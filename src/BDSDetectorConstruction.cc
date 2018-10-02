@@ -81,15 +81,16 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   placementBL(nullptr),
   brho(std::numeric_limits<double>::max()),
   beta0(1)
-{  
-  verbose       = BDSGlobalConstants::Instance()->Verbose();
-  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
-  circular      = BDSGlobalConstants::Instance()->Circular();
+{
+  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  verbose       = globals->Verbose();
+  checkOverlaps = globals->CheckOverlaps();
+  circular      = globals->Circular();
   
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
   canSampleAngledFaces = true;
-  BDSIntegratorSetType integratorSetType = BDSGlobalConstants::Instance()->IntegratorSet();
+  BDSIntegratorSetType integratorSetType = globals->IntegratorSet();
   if (   (integratorSetType == BDSIntegratorSetType::bdsimtwo)
       || (integratorSetType == BDSIntegratorSetType::geant4)
 #if G4VERSION_NUMBER > 1039
@@ -97,7 +98,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 #endif
       )
     { // set to be value of option, default is false.
-      canSampleAngledFaces = BDSGlobalConstants::Instance()->SampleElementsWithPoleface();
+      canSampleAngledFaces = globals->SampleElementsWithPoleface();
     }
 
   UpdateSamplerDiameter();
@@ -459,6 +460,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      worldMaterial,           // material
 						      worldName + "_lv");      // name
+
+  // make the world sensitive to energy deposition with its own unique hits collection
+  if (BDSGlobalConstants::Instance()->StoreELossWorld())
+    {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
   
   // visual attributes
   // copy the debug vis attributes but change to force wireframe
@@ -556,7 +561,7 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	    }
 	}
 
-      if (sensitiveDetector)
+      if (sensitiveDetector && BDSGlobalConstants::Instance()->StoreELoss())
 	{element->GetAcceleratorComponent()->SetSensitiveDetector(sensitiveDetector);}
       
       G4String placementName = element->GetPlacementName() + "_pv";

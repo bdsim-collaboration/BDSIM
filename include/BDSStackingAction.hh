@@ -43,6 +43,8 @@ public:
   virtual void NewStage(); ///< We don't do anything here.
   virtual void PrepareNewEvent(); ///< We don't do anything here.
 
+  static G4double energyKilled;
+
 private:
   /// Force use of supplied constructor.
   BDSStackingAction() = delete;

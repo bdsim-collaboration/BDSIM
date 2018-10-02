@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCoords.hh"
+#include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -73,30 +74,23 @@ void BDSOutputROOT::NewFile()
   
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
-
-  // header
-  theHeaderOutputTree    = new TTree("Header", "BDSIM Header");
-  // geant4 data
-  theGeant4DataTree      = new TTree("Geant4Data", "BDSIM Geant4 Data");
-  // beam data tree
-  theBeamOutputTree      = new TTree("Beam", "BDSIM beam");
-  // options data tree
-  theOptionsOutputTree   = new TTree("Options","BDSIM options");
-  // model data tree
-  theModelOutputTree     = new TTree("Model","BDSIM model");
-  // run histogram tree
-  theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
-  // event data tree
-  theEventOutputTree     = new TTree("Event","BDSIM event");
+  
+  theHeaderOutputTree  = new TTree("Header", "BDSIM Header");           // header
+  theGeant4DataTree    = new TTree("Geant4Data", "BDSIM Geant4 Data");  // geant4 data
+  theBeamOutputTree    = new TTree("Beam", "BDSIM beam");               // beam data tree
+  theOptionsOutputTree = new TTree("Options","BDSIM options");          // options data tree
+  theModelOutputTree   = new TTree("Model","BDSIM model");              // model data tree
+  theRunOutputTree     = new TTree("Run","BDSIM run histograms/information"); // run info tree
+  theEventOutputTree   = new TTree("Event","BDSIM event");              // event data tree
 
   // Build branches for each object
-  theHeaderOutputTree->Branch("Header.",        "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theGeant4DataTree->Branch("Geant4Data.",      "BDSOutputROOTGeant4Data",     geant4DataOutput, 32000, 1);
-  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
-  theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
-  theModelOutputTree->Branch("Model.",          "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
-  theRunOutputTree->Branch("Histos.",           "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
-  theRunOutputTree->Branch("Info.",             "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
+  theHeaderOutputTree->Branch("Header.",   "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
+  theGeant4DataTree->Branch("Geant4Data.", "BDSOutputROOTGeant4Data",     geant4DataOutput, 32000, 1);
+  theBeamOutputTree->Branch("Beam.",       "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
+  theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
+  theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
+  theRunOutputTree->Branch("Histos.",      "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
+  theRunOutputTree->Branch("Info.",        "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
   // Branches for event...
   // Event info output
@@ -110,10 +104,12 @@ void BDSOutputROOT::NewFile()
     }
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,     4000, 1);
-  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit, 4000, 2);
-  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit,  4000, 2);
-  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss", tunnelHit, 4000, 2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,      4000, 1);
+  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLoss", eLossWorld, 4000, 1);
+  theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventExit", eLossWorldExit, 4000, 1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,  4000, 2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit,   4000, 2);
+  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss", tunnelHit,  4000, 2);
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
@@ -162,9 +158,6 @@ void BDSOutputROOT::WriteModel()
 
 void BDSOutputROOT::WriteFileEventLevel()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   theRootOutputFile->cd();
   theEventOutputTree->Fill();
 }
@@ -180,9 +173,6 @@ void BDSOutputROOT::WriteFileRunLevel()
 
 void BDSOutputROOT::CloseFile()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   if(theRootOutputFile && theRootOutputFile->IsOpen())
   {
     theRootOutputFile->cd();

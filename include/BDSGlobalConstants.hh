@@ -188,6 +188,8 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreELoss()               const {return G4bool  (options.storeEloss);}
+  inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
@@ -195,6 +197,7 @@ public:
   inline G4bool   StoreElossTime()           const {return G4bool  (options.storeElossTime);}
   inline G4bool   StoreElossStepLength()     const {return G4bool  (options.storeElossStepLength);}
   inline G4bool   StoreElossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
+  inline G4bool   StoreElossModelID()        const {return G4bool  (options.storeElossModelID);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
