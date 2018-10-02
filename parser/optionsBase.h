@@ -246,6 +246,8 @@ namespace GMAD
     /// Output related options
     int         numberOfEventsPerNtuple;
 
+    bool        storeEloss;
+    bool        storeElossWorld;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
