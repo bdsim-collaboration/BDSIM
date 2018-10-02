@@ -22,8 +22,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
+#include "BDSVolumeExitSD.hh"
 
 #include "G4SDManager.hh"
+#include "G4Version.hh"
+
+#if G4VERSION_NUMBER > 1029
+#include "G4MultiSensitiveDetector.hh"
+#endif
 
 BDSSDManager* BDSSDManager::_instance = nullptr;
 
@@ -67,4 +73,19 @@ BDSSDManager::BDSSDManager()
 
   tunnelECounter = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
   SDMan->AddNewDetector(tunnelECounter);
+
+  worldECounter = new BDSEnergyCounterSD("worldLoss", stopSecondaries, verbose);
+  SDMan->AddNewDetector(worldECounter);
+
+  worldExit= new BDSVolumeExitSD("worldExit", true);
+  SDMan->AddNewDetector(worldExit);
+
+#if G4VERSION_NUMBER > 1029
+  // only multiple SDs since
+  G4MultiSensitiveDetector* wcsd = new G4MultiSensitiveDetector("world_complete");
+  SDMan->AddNewDetector(wcsd);
+  wcsd->AddSD(worldECounter);
+  wcsd->AddSD(worldExit);
+  worldCompleteSD = wcsd;
+#endif
 }

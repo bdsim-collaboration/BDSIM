@@ -1605,7 +1605,7 @@ G4String nameSuffix) const
 
   return new BDSMagnet(magnetType,
 		       elementName + nameSuffix,
-		       element->l * CLHEP::m,
+		       el->l * CLHEP::m,
 		       bpInfo,
 		       outerInfo,
 		       vacuumField,

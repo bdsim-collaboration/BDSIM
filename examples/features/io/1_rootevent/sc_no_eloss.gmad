@@ -20,9 +20,7 @@ option, ngenerate=1,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-    	buildTunnel=1,
-	checkOverlaps=1,
-	storeTrajectories=1;
+    	buildTunnel=1;
 
 beam, particle="e-",
       energy=1.0*GeV,
@@ -36,15 +34,4 @@ beam, particle="e-",
       X0=0.000,
       Y0=0.000;
 
-
-option, storeElossWorld=1,
-	storeElossTurn=1,
-	storeElossLinks=1,
-	storeElossLocal=1,
-	storeElossGlobal=1,
-	storeElossTime=1,
-	storeElossStepLength=1,
-	storeElossPreStepKineticEnergy=1,
-	storeElossModelID=1;
-
-!storeElossModelID is degenerate with storeElossLinks being on, but here for testing.
+option, storeEloss=0;
