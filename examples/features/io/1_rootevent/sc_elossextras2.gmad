@@ -37,14 +37,8 @@ beam, particle="e-",
       Y0=0.000;
 
 
-option, storeElossWorld=1,
-	storeElossTurn=1,
-	storeElossLinks=1,
-	storeElossLocal=1,
+option, storeElossTurn=1,
 	storeElossGlobal=1,
-	storeElossTime=1,
-	storeElossStepLength=1,
-	storeElossPreStepKineticEnergy=1,
 	storeElossModelID=1;
 
-!storeElossModelID is degenerate with storeElossLinks being on, but here for testing.
+! here we purposively don't activate storeElossLinks to test unique output of model id.

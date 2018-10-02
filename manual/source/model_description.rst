@@ -1111,6 +1111,9 @@ Parameter          Description                        Default     Required
 =================  =================================  ==========  ===========
 
 * The `horizontalWidth` must be greater than 2x `xsize`.
+* To prevent the jaws overlapping with one another, a jaw cannot be constructed that crosses the
+  X axis of the element (i.e supplying a negative `xsizeLeft` or `xsizeRight` will not work). Should
+  you require this, please offset the element using the element parameters `offsetX` and `offsetY` instead.
 * To construct a collimator jaws with one jaw closed (i.e. an offset of 0), the horizontal half aperture
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
@@ -3402,6 +3405,15 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeEloss                        | Whether to record any energy deposition at all. Default on. By     |
+|                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
+|                                   | `sensitiveVacuum` have no effect. Saves run time memory and output |
+|                                   | file size.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
+|                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
+|                                   | world volume as well.                                              |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -3412,6 +3424,10 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
 |                                   | and for each trajectory point. Default off.                        |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossModelID                 | Store the beam line index of the object the energy deposition hit  |
+|                                   | was in. If `storeElossLinks` is on, this will be on irrespective   |
+|                                   | of this option.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each point|
 |                                   | of energy deposition and trajectory. Default off.                  |
