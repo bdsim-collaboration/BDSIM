@@ -3405,6 +3405,15 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeEloss                        | Whether to record any energy deposition at all. Default on. By     |
+|                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
+|                                   | `sensitiveVacuum` have no effect. Saves run time memory and output |
+|                                   | file size.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
+|                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
+|                                   | world volume as well.                                              |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+

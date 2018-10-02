@@ -474,30 +474,68 @@ The types and names of the contents of each class can be found in the header fil
 BDSOutputROOTEventInfo
 **********************
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+-------------------+-------------------+---------------------------------------------+
-|  **Variable**     | **Type**          |  **Description**                            |
-+===================+===================+=============================================+
-| startTime         | time_t            | Time stamp at start of event                |
-+-------------------+-------------------+---------------------------------------------+
-| stopTime          | time_t            | Time stamp at end of event                  |
-+-------------------+-------------------+---------------------------------------------+
-| duration          | float             | Duration of event in seconds                |
-+-------------------+-------------------+---------------------------------------------+
-| seedStateAtStart  | std::string       | State of random number generator at the     |
-|                   |                   | start of the event as provided by CLHEP     |
-+-------------------+-------------------+---------------------------------------------+
-| index             | int               | Index of the event (0 counting)             |
-+-------------------+-------------------+---------------------------------------------+
-| aborted           | bool              | Whether event was aborted or not            |
-+-------------------+-------------------+---------------------------------------------+
-| primaryHitMachine | bool              | Whether the primary particle hit the        |
-|                   |                   | machine. This is judged by whether there    |
-|                   |                   | are any energy deposition hits or not. If   |
-|                   |                   | no physics processes are registered this    |
-|                   |                   | won't work correctly.                       |
-+-------------------+-------------------+---------------------------------------------+
++-----------------------+-------------------+---------------------------------------------+
+|  **Variable**         | **Type**          |  **Description**                            |
++=======================+===================+=============================================+
+| startTime             | time_t            | Time stamp at start of event                |
++-----------------------+-------------------+---------------------------------------------+
+| stopTime              | time_t            | Time stamp at end of event                  |
++-----------------------+-------------------+---------------------------------------------+
+| duration              | float             | Duration of event in seconds                |
++-----------------------+-------------------+---------------------------------------------+
+| seedStateAtStart      | std::string       | State of random number generator at the     |
+|                       |                   | start of the event as provided by CLHEP     |
++-----------------------+-------------------+---------------------------------------------+
+| index                 | int               | Index of the event (0 counting)             |
++-----------------------+-------------------+---------------------------------------------+
+| aborted               | bool              | Whether event was aborted or not            |
++-----------------------+-------------------+---------------------------------------------+
+| primaryHitMachine     | bool              | Whether the primary particle hit the        |
+|                       |                   | machine. This is judged by whether there    |
+|                       |                   | are any energy deposition hits or not. If   |
+|                       |                   | no physics processes are registered this    |
+|                       |                   | won't work correctly.                       |
++-----------------------+-------------------+---------------------------------------------+
+| memoryUsageMb         | double            | Memory usage of the whole program at the    |
+|                       |                   | the current event including the geometry.   |
++-----------------------+-------------------+---------------------------------------------+
+| energyDeposited       | double            | (GeV) Integrated energy in Eloss including  |
+|                       |                   | the statistical weight.                     |
++-----------------------+-------------------+---------------------------------------------+
+| energyDepositedWorld  | double            | (GeV) Integrated energy in the ElossWorld   |
+|                       |                   | structure including the statistical weight. |
++-----------------------+-------------------+---------------------------------------------+
+| energyDepositedTunnel | double            | (GeV) Integrated energy in the TunnelHits   |
+|                       |                   | including the statistical weight.           |
++-----------------------+-------------------+---------------------------------------------+
+| energyWorldExit       | double            | (GeV) Integrated energy of all particles    |
+|                       |                   | including their rest mass leaving the       |
+|                       |                   | world volume and therefore the simulation.  |
++-----------------------+-------------------+---------------------------------------------+
+| energyKilled          | double            | (GeV) Integrated energy including their     |
+|                       |                   | rest mass of any particles that were        |
+|                       |                   | artificially killed in the stacking action. |
++-----------------------+-------------------+---------------------------------------------+
+| energyTotal           | double            | The sum of the above energies for the       |
+|                       |                   | current event.                              |
++-----------------------+-------------------+---------------------------------------------+
+
+.. note:: :code:`energyDepositedWorld` will only be non-zero if the option :code:`storeElossWorld`
+	  is on that is off by default.
+
+.. note:: :code:`energyWorldExit` will only be non-zero if Geant4.10.3 or later is used as well
+	  as the option :code:`storeElossWorld` is on that is off by default.
+
+.. warning:: One would expect the parameter `energyTotal` which is the sum of the energies
+	     to be equal to the incoming beam energy. This in reality depends on the physics
+	     list used as well as the production range cuts. Furthermore, ions from the accelerator
+	     material may be liberated leading to an inflated total energy as their rest mass
+	     is also counted. This is non-trivial to correct and this value is provided only
+	     as a guide. The physics library and BDSIM-provided tracking both conserve energy
+	     but it is highly non-trivial to ensure all changes are recorded.
+
 
 BDSOutputROOTEventLoss
 **********************
