@@ -453,8 +453,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
     {
       worldExtent = geom->GetExtent();
 
-      BDSExtentGlobal worldExtent = BDSExtentGlobal(worldExtent, G4Transform3D());
-      G4bool worldContainsAllBeamlines = worldExtent.Encompasses(extents);
+      BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());
+      G4bool worldContainsAllBeamlines = worldExtentGlobal.Encompasses(extents);
 
       // cannot construct world if any beamline extent is greater than the world extents
       if (!worldContainsAllBeamlines)

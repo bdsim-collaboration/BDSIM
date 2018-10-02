@@ -174,10 +174,10 @@ G4bool BDSExtentGlobal::Encompasses(const BDSExtentGlobal& otherExtent)
 {
   G4bool insideX = (std::abs(otherExtent.ExtentXGlobal().first) < std::abs(extXNegG)) &&
           (otherExtent.ExtentXGlobal().second < extXPosG);
-  G4bool insideY = (std::abs(otherExtent.ExtentXGlobal().first) < std::abs(extYNegG)) &&
-          (otherExtent.ExtentXGlobal().second < extYPosG);
-  G4bool insideZ = (std::abs(otherExtent.ExtentXGlobal().first) < std::abs(extZNegG)) &&
-          (otherExtent.ExtentXGlobal().second < extZPosG);
+  G4bool insideY = (std::abs(otherExtent.ExtentYGlobal().first) < std::abs(extYNegG)) &&
+          (otherExtent.ExtentYGlobal().second < extYPosG);
+  G4bool insideZ = (std::abs(otherExtent.ExtentZGlobal().first) < std::abs(extZNegG)) &&
+          (otherExtent.ExtentZGlobal().second < extZPosG);
   return insideX && insideY && insideZ;
 }
 
