@@ -94,10 +94,10 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
 	}
       SetReferenceMomentum();
       SetMass();
-#ifdef BDSDEBUG
-      G4cout << __FUNCTION__ << "> Loaded Map:" << maptableFile << G4endl;
-#endif
     }
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "> Loaded Map:" << maptableFile << G4endl;
+#endif
 }
 
 void BDSPTCOneTurnMap::SetReferenceMomentum()
