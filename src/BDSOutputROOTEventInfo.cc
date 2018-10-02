@@ -33,6 +33,7 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   energyDeposited(0),
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
+  energyKilled(0),
   energyTotal(0)
 {;}
 
@@ -51,5 +52,6 @@ void BDSOutputROOTEventInfo::Flush()
   energyDeposited       = 0;
   energyDepositedWorld  = 0;
   energyDepositedTunnel = 0;
-  energyTotal = 0;
+  energyKilled          = 0;
+  energyTotal           = 0;
 }

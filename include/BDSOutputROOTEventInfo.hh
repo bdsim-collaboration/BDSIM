@@ -50,7 +50,8 @@ public:
   double energyDepositedWorld;  ///< Total energy deposited in the world for this event.
   double energyDepositedTunnel; ///< Total energy deposited in the tunnel for this event.
   double energyWorldExit;       ///< Total energy leaving the world.
-  double energyTotal;
+  double energyKilled;          ///< Total energy of killed particles that weren't in a sensitive volume.
+  double energyTotal;           ///< Sum of above 5 variables that totals all energy.
   
   ClassDef(BDSOutputROOTEventInfo,4);
 };
