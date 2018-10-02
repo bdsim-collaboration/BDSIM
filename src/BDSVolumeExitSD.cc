@@ -50,7 +50,8 @@ void BDSVolumeExitSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSVolumeExitSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*th*/)
+G4bool BDSVolumeExitSD::ProcessHits(G4Step* aStep,
+				    G4TouchableHistory* /*th*/)
 {
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
 

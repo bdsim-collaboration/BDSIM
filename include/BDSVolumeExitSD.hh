@@ -48,7 +48,8 @@ public:
   virtual ~BDSVolumeExitSD(){;}
 
   virtual void Initialize(G4HCofThisEvent* HCE);
-  virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* th);
+  virtual G4bool ProcessHits(G4Step* step,
+			     G4TouchableHistory* th);
   
 private:
   /// assignment and copy constructor not implemented nor used
