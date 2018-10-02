@@ -428,6 +428,12 @@ different value per-event run in BDSIM.
 | Eloss           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
 |                 |                                  | accelerator material                             |
 +-----------------+----------------------------------+--------------------------------------------------+
+| ElossWorld      | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
+|                 |                                  | volume - by default the air.                     |
++-----------------+----------------------------------+--------------------------------------------------+
+| ElossWorldExit  | BDSOutputROOTEventExit           | Global coordinates of the point any track exits  |
+|                 |                                  | the world volume and therefore the simulation.   |
++-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
 |                 |                                  | step on the primary trajectory that wasn't due   |
 |                 |                                  | to tracking, i.e. the first interaction where a  |
@@ -452,6 +458,8 @@ different value per-event run in BDSIM.
 |                 |                                  | sampler during the event. Note: this includes    |
 |                 |                                  | both primary and secondary particles.            |
 +-----------------+----------------------------------+--------------------------------------------------+
+
+* ElossWorld and ElossWorldExit are empty by default and controlled by the option :code:`storeElossWorld`.
 
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
@@ -554,6 +562,42 @@ Extra information can be recorded but this typically dominates the output file s
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
+
+BDSOutputROOTEventExit
+**********************
+
+For the point where particles exit the world, there is no concept of a curvilinear coordinate
+system so there are only global coordinates recorded.
+
++-----------------------+-----------------------+-------------------------------------------------------------------+
+|  **Variable**         | **Type**              |  **Description**                                                  |
++=======================+=======================+===================================================================+
+| n                     | int                   | The number of exits for this event                                |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| totalEnergy           | std::vector<float>    | Vector of total energy of each particle exiting                   |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| postStepKineticEnergy | std::vector<float>    | The kinetic energy of the particle (any species)                  |
+|                       |                       | at the end point as the particle exited.                          |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| X                     | std::vector<float>    | (optional) Global X of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| Y                     | std::vector<float>    | (optional) Global Y of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| Z                     | std::vector<float>    | (optional) Global Z of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| T                     | std::vector<float>    | (optional) Global time-of-flight since beginning of event (ns)    |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| partID                | std::vector<int>      | (optional) Particle ID of particle                                |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| trackID               | std::vector<int>      | (optional) Track ID of particle                                   |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| parentID              | std::vector<int>      | (optional) Track ID of the parent particle                        |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| weight                | std::vector<float>    | Corresponding weight                                              |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+
 
 BDSOutputROOTEventTrajectory
 ****************************
