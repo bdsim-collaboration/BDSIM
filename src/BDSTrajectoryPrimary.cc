@@ -62,10 +62,11 @@ BDSTrajectoryPrimary::~BDSTrajectoryPrimary()
 
 void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
 {
+  auto point = new BDSTrajectoryPoint(aStep);
+
   // check if scattering point and cache it if so
   if (!firstHit)
     {
-      auto point = new BDSTrajectoryPoint(aStep);
       if (point->IsScatteringPoint())
 	{
 	  firstHit = point;
@@ -74,7 +75,16 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
       else
 	{delete point;} // don't store it
     }
-  
+
+  else if (!hasScatteredThisTurn)
+    {
+      if (point->IsScatteringPoint())
+	{
+	  hasScatteredThisTurn = true;
+	}
+      delete point;
+    }
+
   // update last point
   delete lastPoint; // clear old last point
   lastPoint = new BDSTrajectoryPoint(aStep); // construct separate copy as easier to manage.
