@@ -94,7 +94,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
 	  G4ThreeVector outLocalPosition = G4ThreeVector(x, y, localPosition.z());
 	  BDSStep globalPosDir = ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
-	  
+
 	  // Set the output positions and momenta, including the threeDMethod from below...
 	  globalPosAfter = globalPosDir.PreStepPoint() + dPos;
 	  globalMomAfter = globalPosDir.PostStepPoint().transform(transform.getRotation());
@@ -146,7 +146,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  oneTurnMap->UpdateCoordinates(localPosition, localMomentum,
 					turnstaken);
 	}
-      
+
       // Update the particle coordinates for whichever of the methods
       // above was used.
       for (G4int i = 0; i < 3; i++)

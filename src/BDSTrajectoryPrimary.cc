@@ -79,9 +79,7 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
   else if (!hasScatteredThisTurn)
     {
       if (point->IsScatteringPoint())
-	{
-	  hasScatteredThisTurn = true;
-	}
+	{hasScatteredThisTurn = true;}
       delete point;
     }
 
