@@ -86,7 +86,7 @@ BDSBeamline::BDSBeamline(G4Transform3D initialTransform,
   BDSBeamline(initialTransform.getTranslation(),
 	      new G4RotationMatrix(initialTransform.getRotation()),
 	      initialS)
-{initialBeamLineTransform = initialTransform;}
+{;}
 
 BDSBeamline::~BDSBeamline()
 {
@@ -870,6 +870,6 @@ G4bool BDSBeamline::ElementAnglesSumToCircle()
 BDSExtentGlobal BDSBeamline::GetExtentGlobal() const
 {
   const BDSExtent ext = BDSExtent(maximumExtentPositive, maximumExtentNegative);
-  BDSExtentGlobal extG = BDSExtentGlobal(ext, initialBeamLineTransform);
+  BDSExtentGlobal extG = BDSExtentGlobal(ext, G4Transform3D());
   return extG;
 }

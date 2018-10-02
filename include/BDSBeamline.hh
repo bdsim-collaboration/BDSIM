@@ -240,9 +240,6 @@ private:
   /// Current reference rotation at the end of the previous element
   G4RotationMatrix* previousReferenceRotationEnd;
 
-  /// Initial beamline transformation required for calculating the global extents
-  G4Transform3D initialBeamLineTransform;
-
   /// Current reference position at the end of the previous element
   G4ThreeVector previousReferencePositionEnd;
 
