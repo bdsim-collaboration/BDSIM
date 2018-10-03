@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box lunit="mm" name="PREPEND_saContainerSolid" x="2*200" y="2*200" z="2*200"/>
+		<orb name="PREPEND_saOuterSolid" r="100"/>
+		<orb name="PREPEND_saInnerSolid" r="50"/>
+	</solids>
+	<structure>
+		<volume name="PREPEND_saInnerLV_lv">
+			<materialref ref="G4_Ca"/>
+			<solidref ref="PREPEND_saInnerSolid"/>
+		</volume>
+		<volume name="PREPEND_saOuterLV_lv">
+			<materialref ref="G4_C"/>
+			<solidref ref="PREPEND_saOuterSolid"/>
+			<physvol name="PREPEND_saInnerPV_pv">
+				<volumeref ref="PREPEND_saInnerLV_lv"/>
+				<position name="PREPEND_saInnerPV_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_saInnerPV_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_saInnerPV_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+		<volume name="PREPEND_saContainerLV_lv">
+			<materialref ref="G4_Be"/>
+			<solidref ref="PREPEND_saContainerSolid"/>
+			<physvol name="PREPEND_saOuterPV_pv">
+				<volumeref ref="PREPEND_saOuterLV_lv"/>
+				<position name="PREPEND_saOuterPV_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_saOuterPV_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_saOuterPV_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="PREPEND_saContainerLV_lv"/>
+	</setup>
+</gdml>

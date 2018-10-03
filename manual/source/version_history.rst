@@ -1,4 +1,4 @@
-V1.3 - 2018 / 09 / ??
+V1.3 - 2018 / 10 / ??
 =====================
 
 New Features
@@ -7,9 +7,15 @@ New Features
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
+* New option :code:`storeEloss` to completely turn off generation of energy deposition hits to
+  save memory usage and output file size. Default on.
+* New option :code:`storeElossWorld` to turn on generation of energy deposition in the world
+  volume (i.e. the air) as well as record energy leaving the simulation. Default off.
 * New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
 * New option :code:`sensitiveVacuum` to control whether energy deposition in the residual
   gas in the beam pipe 'vacuum' is recorded.
+* New option :code:`storeElossModelID` to control whether the beam line index is stored in
+  the energy loss output. More granular than :code:`storeElossLinks`.
 
 General
 -------
@@ -23,6 +29,9 @@ General
   accepted.
 * The generic beam line element `element` now supports angle and the beam line
   will be curved by this amount.
+* The world is now sensitive and can record energy deposition. Geant4.10.3 upwards
+  is required to record both this information and the energy leaving the world
+  as this requires G4MultiSensitiveDetector.
   
 Bug Fixes
 ---------
@@ -38,6 +47,7 @@ Bug Fixes
   been fixed and now controls whether the parts outside the beam pipe in an
   element record energy loss or not.
 * Degrader and undulator did not record energy deposition.
+* Energy deposition is now correctly recorded when tracks are artificially killed.
 
 Output Changes
 --------------
@@ -45,14 +55,52 @@ Output Changes
 * Memory usage (for Mac & Linux) added at the end of each event in event info. This
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
-* BDSOutputROOTEventInfo class version incremented to 4.
 * New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
-* BDSOutputROOTEventSampler class version incremented to 3.
 * New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
-* BDSOutputROOTEventLoss class version incremented to 4.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
   detail of their output.
-* BDSOutputROOTEventOptions class version incremented to 4.
+* New class BDSOutputROOTEventExit for a record of coordinates when a particle leaves a volume,
+  use currently for exiting the world.
+* New structures ("branches") in the `Event` tree called :code:`Elossworld` and :code:`ElossWorldExit` for
+  energy deposition in the world material and energy leaving the world (and therefore the simulation)
+  respectively.
+* New members in :code:`Event.Info` that are the integrated energy deposite in various parts
+  for that event. These are for convenience and are the integrals of the various Eloss parts.
+
+Output Classes Versions
+-----------------------
+
+* Data Version 4.
+
++-------------------------------+-------------+-----------------+-----------------+
+| **Class**                     | **Changed** | **Old Version** | **New Version** |
++===============================+=============+=================+=================+
+| BDSOutputROOTEventBeam        | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords      | N           | 1               | 1               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventExit        | Y           | NA              | 1               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader      | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms  | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo        | Y           | 3               | 4               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss        | Y           | 3               | 4               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel       | N           | 3               | 3               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions     | Y           | 3               | 4               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo     | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler     | N           | 3               | 3               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory  | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTGeant4Data       | N           | 2               | 2               |
++-------------------------------+-------------+-----------------+-----------------+
 
 Utilities
 ---------

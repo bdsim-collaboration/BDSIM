@@ -3424,6 +3424,15 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeEloss                        | Whether to record any energy deposition at all. Default on. By     |
+|                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
+|                                   | `sensitiveVacuum` have no effect. Saves run time memory and output |
+|                                   | file size.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
+|                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
+|                                   | world volume as well.                                              |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -3434,6 +3443,10 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
 |                                   | and for each trajectory point. Default off.                        |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossModelID                 | Store the beam line index of the object the energy deposition hit  |
+|                                   | was in. If `storeElossLinks` is on, this will be on irrespective   |
+|                                   | of this option.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each point|
 |                                   | of energy deposition and trajectory. Default off.                  |

@@ -13,6 +13,8 @@ simple_testing(io-load-ascii-seed-state "--file=sc.gmad --seedStateFileName=../.
 simple_testing(io-sampler-extras        "--file=sc_samplerextras.gmad --ngenerate=10" "")
 
 # write optional eloss data
-simple_testing(io-eloss-extras          "--file=sc_elossextras.gmad --ngenerate=10" "")
+simple_testing(io-eloss-extras          "--file=sc_elossextras.gmad  --ngenerate=10" "")
+simple_testing(io-eloss-extras2         "--file=sc_elossextras2.gmad --ngenerate=10" "")
 
 simple_testing(io-no-model    "--file=sc_no_model.gmad --ngenerate=1" "")
+simple_testing(io-no-eloss    "--file=sc_no_eloss.gmad --ngenerate=1" "")

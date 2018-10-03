@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCoords.hh"
+#include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -54,6 +55,9 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeTime       = globals->StoreElossTime();
   G4bool storeStepLength = globals->StoreElossStepLength();
   G4bool storePreStepKineticEnergy = globals->StoreElossPreStepKineticEnergy();
+  G4bool storeModelID    = globals->StoreElossModelID();
+  // store the model id if either modelID requested or store links
+  storeModelID = storeModelID || storeLinks;
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
@@ -61,17 +65,23 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
 
-  eLoss = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-                                     storeTime, storeStepLength, storePreStepKineticEnergy);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  pLastHit  = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  tunnelHit = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-					 storeTime, storeStepLength, storePreStepKineticEnergy);
-  traj      = new BDSOutputROOTEventTrajectory();
-  evtHistos = new BDSOutputROOTEventHistograms();
-  evtInfo   = new BDSOutputROOTEventInfo();
-  runHistos = new BDSOutputROOTEventHistograms();
-  runInfo   = new BDSOutputROOTEventRunInfo();
+  eLoss      = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
+  eLossWorld = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
+  eLossWorldExit = new BDSOutputROOTEventExit();
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  tunnelHit  = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
+  traj       = new BDSOutputROOTEventTrajectory();
+  evtHistos  = new BDSOutputROOTEventHistograms();
+  evtInfo    = new BDSOutputROOTEventInfo();
+  runHistos  = new BDSOutputROOTEventHistograms();
+  runInfo    = new BDSOutputROOTEventRunInfo();
 
 #ifndef __ROOTDOUBLE__
   primary = new BDSOutputROOTEventSampler<float>("Primary");
@@ -93,6 +103,8 @@ BDSOutputStructures::~BDSOutputStructures()
   delete primary;
   delete primaryGlobal;
   delete eLoss;
+  delete eLossWorld;
+  delete eLossWorldExit;
   delete pFirstHit;
   delete pLastHit;
   delete tunnelHit;
@@ -167,6 +179,8 @@ void BDSOutputStructures::ClearStructuresEventLevel()
     {(*i)->Flush();}
   primaryGlobal->Flush();
   eLoss->Flush();
+  eLossWorld->Flush();
+  eLossWorldExit->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
   tunnelHit->Flush();

@@ -428,6 +428,12 @@ different value per-event run in BDSIM.
 | Eloss           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
 |                 |                                  | accelerator material                             |
 +-----------------+----------------------------------+--------------------------------------------------+
+| ElossWorld      | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
+|                 |                                  | volume - by default the air.                     |
++-----------------+----------------------------------+--------------------------------------------------+
+| ElossWorldExit  | BDSOutputROOTEventExit           | Global coordinates of the point any track exits  |
+|                 |                                  | the world volume and therefore the simulation.   |
++-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
 |                 |                                  | step on the primary trajectory that wasn't due   |
 |                 |                                  | to tracking, i.e. the first interaction where a  |
@@ -453,6 +459,8 @@ different value per-event run in BDSIM.
 |                 |                                  | both primary and secondary particles.            |
 +-----------------+----------------------------------+--------------------------------------------------+
 
+* ElossWorld and ElossWorldExit are empty by default and controlled by the option :code:`storeElossWorld`.
+
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
 
@@ -466,30 +474,68 @@ The types and names of the contents of each class can be found in the header fil
 BDSOutputROOTEventInfo
 **********************
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+-------------------+-------------------+---------------------------------------------+
-|  **Variable**     | **Type**          |  **Description**                            |
-+===================+===================+=============================================+
-| startTime         | time_t            | Time stamp at start of event                |
-+-------------------+-------------------+---------------------------------------------+
-| stopTime          | time_t            | Time stamp at end of event                  |
-+-------------------+-------------------+---------------------------------------------+
-| duration          | float             | Duration of event in seconds                |
-+-------------------+-------------------+---------------------------------------------+
-| seedStateAtStart  | std::string       | State of random number generator at the     |
-|                   |                   | start of the event as provided by CLHEP     |
-+-------------------+-------------------+---------------------------------------------+
-| index             | int               | Index of the event (0 counting)             |
-+-------------------+-------------------+---------------------------------------------+
-| aborted           | bool              | Whether event was aborted or not            |
-+-------------------+-------------------+---------------------------------------------+
-| primaryHitMachine | bool              | Whether the primary particle hit the        |
-|                   |                   | machine. This is judged by whether there    |
-|                   |                   | are any energy deposition hits or not. If   |
-|                   |                   | no physics processes are registered this    |
-|                   |                   | won't work correctly.                       |
-+-------------------+-------------------+---------------------------------------------+
++-----------------------+-------------------+---------------------------------------------+
+|  **Variable**         | **Type**          |  **Description**                            |
++=======================+===================+=============================================+
+| startTime             | time_t            | Time stamp at start of event                |
++-----------------------+-------------------+---------------------------------------------+
+| stopTime              | time_t            | Time stamp at end of event                  |
++-----------------------+-------------------+---------------------------------------------+
+| duration              | float             | Duration of event in seconds                |
++-----------------------+-------------------+---------------------------------------------+
+| seedStateAtStart      | std::string       | State of random number generator at the     |
+|                       |                   | start of the event as provided by CLHEP     |
++-----------------------+-------------------+---------------------------------------------+
+| index                 | int               | Index of the event (0 counting)             |
++-----------------------+-------------------+---------------------------------------------+
+| aborted               | bool              | Whether event was aborted or not            |
++-----------------------+-------------------+---------------------------------------------+
+| primaryHitMachine     | bool              | Whether the primary particle hit the        |
+|                       |                   | machine. This is judged by whether there    |
+|                       |                   | are any energy deposition hits or not. If   |
+|                       |                   | no physics processes are registered this    |
+|                       |                   | won't work correctly.                       |
++-----------------------+-------------------+---------------------------------------------+
+| memoryUsageMb         | double            | Memory usage of the whole program at the    |
+|                       |                   | the current event including the geometry.   |
++-----------------------+-------------------+---------------------------------------------+
+| energyDeposited       | double            | (GeV) Integrated energy in Eloss including  |
+|                       |                   | the statistical weight.                     |
++-----------------------+-------------------+---------------------------------------------+
+| energyDepositedWorld  | double            | (GeV) Integrated energy in the ElossWorld   |
+|                       |                   | structure including the statistical weight. |
++-----------------------+-------------------+---------------------------------------------+
+| energyDepositedTunnel | double            | (GeV) Integrated energy in the TunnelHits   |
+|                       |                   | including the statistical weight.           |
++-----------------------+-------------------+---------------------------------------------+
+| energyWorldExit       | double            | (GeV) Integrated energy of all particles    |
+|                       |                   | including their rest mass leaving the       |
+|                       |                   | world volume and therefore the simulation.  |
++-----------------------+-------------------+---------------------------------------------+
+| energyKilled          | double            | (GeV) Integrated energy including their     |
+|                       |                   | rest mass of any particles that were        |
+|                       |                   | artificially killed in the stacking action. |
++-----------------------+-------------------+---------------------------------------------+
+| energyTotal           | double            | The sum of the above energies for the       |
+|                       |                   | current event.                              |
++-----------------------+-------------------+---------------------------------------------+
+
+.. note:: :code:`energyDepositedWorld` will only be non-zero if the option :code:`storeElossWorld`
+	  is on that is off by default.
+
+.. note:: :code:`energyWorldExit` will only be non-zero if Geant4.10.3 or later is used as well
+	  as the option :code:`storeElossWorld` is on that is off by default.
+
+.. warning:: One would expect the parameter `energyTotal` which is the sum of the energies
+	     to be equal to the incoming beam energy. This in reality depends on the physics
+	     list used as well as the production range cuts. Furthermore, ions from the accelerator
+	     material may be liberated leading to an inflated total energy as their rest mass
+	     is also counted. This is non-trivial to correct and this value is provided only
+	     as a guide. The physics library and BDSIM-provided tracking both conserve energy
+	     but it is highly non-trivial to ensure all changes are recorded.
+
 
 BDSOutputROOTEventLoss
 **********************
@@ -554,6 +600,42 @@ Extra information can be recorded but this typically dominates the output file s
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
+
+BDSOutputROOTEventExit
+**********************
+
+For the point where particles exit the world, there is no concept of a curvilinear coordinate
+system so there are only global coordinates recorded.
+
++-----------------------+-----------------------+-------------------------------------------------------------------+
+|  **Variable**         | **Type**              |  **Description**                                                  |
++=======================+=======================+===================================================================+
+| n                     | int                   | The number of exits for this event                                |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| totalEnergy           | std::vector<float>    | Vector of total energy of each particle exiting                   |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| postStepKineticEnergy | std::vector<float>    | The kinetic energy of the particle (any species)                  |
+|                       |                       | at the end point as the particle exited.                          |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| X                     | std::vector<float>    | (optional) Global X of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| Y                     | std::vector<float>    | (optional) Global Y of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| Z                     | std::vector<float>    | (optional) Global Z of exit point (m)                             |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| T                     | std::vector<float>    | (optional) Global time-of-flight since beginning of event (ns)    |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| partID                | std::vector<int>      | (optional) Particle ID of particle                                |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| trackID               | std::vector<int>      | (optional) Track ID of particle                                   |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| parentID              | std::vector<int>      | (optional) Track ID of the parent particle                        |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| weight                | std::vector<float>    | Corresponding weight                                              |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+| turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
++-----------------------+-----------------------+-------------------------------------------------------------------+
+
 
 BDSOutputROOTEventTrajectory
 ****************************

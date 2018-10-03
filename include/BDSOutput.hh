@@ -39,10 +39,13 @@ class BDSSamplerHit;
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
+class BDSVolumeExitHit;
+typedef G4THitsCollection<BDSVolumeExitHit> BDSVolumeExitHitsCollection;
 
 class G4PrimaryVertex;
 
-namespace GMAD {
+namespace GMAD
+{
   class BeamBase;
   class OptionsBase;
 }
@@ -104,6 +107,8 @@ public:
 		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
 		 const BDSEnergyCounterHitsCollection* energyLoss,
 		 const BDSEnergyCounterHitsCollection* tunnelLoss,
+		 const BDSEnergyCounterHitsCollection* worldLoss,
+		 const BDSVolumeExitHitsCollection*    worldExitHits,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
 		 const std::map<BDSTrajectory*, bool>& trajectories,
@@ -133,7 +138,7 @@ private:
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, tunnel};
+  enum class LossType {energy, tunnel, world};
 
   /// Write the header.
   virtual void WriteHeader() = 0;
@@ -182,6 +187,9 @@ private:
   /// Fill a collection of energy hits into the appropriate output structure.
   void FillEnergyLoss(const BDSEnergyCounterHitsCollection *loss,
 		      const LossType type);
+
+  /// Fill a collection volume exit hits into the approprate output structure.
+  void FillElossWorldExitHits(const BDSVolumeExitHitsCollection* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
@@ -225,6 +233,13 @@ private:
   G4bool storeOption2;
   G4bool storeOption3;
   G4bool storeOption4;
+  /// @}
+
+  /// @{ Integral when filling hit.
+  G4double energyDeposited;
+  G4double energyDepositedWorld;
+  G4double energyDepositedTunnel;
+  G4double energyWorldExit;
   /// @}
 };
 

@@ -52,7 +52,6 @@ public:
 		      const G4double& yIn               = 0,    // local y
 		      const G4double& zIn               = 0,    // local z
 		      const G4double& globalTimeIn      = 0,    // global time
-		      const G4String& nameIn            = "",   // volume name
 		      const G4int&    partIDIn          = 0,    // PDG id - particle type
 		      const G4int&    trackID           = -1,   // Track ID
 		      const G4int&    parentID          = -1,   // Parent ID
@@ -60,8 +59,7 @@ public:
 		      const G4int&    turnsTakenIn      = 1,    // turns taken if circular
 		      const G4int&    eventNoIn         = 0,    // event number
 		      const G4double& stepLengthIn      = 0,
-		      const G4int&    beamlineIndexIn   = -1,
-		      const G4int&    geomFlag          = -1);
+		      const G4int&    beamlineIndexIn   = -1);
   
   virtual ~BDSEnergyCounterHit();
   
@@ -70,7 +68,6 @@ public:
 
   inline G4int    GetCopyNumber()      const {return copyNumber;}
   inline G4double GetEnergy()          const {return energy;}
-  inline void     SetEnergy(G4double energyIn) {energy = energyIn;}
   inline G4double GetPreStepKineticEnergy() const {return preStepKineticEnergy;}
   inline G4double GetX()               const {return X;} 
   inline G4double GetY()               const {return Y;}
@@ -82,16 +79,13 @@ public:
   inline G4double Gety()               const {return y;}
   inline G4double Getz()               const {return z;} 
   inline G4double GetGlobalTime()      const {return globalTime;}
-  inline G4String GetName()            const {return name;}
   inline G4int    GetPartID()          const {return partID;}
   inline G4int    GetTrackID()         const {return trackID;}
   inline G4int    GetParentID()        const {return parentID;}
   inline G4double GetWeight()          const {return weight;} 
   inline G4int    GetTurnsTaken()      const {return turnsTaken;}
-  inline G4int    GetEventNo()         const {return eventNo;}
   inline G4double GetStepLength()      const {return stepLength;}
   inline G4int    GetBeamlineIndex()   const {return beamlineIndex;}
-  inline G4int    GetGeomFlag()        const {return geomFlag;}
   inline G4double GetEnergyWeighted()  const {return weight * energy;}
   
 private:
@@ -126,8 +120,6 @@ private:
   /// @}
 
   G4double globalTime; ///< Time since start of event
-
-  G4String name;
   G4int    partID;
   G4int    trackID;
   G4int    parentID;
@@ -136,7 +128,6 @@ private:
   G4int    eventNo;
   G4double stepLength;
   G4int    beamlineIndex;
-  G4int    geomFlag;
 };
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
