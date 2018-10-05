@@ -26,7 +26,7 @@ class BDSSamplerSD;
 class BDSTerminatorSD;
 class BDSVolumeExitSD;
 
-#if G4VERSION_NUMBER > 1029
+#if G4VERSION_NUMBER < 1030
 // In this case we use only the energy counter SD and return it
 // as a base class pointer. Include header so casting works.
 #include "BDSEnergyCounterSD.hh"
