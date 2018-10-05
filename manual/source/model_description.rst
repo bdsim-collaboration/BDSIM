@@ -3248,7 +3248,7 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | worldGeometryFile                | The filename of the world geometry file. See          |
 |                                  | :ref:`external-world-geometry` for more details.      |
-|                                  | Default = "".
+|                                  | Default = "".                                         |
 +----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |
