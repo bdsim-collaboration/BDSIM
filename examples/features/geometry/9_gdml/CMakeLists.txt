@@ -10,4 +10,7 @@ if (USE_GDML)
 
   set(TESTING_ARGS --output=none)
   simple_testing(gdml-parametrised "--file=4_parametrised_gdml.gmad" ${OVERLAP_CHECK})
+
+  set(TESTING_ARGS --output=none)
+  simple_testing(gdml-sensitive-per-volume "--file=5_gdml_sensitivity.gmad" ${OVERLAP_CHECK})
 endif()

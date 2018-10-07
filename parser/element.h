@@ -160,6 +160,14 @@ namespace GMAD
     double degraderOffset;
     ///@}
 
+    ///@[ for wirescanner
+    double wireDiameter;
+    double wireLength;
+    double wireOffsetX;
+    double wireOffsetY;
+    double wireOffsetZ;
+    ///@}
+    
     ///@{ for undulator
     double undulatorPeriod;
     double undulatorGap;

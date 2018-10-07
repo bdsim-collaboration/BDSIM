@@ -84,24 +84,23 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Energy Counter SD Hits Collection ID: " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
+				       G4TouchableHistory* /*th*/)
 {
-  parentID = aStep->GetTrack()->GetParentID(); // needed later on too
-
   // Get the energy deposited along the step
   enrg = aStep->GetTotalEnergyDeposit();
-  // Account for secondaries being artificially killed - add the total energy of the particle
-  // as it's artificially absorbed here.
-  if(stopSecondaries && parentID > 0)
-    {enrg += aStep->GetTrack()->GetTotalEnergy();}
 
   //if the energy is 0, don't do anything
   if (!BDS::IsFinite(enrg))
     {return false;}
+
+  G4Track* track = aStep->GetTrack();
+  parentID = track->GetParentID(); // needed later on too
+  ptype    = track->GetDefinition()->GetPDGEncoding();
 
   // step points - used many times
   G4StepPoint* preStepPoint  = aStep->GetPreStepPoint();
@@ -210,9 +209,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	     << "GeV\tPosition: " << sAfter/CLHEP::m <<" m"<< G4endl;
     }
   
-  weight     = aStep->GetTrack()->GetWeight();
-  ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
-  trackID    = aStep->GetTrack()->GetTrackID();
+  weight     = track->GetWeight();
+  trackID    = track->GetTrackID();
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
@@ -225,7 +223,110 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
                                                        sHit,
                                                        x, y, z,
 						       globalTime,
-                                                       volName,
+                                                       ptype,
+                                                       trackID,
+                                                       parentID,
+                                                       weight,
+                                                       turnstaken,
+                                                       eventnumber,
+                                                       stepLength,
+                                                       beamlineIndex);
+  
+  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+  energyCounterCollection->insert(ECHit);
+   
+  return true;
+}
+
+G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
+					    G4TouchableHistory* /*th*/)
+{
+  parentID   = track->GetParentID(); // needed later on too
+  ptype      = track->GetDefinition()->GetPDGEncoding();
+  enrg       = track->GetTotalEnergy();
+  globalTime = track->GetGlobalTime();
+  weight     = track->GetWeight();
+  trackID    = track->GetTrackID();
+  preStepKineticEnergy = track->GetKineticEnergy();
+
+  //if the energy is 0, don't do anything
+  if (!BDS::IsFinite(enrg))
+    {return false;}
+  
+  stepLength = 0;
+  G4ThreeVector posGlobal = track->GetPosition();
+  X = posGlobal.x();
+  Y = posGlobal.y();
+  Z = posGlobal.z();
+  
+  // avoid double getting pv
+  auto hitMassWorldPV = track->GetVolume();
+  G4int nCopy         = hitMassWorldPV->GetCopyNo();
+
+  // calculate local coordinates
+  G4ThreeVector momGlobalUnit = track->GetMomentumDirection();
+  BDSStep stepLocal = auxNavigator->ConvertToLocal(posGlobal, momGlobalUnit, 1*CLHEP::mm, true, 1*CLHEP::mm);
+  G4ThreeVector posLocal = stepLocal.PreStepPoint();
+  // local
+  x = posLocal.x();
+  y = posLocal.y();
+  z = posLocal.z();
+  
+  // get the s coordinate (central s + local z)
+  // volume is from curvilinear coordinate parallel geometry
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
+  G4int beamlineIndex = -1;
+  
+  // declare lambda for updating parameters if info found (avoid duplication of code)
+  auto UpdateParams = [&](BDSPhysicalVolumeInfo* info)
+    {
+      G4double sCentre = info->GetSPos();
+      sAfter           = sCentre;
+      sBefore          = sCentre;
+      beamlineIndex    = info->GetBeamlineIndex();
+    };
+  
+  if (theInfo)
+    {UpdateParams(theInfo);}
+  else
+    {
+      // Try yet again with just a slight shift (100um is bigger than any padding space).
+      G4ThreeVector shiftedPos = posGlobal + 0.1*CLHEP::mm * momGlobalUnit;
+      BDSStep stepLocal2 = auxNavigator->ConvertToLocal(shiftedPos, momGlobalUnit);
+      theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
+      if (theInfo)
+	{UpdateParams(theInfo);}
+      else
+	{
+#ifdef BDSDEBUG
+	  G4cerr << "No volume info for ";
+	  auto vol = stepLocal.VolumeForTransform();
+	  if (vol)
+	    {G4cerr << vol->GetName() << G4endl;}
+	  else
+	    {G4cerr << "Unknown" << G4endl;}
+#endif
+	  // unphysical default value to allow easy identification in output
+	  sAfter        = -1000;
+	  sBefore       = -1000;
+	  beamlineIndex = -2;
+	}
+    }
+  G4double sHit = sBefore; // duplicate
+  
+  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
+  
+  //create hits and put in hits collection of the event
+  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
+                                                       enrg,
+						       preStepKineticEnergy,
+                                                       X, Y, Z,
+                                                       sBefore,
+                                                       sAfter,
+                                                       sHit,
+                                                       x, y, z,
+						       globalTime,
                                                        ptype,
                                                        trackID,
                                                        parentID,

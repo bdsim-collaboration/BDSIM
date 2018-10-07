@@ -29,6 +29,7 @@ ClassImp(BDSOutputROOTEventLoss)
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   storeTurn(false),
   storeLinks(false),
+  storeModelID(false),
   storeLocal(false),
   storeGlobal(false),
   storeTime(false),
@@ -39,6 +40,7 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
 
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeLinksIn,
+					       bool storeModelIDIn,
 					       bool storeLocalIn,
 					       bool storeGlobalIn,
 					       bool storeTimeIn,
@@ -46,6 +48,7 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storePreStepKineticEnergyIn):
   storeTurn(storeTurnIn),
   storeLinks(storeLinksIn),
+  storeModelID(storeModelIDIn),
   storeLocal(storeLocalIn),
   storeGlobal(storeGlobalIn),
   storeTime(storeTimeIn),
@@ -103,15 +106,17 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit* hit)
   if (storeTurn)
     {turn.push_back( hit->GetTurnsTaken());}
 
-  if(storeLinks)
+  if (storeLinks)
     {
       partID.push_back(hit->GetPartID());
       trackID.push_back(hit->GetTrackID());
-      parentID.push_back(hit->GetParentID());
-      modelID.push_back(hit->GetBeamlineIndex());
+      parentID.push_back(hit->GetParentID());   
     }
-
-  if(storeLocal)
+  
+  if (storeModelID)
+    {modelID.push_back(hit->GetBeamlineIndex());}
+  
+  if (storeLocal)
     {
       x.push_back( (float &&) (hit->Getx() / CLHEP::m));
       y.push_back( (float &&) (hit->Gety() / CLHEP::m));
@@ -124,18 +129,15 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit* hit)
       Y.push_back( (float &&) (hit->GetY() / CLHEP::m));
       Z.push_back( (float &&) (hit->GetZ() / CLHEP::m));
     }
+
   if (storeTime)
-    {
-      T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
-    }
+    {T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);}
+
   if (storeStepLength)
-    {
-      stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);
-    }
+    {stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);}
+  
   if (storePreStepKineticEnergy)
-    {
-      preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);
-    }
+    {preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);}
 }
 
 #endif

@@ -74,6 +74,8 @@ public:
   void SetBranchAddress(bool allOn = true,
                         const RBDS::BranchMap* bToTurnOn = nullptr);
 
+  inline int DataVersion() const {return dataVersion;}
+
   /// @{ Accessor
   std::vector<std::string>   GetTreeNames()      {return treeNames;};
   std::vector<std::string>   GetBranchNames()    {return branchNames;}
@@ -123,6 +125,8 @@ private:
   TChain* modChain;
   TChain* evtChain;
   TChain* runChain;
+
+  int dataVersion; ///< Integer version of data loaded.
 
   ClassDef(DataLoader,1);
 };

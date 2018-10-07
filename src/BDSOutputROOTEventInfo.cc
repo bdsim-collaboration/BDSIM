@@ -29,7 +29,12 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   seedStateAtStart(""),
   aborted(false),
   primaryHitMachine(false),
-  memoryUsageMb(0)
+  memoryUsageMb(0),
+  energyDeposited(0),
+  energyDepositedWorld(0),
+  energyDepositedTunnel(0),
+  energyKilled(0),
+  energyTotal(0)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -43,5 +48,10 @@ void BDSOutputROOTEventInfo::Flush()
   seedStateAtStart  = "";
   aborted           = false;
   primaryHitMachine = false;
-  memoryUsageMb     = 0;  
+  memoryUsageMb     = 0;
+  energyDeposited       = 0;
+  energyDepositedWorld  = 0;
+  energyDepositedTunnel = 0;
+  energyKilled          = 0;
+  energyTotal           = 0;
 }

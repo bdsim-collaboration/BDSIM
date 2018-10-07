@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
 class BDSOutputROOTEventCoords;
+class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHeader;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
@@ -111,15 +112,17 @@ protected:
 #endif
   std::vector<std::string> samplerNames; ///< Sampler names to use.
   
-  BDSOutputROOTEventRunInfo*    runInfo;   ///< Run information.
-  BDSOutputROOTEventHistograms* runHistos; ///< Run level histograms
-  BDSOutputROOTEventLoss*       eLoss;     ///< General energy deposition.
-  BDSOutputROOTEventLoss*       pFirstHit; ///< Primary hit point.
-  BDSOutputROOTEventLoss*       pLastHit;  ///< Primary loss point.
-  BDSOutputROOTEventLoss*       tunnelHit; ///< Tunnel energy deposition.
-  BDSOutputROOTEventTrajectory* traj;      ///< Trajectories.
-  BDSOutputROOTEventHistograms* evtHistos; ///< Event level histograms.
-  BDSOutputROOTEventInfo*       evtInfo;   ///< Event information.
+  BDSOutputROOTEventRunInfo*    runInfo;    ///< Run information.
+  BDSOutputROOTEventHistograms* runHistos;  ///< Run level histograms
+  BDSOutputROOTEventLoss*       eLoss;      ///< General energy deposition.
+  BDSOutputROOTEventLoss*       pFirstHit;  ///< Primary hit point.
+  BDSOutputROOTEventLoss*       pLastHit;   ///< Primary loss point.
+  BDSOutputROOTEventLoss*       tunnelHit;  ///< Tunnel energy deposition.
+  BDSOutputROOTEventLoss*       eLossWorld; ///< World energy deposition.
+  BDSOutputROOTEventExit*       eLossWorldExit;///< World exit hits.
+  BDSOutputROOTEventTrajectory* traj;       ///< Trajectories.
+  BDSOutputROOTEventHistograms* evtHistos;  ///< Event level histograms.
+  BDSOutputROOTEventInfo*       evtInfo;    ///< Event information.
   
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry

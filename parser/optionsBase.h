@@ -159,6 +159,7 @@ namespace GMAD
     std::string vacMaterial;   ///< vacuum material
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
+    std::string worldGeometryFile;
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
@@ -246,6 +247,8 @@ namespace GMAD
     /// Output related options
     int         numberOfEventsPerNtuple;
 
+    bool        storeEloss;
+    bool        storeElossWorld;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
@@ -253,6 +256,7 @@ namespace GMAD
     bool        storeElossTime;
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
+    bool        storeElossModelID;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
