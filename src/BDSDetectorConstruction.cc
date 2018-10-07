@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
+#include "BDSGeometryExternal.hh"
+#include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSMaterials.hh"
@@ -102,6 +104,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
     }
 
   UpdateSamplerDiameter();
+  useExternalGeometryWorld = false;
 }
 
 void BDSDetectorConstruction::UpdateSamplerDiameter()
@@ -402,77 +405,116 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  std::vector<G4ThreeVector> extents;
+  std::vector<BDSExtentGlobal> extents;
 
   // These beamlines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
-  extents.push_back(blMain.massWorld->GetMaximumExtentAbsolute());
-  const auto blMainCL = blMain.curvilinearWorld;
-  if (blMainCL)
-    {extents.push_back(blMainCL->GetMaximumExtentAbsolute());}
-  
+  blMain.GetExtentGlobals(extents);
+
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
-    {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
+    {extents.push_back(plBeamline->GetExtentGlobal());}
   
   BDSBeamline* tunnelBeamline = acceleratorModel->TunnelBeamline();
   if (tunnelBeamline)
-    {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
+    {extents.push_back(tunnelBeamline->GetExtentGlobal());}
+
+  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  // extras is a map, so iterator has first and second for key and value
+  for (const auto& bl : extras)
+    {bl.second.GetExtentGlobals(extents);}
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
-
-  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
-  for (const auto& bl : extras)
-    {// extras is a map, so iterator has first and second for key and value
-      extents.push_back(bl.second.massWorld->GetMaximumExtentAbsolute());
-      if (bl.second.curvilinearWorld)
-	{extents.push_back(bl.second.curvilinearWorld->GetMaximumExtentAbsolute());}
-      if (bl.second.curvilinearBridgeWorld)
-	{extents.push_back(bl.second.curvilinearBridgeWorld->GetMaximumExtentAbsolute());}
-      if (bl.second.endPieces)
-	{extents.push_back(bl.second.endPieces->GetMaximumExtentAbsolute());}
-    }
 
   // loop over all extents from all beam lines
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	{worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
+	    {worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
-  
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
-#endif
-  G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
-  margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
-  worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
-#endif
-  
-  G4String worldName   = "World";
-  worldExtent          = BDSExtent(worldR);
-  G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
-  G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
-						      worldMaterial,           // material
-						      worldName + "_lv");      // name
+  G4String worldName = "World";
+  G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+  G4Material *worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
 
-  // make the world sensitive to energy deposition with its own unique hits collection
-  if (BDSGlobalConstants::Instance()->StoreELossWorld())
-    {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
-  
-  // visual attributes
-  // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  worldLV->SetVisAttributes(debugWorldVis);
-	
-  // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
+
+  BDSGeometryExternal* geom = nullptr;
+  if (geometryFile != "")
+    {
+      geom = BDSGeometryFactory::Instance()->BuildGeometry("world", geometryFile, nullptr, 0, 0);
+      useExternalGeometryWorld = true;
+    }
+
+  G4LogicalVolume *worldLV;
+  G4VSolid *worldSolid;
+
+  if (useExternalGeometryWorld)
+    {
+      worldExtent = geom->GetExtent();
+
+      BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());
+      G4bool worldContainsAllBeamlines = worldExtentGlobal.Encompasses(extents);
+
+      // cannot construct world if any beamline extent is greater than the world extents
+      if (!worldContainsAllBeamlines)
+        {
+          G4cerr << __METHOD_NAME__ << "Beamlines cannot be constructed, beamline extents are larger than "
+                 << "the extents of the external world" << G4endl;
+          exit(1);
+        }
+
+      worldLV = geom->GetContainerLogicalVolume();
+      worldSolid = geom->GetContainerSolid();
+
+      // make the world sensitive to energy deposition with its own unique hits collection
+      if (BDSGlobalConstants::Instance()->StoreELossWorld())
+        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+
+      // visual attributes
+      // copy the debug vis attributes but change to force wireframe
+      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+      worldLV->SetVisAttributes(debugWorldVis);
+
+      // set limits
+      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+    }
+  else
+    {
+      // add on margin for constructed world volume
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
+#endif
+      G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
+      margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
+      worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
+#endif
+
+      worldExtent = BDSExtent(worldR);
+      worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
+
+
+      worldLV = new G4LogicalVolume(worldSolid,              // solid
+                                    worldMaterial,           // material
+                                    worldName + "_lv");      // name
+
+      // make the world sensitive to energy deposition with its own unique hits collection
+      if (BDSGlobalConstants::Instance()->StoreELossWorld())
+        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+
+      // visual attributes
+      // copy the debug vis attributes but change to force wireframe
+      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+      worldLV->SetVisAttributes(debugWorldVis);
+
+      // set limits
+      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+    }
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation

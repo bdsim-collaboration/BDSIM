@@ -169,3 +169,35 @@ G4bool BDSExtentGlobal::EncompassesGlobal(G4double x,
 
   return insideX && insideY && insideZ;  
 }
+
+G4bool BDSExtentGlobal::Encompasses(const BDSExtentGlobal& otherExtent)
+{
+  G4bool insideX = (std::abs(otherExtent.ExtentXGlobal().first) < std::abs(extXNegG)) &&
+          (otherExtent.ExtentXGlobal().second < extXPosG);
+  G4bool insideY = (std::abs(otherExtent.ExtentYGlobal().first) < std::abs(extYNegG)) &&
+          (otherExtent.ExtentYGlobal().second < extYPosG);
+  G4bool insideZ = (std::abs(otherExtent.ExtentZGlobal().first) < std::abs(extZNegG)) &&
+          (otherExtent.ExtentZGlobal().second < extZPosG);
+  return insideX && insideY && insideZ;
+}
+
+G4bool BDSExtentGlobal::Encompasses(const std::vector<BDSExtentGlobal>& otherExtents)
+{
+  G4bool encompassesAllBeamlines = true;
+
+  // loop over all extents from all beam lines
+  for (const auto& ext : otherExtents)
+    {
+      if (!Encompasses(ext))
+        {encompassesAllBeamlines = false;}
+    }
+  return encompassesAllBeamlines;
+}
+
+G4ThreeVector BDSExtentGlobal::GetMaximumExtentAbsolute() const
+{
+  G4ThreeVector mEA;
+  for (int i = 0; i < 3; i++)
+    {mEA[i] = std::max(std::abs(ExtentPositiveGlobal()[i]), std::abs(ExtentNegativeGlobal()[i]));}
+  return mEA;
+}

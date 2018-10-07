@@ -101,7 +101,16 @@ public:
   G4bool EncompassesGlobal(G4double x,
 			   G4double y,
 			   G4double z) const;
-  
+
+  /// Return whether the extent encompasses another extent
+  G4bool Encompasses(const BDSExtentGlobal& otherExtent);
+
+  /// Return whether the extent encompasses multiple other extents
+  G4bool Encompasses(const std::vector<BDSExtentGlobal>& otherExtents);
+
+  /// Get the maximum extent absolute in each dimension
+  G4ThreeVector GetMaximumExtentAbsolute() const;
+
   /// @{ Provide a new copy of this extent with an offset applied.
   BDSExtentGlobal TranslateGlobal(G4ThreeVector offset) const
   {return TranslateGlobal(offset.x(), offset.y(), offset.z());}

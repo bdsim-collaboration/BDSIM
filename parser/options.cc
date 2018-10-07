@@ -196,6 +196,7 @@ void Options::PublishMembers()
   publish("vacuumMaterial",       &Options::vacMaterial);
   publish("emptyMaterial",        &Options::emptyMaterial);
   publish("worldMaterial",        &Options::worldMaterial);
+  publish("worldGeometryFile",    &Options::worldGeometryFile);
   publish("worldVolumeMargin",    &Options::worldVolumeMargin);
   publish("dontSplitSBends",      &Options::dontSplitSBends);
   publish("thinElementLength",    &Options::thinElementLength);
