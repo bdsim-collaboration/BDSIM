@@ -223,7 +223,6 @@ private:
   BDSAcceleratorComponent* CreateCrystalCollimator();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
-  BDSAcceleratorComponent* CreateAWScreen();
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateWireScanner();
   BDSAcceleratorComponent* CreateRMatrix();

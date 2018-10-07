@@ -88,8 +88,6 @@ std::string GMAD::typestr(ElementType type)
       {return "muonspoiler";         break;}
     case ElementType::_SCREEN:
       {return "screen";              break;}
-    case ElementType::_AWSCREEN:
-      {return "awscreen";}
     case ElementType::_AWAKESCREEN:
       {return "awakescreen";         break;}
     case ElementType::_AWAKESPECTROMETER:

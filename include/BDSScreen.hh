@@ -39,16 +39,10 @@ class BDSScreen: public BDSDrift
 {
 public:
   BDSScreen(G4String         name,  
-	    G4double         chordength,
-        G4double         screenAnglex,
-        G4double         screenAngley,
-        G4double         screenAnglez,
-        G4double         screenPosxIn,
-        G4double         screenPosyIn,
-        G4double         screenPoszIn,// Length of the drift section containing the screen
+	    G4double         chordength,  // Length of the drift section containing the screen
 	    BDSBeamPipeInfo* beamPipeInfo,// Beam pipe specifications.
-	    G4TwoVector      size = G4TwoVector()); // X Y dimensions of screen
-     //Phi angle of screen
+	    G4TwoVector      size = G4TwoVector(), // X Y dimensions of screen
+	    G4double         screenAngle = 0);     //Phi angle of screen
 
   virtual ~BDSScreen();
 
@@ -56,22 +50,17 @@ public:
   void AddScreenLayer(G4double thickness, G4String material, G4int isSampler=0);
 
 private:
-  const G4TwoVector size;
-  const G4double screenAnglex;
-  const G4double screenAngley;
-  const G4double screenAnglez;
-  const G4double screenPosx;
-  const G4double screenPosy;
-  const G4double screenPosz;
-  G4int nLayers;
   BDSMultilayerScreen* mlScreen;
   std::list<G4double> layerThicknesses;
+  G4TwoVector size;
+  G4double screenAngle;
   std::list<G4String> layerMaterials;
   
   virtual void Build();
   void PlaceScreen();
   G4ThreeVector screenPos;
   G4RotationMatrix* screenRot;
+  G4int nLayers;
 };
 
 #endif

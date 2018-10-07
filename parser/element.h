@@ -168,15 +168,6 @@ namespace GMAD
     double wirescannerRoty;
     double wirescannerRotz;
     ///@}
-
-    ///@{ for screen
-    double screenAnglex;
-    double screenAngley;
-    double screenAnglez;
-    double screenPosx;
-    double screenPosy;
-    double screenPosz;
-
     ///@{ for undulator
     double undulatorPeriod;
     double undulatorGap;

@@ -37,7 +37,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSScreen.hh"
-#include "BDSAWScreen.hh"
 #include "BDSShield.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
@@ -321,8 +320,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateScreen(); break;} 
     case ElementType::_TRANSFORM3D:
       {component = CreateTransform3D(); break;}
-    case ElementType::_AWSCREEN:
-      {component = CreateAWScreen(); break;}
     case ElementType::_THINRMATRIX:
       {component = CreateThinRMatrix(angleIn, elementName); break;}
     case ElementType::_PARALLELTRANSPORTER:
@@ -1386,62 +1383,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
     }
   return theScreen;
 }
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateAWScreen()
-{
-    if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
-
-    G4TwoVector size;
-    size.setX(element->screenXSize*CLHEP::m);
-    size.setY(element->screenYSize*CLHEP::m);
-    G4cout << __METHOD_NAME__ << " - size = " << size << G4endl;
-
-    BDSAWScreen* theScreen = new BDSAWScreen( elementName,
-                                          element->l*CLHEP::m,
-                                          PrepareBeamPipeInfo(element),
-                                          size,
-                                          element->angle);
-    if(element->layerThicknesses.size() != element->layerMaterials.size())
-    {
-        G4cerr << __METHOD_NAME__ << "Element \"" << elementName << "\" must have the "
-               << "same number of materials as layers - check 'layerMaterials'" << G4endl;
-        exit(1);
-    }
-
-    if(element->layerThicknesses.size() == 0 )
-    {
-        G4cerr << __METHOD_NAME__ << "Element: \"" << elementName
-               << "\" has 0 screen layers" << G4endl;
-        exit(1);
-    }
-
-    std::list<std::string>::const_iterator itm;
-    std::list<double>::const_iterator itt;
-    std::list<int>::const_iterator itIsSampler;
-    for(itt = element->layerThicknesses.begin(),
-        itm = element->layerMaterials.begin(),
-        itIsSampler = element->layerIsSampler.begin();
-        itt != element->layerThicknesses.end();
-        ++itt, ++itm)
-    {
-#ifdef BDSDEBUG
-        G4cout << __METHOD_NAME__ << " - screen layer: thickness: "
-	     << *(itt) << ", material "  << (*itm)
-	     <<	", isSampler: "  << (*itIsSampler) << G4endl;
-#endif
-        if(element->layerIsSampler.size()>0)
-        {
-            theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
-            ++itIsSampler;
-        }
-        else
-        {theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm);}
-    }
-    return theScreen;
-}
-
-
 
 #ifdef USE_AWAKE
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()

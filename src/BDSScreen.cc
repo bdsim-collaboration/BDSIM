@@ -26,68 +26,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
 #include <sstream>
-#include <G4Box.hh>
-
-#include "BDSAcceleratorComponent.hh"
-#include "BDSColours.hh"
-#include "BDSMaterials.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSUtilities.hh"
-
-
-#include "BDSDebug.hh"
-
-#include "G4Box.hh"
-#include "G4ExtrudedSolid.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
-#include "G4Tubs.hh"
-
-
 
 BDSScreen::BDSScreen(G4String         nameIn,  
 		     G4double         chordLengthIn,
-             G4double         screenAnglexIn,
-             G4double         screenAngleyIn,
-             G4double         screenAnglezIn,
-		     G4double         screenPosxIn,
-		     G4double         screenPosyIn,
-		     G4double         screenPoszIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn,
-		     G4TwoVector      sizeIn): //X Y dimensions of screen
+		     G4TwoVector      sizeIn, //X Y dimensions of screen
+		     G4double         screenAngleIn):
   BDSDrift(nameIn,chordLengthIn,beamPipeInfoIn),
   size(sizeIn), 
-  screenAnglex(screenAnglexIn),
-  screenAngley(screenAngleyIn),
-  screenAnglez(screenAnglezIn),
-  screenPosx(screenPosxIn),
-  screenPosy(screenPosyIn),
-  screenPosz(screenPoszIn),
-  screenPos(G4ThreeVector(screenPosx, screenPosy, screenPosz))
+  screenAngle(screenAngleIn),
+  screenPos(G4ThreeVector()),
+  nLayers(0)
 {
-  nLayers = 0;
   mlScreen = new BDSMultilayerScreen(size, nameIn+"_mlscreen");
+  
   screenRot = new G4RotationMatrix();
-  screenRot->rotateX(screenAnglex);
-  screenRot->rotateY(screenAngley);
-  screenRot->rotateZ(screenAnglez);
-
-  if (0.5*sqrt(pow(screenPosx, 2)+pow(screenPosy,2)) >= beamPipeInfo->aper1 - (2.0/sqrt(2.0))*size.X)
-  {
-      G4cerr << __METHOD_NAME__ << "Error: option \"screenXsize\" is potentially outside boundaries when rotated" << G4endl;
-      exit(1);
-  }
-  if (0.5*sqrt(pow(screenPosx, 2)+pow(screenPosy,2)) >= beamPipeInfo->aper1 - (2.0/sqrt(2.0))*size.Y)
-  {
-      G4cerr << __METHOD_NAME__ << "Error: option \"screenYSize\" is potentially outside boundaries when rotated" << G4endl;
-      exit(1);
-  }
+  screenRot->rotateY(screenAngle);
 }
-
 
 BDSScreen::~BDSScreen()
 {
@@ -106,17 +61,6 @@ void BDSScreen::Build()
   containerLogicalVolume->SetVisAttributes(VisAtt1);
 
   PlaceScreen(); //Place the screen in the beam pipe
-/*
-  BDSAcceleratorComponent::Build();
-G4Box *screen = new G4Box("screen", 1, 1, 1);
-RegisterSolid(screen);
-
-G4LogicalVolume *screenLV = new G4LogicalVolume(screen, emptyMaterial, "screen_LV");
-RegisterLogicalVolume(screenLV);
-
-G4PVPlacement *screenPV = new G4PVPlacement(screenRot, screenPos, screenLV, "screen_PV", GetAcceleratorVacuumLogicalVolume(), false, 0);
-RegisterPhysicalVolume(screenPV);
-*/
 }
 
 void BDSScreen::AddScreenLayer(G4double thickness, G4String material, G4int isSampler)

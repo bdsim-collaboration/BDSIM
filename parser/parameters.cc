@@ -162,14 +162,6 @@ Parameters::Parameters()
   setMap["wirescannerRotx"]   = false;
   setMap["wirescannerRoty"]   = false;
   setMap["wirescannerRotz"]   = false;
-
-  setMap["screenAnglex"]      = false;
-  setMap["screenAngley"]      = false;
-  setMap["screenAnglez"]      = false;
-  setMap["screenPosx"]        = false;
-  setMap["screenPosy"]        = false;
-  setMap["screenPosz"]        = false;
-
   setMap["undulatorPeriod"]       = false;
   setMap["undulatorGap"]          = false;
   setMap["undulatorMagnetHeight"] = false;
