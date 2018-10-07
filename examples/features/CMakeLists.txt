@@ -1,6 +1,7 @@
 add_subdirectory(analysis)
 add_subdirectory(beam)
 add_subdirectory(components)
+add_subdirectory(data)
 add_subdirectory(fields)
 add_subdirectory(geometry)
 add_subdirectory(io)
