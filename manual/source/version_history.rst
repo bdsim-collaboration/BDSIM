@@ -7,6 +7,7 @@ New Features
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
+* New wire scanner element "wirescanner" with cylindrical wire in a beam pipe.
 * New option :code:`storeEloss` to completely turn off generation of energy deposition hits to
   save memory usage and output file size. Default on.
 * New option :code:`storeElossWorld` to turn on generation of energy deposition in the world
