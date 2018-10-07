@@ -75,7 +75,7 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   tipTop += offsetXY;
   tipBot += offsetXY;
   G4double innerRadius = beamPipeInfo->IndicativeRadiusInner();
-  if (tipTop.mag() < innerRadius || tipBot.mag() < innerRadius)
+  if (tipTop.mag() > innerRadius || tipBot.mag() > innerRadius)
     {
       G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name
 	     << "\" is too big to fit in beam pipe give offsets." << G4endl;
@@ -125,7 +125,8 @@ void BDSWireScanner::Build()
   // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
   wireRot->rotateX(CLHEP::halfpi);
-  wireRot->rotateZ(wireAngle);
+  // want to rotate about unit Z but this has now changed
+  wireRot->rotateY(wireAngle);
   RegisterRotationMatrix(wireRot);
   
   // visualisation attributes
