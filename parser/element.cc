@@ -434,19 +434,12 @@ void Element::flush()
   degraderOffset = 0;
 
   // wirescanner
-  wireDiameter = 0;
-  wireLength = 0;
+  wireDiameter      = 0;
+  wireLength        = 0;
   wirescannerOffset = 0;
-  wirescannerRotx = 0;
-  wirescannerRoty = 0;
-  wirescannerRotz = 0;
-  // screen
-  screenPosx = 0;
-  screenPosy = 0;
-  screenPosz = 0;
-  screenAnglez = 0;
-  screenAngley = 0;
-  screenAnglex = 0;
+  wirescannerRotx   = 0;
+  wirescannerRoty   = 0;
+  wirescannerRotz   = 0;
 
   // undulator
   undulatorPeriod = 1;

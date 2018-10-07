@@ -1336,15 +1336,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
   
   BDSScreen* theScreen = new BDSScreen( elementName,
 					element->l*CLHEP::m,
-                    element->screenAnglex*CLHEP::rad,
-                    element->screenAngley*CLHEP::rad,
-                    element->screenAnglez*CLHEP::rad,
-					element->screenPosx*CLHEP::m,
-					element->screenPosy*CLHEP::m,
-					element->screenPosz*CLHEP::m,
 					PrepareBeamPipeInfo(element),
-					size);
-
+					size,
+					element->angle); 
   if(element->layerThicknesses.size() != element->layerMaterials.size())
     {
       G4cerr << __METHOD_NAME__ << "Element \"" << elementName << "\" must have the "
