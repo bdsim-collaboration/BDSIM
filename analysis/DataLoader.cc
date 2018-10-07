@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TChain.h"
 #include "TFile.h"
 
+#include <algorithm>
 #include <cmath>
 #include <glob.h>
 #include <iostream>
