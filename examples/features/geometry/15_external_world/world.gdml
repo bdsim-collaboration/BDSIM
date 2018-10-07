@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box lunit="mm" name="PREPEND_worldBox" x="2*3501" y="2*3501.0" z="2*5001.0"/>
+		<box lunit="mm" name="PREPEND_floorSolid" x="2*3500" y="2*500.0" z="2*5000.0"/>
+		<box lunit="mm" name="PREPEND_wall1Solid" x="2*2500" y="2*2500.0" z="2*500.0"/>
+		<box lunit="mm" name="PREPEND_wall2Solid" x="2*500.0" y="2*2500.0" z="2*5000.0"/>
+		<box lunit="mm" name="PREPEND_wall3Solid" x="2*2500" y="2*2500.0" z="2*1000"/>
+	</solids>
+	<structure>
+		<volume name="PREPEND_floor_lv_lv">
+			<materialref ref="G4_CONCRETE"/>
+			<solidref ref="PREPEND_floorSolid"/>
+		</volume>
+		<volume name="PREPEND_wall1_lv_lv">
+			<materialref ref="G4_CONCRETE"/>
+			<solidref ref="PREPEND_wall1Solid"/>
+		</volume>
+		<volume name="PREPEND_wall2_lv_lv">
+			<materialref ref="G4_CONCRETE"/>
+			<solidref ref="PREPEND_wall2Solid"/>
+		</volume>
+		<volume name="PREPEND_wall3_lv_lv">
+			<materialref ref="G4_CONCRETE"/>
+			<solidref ref="PREPEND_wall3Solid"/>
+		</volume>
+		<volume name="PREPEND_worldLogical_lv">
+			<materialref ref="G4_AIR"/>
+			<solidref ref="PREPEND_worldBox"/>
+			<physvol name="PREPEND_floor_pv_pv">
+				<volumeref ref="PREPEND_floor_lv_lv"/>
+				<position name="PREPEND_floor_pv_pos" x="0" y="-3000.0" z="0"/>
+				<rotation name="PREPEND_floor_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_floor_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+			<physvol name="PREPEND_ceiling_pv_pv">
+				<volumeref ref="PREPEND_floor_lv_lv"/>
+				<position name="PREPEND_ceiling_pv_pos" x="0" y="3000.0" z="0"/>
+				<rotation name="PREPEND_ceiling_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_ceiling_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+			<physvol name="PREPEND_wall1_pv_pv">
+				<volumeref ref="PREPEND_wall1_lv_lv"/>
+				<position name="PREPEND_wall1_pv_pos" x="0" y="0" z="-4500"/>
+				<rotation name="PREPEND_wall1_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_wall1_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+			<physvol name="PREPEND_wall2_a_pv_pv">
+				<volumeref ref="PREPEND_wall2_lv_lv"/>
+				<position name="PREPEND_wall2_a_pv_pos" x="3000.0" y="0" z="0"/>
+				<rotation name="PREPEND_wall2_a_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_wall2_a_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+			<physvol name="PREPEND_wall2_b_pv_pv">
+				<volumeref ref="PREPEND_wall2_lv_lv"/>
+				<position name="PREPEND_wall2_b_pv_pos" x="-3000.0" y="0" z="0"/>
+				<rotation name="PREPEND_wall2_b_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_wall2_b_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+			<physvol name="PREPEND_wall3_pv_pv">
+				<volumeref ref="PREPEND_wall3_lv_lv"/>
+				<position name="PREPEND_wall3_pv_pos" x="0" y="0" z="4000"/>
+				<rotation name="PREPEND_wall3_pv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_wall3_pv_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="PREPEND_worldLogical_lv"/>
+	</setup>
+</gdml>

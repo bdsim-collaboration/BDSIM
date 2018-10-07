@@ -14,3 +14,10 @@ output.seedstate.txt - example ascii seed state information
 originalmodels/fodo.root - generated from fodo.gmad with seed 456, 100 particles
 
 optics.root - generated from fodo.root
+
+=========================
+In directory dataVersions
+=========================
+caches of previous data versions
+sample1-vX.X.root
+1 file with 10 events using originalModels/sc.gmad with seed 123

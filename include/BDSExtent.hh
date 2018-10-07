@@ -50,7 +50,8 @@ public:
 	    G4double extZNegIn, G4double extZPosIn);
   /// Symmetric variant - assumed to be +/- same amount
   BDSExtent(G4double extXIn, G4double extYIn, G4double extZIn);
-
+  /// Threevectors of positive and negative extents
+  BDSExtent(G4ThreeVector extInNeg, G4ThreeVector extInPos);
   /// Symmetric from three vector.
   explicit BDSExtent(G4ThreeVector extIn);
 	    
@@ -134,12 +135,18 @@ public:
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
 
+  /// Return the minimum absolute value considering all dimensions.
+  G4double MinimumAbs() const;
+
   G4double MaximumX() const {return std::max(std::abs(extXNeg), std::abs(extXPos));}
   G4double MaximumY() const {return std::max(std::abs(extYNeg), std::abs(extYPos));}
   G4double MaximumZ() const {return std::max(std::abs(extZNeg), std::abs(extZPos));}
 
   /// Return the maximum absolute value considering only x,y.
   G4double MaximumAbsTransverse() const;
+
+  /// Return the minimum absolute value considering only x,y.
+  G4double MinimumAbsTransverse() const;
   
 private:
   /// @{ Extent.

@@ -124,6 +124,7 @@ thinrmatrix { return THINRMATRIX;}
 paralleltransporter {return PARALLELTRANSPORTER;}
 rmatrix {return RMATRIX;}
 crystalcol { return CRYSTALCOL; }
+wirescanner { return WIRESCANNER; }
 undulator { return UNDULATOR; }
 
 cavitymodel {return CAVITYMODEL; }
