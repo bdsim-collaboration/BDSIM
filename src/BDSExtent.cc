@@ -161,11 +161,26 @@ G4double BDSExtent::MaximumAbs() const
   return *std::max_element(exts.begin(), exts.end());
 }
 
+G4double BDSExtent::MinimumAbs() const
+{
+  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
+				std::abs(extYNeg), extYPos,
+				std::abs(extZNeg), extZPos};
+  return *std::min_element(exts.begin(), exts.end());
+}
+
 G4double BDSExtent::MaximumAbsTransverse() const
 {
   std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
 				std::abs(extYNeg), extYPos};
   return *std::max_element(exts.begin(), exts.end());
+}
+
+G4double BDSExtent::MinimumAbsTransverse() const
+{
+  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
+				std::abs(extYNeg), extYPos};
+  return *std::min_element(exts.begin(), exts.end());
 }
 
 G4bool BDSExtent::Encompasses(const G4ThreeVector& point) const

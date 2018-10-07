@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
+#include "BDSWireScanner.hh"
 #include "BDSUndulator.hh"
 
 // general
@@ -307,6 +308,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateShield(); break;}
     case ElementType::_DEGRADER:
       {component = CreateDegrader(); break;}
+    case ElementType::_WIRESCANNER:
+      {component = CreateWireScanner(); break;}
     case ElementType::_GAP:
       {component = CreateGap(); break;}
     case ElementType::_CRYSTALCOL:
@@ -360,7 +363,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
-      SetFieldDefinitions(element, component),
+      SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
@@ -1196,9 +1199,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  PrepareColour(element)));
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  G4ThreeVector wireOffset = G4ThreeVector(element->wireOffsetX * CLHEP::m,
+					   element->wireOffsetY * CLHEP::m,
+					   element->wireOffsetZ * CLHEP::m);
+  
+  return (new BDSWireScanner(elementName,
+			     element->l*CLHEP::m,
+			     PrepareBeamPipeInfo(element),
+			     PrepareMaterial(element, "carbon"),
+			     element->wireDiameter*CLHEP::m,
+			     element->wireLength*CLHEP::m,
+			     element->angle*CLHEP::rad,
+			     wireOffset));
+}
+
 BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 {
-
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 

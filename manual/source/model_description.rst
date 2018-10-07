@@ -308,6 +308,7 @@ The following elements may be defined
 * `transform3d`_
 * `element`_
 * `marker`_
+* `wirescanner`_
 
 .. TODO add screen, awakescreen
 
@@ -1233,6 +1234,49 @@ Parameter         Description                   Default     Required
 Examples::
 
    atlassol: solenoid, l=20*m, ks=0.004;
+
+wirescanner
+^^^^^^^^^^^
+
+.. figure:: figures/wirescanner.png
+        :width: 20%
+        :align: right
+
+`wirescanner` defines a cylindrical object within a beam pipe to represent a wire
+scanner typically use in an accelerator.
+
+=====================  ===============================================  ==========  ==========
+parameter              description                                      default     required
+`l`                    length of drift section around wire              0           yes
+`wireDiameter`         diameter of wire [m]                             0           yes
+`wireLength`           length of wirescanner [m]                        0           yes
+`angle`                angle of the wire w.r.t. vertical                0           no
+`wireOffsetX`          x offset of the wire from the center [m]         0           no
+`wireOffsetY`          y offset of the wire from the center [m]         0           no
+`wireOffsetZ`          z offset of the wire from the center [m]         0           no
+`wireMaterial`         material of wire                                 carbon      no
+=====================  ===============================================  ==========  ==========
+
+* The angle is the rotation from vertical in the clock-wise direction looing in the
+  positive S direction (the usualy direction of the beam).
+
+The offsets are with respect to the centre of the beam pipe section the wire is placed inside.
+This should therefore be less than half the element length `l`. The usual beam pipe parameters
+can be specified and apply the to the beam pipe. For example, `material` is used for the beam
+pipe material whereas `wireMaterial` is used for the material of the wire.
+
+The user should take care to define a wire long enough to intercept the beam but be sufficiently
+short to fit inside the beam pipe given the offsets in x, y and z. Checks are made on the end
+points of the wire.
+
+Examples::
+
+    ws45Deg: wirescanner, l=4*cm, wireDiameter=0.1*mm, wireLength=5*cm,
+                          wireOffsetX=1*cm, angle=pi/4, wireMaterial="C",
+			  aper1=5*cm;
+
+    wsVertical: wirescanner, l=4*cm, wireDiameter=0.1*mm, wireLength=5*cm,
+                             wireOffsetX=1*cm, wireOffsetZ=1.6*cm, wireMaterial="C";
 
 
 laser
