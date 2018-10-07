@@ -50,7 +50,8 @@ public:
 	    G4double extZNegIn, G4double extZPosIn);
   /// Symmetric variant - assumed to be +/- same amount
   BDSExtent(G4double extXIn, G4double extYIn, G4double extZIn);
-
+  /// Threevectors of positive and negative extents
+  BDSExtent(G4ThreeVector extInNeg, G4ThreeVector extInPos);
   /// Symmetric from three vector.
   explicit BDSExtent(G4ThreeVector extIn);
 	    

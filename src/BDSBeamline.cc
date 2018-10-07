@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -864,4 +865,11 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
 G4bool BDSBeamline::ElementAnglesSumToCircle()
 {
   return (std::abs(totalAngle) > 0.99 * 2.0 * CLHEP::pi) and (std::abs(totalAngle) < 1.01 * 2.0 * CLHEP::pi);
+}
+
+BDSExtentGlobal BDSBeamline::GetExtentGlobal() const
+{
+  const BDSExtent ext = BDSExtent(maximumExtentPositive, maximumExtentNegative);
+  BDSExtentGlobal extG = BDSExtentGlobal(ext, G4Transform3D());
+  return extG;
 }
