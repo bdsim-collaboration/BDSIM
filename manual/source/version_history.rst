@@ -16,7 +16,8 @@ New Features
   gas in the beam pipe 'vacuum' is recorded.
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
-
+* Access to data version in DataLoader in analysis.
+  
 General
 -------
 
@@ -32,6 +33,7 @@ General
 * The world is now sensitive and can record energy deposition. Geant4.10.3 upwards
   is required to record both this information and the energy leaving the world
   as this requires G4MultiSensitiveDetector.
+* New tests for testing backwards compatibility of analysis tool with previous data version.
   
 Bug Fixes
 ---------
