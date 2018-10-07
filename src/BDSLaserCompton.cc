@@ -46,7 +46,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
  aParticleChange.Initialize(trackData);
  
  // ensure that Laserwire can only occur once in an event
- G4cout << "FireLaserCompton == " << FireLaserCompton << G4endl;
+ //G4cout << "FireLaserCompton == " << FireLaserCompton << G4endl;
  
  if(!FireLaserCompton)
    {return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);}
