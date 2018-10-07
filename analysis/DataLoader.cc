@@ -141,8 +141,12 @@ void DataLoader::BuildInputFileList(std::string inputPath)
     }
 
   // loop over files and check they're the right type
-  int* fileDataVersion = new int();
-  (*fileDataVersion) = 0;
+  int* fileDataVersion = nullptr; // for backwards compatibility don't try
+  if (!backwardsCompatible)
+    {
+      fileDataVersion = new int();
+      (*fileDataVersion) = 0;
+    }
   for(const auto& fn : fileNamesTemp)
     {
       if (backwardsCompatible)
