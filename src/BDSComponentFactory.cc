@@ -42,7 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
-#include "BDSWirescanner.hh"
+#include "BDSWireScanner.hh"
 #include "BDSUndulator.hh"
 
 // general
