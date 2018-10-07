@@ -1201,28 +1201,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
 {
-    if(!HasSufficientMinimumLength(element))
+  if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-
-
-    return (new BDSWirescanner(elementName,
-                            element->l*CLHEP::m,
-                            PrepareHorizontalWidth(element),
-                            element->wireDiameter*CLHEP::m,
-                            element->wireLength*CLHEP::m,
-                            element->wirescannerOffset*CLHEP::m,
-                            element->wirescannerRotx*CLHEP::rad,
-                            element->wirescannerRoty*CLHEP::rad,
-                            element->wirescannerRotz*CLHEP::rad,
-                            PrepareBeamPipeInfo(element),
-                            element->material));
-
+  G4ThreeVector wireOffset = G4ThreeVector(element->wireOffsetX * CLHEP::m,
+					   element->wireOffsetY * CLHEP::m,
+					   element->wireOffsetZ * CLHEP::m);
+  
+  return (new BDSWireScanner(elementName,
+			     element->l*CLHEP::m,
+			     PrepareBeamPipeInfo(element),
+			     PrepareMaterial(element, "carbon"),
+			     element->wireDiameter*CLHEP::m,
+			     element->wireLength*CLHEP::m,
+			     element->angle*CLHEP::rad,
+			     wireOffset));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 {
-
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 

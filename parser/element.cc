@@ -184,10 +184,9 @@ void Element::PublishMembers()
 
   publish("wireDiameter" ,      &Element::wireDiameter);
   publish("wireLength" ,        &Element::wireLength);
-  publish("wirescannerOffset" , &Element::wirescannerOffset);
-  publish("wirescannerRotx" ,   &Element::wirescannerRotx);
-  publish("wirescannerRoty" ,   &Element::wirescannerRoty);
-  publish("wirescannerRotz" ,   &Element::wirescannerRotz);
+  publish("wireOffsetX" ,       &Element::wireOffsetX);
+  publish("wireOffsetY" ,       &Element::wireOffsetY);
+  publish("wireOffsetZ" ,       &Element::wireOffsetZ);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
@@ -434,12 +433,11 @@ void Element::flush()
   degraderOffset = 0;
 
   // wirescanner
-  wireDiameter      = 0;
-  wireLength        = 0;
-  wirescannerOffset = 0;
-  wirescannerRotx   = 0;
-  wirescannerRoty   = 0;
-  wirescannerRotz   = 0;
+  wireDiameter = 0;
+  wireLength   = 0;
+  wireOffsetX  = 0;
+  wireOffsetY  = 0;
+  wireOffsetZ  = 0;
 
   // undulator
   undulatorPeriod = 1;

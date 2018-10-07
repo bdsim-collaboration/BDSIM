@@ -158,10 +158,9 @@ Parameters::Parameters()
 
   setMap["wireDiameter"]      = false;
   setMap["wireLength"]        = false;
-  setMap["wirescannerOffset"] = false;
-  setMap["wirescannerRotx"]   = false;
-  setMap["wirescannerRoty"]   = false;
-  setMap["wirescannerRotz"]   = false;
+  setMap["wireOffsetX"]       = false;
+  setMap["wireOffsetY"]       = false;
+  setMap["wireOffsetZ"]       = false;
   setMap["undulatorPeriod"]       = false;
   setMap["undulatorGap"]          = false;
   setMap["undulatorMagnetHeight"] = false;

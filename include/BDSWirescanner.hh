@@ -19,51 +19,56 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSWIRESCANNER_H
 #define BDSWIRESCANNER_H
 
-#include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
+#include "globals.hh"
+#include "G4Material.hh"
+#include "G4ThreeVector.hh"
+
+class BDSBeamPipeInfo;
+class G4Material;
+
 /**
- * @brief Degrader based on wedge design used in the PSI medical accelerator.
+ * @brief Single cylindrical wire inside beam pipe.
  * 
- * @author Will Shields
+ * @author Max Porter
  */
 
-class BDSWirescanner: public BDSAcceleratorComponent
+class BDSWireScanner: public BDSAcceleratorComponent
 {
 public:
-    BDSWirescanner(G4String name,
-	      G4double   length,
-	      G4double   outerDiameter,
-          G4double   wireDiameter,
-          G4double   wireLength,
-          G4double   wirescannerOffset,
-          G4double   wirescannerRotx,
-          G4double   wirescannerRoty,
-          G4double   wirescannerRotz,
-          BDSBeamPipeInfo*   bdsBeamPipeInfo,
-          G4String   wireMaterial);
-  virtual ~BDSWirescanner();
+  BDSWireScanner(G4String         nameIn,
+		 G4double         lengthIn,
+		 BDSBeamPipeInfo* beamPipeInfoIn,
+		 G4Material*      wireMaterialIn,
+		 G4double         wireDiameterIn,
+		 G4double         wireLengthIn,
+		 G4double         wireAngleIn  = 0,
+		 G4ThreeVector    wireOffsetIn = G4ThreeVector());
+
+  virtual ~BDSWireScanner(){;}
+
+  /// Return the name of a material - in this case the wire is the most relevant.
+  virtual G4String Material() const {return wireMaterial->GetName();}
   
 protected:
   virtual void Build();
   
   virtual void BuildContainerLogicalVolume();
+
+  G4Material*   wireMaterial;
+  G4double      wireDiameter;
+  G4double      wireLength;
+  G4double      wireAngle;
+  G4ThreeVector wireOffset;
   
-  G4double outerDiameter;
-  G4double wireDiameter;
-  G4double wireLength;
-  G4double wirescannerOffset;
-  G4double wirescannerRotx;
-  G4double wirescannerRoty;
-  G4double wirescannerRotz;
-  G4String wireMaterial;
 private:
   /// Private default constructor to force the use of the supplied one.
-  BDSWirescanner() = delete;
+  BDSWireScanner() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSWirescanner& operator=(const BDSWirescanner&) = delete;
-    BDSWirescanner(BDSWirescanner&) = delete;
+  BDSWireScanner& operator=(const BDSWireScanner&) = delete;
+  BDSWireScanner(BDSWireScanner&) = delete;
   ///@}
 };
 

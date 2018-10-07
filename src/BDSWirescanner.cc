@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSMaterials.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -29,87 +28,74 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
+#include "G4TwoVector.hh"
 #include "G4VisAttributes.hh"
 
-#include <vector>
+#include "CLHEP/Units/PhysicalConstants.h"
 
-BDSWirescanner::BDSWirescanner(G4String   nameIn,
-			       G4double   lengthIn,
-			       G4double   outerDiameterIn,
-			       G4double   wireDiameterIn,
-			       G4double   wireLengthIn,
-			       G4double   wirescannerOffsetIn,
-			       G4double   wirescannerRotxIn,
-			       G4double   wirescannerRotyIn,
-			       G4double   wirescannerRotzIn,
-			       BDSBeamPipeInfo*  beamPipeInfoIn,
-			       G4String   wireMaterialIn):
+#include <cmath>
+
+BDSWireScanner::BDSWireScanner(G4String nameIn,
+			       G4double lengthIn,
+			       BDSBeamPipeInfo* beamPipeInfoIn,
+			       G4Material* wireMaterialIn,
+			       G4double wireDiameterIn,
+			       G4double wireLengthIn,
+			       G4double wireAngleIn,
+			       G4ThreeVector wireOffsetIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner", beamPipeInfoIn),
-  outerDiameter(outerDiameterIn),
+  wireMaterial(wireMaterialIn),
   wireDiameter(wireDiameterIn),
   wireLength(wireLengthIn),
-  wirescannerOffset(wirescannerOffsetIn),
-  wirescannerRotx(wirescannerRotxIn),
-  wirescannerRoty(wirescannerRotyIn),
-  wirescannerRotz(wirescannerRotzIn),
-  wireMaterial(wireMaterialIn)
-{;}
-
-BDSWirescanner::~BDSWirescanner()
-{;}
-
-void BDSWirescanner::BuildContainerLogicalVolume()
+  wireAngle(wireAngleIn),
+  wireOffset(wireOffsetIn)
 {
-  //Input Checks
-  if (outerDiameter <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
-      exit(1);
-    }
   if (wireDiameter <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"wireDiameter\" is not defined or must be greater than 0" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: wireDiameter for \"" << name
+	     << "\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
-  if (-outerDiameter >= wirescannerOffset)
+
+  if (wireLength <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name << "\" must be > 0." << G4endl;
       exit(1);
     }
-  if (wirescannerOffset >= outerDiameter)
+
+  // check whether the beam pipe will fit transversely (ignores presumably very small
+  // wire diameter). work out end points off wire including length and offset in x,y.
+  G4TwoVector offsetXY = G4TwoVector(wireOffset.x(), wireOffset.y());
+  G4TwoVector tipTop = G4TwoVector(0, 0.5*wireLength);
+  tipTop.rotate(wireAngle);
+  G4TwoVector tipBot = G4TwoVector(tipTop);
+  tipBot.rotate(CLHEP::pi);
+  tipTop += offsetXY;
+  tipBot += offsetXY;
+  G4double innerRadius = beamPipeInfo->IndicativeRadiusInner();
+  if (tipTop.mag() < innerRadius || tipBot.mag() < innerRadius)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name
+	     << "\" is too big to fit in beam pipe give offsets." << G4endl;
       exit(1);
     }
-  if (0.5*wireLength >= sqrt(pow(beamPipeInfo->aper1,2)-pow(wirescannerOffset,2)))
-    {
-      G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerLength\" is larger than beam pipe" << G4endl;
-      exit(1);
-    }
-  
-  if (wireMaterial == "")
-    {wireMaterial = "carbon";}
-  if (wireLength == 0)
-    {wireLength = beamPipeInfo->aper1;}
 }
 
-void BDSWirescanner::Build()
+void BDSWireScanner::BuildContainerLogicalVolume()
 {
-  BDSAcceleratorComponent::Build();
-  
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
+  BDSBeamPipe* pipe = factory->CreateBeamPipe(name + "_beampipe",
 					      chordLength,
 					      beamPipeInfo);
-  
   RegisterDaughter(pipe);
   
-  //make the beam pipe container, this object's container
+  // make the beam pipe container, this object's container
   containerLogicalVolume = pipe->GetContainerLogicalVolume();
   containerSolid         = pipe->GetContainerSolid();
   
-  //register vacuum volume (for biasing)
+  // register vacuum volume (for biasing)
   SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
   
   // update extents
@@ -118,42 +104,38 @@ void BDSWirescanner::Build()
   // update faces
   SetInputFaceNormal(pipe->InputFaceNormal());
   SetOutputFaceNormal(pipe->OutputFaceNormal());
+}
+
+void BDSWireScanner::Build()
+{
+  BDSAcceleratorComponent::Build();
   
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(wireMaterial);
-  
-  // Wire Solid and logical Volume
-  G4Tubs* wire = new G4Tubs(name,
-			    0,
-			    wireDiameter*0.5,
-			    wireLength*0.5,
-			    0, CLHEP::twopi);  
+  G4Tubs* wire = new G4Tubs(name + "_wire_solid", // name
+			    0,                    // inner radius
+			    wireDiameter*0.5,     // outer radius
+			    wireLength*0.5,       // half length
+			    0, CLHEP::twopi);     // start and finish angle 
   RegisterSolid(wire);
 
   G4LogicalVolume* wireLV = new G4LogicalVolume(wire,                // solid
-						material,            // material
+						wireMaterial,        // material
 						name + "_wire_lv");  // name
   RegisterLogicalVolume(wireLV);
   
-  
-  //Rotation
+  // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
-  wireRot->rotateX(wirescannerRotx + CLHEP::halfpi);
-  wireRot->rotateY(wirescannerRoty);
-  wireRot->rotateZ(wirescannerRotz);
+  wireRot->rotateX(CLHEP::halfpi);
+  wireRot->rotateZ(wireAngle);
   RegisterRotationMatrix(wireRot);
-
-  //colour
+  
+  // visualisation attributes
   G4VisAttributes* wireVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("wirescanner"));
   wireLV->SetVisAttributes(wireVisAttr);
   RegisterVisAttributes(wireVisAttr);
   
-  //position
-  G4ThreeVector wirescannerpos(wirescannerOffset * std::cos(wirescannerRotz), wirescannerOffset * std::sin(wirescannerRotz), 0);
-  
-  
-  //Placement
-  G4PVPlacement *wirePV = new G4PVPlacement(wireRot,           // rotation
-					    wirescannerpos,           // position
+  // placement
+  G4PVPlacement* wirePV = new G4PVPlacement(wireRot,           // rotation
+					    wireOffset,        // position
 					    wireLV,            // its logical volume
 					    name + "_wire_pv", // its name
 					    GetAcceleratorVacuumLogicalVolume(),

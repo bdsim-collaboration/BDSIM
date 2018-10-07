@@ -163,11 +163,11 @@ namespace GMAD
     ///@[ for wirescanner
     double wireDiameter;
     double wireLength;
-    double wirescannerOffset;
-    double wirescannerRotx;
-    double wirescannerRoty;
-    double wirescannerRotz;
+    double wireOffsetX;
+    double wireOffsetY;
+    double wireOffsetZ;
     ///@}
+    
     ///@{ for undulator
     double undulatorPeriod;
     double undulatorGap;
