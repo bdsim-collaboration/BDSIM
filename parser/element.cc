@@ -182,6 +182,12 @@ void Element::PublishMembers()
   publish("undulatorGap",          &Element::undulatorGap);
   publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
 
+  publish("wireDiameter" ,      &Element::wireDiameter);
+  publish("wireLength" ,        &Element::wireLength);
+  publish("wireOffsetX" ,       &Element::wireOffsetX);
+  publish("wireOffsetY" ,       &Element::wireOffsetY);
+  publish("wireOffsetZ" ,       &Element::wireOffsetZ);
+
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
@@ -425,6 +431,13 @@ void Element::flush()
   degraderHeight = 0;
   materialThickness = 0;
   degraderOffset = 0;
+
+  // wirescanner
+  wireDiameter = 0;
+  wireLength   = 0;
+  wireOffsetX  = 0;
+  wireOffsetY  = 0;
+  wireOffsetZ  = 0;
 
   // undulator
   undulatorPeriod = 1;

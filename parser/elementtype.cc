@@ -82,6 +82,8 @@ std::string GMAD::typestr(ElementType type)
       {return "element";    break;}
     case ElementType::_TRANSFORM3D:
       {return "transform3d";         break;}
+    case ElementType::_WIRESCANNER:
+      {return "wirescanner";         break;}
     case ElementType::_MUONSPOILER: 
       {return "muonspoiler";         break;}
     case ElementType::_SCREEN:

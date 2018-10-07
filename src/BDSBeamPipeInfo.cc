@@ -157,7 +157,7 @@ void BDSBeamPipeInfo::CheckApertureInfo()
     }
 }
 
-BDSExtent BDSBeamPipeInfo::Extent() const
+BDSExtent BDSBeamPipeInfo::ExtentInner() const
 {
   G4double extX = 0;
   G4double extY = 0;
@@ -205,16 +205,30 @@ BDSExtent BDSBeamPipeInfo::Extent() const
       }
     default:break;
     }
-  extX += beamPipeThickness;
-  extY += beamPipeThickness;
   BDSExtent ext = BDSExtent(extX, extY, 0);
   return ext;
+}
+
+BDSExtent BDSBeamPipeInfo::Extent() const
+{
+  BDSExtent extentInner = ExtentInner();
+  G4double extX = extentInner.XPos(); // +ve values
+  G4double extY = extentInner.YPos();
+  extX += beamPipeThickness;
+  extY += beamPipeThickness;
+  return BDSExtent(extX, extY, 0);
 }
 
 G4double BDSBeamPipeInfo::IndicativeRadius() const
 {
   BDSExtent ext = Extent();
   return ext.MaximumAbsTransverse();
+}
+
+G4double BDSBeamPipeInfo::IndicativeRadiusInner() const
+{
+  BDSExtent ext = ExtentInner();
+  return ext.MinimumAbsTransverse();
 }
 
 void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,
