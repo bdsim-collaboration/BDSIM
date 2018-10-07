@@ -2226,6 +2226,7 @@ geometry can be used in three ways:
 1) A placement of a piece of geometry unrelated to the beam line.
 2) Wrapped around the beam pipe in a BDSIM magnet element.
 3) As a general element in the beam line where the geometry constitutes the whole object.
+4) As the world volume in which the BDSIM beamline is placed.
 
 These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
 :ref:`element-external-geometry`.
@@ -2266,6 +2267,20 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 	     GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
 	     overall to use multiple GMAD input files and include them.
 
+.. _external-world-geometry:
+
+External World Geometry
+^^^^^^^^^^^^^^^^^^^^^^^
+
+External geometry can be supplied as the world volume with the option `worldGeometryFile`. The BDSIM
+beamline will be placed inside this world volume. Unlike the standard BDSIM world volume whose size is
+set dynamically, the external world volume will have fixed dimensions, therefore the user should supply
+a world volume of sufficient size so as to fully encompass the BDSIM beamline. Should the extents of the
+BDSIM beamline be larger than the world extents, the beamline will not be constructed and BDSIM will exit.
+
+`worldGeometryFile` should be of the format `format:filename`, where `format` is the geometry
+format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
+file. See :ref:`externally-provided-geometry` for more details.
 
 .. _placements:
 
@@ -3230,6 +3245,10 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | worldMaterial                    | The default material surrounding the model. This is   |
 |                                  | by default air.                                       |
++----------------------------------+-------------------------------------------------------+
+| worldGeometryFile                | The filename of the world geometry file. See          |
+|                                  | :ref:`external-world-geometry` for more details.      |
+|                                  | Default = "".                                         |
 +----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |

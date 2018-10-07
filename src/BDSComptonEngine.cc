@@ -17,37 +17,36 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSComptonEngine.hh"
+
 #include "G4ios.hh"
 #include "G4LorentzRotation.hh"
 #include "G4ThreeVector.hh"
+
 #include "Randomize.hh" 
 #include "CLHEP/Units/PhysicalConstants.h"
 
-BDSComptonEngine::BDSComptonEngine(){}
+#include <cmath>
 
+BDSComptonEngine::BDSComptonEngine(){;}
  
 BDSComptonEngine::BDSComptonEngine(G4LorentzVector InGam,
-                                 G4LorentzVector InEl )
-  : itsIncomingEl(InEl),itsIncomingGam(InGam)
+				   G4LorentzVector InEl):
+  itsIncomingEl(InEl),itsIncomingGam(InGam)
 {
  if(itsIncomingGam.e()<=0.)
    {G4Exception("BDSComptonEngine: Invalid Photon Energy", "-1", FatalException, "");}
-} 
+}
  
- 
-BDSComptonEngine::~BDSComptonEngine(){}
-
+BDSComptonEngine::~BDSComptonEngine(){;}
 
 void BDSComptonEngine::PerformCompton()
 {
-
   // Generate compton event; using method described in
   // H.Burkardt, SL/Note 93-73
   
   G4double phi    = CLHEP::twopi * G4UniformRand();
   G4double sinphi = std::sin(phi);
   G4double cosphi = std::cos(phi);
-  
 
   G4int ntry=0;
  
@@ -57,7 +56,7 @@ void BDSComptonEngine::PerformCompton()
   G4double costh, costh2,sinth,sinth2;
   
   Boost = itsIncomingEl.boostVector();
-   //   BoostToLab.boost(-Boost);
+  //   BoostToLab.boost(-Boost);
   G4LorentzRotation BoostToLab(-Boost);
   GamInLab=BoostToLab*(itsIncomingGam);
   G4ThreeVector LabGammaDir= GamInLab.vect().unit();
@@ -65,15 +64,19 @@ void BDSComptonEngine::PerformCompton()
   G4double weight_CovT=0;  //ratio of Compton to Thompson cross sections:
   do {ntry++;
   // 1+cos^2 theta distribution
-  if(G4UniformRand()>0.25){costh=2.*G4UniformRand()-1.;}  
+  if(G4UniformRand()>0.25)
+    {costh=2.*G4UniformRand()-1.;}  
   else
     {
       costh=G4UniformRand();
       G4double r1=G4UniformRand();
       G4double r2=G4UniformRand();
-      if(r1>costh)costh=r1;
-      if(r2>costh)costh=r2;
-      if(G4UniformRand()<0.5)costh=-costh;
+      if(r1>costh)
+	{costh=r1;}
+      if(r2>costh)
+	{costh=r2;}
+      if(G4UniformRand()<0.5)
+	{costh=-costh;}
     }
   
   costh2=costh*costh;
@@ -87,7 +90,7 @@ void BDSComptonEngine::PerformCompton()
   } while(ntry<ntryMax && G4UniformRand()>weight_CovT);
   
   if(ntry==ntryMax)
-    G4Exception("BDSComptonEngine:Max number of loops exceeded", "-1", FatalException, "");
+    {G4Exception("BDSComptonEngine:Max number of loops exceeded", "-1", FatalException, "");}
   
   // G4LorentzVector ElInLab=BoostToLab*(itsIncomingEl);
   

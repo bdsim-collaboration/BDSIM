@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 
 #include "BDSSamplerType.hh"
+#include "BDSExtentGlobal.hh"
 
 #include <iterator>
 #include <ostream>
@@ -149,6 +150,9 @@ public:
 
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
+
+  /// Get the global extents for this beamline
+  BDSExtentGlobal GetExtentGlobal() const;
 
   /// Get the local to global transform for curvilinear coordinates
   /// to global coordinates. 0,0 transverse position by default. Optionally returns
