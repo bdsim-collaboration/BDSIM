@@ -23,8 +23,17 @@ For each submodule:
 4. Update submodules in bdsim repository.
 5. If the data format has changed increment the data version in output
    header structure.
+   
+   * Check data version in analysis.
+   * Regenerate data samples in :code:`examples/features/data/`.
+
 6. Update version history (including submodule and data versions) in
    manual source.
+
+   * Submodule versions.
+   * Data version.
+   * Data class versions.
+
 7. Regenerate BDSIM manual and commit new version. Upload to website.
 8. Merge release candidate branch back into develop.
 9. In develop, put back README, CMakeLists.txt to new version.develop.

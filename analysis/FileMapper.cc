@@ -42,7 +42,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 bool RBDS::GetFileType(TFile*       file,
-		       std::string& fileType)
+		       std::string& fileType,
+		       int*         dataVersion)
 {
   // check if valid file at all
   if (file->IsZombie())
@@ -56,28 +57,32 @@ bool RBDS::GetFileType(TFile*       file,
   headerLocal->SetBranchAddress(headerTree);
   headerTree->GetEntry(0);
   fileType = headerLocal->header->fileType;
+  if (dataVersion) // optional
+    {(*dataVersion) = headerLocal->header->dataVersion;}
   delete headerLocal;
   return true;
 }
 
-bool RBDS::IsBDSIMOutputFile(TFile* file)
+bool RBDS::IsBDSIMOutputFile(TFile* file,
+			     int* dataVersion)
 {
   // check if valid file at all
   if (file->IsZombie())
     {return false;}
   
   std::string fileType;
-  bool success = GetFileType(file, fileType);
+  bool success = GetFileType(file, fileType, dataVersion);
   if (!success)
     {return false;}
 
   return fileType == "BDSIM";
 }
 
-bool RBDS::IsBDSIMOutputFile(const std::string filePath)
+bool RBDS::IsBDSIMOutputFile(const std::string filePath,
+			     int* dataVersion)
 {
   TFile* f = new TFile(filePath.c_str());
-  bool result = IsBDSIMOutputFile(f);
+  bool result = IsBDSIMOutputFile(f, dataVersion);
   f->Close();
   delete f;
   return result;
