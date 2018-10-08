@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSUtilities.hh"
-#include "BDSWirescanner.hh"
+#include "BDSWireScanner.hh"
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
