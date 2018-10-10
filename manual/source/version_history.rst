@@ -18,6 +18,7 @@ New Features
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
 * Access to data version in DataLoader in analysis.
+* External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
   
 General
 -------
