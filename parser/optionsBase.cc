@@ -129,6 +129,8 @@ OptionsBase::OptionsBase()
   emptyMaterial        = "G4_Galactic";
   worldMaterial        = "G4_AIR";
   worldGeometryFile    = "";
+  importanceWorldGeometryFile = "";
+  importanceVolumeMap  = "";
   worldVolumeMargin = 5; //m
 
   vacuumPressure       = 1e-12;

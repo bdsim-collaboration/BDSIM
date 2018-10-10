@@ -160,6 +160,8 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
     std::string worldGeometryFile;
+    std::string importanceWorldGeometryFile;
+    std::string importanceVolumeMap;
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
