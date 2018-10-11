@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SteppingManager.hh"
 #include "G4TrackingManager.hh"
 #include "G4VModularPhysicsList.hh"
+#include "G4IStore.hh"
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
@@ -52,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldLoader.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSImportanceDetectorConstruction.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -139,7 +141,16 @@ int main(int argc,char** argv)
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
   auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
-  runManager->SetUserInitialization(realWorld);  
+  runManager->SetUserInitialization(realWorld);
+
+//TODO: MOVE INTO BDS::ConstructAndRegisterParallelWorlds
+  BDSImportanceDetectorConstruction *importanceWorld;
+  if (globalConstants->ImportanceWorldGeometryFile() != "")
+    {
+      // create a parallel detector
+      importanceWorld = new BDSImportanceDetectorConstruction();
+      realWorld->RegisterParallelWorld(importanceWorld);
+    }
 
   /// For geometry sampling, phys list must be initialized before detector.
   /// BUT for samplers we use a parallel world and this HAS to be before the physcis
@@ -270,6 +281,18 @@ int main(int argc,char** argv)
 #endif
   runManager->Initialize();
 
+//TODO: REPLACE THIS WITH A SEPARATE METHOD
+  if (globalConstants->ImportanceWorldGeometryFile() != "")
+  {
+    G4VPhysicalVolume& imWorld = importanceWorld->GetWorldVolumeAddress();
+    G4IStore* aIstore = G4IStore::GetInstance(importanceWorld->GetName());
+
+    // create a geometry cell for the world volume replicaNumber is 0!
+    G4GeometryCell gWorldVolumeCell(imWorld, 0);
+
+    importanceWorld->Add(aIstore);
+
+  }
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
