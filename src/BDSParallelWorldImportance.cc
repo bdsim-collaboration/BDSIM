@@ -94,27 +94,17 @@ void BDSParallelWorldImportance::BuildWorld()
   std::string geometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
   geom = BDSGeometryFactory::Instance()->BuildGeometry("importanceWorld", geometryFile, nullptr, 0, 0);
 
-  G4String worldName = "ImportanceWorld";
+  //clone mass world for parallel world PV
+  imWorldPV = GetWorld();
+
   G4LogicalVolume *worldLV = geom->GetContainerLogicalVolume();
 
-  // visual attributes
-  // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  worldLV->SetVisAttributes(debugWorldVis);
+  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->VisibleDebugVisAttr()));
+  samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  worldLV->SetVisAttributes(samplerWorldVis);
 
   // set limits
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
-
-  // place the world
-  imWorldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-						 (G4ThreeVector)0,     // at (0,0,0)
-						 worldLV,	           // its logical volume
-						 worldName,            // its name
-						 nullptr,		       // its mother  volume
-						 false,		           // no boolean operation
-						 0,                    // copy number
-						 checkOverlaps);       // overlap checking
 
   fLogicalVolumeVector.push_back(worldLV);
   fPVolumeStore.AddPVolume(G4GeometryCell(*imWorldPV, 0));
@@ -163,7 +153,7 @@ G4String BDSParallelWorldImportance::GetCellName(G4int i) {
 
 void BDSParallelWorldImportance::Add(G4IStore* aIstore) {
   // set importance values and create scorers
-  G4int numCells = imVolumesAndValues.size();
+  G4int numCells = (G4int) imVolumesAndValues.size();
 
   G4int cell(1);
   for (cell = 1; cell <= numCells; cell++) {
