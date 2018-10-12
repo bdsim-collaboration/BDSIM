@@ -16,13 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSIMPORTANCEDETECTORCONSTRUCTION_H
-#define BDSIMPORTANCEDETECTORCONSTRUCTION_H
+#ifndef BDSPARALLELWORLDIMPORTANCE_H
+#define BDSPARALLELWORLDIMPORTANCE_H
 
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSImportanceVolumeStore.hh"
-#include "BDSImportanceDetectorConstruction.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4IStore.hh"
@@ -61,11 +60,11 @@ class BDSBOptrMultiParticleChangeCrossSection;
  * @author Will Shields
  */
 
-class BDSImportanceDetectorConstruction: public G4VUserParallelWorld
+class BDSParallelWorldImportance: public G4VUserParallelWorld
 {
 public:
-    BDSImportanceDetectorConstruction();
-  virtual ~BDSImportanceDetectorConstruction();
+    BDSParallelWorldImportance();
+  virtual ~BDSParallelWorldImportance();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.
@@ -89,8 +88,8 @@ public:
 
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSImportanceDetectorConstruction& operator=(const BDSImportanceDetectorConstruction&);
-  BDSImportanceDetectorConstruction(BDSImportanceDetectorConstruction&);
+  BDSParallelWorldImportance& operator=(const BDSParallelWorldImportance&);
+  BDSParallelWorldImportance(BDSParallelWorldImportance&);
 
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();

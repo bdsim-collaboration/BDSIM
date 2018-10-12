@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSDebug.hh"
-#include "BDSImportanceDetectorConstruction.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
@@ -28,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSImportanceFileLoader.hh"
 #include "BDSMaterials.hh"
+#include "BDSParallelWorldImportance.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -67,7 +67,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-BDSImportanceDetectorConstruction::BDSImportanceDetectorConstruction():
+BDSParallelWorldImportance::BDSParallelWorldImportance():
     G4VUserParallelWorld("importanceWorld")
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
@@ -75,7 +75,7 @@ BDSImportanceDetectorConstruction::BDSImportanceDetectorConstruction():
   checkOverlaps = globals->CheckOverlaps();
 }
 
-void BDSImportanceDetectorConstruction::Construct()
+void BDSParallelWorldImportance::Construct()
 {
   // load the cell importance values
   G4String importanceMapFile = BDS::GetFullPath(BDSGlobalConstants::Instance()->ImportanceVolumeMap());
@@ -83,14 +83,12 @@ void BDSImportanceDetectorConstruction::Construct()
 
   // build world
   BuildWorld();
-
-  if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl;
 }
 
-BDSImportanceDetectorConstruction::~BDSImportanceDetectorConstruction()
+BDSParallelWorldImportance::~BDSParallelWorldImportance()
 {;}
 
-void BDSImportanceDetectorConstruction::BuildWorld()
+void BDSParallelWorldImportance::BuildWorld()
 {
   // load the importance world geometry
   std::string geometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
@@ -127,11 +125,11 @@ void BDSImportanceDetectorConstruction::BuildWorld()
   //SetSensitive();
 }
 
-G4VPhysicalVolume &BDSImportanceDetectorConstruction::GetWorldVolumeAddress() const{
+G4VPhysicalVolume &BDSParallelWorldImportance::GetWorldVolumeAddress() const{
   return *imWorldPV;
 }
 
-G4GeometryCell BDSImportanceDetectorConstruction::GetGeometryCell(G4int i){
+G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
 
   std::ostringstream os;
   os << "cell_";
@@ -146,13 +144,13 @@ G4GeometryCell BDSImportanceDetectorConstruction::GetGeometryCell(G4int i){
   if (p)
     {return G4GeometryCell(*p,0);}
   else {
-    G4cout << "BDSImportanceDetectorConstruction::GetGeometryCell: " << G4endl
+    G4cout << __METHOD_NAME__ << G4endl
            << " couldn't get G4GeometryCell" << G4endl;
     return G4GeometryCell(*imWorldPV,-2);
   }
 }
 
-G4String BDSImportanceDetectorConstruction::GetCellName(G4int i) {
+G4String BDSParallelWorldImportance::GetCellName(G4int i) {
   std::ostringstream os;
   os << "cell_";
   if (i<10) {
@@ -163,7 +161,7 @@ G4String BDSImportanceDetectorConstruction::GetCellName(G4int i) {
   return name;
 }
 
-void BDSImportanceDetectorConstruction::Add(G4IStore* aIstore) {
+void BDSParallelWorldImportance::Add(G4IStore* aIstore) {
   // set importance values and create scorers
   G4int numCells = imVolumesAndValues.size();
 

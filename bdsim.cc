@@ -53,10 +53,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldLoader.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
-#include "BDSImportanceDetectorConstruction.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParallelWorldImportance.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSParticleDefinition.hh"
@@ -144,11 +144,11 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(realWorld);
 
 //TODO: MOVE INTO BDS::ConstructAndRegisterParallelWorlds
-  BDSImportanceDetectorConstruction *importanceWorld;
+    BDSParallelWorldImportance *importanceWorld;
   if (globalConstants->ImportanceWorldGeometryFile() != "")
     {
       // create a parallel detector
-      importanceWorld = new BDSImportanceDetectorConstruction();
+      importanceWorld = new BDSParallelWorldImportance();
       realWorld->RegisterParallelWorld(importanceWorld);
     }
 
