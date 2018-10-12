@@ -88,7 +88,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
-%token <ival> SOLENOID RCOL JCOL ECOL LINE LASER TRANSFORM3D MUONSPOILER MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
+%token <ival> SOLENOID RCOL JCOL ECOL LINE LASER TRANSFORM3D MUONSPOILER MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL WIRESCANNER
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER RMATRIX UNDULATOR
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
@@ -333,6 +333,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | MUSPOILER   {$$=static_cast<int>(ElementType::_MUONSPOILER);}
           | SHIELD      {$$=static_cast<int>(ElementType::_SHIELD);}
           | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
+          | WIRESCANNER {$$=static_cast<int>(ElementType::_WIRESCANNER);}
           | GAP         {$$=static_cast<int>(ElementType::_GAP);}
           | CRYSTALCOL  {$$=static_cast<int>(ElementType::_CRYSTALCOL);}
           | LASER       {$$=static_cast<int>(ElementType::_LASER);}

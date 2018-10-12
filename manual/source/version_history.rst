@@ -7,6 +7,7 @@ New Features
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
+* New wire scanner element "wirescanner" with cylindrical wire in a beam pipe.
 * New option :code:`storeEloss` to completely turn off generation of energy deposition hits to
   save memory usage and output file size. Default on.
 * New option :code:`storeElossWorld` to turn on generation of energy deposition in the world
@@ -16,7 +17,9 @@ New Features
   gas in the beam pipe 'vacuum' is recorded.
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
-
+* Access to data version in DataLoader in analysis.
+* External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
+  
 General
 -------
 
@@ -32,6 +35,7 @@ General
 * The world is now sensitive and can record energy deposition. Geant4.10.3 upwards
   is required to record both this information and the energy leaving the world
   as this requires G4MultiSensitiveDetector.
+* New tests for testing backwards compatibility of analysis tool with previous data version.
   
 Bug Fixes
 ---------

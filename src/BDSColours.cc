@@ -59,13 +59,13 @@ BDSColours::BDSColours()
   colours["warning"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
 
   // tunnel
-  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice gray
-  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
-  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
+  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice grey
+  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another grey
+  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4);// brown 
   
   // elements - one for each type in parser/elementtype.cc
   colours["marker"]           = colours["default"];
-  colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
+  colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark grey
   colours["drift"]            = colours["beampipe"];
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["sbend"]            = colours["sectorbend"];
@@ -91,19 +91,20 @@ BDSColours::BDSColours()
   colours["kicker"]           = colours["sectorbend"];
   colours["tkicker"]          = colours["kicker"];
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
+  colours["wirescanner"]      = colours["tunnel"];                 // grey
   colours["undulator"]        = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
   colours["crystal"]          = colours["srfcavity"];
   colours["thinmultipole"]    = colours["default"];
   colours["dipolefringe"]     = colours["default"];
   colours["rmatrix"]          = colours["default"];
-  colours["thinrmatrix"]       = colours["rmatrix"];
+  colours["thinrmatrix"]      = colours["rmatrix"];
   colours["paralleltransporter"] = colours["default"];
   colours["element"]          = colours["default"];
   colours["screen"]           = new G4Colour(0.69,  0.769, 0.871); // slate grey
   colours["awakescreen"]      = colours["screen"];
-  colours["awakespectrometer"] = colours["sectorbend"];
-  colours["gap"]               = colours["default"];
+  colours["awakespectrometer"]= colours["sectorbend"];
+  colours["gap"]              = colours["default"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
@@ -111,9 +112,9 @@ BDSColours::BDSColours()
   colours["LHCcoil"]          = new G4Colour(0.9,   0.75,  0);     // gold-ish
   colours["LHCcollar"]        = new G4Colour(0.9,   0.9,   0.9);   // gainsboro
   colours["LHCyoke"]          = new G4Colour(0,     0.5,   1.0);   // LHC blue
-  colours["LHCyokered"]       = new G4Colour(*(colours["quadrupole"])); // quadrupole red
+  colours["LHCyokered"]       = new G4Colour(*(colours["quadrupole"]));// quadrupole red
   colours["gdml"]             = new G4Colour(0.4,   0.2,   0);     // poo brown
-  colours["screenframe"]      = new G4Colour(0.7,   0.7,   0.7, 0.4);   // light gray, semi-transparent
+  colours["screenframe"]      = new G4Colour(0.7,   0.7,   0.7, 0.4);// light grey, semi-transparent
 
   // general
   colours["white"]   = new G4Colour(G4Colour::White());

@@ -67,6 +67,7 @@ namespace GMAD
     _CRYSTALCOL  = 69,
     _UNDULATOR   = 70,
     _JCOL        = 71,
+    _WIRESCANNER = 72
   };
 
   /// conversion from enum to string

@@ -156,6 +156,11 @@ Parameters::Parameters()
   setMap["materialThickness"] = false;
   setMap["degraderOffset"]    = false;
 
+  setMap["wireDiameter"]      = false;
+  setMap["wireLength"]        = false;
+  setMap["wireOffsetX"]       = false;
+  setMap["wireOffsetY"]       = false;
+  setMap["wireOffsetZ"]       = false;
   setMap["undulatorPeriod"]       = false;
   setMap["undulatorGap"]          = false;
   setMap["undulatorMagnetHeight"] = false;
