@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineSet.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSCrystalRegistry.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
@@ -69,6 +70,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
+#if G4VERSION_NUMBER > 1039
+#include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
+#endif
 
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
@@ -792,6 +796,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       auto allLVs     = accCom->GetAllLogicalVolumes();
       if(debug)
 	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
+      /*
       for (auto materialLV : allLVs)
 	{
 	  if(materialLV != vacuumLV)
@@ -802,8 +807,22 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	      egMaterial->AttachTo(materialLV);
 	    }
 	}
+      */
     }
   
+#if G4VERSION_NUMBER > 1039
+  // only available in 4.10.4 onwards
+  // crystal biasing necessary for implementation of variable density
+  BDSCrystalRegistry* crystals = BDSCrystalRegistry::Instance();
+  if (!crystals->empty())
+    {
+      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
+      for (auto crystal : *crystals)
+	{
+	  G4cout << crystal << G4endl;
+	  crystalBiasing->AttachTo(crystal);}
+    }
+#endif
 #endif
 }
 

@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
+#include "BDSCrystalRegistry.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -143,6 +144,8 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
 					 crystalMat,
 					 nameIn + "_crystal_lv");
+
+  BDSCrystalRegistry::Instance()->RegisterCrystal(crystalLV);
 #else
   // build logical volumes
   crystalLV = new G4LogicalVolume(crystalSolid,
