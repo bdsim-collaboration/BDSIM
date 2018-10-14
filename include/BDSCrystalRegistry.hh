@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCRYSTALREGISTRY_H
 #define BDSCRYSTALREGISTRY_H
 
+#include "G4Types.hh"
+
 #include <set>
 
 class G4LogicalVolume;
