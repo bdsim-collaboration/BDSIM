@@ -52,6 +52,9 @@ Bug Fixes
   element record energy loss or not.
 * Degrader and undulator did not record energy deposition.
 * Energy deposition is now correctly recorded when tracks are artificially killed.
+* Fix particle channelling in cylindrical and torus shaped crystals. The crystal implementation
+  only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
+  allow use of more advanced geometries than a box.
 
 Output Changes
 --------------
