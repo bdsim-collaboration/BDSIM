@@ -42,21 +42,21 @@
 // and intermediate energies
 //
 
-#ifndef G4EmStandardPhysics_option4_channeling_h
-#define G4EmStandardPhysics_option4_channeling_h 1
+#ifndef BDSSTANDARDPHYSICSOP4CHANNELLING_H
+#define BDSSTANDARDPHYSICSOP4CHANNELLING_H
 
 #include "G4VPhysicsConstructor.hh"
 #include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class G4EmStandardPhysics_option4_channeling : public G4VPhysicsConstructor
+class BDSEmStandardPhysicsOp4Channelling : public G4VPhysicsConstructor
 {
 public:
 
-  explicit G4EmStandardPhysics_option4_channeling(G4int ver=1, const G4String& name="");
+  explicit BDSEmStandardPhysicsOp4Channelling(G4int ver=1, const G4String& name="");
 
-  virtual ~G4EmStandardPhysics_option4_channeling();
+  virtual ~BDSEmStandardPhysicsOp4Channelling();
 
   virtual void ConstructParticle();
   virtual void ConstructProcess();

@@ -36,7 +36,7 @@
 //----------------------------------------------------------------------------
 //
 
-#include "G4EmStandardPhysics_option4_channeling.hh"
+#include "BDSEmStandardPhysicsOp4Channelling.hh"
 
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleDefinition.hh"
@@ -115,12 +115,12 @@
 // factory
 #include "G4PhysicsConstructorFactory.hh"
 //
-G4_DECLARE_PHYSCONSTR_FACTORY(G4EmStandardPhysics_option4_channeling);
+G4_DECLARE_PHYSCONSTR_FACTORY(BDSEmStandardPhysicsOp4Channelling);
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4EmStandardPhysics_option4_channeling::G4EmStandardPhysics_option4_channeling(G4int ver,
-                                                                               const G4String&)
+BDSEmStandardPhysicsOp4Channelling::BDSEmStandardPhysicsOp4Channelling(G4int ver,
+								       const G4String&)
   : G4VPhysicsConstructor("G4EmStandard_opt4_channeling"), verbose(ver)
 {
   G4EmParameters* param = G4EmParameters::Instance();
@@ -140,12 +140,10 @@ G4EmStandardPhysics_option4_channeling::G4EmStandardPhysics_option4_channeling(G
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4EmStandardPhysics_option4_channeling::~G4EmStandardPhysics_option4_channeling()
-{}
+BDSEmStandardPhysicsOp4Channelling::~BDSEmStandardPhysicsOp4Channelling()
+{;}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void G4EmStandardPhysics_option4_channeling::ConstructParticle()
+void BDSEmStandardPhysicsOp4Channelling::ConstructParticle()
 {
   // gamma
   G4Gamma::Gamma();
@@ -176,7 +174,7 @@ void G4EmStandardPhysics_option4_channeling::ConstructParticle()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void G4EmStandardPhysics_option4_channeling::ConstructProcess()
+void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
 {
   if(verbose > 1) {
     G4cout << "### " << GetPhysicsName() << " Construct Processes " << G4endl;
