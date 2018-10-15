@@ -3885,6 +3885,8 @@ is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma ma
 | `sigmaNM`        | Sigma matrix element (N,M)        |
 +------------------+-----------------------------------+
 
+* Only the upper-right half of the matrix and diagonal should be populated, as the
+  elements are symmetric across the diagonal.
 * The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
 
 The user should take care to ensure they specify a positive definite matrix. BDSIM will

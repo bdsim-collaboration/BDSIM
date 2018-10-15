@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Box.hh"
+#include "G4DisplacedSolid.hh"
 #include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -263,19 +264,30 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   G4double sweepAngle;
   CalculateSolidAngles(ba, startAngle, sweepAngle);
   
-  crystalSolid = new G4Tubs(nameIn + "_solid",
-			    xBR - 0.5*thickness,
-			    xBR + 0.5*thickness,
-			    (recipe->lengthZ)*0.5,
-			    startAngle,
-			    sweepAngle);
+  G4Tubs* rawShape = new G4Tubs(nameIn + "_solid",
+				xBR - 0.5*thickness,
+				xBR + 0.5*thickness,
+				(recipe->lengthZ)*0.5,
+				startAngle,
+				sweepAngle);
 
+  // crystal channelling only works in local unitX of a given solid which
+  // makes it impossible to use a cylinder. we cheat by using a G4DisplacedSolid
+  // that's a class used internally by geant4's boolean solids to rotate and translate
+  // the frame of a solid. another option was an intersection with a big box, but
+  // geant4 can't handl this.
+  G4RotationMatrix* relativeRotation = new G4RotationMatrix();
+  relativeRotation->rotateX(-CLHEP::halfpi);
+  G4ThreeVector offset(0,0,0);
+  crystalSolid = new G4DisplacedSolid(nameIn + "_shifted_solid",
+				      rawShape,
+				      relativeRotation,
+				      offset);
+  
   CommonConstruction(nameIn, recipe);
 
-  // placement transform
+  // placement offset - no rotation as we've rotated the solid internally
   placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
-  placementRotation = new G4RotationMatrix();
-  placementRotation->rotateX(-CLHEP::halfpi);
 
   BDSExtent ext = CalculateExtents(ba, xBR, thickness, recipe);
   
@@ -344,16 +356,27 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
       zSections.emplace_back(G4ExtrudedSolid::ZSection(z, G4TwoVector(x, 0), 1));
     }
 
-  crystalSolid = new G4ExtrudedSolid(nameIn + "_solid",
-				     points,
-				     zSections);
+  G4ExtrudedSolid* rawShape = new G4ExtrudedSolid(nameIn + "_solid",
+						  points,
+						  zSections);
+  
+  // crystal channelling only works in local unitX of a given solid which
+  // makes it impossible to use a cylinder. we cheat by using a G4DisplacedSolid
+  // that's a class used internally by geant4's boolean solids to rotate and translate
+  // the frame of a solid. another option was an intersection with a big box, but
+  // geant4 can't handl this.
+  G4RotationMatrix* relativeRotation = new G4RotationMatrix();
+  relativeRotation->rotateX(-CLHEP::halfpi);
+  G4ThreeVector offset(0,0,0);
+  crystalSolid = new G4DisplacedSolid(nameIn + "_shifted_solid",
+				      rawShape,
+				      relativeRotation,
+				      offset);
 
   CommonConstruction(nameIn, recipe);
 
-  // placement transform
+  // placement offset - no rotation as we've rotated the solid internally
   placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
-  placementRotation = new G4RotationMatrix();
-  placementRotation->rotateX(-CLHEP::halfpi);
   
   BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
   G4double xLow = ext.XNeg() + xmin;
