@@ -80,17 +80,17 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
 #endif
   if (info)
-  {
-    prePosLocal  = auxNavigator->ConvertToLocal(track->GetPosition());
-    postPosLocal = auxNavigator->ConvertToLocal(track->GetPosition());
-
-    G4double sCentre = info->GetSPos();
-    preS             = sCentre + prePosLocal.z();
-    postS            = sCentre + postPosLocal.z();
-    beamlineIndex    = info->GetBeamlineIndex();
-    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
-  }
-
+    {
+      prePosLocal  = auxNavigator->ConvertToLocal(track->GetPosition());
+      postPosLocal = auxNavigator->ConvertToLocal(track->GetPosition());
+      
+      G4double sCentre = info->GetSPos();
+      preS             = sCentre + prePosLocal.z();
+      postS            = sCentre + postPosLocal.z();
+      beamlineIndex    = info->GetBeamlineIndex();
+      beamline         = info->GetBeamline();
+      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+    }
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
@@ -169,7 +169,7 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postPosLocal       = G4ThreeVector();
 }
 
-G4bool BDSTrajectoryPoint::IsScatteringPoint()const
+G4bool BDSTrajectoryPoint::IsScatteringPoint() const
 {
   auto processType    = GetPostProcessType();
   auto processSubType = GetPostProcessSubType();
