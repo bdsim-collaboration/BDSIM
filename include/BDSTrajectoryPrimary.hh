@@ -79,6 +79,9 @@ public:
   /// Wether this primary trajectory has hit an object (ie physics process invoked).
   /// Judged by casting first hit pointer to Boolean.
   G4bool HasHitSomething() const {return firstHit;}
+
+  /// Return whether last point was in a collimator.
+  G4bool AbsorbedInCollimator() const;
   
 protected:
   BDSTrajectoryPoint* firstHit;  ///< Point owned by this class for the first scattering point.

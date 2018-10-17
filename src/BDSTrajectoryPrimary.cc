@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSTrajectoryPrimary.hh"
-
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Allocator.hh"
@@ -27,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TrajectoryContainer.hh"
 
 #include <ostream>
+#include <set>
 
 G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
 
@@ -95,3 +97,18 @@ std::ostream& operator<< (std::ostream& out, BDSTrajectoryPrimary const& t)
   return out;
 }
 
+G4bool BDSTrajectoryPrimary::AbsorbedInCollimator() const
+{
+  if (!lastPoint)
+    {return false;} // just in case nullptr
+  if (!lastPoint->GetBeamLine())
+    {return false;} // didn't end in a beam line element
+
+  // note the beam line index comes from searching the curvilinear geometry so it's possible
+  // if the primary stops in the air beside an element it would be identified inside it. Caveat.
+  const BDSBeamlineElement* el = lastPoint->GetBeamLine()->at(lastPoint->GetBeamLineIndex());
+  G4String type = el->GetType();
+
+  std::set<G4String> collimatorTypes = {"ecol", "rcol", "crystalcol", "jcol"};
+  return collimatorTypes.find(type) != collimatorTypes.end(); // true if found ie it is a collimator
+}
