@@ -232,6 +232,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
       primaryHit  = primary->FirstHit();
       primaryLoss = primary->LastPoint();
+      eventInfo->SetPrimaryAbsorbedInCollimator(primary->AbsorbedInCollimator());
     }
 
   // Save interesting trajectories
