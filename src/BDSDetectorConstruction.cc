@@ -27,7 +27,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineSet.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
-#include "BDSCrystalRegistry.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
@@ -814,14 +813,15 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 #if G4VERSION_NUMBER > 1039
   // only available in 4.10.4 onwards
   // crystal biasing necessary for implementation of variable density
-  BDSCrystalRegistry* crystals = BDSCrystalRegistry::Instance();
+  std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
   if (!crystals->empty())
     {
       auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
       for (auto crystal : *crystals)
 	{
 	  G4cout << crystal << G4endl;
-	  crystalBiasing->AttachTo(crystal);}
+	  crystalBiasing->AttachTo(crystal);
+	}
     }
 #endif
 #endif

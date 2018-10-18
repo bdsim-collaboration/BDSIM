@@ -16,11 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSColours.hh"
 #include "BDSCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
-#include "BDSCrystalRegistry.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <cmath>
+#include <set>
 #include <vector>
 
 // only use the crystal extensions if using 10.4.p00 upwards
@@ -145,7 +146,7 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 					 crystalMat,
 					 nameIn + "_crystal_lv");
 
-  BDSCrystalRegistry::Instance()->RegisterCrystal(crystalLV);
+  BDSAcceleratorModel::Instance()->VolumeSet("crystals")->insert(crystalLV);
 #else
   // build logical volumes
   crystalLV = new G4LogicalVolume(crystalSolid,
