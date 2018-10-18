@@ -16,9 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSCollimator.hh"
-
+#include "BDSAcceleratorModel.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSCollimator.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
@@ -169,6 +169,9 @@ void BDSCollimator::Build()
                                                       material,                 // material
                                                       name + "_collimator_lv"); // name
 
+  // register it in a set of collimator logical volumes
+  BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(collimatorLV);
+  
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*colour);
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);

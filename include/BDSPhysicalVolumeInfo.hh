@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "globals.hh" // geant4 types / globals
 
+class BDSBeamline;
+
 /**
  * @brief A class holding any information pertaining to a particular physical
  * volume in a BDSIM geant4 model.  
@@ -40,7 +42,8 @@ public:
   BDSPhysicalVolumeInfo(G4String nameIn,
 			G4String placementNameIn,
 			G4double sPosIn,
-			G4int    beamlineIndexIn = -1);
+			G4int    beamlineIndexIn = -1,
+			BDSBeamline* beamlineIn = nullptr);
   ~BDSPhysicalVolumeInfo();
 
   /// output stream
@@ -60,13 +63,15 @@ public:
   {placementName = placementNameIn;}
 
   /// Get the s position coordinate of the logical volume
-  G4double GetSPos() const {return spos;}
+  inline G4double GetSPos() const {return spos;}
 
   /// Set the s position coordinate of the logical volume
   void SetSPos(G4double SPosIn) {spos = SPosIn;}
 
-  /// Get beamline index
-  G4int  GetBeamlineIndex() const {return beamlineIndex;}
+  /// @{ Accessor.
+  inline G4int  GetBeamlineIndex() const {return beamlineIndex;}
+  inline BDSBeamline* GetBeamline() const {return beamline;}
+  /// @}
   
 private:
   BDSPhysicalVolumeInfo();
@@ -75,6 +80,7 @@ private:
   G4String placementName;
   G4double spos;
   G4int    beamlineIndex;
+  BDSBeamline* beamline;
 };
 
 

@@ -235,7 +235,8 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSEventAction(bdsOutput));
+  BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
+  runManager->SetUserAction(eventAction);
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
@@ -252,7 +253,8 @@ int main(int argc,char** argv)
 #endif
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
-						  globalConstants->TrajNoTransportation()));
+						  globalConstants->TrajNoTransportation(),
+						  eventAction));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;

@@ -141,6 +141,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     preS             = sCentre + prePosLocal.z();
     postS            = sCentre + postPosLocal.z();
     beamlineIndex    = info->GetBeamlineIndex();
+    beamline         = info->GetBeamline();
     turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
   }
 }
@@ -164,6 +165,7 @@ void BDSTrajectoryPoint::InitialiseVariables()
   preS               = -1000;
   postS              = -1000;
   beamlineIndex      = -1;
+  beamline           = nullptr;
   turnstaken         = 0;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();

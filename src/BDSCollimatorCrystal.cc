@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -86,11 +87,13 @@ void BDSCollimatorCrystal::Build()
     {
       crystalLeft = fac->CreateCrystal(name + "_left", crystalInfoLeft);
       RegisterDaughter(crystalLeft);
+      RegisterCrystalLVs(crystalLeft);
     }
   if (crystalInfoRight)
     {
       crystalRight = fac->CreateCrystal(name + "_right", crystalInfoRight);
       RegisterDaughter(crystalRight);
+      RegisterCrystalLVs(crystalRight);
     }
   delete fac;
 
@@ -193,5 +196,16 @@ const G4String& side) const
 	     << crystalAngle / CLHEP::mrad << " mrad and container is "
 	     << chordLength/CLHEP::m << " m long." << G4endl;
       exit(1);
+    }
+}
+ 
+void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal) const
+{
+  auto crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
+  auto collimators = BDSAcceleratorModel::Instance()->VolumeSet("collimators");
+  for (auto lv : crystal->GetAllLogicalVolumes())
+    {
+      crystals->insert(lv);
+      collimators->insert(lv);
     }
 }
