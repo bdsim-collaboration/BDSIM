@@ -623,7 +623,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(element->GetName(),
 								     placementName,
 								     element->GetSPositionMiddle(),
-								     element->GetIndex());
+								     element->GetIndex(),
+								     beamline);
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
@@ -758,7 +759,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
   if(debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
+    {G4cout << __METHOD_NAME__ << G4endl;}
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
@@ -770,39 +771,40 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   // apply per element biases
   for (auto const & item : *registry)
-  {
-    if (debug)
-      {G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
-    BDSAcceleratorComponent* accCom = item.second;
-    G4String                accName = accCom->GetName();
-    
-    // Build vacuum bias object based on vacuum bias list in the component
-    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
-    auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
-    if(vacuumLV)
-      {
-	if(debug)
-	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
-		  << " " << vacuumLV->GetName() << G4endl;}
-	egVacuum->AttachTo(vacuumLV);
-      }
+    {
+      if (debug)
+	{G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
+      BDSAcceleratorComponent* accCom = item.second;
+      G4String                accName = accCom->GetName();
       
-    // Build material bias object based on material bias list in the component
-    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
-    auto allLVs     = accCom->GetAllLogicalVolumes();
-    if(debug)
-      {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
-    for (auto materialLV : allLVs)
-      {
-	if(materialLV != vacuumLV)
-	  {
-	    if(debug)
-	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
-		      << " " << (materialLV)->GetName() << G4endl;}
-	    egMaterial->AttachTo(materialLV);
-	  }
-      }
-  }
+      // Build vacuum bias object based on vacuum bias list in the component
+      auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
+      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
+      if(vacuumLV)
+	{
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+		    << " " << vacuumLV->GetName() << G4endl;}
+	  egVacuum->AttachTo(vacuumLV);
+	}
+      
+      // Build material bias object based on material bias list in the component
+      auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
+      auto allLVs     = accCom->GetAllLogicalVolumes();
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
+      for (auto materialLV : allLVs)
+	{
+	  if(materialLV != vacuumLV)
+	    {
+	      if(debug)
+		{G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+			<< " " << (materialLV)->GetName() << G4endl;}
+	      egMaterial->AttachTo(materialLV);
+	    }
+	}
+    }
+  
 #endif
 }
 

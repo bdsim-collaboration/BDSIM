@@ -18,6 +18,7 @@ New Features
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
 * Access to data version in DataLoader in analysis.
+* External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
   
 General
 -------
@@ -51,6 +52,9 @@ Bug Fixes
   element record energy loss or not.
 * Degrader and undulator did not record energy deposition.
 * Energy deposition is now correctly recorded when tracks are artificially killed.
+* Fix particle channelling in cylindrical and torus shaped crystals. The crystal implementation
+  only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
+  allow use of more advanced geometries than a box.
 
 Output Changes
 --------------
@@ -58,6 +62,7 @@ Output Changes
 * Memory usage (for Mac & Linux) added at the end of each event in event info. This
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
+* Boolean flag store in even info as to whether the primary was absorbed in a collimator or not.
 * New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
 * New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the

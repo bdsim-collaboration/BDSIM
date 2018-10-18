@@ -29,6 +29,7 @@ class G4Step;
 class G4Track;
 
 class BDSAuxiliaryNavigator;
+class BDSBeamline;
 
 /**
  * @brief A Point in a trajectory with extra information.
@@ -77,6 +78,7 @@ public:
   inline G4double GetPreGlobalTime()           const {return preGlobalTime;}
   inline G4double GetPostGlobalTime()          const {return postGlobalTime;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
+  inline BDSBeamline* GetBeamLine()            const {return beamline;}
   inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
@@ -112,6 +114,7 @@ private:
   G4double preGlobalTime;         ///< Time since event started of pre-step point.
   G4double postGlobalTime;        ///< Time since event started of post-step point.
   G4int    beamlineIndex;         ///< Index to beam line element
+  BDSBeamline* beamline;          ///< Beam line (if any) point belongs to.
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
