@@ -53,6 +53,7 @@ public:
   inline void SetAborted(const G4bool& abortedIn)       {info->aborted   = (bool)abortedIn;}
   inline void SetPrimaryHitMachine(const G4bool& hitIn) {info->primaryHitMachine = (bool)hitIn;}
   inline void SetMemoryUsage(const G4double& memoryUsageMbIn) {info->memoryUsageMb = (double)memoryUsageMbIn;}
+  inline void SetPrimaryAbsorbedInCollimator(G4bool absorbed) {info->primaryAbsorbedInCollimator = absorbed;}
   /// @}
 
   /// Accessor.

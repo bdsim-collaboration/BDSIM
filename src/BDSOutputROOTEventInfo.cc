@@ -29,6 +29,7 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   seedStateAtStart(""),
   aborted(false),
   primaryHitMachine(false),
+  primaryAbsorbedInCollimator(false),
   memoryUsageMb(0),
   energyDeposited(0),
   energyDepositedWorld(0),
@@ -48,7 +49,8 @@ void BDSOutputROOTEventInfo::Flush()
   seedStateAtStart  = "";
   aborted           = false;
   primaryHitMachine = false;
-  memoryUsageMb     = 0;
+  primaryAbsorbedInCollimator = false;
+  memoryUsageMb         = 0;
   energyDeposited       = 0;
   energyDepositedWorld  = 0;
   energyDepositedTunnel = 0;

@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4UserTrackingAction.hh"
 
+class BDSEventAction;
 class G4Track;
 
 /**
@@ -33,12 +34,16 @@ class BDSTrackingAction: public G4UserTrackingAction
 public:
   BDSTrackingAction(const G4bool& batchMode,
 		    const G4bool& storeTrajectoryIn,
-		    const G4bool& suppressTransportationStepsIn);
+		    const G4bool& suppressTransportationStepsIn,
+		    BDSEventAction* eventActionIn);
   
   virtual ~BDSTrackingAction(){;}
 
   /// Used to decide whether or not to store trajectories.
   virtual void PreUserTrackingAction(const G4Track* track);
+
+  /// Detect whether track is a primary and if so whether it ended in a collimator.
+  virtual void PostUserTrackingAction(const G4Track* track);
 
 private:
   /// No default constructor required.
@@ -54,6 +59,9 @@ private:
 
   /// Cache of whether to suppress transportation steps in each trajectory.
   const G4bool suppressTransportationSteps;
+
+  /// Cache of event action to communicate whether a primary stopped in a collimator or not.
+  BDSEventAction* eventAction;
 };
 
 #endif

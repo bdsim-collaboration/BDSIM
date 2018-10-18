@@ -62,6 +62,7 @@ Output Changes
 * Memory usage (for Mac & Linux) added at the end of each event in event info. This
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
+* Boolean flag store in even info as to whether the primary was absorbed in a collimator or not.
 * New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
 * New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the

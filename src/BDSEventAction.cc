@@ -120,6 +120,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
   BDSStackingAction::energyKilled = 0;
+  primaryAbsorbedInCollimator = false; // reset flag
   
   // set samplers for trajectory (cannot be done in contructor)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
@@ -185,6 +186,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   G4double memoryUsedMb = BDS::GetMemoryUsage();
   eventInfo->SetMemoryUsage(memoryUsedMb);
+
+  // cache if primary was absorbed in a collimator
+  eventInfo->SetPrimaryAbsorbedInCollimator(primaryAbsorbedInCollimator);
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
