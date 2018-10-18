@@ -17,6 +17,7 @@ add_subdirectory(fodoRing)
 add_subdirectory(lhc)
 add_subdirectory(simpleMachine)
 add_subdirectory(simpleCollimation)
+add_subdirectory(simpleCollimation2)
 add_subdirectory(target)
 
 
