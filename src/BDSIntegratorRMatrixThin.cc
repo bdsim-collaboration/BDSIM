@@ -115,13 +115,13 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
-  G4double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
-  G4double y1    = rmat31 * x0 + rmat32 * xp + rmat33 * y0 + rmat34 * yp + kick3;
-  G4double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
+  G4double x1    = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + kick1;
+  G4double xp1   = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp + rmat23 * y0 * CLHEP::milliradian + rmat24 * yp + kick2;
+  G4double y1    = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m + kick3;
+  G4double yp1   = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp + kick4;
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-
+  
   // need to check against aperture before returning
   if(x1 > aper)
     {x1 = aper;}
