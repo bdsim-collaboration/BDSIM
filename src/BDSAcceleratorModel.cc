@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdio>
 #include <map>
+#include <set>
 #include <vector>
 
 BDSAcceleratorModel* BDSAcceleratorModel::instance = nullptr;
@@ -82,6 +83,9 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   for (auto c : cuts)
     {delete c.second;}
 
+  for (auto vr : volumeRegistries)
+    {delete vr.second;}
+
   G4cout << "BDSAcceleratorModel> Deletion complete" << G4endl;
 
   instance = nullptr;
@@ -128,5 +132,24 @@ G4Region* BDSAcceleratorModel::Region(G4String name) const
 	{G4cout << r.first << " ";}
       G4cout << G4endl;
       exit(1);
+    }
+}
+
+std::set<G4LogicalVolume*>* BDSAcceleratorModel::VolumeSet(G4String name)
+{
+  if (volumeRegistries.find(name) == volumeRegistries.end()) // no such registry -> reate one
+    {volumeRegistries[name] = new std::set<G4LogicalVolume*>();}
+  return volumeRegistries[name];
+}
+
+G4bool BDSAcceleratorModel::VolumeInSet(G4LogicalVolume* volume,
+					G4String registryName)
+{
+  if (volumeRegistries.find(registryName) == volumeRegistries.end())
+    {return false;} // no such registry
+  else
+    {
+      auto registry = volumeRegistries[registryName];
+      return registry->find(volume) != registry->end();
     }
 }

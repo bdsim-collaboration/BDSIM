@@ -23,21 +23,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 BDSPhysicalVolumeInfo::BDSPhysicalVolumeInfo(G4double sPosAtMiddleOfElement):
-  spos(sPosAtMiddleOfElement)
-{
-  name          = "unknown";
-  placementName = "unknown";
-  beamlineIndex = -1;
-}
+  name("unknown"),
+  placementName("unknown"),
+  spos(sPosAtMiddleOfElement),
+  beamlineIndex(-1),
+  beamline(nullptr)
+{;}
 
 BDSPhysicalVolumeInfo::BDSPhysicalVolumeInfo(G4String nameIn,
                                              G4String placementNameIn,
                                              G4double sPosIn,
-                                             G4int    beamlineIndexIn):
-    name(nameIn),
-    placementName(placementNameIn),
-    spos(sPosIn),
-    beamlineIndex(beamlineIndexIn)
+                                             G4int    beamlineIndexIn,
+					     BDSBeamline* beamlineIn):
+  name(nameIn),
+  placementName(placementNameIn),
+  spos(sPosIn),
+  beamlineIndex(beamlineIndexIn),
+  beamline(beamlineIn)
 {;}
 
 BDSPhysicalVolumeInfo::~BDSPhysicalVolumeInfo()

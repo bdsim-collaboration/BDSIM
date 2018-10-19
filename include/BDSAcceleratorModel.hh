@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 
 #include <map>
+#include <set>
 #include <vector>
 
 class BDSBeamline;
@@ -105,6 +106,14 @@ public:
   /// Simpler accessor for production cuts vs regions.
   G4ProductionCuts* ProductionCuts(G4String name) {return cuts.at(name);}
 
+  /// Returns pointer to a set of logical volumes. If no set by that name exits, create it.
+  std::set<G4LogicalVolume*>* VolumeSet(G4String name);
+
+  /// Check whether a volume is in a registry of volumes (a set). If no such registry exists
+  /// then return false.
+  G4bool VolumeInSet(G4LogicalVolume* volume,
+		     G4String registryName);
+
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -123,6 +132,8 @@ private:
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
   std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.
+
+  std::map<G4String, std::set<G4LogicalVolume*>* > volumeRegistries; ///< All volume registries.
 };
 
 #endif
