@@ -18,6 +18,8 @@
 
 # Background
 /vis/viewer/set/background white
+# Set default colour for uncoloured items (such as GDML) to be a visible grey
+/vis/viewer/set/defaultColour 0.9 0.9 0.9
 
 # Axes
 #/vis/scene/add/axes
