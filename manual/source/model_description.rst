@@ -841,6 +841,9 @@ will change.
 The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
 to an increase in :math:`p_y` for a positively charged particle.
 
+.. warning:: :code:`vkick` will supercede the strength even if :code:`B` is specified. Therefore, the
+	     user should specify only :code:`vkick` or :code:`B`.
+
 In the case of a thick kicker, the resulting bending angle is calculated using:
 
 .. math::
@@ -899,6 +902,9 @@ will change.
 
 The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
 to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positively charged particle.
+
+.. warning:: :code:`hkick` will supercede the strength even if :code:`B` is specified. Therefore, the
+	     user should specify only :code:`hkick` or :code:`B`.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum, so the particle
 	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
