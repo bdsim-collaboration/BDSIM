@@ -1025,7 +1025,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {// only build fringe if previous element isn't another solenoid
       if (prevElement->type != ElementType::_SOLENOID)
 	{
-	  auto stIn        = strength(-s);
+	  auto stIn        = strength(s);
 	  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
 	  bLine->AddComponent(solenoidIn);
 	}
@@ -1036,7 +1036,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {// only build fringe if next element isn't another solenoid
       if (nextElement->type != ElementType::_SOLENOID)
 	{
-	  auto stOut       = strength(s);
+	  auto stOut       = strength(-s);
 	  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
 	  bLine->AddComponent(solenoidOut);
 	}
@@ -1492,7 +1492,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
                                                st,
                                                true,
                                                fieldTrans);
-  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
+  vacuumField->SetBeamPipeRadius(beamPipeInfo->aper1);
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
                                           name,
