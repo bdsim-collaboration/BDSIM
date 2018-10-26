@@ -27,9 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn,
-                                                   G4double aperIn):
+                                                   G4double maximumRadiusIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  aper(aperIn)
+  maximumRadius(maximumRadiusIn)
 {
   kick1   = (*strength)["kick1"];
   kick2   = (*strength)["kick2"];
@@ -123,14 +123,14 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
   
   // need to check against aperture before returning
-  if(x1 > aper)
-    {x1 = aper;}
-  else if( x1 < -aper)
-    {x1 = -aper;}
-  if(y1 > aper)
-    {y1 = aper;}
-  else if( y1 < -aper)
-    {y1 = -aper;}
+  if(x1 > maximumRadius)
+    {x1 = maximumRadius;}
+  else if( x1 < -maximumRadius)
+    {x1 = -maximumRadius;}
+  if(y1 > maximumRadius)
+    {y1 = maximumRadius;}
+  else if( y1 < -maximumRadius)
+    {y1 = -maximumRadius;}
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
