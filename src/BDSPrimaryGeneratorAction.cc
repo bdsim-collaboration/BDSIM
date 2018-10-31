@@ -132,6 +132,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
       else
 	{particleDef = particleToUse->ParticleDefinition();}
+      particleCharge = particleDef->GetPDGCharge(); // update charge as always set explicitly with particleGun
     }
 
   particleGun->SetParticleDefinition(particleDef);
