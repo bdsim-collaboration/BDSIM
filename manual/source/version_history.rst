@@ -41,6 +41,8 @@ Bug Fixes
 ---------
 
 * Fixed reloading user file when reading more particles than defined in the file.
+* Fixed "pt" column in user file for reading particle PDG IDs. The first particle would be read
+  correctly and all subsequent particles would revert to the beam definition.
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
 * Fixed incorrect writing of optional sampler information.

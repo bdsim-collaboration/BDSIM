@@ -1,0 +1,9 @@
+! specify all parameters - fictional
+beam,  particle="ion 12 6 5 12.234",
+       energy=23.0 * GeV,
+       distrType="reference";
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;

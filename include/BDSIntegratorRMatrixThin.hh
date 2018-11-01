@@ -33,6 +33,9 @@ class BDSMagnetStrength;
  * Teleporter for moving particles without changing angle but only advances the particle
  * by h.
  *
+ * If the new particle x,y coordinates are greater than maximumRadius, they are clipped
+ * to this value.
+ *
  * @author Stewart Boogert
  */
 
@@ -41,7 +44,7 @@ class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 public:
   BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
 			   G4Mag_EqRhs* eqOfMIn,
-			   G4double aper);
+			   G4double maximumRadiusIn);
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -75,7 +78,7 @@ private:
   G4double rmat43;
   G4double rmat44;
 
-  G4double aper;
+  G4double maximumRadius;
 };
 
 #endif

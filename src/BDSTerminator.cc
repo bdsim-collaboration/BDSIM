@@ -46,12 +46,12 @@ void BDSTerminator::BuildContainerLogicalVolume()
   // Bascially a copy of BDSSampler but with different sensitive detector added
   G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name + "_container_solid",
-			     radius,
-			     radius,
-			     chordLength * 0.5);
+                             radius,
+                             radius,
+                             chordLength * 0.5);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name + "_container_lv");
+                                               emptyMaterial,
+                                               name + "_container_lv");
   
   // Make the terminator sensitive to count the turns of the primary particle
   containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetTerminatorSD());
@@ -60,16 +60,16 @@ void BDSTerminator::BuildContainerLogicalVolume()
   // The numerical values are the default G4UserLimit values so everything will
   // normally be tracked. BDSTerminatorUserLimits has the logic inside it to
   // respond to turn number.
-  BDSTerminatorUserLimits* userLimits = new BDSTerminatorUserLimits(std::numeric_limits<double>::max(),
-								    std::numeric_limits<double>::max(),
-								    std::numeric_limits<double>::max(),
-								    0.,0.);
-  RegisterUserLimits(userLimits);
-  containerLogicalVolume->SetUserLimits(userLimits);
+  BDSTerminatorUserLimits* termUL = new BDSTerminatorUserLimits(std::numeric_limits<double>::max(),
+                                                                std::numeric_limits<double>::max(),
+                                                                std::numeric_limits<double>::max(),
+                                                                0.,0.);
+  RegisterUserLimits(termUL);
+  containerLogicalVolume->SetUserLimits(termUL);
 
   // visual attributes
   containerLogicalVolume->SetVisAttributes(containerVisAttr);
-      
+
   // register extents with BDSGeometryComponent base class
   SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
