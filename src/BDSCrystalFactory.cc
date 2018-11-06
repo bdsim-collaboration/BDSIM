@@ -271,7 +271,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   G4Tubs* rawShape = new G4Tubs(nameIn + "_solid",
 				xBR - 0.5*thickness,
 				xBR + 0.5*thickness,
-				(recipe->lengthZ)*0.5,
+				recipe->lengthY*0.5,
 				startAngle,
 				sweepAngle);
 
