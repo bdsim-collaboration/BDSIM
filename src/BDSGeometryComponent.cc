@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSolid.hh"
+
+#include <algorithm>
 #include <vector>
 
 class G4VSensitiveDetector;
@@ -42,7 +44,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
   outerExtent(extentIn),
   innerExtent(innerExtentIn),
   placementOffset(placementOffsetIn),
-  placementRotation(placementRotationIn)
+  placementRotation(placementRotationIn),
+  allBiasingVolumes(nullptr)
 {;}
 
 BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component):
@@ -52,7 +55,15 @@ BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component
   innerExtent(component.innerExtent),
   placementOffset(component.placementOffset),
   placementRotation(component.placementRotation)
-{;}
+{
+  if (component.allBiasingVolumes)
+    {// create new vector<>*
+      allBiasingVolumes = new std::vector<G4LogicalVolume*>(*component.allBiasingVolumes);
+    }
+  else
+    {allBiasingVolumes = component.allBiasingVolumes;} // nullptr
+
+}
 
 BDSGeometryComponent::~BDSGeometryComponent()
 {
@@ -71,6 +82,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
     {delete ul;}
   
   delete placementRotation;
+  delete allBiasingVolumes;
 }
 
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent const * const anotherComponent)
@@ -353,6 +365,22 @@ std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
   return result;
 }
 
+std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllBiasingVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  if (!allBiasingVolumes)
+    {result = allLogicalVolumes;} // this excludes daughters
+  else
+    {result = std::vector<G4LogicalVolume*>(*allBiasingVolumes);}
+
+  for (auto it : allDaughters) // do the same recusively for daughters
+    {
+      auto dLVs = it->GetAllBiasingVolumes();
+      result.insert(result.end(), dLVs.begin(), dLVs.end());
+    }
+  return result;
+}
+
 std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
 {
   std::vector<G4LogicalVolume*> result(allSensitiveVolumes);
@@ -368,4 +396,15 @@ void BDSGeometryComponent::SetSensitiveDetector(G4VSensitiveDetector* sd)
 {
   for (auto& lv : GetAllSensitiveVolumes())
     {lv->SetSensitiveDetector(sd);}
+}
+
+void BDSGeometryComponent::ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv)
+{
+  // if we haven't excluded anything yet, there isn't a separate copy of the logical volumes
+  // so create a copy then remove it from the biasing list of lvs.
+  if (!allBiasingVolumes)
+    {allBiasingVolumes = new std::vector<G4LogicalVolume*>();}
+
+  auto v = allBiasingVolumes;
+  v->erase( std::remove(v->begin(), v->end(), lv), v->end() );
 }
