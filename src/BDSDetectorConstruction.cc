@@ -825,10 +825,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     {
       auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
       for (auto crystal : *crystals)
-	{
-	  G4cout << crystal << G4endl;
-	  crystalBiasing->AttachTo(crystal);
-	}
+	{crystalBiasing->AttachTo(crystal);}
     }
 #endif
 #endif
