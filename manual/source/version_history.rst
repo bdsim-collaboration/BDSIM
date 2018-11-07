@@ -59,7 +59,9 @@ Bug Fixes
   only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
   allow use of more advanced geometries than a box.
 * Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
-
+* Fix A and Z being the wrong way around for ions in samplers.
+* Charge now correctly recorded in primaries and in samplers for partially stripped ions.
+  
 Output Changes
 --------------
 
