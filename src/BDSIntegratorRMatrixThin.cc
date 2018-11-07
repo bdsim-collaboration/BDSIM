@@ -27,9 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn,
-                                                   G4double aperIn):
+                                                   G4double maximumRadiusIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  aper(aperIn)
+  maximumRadius(maximumRadiusIn)
 {
   kick1   = (*strength)["kick1"];
   kick2   = (*strength)["kick2"];
@@ -115,22 +115,22 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
-  G4double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
-  G4double y1    = rmat31 * x0 + rmat32 * xp + rmat33 * y0 + rmat34 * yp + kick3;
-  G4double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
+  G4double x1    = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + kick1;
+  G4double xp1   = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp + rmat23 * y0 * CLHEP::milliradian + rmat24 * yp + kick2;
+  G4double y1    = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m + kick3;
+  G4double yp1   = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp + kick4;
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-
+  
   // need to check against aperture before returning
-  if(x1 > aper)
-    {x1 = aper;}
-  else if( x1 < -aper)
-    {x1 = -aper;}
-  if(y1 > aper)
-    {y1 = aper;}
-  else if( y1 < -aper)
-    {y1 = -aper;}
+  if(x1 > maximumRadius)
+    {x1 = maximumRadius;}
+  else if( x1 < -maximumRadius)
+    {x1 = -maximumRadius;}
+  if(y1 > maximumRadius)
+    {y1 = maximumRadius;}
+  else if( y1 < -maximumRadius)
+    {y1 = -maximumRadius;}
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);

@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSColours.hh"
 #include "BDSCrystal.hh"
 #include "BDSCrystalFactory.hh"
@@ -44,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <cmath>
+#include <set>
 #include <vector>
 
 // only use the crystal extensions if using 10.4.p00 upwards
@@ -143,6 +145,8 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
 					 crystalMat,
 					 nameIn + "_crystal_lv");
+
+  BDSAcceleratorModel::Instance()->VolumeSet("crystals")->insert(crystalLV);
 #else
   // build logical volumes
   crystalLV = new G4LogicalVolume(crystalSolid,
@@ -186,6 +190,7 @@ BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSExtent& extent)
   aCrystal->RegisterSensitiveVolume(crystalLV);
   aCrystal->RegisterUserLimits(allUserLimits);
   aCrystal->RegisterVisAttributes(allVisAttributes);
+  aCrystal->ExcludeLogicalVolumeFromBiasing(crystalLV); // can't double bias one LV ie with generic biasing
   
   return aCrystal;
 }
@@ -267,7 +272,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   G4Tubs* rawShape = new G4Tubs(nameIn + "_solid",
 				xBR - 0.5*thickness,
 				xBR + 0.5*thickness,
-				(recipe->lengthZ)*0.5,
+				recipe->lengthY*0.5,
 				startAngle,
 				sweepAngle);
 

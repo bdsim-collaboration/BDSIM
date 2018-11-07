@@ -33,8 +33,8 @@ BDSElement::BDSElement(G4String nameIn,
 		       G4double horizontalWidthIn,
 		       G4String geometryIn,
 		       G4String fieldNameIn,
-		       G4double angle):
-  BDSAcceleratorComponent(nameIn, lengthIn, angle, "element"),
+		       G4double angleIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, angleIn, "element"),
   horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
   fieldName(fieldNameIn)

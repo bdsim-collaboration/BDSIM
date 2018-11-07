@@ -384,14 +384,14 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  if (!particleCanBeDifferent)
 	    {particleCanBeDifferent = true;}
 	  ReadValue(type);
-	  G4String particleName = type;
+	  // type is an int so FindParticle(int) is used here
 	  if (InputBunchFile.good())
 	    {
 	      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-	      G4ParticleDefinition* particleDef = particleTable->FindParticle(particleName);
+	      G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
 	      if (!particleDef)
 		{
-		  G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
+		  G4cerr << "Particle \"" << type << "\"not found: quitting!" << G4endl;
 		  exit(1);
 		}
 	      

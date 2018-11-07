@@ -19,6 +19,7 @@ New Features
   the energy loss output. More granular than :code:`storeElossLinks`.
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
+* New complete physics list for crystal channelling to achieve the correct result.
   
 General
 -------
@@ -41,6 +42,8 @@ Bug Fixes
 ---------
 
 * Fixed reloading user file when reading more particles than defined in the file.
+* Fixed "pt" column in user file for reading particle PDG IDs. The first particle would be read
+  correctly and all subsequent particles would revert to the beam definition.
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
 * Fixed incorrect writing of optional sampler information.
@@ -55,6 +58,7 @@ Bug Fixes
 * Fix particle channelling in cylindrical and torus shaped crystals. The crystal implementation
   only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
   allow use of more advanced geometries than a box.
+* Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
 
 Output Changes
 --------------
