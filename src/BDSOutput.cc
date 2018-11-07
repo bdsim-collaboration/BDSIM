@@ -90,6 +90,10 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerIon      = g->StoreSamplerIon();
   storeModel           = g->StoreModel();
 
+  // charge is required for rigidity calculation so force storage from sampler hits
+  if (storeSamplerRigidity && !storeSamplerCharge)
+    {storeSamplerCharge = true;}
+
   // charge + mass + rigidity - particle stuff
   storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
   // charge + mass + rigidity + kinetic energy - particle stuff
@@ -157,6 +161,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
   if (vertexInfoBDS)
     {
       primary->Fill(vertexInfoBDS->primaryVertex.local,
+		    vertexInfoBDS->charge,
 		    vertex->GetPrimary()->GetPDGcode(),
 		    turnsTaken,
 		    vertexInfoBDS->primaryVertex.beamlineIndex);
@@ -165,9 +170,10 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 }
 
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
+				     const G4double charge,
 				     const G4int pdgID)
 {
-  primary->Fill(coords.local, pdgID, 0, 0);
+  primary->Fill(coords.local, charge, pdgID, 0, 0);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();
@@ -381,7 +387,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     {
       G4int samplerID = (*hits)[i]->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill((*hits)[i]);
+      samplerTrees[samplerID]->Fill((*hits)[i], storeSamplerCharge);
     }
   
   // extra information
@@ -390,31 +396,29 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
   if (storeOption4) // everything
     {
       for (auto &sampler : samplerTrees)
-        {sampler->FillCMRIK();}
+        {sampler->FillMRIK();}
     }
   else if (storeOption3) // option1 + ion
     {
       for (auto &sampler : samplerTrees)
-      {sampler->FillCMRI();}
+      {sampler->FillMRI();}
     }
   else if (storeOption2) // option1 + kinetic energy
     {
       for (auto &sampler : samplerTrees)
-      {sampler->FillCMRK();}
+      {sampler->FillMRK();}
     }
   else if (storeOption1) // also applies for 2 and 3
     {
       for (auto &sampler : samplerTrees)
-        {sampler->FillCMR();}
+        {sampler->FillMR();}
     }
   else
     {// treat individually
       for (auto& sampler : samplerTrees)
         {
-          if (storeSamplerCharge)
-	    {sampler->FillCharge();}
           if (storeSamplerKineticEnergy)
-        {sampler->FillKineticEnergy();}
+	    {sampler->FillKineticEnergy();}
           if (storeSamplerMass)
 	    {sampler->FillMass();}
           if (storeSamplerRigidity)

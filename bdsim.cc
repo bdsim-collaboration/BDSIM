@@ -191,7 +191,8 @@ int main(int argc,char** argv)
   if (globalConstants->GeneratePrimariesOnly())
     {
       const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
-	
+      const G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
       const G4int nToGenerate = globalConstants->NGenerate();
@@ -202,7 +203,7 @@ int main(int argc,char** argv)
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
 	  auto coords = bdsBunch->GetNextParticle();
-	  bdsOutput->FillEventPrimaryOnly(coords, pdgID);
+	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID);
 	}
       // Write options now file open.
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
