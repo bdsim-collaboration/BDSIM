@@ -771,7 +771,16 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
   G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
-
+  
+  G4bool useDefaultBiasVacuum   = !defaultBiasVacuum.empty();
+  G4bool useDefaultBiasMaterial = !defaultBiasMaterial.empty();
+  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
+  G4bool biasesDefined = !biasObjectList.empty();
+  G4bool overallUseBiasing = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
+  G4cout << __METHOD_NAME__ << "Using generic biasing: " << BDS::BoolToString(overallUseBiasing) << G4endl;
+  if (!overallUseBiasing)
+    {return;} // no biasing used -> dont attach as just overhead for no reason
+  
   // apply per element biases
   for (auto const & item : *registry)
     {
