@@ -1338,7 +1338,8 @@ The crystal is defined in a separate object in the parser and referred to by the
 that object. At least one of `crystalBoth`, `crystalLeft` and `crystalRight` must be
 specified.
 
-.. warning:: This requires the user to use the "channelling" physics list for channelling to take place.
+.. warning:: This requires the user to use the "completechannelling" or "channelling" physics list
+	     for channelling to take place.
 
 ==========================  ======================================================  ===========  =========
 Parameter                   Description                                             Default      Required
@@ -2716,6 +2717,13 @@ Modular Physics Lists
 +------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`                                              |
 +------------------------------+------------------------------------------------------------------------+
+| channelling                  | This constructs the `G4Channelling` and attaches it to all charged     |
+|                              | particles. Note this physics process will only work in crystals. This  |
+|                              | alone will not give an accurate representation of the distribution     |
+|                              | after a crystal as EM physics is required. Multiple scattering should  |
+|                              | not be used in combination with this however to achieve the correct    |
+|                              | results.                                                               |
++------------------------------+------------------------------------------------------------------------+
 | cherenkov                    | Provides Cherenkov radiation for all charged particles. Issued by the  |
 |                              | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
 |                              | `G4CherenkovProcess`.                                                  |
@@ -2988,6 +2996,23 @@ Examples::
 .. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
 	  case sensitive.
+
+Complete Physics Lists
+^^^^^^^^^^^^^^^^^^^^^^
+
+These are complete physics lists provided for specialist applications. Currently, only one is provided
+for crystal channelling physics. These all begin with "complete".
+
+These cannot be used in combination with any other physics processes.
+
++---------------------------+---------------------------------------------------------------------------+
+| **Physics List**          | **Description**                                                           |
++===========================+===========================================================================+
+| completechannelling       | Modifed em option 4 plus channelling as per the Geant4 example            |
+|                           | for crystal channelling. The exact same physics as used in their example. |
++---------------------------+---------------------------------------------------------------------------+
+
+
 
 .. _physics-biasing:
 
