@@ -280,7 +280,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   // makes it impossible to use a cylinder. we cheat by using a G4DisplacedSolid
   // that's a class used internally by geant4's boolean solids to rotate and translate
   // the frame of a solid. another option was an intersection with a big box, but
-  // geant4 can't handl this.
+  // geant4 can't handle this.
   G4RotationMatrix* relativeRotation = new G4RotationMatrix();
   relativeRotation->rotateX(-CLHEP::halfpi);
   G4ThreeVector offset(0,0,0);
