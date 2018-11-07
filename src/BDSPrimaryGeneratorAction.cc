@@ -132,6 +132,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
       else
 	{particleDef = particleToUse->ParticleDefinition();}
+      // update charge as always set explicitly with particleGun
+      // note for ions, this may be different from particleDef->GetPDGCharge
+      particleCharge = beamParticle->Charge();
     }
 
   particleGun->SetParticleDefinition(particleDef);

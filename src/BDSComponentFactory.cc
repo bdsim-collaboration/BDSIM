@@ -1021,25 +1021,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 
   G4double s = 0.5*(*st)["ks"]; // already includes scaling
   BDSLine* bLine = new BDSLine(elementName);
-  if (prevElement)
+  G4bool buildIncomingFringe = true;
+  if (prevElement) // could be nullptr
     {// only build fringe if previous element isn't another solenoid
-      if (prevElement->type != ElementType::_SOLENOID)
-	{
-	  auto stIn        = strength(-s);
-	  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
-	  bLine->AddComponent(solenoidIn);
-	}
+      buildIncomingFringe = prevElement->type != ElementType::_SOLENOID;
     }
+  if (buildIncomingFringe)
+    {
+      auto stIn        = strength(s);
+      auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+      bLine->AddComponent(solenoidIn);
+    }
+  
   auto solenoid = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
   bLine->AddComponent(solenoid);
-  if (nextElement)
+
+  G4bool buildOutgoingFringe = true;
+  if (nextElement) // could be nullptr
     {// only build fringe if next element isn't another solenoid
-      if (nextElement->type != ElementType::_SOLENOID)
-	{
-	  auto stOut       = strength(s);
-	  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
-	  bLine->AddComponent(solenoidOut);
-	}
+      buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
+    }
+  if (buildOutgoingFringe)
+    {
+      auto stOut       = strength(-s);
+      auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+      bLine->AddComponent(solenoidOut);
     }
   
   return bLine;
@@ -1492,7 +1498,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
                                                st,
                                                true,
                                                fieldTrans);
-  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
+  vacuumField->SetBeamPipeRadius(beamPipeInfo->aper1);
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
                                           name,
