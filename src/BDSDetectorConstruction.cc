@@ -802,10 +802,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       
       // Build material bias object based on material bias list in the component
       auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
-      auto allLVs     = accCom->GetAllLogicalVolumes();
+      auto allLVs     = accCom->GetAllBiasingVolumes();
       if(debug)
 	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
-      /*
       for (auto materialLV : allLVs)
 	{
 	  if(materialLV != vacuumLV)
@@ -816,7 +815,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	      egMaterial->AttachTo(materialLV);
 	    }
 	}
-      */
     }
   
 #if G4VERSION_NUMBER > 1039

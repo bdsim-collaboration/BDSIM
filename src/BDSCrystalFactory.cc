@@ -190,6 +190,7 @@ BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSExtent& extent)
   aCrystal->RegisterSensitiveVolume(crystalLV);
   aCrystal->RegisterUserLimits(allUserLimits);
   aCrystal->RegisterVisAttributes(allVisAttributes);
+  aCrystal->ExcludeLogicalVolumeFromBiasing(crystalLV); // can't double bias one LV ie with generic biasing
   
   return aCrystal;
 }
