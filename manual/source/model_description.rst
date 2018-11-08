@@ -3537,6 +3537,11 @@ following options.
 |                                   | as taken from the beginning of the step before it made it. Default |
 |                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeGeant4Data                   | Whether to store basic particle information for all particles used |
+|                                   | in the simulation under Geant4Data in the output. This can be      |
+|                                   | relatively large when ions are used as there are many thousands    |
+|                                   | of ion definitions. Default on.                                    |
++-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output. Default on.  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |

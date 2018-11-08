@@ -17,6 +17,8 @@ New Features
   gas in the beam pipe 'vacuum' is recorded.
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
+* New option :code:`storeGeant4Data` to control whether the basic particle data is stored in
+  the output for all particles used or not.
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
 * New complete physics list for crystal channelling to achieve the correct result.

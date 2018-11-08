@@ -83,12 +83,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
+  storeGeant4Data      = g->StoreGeant4Data();
+  storeModel           = g->StoreModel();
   storeSamplerCharge   = g->StoreSamplerCharge();
   storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
-  storeModel           = g->StoreModel();
 
   // charge is required for rigidity calculation so force storage from sampler hits
   if (storeSamplerRigidity && !storeSamplerCharge)
@@ -119,14 +120,17 @@ void BDSOutput::FillHeader()
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
-  geant4DataOutput->Flush();
-  geant4DataOutput->Fill(writeIons);
-  WriteGeant4Data();
+  if (storeGeant4Data)
+    {
+      geant4DataOutput->Flush();
+      geant4DataOutput->Fill(writeIons);
+      WriteGeant4Data();
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+      BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
 #else
-  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+      BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
 #endif
+    }
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)

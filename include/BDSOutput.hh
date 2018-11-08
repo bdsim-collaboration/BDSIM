@@ -224,12 +224,13 @@ private:
   G4int nbins;
 
   /// @{ Sampler storage option.
+  G4bool storeGeant4Data;
+  G4bool storeModel;
   G4bool storeSamplerCharge;
   G4bool storeSamplerKineticEnergy;
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
-  G4bool storeModel;
   G4bool storeOption1;
   G4bool storeOption2;
   G4bool storeOption3;
