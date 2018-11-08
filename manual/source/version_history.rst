@@ -63,6 +63,7 @@ Bug Fixes
 * Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
 * Fix A and Z being the wrong way around for ions in samplers.
 * Charge now correctly recorded in primaries and in samplers for partially stripped ions.
+* Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
   
 Output Changes
 --------------
