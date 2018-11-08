@@ -42,6 +42,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4LossTableManager.hh"
 #include "G4EmParameters.hh"
+#include "G4Version.hh"
 
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
@@ -79,7 +80,9 @@
 #include "G4MuPairProduction.hh"
 #include "G4hBremsstrahlung.hh"
 #include "G4hPairProduction.hh"
+#if G4VERSION_NUMBER > 1029
 #include "G4ePairProduction.hh"
+#endif
 
 #include "G4MuBremsstrahlungModel.hh"
 #include "G4MuPairProductionModel.hh"
@@ -190,8 +193,9 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   G4hPairProduction* kp = new G4hPairProduction();
   G4hBremsstrahlung* pb = new G4hBremsstrahlung();
   G4hPairProduction* pp = new G4hPairProduction();
+#if G4VERSION_NUMBER > 1029
   G4ePairProduction* ee = new G4ePairProduction();
-
+#endif
   // muon & hadron multiple scattering
   G4CoulombScattering* muss = new G4CoulombScattering();
   G4CoulombScattering* piss = new G4CoulombScattering();
@@ -207,10 +211,12 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   G4NuclearStopping* pnuc = new G4NuclearStopping();
 
   // Add standard EM Processes
-  auto myParticleIterator=GetParticleIterator();
-  myParticleIterator->reset();
-  while( (*myParticleIterator)() ){
-    G4ParticleDefinition* particle = myParticleIterator->value();
+#if G4VERSION_NUMBER > 1029
+  auto aParticleIterator=GetParticleIterator();
+#endif
+  aParticleIterator->reset();
+  while( (*aParticleIterator)() ){
+    G4ParticleDefinition* particle = aParticleIterator->value();
     G4String particleName = particle->GetParticleName();
 
     if (particleName == "gamma") {
@@ -266,7 +272,9 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
       // register processes
       ph->RegisterProcess(eIoni, particle);
       ph->RegisterProcess(brem, particle);
+#if G4VERSION_NUMBER > 1029
       ph->RegisterProcess(ee, particle);
+#endif
       ph->RegisterProcess(ss, particle);
 
     } else if (particleName == "e+") {
@@ -296,7 +304,9 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
       // register processes
       ph->RegisterProcess(eIoni, particle);
       ph->RegisterProcess(brem, particle);
+#if G4VERSION_NUMBER > 1029
       ph->RegisterProcess(ee, particle);
+#endif
       ph->RegisterProcess(new G4eplusAnnihilation(), particle);
       ph->RegisterProcess(ss, particle);
 
@@ -410,8 +420,11 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   // Deexcitation
   G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
   G4LossTableManager::Instance()->SetAtomDeexcitation(de);
-
+#if G4VERSION_NUMBER > 1029
   G4EmModelActivator mact(GetPhysicsName());
+#else
+  G4EmModelActivator mact;
+#endif
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

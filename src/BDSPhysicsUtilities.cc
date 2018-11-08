@@ -21,7 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSModularPhysicsList.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
+#if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
+#endif
 #include "BDSPhysicsUtilities.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
@@ -80,7 +82,14 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
   else if (completePhysics)
     {
       if (physicsListNameLower == "completechannelling")
-	{return BDS::ChannellingPhysicsComplete();}
+	{
+#if G4VERSION_NUMBER > 1039
+	  return BDS::ChannellingPhysicsComplete();
+#else
+	  G4cerr << "Channel physics is not supported with Geant4 versions less than 10.4" << G4endl;
+	  exit(1);
+#endif
+	}
       else
 	{
 	  G4cerr << "Unknown 'complete' physics list \"" << physicsList << "\"" << G4endl;
@@ -250,6 +259,7 @@ void BDS::PrintDefinedParticles()
   G4cout << G4endl;
 }
 
+#if G4VERSION_NUMBER > 1039
 G4VModularPhysicsList* BDS::ChannellingPhysicsComplete()
 {
   G4VModularPhysicsList* physlist = new FTFP_BERT();
@@ -261,3 +271,4 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete()
   physlist->RegisterPhysics(biasingPhysics);
   return physlist;
 }
+#endif
