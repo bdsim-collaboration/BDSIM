@@ -79,7 +79,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 namespace BDS
 {  
   const BDSIntegratorSet* integratorsBDSIMOne =
-    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4,       // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipolerodrigues,// dipole
 			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
 			 BDSIntegratorType::quadrupole,     // quadrupole
@@ -103,7 +103,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4);// undulator
 
   const BDSIntegratorSet* integratorsBDSIMTwo =
-    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4,         // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,         // solenoid
 			 BDSIntegratorType::dipolerodrigues2, // dipole
 			 BDSIntegratorType::dipolematrix,     // dipole quadrupole
 			 BDSIntegratorType::quadrupole,       // quadrupole
@@ -127,7 +127,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4);  // undulator
   /// Mad-x style tracking.
   const BDSIntegratorSet*  integratorsBDSIMMatrix =
-    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4,       // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipolematrix,   // dipole
 			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
 			 BDSIntegratorType::quadrupole,     // quadrupole
@@ -150,7 +150,7 @@ namespace BDS
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);// undulator  /// Mad-x style tracking with fringe field momentum scaling.
   const BDSIntegratorSet*  integratorsBDSIMMatrixFringeScaling =
-    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4,       // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipolematrix,   // dipole
 			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
 			 BDSIntegratorType::quadrupole,     // quadrupole

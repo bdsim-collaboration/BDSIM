@@ -58,7 +58,9 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
 
   G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag  = mom.mag();
-  G4double      kappa   = - 0.5*fcof*bField/momMag;
+
+  // kappa unit is m^-1, so scale to mm.
+  G4double      kappa   = 0.5*fcof*bField/momMag / CLHEP::m;
 
   // neutral particle or no strength - advance as a drift.
   if (std::abs(kappa)<1e-20)
