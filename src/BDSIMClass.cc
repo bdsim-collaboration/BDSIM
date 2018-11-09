@@ -282,9 +282,6 @@ int BDSIM::Initialise()
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch, beamParticle));
 
   /// Initialize G4 kernel
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
-#endif
   runManager->Initialize();
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
@@ -354,16 +351,13 @@ BDSIM::~BDSIM()
 {
   /// Termination & clean up.
   G4GeometryManager::GetInstance()->OpenGeometry();
-  
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
+    
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> deleting..." << G4endl;
 #endif
   delete bdsOutput;
   
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
-#endif
-  // Order important here because of singletons relying on each other
+  // order important here because of singletons relying on each other
   delete BDSAcceleratorModel::Instance();
   delete BDSTemporaryFiles::Instance();
   delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials
@@ -375,10 +369,7 @@ BDSIM::~BDSIM()
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
-  
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
-#endif
+
   delete runManager;
   delete bdsBunch;
   delete parser;
