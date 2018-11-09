@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
   BDSIM* bds = new BDSIM(argc, argv);
   if (!bds->Initialised())
