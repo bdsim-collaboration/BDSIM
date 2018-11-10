@@ -4,6 +4,8 @@ if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
+include(GenerateExportHeader)
+
 project(bdsim)
 
 # project version
@@ -22,6 +24,7 @@ include(bdsim_macros)
 
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 # Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
@@ -94,6 +97,9 @@ include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
 set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(SYSCONFIG_INSTALL_DIR etc/bdsim/)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -143,6 +149,7 @@ set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include
 
 # BDSIM library and binaries
 add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
+generate_export_header(${BDSIM_LIB_NAME})
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
@@ -257,3 +264,34 @@ if(APPLE)
   mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
   mark_as_advanced(CMAKE_OSX_SYSROOT)
 endif()
+
+
+export(EXPORT BDSIMTargets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMTargets.cmake"
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(cmake/BDSIMConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsim/cmake
+			      PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake
+  VERSION ${BDSIM_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+set(ConfigPackageLocation lib/cmake/bdsimcmake)
+install(EXPORT BDSIMTargets
+  FILE
+    BDSIMTargets.cmake
+  DESTINATION
+    ${ConfigPackageLocation}
+)
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake"
+  DESTINATION
+    ${ConfigPackageLocation}
+  COMPONENT
+    Devel
+)
