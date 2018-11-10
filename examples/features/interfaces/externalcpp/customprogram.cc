@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-int main(int arg, char** argv)
+int main(int argc, char** argv)
 {
   BDSIM* bds = new BDSIM(argc, argv);
   if (!bds->Initialised())
