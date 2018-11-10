@@ -265,21 +265,25 @@ if(APPLE)
   mark_as_advanced(CMAKE_OSX_SYSROOT)
 endif()
 
+# CMake packaging so others can use BDSIM in their cmake applications.
 
+# we use "bdsimcmake" for install cmake stuff as it's prepared in the build
+# directory and this would clash with the main library name. the ConfigPackageLocation
+# is different though so it's installed in a sensible place.
 export(EXPORT BDSIMTargets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMTargets.cmake"
 )
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(cmake/BDSIMConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
-			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsim/cmake
+			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsimcmake/cmake
 			      PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake
   VERSION ${BDSIM_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
 
-set(ConfigPackageLocation lib/cmake/bdsimcmake)
+set(ConfigPackageLocation lib/cmake/bdsim)
 install(EXPORT BDSIMTargets
   FILE
     BDSIMTargets.cmake
