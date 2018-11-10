@@ -98,6 +98,9 @@ set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
 # This module sets up installation:
 include(bdsim_install)
 
+# Before any linkages we define library names
+set(BDSIM_LIB_NAME "bdsim")
+
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
@@ -139,25 +142,25 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
 
 # BDSIM library and binaries
-add_library(bdsim ${root_dicts} ${bdsim_sources} )
+add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(bdsimexec bdsim gmad)
-target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-target_link_libraries(bdsim ${Geant4_LIBRARIES})
+target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
+target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 if (USE_GZSTREAM)
   #preprocessor flag
   add_definitions("-DUSE_GZSTREAM")
-  target_link_libraries(bdsim gzstream)
+  target_link_libraries(${BDSIM_LIB_NAME} gzstream)
 endif()
 
 # link against ROOT
-target_link_libraries(bdsim ${ROOT_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${ROOT_LIBRARIES})
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-    target_link_libraries(bdsim gcov)
+    target_link_libraries(${BDSIM_LIB_NAME} gcov)
 endif()
 
 # set binary name for testing usage
@@ -181,11 +184,11 @@ target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # Add dependency to make sure bdsimRootEvent is done first
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
-add_dependencies(bdsim bdsimRootEvent)
+add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim bdsimRootEvent)
+set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
