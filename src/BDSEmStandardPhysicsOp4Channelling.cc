@@ -113,7 +113,9 @@
 
 #include "G4PhysicsListHelper.hh"
 #include "G4BuilderType.hh"
+#if G4VERSION_NUMBER > 1019
 #include "G4EmModelActivator.hh"
+#endif
 
 // factory
 #include "G4PhysicsConstructorFactory.hh"
@@ -420,10 +422,12 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   // Deexcitation
   G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
   G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+#if G4VERSION_NUMBER > 1019
 #if G4VERSION_NUMBER > 1029
   G4EmModelActivator mact(GetPhysicsName());
 #else
   G4EmModelActivator mact;
+#endif
 #endif
 }
 
