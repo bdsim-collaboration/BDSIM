@@ -1234,6 +1234,7 @@ Parameter         Description                   Default     Required
 ================  ============================  ==========  ===========
 
 * A positive field corresponds to a field in along the direction of positive S.
+* The entrance / exit solenoid fringes are not constructed if the previous / next element is also a solenoid.
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 

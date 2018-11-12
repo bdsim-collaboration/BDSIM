@@ -124,7 +124,7 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   else
     {SetDistChord(dc);}
 
-  //
+  // From USPAS lecture (http://uspas.fnal.gov/materials/13Duke/SCL_Chap3.pdf)
   // (1 , S / 2K      , 0 , (1-C) / 2K  ) (x )
   // (0 , C           , 0 , S           ) (x')
   // (0 , -(1-C) / 2K , 1 , S / 2K      ) (y )
