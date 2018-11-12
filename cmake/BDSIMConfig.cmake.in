@@ -14,6 +14,7 @@ find_package(CLHEP @CLHEP_VERSION@ EXACT REQUIRED CONFIG)
 
 # setup Geant4 to match the one BDSIM was build with
 find_package(Geant4 @Geant4_VERSION@ EXACT REQUIRED CONFIG)
+include(${Geant4_USE_FILE})
 
 include("${CMAKE_CURRENT_LIST_DIR}/BDSIMTargets.cmake")
 
