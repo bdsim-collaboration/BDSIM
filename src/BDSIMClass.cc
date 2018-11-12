@@ -39,6 +39,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSColours.hh"
+#include "BDSComponentFactoryUser.hh"
+#include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSFieldFactory.hh"
@@ -74,7 +76,8 @@ BDSIM::BDSIM():
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(nullptr),
-  runManager(nullptr)
+  runManager(nullptr),
+  userComponentFactory(nullptr)
 {;}
 
 BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
@@ -86,7 +89,8 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(nullptr),
-  runManager(nullptr)
+  runManager(nullptr),
+  userComponentFactory(nullptr)
 {
   Initialise();
 }  
@@ -147,7 +151,8 @@ int BDSIM::Initialise()
   runManager = new BDSRunManager;
 
   /// Register the geometry and parallel world construction methods with run manager.
-  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
+  
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
   auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  

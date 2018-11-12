@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSIMCLASS_H
 
 class BDSBunch;
+class BDSComponentConstructor;
+class BDSComponentFactoryUser;
 class BDSOutput;
 class BDSParser;
 class BDSRunManager;
@@ -58,6 +60,7 @@ private:
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
+  BDSComponentFactoryUser* userComponentFactory;
 };
 
 #endif
