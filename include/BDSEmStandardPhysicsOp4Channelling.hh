@@ -50,6 +50,10 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+/**
+ * @brief Copy of crystal channelling em physics from Geant4.
+ */
+
 class BDSEmStandardPhysicsOp4Channelling : public G4VPhysicsConstructor
 {
 public:
