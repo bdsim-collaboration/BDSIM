@@ -841,17 +841,20 @@ strength for the nominal rigidity.
 The particle motion for a solenoid is calculated for the body of the solenoid only and
 the edge effects are provided via thin elements using the rmatrix integrator.
 
-The thick matrix for the central part is:
+The thick matrix for the solenoid body is:
 
 .. math::
    
    \begin{pmatrix}
-   \cos^2 (Kl)            & \frac{1}{K} \sin(Kl) \cos(Kl) & \sin(Kl) \cos(Kl)    & \frac{1}{K} \sin^2(Kl)        \\
-   -K \sin(Kl) \cos(Kl)   &  \cos^2 (Kl)                 & -K \sin^2(Kl)        & \sin(Kl) \cos(Kl)              \\
-   - \sin(Kl) \cos(Kl)    & \frac{-1}{K}\sin^2(Kl)       &  \cos^2 (Kl)         & \frac{1}{K} \sin(Kl) \cos(Kl)  \\
-   K \sin^2(Kl)           & -\sin(Kl) \cos(Kl)           & -K \sin(Kl) \cos(Kl) & \cos^2 (Kl)                    \\
+   1 & \frac{\sin(2Kl)}{2K}        & 0 & \frac{(1 - \cos(2Kl))}{2K}  \\
+   0 & \cos(2Kl)                   & 0 & \sin(2Kl)                   \\
+   0 & -\frac{(1 - \cos(2Kl))}{2K} & 1 & \frac{\sin(2Kl)}{2K}        \\
+   0 & -\sin(2Kl)                  & 0 & \cos(2Kl)                   \\
    \end{pmatrix}
 
+The solenoid fringes are constructed as thin RMatrix elements either end of the solenoid body.
+If the fringes are constructed, the length of the solenoid body is reduced by the thin element length
+in order to conserve the total element length. In this case the solenoid strength is scaled accordingly.
 For the fringes, the following matrix is used
 
 .. math::
@@ -860,14 +863,14 @@ For the fringes, the following matrix is used
    1      & 0  & 0     & 0 \\
    0      & 1  & \mp K & 0 \\
    0      & 0  & 1     & 0 \\
-   \pm K  & 0  & 0     & 1\\
+   \pm K  & 0  & 0     & 1 \\
    \end{pmatrix}
 
-where :math:`K` is
+where
 
 .. math::
 
-   \frac{B}{2 B\rho}
+   K = \frac{B}{2 B\rho}
 
 The plus minuses are flipped for the exit fringe.
 
