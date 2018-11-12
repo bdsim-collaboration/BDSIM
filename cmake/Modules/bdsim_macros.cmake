@@ -7,8 +7,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_BINARY_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     )
-  list(APPEND ${source_dest_var} ${CMAKE_CURRENT_BINARY_DIR}/src/BDSIMClass.cc)
-  list(REMOVE_ITEM ${source_dest_var} ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSIMClass.cc)
 endmacro()
 
 #from https://cmake.org/pipermail/cmake/2009-March/027892.html
