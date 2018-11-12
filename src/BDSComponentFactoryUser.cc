@@ -30,7 +30,10 @@ BDSComponentFactoryUser::BDSComponentFactoryUser():
 {;}
 
 BDSComponentFactoryUser::~BDSComponentFactoryUser()
-{;}
+{
+  for (auto constructor : userFunctions)
+    {delete constructor.second;}
+}
 
 void BDSComponentFactoryUser::SetRigidityAndLorentzBeta(const G4double brhoIn,
 							const G4double beta0In)
