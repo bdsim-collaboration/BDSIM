@@ -36,7 +36,9 @@ public:
   virtual BDSAcceleratorComponent* Construct(GMAD::Element const* elementIn,
 					     GMAD::Element const* prevElementIn,
 					     GMAD::Element const* nextElementIn,
-					     G4double currentArcLength) = 0;
+					     G4double currentArcLengthIn,
+					     G4double brhoIn,
+					     G4double beta0In) = 0;
 };
 
 #endif
