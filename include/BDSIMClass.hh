@@ -26,17 +26,53 @@ class BDSOutput;
 class BDSParser;
 class BDSRunManager;
 
+#include "G4String.hh"
+
+/** 
+ * @brief Interface class to use BDSIM.
+ *
+ * First way to use:
+ * bds = new BDSIM(argc, argv);
+ * bds->BeamOn();
+ * 
+ * Second way to use (delayed initialisation):
+ * bds = new BDSIM();
+ * // modify bds in some way
+ * bds->Initialise(argc, argv);
+ * bds->BeamOn();
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSIM
 {
 public:
+  /// Construct an instance but don't initialise. Requires initialisation with
+  /// arguments argc and arv
   BDSIM();
+
+  /// Initialise everything given these arguments.
+  int Initialise(int argc, char** argv, bool usualPrintOut=true);
+
+  /// Construct and initialise BDSIM.
   BDSIM(int argc, char** argv, bool usualPrintOut=true);
+
+  /// The destructor opens the geometry in Geant4 and deletes everything.
   ~BDSIM();
-  
-  int Initialise();
+
+  /// Accessor as to whether BDSIM kernel is initialised - ie all geometry and physics
+  /// constructed.
   inline bool Initialised() const {return initialised;};
 
+  /// Generate nGenerate events. If the default argument -1 is used, the number is taken
+  /// from the standard input e.g. the executable option ngenerate and then the one specified
+  /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
+
+  /// Register a custom user beam line element by the type name you'd like it to have
+  /// and the (user-provided) constructor that can construct it.
+  void RegisterUserComponent(G4String componentTypeName,
+			     BDSComponentConstructor* componentConstructor);
 
   /*
   void TrackEnergy(double pdgID, double totalEnergy,
@@ -50,6 +86,9 @@ public:
 		     double s, double t);
   */
 private:
+  /// The main function where everything is constructed.
+  int Initialise();
+  
   bool   ignoreSIGINT;
   bool   usualPrintOut;
   bool   initialised;

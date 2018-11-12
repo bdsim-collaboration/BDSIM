@@ -93,7 +93,15 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   userComponentFactory(nullptr)
 {
   Initialise();
-}  
+}
+
+int BDSIM::Initialise(int argc, char** argv, bool usualPrintOutIn)
+{
+  argcCache = argc;
+  argvCache = argv;
+  usualPrintOut = usualPrintOutIn;
+  return Initialise();
+}
 
 int BDSIM::Initialise()
 {
@@ -381,4 +389,19 @@ BDSIM::~BDSIM()
 
   if (usualPrintOut)
     {G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;}
+}
+
+void BDSIM::RegisterUserComponent(G4String componentTypeName,
+				  BDSComponentConstructor* componentConstructor)
+{
+  if (initialised)
+    {
+      G4cout << __METHOD_NAME__ << "warning - BDSIM kernel already initialised - "
+	     << "this component will not be available" << G4endl;
+    }
+  if (!userComponentFactory)
+    {userComponentFactory = new BDSComponentFactoryUser();}
+
+  userComponentFactory->RegisterComponent(componentTypeName,
+					  componentConstructor);
 }
