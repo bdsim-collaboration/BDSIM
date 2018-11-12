@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
+#include "BDSComponentFactoryUser.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -96,9 +97,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
-					 const G4double& beta0In):
+					 const G4double& beta0In,
+					 BDSComponentFactoryUser* userComponentFactoryIn):
   brho(brhoIn),
   beta0(beta0In),
+  userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
@@ -328,6 +331,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateRMatrix(); break;}
     case ElementType::_UNDULATOR:
       {component = CreateUndulator(); break;}
+    case ElementType::_USERCOMPONENT:
+      {
+	if (!userComponentFactory)
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no user component factory registered" << G4endl;
+	    exit(1);
+	  }
+	G4String typeName = G4String(element->userTypeName);
+	if (!userComponentFactory->CanConstructComponentByName(typeName))
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no such component \""
+		   << element->userTypeName << "\" registered." << G4endl;
+	    exit(1);
+	  }
+	else
+	  {
+	    component = userComponentFactory->ConstructComponent(typeName,
+								 element,
+								 prevElement,
+								 nextElement,
+								 currentArcLength);
+	  }
+	break;
+      }
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
