@@ -1045,7 +1045,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		    (*s)["rmat23"] = phi;
 		    return s;
 		  };
-  G4bool isMatrixSet = integratorSet->IsMatrixIntegratorSet();
 
   G4double s = 0.5*(*st)["ks"]; // already includes scaling
   BDSLine* bLine = new BDSLine(elementName);
@@ -1054,7 +1053,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {// only build fringe if previous element isn't another solenoid
       buildIncomingFringe = prevElement->type != ElementType::_SOLENOID;
     }
-  if (buildIncomingFringe && !isMatrixSet)
+  if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
       auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
@@ -1069,7 +1068,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {// only build fringe if next element isn't another solenoid
       buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
     }
-  if (buildOutgoingFringe && !isMatrixSet)
+  if (buildOutgoingFringe)
     {
       auto stOut       = strength(-s);
       auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
