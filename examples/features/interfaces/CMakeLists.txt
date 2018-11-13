@@ -2,4 +2,4 @@
 # these require the installed version so cannot possibly complete at build time and will
 # break the build.
 
-simple_testing(usercomponent-undefined "--file=undefinedusercomponent.gmad" "")
+simple_fail(usercomponent-undefined "--file=undefinedusercomponent.gmad" "")
