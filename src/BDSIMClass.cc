@@ -71,6 +71,7 @@ BDSIM::BDSIM():
   ignoreSIGINT(false),
   usualPrintOut(true),
   initialised(false),
+  initialisationResult(1),
   argcCache(0),
   argvCache(nullptr),
   parser(nullptr),
@@ -84,6 +85,7 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   ignoreSIGINT(false),
   usualPrintOut(usualPrintOutIn),
   initialised(false),
+  initialisationResult(1),
   argcCache(argc),
   argvCache(argv),
   parser(nullptr),
@@ -92,7 +94,7 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   runManager(nullptr),
   userComponentFactory(nullptr)
 {
-  Initialise();
+  initialisationResult = Initialise();
 }
 
 int BDSIM::Initialise(int argc, char** argv, bool usualPrintOutIn)
@@ -100,7 +102,8 @@ int BDSIM::Initialise(int argc, char** argv, bool usualPrintOutIn)
   argcCache = argc;
   argvCache = argv;
   usualPrintOut = usualPrintOutIn;
-  return Initialise();
+  initialisationResult = Initialise();
+  return initialisationResult;
 }
 
 int BDSIM::Initialise()

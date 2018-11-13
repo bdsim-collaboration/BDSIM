@@ -64,6 +64,8 @@ public:
   /// constructed.
   inline bool Initialised() const {return initialised;};
 
+  inline int InitialisationResult() const {return initialisationResult;}
+
   /// Generate nGenerate events. If the default argument -1 is used, the number is taken
   /// from the standard input e.g. the executable option ngenerate and then the one specified
   /// in the input gmad files as an option.
@@ -89,12 +91,12 @@ private:
   /// The main function where everything is constructed.
   int Initialise();
   
-  bool   ignoreSIGINT;
-  bool   usualPrintOut;
-  bool   initialised;
-  int    argcCache;
-  char** argvCache;
-
+  bool   ignoreSIGINT;         ///< For cmake testing.
+  bool   usualPrintOut;        ///< Whether to allow the usual cout output.
+  bool   initialised;          ///< Whether initialisation was completed safely
+  int    initialisationResult; ///< Possible to not finish initialisation but have completed ok - flag for this.
+  int    argcCache;            ///< Cache of argc.
+  char** argvCache;            ///< Cache of argv.
   BDSParser*     parser;
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
