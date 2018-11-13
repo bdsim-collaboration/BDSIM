@@ -23,6 +23,7 @@
 #include "BDSSamplerSD.hh" // so we can convert BDSSamplerSD* to G4VSensitiveDetector*
 #include "BDSSDManager.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
@@ -34,7 +35,8 @@
 #include "G4VisAttributes.hh"
 
 UDipole::UDipole(G4String name,
-		 G4double bFieldIn):
+		 G4double bFieldIn,
+		 G4String params):
   BDSAcceleratorComponent(name, 1.57*CLHEP::m, /*angle*/0, "udipole"),
   bField(bFieldIn),
   horizontalWidth(1*CLHEP::m),
@@ -49,6 +51,18 @@ UDipole::UDipole(G4String name,
   pipe1Length = 25*CLHEP::cm;
   yokeLength  = 0.98*CLHEP::m;
   chamberLength = chordLength - 2*pipe1Length - 2*lengthSafety;
+
+  // use function from BDSUtilities to process user params string into
+  // map of strings and values.
+  std::map<G4String, G4String> map = BDS::GetUserParametersMap(params);
+
+  // the map is supplied at run time so we must check it actually has the key
+  // to avoid throwing an exception.
+  auto colourSearch = map.find("colour");
+  if (colourSearch != map.end())
+    {colour = colourSearch->second;}
+  else
+    {colour = "rectangularbend";}
 }
 
 UDipole::~UDipole()
@@ -138,7 +152,7 @@ void UDipole::BuildMagnetYoke()
 							 5*CLHEP::cm,
 							 1.0);
   outerInfo->yokeOnLeft = true; // put C yoke on top
-  outerInfo->colour = BDSColours::Instance()->GetColour("rectangularbend"); // update colour
+  outerInfo->colour = BDSColours::Instance()->GetColour(colour); // update colour
 
   // create a fake piece of beam pipe to build the yoke w.r.t. because currently
   // the magnet factory always builds a tight fitting yoke to a piece of beam pipe

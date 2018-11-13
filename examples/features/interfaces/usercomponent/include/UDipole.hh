@@ -25,7 +25,8 @@ class UDipole: public BDSAcceleratorComponent
 public:
   /// Construct as we wish.
   UDipole(G4String name,
-	  G4double bFieldIn);
+	  G4double bFieldIn,
+	  G4String paramsIn);
   
   virtual ~UDipole(); ///< Remember destructor has to be virtual.
 
@@ -68,6 +69,7 @@ private:
   G4double    pipe1Length;
   G4double    yokeLength;
   G4double    chamberLength;
+  G4String    colour;
   BDSBeamPipeInfo* pipe1Info;
   G4LogicalVolume* volumeForField;
 };
