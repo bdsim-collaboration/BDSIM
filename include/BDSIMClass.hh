@@ -97,11 +97,14 @@ private:
   int    initialisationResult; ///< Possible to not finish initialisation but have completed ok - flag for this.
   int    argcCache;            ///< Cache of argc.
   char** argvCache;            ///< Cache of argv.
+
+  /// @{ Cache of main object in BDSIM.
   BDSParser*     parser;
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
   BDSComponentFactoryUser* userComponentFactory;
+  /// @}
 };
 
 #endif

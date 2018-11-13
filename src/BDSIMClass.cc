@@ -123,7 +123,7 @@ int BDSIM::Initialise()
   ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
   
 #ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
+  G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
 #endif
 
   /// Parse lattice file
@@ -170,8 +170,8 @@ int BDSIM::Initialise()
 
   /// For geometry sampling, phys list must be initialized before detector.
   /// BUT for samplers we use a parallel world and this HAS to be before the physcis
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = parser->GetOptions().physicsList;
 
@@ -249,25 +249,25 @@ int BDSIM::Initialise()
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
   if (usualPrintOut)
     {
-      G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
-      G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;
-      G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
-      G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
+      G4cout << __METHOD_NAME__ << "Geometry Tolerances: "     << G4endl;
+      G4cout << __METHOD_NAME__ << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;
+      G4cout << __METHOD_NAME__ << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
+      G4cout << __METHOD_NAME__ << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
     }
   /// Set user action classes
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon()));
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Event Action"<<G4endl;
 #endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for performance reasons)
   if (globalConstants->VerboseStep())
@@ -277,7 +277,7 @@ int BDSIM::Initialise()
     }
   
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Tracking Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
@@ -285,12 +285,12 @@ int BDSIM::Initialise()
 						  eventAction));
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSStackingAction(globalConstants));
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - Primary Generator"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch, beamParticle));
 
@@ -316,7 +316,7 @@ int BDSIM::Initialise()
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry)
     { 
-      G4cerr << __FUNCTION__ << "> error - geometry not closed." << G4endl;
+      G4cerr << __METHOD_NAME__ << "error - geometry not closed." << G4endl;
       return 1;
     }
 
@@ -369,7 +369,7 @@ BDSIM::~BDSIM()
   G4GeometryManager::GetInstance()->OpenGeometry();
     
 #ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> deleting..." << G4endl;
+  G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
   delete bdsOutput;
   
@@ -394,7 +394,7 @@ BDSIM::~BDSIM()
   delete parser;
 
   if (usualPrintOut)
-    {G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
 void BDSIM::RegisterUserComponent(G4String componentTypeName,
