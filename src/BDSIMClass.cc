@@ -242,10 +242,7 @@ int BDSIM::Initialise()
       bdsOutput->FillBeam(bb);
 
       bdsOutput->CloseFile();
-      delete bdsBunch;
-      delete bdsOutput;
-      delete runManager;
-      return 0;
+      return 2;
     }
   
   /// Print the geometry tolerance
@@ -336,6 +333,9 @@ int BDSIM::Initialise()
 
 void BDSIM::BeamOn(int nGenerate)
 {
+  if (initialisationResult > 1 || !initialised)
+    {return;} // a mode where we don't do anything
+
   G4cout.precision(10);
   /// Catch aborts to close output stream/file. perhaps not all are needed.
   struct sigaction act;
@@ -381,11 +381,14 @@ BDSIM::~BDSIM()
   delete BDSMaterials::Instance();
 
   // instances not used in this file, but no other good location for deletion
-  delete BDSColours::Instance();
-  delete BDSFieldLoader::Instance();
-  delete BDSSDManager::Instance();
-  delete BDSSamplerRegistry::Instance();
-
+  if (initialisationResult < 2)
+    {
+      delete BDSColours::Instance();
+      delete BDSFieldLoader::Instance();
+      delete BDSSDManager::Instance();
+      delete BDSSamplerRegistry::Instance();
+    }
+      
   delete runManager;
   delete bdsBunch;
   delete parser;

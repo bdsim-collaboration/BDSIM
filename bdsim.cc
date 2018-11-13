@@ -33,8 +33,12 @@ int main(int argc, char** argv)
 {
   BDSIM* bds = new BDSIM(argc, argv);
   if (!bds->Initialised())
-    {std::cout << "Intialisation failed" << std::endl; return 1;}
-  bds->BeamOn();
+    {
+      if (bds->InitialisationResult() == 1) // if 2 it's ok
+	{std::cout << "Intialisation failed" << std::endl; return 1;}
+    }
+  else
+    {bds->BeamOn();}
   delete bds;
   return 0;
 }
