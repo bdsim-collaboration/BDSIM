@@ -34,9 +34,11 @@ For each submodule:
    * Data version.
    * Data class versions.
 
-7. Regenerate BDSIM manual and commit new version. Upload to website.
-8. Merge release candidate branch back into develop.
-9. In develop, put back README, CMakeLists.txt to new version.develop.
-10. Merge release candidate branch into master then delete.
-11. Check all tests complete locally given merge before pushing.
-12. Tag master branch for version number.
+7. If BDSColours has changed, run BDSIM with DEBUGOUTPUT build and copy print out of
+   colours to manual (already in correct format).
+8. Regenerate BDSIM manual and commit new version. Upload to website.
+9. Merge release candidate branch back into develop.
+10. In develop, put back README, CMakeLists.txt to new version.develop.
+11. Merge release candidate branch into master then delete.
+12. Check all tests complete locally given merge before pushing.
+13. Tag master branch for version number.
