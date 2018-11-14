@@ -69,6 +69,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
+#if G4VERSION_NUMBER > 1039
+#include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
+#endif
 
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
@@ -623,7 +626,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(element->GetName(),
 								     placementName,
 								     element->GetSPositionMiddle(),
-								     element->GetIndex());
+								     element->GetIndex(),
+								     beamline);
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
@@ -758,7 +762,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
   if(debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
+    {G4cout << __METHOD_NAME__ << G4endl;}
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
@@ -767,42 +771,63 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
   G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
-
+  
+  G4bool useDefaultBiasVacuum   = !defaultBiasVacuum.empty();
+  G4bool useDefaultBiasMaterial = !defaultBiasMaterial.empty();
+  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
+  G4bool biasesDefined = !biasObjectList.empty();
+  G4bool overallUseBiasing = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
+  G4cout << __METHOD_NAME__ << "Using generic biasing: " << BDS::BoolToString(overallUseBiasing) << G4endl;
+  if (!overallUseBiasing)
+    {return;} // no biasing used -> dont attach as just overhead for no reason
+  
   // apply per element biases
   for (auto const & item : *registry)
-  {
-    if (debug)
-      {G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
-    BDSAcceleratorComponent* accCom = item.second;
-    G4String                accName = accCom->GetName();
-    
-    // Build vacuum bias object based on vacuum bias list in the component
-    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
-    auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
-    if(vacuumLV)
-      {
-	if(debug)
-	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
-		  << " " << vacuumLV->GetName() << G4endl;}
-	egVacuum->AttachTo(vacuumLV);
-      }
+    {
+      if (debug)
+	{G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
+      BDSAcceleratorComponent* accCom = item.second;
+      G4String                accName = accCom->GetName();
       
-    // Build material bias object based on material bias list in the component
-    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
-    auto allLVs     = accCom->GetAllLogicalVolumes();
-    if(debug)
-      {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
-    for (auto materialLV : allLVs)
-      {
-	if(materialLV != vacuumLV)
-	  {
-	    if(debug)
-	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
-		      << " " << (materialLV)->GetName() << G4endl;}
-	    egMaterial->AttachTo(materialLV);
-	  }
-      }
-  }
+      // Build vacuum bias object based on vacuum bias list in the component
+      auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
+      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
+      if(vacuumLV)
+	{
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+		    << " " << vacuumLV->GetName() << G4endl;}
+	  egVacuum->AttachTo(vacuumLV);
+	}
+      
+      // Build material bias object based on material bias list in the component
+      auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
+      auto allLVs     = accCom->GetAllBiasingVolumes();
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
+      for (auto materialLV : allLVs)
+	{
+	  if(materialLV != vacuumLV)
+	    {
+	      if(debug)
+		{G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+			<< " " << (materialLV)->GetName() << G4endl;}
+	      egMaterial->AttachTo(materialLV);
+	    }
+	}
+    }
+  
+#if G4VERSION_NUMBER > 1039
+  // only available in 4.10.4 onwards
+  // crystal biasing necessary for implementation of variable density
+  std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
+  if (!crystals->empty())
+    {
+      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
+      for (auto crystal : *crystals)
+	{crystalBiasing->AttachTo(crystal);}
+    }
+#endif
 #endif
 }
 

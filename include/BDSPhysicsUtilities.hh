@@ -58,6 +58,10 @@ namespace BDS
   
   G4GenericBiasingPhysics* BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
+#if G4VERSION_NUMBER > 1039
+  /// Build the physics required for channelling to work correctly.
+  G4VModularPhysicsList* ChannellingPhysicsComplete();
+#endif
 }
 
 #endif

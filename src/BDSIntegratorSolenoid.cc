@@ -58,7 +58,9 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
 
   G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag  = mom.mag();
-  G4double      kappa   = - 0.5*fcof*bField/momMag;
+
+  // kappa unit is m^-1, so scale to mm.
+  G4double      kappa   = 0.5*fcof*bField/momMag / CLHEP::m;
 
   // neutral particle or no strength - advance as a drift.
   if (std::abs(kappa)<1e-20)
@@ -122,31 +124,32 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   else
     {SetDistChord(dc);}
 
-  // From PRSTAB 8 021001 (2005) and Handbook of Acc. Phys & Engineering, 2nd Ed., A. Chao, pg74
-  // (C^2    , SC / K   , SC     , S^2 / K  ) (x )
-  // (-K SC  , C^2      , -K S^2 , SC       ) (x')
-  // (-SC    , -S^2 / K , C^2    , SC / K   ) (y )
-  // (K S^2  , -SC      , -K SC  , C^2      ) (y')
-  // K = B_0 / 2Brho
+  // From USPAS lecture (http://uspas.fnal.gov/materials/13Duke/SCL_Chap3.pdf)
+  // (1 , S / 2K      , 0 , (1-C) / 2K  ) (x )
+  // (0 , C           , 0 , S           ) (x')
+  // (0 , -(1-C) / 2K , 1 , S / 2K      ) (y )
+  // (0 , -S          , 0 , C           ) (y')
+  //
+  // K = B_0 / 2*Brho
   // B_0 is field in solenoid
   // Brho is momentum of central trajectory
-  // C = cos( KL )
-  // S = sin( KL )
+  // C = cos( 2KL )
+  // S = sin( 2KL )
 
-  G4double C    = std::cos(kappa * h);
-  G4double S    = std::sin(kappa * h);
-  G4double C2   = C * C;
-  G4double S2   = S * S;
-  G4double SC   = S * C;
-  G4double SCK  = SC * kappa;
-  G4double SCoK = SC / kappa;
-  G4double S2oK = S2 / kappa;
-  G4double S2K  = S2 * kappa;
-  
-  G4double x1  =  x0*C2  + xp0*SCoK + y0*SC  + yp0*S2oK;
-  G4double xp1 = -x0*SCK + xp0*C2   - y0*S2K + yp0*SC;
-  G4double y1  = -x0*SC  - xp0*S2oK + y0*C2  + yp0*SCoK;
-  G4double yp1 =  x0*S2K - xp0*SC   - y0*SCK + yp0*C2;
+  G4double C      = std::cos(2 * kappa * h);
+  G4double S      = std::sin(2 * kappa * h);
+  G4double S2oK   = S / kappa;
+  G4double OmC2oK = (1.0 - C) / kappa;
+
+  G4double X11 = 1, X12 = 0.5*S2oK,    X13 = 0, X14 = 0.5*OmC2oK;
+  G4double X21 = 0, X22 = C,           X23 = 0, X24 = S;
+  G4double X31 = 0, X32 = -0.5*OmC2oK, X33 = 1, X34 = 0.5*S2oK;
+  G4double X41 = 0, X42 = -S,          X43 = 0, X44 = C ;
+
+  G4double x1  = x0*X11 + xp0*X12 + y0*X13 + yp0*X14;
+  G4double xp1 = x0*X21 + xp0*X22 + y0*X23 + yp0*X24;
+  G4double y1  = x0*X31 + xp0*X32 + y0*X33 + yp0*X34;
+  G4double yp1 = x0*X41 + xp0*X42 + y0*X43 + yp0*X44;
   
   G4double z1 = z0 + h;
   // ensure normalisation for vector

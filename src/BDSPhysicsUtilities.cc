@@ -21,7 +21,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSModularPhysicsList.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
+#if G4VERSION_NUMBER > 1039
+#include "BDSPhysicsChannelling.hh"
+#endif
 #include "BDSPhysicsUtilities.hh"
+#include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
 #include "globals.hh"
 #include "G4AntiNeutrinoE.hh"
@@ -45,6 +49,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 
+#include "FTFP_BERT.hh"
+
 #include <map>
 
 G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
@@ -53,6 +59,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
   G4String physicsListNameLower = physicsList; // make lower case copy
   physicsListNameLower.toLower();
   G4bool useGeant4Physics = physicsListNameLower.contains("g4");
+  G4bool completePhysics  = physicsListNameLower.contains("complete");
   if (useGeant4Physics)
     {
       // strip off G4_ prefix - from original as G4 factory case sensitive
@@ -71,6 +78,23 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	}
       else
 	{return factory.GetReferencePhysList(geant4PhysicsList);}
+    }
+  else if (completePhysics)
+    {
+      if (physicsListNameLower == "completechannelling")
+	{
+#if G4VERSION_NUMBER > 1039
+	  return BDS::ChannellingPhysicsComplete();
+#else
+	  G4cerr << "Channel physics is not supported with Geant4 versions less than 10.4" << G4endl;
+	  exit(1);
+#endif
+	}
+      else
+	{
+	  G4cerr << "Unknown 'complete' physics list \"" << physicsList << "\"" << G4endl;
+	  exit(1);
+	}
     }
   else
     {return new BDSModularPhysicsList(physicsList);}
@@ -234,3 +258,17 @@ void BDS::PrintDefinedParticles()
     {G4cout <<  it->value()->GetParticleName() << " ";}
   G4cout << G4endl;
 }
+
+#if G4VERSION_NUMBER > 1039
+G4VModularPhysicsList* BDS::ChannellingPhysicsComplete()
+{
+  G4VModularPhysicsList* physlist = new FTFP_BERT();
+  G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
+  physlist->RegisterPhysics(new BDSPhysicsChannelling());
+  // replace the EM physics in the Geant4 provided FTFP_BERT composite physics list
+  physlist->ReplacePhysics(new BDSEmStandardPhysicsOp4Channelling());
+  biasingPhysics->PhysicsBiasAllCharged();
+  physlist->RegisterPhysics(biasingPhysics);
+  return physlist;
+}
+#endif

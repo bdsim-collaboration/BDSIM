@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSTrajectoryPrimary.hh"
-
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Allocator.hh"
@@ -27,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TrajectoryContainer.hh"
 
 #include <ostream>
+#include <set>
 
 G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
 
@@ -94,4 +96,3 @@ std::ostream& operator<< (std::ostream& out, BDSTrajectoryPrimary const& t)
   out << b;
   return out;
 }
-

@@ -132,6 +132,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
       else
 	{particleDef = particleToUse->ParticleDefinition();}
+      // update charge as always set explicitly with particleGun
+      // note for ions, this may be different from particleDef->GetPDGCharge
+      particleCharge = beamParticle->Charge();
     }
 
   particleGun->SetParticleDefinition(particleDef);
@@ -186,7 +189,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge));
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

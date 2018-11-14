@@ -17,8 +17,11 @@ New Features
   gas in the beam pipe 'vacuum' is recorded.
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
+* New option :code:`storeGeant4Data` to control whether the basic particle data is stored in
+  the output for all particles used or not.
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
+* New complete physics list for crystal channelling to achieve the correct result.
   
 General
 -------
@@ -41,6 +44,8 @@ Bug Fixes
 ---------
 
 * Fixed reloading user file when reading more particles than defined in the file.
+* Fixed "pt" column in user file for reading particle PDG IDs. The first particle would be read
+  correctly and all subsequent particles would revert to the beam definition.
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
 * Fixed incorrect writing of optional sampler information.
@@ -52,13 +57,21 @@ Bug Fixes
   element record energy loss or not.
 * Degrader and undulator did not record energy deposition.
 * Energy deposition is now correctly recorded when tracks are artificially killed.
-
+* Fix particle channelling in cylindrical and torus shaped crystals. The crystal implementation
+  only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
+  allow use of more advanced geometries than a box.
+* Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
+* Fix A and Z being the wrong way around for ions in samplers.
+* Charge now correctly recorded in primaries and in samplers for partially stripped ions.
+* Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
+  
 Output Changes
 --------------
 
 * Memory usage (for Mac & Linux) added at the end of each event in event info. This
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
+* Boolean flag store in even info as to whether the primary was absorbed in a collimator or not.
 * New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
 * New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the

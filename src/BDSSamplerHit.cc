@@ -26,13 +26,15 @@ G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
 
 BDSSamplerHit::BDSSamplerHit(G4int samplerIDIn,
 			     const BDSParticleCoordsFull& coordsIn,
-			     G4int pdgIDIn,
-			     G4int parentIDIn,
-			     G4int trackIDIn,
-			     G4int turnsTakenIn,
-			     G4int beamlineIndexIn):
+			     G4double chargeIn,
+			     G4int    pdgIDIn,
+			     G4int    parentIDIn,
+			     G4int    trackIDIn,
+			     G4int    turnsTakenIn,
+			     G4int    beamlineIndexIn):
   samplerID(samplerIDIn),
   coords(coordsIn),
+  charge(chargeIn),
   pdgID(pdgIDIn),
   parentID(parentIDIn),
   trackID(trackIDIn),

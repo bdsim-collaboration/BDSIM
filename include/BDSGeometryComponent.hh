@@ -175,6 +175,9 @@ public:
 
   /// Access all logical volumes belonging to this component
   std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
+
+  /// Return all logical volumes that should be used for biasing minus any that are excluded.
+  virtual std::vector<G4LogicalVolume*> GetAllBiasingVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
   virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
@@ -184,6 +187,10 @@ public:
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);
+
+  /// Remove a particular logical volume from the logical volumes that will be
+  /// returned for biasing.
+  void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
 
 protected:
   
@@ -227,6 +234,11 @@ protected:
   /// is defaulted to a nullptr so MUST be tested before use - this saves memory as every
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
+
+  /// Volumes to use for biasing. By default this is nullptr and the accessor returns
+  /// allLogicalVolumes. However, if ExcludeLogicalVolumeFromBiasing is used, the vector
+  /// is copied and this pointer set to that vector. This is memory efficient solution.
+  std::vector<G4LogicalVolume*>* allBiasingVolumes;
 };
 
 inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const

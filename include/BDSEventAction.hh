@@ -45,6 +45,8 @@ public:
   virtual void EndOfEventAction(const G4Event*);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
+
+  void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
     
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
@@ -66,6 +68,8 @@ private:
 
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
+
+  G4bool primaryAbsorbedInCollimator; ///< Whether primary stopped in a collimator.
 
   /// @{ Cache of variable from global constants.
   G4double trajectoryEnergyThreshold;

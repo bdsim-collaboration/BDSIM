@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
+#include "G4DynamicParticle.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
@@ -82,6 +83,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4int ParentID    = track->GetParentID();          // unique ID of track's mother
   G4double T        = track->GetGlobalTime();        // time since beginning of event
   G4double energy   = track->GetTotalEnergy();       // total track energy
+  G4double charge   = track->GetDynamicParticle()->GetCharge(); // dynamic effective charge
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
@@ -144,6 +146,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 
   BDSSamplerHit* smpHit = new BDSSamplerHit(samplerID,
 					    coords,
+					    charge,
 					    PDGtype,
 					    ParentID,
 					    TrackID,

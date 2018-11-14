@@ -45,7 +45,7 @@ public:
     int         charge; ///< Charge in units of e.
     double      mass;   ///< Mass in GeV.
 
-    double rigidity(const double& totalEnergy) const
+    double rigidity(const double totalEnergy) const
     {
       if (!(std::abs(charge) > std::numeric_limits<double>::epsilon()))
 	{return 0;} // not finite charge, so rigidity 0
@@ -56,6 +56,19 @@ public:
       // p = sqrt(E^2 - m^2) in GeV
       double momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));
       double brho = momentum / 0.29979245799999998 / charge;
+      return brho;
+    }
+    double rigidity(const double totalEnergy, const double chargeIn) const
+    {
+      if (!(std::abs(chargeIn) > std::numeric_limits<double>::epsilon()))
+	{return 0;} // not finite charge, so rigidity 0
+      if (totalEnergy <= mass)
+	{return 0;} // invalid - just return 0
+      // calculation reproduced from BDSParticleDefinition but with hard coded constants
+      // for units here and to ensure no Geant4 linkage for output structures
+      // p = sqrt(E^2 - m^2) in GeV
+      double momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));
+      double brho = momentum / 0.29979245799999998 / chargeIn;
       return brho;
     }
   };
@@ -69,7 +82,7 @@ public:
     int a; ///< Mass number - number of nucleons in nucleus.
     int z; ///< Atomic number - number of protons in nucleus.
     
-    double rigidity(const double& totalEnergy) const
+    double rigidity(const double totalEnergy) const
     {
       if (!(std::abs(charge) > std::numeric_limits<double>::epsilon()))
 	{return 0;} // not finite charge, so rigidity 0
@@ -79,6 +92,16 @@ public:
       double brho = momentum / 0.29979245799999998 / charge;
       return brho;
     }
+    double rigidity(const double totalEnergy, const double chargeIn) const
+    {
+      if (!(std::abs(chargeIn) > std::numeric_limits<double>::epsilon()))
+	{return 0;} // not finite charge, so rigidity 0
+      if (totalEnergy <= mass)
+	{return 0;} // invalid - just return 0
+      double momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));
+      double brho = momentum / 0.29979245799999998 / chargeIn;
+      return brho;
+    }  
   };
   
   BDSOutputROOTGeant4Data();

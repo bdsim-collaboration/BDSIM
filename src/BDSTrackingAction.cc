@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
+#include "BDSEventAction.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
@@ -23,13 +25,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
+#include "G4VPhysicalVolume.hh"
+
+#include <set>
+
+class G4LogicalVolume;
 
 BDSTrackingAction::BDSTrackingAction(const G4bool& batchMode,
 				     const G4bool& storeTrajectoryIn,
-				     const G4bool& suppressTransportationStepsIn):
+				     const G4bool& suppressTransportationStepsIn,
+				     BDSEventAction* eventActionIn):
   interactive(!batchMode),
   storeTrajectory(storeTrajectoryIn),
-  suppressTransportationSteps(suppressTransportationStepsIn)
+  suppressTransportationSteps(suppressTransportationStepsIn),
+  eventAction(eventActionIn)
 {;}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
@@ -60,5 +69,16 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 	}
       else // mark as don't store
 	{fpTrackingManager->SetStoreTrajectory(0);}
+    }
+}
+
+void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
+{
+  if (track->GetParentID() == 0)
+    {
+      G4LogicalVolume* lv = track->GetVolume()->GetLogicalVolume();
+      std::set<G4LogicalVolume*>* collimators = BDSAcceleratorModel::Instance()->VolumeSet("collimators");
+      if (collimators->find(lv) != collimators->end())
+	{eventAction->SetPrimaryAbsorbedInCollimator(true);}
     }
 }
