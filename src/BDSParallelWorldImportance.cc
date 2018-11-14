@@ -67,10 +67,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-BDSParallelWorldImportance::BDSParallelWorldImportance():
-    G4VUserParallelWorld("importanceWorld")
+BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
+  G4VUserParallelWorld("importanceWorld_" + name)
 {
-  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  globals = BDSGlobalConstants::Instance();
   verbose       = globals->Verbose();
   checkOverlaps = globals->CheckOverlaps();
 }
@@ -78,7 +78,7 @@ BDSParallelWorldImportance::BDSParallelWorldImportance():
 void BDSParallelWorldImportance::Construct()
 {
   // load the cell importance values
-  G4String importanceMapFile = BDS::GetFullPath(BDSGlobalConstants::Instance()->ImportanceVolumeMapFile());
+  G4String importanceMapFile = BDS::GetFullPath(globals->ImportanceVolumeMapFile());
   imVolumesAndValues = BDSImportanceFileLoader::Instance()->Load(importanceMapFile);
 
   // build world
@@ -91,25 +91,44 @@ BDSParallelWorldImportance::~BDSParallelWorldImportance()
 void BDSParallelWorldImportance::BuildWorld()
 {
   // load the importance world geometry
-  std::string geometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
+  std::string geometryFile = globals->ImportanceWorldGeometryFile();
   geom = BDSGeometryFactory::Instance()->BuildGeometry("importanceWorld", geometryFile, nullptr, 0, 0);
 
   //clone mass world for parallel world PV
   imWorldPV = GetWorld();
 
-  G4LogicalVolume *worldLV = geom->GetContainerLogicalVolume();
+  G4LogicalVolume *worldLV = imWorldPV->GetLogicalVolume();
 
-  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->VisibleDebugVisAttr()));
+  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(samplerWorldVis);
 
   // set limits
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
-  fLogicalVolumeVector.push_back(worldLV);
-  fPVolumeStore.AddPVolume(G4GeometryCell(*imWorldPV, 0));
+  std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
+  std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
 
-  // add all logical volumes inside parallel world to the fLogicalVolumeVector vector
+  for (G4int i=0; i < (G4int)parallelPVs.size(); i++)
+    {
+        G4LogicalVolume* lv = parallelLVs[i+1];
+        G4VPhysicalVolume* pv = parallelPVs[i];
+
+        G4VPhysicalVolume *parallelPV = new G4PVPlacement(pv->GetRotation(),
+                                            pv->GetTranslation(),
+                                            lv,
+                                            pv->GetName(),
+                                            worldLV,
+                                            false,
+                                            0);
+
+        parallelPhysicalVolumes.push_back(parallelPV);
+    }
+
+  //parallelLogicalVolumes.push_back(worldLV);
+  //imVolumeStore.AddPVolume(G4GeometryCell(*imWorldPV, 0));
+
+  // add all logical volumes inside parallel world to the parallelLogicalVolume vector
   // add all physical volumes inside parallel world to the fPVolumeStore
 
   //SetSensitive();
@@ -130,7 +149,7 @@ G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
   G4String PVname = os.str();
 
   const G4VPhysicalVolume *p=0;
-  p = fPVolumeStore.GetPVolume(PVname);
+  p = imVolumeStore.GetPVolume(PVname);
   if (p)
     {return G4GeometryCell(*p,0);}
   else {
@@ -151,7 +170,12 @@ G4String BDSParallelWorldImportance::GetCellName(G4int i) {
   return name;
 }
 
-void BDSParallelWorldImportance::Add(G4IStore* aIstore) {
+void BDSParallelWorldImportance::AddIStore() {
+  G4IStore* aIstore = G4IStore::GetInstance(imWorldPV->GetName());
+
+  // create a geometry cell for the world volume replicaNumber is 0!
+  G4GeometryCell gWorldVolumeCell(*imWorldPV, 0);
+
   // set importance values and create scorers
   G4int numCells = (G4int) imVolumesAndValues.size();
 

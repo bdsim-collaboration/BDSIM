@@ -16,8 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
+#include "BDSParallelWorldImportance.hh"
 #include "BDSParallelWorldInfo.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParallelWorldUtilities.hh"
@@ -100,6 +102,14 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	  samplerWorlds.push_back(sWorld);
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
+    }
+
+  // only create the importance parallel world if the file is specified
+  if (BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile() != "")
+    {
+      BDSParallelWorldImportance *importanceWorld = new BDSParallelWorldImportance("main");
+      massWorld->RegisterParallelWorld(importanceWorld);
+      samplerWorlds.push_back(importanceWorld);
     }
 
   return samplerWorlds;

@@ -63,7 +63,7 @@ class BDSBOptrMultiParticleChangeCrossSection;
 class BDSParallelWorldImportance: public G4VUserParallelWorld
 {
 public:
-    BDSParallelWorldImportance();
+  explicit  BDSParallelWorldImportance(G4String name);
   virtual ~BDSParallelWorldImportance();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
@@ -84,7 +84,7 @@ public:
 
   G4GeometryCell GetGeometryCell(G4int i);
 
-  void Add(G4IStore* aIstore);
+  void AddIStore();
 
 private:
   /// assignment and copy constructor not implemented nor used
@@ -123,11 +123,14 @@ private:
 
   BDSExtent worldExtent; ///< Record of the world extent.
 
-  std::vector< G4LogicalVolume * > fLogicalVolumeVector;
+  std::vector< G4LogicalVolume* > parallelLogicalVolumes;
+  std::vector< G4VPhysicalVolume* > parallelPhysicalVolumes;
 
-  BDSImportanceVolumeStore fPVolumeStore;
+  BDSImportanceVolumeStore imVolumeStore;
 
   std::map<G4String, G4double> imVolumesAndValues;
+
+  const BDSGlobalConstants* globals;
 };
 
 #endif

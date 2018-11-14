@@ -143,15 +143,6 @@ int main(int argc,char** argv)
   auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);
 
-//TODO: MOVE INTO BDS::ConstructAndRegisterParallelWorlds
-    BDSParallelWorldImportance *importanceWorld;
-  if (globalConstants->ImportanceWorldGeometryFile() != "")
-    {
-      // create a parallel detector
-      importanceWorld = new BDSParallelWorldImportance();
-      realWorld->RegisterParallelWorld(importanceWorld);
-    }
-
   /// For geometry sampling, phys list must be initialized before detector.
   /// BUT for samplers we use a parallel world and this HAS to be before the physcis
 #ifdef BDSDEBUG 
@@ -281,18 +272,9 @@ int main(int argc,char** argv)
 #endif
   runManager->Initialize();
 
-//TODO: REPLACE THIS WITH A SEPARATE METHOD
-  if (globalConstants->ImportanceWorldGeometryFile() != "")
-  {
-    G4VPhysicalVolume& imWorld = importanceWorld->GetWorldVolumeAddress();
-    G4IStore* aIstore = G4IStore::GetInstance(importanceWorld->GetName());
+  //Importance sampling code will go here
+  //auto imWorld = samplerWorlds[3];
 
-    // create a geometry cell for the world volume replicaNumber is 0!
-    G4GeometryCell gWorldVolumeCell(imWorld, 0);
-
-    importanceWorld->Add(aIstore);
-
-  }
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
