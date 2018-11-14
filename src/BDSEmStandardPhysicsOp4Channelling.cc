@@ -35,6 +35,11 @@
 //
 //----------------------------------------------------------------------------
 //
+#include "G4Version.hh"
+// just exclude whole physics list for < 10.4 as it's only used with channelling that's in 10.4
+#if G4VERSION_NUMBER > 1039
+
+
 
 #include "BDSEmStandardPhysicsOp4Channelling.hh"
 
@@ -42,7 +47,6 @@
 #include "G4ParticleDefinition.hh"
 #include "G4LossTableManager.hh"
 #include "G4EmParameters.hh"
-#include "G4Version.hh"
 
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
@@ -80,9 +84,7 @@
 #include "G4MuPairProduction.hh"
 #include "G4hBremsstrahlung.hh"
 #include "G4hPairProduction.hh"
-#if G4VERSION_NUMBER > 1029
 #include "G4ePairProduction.hh"
-#endif
 
 #include "G4MuBremsstrahlungModel.hh"
 #include "G4MuPairProductionModel.hh"
@@ -113,9 +115,7 @@
 
 #include "G4PhysicsListHelper.hh"
 #include "G4BuilderType.hh"
-#if G4VERSION_NUMBER > 1019
 #include "G4EmModelActivator.hh"
-#endif
 
 // factory
 #include "G4PhysicsConstructorFactory.hh"
@@ -195,9 +195,8 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   G4hPairProduction* kp = new G4hPairProduction();
   G4hBremsstrahlung* pb = new G4hBremsstrahlung();
   G4hPairProduction* pp = new G4hPairProduction();
-#if G4VERSION_NUMBER > 1029
   G4ePairProduction* ee = new G4ePairProduction();
-#endif
+  
   // muon & hadron multiple scattering
   G4CoulombScattering* muss = new G4CoulombScattering();
   G4CoulombScattering* piss = new G4CoulombScattering();
@@ -422,13 +421,13 @@ void BDSEmStandardPhysicsOp4Channelling::ConstructProcess()
   // Deexcitation
   G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
   G4LossTableManager::Instance()->SetAtomDeexcitation(de);
-#if G4VERSION_NUMBER > 1019
 #if G4VERSION_NUMBER > 1029
   G4EmModelActivator mact(GetPhysicsName());
 #else
   G4EmModelActivator mact;
 #endif
-#endif
 }
+
+#endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
