@@ -88,25 +88,26 @@ public:
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSSamplerHit* hit);
+  void Fill(const BDSSamplerHit* hit,
+	    G4bool storeCharge = false);
   void Fill(const BDSParticleCoordsFull& coords,
+	    const G4double charge,
 	    const G4int pdgID,
 	    const G4int turnsTaken,
 	    const G4int beamlineIndex);
 #endif
 
   /// @{ Calculate and fill calculated variables.
-  inline void FillCharge()   {charge   = getCharge();}
   inline void FillMass()     {mass     = getMass();}
   inline void FillRigidity() {rigidity = getRigidity();}
   inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
   inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
   /// @}
   
-  void FillCMR();  ///< Calculate and fill charge, mass and rigidity.
-  void FillCMRK(); ///< Calculate and fill charge, mass, rigidity, and kinetic energy.
-  void FillCMRI(); ///< Calculate and fill charge, mass, rigidity and ion properties.
-  void FillCMRIK(); ///< Calculate and fill charge, mass, rigidity, kinetic energy, and ion properties.
+  void FillMR();  ///< Calculate and fill mass and rigidity.
+  void FillMRK(); ///< Calculate and fill mass, rigidity, and kinetic energy.
+  void FillMRI(); ///< Calculate and fill mass, rigidity and ion properties.
+  void FillMRIK();///< Calculate and fill mass, rigidity, kinetic energy, and ion properties.
 
   void SetBranchAddress(TTree *);
   void Flush();  ///< Clean Sampler

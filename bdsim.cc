@@ -191,7 +191,8 @@ int main(int argc,char** argv)
   if (globalConstants->GeneratePrimariesOnly())
     {
       const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
-	
+      const G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
       const G4int nToGenerate = globalConstants->NGenerate();
@@ -202,7 +203,7 @@ int main(int argc,char** argv)
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
 	  auto coords = bdsBunch->GetNextParticle();
-	  bdsOutput->FillEventPrimaryOnly(coords, pdgID);
+	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID);
 	}
       // Write options now file open.
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
@@ -235,7 +236,8 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSEventAction(bdsOutput));
+  BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
+  runManager->SetUserAction(eventAction);
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
@@ -252,7 +254,8 @@ int main(int argc,char** argv)
 #endif
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
-						  globalConstants->TrajNoTransportation()));
+						  globalConstants->TrajNoTransportation(),
+						  eventAction));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;

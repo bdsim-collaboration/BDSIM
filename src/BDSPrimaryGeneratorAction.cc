@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -140,6 +140,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
       else
 	{particleDef = particleToUse->ParticleDefinition();}
+      // update charge as always set explicitly with particleGun
+      // note for ions, this may be different from particleDef->GetPDGCharge
+      particleCharge = beamParticle->Charge();
     }
 
   particleGun->SetParticleDefinition(particleDef);
@@ -194,7 +197,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge));
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

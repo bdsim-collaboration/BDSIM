@@ -1066,6 +1066,9 @@ void BDSModularPhysicsList::Channelling()
 {
   if (!physicsActivated["channelling"])
     {
+      G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
+      biasingPhysics->PhysicsBiasAllCharged();
+      RegisterPhysics(biasingPhysics);
       constructors.push_back(new BDSPhysicsChannelling());
       physicsActivated["channelling"] = true;
     }

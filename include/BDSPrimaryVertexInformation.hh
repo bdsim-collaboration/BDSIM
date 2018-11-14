@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSParticleCoordsFullGlobal.hh"
 
+#include "globals.hh"
 #include "G4VUserPrimaryVertexInformation.hh"
 
 /**
@@ -36,13 +37,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSPrimaryVertexInformation: public G4VUserPrimaryVertexInformation
 {
 public:
-  explicit BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn);
+  BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
+			      const G4double chargeIn);
   virtual ~BDSPrimaryVertexInformation(){;}
 
   /// Required implementation by virtual base class.
   virtual void Print() const;
 
   BDSParticleCoordsFullGlobal primaryVertex; ///< Full set of coordinates.
+  G4double charge; ///< Effective charge of primary.
 
 private:
   BDSPrimaryVertexInformation() = delete;

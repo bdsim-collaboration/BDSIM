@@ -21,11 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn):
-  primaryVertex(primaryVertexIn)
+BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
+							  const G4double chargeIn):
+  primaryVertex(primaryVertexIn),
+  charge(chargeIn)
 {;}
 
 void BDSPrimaryVertexInformation::Print() const
 {
   G4cout << primaryVertex << G4endl;
+  G4cout << "Primary particle charge " << charge / CLHEP::eplus << G4endl;
 }
