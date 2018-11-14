@@ -122,7 +122,7 @@ double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
 }
 
 double BDSOutputROOTGeant4Data::KineticEnergy(const int&    pdgID,
-                      const double& totalEnergy) const
+					      const double& totalEnergy) const
 {
   if (IsIon(pdgID))
     {
@@ -234,8 +234,8 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
 						     (int)def->GetPDGCharge(),
 						     (double)def->GetPDGMass()/CLHEP::GeV,
-						     (int)def->GetAtomicNumber(),
-						     (int)def->GetAtomicMass()};
+						     (int)def->GetAtomicMass(),
+						     (int)def->GetAtomicNumber()};
 	  ions[def->GetPDGEncoding()] = ionDef;
 	}
     }

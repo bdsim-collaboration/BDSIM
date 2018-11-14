@@ -41,6 +41,9 @@
 // the most adavced options allowing precise simulation at low
 // and intermediate energies
 //
+#include "G4Version.hh"
+// just exclude whole physics list for < 10.4 as it's only used with channelling that's in 10.4
+#if G4VERSION_NUMBER > 1039
 
 #ifndef BDSSTANDARDPHYSICSOP4CHANNELLING_H
 #define BDSSTANDARDPHYSICSOP4CHANNELLING_H
@@ -49,6 +52,10 @@
 #include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+/**
+ * @brief Copy of crystal channelling em physics from Geant4.
+ */
 
 class BDSEmStandardPhysicsOp4Channelling : public G4VPhysicsConstructor
 {
@@ -66,5 +73,7 @@ private:
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif
 
 #endif

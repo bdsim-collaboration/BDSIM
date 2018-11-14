@@ -1234,6 +1234,7 @@ Parameter         Description                   Default     Required
 ================  ============================  ==========  ===========
 
 * A positive field corresponds to a field in along the direction of positive S.
+* The entrance / exit solenoid fringes are not constructed if the previous / next element is also a solenoid.
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 
@@ -3536,6 +3537,11 @@ following options.
 | storeElossPreStepKineticEnergy    | Stores the kinetic energy of the particle causing energy deposition|
 |                                   | as taken from the beginning of the step before it made it. Default |
 |                                   | off.                                                               |
++-----------------------------------+--------------------------------------------------------------------+
+| storeGeant4Data                   | Whether to store basic particle information for all particles used |
+|                                   | in the simulation under Geant4Data in the output. This can be      |
+|                                   | relatively large when ions are used as there are many thousands    |
+|                                   | of ion definitions. Default on.                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output. Default on.  |
 +-----------------------------------+--------------------------------------------------------------------+

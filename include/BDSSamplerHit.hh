@@ -38,11 +38,12 @@ class BDSSamplerHit: public G4VHit
 public:
   BDSSamplerHit(G4int samplerIDIn,
 		const BDSParticleCoordsFull& coordsIn,
-		G4int pdgIDIn,
-		G4int parentIDIn,
-		G4int trackIDIn,
-		G4int turnsTakenIn,
-		G4int beamlineIndexIn);
+		G4double chargeIn,
+		G4int    pdgIDIn,
+		G4int    parentIDIn,
+		G4int    trackIDIn,
+		G4int    turnsTakenIn,
+		G4int    beamlineIndexIn);
   
   virtual ~BDSSamplerHit(){;}
   
@@ -51,6 +52,7 @@ public:
 
   G4int                 samplerID;
   BDSParticleCoordsFull coords;
+  G4double              charge; // double as g4 uses it as a double
   G4int                 pdgID;
   G4int                 parentID;
   G4int                 trackID;

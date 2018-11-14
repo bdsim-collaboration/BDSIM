@@ -98,7 +98,9 @@ private:
   BDSEnergyCounterSD* tunnelECounter;
   BDSEnergyCounterSD* worldECounter;
   BDSVolumeExitSD*    worldExit;
+#if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
+#endif
   /// @}
 };
 

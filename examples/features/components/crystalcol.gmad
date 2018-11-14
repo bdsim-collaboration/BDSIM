@@ -20,10 +20,7 @@ col1 : crystalcol, l=4.001*mm, apertureType="rectangular", aper1=0.25*cm, aper2=
 		   xsize=2*mm;
 
 lat: line = (col1);
-
-
 use, lat;
-
 sample, all;
 
 beam, particle="proton",
@@ -31,7 +28,5 @@ beam, particle="proton",
       X0=2*mm,
       Xp0=10*urad;
 
-
-!option, physicsList="ftfp_bert em channelling",
-!	stopSecondaries=1;
-option, physicsList="channelling";
+option, physicsList="completechannelling",
+	stopSecondaries=1;
