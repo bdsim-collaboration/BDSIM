@@ -18,11 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipole.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
@@ -43,6 +43,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn,
+							     const BDSParticleDefinition* designParticle,
 							     const G4double&          tiltIn):
   BDSIntegratorMag(eqOfMIn, 6),
   nominalBRho(brhoIn),
@@ -52,8 +53,8 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   nominalRho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   nominalField((*strengthIn)["field"]),
   fieldRatio(nominalField/ (nominalBRho/nominalRho)),
-  nominalEnergy(BDSGlobalConstants::Instance()->BeamTotalEnergy()),
-  nominalMass(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass()),
+  nominalEnergy(designParticle->TotalEnergy()),
+  nominalMass(designParticle->Mass()),
   fieldArcLength((*strengthIn)["length"]),
   nominalAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
