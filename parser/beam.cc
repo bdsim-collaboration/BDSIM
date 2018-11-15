@@ -116,6 +116,8 @@ bool Beam::HasBeenSet(std::string name) const
 void Beam::PublishMembers()
 {
   publish("particle",             &Beam::particleName);
+  publish("particleName",         &Beam::particleName);
+  publish("beamParticleName",     &Beam::beamParticleName);
   publish("energy",               &Beam::beamEnergy);
   publish("distrType",            &Beam::distrType);
   publish("xDistrType",           &Beam::xDistrType);
