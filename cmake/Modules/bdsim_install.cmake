@@ -6,7 +6,7 @@
 # into a different component via COMPONENT. These components will 
 # be used to create the installation components.
 macro(bdsim_install_targets)
-    install(TARGETS ${ARGN}
+    install(TARGETS ${ARGN} EXPORT BDSIMTargets
       BUNDLE
       DESTINATION .
       COMPONENT Runtime

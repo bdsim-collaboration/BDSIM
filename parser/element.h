@@ -42,6 +42,8 @@ namespace GMAD
   struct Element : public Published<Element>{
     ElementType type; ///< element enum
     std::string name;
+    std::string userTypeName; ///< User component element type name.
+    std::string userParameters; ///< String for passing user parameters through.
 
     double l; ///< length in metres
     double scaling; ///< Overall scaling of field strength.

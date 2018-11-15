@@ -43,6 +43,7 @@ namespace GMAD {
 class BDSAcceleratorModel;
 class BDSBeamline;
 class BDSBeamlineSet;
+class BDSComponentFactoryUser;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -64,7 +65,7 @@ class BDSBOptrMultiParticleChangeCrossSection;
 class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
-  BDSDetectorConstruction();
+  explicit BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
   virtual ~BDSDetectorConstruction();
 
   /// Loop over beam line and work out maximum tolerable sampler radius.
@@ -176,6 +177,8 @@ private:
   G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
   G4bool useExternalGeometryWorld;
+
+  BDSComponentFactoryUser* userComponentFactory;
 };
 
 #endif
