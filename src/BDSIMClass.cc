@@ -187,11 +187,14 @@ int BDSIM::Initialise()
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
   // runManager->Initialize()).
-  BDSParticleDefinition* beamParticle;
-  beamParticle = BDS::ConstructBeamParticle(globalConstants->ParticleName(),
-					    globalConstants->BeamTotalEnergy(),
-					    globalConstants->FFact());
-  globalConstants->SetBeamParticleDefinition(beamParticle);
+  BDSParticleDefinition* designParticle = nullptr;
+  BDSParticleDefinition* beamParticle = nullptr;
+  G4bool beamDifferentFromDesignParticle = false;
+  BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
+				      globalConstants->FFact(),
+				      designParticle,
+				      beamParticle,
+				      beamDifferentFromDesignParticle);
   if (usualPrintOut)
     {G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;}
   // update rigidity where needed
