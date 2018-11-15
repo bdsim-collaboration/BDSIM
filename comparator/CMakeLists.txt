@@ -10,7 +10,7 @@ target_link_libraries(comparator bdsimRootEvent rebdsim)
 
 add_executable(comparatorexec comparator.cc)
 set_target_properties(comparatorexec PROPERTIES OUTPUT_NAME "comparator" VERSION ${BDSIM_VERSION})
-target_link_libraries(comparatorexec comparator bdsim)
+target_link_libraries(comparatorexec comparator ${BDSIM_LIB_NAME})
 
 # Installation
 bdsim_install_targets(comparatorexec comparator)

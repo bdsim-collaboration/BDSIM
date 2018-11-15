@@ -104,6 +104,8 @@ std::string GMAD::typestr(ElementType type)
       {return "rmatrix";             break;}
     case ElementType::_UNDULATOR:
       {return "undulator";           break;}
+    case ElementType::_USERCOMPONENT:
+      {return "usercomponent";       break;}
     default:
       {return "none"; break;}
     }

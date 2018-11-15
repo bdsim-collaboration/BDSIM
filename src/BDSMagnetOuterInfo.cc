@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSColours.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuterInfo.hh"
 
@@ -37,9 +38,10 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   buildEndPieces(true),
   coilWidthFraction(0.65),
   coilHeightFraction(0.8),
-  geometryTypeAndPath(""),
-  colour(nullptr)
-{;}
+  geometryTypeAndPath("")
+{
+  colour = BDSColours::Instance()->GetColour("default");
+}
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,

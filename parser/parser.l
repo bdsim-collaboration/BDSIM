@@ -126,6 +126,7 @@ rmatrix {return RMATRIX;}
 crystalcol { return CRYSTALCOL; }
 wirescanner { return WIRESCANNER; }
 undulator { return UNDULATOR; }
+usercomponent { return USERCOMPONENT; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

@@ -25,13 +25,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Random/Random.h"
 
 BDSRunManager::BDSRunManager()
-{;}
+{
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "constructing run manager"<<G4endl;
+#endif
+}
 
 BDSRunManager::~BDSRunManager()
-{;}
+{
+#ifdef BDSDEBUG 
+  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
+#endif
+}
 
 void BDSRunManager::Initialize()
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "> Initialising Geant4 kernel"<<G4endl;
+#endif
   G4RunManager::Initialize();
 
   BDSExtent worldExtent;
