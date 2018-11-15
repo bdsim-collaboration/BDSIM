@@ -70,7 +70,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 #ifdef USE_GZSTREAM
-#include "gzstream.h"
+#include "src-external/gzstream/gzstream.h"
 #endif
 
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;

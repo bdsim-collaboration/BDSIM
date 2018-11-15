@@ -29,6 +29,7 @@ BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
 					  G4int         fileNumberOffset)
 {
 #ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "setting up output." << G4endl;
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
 #endif
   BDSOutput* result = nullptr;

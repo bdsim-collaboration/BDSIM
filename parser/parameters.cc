@@ -32,6 +32,8 @@ Parameters::Parameters()
 {
   // fill setMap, needs to match published member names
   // usually same but some exceptions, those are commented
+  setMap["userTypeName"]   = false;
+  setMap["userParameters"] = false;
   setMap["l"]         = false;
   setMap["scaling"]   = false;
   setMap["ks"]        = false;
