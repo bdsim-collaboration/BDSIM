@@ -54,13 +54,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 				       GMAD::Beam&          beamIn):
   options(opt),
   beam(beamIn),
-  beamParticleDefinition(nullptr),
   turnsTaken(0)
 {
   ResetTurnNumber();
   outputType = BDS::DetermineOutputType(options.outputFormat);
-
-  particleName = G4String(beam.particleName);
 
   numberToGenerate = G4int(options.nGenerate);
 

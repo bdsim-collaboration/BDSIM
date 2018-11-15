@@ -141,7 +141,6 @@ public:
   inline G4double TunnelOffsetX()            const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()            const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
   inline G4double ElossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
-  inline G4double BeamTotalEnergy()          const {return G4double(beam.beamEnergy)*CLHEP::GeV;}
   inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
   inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}
@@ -174,7 +173,6 @@ public:
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
-  inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveOuter()           const {return G4bool  (options.sensitiveOuter);}
   inline G4bool   SensitiveVacuum()          const {return G4bool  (options.sensitiveVacuum);}
@@ -261,9 +259,7 @@ public:
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
-  inline G4String              ParticleName()            const {return beam.particleName;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}
-  inline BDSParticleDefinition* BeamParticleDefinition() const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -292,12 +288,7 @@ public:
   void SetLaserwireWavelength(G4String aName, G4double aWavelength);
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
-private:
-  BDSParticleDefinition* beamParticleDefinition; ///< Initial bunch parameters
-
-  /// Particle name
-  G4String particleName;
-  
+private:  
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
 
@@ -339,9 +330,6 @@ private:
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
 };
-
-inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
-{beamParticleDefinition = particleDefinitionIn;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
