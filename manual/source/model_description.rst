@@ -1,3 +1,7 @@
+.. macro for non breaking white space usefulf or units:
+.. |nbsp| unicode:: 0xA0
+   :trim:
+
 .. _model-description:
 
 ================================
@@ -3081,6 +3085,7 @@ options. All options are described in the following sub-sections:
 * :ref:`physics-process-options`
 * `Visualisation`_
 * `Output Options`_
+* `One Turn Map`_
 * `Offset for Main Beam Line`_
 * `Scoring Map`_
 * `Developer Options`_
@@ -3596,6 +3601,39 @@ following options.
 | trajCutLTR                        | Only stores trajectories whose *global* radius is from the start   |
 |                                   | position (sqrt(x^2, y^2)).                                         |
 +-----------------------------------+--------------------------------------------------------------------+
+
+.. _one-turn-map:
+
+One Turn Map
+^^^^^^^^^^^^
+
+Geant4 mandates that there are no overlaps between solids, which in
+BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice
+element.  Whilst these thin gaps have a negligible effect for a single
+pass or turn, over several turns it introduces a sizeable inaccuracy
+in the tracking.  To correct for this, BDSIM models can be supplmented
+with a one turn map which is applied at the end of each turn to right
+the primary back onto the correct trajectory.  To ensure physical
+results the one turn map is only applied to primaries, if they did not
+interact on the previous turn, and if they are within 5% of the
+reference momentum.  The one turn map is also not applied on the first
+turn where there the beam is offset in S, but applied on following
+turns, still accounting for the exceptions mentioned above.
+
+The map must be of the format as written by MADX-PTC's ``PTC_NORMAL``
+command.  A one turn map (in this case, 12th order) can be generated
+in MAD-X with the following::
+
+  PTC_CREATE_UNIVERSE;
+  PTC_CREATE_LAYOUT, model=2,method=6,nst=10, exact=true, resplit, xbend;
+  PTC_NORMAL,maptable,icase=5,no=12;
+  write, table="map_table", file="my_oneturn_map_file";
+  PTC_END;
+
+To use then use the one turn map with BDSIM::
+
+  option, ptcOneTurnMapFileName="path/to/my_oneturn_map_file";
+
 
 .. _beamline-offset:
 
