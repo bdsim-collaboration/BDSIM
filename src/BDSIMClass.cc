@@ -196,12 +196,15 @@ int BDSIM::Initialise()
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
   if (usualPrintOut)
-    {G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;}
+    {
+      G4cout << "Design particle properties: " << G4endl << *designParticle;
+      if (beamDifferentFromDesignParticle)
+	{G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
+    }
   // update rigidity where needed
-  realWorld->SetRigidityForConstruction(beamParticle->BRho());
-  realWorld->SetBeta0ForConstruction(beamParticle->Beta());
-  BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
-  BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
+  realWorld->SetDesignParticle(designParticle);
+  BDSFieldFactory::SetDesignParticle(designParticle);
+  BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());

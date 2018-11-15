@@ -125,7 +125,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <vector>
 
-G4double BDSFieldFactory::defaultRigidity = std::numeric_limits<double>::max();
+const BDSParticleDefinition* BDSFieldFactory::designParticle = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
@@ -138,8 +138,8 @@ BDSFieldFactory* BDSFieldFactory::Instance()
 
 BDSFieldFactory::BDSFieldFactory()
 {
-  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
-			  defaultRigidity);
+  G4double defaultRigidity = std::numeric_limits<double>::max();
+  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
 }
 
 BDSFieldFactory::~BDSFieldFactory()

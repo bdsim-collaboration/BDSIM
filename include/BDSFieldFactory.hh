@@ -36,6 +36,7 @@ class BDSField;
 class BDSFieldInfo;
 class BDSFieldObjects;
 class BDSMagnetStrength;
+class BDSParticleDefinition;
 
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
@@ -69,7 +70,8 @@ public:
   static BDSFieldFactory* Instance();
 
   /// Update the internal cache of the rigidity.
-  static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
+  static void SetDesignParticle(const BDSParticleDefinition* designParticleIn)
+  {designParticle = designParticleIn;}
   
   ~BDSFieldFactory();
 
@@ -163,7 +165,7 @@ private:
   /// BDSFieldInfo definitions prepare from parser vector of definitions.
   std::map<G4String, BDSFieldInfo*> parserDefinitions;
 
-  /// Cache of default rigidity.
-  static G4double defaultRigidity;
+  /// Cache of design particle for fields.
+  static const BDSParticleDefinition* designParticle;
 };
 #endif
