@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ClassicalRK4.hh"
 
 G4double BDSIntegratorMag::thinElementLength = -1; // mm
+G4double BDSIntegratorMag::nominalMatrixRelativeMomCut = -1;
 
 BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
 				   G4int        nVariablesIn):
@@ -39,6 +40,9 @@ BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
 
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+
+  if (nominalMatrixRelativeMomCut < 0)
+    {nominalMatrixRelativeMomCut = BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut();}
 }
   
 BDSIntegratorMag::~BDSIntegratorMag()
