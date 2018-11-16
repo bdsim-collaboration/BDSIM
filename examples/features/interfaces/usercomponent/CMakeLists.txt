@@ -6,7 +6,7 @@ project(usercomponent)
 set(bdsim_DIR /Users/nevay/physics/reps/bdsim-interface-install/lib/cmake/bdsim)
 
 # find the package and set up variables
-find_package(bdsim REQUIRED)
+find_package(BDSIM REQUIRED)
 
 # add headers from BDSIM
 include_directories(${BDSIM_INCLUDE_DIR}/bdsim)
