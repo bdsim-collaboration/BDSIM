@@ -6,7 +6,7 @@ project (externalcpp)
 set(bdsim_DIR /Users/nevay/physics/reps/bdsim-interface-install/lib/cmake/bdsim)
 
 # find the package and set up variables
-find_package(bdsim REQUIRED)
+find_package(BDSIM REQUIRED)
 
 # define program includes
 include_directories(${BDSIM_INCLUDE_DIR}/bdsim)
