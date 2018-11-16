@@ -96,7 +96,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
-  if (S0 >= beamlineS && BDS::IsFinite(beamlineS))
+  if (S0 > beamlineS)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using curvilinear transform" << G4endl;

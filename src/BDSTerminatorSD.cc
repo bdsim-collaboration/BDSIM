@@ -58,6 +58,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << "parentID:         " << parentID    << G4endl;
   G4cout << __METHOD_NAME__ << "track lenth (mm): " << trackLength << G4endl;
 #endif
+
   if ((parentID == 0) && (trackLength > 1000) && aStep->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
       // parentID == 0 -> primary particle - should only increment turn number for primaries

@@ -287,6 +287,8 @@ namespace GMAD
     double   printFractionEvents;
     double   printFractionTurns;
 
+    std::string ptcOneTurnMapFileName;
+
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
 

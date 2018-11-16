@@ -36,6 +36,7 @@ class BDSField;
 class BDSFieldInfo;
 class BDSFieldObjects;
 class BDSMagnetStrength;
+class BDSPrimaryGeneratorAction;
 
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
@@ -70,7 +71,9 @@ public:
 
   /// Update the internal cache of the rigidity.
   static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
-  
+  /// Update the internal cache of the primary generator action.
+  static void SetPrimaryGeneratorAction(BDSPrimaryGeneratorAction* pgaIn) {primaryGeneratorAction = pgaIn;}
+
   ~BDSFieldFactory();
 
   /// Main interface to field factory.
@@ -148,8 +151,8 @@ private:
   static BDSFieldFactory* instance;
   
   /// Splits the G4String member variable formatAndName on the ":" character.
-  /// Whatever is before is taken as the fromat string and whatever is after is
-  /// taken as the filepath.
+  /// Whatever is before is taken as the format string and whatever is after is
+  /// taken as the file path.
   void ParseFormatAndFilename();
 
   /// Reset all pointers to nullptr that are temporarily used during construction
@@ -165,5 +168,7 @@ private:
 
   /// Cache of default rigidity.
   static G4double defaultRigidity;
+  /// Cache of primary generator action.
+  static BDSPrimaryGeneratorAction* primaryGeneratorAction;
 };
 #endif

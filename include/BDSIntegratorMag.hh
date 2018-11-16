@@ -58,6 +58,11 @@ public:
   /// for coordinate lookup.
   static G4double thinElementLength;
 
+  /// This static variable is updated by BDSFieldManager that marks each
+  /// track as primary or not here. This variable is used throughout our
+  /// integrators for magnetic fields which inherit this class.
+  static G4bool currentTrackIsPrimary;
+
 protected:
   /// Convert final local position and direction to global frame. Allow
     /// scaling of momentum in case localMom is a unit vector

@@ -86,7 +86,10 @@ public:
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
   /// z0 will be treated as S and the global z0 be calculated.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
-  
+
+  G4double GetCentralMomentum() {return P0;}
+  G4bool GetUseCurvilinear() {return useCurvilinear;}
+
 protected:
   /// Apply either the curivilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
