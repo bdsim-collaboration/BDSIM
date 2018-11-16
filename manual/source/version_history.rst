@@ -39,6 +39,7 @@ General
   is required to record both this information and the energy leaving the world
   as this requires G4MultiSensitiveDetector.
 * New tests for testing backwards compatibility of analysis tool with previous data version.
+* "Model Preparation" is now "Model Conversion" in the manual to be clearer.
   
 Bug Fixes
 ---------
