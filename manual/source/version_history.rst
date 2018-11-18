@@ -22,6 +22,10 @@ New Features
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
 * New complete physics list for crystal channelling to achieve the correct result.
+* New ability to specify a different beam particle that is different from the design
+  particle used for magnetic field strength calculations (:code:`beamParticleName`).
+* Specify the particle assumed for the user file distribution that can be different from
+  the design particle.
   
 General
 -------

@@ -3746,11 +3746,15 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used. This also specifies the particle species and **reference energy**, which is the
-design energy of the machine. This is used along with the particle species to calculate
+used. This also specifies the particle species and **reference total energy**, which is the
+design total energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic rigidity that magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
 is calculated using this if only the `angle` parameter has been specified.
+
+Apart from the design particle and energy, a beam of particles of a different species and total
+energy may be specified. By default, if only one particle is specified this is assumed to be
+both the design particle and the particle used for the beam distribution.
 
 .. note:: The design energy is required to be specified, but the central energy, of say
 	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
@@ -3789,6 +3793,9 @@ used. The particle must be given by the Geant4 name. The ones above are always d
 and so can always safely be used irrespective of the physics lists used. If the particle
 definition is not found, BDSIM will print a warning and exit.
 
+Ion Beams
+^^^^^^^^^
+
 The user may also specify any ion with the following syntax::
 
   beam, particle="ion A Z";
@@ -3803,6 +3810,35 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
+
+Different Beam and Design Particles
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The model may use one particle for design and one for the beam distribution. The "design" particle
+is used to calculate the rigidity that is used along with normalised field strengths (such as
+:code:`k1` for quadrupoles) to calculate an absolute field or field gradient. However, it is
+often useful to simulate a beam of other particles. To specify a different central energy, the
+parameter :code:`E0` should be used. If a different particle is required the parameter
+:code:`beamParticleName` should be used. Examples::
+
+   beam, particle="e-",
+         energy=100*GeV,
+	 beamParticleName="e+";
+
+This specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution parameters).::
+
+   beam, particle="e-",
+         energy=100*GeV,
+	 beamParticleName="e+",
+	 E0=20*GeV;
+
+This specified that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam tracked is a 20 GeV positron beam.
+
+* If no :code:`beamParticleName` variable is specified, it's assumed to be the same as :code:`particle`.
+* If no :code:`E0` variable is specified, it's assumed to be the same as :code:`energy`.
+	
 
 Generate Only the Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
