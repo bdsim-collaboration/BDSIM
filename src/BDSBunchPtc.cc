@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <regex>
 
 BDSBunchPtc::BDSBunchPtc():
+  matchDistrFileLength(false),
   nRays(0),
   fileName("./inrays.madx"),
   iRay(0),
@@ -119,10 +120,9 @@ void BDSBunchPtc::LoadPtcFile()
 
   // set number of available rays in options
   nRays = ptcData.size();
-
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  if (globals->MatchDistrFileLength())
-    {globals->SetNumberToGenerate(nRays);}
+  
+  if (matchDistrFileLength)
+    {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
 
   return;
 }
@@ -138,6 +138,7 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
 #endif
 
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
+  matchDistrFileLength = G4bool(beam.matchDistrFileLength);
   beta = beamParticle->Beta();
   SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();

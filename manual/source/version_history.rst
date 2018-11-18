@@ -17,10 +17,19 @@ New Features
   gas in the beam pipe 'vacuum' is recorded.
 * New option :code:`storeElossModelID` to control whether the beam line index is stored in
   the energy loss output. More granular than :code:`storeElossLinks`.
+* New option :code:`storeGeant4Data` to control whether the basic particle data is stored in
+  the output for all particles used or not.
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
 * New complete physics list for crystal channelling to achieve the correct result.
+* New ability to specify a different beam particle that is different from the design
+  particle used for magnetic field strength calculations (:code:`beamParticleName`).
+* Specify the particle assumed for the user file distribution that can be different from
+  the design particle.
   
+* New option to use a one turn map generated from MAD-X PTC to correct
+  multi-turn tracking for circular machines.
+
 General
 -------
 
@@ -37,6 +46,7 @@ General
   is required to record both this information and the energy leaving the world
   as this requires G4MultiSensitiveDetector.
 * New tests for testing backwards compatibility of analysis tool with previous data version.
+* "Model Preparation" is now "Model Conversion" in the manual to be clearer.
   
 Bug Fixes
 ---------
@@ -59,7 +69,11 @@ Bug Fixes
   only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
   allow use of more advanced geometries than a box.
 * Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
-
+* Fix A and Z being the wrong way around for ions in samplers.
+* Charge now correctly recorded in primaries and in samplers for partially stripped ions.
+* Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
+* Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for field maps.
+  
 Output Changes
 --------------
 

@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineSet.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSComponentFactoryUser.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
@@ -82,10 +83,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-BDSDetectorConstruction::BDSDetectorConstruction():
+BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
-  brho(std::numeric_limits<double>::max()),
-  beta0(1)
+  designParticle(nullptr),
+  userComponentFactory(userComponentFactoryIn)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   verbose       = globals->Verbose();
@@ -267,7 +268,9 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular)
 {
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho, beta0);
+  if (userComponentFactory)
+    {userComponentFactory->SetDesignParticle(designParticle);}
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
   BDSBeamline* massWorld = new BDSBeamline(initialTransform, initialS);
     
   if (beamlineIsCircular)

@@ -34,10 +34,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <functional>
 #include <iostream>
+#include <iterator>
 #include <limits>
+#include <map>
 #include <signal.h>
+#include <sstream>
+#include <string>
 #include <unistd.h>
 #include <utility>
+#include <vector>
 
 #include <sys/resource.h>
 #include <sys/stat.h>
@@ -534,5 +539,23 @@ G4double BDS::GetMemoryUsage()
 {
   struct rusage r_usage;
   G4double result = getrusage(RUSAGE_SELF,&r_usage);
+  return result;
+}
+
+std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
+{
+  // split by white space then by colon
+  std::istringstream iss(userParameters);
+  std::vector<std::string> paramaterPairs(std::istream_iterator<std::string>{iss},
+					  std::istream_iterator<std::string>{});
+
+  std::map<G4String, G4String> result;
+  for (auto& pair : paramaterPairs)
+    {
+      auto index = pair.find(":");
+      std::string key = pair.substr(0, index);
+      std::string value = pair.substr(index+1);
+      result[G4String(key)] = G4String(value);
+    }
   return result;
 }

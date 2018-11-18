@@ -257,7 +257,7 @@ namespace GMAD
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
-    
+    bool        storeGeant4Data;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -286,6 +286,8 @@ namespace GMAD
 
     double   printFractionEvents;
     double   printFractionTurns;
+
+    std::string ptcOneTurnMapFileName;
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation

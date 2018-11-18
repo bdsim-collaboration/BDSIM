@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TfsFile.hh"
 
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -53,7 +54,7 @@ void PTC::TfsFile::Load()
   f.seekg(0, std::ios::beg);
 
   // calculate print out rate
-  int perLinePrintOut = 0.02*n; // 2% print out
+  int perLinePrintOut = std::ceil(0.02*n); // 2% print out
 
   // temporary variables and regexes
   std::string line;

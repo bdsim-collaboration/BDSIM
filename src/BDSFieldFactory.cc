@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSPTCOneTurnMap.hh"
+#include "BDSPrimaryGeneratorAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
@@ -125,7 +127,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <vector>
 
-G4double BDSFieldFactory::defaultRigidity = std::numeric_limits<double>::max();
+const BDSParticleDefinition* BDSFieldFactory::designParticle = nullptr;
+BDSPrimaryGeneratorAction* BDSFieldFactory::primaryGeneratorAction = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
@@ -138,8 +141,10 @@ BDSFieldFactory* BDSFieldFactory::Instance()
 
 BDSFieldFactory::BDSFieldFactory()
 {
-  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
-			  defaultRigidity);
+  G4double defaultRigidity = std::numeric_limits<double>::max();
+  if (designParticle)
+    {defaultRigidity = designParticle->BRho();}
+  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
 }
 
 BDSFieldFactory::~BDSFieldFactory()
@@ -558,7 +563,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::dipolerodrigues2:
       integrator = new BDSIntegratorDipoleRodrigues2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::dipolematrix:
-      integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Tilt()); break;
+      integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature, designParticle, info.Tilt()); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::sextupole:
@@ -729,12 +734,25 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
-  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
-								    (*info.MagnetStrength())["length"]);
-  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
-							    bEqOfMotion, integrator);
+  G4MagneticField* bGlobalField = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion = new G4Mag_UsualEqRhs(bGlobalField);
+
+  G4MagIntegratorStepper* integrator;
+  auto mapfile = BDSGlobalConstants::Instance()->PTCOneTurnMapFileName();
+  BDSPTCOneTurnMap* otm = nullptr;
+
+  if (!mapfile.empty())
+    {
+      otm = new BDSPTCOneTurnMap(mapfile, designParticle);
+      primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
+    }
+
+  integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
+					   (*info.MagnetStrength())["length"],
+					   otm);
+						       
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
+						       bEqOfMotion, integrator);
   return completeField;
 }
 

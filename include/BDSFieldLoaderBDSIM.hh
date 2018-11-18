@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 #ifdef USE_GZSTREAM
-#include "gzstream.h"
+#include "src-external/gzstream/gzstream.h"
 #endif
 
 class BDSArray4DCoords;

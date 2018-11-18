@@ -49,7 +49,8 @@ private:
 
   /// Assign the distribution file by finding the full path of it.
   void SetDistrFile(G4String distrFileNameIn);
-  
+
+  G4bool   matchDistrFileLength; ///< Whether to only run the number of particles in the file.
   G4int    nRays;     ///< Number of rays in file (1 counting).
   G4String fileName;  ///< File name.
   G4int    iRay;      ///< Iterator counter for current ray.

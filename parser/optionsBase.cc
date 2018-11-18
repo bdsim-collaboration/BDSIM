@@ -225,6 +225,7 @@ OptionsBase::OptionsBase()
   storeElossStepLength     = false;
   storeElossPreStepKineticEnergy = false;
   storeElossModelID        = false;
+  storeGeant4Data          = true;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1000000;
   storeTrajectoryParticle   = "";
@@ -243,6 +244,8 @@ OptionsBase::OptionsBase()
 
   printFractionEvents = 0.1;
   printFractionTurns  = 0.2;
+
+  ptcOneTurnMapFileName = "";
 
   // visualisation
   nSegmentsPerCircle       = 50;

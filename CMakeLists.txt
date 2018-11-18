@@ -4,6 +4,8 @@ if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
+include(GenerateExportHeader)
+
 project(bdsim)
 
 # project version
@@ -22,6 +24,7 @@ include(bdsim_macros)
 
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 # Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
@@ -94,18 +97,27 @@ include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
 set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(SYSCONFIG_INSTALL_DIR etc/bdsim/)
 
 # This module sets up installation:
 include(bdsim_install)
 
+# Before any linkages we define library names
+set(BDSIM_LIB_NAME "bdsim")
+
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
-configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/src/BDSIMClass.cc ${CMAKE_BINARY_DIR}/src/BDSIMClass.cc @ONLY)
 
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
+list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSIMClass.cc)
+list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSIMClass.cc)
 
 # Add Modules
 option(USE_AWAKE "Use AWAKE Module" OFF)
@@ -139,27 +151,28 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
 
 # BDSIM library and binaries
-add_library(bdsim ${root_dicts} ${bdsim_sources} )
+add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
+generate_export_header(${BDSIM_LIB_NAME})
 
 add_subdirectory( tracker )
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(bdsimexec bdsim gmad)
-target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-target_link_libraries(bdsim ${Geant4_LIBRARIES})
+target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
+target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 if (USE_GZSTREAM)
   #preprocessor flag
   add_definitions("-DUSE_GZSTREAM")
-  target_link_libraries(bdsim gzstream)
+  target_link_libraries(${BDSIM_LIB_NAME} gzstream)
 endif()
 
 # link against ROOT
-target_link_libraries(bdsim ${ROOT_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${ROOT_LIBRARIES})
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-    target_link_libraries(bdsim gcov)
+    target_link_libraries(${BDSIM_LIB_NAME} gcov)
 endif()
 
 # set binary name for testing usage
@@ -183,11 +196,11 @@ target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # Add dependency to make sure bdsimRootEvent is done first
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
-add_dependencies(bdsim bdsimRootEvent)
+add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim bdsimRootEvent)
+set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
@@ -256,3 +269,38 @@ if(APPLE)
   mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
   mark_as_advanced(CMAKE_OSX_SYSROOT)
 endif()
+
+# CMake packaging so others can use BDSIM in their cmake applications.
+
+# we use "bdsimcmake" for install cmake stuff as it's prepared in the build
+# directory and this would clash with the main library name. the ConfigPackageLocation
+# is different though so it's installed in a sensible place.
+export(EXPORT BDSIMTargets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMTargets.cmake"
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(cmake/BDSIMConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsimcmake/cmake
+			      PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake
+  VERSION ${BDSIM_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+set(ConfigPackageLocation lib/cmake/bdsim)
+install(EXPORT BDSIMTargets
+  FILE
+    BDSIMTargets.cmake
+  DESTINATION
+    ${ConfigPackageLocation}
+)
+install(
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake"
+  DESTINATION
+    ${ConfigPackageLocation}
+  COMPONENT
+    Devel
+)

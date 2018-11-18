@@ -305,6 +305,7 @@ void Options::PublishMembers()
   publish("storeElossStepLength",           &Options::storeElossStepLength);
   publish("storeElossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
   publish("storeElossModelID",              &Options::storeElossModelID);
+  publish("storeGeant4Data",                &Options::storeGeant4Data);
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
@@ -323,10 +324,12 @@ void Options::PublishMembers()
 
   // circular options
   publish("nturns",                   &Options::nturns);
-  
+
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+
+  publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);

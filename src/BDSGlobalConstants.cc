@@ -25,10 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSOutputType.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -54,13 +55,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 				       GMAD::Beam&          beamIn):
   options(opt),
   beam(beamIn),
-  beamParticleDefinition(nullptr),
   turnsTaken(0)
 {
   ResetTurnNumber();
   outputType = BDS::DetermineOutputType(options.outputFormat);
-
-  particleName = G4String(beam.particleName);
 
   numberToGenerate = G4int(options.nGenerate);
 
@@ -114,7 +112,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
-  
+
   BDSSamplerPlane::chordLength = LengthSafety();
 }
 

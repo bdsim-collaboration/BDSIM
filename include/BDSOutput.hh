@@ -100,6 +100,7 @@ public:
   /// and calls WriteFileEventLevel() and then clears the structures. It therefore
   /// should not be used in conjunction with FillEvent().
   void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
+			    const G4double charge,
 			    const G4int pdgID);
   
   /// Copy event information from Geant4 simulation structures to output structures.
@@ -229,12 +230,13 @@ private:
   G4int nbins;
 
   /// @{ Sampler storage option.
+  G4bool storeGeant4Data;
+  G4bool storeModel;
   G4bool storeSamplerCharge;
   G4bool storeSamplerKineticEnergy;
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
-  G4bool storeModel;
   G4bool storeOption1;
   G4bool storeOption2;
   G4bool storeOption3;

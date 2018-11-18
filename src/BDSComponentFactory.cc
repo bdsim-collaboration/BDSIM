@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
+#include "BDSComponentFactoryUser.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -74,6 +75,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -95,16 +97,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
-					 const G4double& beta0In):
-  brho(brhoIn),
-  beta0(beta0In),
+BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
+					 BDSComponentFactoryUser* userComponentFactoryIn):
+  designParticle(designParticleIn),
+  userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
+  brho  = designParticle->BRho();
+  beta0 = designParticle->Beta();
+  
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
@@ -328,6 +333,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateRMatrix(); break;}
     case ElementType::_UNDULATOR:
       {component = CreateUndulator(); break;}
+    case ElementType::_USERCOMPONENT:
+      {
+	if (!userComponentFactory)
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no user component factory registered" << G4endl;
+	    exit(1);
+	  }
+	G4String typeName = G4String(element->userTypeName);
+	if (!userComponentFactory->CanConstructComponentByName(typeName))
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no such component \""
+		   << element->userTypeName << "\" registered." << G4endl;
+	    exit(1);
+	  }
+	else
+	  {
+	    component = userComponentFactory->ConstructComponent(typeName,
+								 element,
+								 prevElement,
+								 nextElement,
+								 currentArcLength);
+	  }
+	break;
+      }
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
@@ -1019,28 +1048,70 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		    return s;
 		  };
 
-  G4double s = 0.5*(*st)["ks"]; // already includes scaling
-  BDSLine* bLine = new BDSLine(elementName);
   G4bool buildIncomingFringe = true;
   if (prevElement) // could be nullptr
     {// only build fringe if previous element isn't another solenoid
       buildIncomingFringe = prevElement->type != ElementType::_SOLENOID;
     }
+  G4bool buildOutgoingFringe = true;
+  if (nextElement) // could be nullptr
+    {// only build fringe if next element isn't another solenoid
+      buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
+    }
+
+  G4double solenoidBodyLength = element->l * CLHEP::m;
+
+  if (buildIncomingFringe)
+    {solenoidBodyLength -= thinElementLength;}
+  if (buildOutgoingFringe)
+    {solenoidBodyLength -= thinElementLength;}
+
+  // scale factor to account for reduced body length due to fringe placement.
+  G4double lengthScaling = solenoidBodyLength / (element->l * CLHEP::m);
+  G4double s = 0.5*(*st)["ks"] * lengthScaling; // already includes scaling
+  BDSLine* bLine = new BDSLine(elementName);
+
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
       auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
       bLine->AddComponent(solenoidIn);
     }
-  
-  auto solenoid = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
+
+  // Do not use CreateMagnet method as solenoid body length needs to be reduced to conserve total
+  // element length. The solenoid strength is scaled accordingly.
+
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::solenoid);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
+                                               brho,
+                                               intType,
+                                               st,
+                                               true,
+                                               fieldTrans);
+
+  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + "_centre", element, st, bpInfo);
+  vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
+  BDSFieldInfo* outerField = nullptr;
+
+  // only make a default multipolar field if the yokeFields flag is on and
+  // there isn't an 'outerField' specified for the element
+  G4bool externalOuterField = !(element->fieldOuter.empty());
+  if (yokeFields && !externalOuterField)
+    {outerField = PrepareMagnetOuterFieldInfo(st, BDSFieldType::solenoid, bpInfo, outerInfo, fieldTrans);}
+
+  auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
+                         elementName + "_centre",
+                         solenoidBodyLength,
+                         bpInfo,
+                         outerInfo,
+                         vacuumField,
+                         0,
+                         outerField);
+
   bLine->AddComponent(solenoid);
 
-  G4bool buildOutgoingFringe = true;
-  if (nextElement) // could be nullptr
-    {// only build fringe if next element isn't another solenoid
-      buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
-    }
   if (buildOutgoingFringe)
     {
       auto stOut       = strength(-s);

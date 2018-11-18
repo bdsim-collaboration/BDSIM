@@ -52,6 +52,8 @@ Element::Element():
 
 void Element::PublishMembers()
 {
+  publish("userTypeName",   &Element::userTypeName);
+  publish("userParameters", &Element::userParameters);
   publish("l",         &Element::l);
   publish("scaling",   &Element::scaling);
   publish("ks",        &Element::ks);
@@ -374,6 +376,8 @@ void Element::flush()
 {
   type = ElementType::_NONE;
   name = "";
+  userTypeName = "";
+  userParameters = "";
   l = 0;
   scaling = 1;
   ks = 0;

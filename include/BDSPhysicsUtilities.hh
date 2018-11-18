@@ -34,12 +34,23 @@ namespace BDS
   /// BDSIM modular physics and construct it.
   G4VModularPhysicsList* BuildPhysics(const G4String& physicsList);
 
-  /// Construct beam particle definition. Ensure that particle is instantiated
+  /// Construct the design and beam particle definitions. Even if these are the same, unique
+  /// objects are created for and must be deleted elsewhere. Two pointers are passed by
+  /// reference that will be updated with the allocated objects. The Boolean by reference
+  /// argument is to tell whether they definitions (although unique objects) define the same
+  /// particle.
+  void ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+				      G4double ffact,
+				      BDSParticleDefinition*& designParticle,
+				      BDSParticleDefinition*& beamParticle,
+				      G4bool& beamDifferentFromDesignParticle);
+  
+  /// Construct particle definition. Ensure that particle is instantiated
   /// from a Geant4 point of view.  'ffact' is typically 1 or -1 used to flip
   /// the sign of the rigidity for difference between convention and what's required.
-  BDSParticleDefinition* ConstructBeamParticle(G4String particleName,
-					       G4double totalEnergy,
-					       G4double ffact = 1);
+  BDSParticleDefinition* ConstructParticleDefinition(G4String particleNameIn,
+						     G4double totalEnergy,
+						     G4double ffact = 1);
 
   /// Ensure required beam particle has been constructed for Geant4 purposes.
   void ConstructBeamParticleG4(G4String name);
@@ -58,8 +69,10 @@ namespace BDS
   
   G4GenericBiasingPhysics* BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
+#if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.
   G4VModularPhysicsList* ChannellingPhysicsComplete();
+#endif
 }
 
 #endif
