@@ -42,8 +42,13 @@ namespace
   };
 } // namespace
 
-// Note: This class uses PTC units internally for calculating the
-// result of the map.
+/**
+ * @brief Class to load and use PTC 1 turn map.
+ *
+ * This class uses PTC units internally for calculating the result of the map.
+ *
+ * @author Stuart Walker.
+ */
 
 class BDSPTCOneTurnMap
 {
@@ -66,36 +71,32 @@ public:
   /// Move assignment operator
   BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
 
+  /// Main constructor.
   BDSPTCOneTurnMap(G4String path,
 		   const BDSParticleDefinition* designParticle); ///< Path to maptable file.
 
+  /// Decides whether or not this should be applied.  Can add more
   G4bool ShouldApplyToPrimary(G4double momentum, G4int turnstaken);
-  // Decides whether or not this should be applied.  Can add more
 
-  void SetBeamParameters(G4double referenceMomentum, G4double mass);
-
+  /// Load initial coordinates where the beam started and convert to PTC coordinates.
   void SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
 				    G4bool offsetS0);
 
+  /// Update coordinates if the last turn is greater than the number of turns taken.
   void UpdateCoordinates(G4ThreeVector localPosition,
 			 G4ThreeVector localMomentum,
 			 G4int         turnstaken);
 
-  inline G4bool IsBeamOffsetS0() const { return beamOffsetS0; }
-
-  void GetThisTurn(G4double &x,
-		   G4double &px,
-		   G4double &y,
-		   G4double &py,
-		   G4double &pz,
+  /// Return the coordinates for this turn.
+  void GetThisTurn(G4double& x,
+		   G4double& px,
+		   G4double& y,
+		   G4double& py,
+		   G4double& pz,
 		   G4int turnstaken);
-  
-  void SetInitialPrimaryMomentum(G4double in) {initialPrimaryMomentum = in;}
-
-  G4double GetReferenceMomentum() const {return referenceMomentum;}
 
 private:
-  G4double evaluate(std::vector<PTCMapTerm>& terms,
+  G4double Evaluate(std::vector<PTCMapTerm>& terms,
 		    G4double x,
 		    G4double px,
                     G4double y,

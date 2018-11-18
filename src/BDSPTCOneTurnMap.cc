@@ -16,23 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "BDSPTCOneTurnMap.hh"
-#include "BDSTrajectoryPrimary.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPTCOneTurnMap.hh"
+#include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // Geant4 typedefs
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
 #include <fstream>
 #include <set>
 #include <sstream>
 #include <string>
-
 
 BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
 				   const BDSParticleDefinition* designParticle):
@@ -125,11 +125,11 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
   beamOffsetS0 = beamOffsetS0In;
 }
 
-void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
-				   G4double &px,
-				   G4double &y,
-                                   G4double &py,
-				   G4double &pz,
+void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
+				   G4double& px,
+				   G4double& y,
+                                   G4double& py,
+				   G4double& pz,
 				   G4int turnstaken)
 {
   auto xOut = 0.0;
@@ -161,23 +161,23 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 #endif
 
       lastTurnNumber = turnstaken;
-      xOut = evaluate(xTerms,
+      xOut = Evaluate(xTerms,
 		      xLastTurn, pxLastTurn,
 		      yLastTurn, pyLastTurn,
 		      deltaPLastTurn);
-      pxOut = evaluate(pxTerms,
+      pxOut = Evaluate(pxTerms,
 		       xLastTurn, pxLastTurn,
 		       yLastTurn, pyLastTurn,
 		       deltaPLastTurn);
-      yOut = evaluate(yTerms,
+      yOut = Evaluate(yTerms,
 		      xLastTurn, pxLastTurn,
 		      yLastTurn, pyLastTurn,
 		      deltaPLastTurn);
-      pyOut = evaluate(pyTerms,
+      pyOut = Evaluate(pyTerms,
 		       xLastTurn, pxLastTurn,
 		       yLastTurn, pyLastTurn,
 		       deltaPLastTurn);
-      deltaPOut = evaluate(deltaPTerms,
+      deltaPOut = Evaluate(deltaPTerms,
 			   xLastTurn, pxLastTurn,
 			   yLastTurn, pyLastTurn,
 			   deltaPLastTurn);
@@ -245,7 +245,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 #endif
 }
 
-G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
+G4double BDSPTCOneTurnMap::Evaluate(std::vector<PTCMapTerm>& terms,
 				    G4double x,
                                     G4double px,
 				    G4double y,
@@ -322,29 +322,30 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
                                          G4ThreeVector localMomentum,
 					 G4int turnstaken)
 {
-  if (lastTurnNumber < turnstaken) {
-    // This method is called in the integrator if the OTM is active but
-    // NOT applicable.  So given that the TeleporterIntegrator will be called
-    // multiple times, whatever happens here, it should not suddenly
-    // make the OTM applicable for subsequent calls to the Teleporter
-    // stepper on the same turn.
-    xLastTurn = localPosition.x() / CLHEP::m;
-    yLastTurn = localPosition.y() / CLHEP::m;
-    pxLastTurn = localMomentum.x() / referenceMomentum;
-    pyLastTurn = localMomentum.y() / referenceMomentum;
-    G4double totalMomentum = localMomentum.mag();
-    deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
-    // deltaPLastTurn assumed to not change between turns for 5D map.
-    lastTurnNumber = turnstaken;
+  if (lastTurnNumber < turnstaken)
+    {
+      // This method is called in the integrator if the OTM is active but
+      // NOT applicable.  So given that the TeleporterIntegrator will be called
+      // multiple times, whatever happens here, it should not suddenly
+      // make the OTM applicable for subsequent calls to the Teleporter
+      // stepper on the same turn.
+      xLastTurn = localPosition.x() / CLHEP::m;
+      yLastTurn = localPosition.y() / CLHEP::m;
+      pxLastTurn = localMomentum.x() / referenceMomentum;
+      pyLastTurn = localMomentum.y() / referenceMomentum;
+      G4double totalMomentum = localMomentum.mag();
+      deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
+      // deltaPLastTurn assumed to not change between turns for 5D map.
+      lastTurnNumber = turnstaken;
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__
-	   << "Updating map coords without use of map:" << G4endl;
-    G4cout << "xLastTurn = " << xLastTurn << G4endl;
-    G4cout << "yLastTurn = " << yLastTurn << G4endl;
-    G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-    G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
+      G4cout << __METHOD_NAME__
+	     << "Updating map coords without use of map:" << G4endl;
+      G4cout << "xLastTurn = " << xLastTurn << G4endl;
+      G4cout << "yLastTurn = " << yLastTurn << G4endl;
+      G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
+      G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
 #endif
-  }
+    }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__
          << "Skipping further coordinate updates without use of map" << G4endl;
