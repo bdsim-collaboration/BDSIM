@@ -48,6 +48,7 @@ class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
+class BDSParticleDefinition;
 class BDSTiltOffset;
 
 /**
@@ -79,13 +80,13 @@ public:
 
 
   /// Update values for nominal rigidity and relativisitic beta of the beam particle.
-  void SetRigidityAndLorentzBeta(const G4double brhoIn,
-				 const G4double beta0In);
-  
+  void SetDesignParticle(const BDSParticleDefinition* designParticleIn);  
   
 private:
   /// Map of user component name with constructors to build a component.
   std::map<G4String, BDSComponentConstructor*> userFunctions;
+
+  const BDSParticleDefinition* designParticle; ///< Particle w.r.t. which elements are built.
   G4double brho;  ///< Cache of nominal beam rigidity.
   G4double beta0; ///< Cache of nominal relativistic beta for the beam particle.
 };

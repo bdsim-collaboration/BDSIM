@@ -85,8 +85,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
-  brho(std::numeric_limits<double>::max()),
-  beta0(1),
+  designParticle(nullptr),
   userComponentFactory(userComponentFactoryIn)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
@@ -270,8 +269,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4bool               beamlineIsCircular)
 {
   if (userComponentFactory)
-    {userComponentFactory->SetRigidityAndLorentzBeta(brho, beta0);}
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho, beta0, userComponentFactory);
+    {userComponentFactory->SetDesignParticle(designParticle);}
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
   BDSBeamline* massWorld = new BDSBeamline(initialTransform, initialS);
     
   if (beamlineIsCircular)

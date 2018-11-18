@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSComponentConstructor.hh"
 #include "BDSComponentFactoryUser.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 
@@ -25,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 BDSComponentFactoryUser::BDSComponentFactoryUser():
+  designParticle(nullptr),
   brho(0),
   beta0(0)
 {;}
@@ -35,11 +37,11 @@ BDSComponentFactoryUser::~BDSComponentFactoryUser()
     {delete constructor.second;}
 }
 
-void BDSComponentFactoryUser::SetRigidityAndLorentzBeta(const G4double brhoIn,
-							const G4double beta0In)
+void BDSComponentFactoryUser::SetDesignParticle(const BDSParticleDefinition* designParticleIn)
 {
-  brho = brhoIn;
-  beta0 = beta0In;
+  designParticle = designParticleIn;
+  brho  = designParticle->BRho();
+  beta0 = designParticle->Beta();
 }
 
 void BDSComponentFactoryUser::RegisterComponent(G4String componentTypeName,

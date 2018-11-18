@@ -45,7 +45,7 @@ class BDSBeamline;
 class BDSBeamlineSet;
 class BDSComponentFactoryUser;
 class BDSFieldObjects;
-class BDSShowerModel;
+class BDSParticleDefinition;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
@@ -81,11 +81,8 @@ public:
   /// Create biasing operations.
   void BuildPhysicsBias();
 
-  /// Update member brho (rigidity) for use in constructing accelerator elements.
-  inline void SetRigidityForConstruction(const G4double& brhoIn) {brho = brhoIn;}
-
-  /// Update member beta0 for use in constructing accelerator components.
-  inline void SetBeta0ForConstruction(const G4double& beta0In) {beta0 = beta0In;}
+  /// Set the design particle definition.
+  inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
@@ -173,6 +170,8 @@ private:
   G4bool       circular;    ///< Whether or not we're building a circular machine.
   BDSExtent    worldExtent; ///< Record of the world extent.
   BDSBeamline* placementBL; ///< Placement beam line.
+  /// Particle definition all components are built w.r.t. Includes rigidity etc.
+  const BDSParticleDefinition* designParticle;
   G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
   G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.

@@ -36,7 +36,8 @@ namespace GMAD
       BeamBase();
 
       ///@{ beam parameters
-      std::string particleName;
+      std::string particle;
+      std::string beamParticleName;
       double      beamEnergy;
       std::string distrType;
       std::string xDistrType;

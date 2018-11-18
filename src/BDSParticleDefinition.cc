@@ -78,6 +78,24 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
   CalculateLorentzFactors();
 }
 
+BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other):
+  particle(other.particle),
+  name(other.name),
+  mass(other.mass),
+  charge(other.charge),
+  totalEnergy(other.totalEnergy),
+  kineticEnergy(other.kineticEnergy),
+  momentum(other.momentum),
+  gamma(other.gamma),
+  beta(other.beta),
+  brho(other.brho)
+{
+  if (other.ionDefinition)
+    {ionDefinition = new BDSIonDefinition(*other.ionDefinition);}
+  else
+    {ionDefinition = nullptr;}
+}
+
 BDSParticleDefinition::~BDSParticleDefinition()
 {
   delete ionDefinition;

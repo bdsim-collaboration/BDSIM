@@ -48,6 +48,7 @@ class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
+class BDSParticleDefinition;
 class BDSTiltOffset;
 
 /**
@@ -72,8 +73,7 @@ class BDSTiltOffset;
 class BDSComponentFactory
 {
 public:
-  explicit BDSComponentFactory(const G4double& brhoIn,
-			       const G4double& beta0In,
+  explicit BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
   ~BDSComponentFactory();
 
@@ -180,7 +180,8 @@ public:
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
-  
+
+  const BDSParticleDefinition* designParticle; ///< Particle w.r.t. which elements are built.
   G4double brho;              ///< Rigidity in T*m (G4units) for beam particles.
   G4double beta0;             ///< Cache of relativisitic beta for primary particle.
   BDSComponentFactoryUser* userComponentFactory; ///< User component factory if any.

@@ -1,0 +1,14 @@
+beam,  particle = "e-",
+       energy = 200.0 * GeV,
+       beamParticleName = "proton",
+       E0 = 100 * GeV,
+       distrType = "reference";
+
+! for an e- at 200GeV, this will produce a B field of ~2.8T
+! the test shows this is true irrespective of the beam particle as
+! it's calculated from the 'particle' ie the design particle.
+vk1: vkicker, angle=4.2*mrad, l=1*m;
+l1: line=(vk1);
+use, l1;
+
+sample, all;

@@ -5,6 +5,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 simple_testing(bunch-circle                   "--file=circle.gmad"                  "")
 simple_testing(bunch-composite                "--file=composite.gmad"               "")
 simple_testing(bunch-composite-w-gauss        "--file=composite-w-gauss.gmad"       "")
+simple_testing(bunch-different-beam-particle  "--file=different-beam-particle.gmad" "")
 simple_testing(bunch-eshell                   "--file=eshell.gmad"                  "")
 simple_testing(bunch-eshell-width             "--file=eshell-width.gmad"            "")
 simple_testing(bunch-gauss                    "--file=gauss.gmad"                   "")
@@ -25,6 +26,7 @@ simple_testing(bunch-ring                     "--file=ring.gmad"                
 simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"                "")
 simple_testing(bunch-square                   "--file=square.gmad"                  "")
 simple_testing(bunch-userfile                 "--file=userfile.gmad"                "")
+simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle.gmad" "")
 simple_testing(bunch-userfile-one-column      "--file=userfile_one_column.gmad"     "")
 simple_testing(bunch-userfile-placet          "--file=userfile-placet.gmad"         "")
 

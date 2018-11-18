@@ -1,0 +1,15 @@
+beam,  particle="e-",
+       energy = 1*GeV,
+       beamParticleName = "proton",
+       E0 = 30*GeV,
+       distrType  = "userfile",
+       distrFile  = "userbeamdataonecolumn.dat",
+       distrFileFormat = "x[mum]";
+
+! here all particles in the distribution file are assumed to be a
+! proton but the machine is designed for an electron at 1 GeV.
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=4;

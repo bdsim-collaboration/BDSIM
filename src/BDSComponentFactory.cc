@@ -75,6 +75,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -96,11 +97,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
-					 const G4double& beta0In,
+BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser* userComponentFactoryIn):
-  brho(brhoIn),
-  beta0(beta0In),
+  designParticle(designParticleIn),
   userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
@@ -108,6 +107,9 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
+  brho  = designParticle->BRho();
+  beta0 = designParticle->Beta();
+  
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
