@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4double BDSIntegratorMag::thinElementLength = -1; // mm
 G4double BDSIntegratorMag::nominalMatrixRelativeMomCut = -1;
+G4bool BDSIntegratorMag::currentTrackIsPrimary = false;
 
 BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
 				   G4int        nVariablesIn):

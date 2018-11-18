@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSGLOBALCONSTANTS_H
-#define BDSGLOBALCONSTANTS_H 
+#define BDSGLOBALCONSTANTS_H
 
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -256,7 +256,8 @@ public:
   inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
-  
+  inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
+
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}

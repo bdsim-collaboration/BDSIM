@@ -27,6 +27,9 @@ New Features
 * Specify the particle assumed for the user file distribution that can be different from
   the design particle.
   
+* New option to use a one turn map generated from MAD-X PTC to correct
+  multi-turn tracking for circular machines.
+
 General
 -------
 

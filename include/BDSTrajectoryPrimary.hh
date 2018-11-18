@@ -79,7 +79,11 @@ public:
   /// Wether this primary trajectory has hit an object (ie physics process invoked).
   /// Judged by casting first hit pointer to Boolean.
   G4bool HasHitSomething() const {return firstHit;}
-  
+
+  /// Whether this primary has scattered on this turn.  It should be
+  /// reset at the end of each turn.
+  static G4bool hasScatteredThisTurn;
+
 protected:
   BDSTrajectoryPoint* firstHit;  ///< Point owned by this class for the first scattering point.
   BDSTrajectoryPoint* lastPoint; ///< Point owned by this class for the last-most point.

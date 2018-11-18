@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSPTCOneTurnMap.hh"
+#include "BDSPrimaryGeneratorAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
@@ -126,6 +128,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 const BDSParticleDefinition* BDSFieldFactory::designParticle = nullptr;
+BDSPrimaryGeneratorAction* BDSFieldFactory::primaryGeneratorAction = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
@@ -731,12 +734,25 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
-  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
-								    (*info.MagnetStrength())["length"]);
-  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
-							    bEqOfMotion, integrator);
+  G4MagneticField* bGlobalField = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion = new G4Mag_UsualEqRhs(bGlobalField);
+
+  G4MagIntegratorStepper* integrator;
+  auto mapfile = BDSGlobalConstants::Instance()->PTCOneTurnMapFileName();
+  BDSPTCOneTurnMap* otm = nullptr;
+
+  if (!mapfile.empty())
+    {
+      otm = new BDSPTCOneTurnMap(mapfile);
+      primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
+    }
+
+  integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
+					   (*info.MagnetStrength())["length"],
+					   otm);
+						       
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
+						       bEqOfMotion, integrator);
   return completeField;
 }
 

@@ -298,7 +298,9 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch, beamParticle));
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, beamParticle);
+  runManager->SetUserAction(primaryGeneratorAction);
+  BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
   /// Initialize G4 kernel
   runManager->Initialize();

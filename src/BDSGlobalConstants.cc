@@ -25,10 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSOutputType.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -111,7 +112,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
-  
+
   BDSSamplerPlane::chordLength = LengthSafety();
 }
 
