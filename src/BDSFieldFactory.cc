@@ -139,6 +139,8 @@ BDSFieldFactory* BDSFieldFactory::Instance()
 BDSFieldFactory::BDSFieldFactory()
 {
   G4double defaultRigidity = std::numeric_limits<double>::max();
+  if (designParticle)
+    {defaultRigidity = designParticle->BRho();}
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
 }
 
