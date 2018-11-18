@@ -19,15 +19,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TRKPhysicsCalculations
 #define TRKPhysicsCalculations
 
+#include <string>
+
 namespace GMAD
 {
-  class Beam;
+  class BeamBase;
 }
 
 class BDSParticleDefinition;
 
 namespace TRK
 {
-  BDSParticleDefinition* DefineParticle(const GMAD::Beam& beam);
+  void ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+				      double ffact,
+				      BDSParticleDefinition*& designParticle,
+				      BDSParticleDefinition*& beamParticle,
+				      bool& beamDifferentFromDesignParticle);
+
+  BDSParticleDefinition* ConstructParticleDefinition(std::string particleNameIn,
+						     double totalEnergy,
+						     double ffact);
 }
 #endif

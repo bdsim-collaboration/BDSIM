@@ -27,16 +27,42 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-
-BDSParticleDefinition* TRK::DefineParticle(const GMAD::Beam& beam)
+void TRK::ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+					 double ffact,
+					 BDSParticleDefinition*& designParticle,
+					 BDSParticleDefinition*& beamParticle,
+					 bool& beamDifferentFromDesignParticle)
 {
-  double mass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)beam.particleName);
-  double charge = (double)TRKParticleDefinition::Instance()->GetParticleCharge((std::string)beam.particleName);
-  double energy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-  double ffact  = BDSGlobalConstants::Instance()->FFact();
+  std::string designParticleName = beamDefinition.particle;
+  G4double designTotalEnergy     = beamDefinition.beamEnergy * CLHEP::GeV;
+  designParticle = TRK::ConstructParticleDefinition(designParticleName, designTotalEnergy, ffact);
+  if ((beamDefinition.particle == beamDefinition.beamParticleName) &&
+      (beamDefinition.beamEnergy == beamDefinition.E0))
+    {// copy definition
+      beamParticle = new BDSParticleDefinition(*designParticle);
+      beamDifferentFromDesignParticle = false;
+    }
+  else
+    {
+      G4String beamParticleName = beamDefinition.beamParticleName;
+      G4double beamTotalEnergy  = beamDefinition.E0 * CLHEP::GeV;
+      beamParticle = TRK::ConstructParticleDefinition(beamParticleName,
+						      beamTotalEnergy,
+						      ffact);
+      beamDifferentFromDesignParticle = true;
+    }
+}
+
+BDSParticleDefinition* TRK::ConstructParticleDefinition(std::string particleNameIn,
+							double totalEnergy,
+							double ffact)
+{
+  double mass   = TRKParticleDefinition::Instance()->GetParticleMass(particleNameIn);
+  double charge = (double)TRKParticleDefinition::Instance()->GetParticleCharge(particleNameIn);
   
-  BDSParticleDefinition* particleDefB = new BDSParticleDefinition(beam.particleName, mass, charge,
-								  energy, ffact);
+  BDSParticleDefinition* particleDefB = new BDSParticleDefinition(particleNameIn,
+								  mass, charge,
+								  totalEnergy, ffact);
 
   return particleDefB;
 }

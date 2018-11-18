@@ -67,13 +67,20 @@ int main (int argc, char** argv)
   BDSRandom::SetSeed(); // set the seed from options or from exec options
 
   /// Build bunch
-  BDSParticleDefinition* particle = TRK::DefineParticle(beam);
-  TRKBunch* bunch = new TRKBunch(beam, particle);
+  BDSParticleDefinition* designParticle = nullptr;
+  BDSParticleDefinition* beamParticle   = nullptr;
+  G4bool beamDifferentFromDesignParticle = false;
+  TRK::ConstructDesignAndBeamParticle(beam,
+				      globalConstants->FFact(),
+				      designParticle,
+				      beamParticle,
+				      beamDifferentFromDesignParticle);
+  TRKBunch* bunch = new TRKBunch(beam, beamParticle);
   /// Write primaries to output file
   output->WriteTrackerBunch("primaries",bunch,true);
   
   /// Build beamline
-  TRKFactory* factory   = new TRKFactory(options, particle);
+  TRKFactory* factory   = new TRKFactory(options, designParticle);
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
@@ -84,6 +91,8 @@ int main (int argc, char** argv)
   tracker.Track(bunch);
   
   // free memory (good code test)
+  delete designParticle;
+  delete beamParticle;
   delete factory;
   delete bunch;
   delete output;
