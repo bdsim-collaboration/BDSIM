@@ -29,19 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSParticleDefinition;
 
-namespace
-{
-  struct PTCMapTerm
-  {
-    G4double coefficient;
-    G4int nx;
-    G4int npx;
-    G4int ny;
-    G4int npy;
-    G4int ndeltaP;
-  };
-} // namespace
-
 /**
  * @brief Class to load and use PTC 1 turn map.
  *
@@ -53,27 +40,24 @@ namespace
 class BDSPTCOneTurnMap
 {
 public:
-  /// Default constructor
-  BDSPTCOneTurnMap() = delete;
+  struct PTCMapTerm
+  {
+    G4double coefficient;
+    G4int nx;
+    G4int npx;
+    G4int ny;
+    G4int npy;
+    G4int ndeltaP;
+  };
+    
+  BDSPTCOneTurnMap() = delete;                                   ///< Default constructor.
+  BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;     ///< Copy constructor.
+  BDSPTCOneTurnMap(BDSPTCOneTurnMap &&other) noexcept = default; ///< Move constructor. 
+  virtual ~BDSPTCOneTurnMap() {;}                                ///< Destructor.
 
-  /// Copy constructor
-  BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;
-
-  /// Move constructor
-  BDSPTCOneTurnMap(BDSPTCOneTurnMap &&other) noexcept = default;
-
-  /// Destructor
-  virtual ~BDSPTCOneTurnMap() noexcept = default;
-
-  /// Copy assignment operator
-  BDSPTCOneTurnMap &operator=(const BDSPTCOneTurnMap &other) = default;
-
-  /// Move assignment operator
-  BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
-
-  /// Main constructor.
+  /// Main constructor with path to maptable file.
   BDSPTCOneTurnMap(G4String path,
-		   const BDSParticleDefinition* designParticle); ///< Path to maptable file.
+		   const BDSParticleDefinition* designParticle);
 
   /// Decides whether or not this should be applied.  Can add more
   G4bool ShouldApplyToPrimary(G4double momentum, G4int turnstaken);
@@ -104,14 +88,13 @@ private:
 		    G4double deltaP) const;
 
   G4double initialPrimaryMomentum;
-  G4bool beamOffsetS0;
-
+  G4bool   beamOffsetS0;
   G4double referenceMomentum;
   G4double mass;
 
   std::set<G4int> turnsScattered;
 
-  G4int lastTurnNumber;
+  G4int    lastTurnNumber;
   G4double xLastTurn;
   G4double pxLastTurn;
   G4double yLastTurn;
