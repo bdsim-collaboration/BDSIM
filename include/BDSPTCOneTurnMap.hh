@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <set>
 
+class BDSParticleDefinition;
+
 namespace
 {
   struct PTCMapTerm
@@ -64,7 +66,8 @@ public:
   /// Move assignment operator
   BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
 
-  BDSPTCOneTurnMap(G4String path); ///< Path to maptable file.
+  BDSPTCOneTurnMap(G4String path,
+		   const BDSParticleDefinition* designParticle); ///< Path to maptable file.
 
   G4bool ShouldApplyToPrimary(G4double momentum, G4int turnstaken);
   // Decides whether or not this should be applied.  Can add more
@@ -86,15 +89,12 @@ public:
 		   G4double &py,
 		   G4double &pz,
 		   G4int turnstaken);
-
-  void SetReferenceMomentum();
-  void SetMass();
+  
   void SetInitialPrimaryMomentum(G4double in) {initialPrimaryMomentum = in;}
 
   G4double GetReferenceMomentum() const {return referenceMomentum;}
 
 private:
-
   G4double evaluate(std::vector<PTCMapTerm>& terms,
 		    G4double x,
 		    G4double px,

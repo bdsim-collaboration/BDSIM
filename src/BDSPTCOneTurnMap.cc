@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // Geant4 typedefs
@@ -33,9 +34,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
+				   const BDSParticleDefinition* designParticle):
   beamOffsetS0(false)
 {
+  referenceMomentum = designParticle->Momentum();
+  mass = designParticle->Mass();
+
   G4String filePath = BDS::GetFullPath(maptableFile);
   G4cout << __METHOD_NAME__ << "Using map table " << filePath << G4endl;
   std::ifstream infile(filePath);
@@ -92,22 +97,10 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
 	    break;
 	  }
 	}
-      SetReferenceMomentum();
-      SetMass();
     }
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "> Loaded Map:" << maptableFile << G4endl;
 #endif
-}
-
-void BDSPTCOneTurnMap::SetReferenceMomentum()
-{
-  referenceMomentum =  BDSGlobalConstants::Instance()->BeamParticleDefinition()->Momentum();
-}
-
-void BDSPTCOneTurnMap::SetMass()
-{
-  mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
 void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,

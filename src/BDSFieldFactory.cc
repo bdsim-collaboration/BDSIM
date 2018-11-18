@@ -743,7 +743,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 
   if (!mapfile.empty())
     {
-      otm = new BDSPTCOneTurnMap(mapfile);
+      otm = new BDSPTCOneTurnMap(mapfile, designParticle);
       primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
     }
 
