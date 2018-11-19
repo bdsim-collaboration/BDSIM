@@ -111,6 +111,7 @@ set(BDSIM_LIB_NAME "bdsim")
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${PROJECT_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/BDSIMClass.cc ${CMAKE_BINARY_DIR}/src/BDSIMClass.cc @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/src/BDSVisManager.cc ${CMAKE_BINARY_DIR}/src/BDSVisManager.cc @ONLY)
 
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_GDML)
@@ -118,6 +119,9 @@ if(NOT USE_GDML)
 endif()
 list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSIMClass.cc)
 list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSIMClass.cc)
+list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSVisManager.cc)
+list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSVisManager.cc)
+
 
 # Add Modules
 option(USE_AWAKE "Use AWAKE Module" OFF)
