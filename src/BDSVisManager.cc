@@ -48,7 +48,7 @@ BDSVisManager::BDSVisManager()
 void BDSVisManager::StartSession(G4int argc, char** argv)
 {
   /// Create BDS UI messenger
-  BDSMessenger *bdsMessenger = new BDSMessenger();
+  BDSMessenger* bdsMessenger = new BDSMessenger();
 
 #ifdef G4UI_USE_TCSH
   G4UIsession* session = new G4UIterminal(new G4UItcsh);
@@ -60,10 +60,11 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
 #endif
-  // Initialize visualisation
+  // initialize visualisation
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
-      
+  
+  // setup trajectory colouring
   G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
   visManager->RegisterModel(trajModel1);
   visManager->SelectTrajectoryModel(trajModel1->Name());
