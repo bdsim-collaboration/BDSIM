@@ -52,6 +52,9 @@ simple_testing(option-executable-verbose-g4levels "--file=sm.gmad" "")
 # Test that ptc one turn map does not crash bdsim
 simple_testing(option-ptc-otm "--file=ptcOneTurnMap.gmad --circular" "")
 
+# Test that original teleporter approach does not crash bdsim
+simple_testing(option-originalTeleporterMethod "--file=originalTeleporterMethod.gmad --circular" "")
+
 ## Some tests that check wrong input options will fail
 simple_testing(option-length-safety-too-small "--file=smallLengthSafety.gmad" "")
 set_tests_properties(option-length-safety-too-small PROPERTIES WILL_FAIL 1)
