@@ -26,7 +26,6 @@ New Features
   particle used for magnetic field strength calculations (:code:`beamParticleName`).
 * Specify the particle assumed for the user file distribution that can be different from
   the design particle.
-  
 * New option to use a one turn map generated from MAD-X PTC to correct
   multi-turn tracking for circular machines.
 
@@ -47,6 +46,8 @@ General
   as this requires G4MultiSensitiveDetector.
 * New tests for testing backwards compatibility of analysis tool with previous data version.
 * "Model Preparation" is now "Model Conversion" in the manual to be clearer.
+* Visualisation now uses macro search path to look for visualisation macro in the installation
+  directory then the build directory of BDSIM.
   
 Bug Fixes
 ---------
