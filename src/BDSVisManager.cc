@@ -134,10 +134,10 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
       // add run icon:
       std::string runButtonFilename = visPath + "run.png";
       UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
-#endif
       // add menus
       std::string guiMacroFilename  = visPath + "gui.mac";
       UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
+#endif
     }
 #endif
   session2->SessionStart();
