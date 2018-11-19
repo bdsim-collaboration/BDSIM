@@ -21,7 +21,3 @@ include("${CMAKE_CURRENT_LIST_DIR}/BDSIMTargets.cmake")
 set(BDSIM_LIBRARIES bdsim gmad rebdsim bdsimRootEvent)
 
 check_required_components(bdsim)
-
-
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/vis)
-configure_file("@CMAKE_INSTALL_PREFIX@/share/bdsim/vis/vis.mac" "${CMAKE_CURRENT_BINARY_DIR}/vis/vis.mac" COPYONLY)
