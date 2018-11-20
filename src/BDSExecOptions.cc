@@ -79,6 +79,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "distrFile", 1, 0, 0 },
 					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
+					{ "geant4Macro", 1, 0, 0 },
 					{ "output", 1, 0, 0 },
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
@@ -190,6 +191,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
 	{options.set_value("visMacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+      else if( !strcmp(optionName , "geant4Macro") )
+	{options.set_value("geant4MacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
       else if( !strcmp(optionName, "colours") )
 	{
 	  BDSColours::Instance()->Print();
@@ -310,6 +313,7 @@ void BDSExecOptions::Usage() const
 	<<"--distrFile=<file>           : specify which file to use for the bunch distribution" << G4endl
 	<<"--exportGeometryTo=<file>    : export the geometry to a file - extension determines format"<<G4endl
 	<<"                               where possible extensions are (\"gdml\")"<<G4endl
+	<<"--geant4Macro=<file>         : macro file to run after initialisation of visualiser"<<G4endl
 	<<"--generatePrimariesOnly      : generate N primary particle coordinates without simulation then quit"<<G4endl
 	<<"--help                       : display this message"<<G4endl
 	<<"--materials                  : list materials included in bdsim by default"<<G4endl
@@ -347,6 +351,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(27) << "circular: "                 << std::setw(15) << std::left << options.circular              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(27) << "distrFile: "                << std::setw(15) << std::left << beam.distrFile                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(27) << "exportgeometryto "          << std::setw(15) << std::left << options.exportFileName        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "geant4Macro "               << std::setw(15) << std::left << options.geant4MacroFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(27) << "generatePrimariesOnly "     << std::setw(15) << std::left << options.generatePrimariesOnly << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(27) << "ngenerate: "                << std::setw(15) << std::left << options.nGenerate             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(27) << "outputFileName: "           << std::setw(15) << std::left << options.outputFileName        << G4endl;

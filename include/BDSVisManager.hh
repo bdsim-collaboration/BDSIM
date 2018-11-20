@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSVISMANAGER_H
 #define BDSVISMANAGER_H 
 
+#include "G4String.hh"
 #include "G4Types.hh"
 
 /**
@@ -31,10 +32,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSVisManager
 {
 public:
-  BDSVisManager();
+  BDSVisManager(G4String visMacroFileNameIn,
+		G4String geant4MacroFileNameIn);
 
   /// start interactive mode
   void StartSession(G4int argc, char** argv);
+
+private:
+
+  G4String visMacroFileName;    ///< Full macro file path to run for visualisation.
+  G4String geant4MacroFileName; ///< Full macro file path for optional macro to run afterwards.
 };
 
 #endif
