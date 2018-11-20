@@ -52,6 +52,13 @@ follows::
 When running, BDSIM looks for the macros in the installation directory then the
 build directory if it exists.
 
+The user can also specify an optional macro to run after the visualisation has started.
+This way, you can use the default BDSIM visualisation but run your own macro at the beginning.
+This may be useful for particular view points or visualisation settings.::
+
+  bdsim --file=mylattice.gmad --geant4Macro=viewpoint.mac
+
+
 Visualisation Features
 ======================
 

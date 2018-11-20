@@ -38,11 +38,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
 
-BDSVisManager::BDSVisManager()
+BDSVisManager::BDSVisManager(G4String visMacroFileNameIn,
+			     G4String geant4MacroFileNameIn):
+  visMacroFileName(visMacroFileNameIn),
+  geant4MacroFileName(geant4MacroFileNameIn)
 {;}
 
 void BDSVisManager::StartSession(G4int argc, char** argv)
@@ -78,7 +80,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   // setup paths to look for macros for the install then the build directory
   UIManager->ApplyCommand("/control/macroPath @CMAKE_INSTALL_PREFIX@/share/bdsim/vis:@CMAKE_BINARY_DIR@/vis");
 
-  G4String visMacName = BDSGlobalConstants::Instance()->VisMacroFileName();
+  G4String visMacName = visMacroFileName;
   G4String visMacPath = visMacName; // by default just copy it
   if (visMacName.empty()) // none specified - use default in BDSIM
     {
@@ -108,6 +110,11 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
     }
   // execute the macro
   UIManager->ApplyCommand("/control/execute " + visMacPath);
+
+  // apply optional macro if file name not empty
+  if (!geant4MacroFileName.empty())
+    {UIManager->ApplyCommand("/control/execute " + geant4MacroFileName);}
+  
   
 #if G4VERSION_NUMBER < 1030
   if (session2->IsGUI())

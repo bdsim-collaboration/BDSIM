@@ -52,6 +52,10 @@ be used literally.  The following command may be used to display all options::
 |                              | extension, which determines the format         |
 |                              | where possible extensions are ("gdml")         |
 +------------------------------+------------------------------------------------+
+| -\\-geant4Macro=<file>       | Optional Geant4 macro file to run after the    |
+|                              | visualisation has started. Only works in       |
+|                              | interactive visualisation.                     |
++------------------------------+------------------------------------------------+
 | -\\-generatePrimariesOnly    | Generates primary particle coordinates only    |
 |                              | then exits without simulating anything         |
 +------------------------------+------------------------------------------------+
@@ -198,4 +202,4 @@ user types into the visualiser terminal::
   /run/beamOn 1
   exit
 
-,which runs one event and visualises it.  
+,which runs one event and visualises it.

@@ -28,6 +28,8 @@ New Features
   the design particle.
 * New option to use a one turn map generated from MAD-X PTC to correct
   multi-turn tracking for circular machines.
+* New option :code:`geant4Macro` and executable option :code:`--geant4Macro` to run an optional
+  macro in the visualiser once it's started.
 
 General
 -------

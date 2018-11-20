@@ -359,7 +359,8 @@ void BDSIM::BeamOn(int nGenerate)
   /// Run in either interactive or batch mode
   if(!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
     {
-      BDSVisManager visManager;
+      BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
+					       BDSGlobalConstants::Instance()->Geant4MacroFileName());
       visManager.StartSession(argcCache, argvCache);
     }
   else
