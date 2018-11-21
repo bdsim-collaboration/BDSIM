@@ -80,15 +80,15 @@ protected:
   /// Clear the local structures in this class in preparation for a new run.
   void ClearStructuresRunLevel();
   
-  ///@{ Create histograms for evtHistos and runHistos.
-  void Create1DHistogram(G4String name,
-                         G4String title,
-                         G4int    nbins,
-                         G4double xmin,
-                         G4double xmax);
-  void Create1DHistogram(G4String name,
-                         G4String title,
-                         std::vector<double>& edges);
+  ///@{ Create histograms for both evtHistos and runHistos. Return index from evtHistos.
+  G4int Create1DHistogram(G4String name,
+			  G4String title,
+			  G4int    nbins,
+			  G4double xmin,
+			  G4double xmax);
+  G4int Create1DHistogram(G4String name,
+			  G4String title,
+			  std::vector<double>& edges);
   ///@}
 
   BDSOutputROOTGeant4Data*   geant4DataOutput; ///< Geant4 information / particle tables.

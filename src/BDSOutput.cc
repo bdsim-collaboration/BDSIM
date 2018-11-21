@@ -326,9 +326,9 @@ void BDSOutput::CreateHistograms()
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax); // 1
-  Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax); // 2
-  Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax); // 3
+  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax); // 1
+  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax); // 2
+  histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax); // 3
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
@@ -337,26 +337,29 @@ void BDSOutput::CreateHistograms()
   else
     {binedges = {0,1};}
   // create per element ("pe") bin width histograms
-  Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges); // 4
-  Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges); // 5
-  Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
+  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges); // 4
+  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges); // 5
+  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
 
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
   if (tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
-      Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax); // 7
-      Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges); // 8
+      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax); // 7
+      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges); // 8
+    }
+
     }
   
   if (useScoringMap)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
-      evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
-				   g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
-				   g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
-				   g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
+      G4int scInd = evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
+						 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
+      histIndices3D["ScoringMap"] = scInd;
     }
 }
 
@@ -437,6 +440,13 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 			       const LossType lossType)
 {
   G4int n_hit = hits->entries();
+  G4int indEloss         = histIndices1D["Eloss"];
+  G4int indElossPE       = histIndices1D["ElossPE"];
+  G4int indElossTunnel   = histIndices1D["ElossTunnel"];
+  G4int indElossTunnelPE = histIndices1D["ElossTunnelPE"];
+  G4int indScoringMap    = 0;
+  if (useScoringMap)
+    {indScoringMap = histIndices3D["ScoringMap"];}
   for (G4int i=0;i<n_hit;i++)
     {
       BDSEnergyCounterHit* hit = (*hits)[i];
@@ -448,20 +458,20 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  {// number - 1 for the index
 	    eLoss->Fill(hit);
 	    energyDeposited += eW;
-	    runHistos->Fill1DHistogram(2, sHit, eW);
-	    evtHistos->Fill1DHistogram(2, sHit, eW);
-	    runHistos->Fill1DHistogram(5, sHit, eW);
-	    evtHistos->Fill1DHistogram(5, sHit, eW);
+	    runHistos->Fill1DHistogram(indEloss, sHit, eW);
+	    evtHistos->Fill1DHistogram(indEloss, sHit, eW);
+	    runHistos->Fill1DHistogram(indElossPE, sHit, eW);
+	    evtHistos->Fill1DHistogram(indElossPE, sHit, eW);
 	    break;
 	  }
 	case BDSOutput::LossType::tunnel:
 	  {
 	    energyDepositedTunnel += eW;
 	    tunnelHit->Fill(hit);
-	    runHistos->Fill1DHistogram(6, sHit, eW);
-	    evtHistos->Fill1DHistogram(6, sHit, eW);
-	    runHistos->Fill1DHistogram(7, sHit, eW);
-	    evtHistos->Fill1DHistogram(7, sHit, eW);
+	    runHistos->Fill1DHistogram(indElossTunnel, sHit, eW);
+	    evtHistos->Fill1DHistogram(indElossTunnel, sHit, eW);
+	    runHistos->Fill1DHistogram(indElossTunnelPE, sHit, eW);
+	    evtHistos->Fill1DHistogram(indElossTunnelPE, sHit, eW);
 	    break;
 	  }
 	case BDSOutput::LossType::world:
@@ -478,7 +488,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	{
 	  G4double x = hit->Getx()/CLHEP::m;
 	  G4double y = hit->Gety()/CLHEP::m;
-	  evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+	  evtHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
 	}
     }
 }
@@ -498,20 +508,20 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
 {
   pFirstHit->Fill(phit);
   const G4double preStepSPosition = phit->GetPreS() / CLHEP::m;
-  runHistos->Fill1DHistogram(0, preStepSPosition);
-  evtHistos->Fill1DHistogram(0, preStepSPosition);
-  runHistos->Fill1DHistogram(3, preStepSPosition);
-  evtHistos->Fill1DHistogram(3, preStepSPosition);
+  runHistos->Fill1DHistogram(histIndices1D["Phits"],   preStepSPosition);
+  evtHistos->Fill1DHistogram(histIndices1D["Phits"],   preStepSPosition);
+  runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
+  evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
 }
 
 void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 {
   pLastHit->Fill(ploss);
   const G4double postStepSPosition = ploss->GetPostS() / CLHEP::m;
-  runHistos->Fill1DHistogram(1, postStepSPosition);
-  evtHistos->Fill1DHistogram(1, postStepSPosition);
-  runHistos->Fill1DHistogram(4, postStepSPosition);
-  evtHistos->Fill1DHistogram(4, postStepSPosition);
+  runHistos->Fill1DHistogram(histIndices1D["Ploss"],   postStepSPosition);
+  evtHistos->Fill1DHistogram(histIndices1D["Ploss"],   postStepSPosition);
+  runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
+  evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
 }
 
 void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)

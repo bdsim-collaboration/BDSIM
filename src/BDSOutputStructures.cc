@@ -114,18 +114,21 @@ BDSOutputStructures::~BDSOutputStructures()
   delete runInfo;
 }
 
-void BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
-					    G4int nbins, G4double xmin, G4double xmax)
+G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
+					     G4int nbins, G4double xmin, G4double xmax)
 {
-  evtHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
+  G4int result = evtHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
+  // index from runHistos will be the same as used only through interfaces in this class
   runHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
+  return result;
 }
 
-void BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
-					    std::vector<double>& edges)
+G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
+					     std::vector<double>& edges)
 {
-  evtHistos->Create1DHistogram(name,title,edges);
+  G4int result = evtHistos->Create1DHistogram(name,title,edges);
   runHistos->Create1DHistogram(name,title,edges);
+  return result;
 }
 
 void BDSOutputStructures::InitialiseSamplers()

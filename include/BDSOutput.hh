@@ -243,6 +243,12 @@ private:
   G4double energyDepositedTunnel;
   G4double energyWorldExit;
   /// @}
+
+  /// @{ Map of histogram name (short) to index of histogram in output.
+  std::map<G4String, G4int> histIndices1D;
+  std::map<G4String, G4int> histIndices3D;
+  /// @}
+  
 };
 
 #endif
