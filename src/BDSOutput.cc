@@ -521,21 +521,8 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	}
     }
 
-  if (storeCollimationInfo && anyCollimators)
-    {
-      std::vector<G4String> names = {"PhitsPE", "PlossPE", "ElossPE"};
-      for (auto name : names)
-	{
-	  TH1D* regular    = evtHistos->Get1DHistogram(histIndices1D[name]);
-	  TH1D* collimator = evtHistos->Get1DHistogram(histIndices1D["Collimator"+name]);
-	  G4int binIndex = 1; // starts at 1 for TH1; 0 is underflow
-	  for (auto collimatorIndex : collimatorIndices)
-	    {
-	      collimator->SetBinContent(binIndex, regular->GetBinContent(collimatorIndex));
-	      binIndex++;
-	    }
-	}
-    }
+  if (storeCollimationInfo && anyCollimators && (lossType == BDSOutput::LossType::energy))
+    {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
 }
 
 void BDSOutput::FillElossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
@@ -557,6 +544,9 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
   evtHistos->Fill1DHistogram(histIndices1D["Phits"],   preStepSPosition);
   runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
+  
+  if (storeCollimationInfo && anyCollimators)
+    {CopyFromHistToHist1D("PhitsPE", "CollimatorPhitsPE", collimatorIndices);}
 }
 
 void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
@@ -567,6 +557,9 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
   evtHistos->Fill1DHistogram(histIndices1D["Ploss"],   postStepSPosition);
   runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
+
+  if (storeCollimationInfo && anyCollimators)
+    {CopyFromHistToHist1D("PlossPE", "CollimatorPlossPE", collimatorIndices);}
 }
 
 void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)
@@ -581,4 +574,24 @@ void BDSOutput::FillRunInfo(const BDSEventInfo* info)
 {
   if (info)
     {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
+}
+
+void BDSOutput::CopyFromHistToHist1D(const G4String sourceName,
+				     const G4String destinationName,
+				     const std::vector<G4int> indices)
+{
+  TH1D* sourceEvt      = evtHistos->Get1DHistogram(histIndices1D[sourceName]);
+  TH1D* destinationEvt = evtHistos->Get1DHistogram(histIndices1D[destinationName]);
+  // for the run ones we are overwriting but this is ok
+  TH1D* sourceRun      = runHistos->Get1DHistogram(histIndices1D[sourceName]);
+  TH1D* destinationRun = runHistos->Get1DHistogram(histIndices1D[destinationName]);
+  G4int binIndex = 1; // starts at 1 for TH1; 0 is underflow
+  for (const auto index : indices)
+    {
+      destinationEvt->SetBinContent(binIndex, sourceEvt->GetBinContent(index + 1));
+      destinationEvt->SetBinError(binIndex,   sourceEvt->GetBinError(index + 1));
+      destinationRun->SetBinContent(binIndex, sourceRun->GetBinContent(index + 1));
+      destinationRun->SetBinError(binIndex,   sourceRun->GetBinError(index + 1));
+      binIndex++;
+    }
 }

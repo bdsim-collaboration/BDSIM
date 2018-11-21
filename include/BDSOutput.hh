@@ -201,6 +201,12 @@ private:
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
 
+  /// Utility function to copy out select bins from one histogram to another for 1D
+  /// histograms only.
+  void CopyFromHistToHist1D(const G4String sourceName,
+			    const G4String destinationName,
+			    const std::vector<G4int> indices);
+
   /// No default constructor.
   BDSOutput() = delete;
   
