@@ -21,3 +21,6 @@ option, physicsList="em",
 	minimumKineticEnergy=50*MeV;
 
 option, ngenerate=10;
+
+option, storeCollimationInfo=1,
+	elossHistoBinWidht=10*cm;
