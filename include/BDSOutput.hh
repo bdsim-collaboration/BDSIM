@@ -223,7 +223,8 @@ private:
   /// Number of bins for each histogram required.
   G4int nbins;
 
-  /// @{ Sampler storage option.
+  /// @{ Storage option.
+  G4bool storeCollimationInfo;
   G4bool storeGeant4Data;
   G4bool storeModel;
   G4bool storeSamplerCharge;
@@ -249,6 +250,10 @@ private:
   std::map<G4String, G4int> histIndices3D;
   /// @}
   
+  /// Optional cache of indices in beam line of collimators used to extract
+  /// collimator information.
+  std::vector<G4int> collimatorIndices;
+  G4bool anyCollimators; ///< Whether there are any collimators at all.
 };
 
 #endif

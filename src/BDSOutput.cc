@@ -76,13 +76,15 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   energyDeposited(0),
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
-  energyWorldExit(0)
+  energyWorldExit(0),
+  anyCollimators(false)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
+  storeCollimationInfo = g->StoreCollimationInfo();
   storeGeant4Data      = g->StoreGeant4Data();
   storeModel           = g->StoreModel();
   storeSamplerCharge   = g->StoreSamplerCharge();
@@ -350,6 +352,13 @@ void BDSOutput::CreateHistograms()
       histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges); // 8
     }
 
+  if (storeCollimationInfo)
+    {
+      collimatorIndices = flatBeamline->GetIndicesOfCollimators();
+      G4int nCollimators = (G4int)collimatorIndices.size();
+      anyCollimators = nCollimators > 0;
+      if (anyCollimators)
+	{histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE", "Energy Loss per Collimator", nCollimators, 0, nCollimators);}
     }
   
   if (useScoringMap)
@@ -489,6 +498,18 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  G4double x = hit->Getx()/CLHEP::m;
 	  G4double y = hit->Gety()/CLHEP::m;
 	  evtHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
+	}
+    }
+
+  if (storeCollimationInfo && anyCollimators)
+    {
+      TH1D* elossPerEntry   = evtHistos->Get1DHistogram(histIndices1D["ElossPE"]);
+      TH1D* elossCollimator = evtHistos->Get1DHistogram(histIndices1D["ElossCollimatorPE"]);
+      G4int binIndex = 1; // starts at 1 for TH1; 0 is underflow
+      for (auto collimatorIndex : collimatorIndices)
+	{
+	  elossCollimator->SetBinContent(binIndex, elossPerEntry->GetBinContent(collimatorIndex));
+	  binIndex++;
 	}
     }
 }
