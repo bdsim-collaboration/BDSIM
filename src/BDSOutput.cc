@@ -466,10 +466,8 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  }
 	case BDSOutput::LossType::world:
 	  {
-	    //G4cout << __METHOD_NAME__ << "energyDepositedWorld " << energyDepositedWorld << G4endl;
 	    energyDepositedWorld += eW;
 	    eLossWorld->Fill(hit);
-
 	    break;
 	  }
 	default:

@@ -132,13 +132,16 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
   return (G4int)histograms3D.size();
 }
 
-void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int histoId, G4double value,
+void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int    histoId,
+						   G4double value,
                                                    G4double weight)
 {
   histograms1D[histoId]->Fill(value,weight);
 }
 
-void BDSOutputROOTEventHistograms::Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue,
+void BDSOutputROOTEventHistograms::Fill2DHistogram(G4int    histoId,
+						   G4double xValue,
+						   G4double yValue,
                                                    G4double weight)
 {
   histograms2D[histoId]->Fill(xValue,yValue,weight);
