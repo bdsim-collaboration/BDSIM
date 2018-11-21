@@ -339,17 +339,27 @@ void BDSOutput::CreateHistograms()
   else
     {binedges = {0,1};}
   // create per element ("pe") bin width histograms
-  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
-  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
-  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges);
+  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto",
+					       "Primary Hits per Element",
+					       binedges);
+  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto",
+					       "Primary Loss per Element",
+					       binedges);
+  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto",
+					       "Energy Loss per Element" ,
+					       binedges);
 
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
   if (tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
-      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax);
-      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges);
+      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",
+						       "Energy Loss in Tunnel",
+						       nbins, smin,smax);
+      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto",
+							 "Energy Loss in Tunnel per Element",
+							 binedges);
     }
 
   if (storeCollimationInfo)
@@ -358,7 +368,9 @@ void BDSOutput::CreateHistograms()
       G4int nCollimators = (G4int)collimatorIndices.size();
       anyCollimators = nCollimators > 0;
       if (anyCollimators)
-	{histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE", "Energy Loss per Collimator", nCollimators, 0, nCollimators);}
+	{histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
+								"Energy Loss per Collimator",
+								nCollimators, 0, nCollimators);}
     }
   
   if (useScoringMap)
