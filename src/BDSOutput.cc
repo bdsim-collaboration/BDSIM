@@ -328,9 +328,9 @@ void BDSOutput::CreateHistograms()
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax); // 1
-  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax); // 2
-  histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax); // 3
+  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
+  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
+  histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
@@ -339,17 +339,17 @@ void BDSOutput::CreateHistograms()
   else
     {binedges = {0,1};}
   // create per element ("pe") bin width histograms
-  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges); // 4
-  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges); // 5
-  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
+  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
+  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
+  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges);
 
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
   if (tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
-      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax); // 7
-      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges); // 8
+      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax);
+      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges);
     }
 
   if (storeCollimationInfo)
