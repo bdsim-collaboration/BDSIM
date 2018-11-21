@@ -296,6 +296,8 @@ void Options::PublishMembers()
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
   publish("trajNoTransportation",           &Options::trajNoTransportation);
+
+  publish("storeCollimationInfo",           &Options::storeCollimationInfo);
   publish("storeEloss",                     &Options::storeEloss);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeElossTurn",                 &Options::storeElossTurn);
