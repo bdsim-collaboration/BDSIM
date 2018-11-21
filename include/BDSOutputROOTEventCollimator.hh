@@ -38,9 +38,7 @@ class BDSOutputROOTEventCollimator: public TObject
 {
 public:
   /// Default constructor for ROOT
-  BDSOutputROOTEventCollimator();
-
-  
+  BDSOutputROOTEventCollimator();  
 
   bool   interacted;
   bool   primaryStopped;
@@ -73,8 +71,7 @@ public:
   std::vector<float> y;
   std::vector<float> T;       ///< Global time.
   std::vector<int>   turn;
-
-  BDSOutputROOTEventCollimator();
+  
   virtual ~BDSOutputROOTEventCollimator();
 #ifndef __ROOTBUILD__
   void Fill();
