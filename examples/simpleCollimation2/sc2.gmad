@@ -22,5 +22,5 @@ option, physicsList="em",
 
 option, ngenerate=10;
 
-option, storeCollimationInfo=1,
-	elossHistoBinWidht=10*cm;
+option, storeCollimationInfo=1;
+option, elossHistoBinWidth=50*cm;
