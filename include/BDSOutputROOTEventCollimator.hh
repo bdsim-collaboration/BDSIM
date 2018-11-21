@@ -74,26 +74,14 @@ public:
   std::vector<float> T;       ///< Global time.
   std::vector<int>   turn;
 
-  BDSOutputROOTEventLoss();
-  BDSOutputROOTEventLoss(const bool& storeLinksIn,
-			 const bool& storeLocalIn,
-			 const bool& storeGobalIn,
-                         const bool& storeTimeIn,
-			 const bool& storeStepLengthIn);
-  virtual ~BDSOutputROOTEventLoss();
+  BDSOutputROOTEventCollimator();
+  virtual ~BDSOutputROOTEventCollimator();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSTrajectoryPoint* hit);
-  void Fill(const BDSEnergyCounterHit* hit);
+  void Fill();
 #endif
   virtual void Flush();
 
-  bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors
-  bool storeLocal      = false; ///< Whether to store local coordinates
-  bool storeGlobal     = false; ///< Whether to store global coordinates
-  bool storeTime       = false; ///< Whether to store global time
-  bool storeStepLength = false; ///< Whether to store step length.
-
-  ClassDef(BDSOutputROOTEventLoss,3);
+  ClassDef(BDSOutputROOTEventCollimator, 1);
 };
 
 
