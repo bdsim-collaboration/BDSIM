@@ -368,9 +368,17 @@ void BDSOutput::CreateHistograms()
       G4int nCollimators = (G4int)collimatorIndices.size();
       anyCollimators = nCollimators > 0;
       if (anyCollimators)
-	{histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
-								"Energy Loss per Collimator",
-								nCollimators, 0, nCollimators);}
+	{
+	  histIndices1D["CollimatorPhitsPE"] = Create1DHistogram("CollimatorPhitsPE",
+								 "Primary Hits per Collimator",
+								 nCollimators, 0, nCollimators);
+	  histIndices1D["CollimatorPlossPE"] = Create1DHistogram("CollimatorPlossPE",
+								 "Primary Loss per Collimator",
+								 nCollimators, 0, nCollimators);
+	  histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
+								 "Energy Loss per Collimator",
+								 nCollimators, 0, nCollimators);
+	}
     }
   
   if (useScoringMap)
@@ -515,13 +523,17 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 
   if (storeCollimationInfo && anyCollimators)
     {
-      TH1D* elossPerEntry   = evtHistos->Get1DHistogram(histIndices1D["ElossPE"]);
-      TH1D* elossCollimator = evtHistos->Get1DHistogram(histIndices1D["ElossCollimatorPE"]);
-      G4int binIndex = 1; // starts at 1 for TH1; 0 is underflow
-      for (auto collimatorIndex : collimatorIndices)
+      std::vector<G4String> names = {"PhitsPE", "PlossPE", "ElossPE"};
+      for (auto name : names)
 	{
-	  elossCollimator->SetBinContent(binIndex, elossPerEntry->GetBinContent(collimatorIndex));
-	  binIndex++;
+	  TH1D* regular    = evtHistos->Get1DHistogram(histIndices1D[name]);
+	  TH1D* collimator = evtHistos->Get1DHistogram(histIndices1D["Collimator"+name]);
+	  G4int binIndex = 1; // starts at 1 for TH1; 0 is underflow
+	  for (auto collimatorIndex : collimatorIndices)
+	    {
+	      collimator->SetBinContent(binIndex, regular->GetBinContent(collimatorIndex));
+	      binIndex++;
+	    }
 	}
     }
 }
