@@ -77,7 +77,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
   energyWorldExit(0),
-  anyCollimators(false)
+  nCollimators(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
@@ -109,6 +109,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
 
 void BDSOutput::InitialiseGeometryDependent()
 {
+  PrepareCollimatorInformation();
   CreateHistograms();
   InitialiseSamplers();
 }
@@ -118,6 +119,7 @@ void BDSOutput::FillHeader()
   headerOutput->Flush();
   headerOutput->Fill(); // updates time stamp
   WriteHeader();
+  ClearStructuresHeader();
 }
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
@@ -153,9 +155,11 @@ void BDSOutput::FillModel()
 {
   if (storeModel)
     {
-      modelOutput->Fill();
+      modelOutput->Fill(collimatorIndices, collimatorIndicesByName);
       WriteModel();
       ClearStructuresModel();
+      collimatorIndices.clear();
+      collimatorIndicesByName.clear();
     }
 }
 
@@ -314,6 +318,16 @@ void BDSOutput::CalculateHistogramParameters()
   sMaxHistograms = nbins * binWidth;
 }
 
+void BDSOutput::PrepareCollimatorInformation()
+{
+  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  collimatorIndices = flatBeamline->GetIndicesOfCollimators();
+  nCollimators = (G4int)collimatorIndices.size();
+  
+  for (auto index : collimatorIndices)
+    {collimatorIndicesByName[flatBeamline->at(index)->GetName()] = index;}
+}
+
 void BDSOutput::CreateHistograms()
 {
   // construct output histograms
@@ -362,23 +376,17 @@ void BDSOutput::CreateHistograms()
 							 binedges);
     }
 
-  if (storeCollimationInfo)
+  if (storeCollimationInfo && nCollimators > 0)
     {
-      collimatorIndices = flatBeamline->GetIndicesOfCollimators();
-      G4int nCollimators = (G4int)collimatorIndices.size();
-      anyCollimators = nCollimators > 0;
-      if (anyCollimators)
-	{
-	  histIndices1D["CollimatorPhitsPE"] = Create1DHistogram("CollimatorPhitsPE",
-								 "Primary Hits per Collimator",
-								 nCollimators, 0, nCollimators);
-	  histIndices1D["CollimatorPlossPE"] = Create1DHistogram("CollimatorPlossPE",
-								 "Primary Loss per Collimator",
-								 nCollimators, 0, nCollimators);
-	  histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
-								 "Energy Loss per Collimator",
-								 nCollimators, 0, nCollimators);
-	}
+      histIndices1D["CollimatorPhitsPE"] = Create1DHistogram("CollimatorPhitsPE",
+							     "Primary Hits per Collimator",
+							     nCollimators, 0, nCollimators);
+      histIndices1D["CollimatorPlossPE"] = Create1DHistogram("CollimatorPlossPE",
+							     "Primary Loss per Collimator",
+							     nCollimators, 0, nCollimators);
+      histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
+							     "Energy Loss per Collimator",
+							     nCollimators, 0, nCollimators);
     }
   
   if (useScoringMap)
@@ -521,7 +529,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	}
     }
 
-  if (storeCollimationInfo && anyCollimators && (lossType == BDSOutput::LossType::energy))
+  if (storeCollimationInfo && nCollimators > 0 && (lossType == BDSOutput::LossType::energy))
     {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
 }
 
@@ -545,7 +553,7 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
   runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   
-  if (storeCollimationInfo && anyCollimators)
+  if (storeCollimationInfo && nCollimators > 0)
     {CopyFromHistToHist1D("PhitsPE", "CollimatorPhitsPE", collimatorIndices);}
 }
 
@@ -558,7 +566,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
   runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
 
-  if (storeCollimationInfo && anyCollimators)
+  if (storeCollimationInfo && nCollimators > 0)
     {CopyFromHistToHist1D("PlossPE", "CollimatorPlossPE", collimatorIndices);}
 }
 

@@ -26,6 +26,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSSamplerRegistry.hh"
+
+#include "G4Types.hh"
+#include "G4String.hh"
+
+#include <map>
+#include <string>
+#include <vector>
 #endif
 
 ClassImp(BDSOutputROOTEventModel)
@@ -51,8 +58,7 @@ int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
 	  iMin = i;
 	  dMin = d;
 	}
-    }
-  
+    } 
   return iMin;
 }
 
@@ -123,11 +129,24 @@ void BDSOutputROOTEventModel::Flush()
   fintx.clear();
   fintk2.clear();
   fintxk2.clear();
+
+  collimatorIndices.clear();
+  collimatorIndicesByName.clear();
+  nCollimators = 0;
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventModel::Fill()
+void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
+				   const std::map<G4String, G4int>& collimatorIndicesByNameIn)
 {
+  for (const auto value : collimatorIndicesIn)
+    {collimatorIndices.push_back((int)value);}
+
+  nCollimators = (int)collimatorIndices.size();
+  
+  for (const auto& kv : collimatorIndicesByNameIn)
+    {collimatorIndicesByName[(std::string)kv.first] = (int)kv.second;}
+  
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {samplerNamesUnique.push_back(std::string(name)+".");}
   

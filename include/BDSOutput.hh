@@ -167,6 +167,9 @@ private:
   /// Calculate the number of bins and required maximum s.
   void CalculateHistogramParameters();
 
+  /// Extract collimator elements from the beam line and flag whether there are any at all.
+  void PrepareCollimatorInformation();
+  
   /// Create histograms.
   void CreateHistograms();
   
@@ -256,10 +259,14 @@ private:
   std::map<G4String, G4int> histIndices3D;
   /// @}
   
-  /// Optional cache of indices in beam line of collimators used to extract
-  /// collimator information.
-  std::vector<G4int> collimatorIndices;
-  G4bool anyCollimators; ///< Whether there are any collimators at all.
+  G4int nCollimators; ///< Number of collimators in beam line.
+
+  // These collimation variables are held in this class as this class requires the number
+  // of collimators to decide whether or not to make histograms. To do this the beam line
+  // is searched in InitialiseGeometryDependent(). The information is cached here in this class
+  // to avoid having to search a second time when we call FillModel.
+  std::vector<G4int>         collimatorIndices; ///< Indices in the beam line that are collimators.
+  std::map<G4String, G4int>  collimatorIndicesByName; ///< Indices mapped to their name.
 };
 
 #endif

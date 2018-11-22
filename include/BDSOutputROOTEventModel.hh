@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTMODEL_H
 #define BDSOUTPUTROOTEVENTMODEL_H
 
+#include <map>
 #include <vector>
 #include <string>
 
@@ -26,6 +27,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TObject.h"
 #include "TVector3.h"
 #include "TRotation.h"
+
+#ifndef __ROOTBUILD__
+#include "G4String.hh"
+#include "G4Types.hh"
+#endif
 
 /**
  * @brief Information stored per model representing accelerator.
@@ -105,6 +111,14 @@ public:
   std::vector<float>       fintk2;
   std::vector<float>       fintxk2;
 
+  /// Optional cache of indices in beam line of collimators used to extract
+  /// collimator information.
+  std::vector<int> collimatorIndices;
+
+  /// Similar cache but by name of collimator as built by BDSIM.
+  std::map<std::string, int> collimatorIndicesByName;
+  
+  int nCollimators; ///< Number of collimators in beam line.
 
   /// Default constructor
   BDSOutputROOTEventModel();
@@ -117,7 +131,8 @@ public:
   
 #ifndef __ROOTBUILD__
   /// Fill root output
-  virtual void Fill();
+  virtual void Fill(const std::vector<G4int>& collimatorIndicesIn = {},
+		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {});
 #endif
 
   ClassDef(BDSOutputROOTEventModel,3);
