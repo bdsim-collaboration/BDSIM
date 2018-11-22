@@ -30,7 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventModel)
 
-BDSOutputROOTEventModel::BDSOutputROOTEventModel()
+BDSOutputROOTEventModel::BDSOutputROOTEventModel():
+  n(0)
 {;}
 
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
@@ -57,6 +58,7 @@ int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
 
 void BDSOutputROOTEventModel::Flush()
 {
+  n = 0;
   samplerNamesUnique.clear();
   componentName.clear();
   placementName.clear();
@@ -136,6 +138,9 @@ void BDSOutputROOTEventModel::Fill()
 
   double angle;
   CLHEP::Hep3Vector axis;
+
+  n = (int)beamline->size();
+  
   // iterate over flat beamline
   for (auto i = beamline->begin(); i != beamline->end(); ++i)
   {

@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTEventModel: public TObject
 {
 public:
+  int n;
+  
   std::vector<std::string> samplerNamesUnique;
 
   std::vector<std::string> componentName;
