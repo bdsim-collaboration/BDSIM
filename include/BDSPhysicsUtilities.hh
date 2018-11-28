@@ -71,7 +71,7 @@ namespace BDS
 
 #if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.
-  G4VModularPhysicsList* ChannellingPhysicsComplete();
+  G4VModularPhysicsList* ChannellingPhysicsComplete(const G4bool useEMD = false);
 #endif
 }
 
