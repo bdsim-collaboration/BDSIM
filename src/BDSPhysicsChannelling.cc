@@ -60,7 +60,9 @@ void BDSPhysicsChannelling::ConstructProcess()
     {return;}
 
   G4Channeling* channelling = new G4Channeling();
-  channelling->SetMinKineticEnergy(BDSGlobalConstants::Instance()->MinimumKineticEnergy());
+  //#if G4VERSION_NUMBER > 1049
+  channelling->SetMinimumEnergy(BDSGlobalConstants::Instance()->MinimumKineticEnergy());
+  //#endif
 
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
