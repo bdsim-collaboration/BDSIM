@@ -2,14 +2,6 @@
 Running BDSIM
 =============
 
-Run Time Requirements
-=====================
-
-If BDSIM is compiled with GDML support on and GDML is required, the user is required
-to be connected to the Internet to access the GDML schema. This is a requirement
-of the Geant4 GDML parser.
-.. note:: In future, this need will be eliminated.
-
 Basic Operation
 ===============
 
