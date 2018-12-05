@@ -50,6 +50,8 @@ General
 * "Model Preparation" is now "Model Conversion" in the manual to be clearer.
 * Visualisation now uses macro search path to look for visualisation macro in the installation
   directory then the build directory of BDSIM.
+* In recreate mode, there is explicit print out about when the seed is set and if if was successfully
+  loaded from the output file.
   
 Bug Fixes
 ---------
@@ -76,6 +78,8 @@ Bug Fixes
 * Charge now correctly recorded in primaries and in samplers for partially stripped ions.
 * Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
 * Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for field maps.
+* Fix setting default seed state for random number generator if using recreate mode and progressing
+  beyond an event stored in the file.
   
 Output Changes
 --------------

@@ -76,7 +76,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // load seed state if recreating.
   if (recreate)
-    {BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));}
+    {
+      G4cout << __METHOD_NAME__ << "setting seed state from file" << G4endl;
+      BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));
+    }
 
   // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
