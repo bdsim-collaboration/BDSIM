@@ -2,14 +2,6 @@
 Running BDSIM
 =============
 
-Run Time Requirements
-=====================
-
-If BDSIM is compiled with GDML support on and GDML is required, the user is required
-to be connected to the Internet to access the GDML schema. This is a requirement
-of the Geant4 GDML parser.
-.. note:: In future, this need will be eliminated.
-
 Basic Operation
 ===============
 
@@ -203,3 +195,30 @@ user types into the visualiser terminal::
   exit
 
 ,which runs one event and visualises it.
+
+Recreate Mode
+=============
+
+After performing a simulation in BDSIM, it is possible to reproduce one or more events exactly
+the same again. To do this, the original input gmad files (and any associated external geometry
+or field maps, e.g. all the input) are required and should be the same as was originally used.
+Along with this, a BDSIM ROOT output file is required. The output file is used to load the
+random number generator seed states at the start of each event such that the beam and physics
+processes will be the same. For example::
+
+  bdsim --file=mymodel.gmad --outfile=run1 --batch --ngenerate=100
+
+  # let's recreate event 87
+
+  bdsim --file=mymodle.gmad --outfile=selectevent --batch --ngenerate=1 --recreate=run1.root --startFromEvent=87
+
+Usually, one would reproduce something individually to investigate something unexpected and therefore
+might change some physics options. If this is the case, subsequent events will still begin with the same
+beam coordinates as the random number generator is loaded from the previous simulation output file
+at the start of each event. If the physics proceeds differently, this can advance the random number
+generator to a different state.
+
+* If the recreation goes beyond the stored number of events, the random number generator will proceed
+  as normal. e.g. starting from event 80/100 and generating 30 events, will result in 10 new events.
+* Executable options override whatever options were used (and therefore stored in the output) in the
+  initial run of BDSIM.
