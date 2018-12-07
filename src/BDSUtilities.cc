@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4TwoVector.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -310,7 +311,11 @@ G4bool BDS::Geant4EnvironmentIsSet()
 				     "G4NEUTRONHPDATA",
 				     "G4RADIOACTIVEDATA",
 				     "G4LEDATA",
+#if G4VERSION_NUMBER < 1049
 				     "G4NEUTRONXSDATA",
+#else
+				     "G4PARTICLEXSDATA",
+#endif
 				     "G4REALSURFACEDATA",
 				     "G4LEVELGAMMADATA",
 				     "G4PIIDATA",
