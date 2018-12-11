@@ -9,7 +9,7 @@ BDSIM is started interactively (without the :code:`--batch` command), Geant4
 will print a list of all available visualisers that Geant4 has been compiled
 with on your system. Should you wish to extend this list, you must follow
 the Geant4 instructions, which typically involve installing the necessary
-dependencies (such as qt4), reconfiguring and recompiling Geant4. BDSIM
+dependencies (such as Qt5), reconfiguring and recompiling Geant4. BDSIM
 should then subsequently be reconfigured (rerun cmake) and recompiled.
 
 As an example, an excerpt from the terminal output shows the following list
@@ -48,6 +48,16 @@ The BDSIM visualisation macros can be found in the bdsim source directory as
 follows::
 
   bdsim/vis/*.mac
+
+When running, BDSIM looks for the macros in the installation directory then the
+build directory if it exists.
+
+The user can also specify an optional macro to run after the visualisation has started.
+This way, you can use the default BDSIM visualisation but run your own macro at the beginning.
+This may be useful for particular view points or visualisation settings.::
+
+  bdsim --file=mylattice.gmad --geant4Macro=viewpoint.mac
+
 
 Visualisation Features
 ======================

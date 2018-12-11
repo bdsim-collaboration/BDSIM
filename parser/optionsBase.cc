@@ -32,6 +32,7 @@ OptionsBase::OptionsBase()
   // executable options
   inputFileName         = "optics.mad";
   visMacroFileName      = "";
+  geant4MacroFileName   = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";

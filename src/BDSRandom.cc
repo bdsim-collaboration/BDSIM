@@ -115,6 +115,8 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
 
 void BDSRandom::SetSeedState(G4String seedState)
 {
+  if (seedState.empty())
+    {G4cout << __METHOD_NAME__ << "empty seed state supplied - no seed state set" << G4endl; return;}
   std::stringstream ss;
   ss.str(seedState); // set contents of string stream as input string
   SetSeedState(ss);

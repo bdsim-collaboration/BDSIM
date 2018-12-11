@@ -38,17 +38,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
 
-BDSVisManager::BDSVisManager()
+BDSVisManager::BDSVisManager(G4String visMacroFileNameIn,
+			     G4String geant4MacroFileNameIn):
+  visMacroFileName(visMacroFileNameIn),
+  geant4MacroFileName(geant4MacroFileNameIn)
 {;}
 
 void BDSVisManager::StartSession(G4int argc, char** argv)
 {
   /// Create BDS UI messenger
-  BDSMessenger *bdsMessenger = new BDSMessenger();
+  BDSMessenger* bdsMessenger = new BDSMessenger();
 
 #ifdef G4UI_USE_TCSH
   G4UIsession* session = new G4UIterminal(new G4UItcsh);
@@ -60,10 +62,11 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
 #endif
-  // Initialize visualisation
+  // initialize visualisation
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
-      
+  
+  // setup trajectory colouring
   G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
   visManager->RegisterModel(trajModel1);
   visManager->SelectTrajectoryModel(trajModel1->Name());
@@ -73,73 +76,56 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
 
-  std::string bdsimPath = BDS::GetBDSIMExecPath();
-  // difference between local build and install build:
-  std::string visPath;
-  std::string localPath   = bdsimPath + "vis/vis.mac";
-  std::string installPath = bdsimPath + "../share/bdsim/vis/vis.mac";
-      
-  if (FILE *file = fopen(localPath.c_str(), "r"))
-    {
-      fclose(file);
-      visPath = bdsimPath + "vis/";
-    }
-  else if ( (file = fopen(installPath.c_str(), "r")) )
-    {
-      fclose(file);
-      visPath = bdsimPath + "../share/bdsim/vis/";
-    }
-  else
-    {G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;}
+  G4UImanager* UIManager = G4UImanager::GetUIpointer();
+  // setup paths to look for macros for the install then the build directory
+  UIManager->ApplyCommand("/control/macroPath @CMAKE_INSTALL_PREFIX@/share/bdsim/vis:@CMAKE_BINARY_DIR@/vis");
 
-  // check if visualisation file is present and readable
-  G4String visMacroName = BDSGlobalConstants::Instance()->VisMacroFileName();
-  bool useDefault = false;
-  // if not set use default visualisation file
-  if (visMacroName.empty())
-    {useDefault = true;}
-  // build full filename
-  G4String visMacroFilename = visMacroName;
-  if (useDefault)
+  G4String visMacName = visMacroFileName;
+  G4String visMacPath = visMacName; // by default just copy it
+  if (visMacName.empty()) // none specified - use default in BDSIM
     {
 #ifdef G4VIS_USE_OPENGLQT
-      visMacroFilename = visPath + "vis.mac";
+      visMacName = "vis.mac";
 #else
-      visMacroFilename = visPath + "dawnfile.mac";
+      visMacName = "dawnfile.mac";
 #endif
-    }
-  else
-    {
-      // check if file exists and if not present don't start session
-      // (need to use std::cout otherwise not printed)
-      if (BDS::FileExists(visMacroFilename) == false)
-	{
-          std::cout << __METHOD_NAME__ << "ERROR: visualisation file "
-                    << visMacroFilename << " not present!" << G4endl;
+      // check if we find the file to at least let the user know what's being executed
+      visMacPath = UIManager->FindMacroPath(visMacName);
+      G4cout << __METHOD_NAME__ << "Visualisation macro name: " << visMacName << G4endl;
+      G4cout << __METHOD_NAME__ << "Visualisation macro path: " << visMacPath << G4endl;
+      if (visMacPath == visMacName) // this happens when the geant4 ui manager doesn't find the file in any directory
+        {// behaviour found from geant4 source code inspection...
+          G4cout << __METHOD_NAME__ << "vis.mac missing from BDSIM installation directory." << G4endl;
           return;
         }
     }
-  // execute visualisation file
-  G4UImanager* UIManager = G4UImanager::GetUIpointer();
-  UIManager->ApplyCommand("/control/execute " + visMacroFilename);
+  else
+    {// user specified visualisation macro - check if it exists
+      if (BDS::FileExists(visMacPath) == false)
+        {
+          std::cout << __METHOD_NAME__ << "ERROR: visualisation file "
+                    << visMacPath << " not present!" << G4endl;
+          return;
+        }
+    }
+  // execute the macro
+  UIManager->ApplyCommand("/control/execute " + visMacPath);
+
+  // apply optional macro if file name not empty
+  if (!geant4MacroFileName.empty())
+    {UIManager->ApplyCommand("/control/execute " + geant4MacroFileName);}
   
-  // run gui
-  if (session2->IsGUI())
-    {
+  
 #if G4VERSION_NUMBER < 1030
-      // these were added by default in Geant4.10.3 onwards
-      // Add icons
-      std::string iconMacroFilename = visPath + "icons.mac";
-      UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
-      // add run icon:
-      std::string runButtonFilename = visPath + "run.png";
-      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
-#endif
-      // add menus
-      std::string guiMacroFilename  = visPath + "gui.mac";
-      UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
+  if (session2->IsGUI())
+    {// these were added by default in Geant4.10.3 onwards
+      UIManager->ApplyCommand("/control/execute icons.mac"); // add icons
+      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" run.png"); // add run icon
+      UIManager->ApplyCommand("/control/execute gui.mac");   // add menus
     }
 #endif
+#endif
+  // run gui
   session2->SessionStart();
   delete session2;
 #endif
