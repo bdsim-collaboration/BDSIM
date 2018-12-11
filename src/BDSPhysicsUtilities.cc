@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
 #endif
+#include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
@@ -81,10 +82,11 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
     }
   else if (completePhysics)
     {
-      if (physicsListNameLower == "completechannelling")
+      if (physicsListNameLower == "completechannelling" || physicsListNameLower == "completechannellingemd")
 	{
 #if G4VERSION_NUMBER > 1039
-	  return BDS::ChannellingPhysicsComplete();
+	  G4bool useEMD = physicsListNameLower.contains("emd");
+	  return BDS::ChannellingPhysicsComplete(useEMD);
 #else
 	  G4cerr << "Channel physics is not supported with Geant4 versions less than 10.4" << G4endl;
 	  exit(1);
@@ -286,13 +288,18 @@ void BDS::PrintDefinedParticles()
 }
 
 #if G4VERSION_NUMBER > 1039
-G4VModularPhysicsList* BDS::ChannellingPhysicsComplete()
+G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(const G4bool useEMD)
 {
   G4VModularPhysicsList* physlist = new FTFP_BERT();
   G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
   physlist->RegisterPhysics(new BDSPhysicsChannelling());
   // replace the EM physics in the Geant4 provided FTFP_BERT composite physics list
   physlist->ReplacePhysics(new BDSEmStandardPhysicsOp4Channelling());
+
+  // optional electromagnetic dissociation that isn't in FTFP_BERT by default
+  if (useEMD)
+    {physlist->RegisterPhysics(new BDSPhysicsEMDissociation());}
+
   biasingPhysics->PhysicsBiasAllCharged();
   physlist->RegisterPhysics(biasingPhysics);
   return physlist;

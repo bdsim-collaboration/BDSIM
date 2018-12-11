@@ -3060,7 +3060,10 @@ using the following syntax::
 
   option, <option_name>=<value>;
 
-If the value is a string and not a number, it should be enclosed in "double inverted commas".
+Values accepted can be a number (integer, floating point or scientific notation), a string
+with the value enclosed in "double inverted commas", or a Boolean. For Boolean options (described
+as on or off, or true or false) a number 1 or 0 is used.
+
 Multiple options can be defined at once using the following syntax::
 
   option, <option1> = <value>,
@@ -3070,14 +3073,12 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius, as these will have a large impact on the outcome of the simulation.
 
-Below is a full list of all options in BDSIM. If the option is Boolean, 1 (true) or 0 (false) can be used
-as their value.
+Below is a full list of all options in BDSIM. Please also see :ref:`executable-options` for options
+that are used on the command line when executing BDSIM. The executable options override whatever
+options are specified in the input gmad files.
 
-Please also see :ref:`executable-options` for options that are used on the command line when
-executing BDSIM.
-
-Common options are duplicated below for convenience, as these are the most common and useful
-options. All options are described in the following sub-sections:
+Common options are duplicated below for convenience as these are the most useful ones. All options
+are described in the following sub-sections:
 
 * `General Run Options`_
 * `Geometry Options`_

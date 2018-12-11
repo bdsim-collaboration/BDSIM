@@ -97,7 +97,11 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
+#if G4VERSION_NUMBER > 1049
+			 BDSIntegratorType::g4classicalrk4, // multipole outer - nystrom doesn't work in g4.10.5
+#else
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+#endif
 			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);// undulator
@@ -121,7 +125,11 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4,   // skew decapole
 			 BDSIntegratorType::dipolefringe,     // dipole fringe field
 			 BDSIntegratorType::multipolethin,    // thin multipole
-			 BDSIntegratorType::g4nystromrk4,     // multipole outer
+#if G4VERSION_NUMBER > 1049
+			 BDSIntegratorType::g4classicalrk4, // multipole outer - nystrom doesn't work in g4.10.5
+#else
+			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+#endif
 			 BDSIntegratorType::rmatrixthin,      // thin rmatrix
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);  // undulator
@@ -145,7 +153,11 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
+#if G4VERSION_NUMBER > 1049
+			 BDSIntegratorType::g4classicalrk4, // multipole outer - nystrom doesn't work in g4.10.5
+#else
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+#endif
 			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);// undulator  /// Mad-x style tracking with fringe field momentum scaling.
@@ -168,7 +180,11 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringescaling, // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
+#if G4VERSION_NUMBER > 1049
+			 BDSIntegratorType::g4classicalrk4, // multipole outer - nystrom doesn't work in g4.10.5
+#else
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+#endif
 			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);// undulator  /// All 4th Order Runge Kutte.
@@ -191,7 +207,11 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
+#if G4VERSION_NUMBER > 1049
+			 BDSIntegratorType::g4classicalrk4, // multipole outer - nystrom doesn't work in g4.10.5
+#else
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+#endif
 			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
 			 BDSIntegratorType::paralleltransport, // parallel transport
 			 BDSIntegratorType::g4classicalrk4);// undulator
