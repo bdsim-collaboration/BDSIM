@@ -205,7 +205,7 @@ void Options::PublishMembers()
   publish("vhRatio",                   &Options::vhRatio);
   publish("coilWidthFraction",         &Options::coilWidthFraction);
   publish("coilHeightFraction",        &Options::coilHeightFraction);
-  publish("ignoreLocalMagnetGeometry", &Options::coilHeightFraction);
+  publish("ignoreLocalMagnetGeometry", &Options::ignoreLocalMagnetGeometry);
 
   publish("preprocessGDML",       &Options::preprocessGDML);
 
