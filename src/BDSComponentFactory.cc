@@ -1847,7 +1847,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
-  G4Material* result;
+  G4Material* result = nullptr;
   if (el->vacuumMaterial == "")
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
