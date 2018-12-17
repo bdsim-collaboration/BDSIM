@@ -862,18 +862,19 @@ void BDSMaterials::AddMaterial(G4String aName,
 		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
   std::list<G4String>::iterator sIter;
   typename std::list<Type>::iterator dIter;
-  for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
-      sIter != itsComponents.end();
-      ++sIter, ++dIter)
-  {
+  for (sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
+       sIter != itsComponents.end();
+       ++sIter, ++dIter)
+    {
 #ifdef BDSDEBUG
-    G4cout << "BDSMaterials::AddMaterial: " << *sIter << G4endl;
+      G4cout << "BDSMaterials::AddMaterial: " << *sIter << G4endl;
 #endif
-    G4Element* element = CheckElement(*sIter);
-    if(element){
-      tmpMaterial->AddElement(element,(*dIter));
-    } else tmpMaterial->AddMaterial(GetMaterial(*sIter),(*dIter));
-  }
+      G4Element* element = CheckElement(*sIter);
+      if(element)
+	{tmpMaterial->AddElement(element,(*dIter));}
+      else
+	{tmpMaterial->AddMaterial(GetMaterial(*sIter),(*dIter));}
+    }
   AddMaterial(tmpMaterial,aName);
 }
 
@@ -904,7 +905,8 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
       // find material regardless of capitalisation
       aMaterial.toLower();
       auto iter = materials.find(aMaterial);
-      if(iter != materials.end()) return (*iter).second;
+      if (iter != materials.end())
+        {return (*iter).second;}
       else
 	{
 	  ListMaterials();
@@ -1001,88 +1003,95 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
   G4bool debug = false;
 #endif
  
-  // convert the parsed atom list to list of Geant4 G4Elements
-  
-  if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
-  for(auto it : BDSParser::Instance()->GetAtoms())
-  {
+  // convert the parsed atom list to list of Geant4 G4Elements  
+  if (verbose || debug)
+    {G4cout << __METHOD_NAME__ << "parsing the atom list..." << G4endl;}
+  for (auto it : BDSParser::Instance()->GetAtoms())
+    {
 #ifdef BDSDEBUG
-    G4cout << "---->adding Atom, ";
-    it.print();
+      G4cout << "---->adding Atom, ";
+      it.print();
 #endif
-
-    AddElement(it.name,it.symbol,it.Z,it.A);
-  }
-  if (verbose || debug) G4cout << "size of atom list: "<< BDSParser::Instance()->GetAtoms().size() << G4endl;
+      AddElement(it.name,it.symbol,it.Z,it.A);
+    }
+  if (verbose || debug)
+    {G4cout << "size of atom list: "<< BDSParser::Instance()->GetAtoms().size() << G4endl;}
 
   // convert the parsed material list to list of Geant4 G4Materials
-  if (verbose || debug) G4cout << "parsing the material list..."<< G4endl;
-  for(auto it : BDSParser::Instance()->GetMaterials())
-  {
-    G4State itsState;
-    if      (it.state=="solid")  itsState = kStateSolid;
-    else if (it.state=="liquid") itsState = kStateLiquid;
-    else if (it.state=="gas")    itsState = kStateGas;
-    else {
-      G4cout << "Unknown material state "<< it.state 
-	     << ", setting it to default (solid)"
-	     << G4endl;
-      it.state="solid";
-      itsState = kStateSolid;
-    }
-
-#ifdef BDSDEBUG  
-    G4cout << "---->adding Material, ";
-    it.print();
-#endif
-
-    if(it.Z != 0) {
-      AddMaterial(it.name,
-		  it.Z,
-		  it.A,
-		  it.density,
-		  itsState,
-		  it.temper,
-		  it.pressure);
-    }
-    else if(it.components.size() != 0){
-      std::list<G4String> tempComponents;
-      for (auto jt : it.components)
-	{tempComponents.push_back(G4String(jt));}
-
-      if(it.componentsWeights.size()==it.components.size()) {
-	
-	AddMaterial(it.name,
-		    it.density,
-		    itsState,
-		    it.temper,
-		    it.pressure,
-		    tempComponents,
-		    it.componentsWeights);
-      }
-      else if(it.componentsFractions.size()==it.components.size()) {
-
-        AddMaterial(it.name,
-		    it.density,
-		    itsState,
-		    it.temper,
-		    it.pressure,
-		    tempComponents,
-		    it.componentsFractions);
-      }
+  if (verbose || debug)
+    {G4cout << "parsing the material list..."<< G4endl;}
+  for (auto it : BDSParser::Instance()->GetMaterials())
+    {
+      G4State itsState;
+      if      (it.state=="solid")
+	{itsState = kStateSolid;}
+      else if (it.state=="liquid")
+	{itsState = kStateLiquid;}
+      else if (it.state=="gas")
+	{itsState = kStateGas;}
       else
 	{
-	  G4cout << __METHOD_NAME__
-		 << "Badly defined material - number of components is not equal to number of weights or mass fractions!" << G4endl;
+	  G4cout << "Unknown material state "<< it.state 
+		 << ", setting it to default (solid)"
+		 << G4endl;
+	  it.state="solid";
+	  itsState = kStateSolid;
+	}
+      
+#ifdef BDSDEBUG  
+      G4cout << "---->adding Material, ";
+      it.print();
+#endif
+      
+      if(it.Z != 0)
+	{
+	  AddMaterial(it.name,
+		      it.Z,
+		      it.A,
+		      it.density,
+		      itsState,
+		      it.temper,
+		      it.pressure);
+	}
+      else if(it.components.size() != 0)
+	{
+	  std::list<G4String> tempComponents;
+	  for (auto jt : it.components)
+	    {tempComponents.push_back(G4String(jt));}
+	  
+	  if(it.componentsWeights.size()==it.components.size())
+	    {
+	      AddMaterial(it.name,
+			  it.density,
+			  itsState,
+			  it.temper,
+			  it.pressure,
+			  tempComponents,
+			  it.componentsWeights);
+	    }
+	  else if(it.componentsFractions.size()==it.components.size())
+	    {
+	      AddMaterial(it.name,
+			  it.density,
+			  itsState,
+			  it.temper,
+			  it.pressure,
+			  tempComponents,
+			  it.componentsFractions);
+	    }
+	  else
+	    {
+	      G4cout << __METHOD_NAME__
+		     << "Badly defined material - number of components is not equal to number of weights or mass fractions!" << G4endl;
+	      exit(1);
+	    }
+	}
+      else
+	{
+	  G4cout << __METHOD_NAME__ << "Badly defined material - need more information!" << G4endl;
 	  exit(1);
 	}
     }
-    else
-      {
-	G4cout << __METHOD_NAME__ << "Badly defined material - need more information!" << G4endl;
-	exit(1);
-      }
-  }
   if (verbose || debug)
     {G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;}
 }
