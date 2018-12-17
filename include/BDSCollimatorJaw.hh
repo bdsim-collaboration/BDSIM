@@ -30,7 +30,7 @@ class G4VSolid;
 /**
  * @brief Collimator with only two jaw and no top bit.
  *
- * @author Laurie Nevay
+ * @author Will Shields
  */
 
 class BDSCollimatorJaw: public BDSAcceleratorComponent
@@ -57,8 +57,6 @@ protected:
   virtual void Build();
   
   virtual void BuildContainerLogicalVolume();
-
-  virtual void BuildJawCollimator();
 
   ///@{ Geometrical objects:
   G4VSolid* jawSolid;
