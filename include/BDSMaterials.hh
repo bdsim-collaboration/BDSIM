@@ -117,6 +117,10 @@ private:
   void AddElement(G4String name, const G4String& symbol, G4double itsZ, G4double itsA);
   ///@}
 
+  /// Print warning if density suspiciously high. Should be in g/cm3 in G4 units already.
+  void DensityCheck(const G4double  density,
+		    const G4String& materialName) const;
+
   /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials;
   /// map of elements, no lowercase convention

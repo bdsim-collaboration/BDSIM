@@ -875,6 +875,8 @@ void BDSMaterials::AddMaterial(G4String name,
 			       const std::list<Type>&     componentFractions)
 {
   name.toLower();
+  DensityCheck(density, name);
+  
   G4Material* tmpMaterial = new G4Material(name,
 					   density*CLHEP::g/CLHEP::cm3, 
 					   (G4int)components.size(),
@@ -958,6 +960,18 @@ void BDSMaterials::AddElement(G4String name,
 {
   G4Element* tmpElement = new G4Element(name, symbol, Z, A*CLHEP::g/CLHEP::mole);
   AddElement(tmpElement, symbol);
+}
+
+void BDSMaterials::DensityCheck(const G4double  density,
+				const G4String& materialName) const
+{
+  if (density > 1e2)
+    {// so greater than 100g / cm3, the densest natural material is around 23g/cm3
+      G4cout << G4endl << G4endl;
+      G4cout << __METHOD_NAME__ << "material \"" << materialName
+	     << "\" has a density higher than 100g/cm3! Perhaps check this!" << G4endl
+	     << "Density: " << density << G4endl;
+    }
 }
 
 G4Element* BDSMaterials::CheckElement(G4String symbol) const
