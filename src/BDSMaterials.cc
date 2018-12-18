@@ -824,37 +824,45 @@ void BDSMaterials::DefineVacuums()
   AddMaterial(tmpMaterial,name);
 }
 
-void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
+void BDSMaterials::AddMaterial(G4Material* material, G4String name)
 {
-  aName.toLower();
-  if(materials.insert(make_pair(aName,aMaterial)).second)
+  name.toLower();
+  if (materials.insert(make_pair(name, material)).second)
     {
 #ifdef BDSDEBUG
-      G4cout << "New material : " << aName << " added to material table" << G4endl;
+      G4cout << "New material : " << name << " added to material table" << G4endl;
 #endif
     }
   else
-    {G4cout << __METHOD_NAME__ << "Material \"" << aName << "\" already exists" << G4endl; exit(1);}
+    {G4cout << __METHOD_NAME__ << "Material \"" << name << "\" already exists" << G4endl; exit(1);}
 }
 
-void BDSMaterials::AddMaterial(G4String aMaterial,G4String aName)
+void BDSMaterials::AddMaterial(G4String materialStr, G4String name)
 {
-  G4Material* material = GetMaterial(aMaterial);
-  AddMaterial(material, aName);
+  G4Material* material = GetMaterial(materialStr);
+  AddMaterial(material, name);
 }
 
-void BDSMaterials::AddMaterial(G4String aName,
-			       G4double itsZ,
-			       G4double itsA,
-			       G4double itsDensity,
-			       G4State  itsState,    //solid,gas
-			       G4double itsTemp,     //temperature
-			       G4double itsPressure) //pressure
+void BDSMaterials::AddMaterial(G4String name,
+			       G4double Z,
+			       G4double A,
+			       G4double density,
+			       G4State  state,
+			       G4double temperature,
+			       G4double pressure)
 {
   // convention: material name in small letters (to be able to find materials regardless of capitalisation)
-  aName.toLower();
-  G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3, itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  AddMaterial(tmpMaterial,aName);
+  name.toLower();
+  DensityCheck(density, name);
+  
+  G4Material* tmpMaterial = new G4Material(name,
+					   Z,
+					   A*CLHEP::g/CLHEP::mole,
+					   density*CLHEP::g/CLHEP::cm3,
+					   state,
+					   temperature*CLHEP::kelvin,
+					   pressure*CLHEP::atmosphere);
+  AddMaterial(tmpMaterial, name);
 }
 
 template <typename Type>
@@ -998,15 +1006,15 @@ void BDSMaterials::ListMaterials() const
 
 BDSMaterials::~BDSMaterials()
 {
-  for(auto material : materials)
+  for (auto material : materials)
     {delete material.second;}
   materials.clear();
 
-  for(auto element : elements)
+  for (auto element : elements)
     {delete element.second;}
   elements.clear();
 
-  for(G4MaterialPropertiesTable* table : propertiesTables)
+  for (G4MaterialPropertiesTable* table : propertiesTables)
     {delete table;}
 
   _instance = nullptr;

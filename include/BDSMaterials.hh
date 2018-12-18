@@ -56,9 +56,10 @@ public:
 protected:
   BDSMaterials();
   /// Add G4Material
-  void AddMaterial(G4Material* aMaterial, G4String aName);
+  void AddMaterial(G4Material* material, G4String name);
   /// Add alias to a material
-  void AddMaterial(G4String    aMaterial, G4String aName);
+  void AddMaterial(G4String    materialStr, G4String name);
+
   /** Add materials
       @param[in] Z        atomic number
       @param[in] A        mole mass in g/mole
@@ -67,12 +68,12 @@ protected:
       @param[in] temp     in kelvin
       @param[in] pressure in atm
   */
-  void AddMaterial(G4String aName,
+  void AddMaterial(G4String name,
 		   G4double Z,
 		   G4double A,
 		   G4double density,
 		   G4State  state, 
-		   G4double temp, 
+		   G4double temperature, 
 		   G4double pressure);
 
   /** Add materials
