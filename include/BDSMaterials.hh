@@ -49,9 +49,9 @@ public:
   void ListMaterials()const;
 
   /// Get material by name
-  G4Material* GetMaterial(G4String aMaterial)const;
+  G4Material* GetMaterial(G4String material) const;
   /// Get element by name
-  G4Element*  GetElement(G4String aSymbol)const;
+  G4Element*  GetElement(G4String symbol) const;
 
 protected:
   BDSMaterials();
@@ -84,16 +84,16 @@ protected:
       @param[in] componentsFractions list of fractions or integers of the elements
   */
   template <typename Type>
-  void AddMaterial(G4String aName, 
+  void AddMaterial(G4String name, 
 		   G4double density, 
 		   G4State  state, 
-		   G4double temp, 
+		   G4double temperature, 
 		   G4double pressure,
-		   std::list<G4String> components,
-		   std::list<Type> componentsFractions);
+		   const std::list<G4String>& components,
+		   const std::list<Type>&     componentFractions);
 
   /// Return element if defined (nullptr if not)
-  G4Element* CheckElement(G4String aSymbol)const;
+  G4Element* CheckElement(G4String symbol) const;
 
 private:
   /// Singleton instance
@@ -112,8 +112,8 @@ private:
   ///@}
 
   ///@{ Add a G4Element
-  void AddElement(G4Element* aElement,G4String aName);
-  void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
+  void AddElement(G4Element* element, const G4String& symbol);
+  void AddElement(G4String name, const G4String& symbol, G4double itsZ, G4double itsA);
   ///@}
 
   /// map of materials, convention name lowercase

@@ -849,21 +849,25 @@ void BDSMaterials::AddMaterial(G4String aName,
 }
 
 template <typename Type>
-void BDSMaterials::AddMaterial(G4String aName,
-			       G4double itsDensity,
-			       G4State  itsState,
-			       G4double itsTemp,
-			       G4double itsPressure,
-			       std::list<G4String> itsComponents,
-			       std::list<Type> itsComponentsFractions)
+void BDSMaterials::AddMaterial(G4String name,
+			       G4double density,
+			       G4State  state,
+			       G4double temperature,
+			       G4double pressure,
+			       const std::list<G4String>& components,
+			       const std::list<Type>&     componentFractions)
 {
-  aName.toLower();
-  G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
-		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  std::list<G4String>::iterator sIter;
-  typename std::list<Type>::iterator dIter;
-  for (sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
-       sIter != itsComponents.end();
+  name.toLower();
+  G4Material* tmpMaterial = new G4Material(name,
+					   density*CLHEP::g/CLHEP::cm3, 
+					   (G4int)components.size(),
+					   state,
+					   temperature*CLHEP::kelvin,
+					   pressure*CLHEP::atmosphere);
+  std::list<G4String>::const_iterator sIter;
+  typename std::list<Type>::const_iterator dIter;
+  for (sIter = components.begin(), dIter = componentFractions.begin();
+       sIter != components.end();
        ++sIter, ++dIter)
     {
 #ifdef BDSDEBUG
@@ -871,31 +875,31 @@ void BDSMaterials::AddMaterial(G4String aName,
 #endif
       G4Element* element = CheckElement(*sIter);
       if(element)
-	{tmpMaterial->AddElement(element,(*dIter));}
+	{tmpMaterial->AddElement(element, (*dIter));}
       else
-	{tmpMaterial->AddMaterial(GetMaterial(*sIter),(*dIter));}
+	{tmpMaterial->AddMaterial(GetMaterial(*sIter), (*dIter));}
     }
-  AddMaterial(tmpMaterial,aName);
+  AddMaterial(tmpMaterial, name);
 }
 
-G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
+G4Material* BDSMaterials::GetMaterial(G4String material) const
 {
   // for short names we assume they're elements so we prefix with G4_ and
   // get them from NIST
   G4String nistString ("G4_");
-  if (aMaterial.length() <= 2)
-    {aMaterial.prepend(nistString);}
+  if (material.length() <= 2)
+    {material.prepend(nistString);}
 
-  G4String start (aMaterial, 3);
+  G4String start (material, 3);
   if (nistString == start)
     {
 #ifdef BDSDEBUG
-      G4cout << "Using NIST material " << aMaterial << G4endl;
+      G4cout << "Using NIST material " << material << G4endl;
 #endif
-      G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
+      G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial(material, true, true);
       if (mat == nullptr)
         {
-          G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" could not be found by NIST." << G4endl;
+          G4cout << __METHOD_NAME__ << "\"" << material << "\" could not be found by NIST." << G4endl;
           exit(1);
         }
       return mat;
@@ -903,64 +907,70 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
   else
     {
       // find material regardless of capitalisation
-      aMaterial.toLower();
-      auto iter = materials.find(aMaterial);
+      material.toLower();
+      auto iter = materials.find(material);
       if (iter != materials.end())
         {return (*iter).second;}
       else
 	{
 	  ListMaterials();
-	  G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" is unknown." << G4endl;
+	  G4cout << __METHOD_NAME__ << "\"" << material << "\" is unknown." << G4endl;
 	  exit(1);
 	}
     }
 }
 
-void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
+void BDSMaterials::AddElement(G4Element* element, const G4String& symbol)
 {
-  if (CheckElement(aSymbol) != nullptr)
+  if (CheckElement(symbol) != nullptr)
     {
-      G4cout << __METHOD_NAME__ << "Atom  \"" << aSymbol << "\" already exists." << G4endl;
+      G4cout << __METHOD_NAME__ << "Element  \"" << symbol << "\" already exists." << G4endl;
       exit(1);
     }
 
-  elements.insert(make_pair(aSymbol,aElement));
+  elements.insert(make_pair(symbol, element));
 #ifdef BDSDEBUG
-  G4cout << "New atom : " << aSymbol << G4endl;
+  G4cout << "New element : " << symbol << G4endl;
 #endif
 }
 
-void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
+void BDSMaterials::AddElement(G4String name,
+			      const G4String& symbol,
+			      G4double Z,
+			      G4double A)
 {
-  G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
-  AddElement(tmpElement,aSymbol);
+  G4Element* tmpElement = new G4Element(name, symbol, Z, A*CLHEP::g/CLHEP::mole);
+  AddElement(tmpElement, symbol);
 }
 
-G4Element* BDSMaterials::CheckElement(G4String aSymbol)const
+G4Element* BDSMaterials::CheckElement(G4String symbol) const
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Checking element " << aSymbol << G4endl;
+  G4cout << __METHOD_NAME__ << "Checking element " << symbol << G4endl;
 #endif
   // first look in defined element list
-  auto iter = elements.find(aSymbol);
-  if(iter != elements.end()) return (*iter).second;
-
-  G4Element* element = G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
-  return element;
+  auto iter = elements.find(symbol);
+  if(iter != elements.end())
+    {return (*iter).second;}
+  else
+    {
+      G4Element* element = G4NistManager::Instance()->FindOrBuildElement(symbol, true);
+      return element;
+    }
 }
 
-G4Element* BDSMaterials::GetElement(G4String aSymbol)const
+G4Element* BDSMaterials::GetElement(G4String symbol) const
 {
-  G4Element* element = CheckElement(aSymbol);
+  G4Element* element = CheckElement(symbol);
   if (element == nullptr)
     {
-      G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" could not be found." << G4endl;
+      G4cout << __METHOD_NAME__ << "Element \"" << symbol << "\" could not be found." << G4endl;
       exit(1);
     }
   return element;
 }
 
-void BDSMaterials::ListMaterials()const
+void BDSMaterials::ListMaterials() const
 {
   G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl;
 
