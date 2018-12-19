@@ -47,6 +47,10 @@ public:
 			  G4double                 minimumRadiusOfCurvatureIn);
   
   virtual ~BDSIntegratorKickerThin(){;}
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorKickerThin& operator=(const BDSIntegratorKickerThin&) = delete;
+  BDSIntegratorKickerThin(BDSIntegratorKickerThin&) = delete;
+  /// @}
 
   /// The stepper for integration.
   virtual void Stepper(const G4double yIn[],
