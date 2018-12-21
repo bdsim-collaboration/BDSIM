@@ -85,34 +85,46 @@ void BDSMaterials::DefineMetals()
 
   // special forms
   std::list<int> singleElement = {1};
-  AddMaterial("graphite"      ,   2.265, kStateSolid, NTP_Temperature, 1, {"C"} , singleElement);
-  AddMaterial("graphitefoam"  ,   0.61 , kStateSolid, NTP_Temperature, 1, {"C"} , singleElement);
-  AddMaterial("solidhydrogen" ,   8.96 , kStateSolid, NTP_Temperature, 1, {"H"} , singleElement);
-  AddMaterial("solidnitrogen" ,   8.96 , kStateSolid, NTP_Temperature, 1, {"N"} , singleElement);
-  AddMaterial("solidoxygen"   ,   8.96 , kStateSolid, NTP_Temperature, 1, {"O"} , singleElement);
-  AddMaterial("weightiron"    ,   7.87 , kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
+  AddMaterial("graphite",     2.265, kStateSolid, NTP_Temperature, 1, {"C"}, singleElement);
+  AddMaterial("graphitefoam", 0.61,  kStateSolid, NTP_Temperature, 1, {"C"}, singleElement);
+  AddMaterial("solidhydrogen",8.96,  kStateSolid, NTP_Temperature, 1, {"H"}, singleElement);
+  AddMaterial("solidnitrogen",8.96,  kStateSolid, NTP_Temperature, 1, {"N"}, singleElement);
+  AddMaterial("solidoxygen",  8.96,  kStateSolid, NTP_Temperature, 1, {"O"}, singleElement);
+  AddMaterial("weightiron",   7.87,  kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
 
   // composites and alloys
+  AddMaterial("leadtungstate" ,
+	      8.27,
+	      kStateSolid, NTP_Temperature, 1,
+              {"Pb","W" ,"O" },
+	      std::list<int>{1, 1, 4});
+  
+  AddMaterial("smco",
+	      8.4,
+	      kStateSolid, 300, 1,
+              {"Sm","Co"},
+	      std::list<double>{0.338, 0.662});
 
-  AddMaterial("leadtungstate" ,   8.27 , kStateSolid, NTP_Temperature, 1,
-              {"Pb","W" ,"O" }, std::list<int>{1, 1, 4});
-  AddMaterial("smco"          ,   8.4  , kStateSolid, 300, 1,
-              {"Sm","Co"}     , std::list<double>{0.338, 0.662});
+  // Titanium alloy (BDS collimator material SLAC-TN-03-069 p25) deacon 15 Jun 2007
+  AddMaterial("titaniumalloy",
+	      4.48,
+	      kStateSolid, 300, 1,
+              {"V" ,"Al","Ti"},
+	      std::list<double>{0.025, 0.03, 0.945});
 
-  //Titanium alloy (BDS collimator material SLAC-TN-03-069 p25) deacon 15 Jun 2007
-  AddMaterial("titaniumalloy" ,   4.48 , kStateSolid, 300, 1,
-              {"V" ,"Al","Ti"}, std::list<double>{0.025, 0.03, 0.945});
-
-  //Carbon Steel (shell of cryomodule). LDeacon 21 Feb 2006
-  AddMaterial("carbonsteel"   ,   7.87 , kStateSolid, 100, 1,
-              {"C","Mn","P","S","Fe"}, std::list<double>{0.0017, 0.0045, 0.0004, 0.0005, 0.9929});
+  // Carbon Steel (shell of cryomodule). LDeacon 21 Feb 2006
+  AddMaterial("carbonsteel",
+	      7.87,
+	      kStateSolid, 100, 1,
+              {"C","Mn","P","S","Fe"},
+	      std::list<double>{0.0017, 0.0045, 0.0004, 0.0005, 0.9929});
 
   // Copper Alloy 17410 (C17410) "Beryllium Copper"
-  AddMaterial(name="berylliumcopper", density=8.8 * CLHEP::g/CLHEP::cm3,
+  AddMaterial("berylliumcopper",
+	      8.8,
 	      kStateSolid, 300, 1,
-      {"G4_Cu", "G4_Be", "G4_Co", "G4_Al", "G4_Fe", "G4_Ni"},
-	      std::list<double>{0.991, 0.0031, 0.00500,
-		  0.0004, 0.0003, 0.0002});
+	      {"Cu", "Be", "Co", "Al", "Fe", "Ni"},
+	      std::list<double>{0.991, 0.0031, 0.00500, 0.0004, 0.0003, 0.0002});
 
   //Stainless Steel 316L
   AddMaterial("stainlesssteel",   8.000, kStateSolid, 295, 1,
@@ -120,58 +132,54 @@ void BDSMaterials::DefineMetals()
 	      std::list<double>{0.0003, 0.02, 0.0075, 0.00045, 0.0003, 0.17, 0.025, 0.12, 0.001, 0.65545});
 
   // Stainless Steel AISI code 304L (low-carbon) @ 300K
-  AddMaterial(name="stainless_steel_304L",
-	      density=8.02 * CLHEP::g/CLHEP::cm3,
+  AddMaterial("stainless_steel_304L",
+	      8.02,
 	      kStateSolid, 300, 1,
-      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},
-	      std::list<double>{0.67145, 0.185, 0.1125, 0.02,
-		  0.01, 0.00045, 0.0003, 0.0003});
+	      {"Fe", "Cr", "Ni", "Mn", "Si", "P", "S", "C"},
+	      std::list<double>{0.67145, 0.185, 0.1125, 0.02, 0.01, 0.00045, 0.0003, 0.0003});
 
   // Stainless Steel AISI code 304L (low-carbon) @ 87K
-  AddMaterial(name="stainless_steel_304L_87K",
-	      density=8.02 * CLHEP::g/CLHEP::cm3,
+  AddMaterial("stainless_steel_304L_87K",
+	      8.02,
 	      kStateSolid, 87, 1,
-      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},
-	      std::list<double>{0.67145, 0.185, 0.1125, 0.02,
-		  0.01, 0.00045, 0.0003, 0.0003});
+	      {"Fe", "Cr", "Ni", "Mn", "Si", "P", "S", "C"},
+	      std::list<double>{0.67145, 0.185, 0.1125, 0.02, 0.01, 0.00045, 0.0003, 0.0003});
 
- // Stainless Steel AISI code 316LN
- // (Type 316, low carbon, nitrogen-enhanced) @ 300K
-  AddMaterial(name="stainless_steel_316LN",
-	      density=8.03 * CLHEP::g/CLHEP::cm3,
+  // Stainless Steel AISI code 316LN
+  // (Type 316, low carbon, nitrogen-enhanced) @ 300K
+  AddMaterial("stainless_steel_316LN",
+	      8.03,
 	      kStateSolid, 300, 1,
-      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mo", "G4_Mn", "G4_Si", "G4_Ti", "G4_N",
-	  "G4_Nb", "G4_Cu", "G4_Co", "G4_P", "G4_C", "G4_S", "G4_Ta", "G4_B"},
-	      std::list<double>{
-		0.65093, 0.1700, 0.12000, 0.02500, 0.0200, 0.00750,
-		  0.00150, 0.0014, 0.00100, 0.00100, 0.0005, 0.00045,
-		  0.00030, 0.0003, 0.00010, 0.00002});
+	      {"Fe", "Cr", "Ni", "Mo", "Mn", "Si", "Ti", "N", "Nb",
+	       "Cu", "Co", "P", "C", "S", "Ta", "B"},
+	      std::list<double>{0.65093, 0.1700, 0.12000, 0.02500, 0.0200, 0.00750,
+				  0.00150, 0.0014, 0.00100, 0.00100, 0.0005, 0.00045,
+				  0.00030, 0.0003, 0.00010, 0.00002});
 
  // Stainless Steel AISI code 316LN
  // (Type 316, low-carbon nitrogen-enhanced) @ 87K
-  AddMaterial(name="stainless_steel_316LN_87K",
-	      density=8.03 * CLHEP::g/CLHEP::cm3,
+  AddMaterial("stainless_steel_316LN_87K",
+	      8.03,
 	      kStateSolid, 87, 1,
-      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mo", "G4_Mn", "G4_Si", "G4_Ti", "G4_N",
-	  "G4_Nb", "G4_Cu", "G4_Co", "G4_P", "G4_C", "G4_S", "G4_Ta", "G4_B"},
-	      std::list<double>{
-		0.65093, 0.1700, 0.12000, 0.02500, 0.0200,
-		  0.00750, 0.00150, 0.0014, 0.00100, 0.00100,
-		  0.0005, 0.00045, 0.00030, 0.0003, 0.00010,
-		  0.00002});
-
+	      {"Fe", "Cr", "Ni", "Mo", "Mn", "Si", "Ti", "N",
+	       "Nb", "Cu", "Co", "P", "C", "S", "Ta", "B"},
+	      std::list<double>{0.65093, 0.1700, 0.12000, 0.02500, 0.0200,
+				  0.00750, 0.00150, 0.0014, 0.00100, 0.00100,
+				  0.0005, 0.00045, 0.00030, 0.0003, 0.00010,
+				  0.00002});
+  
   // Mild Steel
   AddMaterial(name="mild_steel", density=  8.000, kStateSolid, 295, 1,
       {"G4_C", "G4_Mn", "G4_Si", "G4_Fe"},
 	      std::list<double>{0.002, 0.005, 0.0015, 0.99150});
-
-   // Pure tungsten is not typically used, but instead instead as part of "heavy
-   // alloy."  I think "heavy" in the sense that the tungsten makes up almost
-   // all of the composition, and tungsten is a very dense metal.
-  AddMaterial(name="tungsten_heavy_alloy",
-	      density=18.5 * CLHEP::g/CLHEP::cm3,
+  
+  // Pure tungsten is not typically used, but instead instead as part of "heavy
+  // alloy."  I think "heavy" in the sense that the tungsten makes up almost
+  // all of the composition, and tungsten is a very dense metal.
+  AddMaterial("tungsten_heavy_alloy",
+	      18.5,
 	      kStateSolid, 87, 1,
-      {"G4_W", "G4_Ni", "G4_Fe"},
+      {"W", "Ni", "Fe"},
 	      std::list<double>{0.97, 0.02, 0.01});
 }
 
@@ -654,13 +662,11 @@ void BDSMaterials::DefineLHCComponents()
 		  4.184974185E-05  *CLHEP::perCent});
 
   // LHC Rock
-  AddMaterial(name="lhc_rock",
-	      density=2*CLHEP::g/CLHEP::cm3,
+  AddMaterial("lhc_rock",
+	      2,
 	      kStateSolid, 300, 1,
-      {"G4_H", "G4_Na", "G4_Si", "G4_Fe", "G4_C",
-	  "G4_Mg", "G4_K", "G4_O", "G4_Al", "G4_Ca"},
-	      std::list<double>{
-		0.006, 0.01, 0.2, 0.014, 0.03, 0.005, 0.01, 0.5, 0.03, 0.195});
+	      {"H", "Na", "Si", "Fe", "C", "Mg", "K", "O", "Al", "Ca"},
+	      std::list<double>{0.006, 0.01, 0.2, 0.014, 0.03, 0.005, 0.01, 0.5, 0.03, 0.195});
 
   // Superconducting components of LHC magnet elements
   // Definitions taken from FLUKA
