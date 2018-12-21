@@ -836,7 +836,7 @@ void BDSMaterials::AddMaterial(G4Material* material, G4String name)
   if (materials.insert(make_pair(name, material)).second)
     {
 #ifdef BDSDEBUG
-      G4cout << "New material : " << name << " added to material table" << G4endl;
+      G4cout << "New material : " << name << G4endl;
 #endif
     }
   else
@@ -1011,10 +1011,13 @@ void BDSMaterials::ListMaterials() const
 {
   G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl;
 
-  G4cout << "Extra defined elements are:" << G4endl;
-  for (auto element : elements)
-    {G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
-  G4cout << G4endl;
+  if (!elements.empty())
+    {
+      G4cout << "Extra defined elements are:" << G4endl;
+      for (auto element : elements)
+	{G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
+      G4cout << G4endl;
+    }
   
   G4cout << "Defined materials are:" << G4endl;
   for (auto material : materials)
