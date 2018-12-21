@@ -126,8 +126,10 @@ void BDSMaterials::DefineMetals()
 	      {"Cu", "Be", "Co", "Al", "Fe", "Ni"},
 	      std::list<double>{0.991, 0.0031, 0.00500, 0.0004, 0.0003, 0.0002});
 
-  //Stainless Steel 316L
-  AddMaterial("stainlesssteel",   8.000, kStateSolid, 295, 1,
+  // Stainless Steel 316L
+  AddMaterial("stainlesssteel",
+	      8.0,
+	      kStateSolid, 295, 1,
               {"C","Mn","Si","P","S","Cr","Mo","Ni","N","Fe"},
 	      std::list<double>{0.0003, 0.02, 0.0075, 0.00045, 0.0003, 0.17, 0.025, 0.12, 0.001, 0.65545});
 
@@ -169,8 +171,8 @@ void BDSMaterials::DefineMetals()
 				  0.00002});
   
   // Mild Steel
-  AddMaterial(name="mild_steel", density=  8.000, kStateSolid, 295, 1,
-      {"G4_C", "G4_Mn", "G4_Si", "G4_Fe"},
+  AddMaterial("mild_steel",   8.000, kStateSolid, 295, 1,
+	      {"C", "Mn", "Si", "Fe"},
 	      std::list<double>{0.002, 0.005, 0.0015, 0.99150});
   
   // Pure tungsten is not typically used, but instead instead as part of "heavy
@@ -193,21 +195,21 @@ void BDSMaterials::DefineSuperconductors()
 
 void BDSMaterials::DefineNonMetalSolids()
 {
-  //Boron Nickel (absorber)
+  // boron Nickel (absorber)
   AddMaterial("bn5000",
 	      1.925,
 	      kStateSolid, 300, 1,
 	      {"B","Ni","O","Ca","Si"}, 
 	      std::list<double>{0.383249242, 0.472071387, 0.0366276887, 0.0228923054, 0.0851593762});
 
-  //Calcium carbonate (calcite)
+  // calcium carbonate (calcite)
   AddMaterial("calciumCarbonate",
 	      2.711,
 	      kStateSolid, 300, 1,
 	      {"Ca","O","C"},
 	      std::list<int>{1,3,1});
 
-  //Clay
+  // clay
   AddMaterial("clay",
 	      1.746,
 	      kStateSolid, 300, 1,
@@ -237,20 +239,27 @@ void BDSMaterials::DefineNonMetalSolids()
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   AddMaterial(tmpMaterial, "fusedsilica");
 
-  //Perspex.
+  // perspex
   AddMaterial("perspex",
 	      1.18,
 	      kStateSolid,
 	      300,
 	      1,
-	      {"G4_C","G4_O","G4_H"}, 
+	      {"C","O","H"}, 
 	      std::list<double>{0.59984,0.31961,0.08055});
 
-  //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
-  AddMaterial("invar" ,   8.1 , kStateSolid, 2, 1, {"Ni","Fe"}, std::list<double>{0.35,0.65});
+  // invar - Temperature 2 kelvin. LDeacon 6th Feburary 2006
+  AddMaterial("invar" ,
+	      8.1 ,
+	      kStateSolid, 2, 1,
+	      {"Ni","Fe"},
+	      std::list<double>{0.35,0.65});
 
-  //Kapton polyimide film
-  AddMaterial("kapton",   1.42, kStateSolid, 295, 1, {"H","C","N","O"}, 
+  // kapton polyimide film
+  AddMaterial("kapton",
+	      1.42,
+	      kStateSolid, 295, 1,
+	      {"H","C","N","O"}, 
 	      std::list<double>{0.026362,0.691133,0.073270,0.209235});
 
   // n-bk7
@@ -267,40 +276,56 @@ void BDSMaterials::DefineNonMetalSolids()
   tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
   AddMaterial(tmpMaterial, "n-bk7");
 
-  //quartz
+  // quartz
   AddMaterial("quartz", 2.655, kStateSolid, 300, 1, {"Si","O"}, std::list<int>{1,2});
 
   // marl
-  AddMaterial("marl"  , 1.474, kStateSolid, 300, 1, {"clay","calciumCarbonate"},
+  AddMaterial("marl",
+	      1.474,
+	      kStateSolid, 300, 1,
+	      {"clay","calciumCarbonate"},
 	      std::list<double>{0.5,0.5});
 
-  //clayousMarl
-  AddMaterial("clayousMarl", 1.555, kStateSolid, 300, 1, {"clay","calciumCarbonate"},
+  // clayousMarl
+  AddMaterial("clayousMarl",
+	      1.555,
+	      kStateSolid, 300, 1,
+	      {"clay","calciumCarbonate"},
 	      std::list<double>{0.65,0.35});
 
-  //limousMarl
-  AddMaterial("limousMarl", 1.392, kStateSolid, 300, 1, {"clay", "calciumCarbonate"},
+  // limousMarl
+  AddMaterial("limousMarl",
+	      1.392,
+	      kStateSolid, 300, 1,
+	      {"clay", "calciumCarbonate"},
 	      std::list<double>{0.35,0.65});
 
   // "standard" soil (dry)
-  AddMaterial("soil", 1.9, kStateSolid, 300, 1, {"Si","O","H","Al"},
+  AddMaterial("soil",
+	      1.9,
+	      kStateSolid, 300, 1,
+	      {"Si","O","H","Al"},
 	      std::list<double>{0.33377483443708611, 0.57218543046357617, 0.022516556291390728, 0.071523178807947022});
 
-  // Epoxy Resin components
-  //The main component of epoxy resin commonly used to insulate magnet coils.
+  // epoxy Resin components
+  // the main component of epoxy resin commonly used to insulate magnet coils.
   AddMaterial("aralditef", 1.175, kStateSolid, 300, 1, {"C","H","O"},std::list<int>{12,18,4});
 
-  //A hardener for the epoxy resin
+  // a hardener for the epoxy resin
   AddMaterial("hy906", 1.225, kStateSolid, 300, 1, {"C","H","O"},std::list<int>{10,5,3});
 
-  //An accelerator for epoxy resin
+  // an accelerator for epoxy resin
   AddMaterial("dy061", 1.025, kStateSolid, 300, 1, {"C","H","O","N"},std::list<int>{15,25,1,3});
 
-  //Material type 3 from CERN 81-05, "The Selection and Properties of Epoxide Resins Used for the Insulation of Magnet Systems in Radiation Environments".
-  AddMaterial("epoxyresin3", 1.20, kStateSolid, 300, 1, {"aralditef","hy906","dy061"},
+  // material type 3 from CERN 81-05, "The Selection and Properties of Epoxide Resins
+  // Used for the Insulation of Magnet Systems in Radiation Environments".
+  AddMaterial("epoxyresin3",
+	      1.20,
+	      kStateSolid, 300, 1,
+	      {"aralditef","hy906","dy061"},
 	      std::list<double>{0.497512,0.497512,0.004976});
 
-  //Cellulose
+  // cellulose
   tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
@@ -310,11 +335,12 @@ void BDSMaterials::DefineNonMetalSolids()
   tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
   AddMaterial(tmpMaterial, "cellulose");
 
-  //Polyurethane
+  // polyurethane
   AddMaterial("polyurethane",
 	      1.05,
 	      kStateSolid, NTP_Temperature, 1,
-	      {"C","H","N","O"}, std::list<int>{6,10,2,4});
+	      {"C","H","N","O"},
+	      std::list<int>{6,10,2,4});
 }
 
 void BDSMaterials::DefineScintillators()
@@ -414,10 +440,9 @@ void BDSMaterials::DefineScintillators()
   G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
   ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/CLHEP::MeV);
   tmpMaterial->SetMaterialPropertiesTable(ups923a_mt);
-  //Put into the materials array.
   AddMaterial(tmpMaterial, "ups923a");
 
-  //PET 
+  // PET 
   G4double pet_density=1.4*CLHEP::g/CLHEP::cm3;
   G4int pet_nelements=3;
   G4State pet_state=kStateSolid;
@@ -437,7 +462,7 @@ void BDSMaterials::DefineScintillators()
   AddMaterial(tmpMaterial, "pet");
 
 
-  //Opaque PET (Dacron)
+  // Opaque PET (Dacron)
   tmpMaterial= new G4Material("pet_opaque",
 			      pet_density,
 			      pet_nelements,
@@ -455,10 +480,10 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial->SetMaterialPropertiesTable(pet_opaqueMaterialPropertiesTable);
   AddMaterial(tmpMaterial, "pet_opaque");
 
-  //Gadolinium oxysulphate Gd_2 O_2 S
+  // Gadolinium oxysulphate Gd_2 O_2 S
   G4Material* GOS = nistManager->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
 
-  //Ganolinium oxysulphate in a polyurethane elastomer (lanex)
+  // Ganolinium oxysulphate in a polyurethane elastomer (lanex)
   G4double fill_factor=0.5;
   G4double lanex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
   G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/lanex_density;
@@ -611,7 +636,7 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial->SetMaterialPropertiesTable(mptMedex);
   AddMaterial(tmpMaterial, "medex");
 
-  //carbon fiber
+  // carbon fiber
   G4double frac_graph=0.5;
   G4double frac_poly=0.5;
   G4Material* graph=GetMaterial("G4_GRAPHITE");
@@ -676,23 +701,41 @@ void BDSMaterials::DefineLHCComponents()
   
   std::list<int> singleElement = {1};
   // Liquid helium at 1.9K  
-  AddMaterial("lhe_1.9k", 0.1472, kStateLiquid, 1.9, 1, {"He"}, singleElement);
+  AddMaterial("lhe_1.9k",
+	      0.1472,
+	      kStateLiquid, 1.9, 1,
+	      {"He"}, singleElement);
 
   // Niobium @ 87K
-  AddMaterial("nb_87k"  , 8.902 , kStateSolid , 87 , 1, {"Nb"}, singleElement);
+  AddMaterial("nb_87k",
+	      8.902 ,
+	      kStateSolid , 87 , 1,
+	      {"Nb"}, singleElement);
   
   // Titanium @ 87K
-  AddMaterial("ti_87k"  , 4.54  , kStateSolid , 87 , 1, {"Ti"}, singleElement);
+  AddMaterial("ti_87k",
+	      4.54,
+	      kStateSolid, 87 , 1,
+	      {"Ti"}, singleElement);
 
   // superconductor NbTi with Ti = 47% by weight
-  AddMaterial("nbti_87k", 6.0471, kStateSolid , 87 , 1, {"nb_87k","ti_87k"},
+  AddMaterial("nbti_87k",
+	      6.0471,
+	      kStateSolid , 87 , 1,
+	      {"nb_87k","ti_87k"},
 	      std::list<double>{0.53,0.47});
 
   // copper at 4 Kelvin
-  AddMaterial("cu_4k", 8.96, kStateSolid, 4, 1, {"Cu"}, singleElement);
+  AddMaterial("cu_4k",
+	      8.96,
+	      kStateSolid, 4, 1,
+	      {"Cu"}, singleElement);
   
   // naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
-  AddMaterial("nbti.1", 8.4206, kStateSolid, 4, 1, {"nbti_87k","cu_4k"},
+  AddMaterial("nbti.1",
+	      8.4206,
+	      kStateSolid, 4, 1,
+	      {"nbti_87k","cu_4k"},
 	      std::list<double>{1.0/5.4, 4.4/5.4});
 }
 
@@ -772,21 +815,17 @@ void BDSMaterials::DefineGases()
 
 void BDSMaterials::DefinePlasmas()
 {
-  G4double z;
   //Awake plasma - rubidium at density of 7e14 atoms/cm3 
   //  G4double numberDensity = 7.0e14/CLHEP::cm3;
   G4double a = 85.4678*CLHEP::g/CLHEP::mole;
-  G4double density = 1e-7*CLHEP::g/CLHEP::cm3;
-  //density = a*numberDensity;
-  G4Material* tmpMaterial = new G4Material("awakeplasma", z=37., a, density);
+  G4double density = 1e-7 * CLHEP::g/CLHEP::cm3;
+  G4Material* tmpMaterial = new G4Material("awakeplasma", 37., a, density);
   AddMaterial(tmpMaterial, "awakeplasma");
 }
 
 void BDSMaterials::DefineVacuums()
 {
-  G4double fractionmass;
-  //Default vacuum (same composition as residual vacuum in warm sections of LHC).
-  // can be overridden by vacMaterial option
+  // Default vacuum (same composition as residual vacuum in warm sections of LHC).
   G4double vacpressure;
   // check if parser is initialised (in case list materials is asked by command line) 
   if (BDSParser::IsInitialised())
@@ -803,18 +842,17 @@ void BDSMaterials::DefineVacuums()
 #endif
   G4Material* tmpMaterial = new G4Material("vacuum",
 					   density,
-					   3,
-					   kStateGas,
-					   temperature,
-					   vacpressure);
-  tmpMaterial->AddElement(GetElement("H"), fractionmass=0.482);
-  tmpMaterial->AddElement(GetElement("C"), fractionmass=0.221);
-  tmpMaterial->AddElement(GetElement("O"), fractionmass=0.297);
+					   3, kStateGas,
+					   temperature, vacpressure);
+  tmpMaterial->AddElement(GetElement("H"), 0.482);
+  tmpMaterial->AddElement(GetElement("C"), 0.221);
+  tmpMaterial->AddElement(GetElement("O"), 0.297);
   AddMaterial(tmpMaterial, "vacuum");
 
-  const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double Vac_RIND[Vac_NUMENTRIES] = {1.000,1.000,1.000};//Assume refractive index = 1 in a vacuum.
-  G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
+  const G4int Vac_NUMENTRIES = 3;
+  // Assume refractive index = 1 in a vacuum.
+  G4double Vac_RIND[Vac_NUMENTRIES]   = {1.000,1.000,1.000};
+  G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
   G4MaterialPropertiesTable* vacMaterialPropertiesTable = CreatePropertiesTable();
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
