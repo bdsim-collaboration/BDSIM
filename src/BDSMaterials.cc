@@ -218,9 +218,13 @@ void BDSMaterials::DefineNonMetalSolids()
 	      2.3,
 	      kStateSolid, 300, 1, {"Si","O","H","Ca","Al","Fe"},
 	      std::list<double>{0.227915, 0.60541, 0.09972, 0.04986, 0.014245, 0.00285});
-  
-  G4Material* tmpMaterial = new G4Material
-    (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+
+  // we make the material manually here so we have a pointer to it. note density units must
+  // be used here.
+  G4Material* tmpMaterial = new G4Material("fusedsilica",
+					   1.032*CLHEP::g/CLHEP::cm3, // density
+					   2,
+					   kStateSolid);
   tmpMaterial->AddElement(GetElement("O") , 2);
   tmpMaterial->AddElement(GetElement("Si"), 1);
   const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
@@ -249,9 +253,8 @@ void BDSMaterials::DefineNonMetalSolids()
   AddMaterial("kapton",   1.42, kStateSolid, 295, 1, {"H","C","N","O"}, 
 	      std::list<double>{0.026362,0.691133,0.073270,0.209235});
 
-  //n-bk7
-  tmpMaterial = new G4Material 
-    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+  // n-bk7
+  tmpMaterial = new G4Material("n-bk7", 1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(GetElement("O") , 2);
   tmpMaterial->AddElement(GetElement("Si"), 1);
   const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
@@ -317,7 +320,7 @@ void BDSMaterials::DefineNonMetalSolids()
 void BDSMaterials::DefineScintillators()
 {
   //YAG
-  G4Material* tmpMaterial = new G4Material(name="yag", density=4.56*CLHEP::g/CLHEP::cm3, 3);
+  G4Material* tmpMaterial = new G4Material("yag", 4.56*CLHEP::g/CLHEP::cm3, 3);
   tmpMaterial->AddElement(GetElement("Y") , 3);
   tmpMaterial->AddElement(GetElement("Al"), 5);
   tmpMaterial->AddElement(GetElement("O") , 12);
@@ -699,7 +702,7 @@ void BDSMaterials::DefineLiquids()
   AddMaterial("G4_WATER", "water"); // use NIST water
   
   //Water for Cherenkov radiation detector
-  G4Material* tmpMaterial = new G4Material(name="waterCkov", density=1.*CLHEP::g/CLHEP::cm3, 2);
+  G4Material* tmpMaterial = new G4Material("waterCkov", 1.*CLHEP::g/CLHEP::cm3, 2);
   tmpMaterial->AddElement(GetElement("O"), 1);
   tmpMaterial->AddElement(GetElement("H"), 2);
   const G4int nEntries = 9;
