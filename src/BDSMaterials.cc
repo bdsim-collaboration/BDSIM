@@ -766,50 +766,54 @@ void BDSMaterials::DefineLiquids()
 void BDSMaterials::DefineGases()
 {
   AddMaterial("N",  "nitrogen");
-  
-  G4String name;
-  G4double fractionmass;
-  // gaseous materials
-  // For air: do we want it at p=1atm or at p inside beampipe?
-  // 1st case:
-  // tmpMaterial = new G4Material
-  //    (name="Air"           , density=  1.205*CLHEP::g/dm3, 2, kStateGas, 300*CLHEP::kelvin);
-  // 2nd case:
-  // ideal gas: 
-  //   1) density * temperature / pressure = constant
-  //   2) at T=STP_Temperature, p=1*atmosphere, n=1mole occupies a volume
-  //      V=22.4l=22.4e-3*m3 and therefore has density=molar weight/(22.4e-3*m3)
-  
-  //Room temperature temperature and standard pressure
+
+  // air
+  AddMaterial("G4_AIR", "air");
+  G4Material* g4AirMaterial = GetMaterial("air");
+  const G4int airNEntries = 3;
+  // source: NPL Tables of Physical & Chemical Constants. Refractive indices at
+  // different energies.
+  G4double airRefractiveIndex[airNEntries] = {1.000292,1.000292,1.000292};
+  G4double airEnergy[airNEntries]          = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
+  G4MaterialPropertiesTable* airProperties = CreatePropertiesTable();
+  airProperties->AddProperty("RINDEX", airEnergy, airRefractiveIndex, airNEntries);
+  g4AirMaterial->SetMaterialPropertiesTable(airProperties);
+
+  // old way - manually constructed air
+  // room temperature temperature and standard pressure
   G4double temperature = 300*CLHEP::kelvin;
-  G4double pressure = 1.0*CLHEP::atmosphere;
-  //Air
-  G4double density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))* 30*CLHEP::g/(22.4e-3*CLHEP::m3) ;
-  G4Material* tmpMaterial = new G4Material
-    (name="air", density, 2, kStateGas, temperature, pressure);
-  tmpMaterial->AddElement(GetElement("O"), fractionmass=0.2);
-  tmpMaterial->AddElement(GetElement("N"), fractionmass=0.8);
-  const G4int Air_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double Air_RIND[Air_NUMENTRIES] = {1.000292,1.000292,1.000292};//Source: NPL Tables of Physical & Chemical Constants. Refractive indices at different energies.
-  G4double Air_Energy[Air_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable* airMaterialPropertiesTable = CreatePropertiesTable();
-  airMaterialPropertiesTable->AddProperty("RINDEX",Air_Energy, Air_RIND, Air_NUMENTRIES);
-  tmpMaterial->SetMaterialPropertiesTable(airMaterialPropertiesTable);
-  AddMaterial(tmpMaterial,name);
+  G4double pressure    = 1.0*CLHEP::atmosphere;
+  G4double airDensity  = 0.001225; // g/cm3
+  G4Material* tmpMaterial = new G4Material("airbdsim",
+					   airDensity*CLHEP::g/CLHEP::cm3,
+					   2,
+					   kStateGas,
+					   temperature,
+					   pressure);
+  tmpMaterial->AddElement(GetElement("O"), 0.2);
+  tmpMaterial->AddElement(GetElement("N"), 0.8);
+  tmpMaterial->SetMaterialPropertiesTable(airProperties);
+  AddMaterial(tmpMaterial, "airbdsim");
 
-  //Carbon monoxide
-  density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))
-    * (12.+16.)*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
-  AddMaterial(name="carbonmonoxide", density, kStateGas, temperature, pressure, {"C","O"},
+  // Carbon monoxide
+  G4double coDensity = 0.001145; // g/cm3
+  AddMaterial("carbonmonoxide",
+	      coDensity,
+	      kStateGas,
+	      temperature,
+	      pressure,
+	      {"C","O"},
 	      std::list<int>{1,1});
 
-  //Carbon monoxide beam pipe gas
-  double bp_pressure=0.0133e-9*CLHEP::bar; //10 nTorr pressure
-  density = (CLHEP::STP_Temperature/temperature) * (bp_pressure/(1.*CLHEP::atmosphere))
-    * (12.+16.)*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
-  AddMaterial(name="bp_carbonmonoxide", density, kStateGas, temperature, bp_pressure, {"C","O"},
-	      std::list<int>{1,1});
-  
+  // Carbon monoxide beam pipe gas
+  G4double bp_pressure = 0.0133e-9 * (CLHEP::bar/CLHEP::atmosphere); //10 nTorr pressure
+  AddMaterial("bp_carbonmonoxide",
+	      coDensity,
+	      kStateGas,
+	      temperature,
+	      bp_pressure,
+	      {"C","O"},
+	      std::list<int>{1,1});  
 }
 
 void BDSMaterials::DefinePlasmas()
