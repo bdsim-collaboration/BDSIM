@@ -47,6 +47,10 @@ public:
 			    G4Material*   material);
   
   virtual ~BDSScreenFrameRectangular();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSScreenFrameRectangular& operator=(const BDSScreenFrameRectangular&) = delete;
+  BDSScreenFrameRectangular(BDSScreenFrameRectangular&) = delete;
+  /// @}
 
   /// Construct the geometry.
   virtual void Build();

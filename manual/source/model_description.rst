@@ -4711,18 +4711,18 @@ The following materials are also defined in BDSIM. The user should consult
 :code:`bdsim/src/BDSMaterials.cc` for the full definition of each including
 elements, mass fractions, temperature and state.
 
-* air
+* air (G4_AIR)
+* airbdsim
 * aralditef
 * awakeplasma
-* beamgasplugmat
 * berylliumcopper
 * bn5000
 * bp_carbonmonoxide
-* calciumCarbonate
+* calciumcarbonate
 * carbonfiber
 * carbonmonoxide
 * carbonsteel
-* cellulose
+* cellulose (G4_CELLULOSE_CELLOPHANE)
 * clay
 * clayousMarl
 * concrete
@@ -4735,24 +4735,25 @@ elements, mass fractions, temperature and state.
 * graphite
 * graphitefoam
 * hy906
+* invar
+* kapton
 * lanex
 * lanex2
-* laservac
+* laservac (same as vacuum but with different name)
 * leadtungstate
 * lhcconcrete
 * lhc_rock
 * lhe_1.9k
-* limousMarl
+* limousmarl
 * liquidhelium
-* invar
-* kapton
 * marl
 * medex
 * mild_steel
-* niobium
-* nbti
+* niobium_2k
 * nbti.1
+* nbti_4k
 * nbti_87k
+* nb_2k (niobium_2k)
 * nb_87k
 * n-bk7
 * perspex
@@ -4775,8 +4776,45 @@ elements, mass fractions, temperature and state.
 * tungsten_heavy_alloy
 * ups923a
 * vacuum
+* water (G4_WATER)
 * weightiron
 * yag
+
+Vacuum and Air
+^^^^^^^^^^^^^^
+
+The default "vacuum" material used in all beam pipes is composed of H, C and O with the
+following fractions:
+
++--------------+-------------------+
+| **Element**  | **Mass Fraction** |
++==============+===================+
+| H            | 0.482             |
++--------------+-------------------+
+| C            | 0.221             |
++--------------+-------------------+
+| O            | 0.297             |
++--------------+-------------------+
+
+The default pressure is 1e-12 bar, the temperature is 300K and the density os 1.16336e-9 g/cm3.
+
+"air" is the G4_AIR material. As of Geant4.10.04.p02
+(see geant4/source/materials/src/G4NistMaterialBuilder.cc), it is composed of C, N, O, Ar
+with the following fractions:
+
++--------------+-------------------+
+| **Element**  | **Mass Fraction** |
++==============+===================+
+| C            | 0.000124          |
++--------------+-------------------+
+| N            | 0.755267          |
++--------------+-------------------+
+| O            | 0.231781          |
++--------------+-------------------+
+| Ar           | 0.012827          |
++--------------+-------------------+
+
+It is a gas with density of 1.20479 mg/cm3.
 
 .. _crystals:
 

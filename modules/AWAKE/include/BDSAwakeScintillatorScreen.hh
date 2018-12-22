@@ -43,7 +43,7 @@ public:
 protected:
 
 private:
-  virtual void Build();
+  virtual void Build() override;
   void BuildCamera();
   void PlaceCamera();
   void BuildScreen();
@@ -53,7 +53,7 @@ private:
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildContainerLogicalVolume();
+  virtual void BuildContainerLogicalVolume() override;
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();
