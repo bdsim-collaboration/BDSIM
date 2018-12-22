@@ -22,9 +22,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 #include "G4NistManager.hh"
 
+#include <chrono>
 #include <iomanip>
 #include <list>
 #include <map>
+#include <thread>
 
 BDSMaterials* BDSMaterials::_instance = nullptr;
 
@@ -1019,7 +1021,9 @@ void BDSMaterials::DensityCheck(const G4double  density,
       G4cout << G4endl << G4endl;
       G4cout << __METHOD_NAME__ << "material \"" << materialName
 	     << "\" has a density higher than 100g/cm3! Perhaps check this!" << G4endl
-	     << "Density: " << density << G4endl;
+	     << "Density: " << density << "g/cm3" << G4endl << G4endl;
+      std::this_thread::sleep_for(std::chrono::seconds(2));
+      G4cout << "Proceeding..." << G4endl;
     }
 }
 
