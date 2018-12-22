@@ -856,18 +856,17 @@ void BDSMaterials::DefineVacuums()
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
-  AddMaterial("laservac" , density, kStateGas, temperature, vacpressure, {"vacuum"}, std::list<int>{1});
-
-  //High density carbon monoxide, density chosen such that 1mm length gives ~ one interaction
-  density=37.403/10.*CLHEP::g/CLHEP::cm3;
-  G4double pressure = 1.0*CLHEP::atmosphere;
-  AddMaterial(name="beamgasplugmat", density, kStateGas, temperature, pressure, {"C","O"}, 
-	      std::list<int>{1,1});
-
-  // Empty material (space vacuum - real empty material does not exist in Geant4)
-  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial(name="G4_Galactic");
-  tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
-  AddMaterial(tmpMaterial,name);
+  // copy regular vacuum as named 'laservac' to detect where laserwire is.
+  // G4Material doesn't have a copy constructor but it has a sort of copy
+  // constructor.
+  G4Material* regularVacuum = GetMaterial("vacuum");
+  G4Material* laservac = new G4Material("laservac",
+					regularVacuum->GetDensity(),
+					regularVacuum,
+					kStateGas,
+					regularVacuum->GetTemperature(),
+					regularVacuum->GetPressure());
+  AddMaterial(laservac, "laservac");
 }
 
 void BDSMaterials::AddMaterial(G4Material* material, G4String name)
