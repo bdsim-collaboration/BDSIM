@@ -190,9 +190,10 @@ void BDSMaterials::DefineMetals()
 void BDSMaterials::DefineSuperconductors()
 {
   // niobium at 2K
-  AddMaterial("niobium2k", 8.57 , kStateSolid, 2, 1, {"Nb"}, std::list<int>{1});
+  AddMaterial("niobium_2k", 8.57 , kStateSolid, 2, 1, {"Nb"}, std::list<int>{1});
+  AddMaterial("niobium_2k", "nb_2k"); // alias
   // niobium titanium at 4K
-  AddMaterial("nbti4k", 5.6  , kStateSolid, 4, 1, {"Nb","Ti"}, std::list<int>{1,1});
+  AddMaterial("nbti_4k", 5.6  , kStateSolid, 4, 1, {"Nb","Ti"}, std::list<int>{1,1});
 }
 
 void BDSMaterials::DefineNonMetalSolids()

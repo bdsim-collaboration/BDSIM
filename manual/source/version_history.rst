@@ -83,8 +83,8 @@ Materials
    - "pet"
    - "lhc_rock"
 
-* "niobium" is now "niobium2k" to better reflect the unusual temperature.
-* "nbti" is now "bnti4k" to better reflect the unusual temperature.
+* "niobium" is now "niobium_2k" to better reflect the unusual temperature.
+* "nbti" is now "nbti_4k" to better reflect the unusual temperature.
 * "waterCkov" has been removed. "water or "G4_WATER" (the same) should be used. The refractive
   index data has been added to G4_WATER.
   
