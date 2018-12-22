@@ -1062,6 +1062,7 @@ void BDSMaterials::PrintBasicMaterialMassFraction(G4Material* material) const
 
 void BDSMaterials::ListMaterials() const
 {
+  G4cout << __METHOD_NAME__ << G4endl;
   // always print out vacuum composition
   G4Material* vacuum = GetMaterial("vacuum");
   G4cout<< "\"vacuum\" composition: " << G4endl;
