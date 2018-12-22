@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 
 class G4Mag_EqRhs;
+class BDSPTCOneTurnMap;
 
 /**
  * @brief Custom unphysical integrator to advance particle in teleporter.
@@ -36,12 +37,13 @@ class G4Mag_EqRhs;
 class BDSIntegratorTeleporter: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
-			  G4Transform3D teleporterDeltaIn,
-			  G4double      teleporterLengthIn);
+  BDSIntegratorTeleporter(G4Mag_EqRhs*      eqOfMIn,
+			  G4Transform3D     teleporterDeltaIn,
+			  G4double          teleporterLengthIn,
+			  BDSPTCOneTurnMap* oneTurnMapIn=nullptr);
 
-  virtual ~BDSIntegratorTeleporter(){;}
-  
+  virtual ~BDSIntegratorTeleporter();
+
   virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
@@ -50,10 +52,11 @@ public:
 
 private:
 
-  const G4Transform3D transform;
-  const G4ThreeVector dPos;
-  const G4double      teleporterLength;
-  G4bool              newMethod;  ///< Whether to use full 3D transform.
+  const G4Transform3D     transform;
+  const G4ThreeVector     dPos;
+  const G4double          teleporterLength;
+  BDSPTCOneTurnMap*       oneTurnMap;
+  G4bool                  threeDMethod;  ///< Whether to use full 3D transform.
 };
 
 #endif

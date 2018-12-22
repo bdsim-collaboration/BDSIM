@@ -59,7 +59,12 @@ BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()
 {
+  CleanUpPolesSquare();
   BDSMagnetOuterFactoryPolesBase::CleanUp();
+}
+
+void BDSMagnetOuterFactoryPolesSquare::CleanUpPolesSquare()
+{
   poleRotations.clear();
   poleSolids.clear();
   poleLVs.clear();

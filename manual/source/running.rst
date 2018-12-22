@@ -2,14 +2,6 @@
 Running BDSIM
 =============
 
-Run Time Requirements
-=====================
-
-If BDSIM is compiled with GDML support on and GDML is required, the user is required
-to be connected to the Internet to access the GDML schema. This is a requirement
-of the Geant4 GDML parser.
-.. note:: In future, this need will be eliminated.
-
 Basic Operation
 ===============
 
@@ -51,6 +43,10 @@ be used literally.  The following command may be used to display all options::
 | -\\-exportGeometryTo=<file>  | Exports the geometry to a file                 |
 |                              | extension, which determines the format         |
 |                              | where possible extensions are ("gdml")         |
++------------------------------+------------------------------------------------+
+| -\\-geant4Macro=<file>       | Optional Geant4 macro file to run after the    |
+|                              | visualisation has started. Only works in       |
+|                              | interactive visualisation.                     |
 +------------------------------+------------------------------------------------+
 | -\\-generatePrimariesOnly    | Generates primary particle coordinates only    |
 |                              | then exits without simulating anything         |
@@ -115,7 +111,12 @@ are described in the following sections.
 
 When run interactively, a Geant4 visualiser is invoked that produces a window with an image
 of the BDSIM model as well as a terminal prompt to control it. No events are simulated
-without user input. Alternatively, BDSIM can be run in batch mode, where no visualiser
+without user input. BDSIM provides a basic visualisation "macro" for Geant4 using the Qt
+visualiser to start and add the geometry to the scene. This is found from the
+BDSIM installation directory or failing that the build directory. The user may provide
+their own custom visualisuation macro with the executable command :code:`--vis_mac=mymac.mac`.
+
+Alternatively, BDSIM can be run in batch mode, where no visualiser
 is used and the specified number of primary events is simulated and feedback is printed
 to the terminal. Batch mode is typically much faster than the interactive mode, but
 the interactive mode is very useful for understanding the model and a typical event
@@ -193,4 +194,31 @@ user types into the visualiser terminal::
   /run/beamOn 1
   exit
 
-,which runs one event and visualises it.  
+,which runs one event and visualises it.
+
+Recreate Mode
+=============
+
+After performing a simulation in BDSIM, it is possible to reproduce one or more events exactly
+the same again. To do this, the original input gmad files (and any associated external geometry
+or field maps, e.g. all the input) are required and should be the same as was originally used.
+Along with this, a BDSIM ROOT output file is required. The output file is used to load the
+random number generator seed states at the start of each event such that the beam and physics
+processes will be the same. For example::
+
+  bdsim --file=mymodel.gmad --outfile=run1 --batch --ngenerate=100
+
+  # let's recreate event 87
+
+  bdsim --file=mymodle.gmad --outfile=selectevent --batch --ngenerate=1 --recreate=run1.root --startFromEvent=87
+
+Usually, one would reproduce something individually to investigate something unexpected and therefore
+might change some physics options. If this is the case, subsequent events will still begin with the same
+beam coordinates as the random number generator is loaded from the previous simulation output file
+at the start of each event. If the physics proceeds differently, this can advance the random number
+generator to a different state.
+
+* If the recreation goes beyond the stored number of events, the random number generator will proceed
+  as normal. e.g. starting from event 80/100 and generating 30 events, will result in 10 new events.
+* Executable options override whatever options were used (and therefore stored in the output) in the
+  initial run of BDSIM.

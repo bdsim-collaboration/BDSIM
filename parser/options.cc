@@ -114,6 +114,7 @@ void Options::PublishMembers()
   // executable options first
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
+  publish("geant4MacroFileName",   &Options::geant4MacroFileName);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
@@ -206,6 +207,7 @@ void Options::PublishMembers()
   publish("vhRatio",              &Options::vhRatio);
   publish("coilWidthFraction",    &Options::coilWidthFraction);
   publish("coilHeightFraction",   &Options::coilHeightFraction);
+  publish("ignoreLocalMagnetGeometry", &Options::ignoreLocalMagnetGeometry);
 
   publish("preprocessGDML",       &Options::preprocessGDML);
   
@@ -330,6 +332,8 @@ void Options::PublishMembers()
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+
+  publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);

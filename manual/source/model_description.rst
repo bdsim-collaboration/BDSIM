@@ -1,3 +1,7 @@
+.. macro for non breaking white space usefulf or units:
+.. |nbsp| unicode:: 0xA0
+   :trim:
+
 .. _model-description:
 
 ================================
@@ -3056,7 +3060,10 @@ using the following syntax::
 
   option, <option_name>=<value>;
 
-If the value is a string and not a number, it should be enclosed in "double inverted commas".
+Values accepted can be a number (integer, floating point or scientific notation), a string
+with the value enclosed in "double inverted commas", or a Boolean. For Boolean options (described
+as on or off, or true or false) a number 1 or 0 is used.
+
 Multiple options can be defined at once using the following syntax::
 
   option, <option1> = <value>,
@@ -3066,14 +3073,12 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius, as these will have a large impact on the outcome of the simulation.
 
-Below is a full list of all options in BDSIM. If the option is Boolean, 1 (true) or 0 (false) can be used
-as their value.
+Below is a full list of all options in BDSIM. Please also see :ref:`executable-options` for options
+that are used on the command line when executing BDSIM. The executable options override whatever
+options are specified in the input gmad files.
 
-Please also see :ref:`executable-options` for options that are used on the command line when
-executing BDSIM.
-
-Common options are duplicated below for convenience, as these are the most common and useful
-options. All options are described in the following sub-sections:
+Common options are duplicated below for convenience as these are the most useful ones. All options
+are described in the following sub-sections:
 
 * `General Run Options`_
 * `Geometry Options`_
@@ -3081,6 +3086,7 @@ options. All options are described in the following sub-sections:
 * :ref:`physics-process-options`
 * `Visualisation`_
 * `Output Options`_
+* `One Turn Map`_
 * `Offset for Main Beam Line`_
 * `Scoring Map`_
 * `Developer Options`_
@@ -3597,6 +3603,39 @@ following options.
 |                                   | position (sqrt(x^2, y^2)).                                         |
 +-----------------------------------+--------------------------------------------------------------------+
 
+.. _one-turn-map:
+
+One Turn Map
+^^^^^^^^^^^^
+
+Geant4 mandates that there are no overlaps between solids, which in
+BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice
+element.  Whilst these thin gaps have a negligible effect for a single
+pass or turn, over several turns it introduces a sizeable inaccuracy
+in the tracking.  To correct for this, BDSIM models can be supplmented
+with a one turn map which is applied at the end of each turn to right
+the primary back onto the correct trajectory.  To ensure physical
+results the one turn map is only applied to primaries, if they did not
+interact on the previous turn, and if they are within 5% of the
+reference momentum.  The one turn map is also not applied on the first
+turn where there the beam is offset in S, but applied on following
+turns, still accounting for the exceptions mentioned above.
+
+The map must be of the format as written by MADX-PTC's ``PTC_NORMAL``
+command.  A one turn map (in this case, 12th order) can be generated
+in MAD-X with the following::
+
+  PTC_CREATE_UNIVERSE;
+  PTC_CREATE_LAYOUT, model=2,method=6,nst=10, exact=true, resplit, xbend;
+  PTC_NORMAL,maptable,icase=5,no=12;
+  write, table="map_table", file="my_oneturn_map_file";
+  PTC_END;
+
+To use then use the one turn map with BDSIM::
+
+  option, ptcOneTurnMapFileName="path/to/my_oneturn_map_file";
+
+
 .. _beamline-offset:
 
 Offset for Main Beam Line
@@ -3746,11 +3785,15 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used. This also specifies the particle species and **reference energy**, which is the
-design energy of the machine. This is used along with the particle species to calculate
+used. This also specifies the particle species and **reference total energy**, which is the
+design total energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic rigidity that magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
 is calculated using this if only the `angle` parameter has been specified.
+
+Apart from the design particle and energy, a beam of particles of a different species and total
+energy may be specified. By default, if only one particle is specified this is assumed to be
+both the design particle and the particle used for the beam distribution.
 
 .. note:: The design energy is required to be specified, but the central energy, of say
 	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
@@ -3789,6 +3832,9 @@ used. The particle must be given by the Geant4 name. The ones above are always d
 and so can always safely be used irrespective of the physics lists used. If the particle
 definition is not found, BDSIM will print a warning and exit.
 
+Ion Beams
+^^^^^^^^^
+
 The user may also specify any ion with the following syntax::
 
   beam, particle="ion A Z";
@@ -3803,6 +3849,35 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
+
+Different Beam and Design Particles
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The model may use one particle for design and one for the beam distribution. The "design" particle
+is used to calculate the rigidity that is used along with normalised field strengths (such as
+:code:`k1` for quadrupoles) to calculate an absolute field or field gradient. However, it is
+often useful to simulate a beam of other particles. To specify a different central energy, the
+parameter :code:`E0` should be used. If a different particle is required the parameter
+:code:`beamParticleName` should be used. Examples::
+
+   beam, particle="e-",
+         energy=100*GeV,
+	 beamParticleName="e+";
+
+This specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution parameters).::
+
+   beam, particle="e-",
+         energy=100*GeV,
+	 beamParticleName="e+",
+	 E0=20*GeV;
+
+This specified that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam tracked is a 20 GeV positron beam.
+
+* If no :code:`beamParticleName` variable is specified, it's assumed to be the same as :code:`particle`.
+* If no :code:`E0` variable is specified, it's assumed to be the same as :code:`energy`.
+	
 
 Generate Only the Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -4310,6 +4385,10 @@ If the number of particles to be generated with ngenerate is greater than the nu
 particles defined in the file, the bunch generation will reload the file and read the
 particle coordinates from the beginning.
 
+This distribution reads lines at the start of each event to be memory efficient. However,
+this prevents reading a whole file by the number of lines in the file unlike the :code:`ptc`
+distribution that loads all lines and can use the :code:`matchDistrFileLength`.
+
 .. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
 	  on by default.
 
@@ -4632,18 +4711,18 @@ The following materials are also defined in BDSIM. The user should consult
 :code:`bdsim/src/BDSMaterials.cc` for the full definition of each including
 elements, mass fractions, temperature and state.
 
-* air
+* air (G4_AIR)
+* airbdsim
 * aralditef
 * awakeplasma
-* beamgasplugmat
 * berylliumcopper
 * bn5000
 * bp_carbonmonoxide
-* calciumCarbonate
+* calciumcarbonate
 * carbonfiber
 * carbonmonoxide
 * carbonsteel
-* cellulose
+* cellulose (G4_CELLULOSE_CELLOPHANE)
 * clay
 * clayousMarl
 * concrete
@@ -4656,24 +4735,25 @@ elements, mass fractions, temperature and state.
 * graphite
 * graphitefoam
 * hy906
+* invar
+* kapton
 * lanex
 * lanex2
-* laservac
+* laservac (same as vacuum but with different name)
 * leadtungstate
 * lhcconcrete
 * lhc_rock
 * lhe_1.9k
-* limousMarl
+* limousmarl
 * liquidhelium
-* invar
-* kapton
 * marl
 * medex
 * mild_steel
-* niobium
-* nbti
+* niobium_2k
 * nbti.1
+* nbti_4k
 * nbti_87k
+* nb_2k (niobium_2k)
 * nb_87k
 * n-bk7
 * perspex
@@ -4696,8 +4776,45 @@ elements, mass fractions, temperature and state.
 * tungsten_heavy_alloy
 * ups923a
 * vacuum
+* water (G4_WATER)
 * weightiron
 * yag
+
+Vacuum and Air
+^^^^^^^^^^^^^^
+
+The default "vacuum" material used in all beam pipes is composed of H, C and O with the
+following fractions:
+
++--------------+-------------------+
+| **Element**  | **Mass Fraction** |
++==============+===================+
+| H            | 0.482             |
++--------------+-------------------+
+| C            | 0.221             |
++--------------+-------------------+
+| O            | 0.297             |
++--------------+-------------------+
+
+The default pressure is 1e-12 bar, the temperature is 300K and the density os 1.16336e-9 g/cm3.
+
+"air" is the G4_AIR material. As of Geant4.10.04.p02
+(see geant4/source/materials/src/G4NistMaterialBuilder.cc), it is composed of C, N, O, Ar
+with the following fractions:
+
++--------------+-------------------+
+| **Element**  | **Mass Fraction** |
++==============+===================+
+| C            | 0.000124          |
++--------------+-------------------+
+| N            | 0.755267          |
++--------------+-------------------+
+| O            | 0.231781          |
++--------------+-------------------+
+| Ar           | 0.012827          |
++--------------+-------------------+
+
+It is a gas with density of 1.20479 mg/cm3.
 
 .. _crystals:
 

@@ -17,16 +17,18 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSPRIMARYGENERATORACTION_H
-#define BDSPRIMARYGENERATORACTION_H 
+#define BDSPRIMARYGENERATORACTION_H
 
-#include "G4VUserPrimaryGeneratorAction.hh"
+#include "BDSExtent.hh"
+
 #include "globals.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
 
 class BDSBunch;
-class BDSExtent;
 class BDSIonDefinition;
 class BDSOutputLoader;
 class BDSParticleDefinition;
+class BDSPTCOneTurnMap;
 class G4Event;
 class G4ParticleGun;
 
@@ -46,7 +48,10 @@ public:
 
   /// Set the world extent that particle coordinates will be checked against.
   inline void SetWorldExtent(const BDSExtent worldExtentIn) {worldExtent = worldExtentIn;}
-  
+  /// Register a PTC map instance used in the teleporter which this
+  /// class will set initial (first turn) primary coordinates for.
+  void RegisterPTCOneTurnMap(BDSPTCOneTurnMap* otmIn) {oneTurnMap = otmIn;}
+
 private:
   /// Beam particle.
   BDSParticleDefinition* beamParticle;
@@ -82,8 +87,9 @@ private:
   G4bool ionCached; 
   
   G4double particleCharge; ///< Charge that will replace default ion charge.
+
+  /// Cached OTM for setting first turn primary coords.
+  BDSPTCOneTurnMap* oneTurnMap;
 };
 
 #endif
-
-

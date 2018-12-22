@@ -49,6 +49,11 @@ simple_testing(option-executable-verbose_step "--file=sm.gmad" "")
 set(TESTING_ARGS "--verbose_G4run=5 --verbose_G4event=5 --verbose_G4tracking=5 --verbose_G4stepping=5")
 simple_testing(option-executable-verbose-g4levels "--file=sm.gmad" "")
 
+# Test that ptc one turn map does not crash bdsim
+simple_testing(option-ptc-otm "--file=ptcOneTurnMap.gmad --circular" "")
+
+# Test that original teleporter approach does not crash bdsim
+simple_testing(option-originalTeleporterMethod "--file=originalTeleporterMethod.gmad --circular" "")
 
 ## Some tests that check wrong input options will fail
 simple_testing(option-length-safety-too-small "--file=smallLengthSafety.gmad" "")
@@ -61,6 +66,7 @@ simple_testing(option-zero-beam-energy "--file=zeroBeamEnergy.gmad" "")
 set_tests_properties(option-zero-beam-energy PROPERTIES WILL_FAIL 1)
 
 simple_testing(option-ignore-local-aperture "--file=overrideAperture.gmad" "")
+simple_testing(option-ignore-local-magnet-geometry "--file=overrideMagnetGeometry.gmad" "")
 
 simple_testing(option-noeloss-beampipes      "--file=noeloss-beampipes.gmad" "")
 simple_testing(option-noeloss-outer          "--file=noeloss-outer.gmad"     "")

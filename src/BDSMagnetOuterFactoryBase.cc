@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
@@ -49,10 +50,15 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   defaultUserLimits  = BDSGlobalConstants::Instance()->DefaultUserLimits();
 
   // initialise variables and pointers that'll be used by the factory
-  CleanUp();
+  CleanUpBase();
 }
 
 void BDSMagnetOuterFactoryBase::CleanUp()
+{
+  CleanUpBase();
+}
+
+void BDSMagnetOuterFactoryBase::CleanUpBase()
 {
   poleSolid            = nullptr;
   yokeSolid            = nullptr;
@@ -102,7 +108,11 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 					  name + "_container_lv");
   
   // VISUAL ATTRIBUTES
-  G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
+  G4VisAttributes* outerVisAttr;
+  if (colour)
+    {outerVisAttr = new G4VisAttributes(*colour);}
+  else
+    {outerVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("default"));}
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(outerVisAttr);

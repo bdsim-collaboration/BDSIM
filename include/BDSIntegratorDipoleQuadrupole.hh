@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSIntegratorDipoleRodrigues2;
 class BDSMagnetStrength;
+class BDSParticleDefinition;
 class BDSStep;
 class G4Mag_EqRhs;
 
@@ -42,9 +43,15 @@ public:
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
 				G4double minimumRadiusOfCurvatureIn,
+				const BDSParticleDefinition* designParticle,
 				const G4double&     tiltIn);
   
   virtual ~BDSIntegratorDipoleQuadrupole();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorDipoleQuadrupole& operator=(const BDSIntegratorDipoleQuadrupole&) = delete;
+  BDSIntegratorDipoleQuadrupole(BDSIntegratorDipoleQuadrupole&) = delete;
+  /// @}
 
   /// Check if the quadrupole has finite strength and use drift if not. If finite strength,
   /// convert to local curvilinear coordiantes and check for paraxial approximation. If paraxial,
@@ -66,10 +73,10 @@ protected:
 	       const G4double&      h,
 	       const G4double&      fcof,
 	       G4ThreeVector&       posOut,
-		   G4ThreeVector&       momOut,
-		   const G4double		rho,
-		   const G4double		beta,
-           const G4double       deltaEnergy) const;
+	       G4ThreeVector&       momOut,
+	       const G4double	    rho,
+	       const G4double	    beta,
+	       const G4double       deltaEnergy) const;
 
 
 
@@ -93,7 +100,6 @@ private:
   G4double          tilt;           ///< Tilt offset transform for field.
   const G4double    scaling;        ///< Cache field scaling factor
   G4bool            isScaled;       ///< Cache if field is scaled
-  G4double          nominalMomCut;  ///< Cache option for momentum cut to switch tracking to backup integrator
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };

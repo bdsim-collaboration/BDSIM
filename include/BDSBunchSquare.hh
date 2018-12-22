@@ -36,7 +36,11 @@ class BDSBunchSquare: public BDSBunch
 { 
 public: 
   BDSBunchSquare(); 
-  virtual ~BDSBunchSquare(); 
+  virtual ~BDSBunchSquare();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSBunchSquare& operator=(const BDSBunchSquare&) = delete;
+  BDSBunchSquare(BDSBunchSquare&) = delete;
+  /// @}
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,

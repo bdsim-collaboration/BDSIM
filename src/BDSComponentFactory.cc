@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
+#include "BDSComponentFactoryUser.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -74,6 +75,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -95,16 +97,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
-					 const G4double& beta0In):
-  brho(brhoIn),
-  beta0(beta0In),
+BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
+					 BDSComponentFactoryUser* userComponentFactoryIn):
+  designParticle(designParticleIn),
+  userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
+  brho  = designParticle->BRho();
+  beta0 = designParticle->Beta();
+  
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
@@ -328,6 +333,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateRMatrix(); break;}
     case ElementType::_UNDULATOR:
       {component = CreateUndulator(); break;}
+    case ElementType::_USERCOMPONENT:
+      {
+	if (!userComponentFactory)
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no user component factory registered" << G4endl;
+	    exit(1);
+	  }
+	G4String typeName = G4String(element->userTypeName);
+	if (!userComponentFactory->CanConstructComponentByName(typeName))
+	  {
+	    G4cerr << __METHOD_NAME__ << "Error - no such component \""
+		   << element->userTypeName << "\" registered." << G4endl;
+	    exit(1);
+	  }
+	else
+	  {
+	    component = userComponentFactory->ConstructComponent(typeName,
+								 element,
+								 prevElement,
+								 nextElement,
+								 currentArcLength);
+	  }
+	break;
+      }
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
@@ -622,7 +651,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   (*st)["hkick"] = scaling * hkick;
   (*st)["vkick"] = scaling * vkick;
 
-  // create fringe magnet strengths. Copies supplied stength object so it should contain all
+  // create fringe magnet strengths. Copies supplied strength object so it should contain all
   // the kicker strength information as well as the added fringe information
   BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element,
                                                                st,
@@ -772,16 +801,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["by"]    = unitField.y();
     }
 
-  if (fringeStIn)
-    {
-        (*fringeStIn)["bx"] = (*st)["bx"];
-        (*fringeStIn)["by"] = (*st)["by"];
-    }
-  if (fringeStOut)
-    {
-        (*fringeStOut)["bx"] = (*st)["bx"];
-        (*fringeStOut)["by"] = (*st)["by"];
-    }
+  (*fringeStIn) ["bx"] = (*st)["bx"];
+  (*fringeStIn) ["by"] = (*st)["by"];
+  (*fringeStOut)["bx"] = (*st)["bx"];
+  (*fringeStOut)["by"] = (*st)["by"];
 
   BDSMagnetType t;
   G4double defaultVHRatio = 1.5;
@@ -1147,10 +1170,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
   return new BDSCollimatorJaw(elementName,
 			      element->l*CLHEP::m,
 			      PrepareHorizontalWidth(element),
-                  element->xsize*CLHEP::m,
-                  element->ysize*CLHEP::m,
-                  element->xsizeLeft*CLHEP::m,
-                  element->xsizeRight*CLHEP::m,
+                              element->xsize*CLHEP::m,
+                              element->ysize*CLHEP::m,
+                              element->xsizeLeft*CLHEP::m,
+                              element->xsizeRight*CLHEP::m,
 			      true,
 			      true,
 			      PrepareMaterial(element, "G4_Cu"),
@@ -1343,6 +1366,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
     {left  = PrepareCrystalInfo(G4String(element->crystalLeft));}
   else
     {right = PrepareCrystalInfo(G4String(element->crystalRight));}
+
+  if (left && !right &&  BDS::IsFinite(element->crystalAngleYAxisRight))
+    {
+      G4cout << G4endl << G4endl << __METHOD_NAME__
+             << "Left crystal being used but right angle set - perhaps check input for element "
+             << elementName << G4endl << G4endl;
+    }
+  if (!left && right &&  BDS::IsFinite(element->crystalAngleYAxisLeft))
+    {
+      G4cout << G4endl << G4endl << __METHOD_NAME__
+	     << "Right crystal being used but left angle set - perhaps check input for element "
+	     << elementName << G4endl << G4endl;
+    }
   
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,
@@ -1733,8 +1769,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (el->magnetGeometryType == "")
-    {info->geometryType = globals->MagnetGeometryType();}
+ if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
+   {info->geometryType = globals->MagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
@@ -1818,7 +1854,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
-  G4Material* result;
+  G4Material* result = nullptr;
   if (el->vacuumMaterial == "")
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else

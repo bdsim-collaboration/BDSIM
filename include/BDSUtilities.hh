@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
+#include <map>
 #include <string>
 #include <utility>
 
@@ -189,6 +190,9 @@ namespace BDS
 
   /// Get the curent memory usage.
   G4double GetMemoryUsage();
+
+  /// Take one long string and split on space and then on colon. "key1:value1 key2:value2" etc.
+  std::map<G4String, G4String> GetUserParametersMap(G4String userParameters);
 }
 
 #endif

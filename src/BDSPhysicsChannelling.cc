@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "G4Version.hh"
 #if G4VERSION_NUMBER > 1039
+#include "BDSGlobalConstants.hh"
 #include "BDSPhysicsChannelling.hh"
 
 #include "G4BaryonConstructor.hh"
@@ -59,6 +60,10 @@ void BDSPhysicsChannelling::ConstructProcess()
     {return;}
 
   G4Channeling* channelling = new G4Channeling();
+  //#if G4VERSION_NUMBER > 1049 || CUSTOMCHANNELING
+#if CUSTOMCHANNELING
+  channelling->SetMinimumEnergy(BDSGlobalConstants::Instance()->MinimumKineticEnergy());
+#endif
 
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();

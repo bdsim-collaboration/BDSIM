@@ -59,6 +59,10 @@ public:
 			G4double          totalEnergyIn,
 			G4double          ffact,
 		       	BDSIonDefinition* ionDefinitionIn = nullptr);
+
+  /// Copy constructor specified as we have to copy the ionDefinition if it exists.
+  BDSParticleDefinition(const BDSParticleDefinition& other);
+  
   ~BDSParticleDefinition();
 
   /// Update the G4 particle definition member. Developer responsibility to ensure

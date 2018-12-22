@@ -1,5 +1,11 @@
-V1.3 - 2018 / 10 / ??
+V1.3 - 2018 / 12 / ??
 =====================
+
+Expected Changes To Results
+---------------------------
+
+* The density of the surrounding air has changed very slighty to that of the standard
+  G4_AIR one.
 
 New Features
 ------------
@@ -22,7 +28,17 @@ New Features
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
 * New complete physics list for crystal channelling to achieve the correct result.
-  
+* New ability to specify a different beam particle that is different from the design
+  particle used for magnetic field strength calculations (:code:`beamParticleName`).
+* Specify the particle assumed for the user file distribution that can be different from
+  the design particle.
+* New option to use a one turn map generated from MAD-X PTC to correct
+  multi-turn tracking for circular machines.
+* New option :code:`geant4Macro` and executable option :code:`--geant4Macro` to run an optional
+  macro in the visualiser once it's started.
+* A warning will print if a user-defined material is more dense than 100g/cm3 as this is much higher
+  than any naturally occuring material (on Earth). The simulation will still proceed.
+
 General
 -------
 
@@ -35,10 +51,45 @@ General
   accepted.
 * The generic beam line element `element` now supports angle and the beam line
   will be curved by this amount.
-* The world is now sensitive and can record energy deposition. Geant4.10.3 upwards
+* The world volume is now sensitive and can record energy deposition. Geant4.10.3 upwards
   is required to record both this information and the energy leaving the world
   as this requires G4MultiSensitiveDetector.
 * New tests for testing backwards compatibility of analysis tool with previous data version.
+* "Model Preparation" is now "Model Conversion" in the manual to be clearer.
+* Visualisation now uses macro search path to look for visualisation macro in the installation
+  directory then the build directory of BDSIM.
+* In recreate mode, there is explicit print out about when the seed is set and if if was successfully
+  loaded from the output file.
+* The Cherenkov example has now been updated to show 3 materials (air, water, YAG).
+
+Materials
+---------
+
+* The materials construction in src/BDSMaterials.cc was checked through thoroughly.
+* "air" is now G4_AIR instead of custom BDSIM air (similar composition). The old air is now "airbdsim".
+* The refractive index data for optical and cherenkov physics has been added on top of G4_AIR
+  as well as "airbdsim".
+* "airbdsim" now has a density of 1.225mg/cm3.
+* "bp_carbonmonoxide" material now has correct pressure (previously near infinite).
+* Fixed double density for the following materials. They would have been extremely dense.
+  
+   - "berylliumcopper"
+   - "stainless_steel_304L"
+   - "stainless_steel_304L_87K"
+   - "stainless_steel_316LN"
+   - "stainless_steel_316LN_87K"
+   - "tungsten_heavy_alloy"
+   - "fusedsilica"
+   - "n-bk7"
+   - "yag"
+   - "pet"
+   - "lhc_rock"
+
+* "niobium" is now "niobium_2k" to better reflect the unusual temperature.
+* "nbti" is now "nbti_4k" to better reflect the unusual temperature.
+* "waterCkov" has been removed. "water or "G4_WATER" (the same) should be used. The refractive
+  index data has been added to G4_WATER.
+  
   
 Bug Fixes
 ---------
@@ -64,6 +115,11 @@ Bug Fixes
 * Fix A and Z being the wrong way around for ions in samplers.
 * Charge now correctly recorded in primaries and in samplers for partially stripped ions.
 * Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
+* Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for field maps.
+* Fix setting default seed state for random number generator if using recreate mode and progressing
+  beyond an event stored in the file.
+* Fix setting the energy level of an ion - wasn't set from input.
+* SQL geometry factory didn't clean up after repeated use. Not currently supported.
   
 Output Changes
 --------------

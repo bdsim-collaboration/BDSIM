@@ -1,0 +1,8 @@
+! there are no user components defined in bdsim by default so this should
+! safely and nicely fail.
+d1: usercomponent, userTypeName="bananas", l=1*m;
+l1: line=(d1);
+use, l1;
+
+beam, particle="proton",
+      energy=10*GeV;

@@ -58,7 +58,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
   coolingPipeRadius    = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
   coolingPipeOffset    = 0.0;  //initialised only
   copperSkinThickness  = 75*CLHEP::um;
-  CleanUp();
+  CleanUpLHCDetailed();
 }
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
@@ -68,7 +68,12 @@ BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
 
 void BDSBeamPipeFactoryLHCDetailed::CleanUp()
 {
+  CleanUpLHCDetailed();
   BDSBeamPipeFactoryBase::CleanUp();
+}
+
+void BDSBeamPipeFactoryLHCDetailed::CleanUpLHCDetailed()
+{
   copperSkinSolid     = nullptr; // the copper skin
   screenSolid         = nullptr; // the beam screen (first bit of aperture)
   coolingPipeSolid    = nullptr; // small cooling pipe above and below beam screen

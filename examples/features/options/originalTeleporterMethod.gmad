@@ -1,0 +1,6 @@
+include ../../fodoRing/fodoRing_components.gmad;
+include ../../fodoRing/fodoRing_sequence.gmad;
+include ../../fodoRing/fodoRing_beam.gmad;
+include ../../fodoRing/fodoRing_options.gmad;
+
+option, teleporterFullTransform=0;

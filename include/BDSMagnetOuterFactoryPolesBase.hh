@@ -192,6 +192,9 @@ protected:
   /// Empty containers for next use - this class is never deleted so can't rely on scope
   virtual void CleanUp();
 
+  /// Non-virtual clean up to be used in constructor.
+  void CleanUpPolesBase();
+
   /// Common construction tasks to all methods - assemble yoke and poles in container
   virtual BDSMagnetOuter* CommonConstructor(G4String     name,
 					    G4double     length,

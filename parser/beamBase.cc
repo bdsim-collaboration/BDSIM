@@ -24,7 +24,8 @@ using namespace GMAD;
 
 BeamBase::BeamBase()
 {
-  particleName         = "";
+  particle             = "";
+  beamParticleName     = "";
   beamEnergy           = 0.0;
   distrType            = "reference";
   xDistrType           = "";

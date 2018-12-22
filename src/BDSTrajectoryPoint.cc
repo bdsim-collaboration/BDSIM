@@ -77,7 +77,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+  G4cout << __METHOD_NAME__ << "Process (main|sub) (" << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << ")" << G4endl;
 #endif
   if (info)
   {

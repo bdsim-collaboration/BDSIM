@@ -47,6 +47,10 @@ public:
 		   G4int        nVariablesIn);
   
   virtual ~BDSIntegratorMag();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorMag& operator=(const BDSIntegratorMag&) = delete;
+  BDSIntegratorMag(BDSIntegratorMag&) = delete;
+  /// @}
 
   /// Estimate maximum distance of curved solution and chord.
   inline virtual G4double DistChord() const {return distChordPrivate;}
@@ -57,6 +61,15 @@ public:
   /// Cache of thin element length to know maximum possible length scale step
   /// for coordinate lookup.
   static G4double thinElementLength;
+
+  /// Cache of the fraction of the momentum outside which don't use a matrix
+  /// as it's just not feasible.
+  static G4double nominalMatrixRelativeMomCut;
+
+  /// This static variable is updated by BDSFieldManager that marks each
+  /// track as primary or not here. This variable is used throughout our
+  /// integrators for magnetic fields which inherit this class.
+  static G4bool currentTrackIsPrimary;
 
 protected:
   /// Convert final local position and direction to global frame. Allow

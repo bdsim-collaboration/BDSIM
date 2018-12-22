@@ -120,7 +120,14 @@ G4String BDSOutputLoader::SeedState(G4int eventNumber)
 {
   // always change back to this file - assuming other root files could be open
   file->cd();
-  
+
+  // cannot retrieve a seed state beyond that in the file - protection here to
+  // make life simpler elsewhere
+  if (eventNumber > eventTree->GetEntries())
+    {
+      G4cout << __METHOD_NAME__ << "event index beyond number stored in file - no seed state loaded" << G4endl;
+      return "";
+    }
   eventTree->GetEntry((int)eventNumber);
   
   return G4String(localEventInfo->seedStateAtStart);

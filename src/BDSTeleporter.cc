@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSTeleporter.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" //G4 global constants & types
 #include "G4Box.hh" 
@@ -43,8 +44,19 @@ BDSTeleporter::BDSTeleporter(const G4double length,
 
 void BDSTeleporter::Build()
 {
-  BDSAcceleratorComponent::Build(); // create container
-  
+  // We don't use BDSAcceleratorComponent::Build() so we can control the user limits
+  // to limit the step length in the volume.
+  BuildContainerLogicalVolume();
+  // set user limits for container & visual attributes
+  if(containerLogicalVolume)
+    {
+      // user limits
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      //copy the default and update with the length of the object rather than the default 1m
+      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength), 0.95);
+      containerLogicalVolume->SetUserLimits(ul);
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+    }
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
 							    containerLogicalVolume,
 							    true);

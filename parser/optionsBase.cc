@@ -32,6 +32,7 @@ OptionsBase::OptionsBase()
   // executable options
   inputFileName         = "optics.mad";
   visMacroFileName      = "";
+  geant4MacroFileName   = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
@@ -93,17 +94,18 @@ OptionsBase::OptionsBase()
   xsize=0.0, ysize=0.0;
 
   // magnet geometry
-  magnetGeometryType   = "polessquare";
-  outerMaterialName    = "iron";
-  horizontalWidth      = 0.6;
-  thinElementLength    = 1e-7;
-  hStyle               = false;
-  vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
-  coilWidthFraction    = -1;
-  coilHeightFraction   = -1;
+  magnetGeometryType         = "polessquare";
+  outerMaterialName          = "iron";
+  horizontalWidth            = 0.6;
+  thinElementLength          = 1e-7;
+  hStyle                     = false; // vhRatio < 0 as signal to use geometry factory defautl
+  vhRatio                    = -1;
+  coilWidthFraction          = -1;
+  coilHeightFraction         = -1;
+  ignoreLocalMagnetGeometry  = 0;
 
   preprocessGDML = true;
-  
+
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
@@ -246,6 +248,8 @@ OptionsBase::OptionsBase()
 
   printFractionEvents = 0.1;
   printFractionTurns  = 0.2;
+
+  ptcOneTurnMapFileName = "";
 
   // visualisation
   nSegmentsPerCircle       = 50;

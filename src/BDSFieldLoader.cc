@@ -67,10 +67,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 
 #ifdef USE_GZSTREAM
-#include "gzstream.h"
+#include "src-external/gzstream/gzstream.h"
 #endif
 
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
@@ -136,7 +137,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
 
   if (result && info.AutoScale())
     {
-      // prepare temporary recipe for fiel with cubic interpolation and no scaling
+      // prepare temporary recipe for field with cubic interpolation and no scaling
       // other than units
       BDSFieldInfo temporaryRecipe = BDSFieldInfo(info);
       temporaryRecipe.SetAutoScale(false); // prevent recursion
@@ -170,6 +171,11 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       delete tempField; // clear up
       
       G4double ratio    = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+      if (!std::isnormal(ratio))
+        {
+          G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
+          ratio = 1;
+        }
       G4double newScale = result->Scaling() * ratio;
 #ifdef BDSDEBUG
       G4cout << "Ratio of supplied strength to calculated map strength: " << ratio << G4endl;

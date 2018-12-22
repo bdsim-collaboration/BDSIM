@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
 #endif
+#include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
@@ -81,10 +82,11 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
     }
   else if (completePhysics)
     {
-      if (physicsListNameLower == "completechannelling")
+      if (physicsListNameLower == "completechannelling" || physicsListNameLower == "completechannellingemd")
 	{
 #if G4VERSION_NUMBER > 1039
-	  return BDS::ChannellingPhysicsComplete();
+	  G4bool useEMD = physicsListNameLower.contains("emd");
+	  return BDS::ChannellingPhysicsComplete(useEMD);
 #else
 	  G4cerr << "Channel physics is not supported with Geant4 versions less than 10.4" << G4endl;
 	  exit(1);
@@ -100,15 +102,41 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
     {return new BDSModularPhysicsList(physicsList);}
 }
 
-BDSParticleDefinition* BDS::ConstructBeamParticle(G4String particleName,
-						  G4double totalEnergy,
-						  G4double ffact)
+void BDS::ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+					 G4double ffact,
+					 BDSParticleDefinition*& designParticle,
+					 BDSParticleDefinition*& beamParticle,
+					 G4bool& beamDifferentFromDesignParticle)
 {
-  BDSParticleDefinition* particleDefB = nullptr; // result can be constructed in two ways
+  G4String designParticleName = G4String(beamDefinition.particle);
+  G4double designTotalEnergy = G4double(beamDefinition.beamEnergy)*CLHEP::GeV;
+  designParticle = BDS::ConstructParticleDefinition(designParticleName, designTotalEnergy, ffact);
+  if ((beamDefinition.particle == beamDefinition.beamParticleName) &&
+      (beamDefinition.beamEnergy == beamDefinition.E0))
+    {// copy definition
+      beamParticle = new BDSParticleDefinition(*designParticle);
+      beamDifferentFromDesignParticle = false;
+    }
+  else
+    {
+      G4String beamParticleName = G4String(beamDefinition.beamParticleName);
+      G4double beamTotalEnergy  = G4double(beamDefinition.E0)*CLHEP::GeV;
+      beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
+						      beamTotalEnergy,
+						      ffact);
+      beamDifferentFromDesignParticle = true;
+    }
+}
 
+BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
+							G4double totalEnergy,
+							G4double ffact)
+{
+  BDSParticleDefinition* particleDefB = nullptr; // result
+  G4String particleName = particleNameIn; // copy the name
   particleName.toLower();
+
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  
   if (particleName.contains("ion"))
     {
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
@@ -260,13 +288,18 @@ void BDS::PrintDefinedParticles()
 }
 
 #if G4VERSION_NUMBER > 1039
-G4VModularPhysicsList* BDS::ChannellingPhysicsComplete()
+G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(const G4bool useEMD)
 {
   G4VModularPhysicsList* physlist = new FTFP_BERT();
   G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
   physlist->RegisterPhysics(new BDSPhysicsChannelling());
   // replace the EM physics in the Geant4 provided FTFP_BERT composite physics list
   physlist->ReplacePhysics(new BDSEmStandardPhysicsOp4Channelling());
+
+  // optional electromagnetic dissociation that isn't in FTFP_BERT by default
+  if (useEMD)
+    {physlist->RegisterPhysics(new BDSPhysicsEMDissociation());}
+
   biasingPhysics->PhysicsBiasAllCharged();
   physlist->RegisterPhysics(biasingPhysics);
   return physlist;

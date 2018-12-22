@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -25,13 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * version @BDSIM_VERSION@
  */
 
-#include "BDSExecOptions.hh"     // executable command line options 
-#include "BDSGlobalConstants.hh" //  global parameters
+#include "BDSIMClass.hh"
 
-#include <cstdlib>      // standard headers 
-#include <cstdio>
-#include <signal.h>
+#include <iostream>
 
+<<<<<<< HEAD
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
@@ -306,63 +304,18 @@ int main(int argc,char** argv)
       BDSGeometryWriter geometrywriter;
       geometrywriter.ExportGeometry(globalConstants->ExportType(),
 				    globalConstants->ExportFileName());
+=======
+int main(int argc, char** argv)
+{
+  BDSIM* bds = new BDSIM(argc, argv);
+  if (!bds->Initialised())
+    {
+      if (bds->InitialisationResult() == 1) // if 2 it's ok
+	{std::cout << "Intialisation failed" << std::endl; return 1;}
+>>>>>>> origin/develop
     }
   else
-    {
-      G4cout.precision(10);
-      /// Catch aborts to close output stream/file. perhaps not all are needed.
-      struct sigaction act;
-      act.sa_handler = &BDS::HandleAborts;
-      sigemptyset(&act.sa_mask);
-      act.sa_flags = 0;
-      if (!ignoreSIGINT)
-	{sigaction(SIGINT,  &act, 0);}
-      sigaction(SIGABRT, &act, 0);
-      sigaction(SIGTERM, &act, 0);
-      sigaction(SIGSEGV, &act, 0);
-      
-      /// Run in either interactive or batch mode
-      if(!globalConstants->Batch())   // Interactive mode
-	{
-	  BDSVisManager visManager;
-	  visManager.StartSession(argc,argv);
-	}
-      else           // Batch mode
-	{runManager->BeamOn(globalConstants->NGenerate());}
-    }
-
-  /// Termination & clean up.
-  G4GeometryManager::GetInstance()->OpenGeometry();
-
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
-#endif
-  delete bdsOutput;
-  
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
-#endif
-  // Order important here because of singletons relying on each other
-  delete BDSAcceleratorModel::Instance();
-  delete BDSTemporaryFiles::Instance();
-  delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials
-  delete globalConstants;
-  delete BDSMaterials::Instance();
-
-  // instances not used in this file, but no other good location for deletion
-  delete BDSColours::Instance();
-  delete BDSFieldLoader::Instance();
-  delete BDSSDManager::Instance();
-  delete BDSSamplerRegistry::Instance();
-  
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
-#endif
-  delete runManager;
-  delete bdsBunch;
-  delete parser;
-
-  G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;
-
+    {bds->BeamOn();}
+  delete bds;
   return 0;
 }

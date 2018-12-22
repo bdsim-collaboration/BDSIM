@@ -36,9 +36,10 @@ namespace GMAD
   public:
     OptionsBase();
 
-    std::string inputFileName;    ///< input filename
-    std::string visMacroFileName; ///< visualisation filename
-    bool        visDebug;         ///< flag for visualisation debug
+    std::string inputFileName;       ///< Input filename.
+    std::string visMacroFileName;    ///< Visualisation filename.
+    std::string geant4MacroFileName; ///< Geant4 macro to run.
+    bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format
     std::string outputFileName;
@@ -130,6 +131,7 @@ namespace GMAD
     double      vhRatio;
     double      coilWidthFraction;
     double      coilHeightFraction;
+    bool        ignoreLocalMagnetGeometry;
 
     /// geometry control
     bool preprocessGDML;
@@ -288,6 +290,8 @@ namespace GMAD
 
     double   printFractionEvents;
     double   printFractionTurns;
+
+    std::string ptcOneTurnMapFileName;
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
