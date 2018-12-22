@@ -840,12 +840,7 @@ void BDSMaterials::DefineVacuums()
     {vacpressure=1e-12*CLHEP::bar;}
   G4double temperature = 300*CLHEP::kelvin;
   G4double density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere)) * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3);
-#ifdef BDSDEBUG 
-  G4cout<< " ***************** defining Vacuum"<<G4endl;
-  G4cout<< "pressure="<<vacpressure/CLHEP::bar<<" bar"<<G4endl;
-  G4cout<< "temp="<<temperature/CLHEP::kelvin<<" K"<<G4endl;
-  G4cout<< "density="<<density/(CLHEP::g/CLHEP::m3)<<"g/m^3"<<G4endl;
-#endif
+  
   G4Material* tmpMaterial = new G4Material("vacuum",
 					   density,
 					   3, kStateGas,
@@ -1055,9 +1050,27 @@ G4Element* BDSMaterials::GetElement(G4String symbol) const
   return element;
 }
 
+void BDSMaterials::PrintBasicMaterialMassFraction(G4Material* material) const
+{
+  // simpler version of geant4 code
+  for (G4int i = 0; i < (G4int)material->GetNumberOfElements(); i++)
+    {
+      G4cout << (*(material->GetElementVector()))[i]->GetName() << "\t "
+	     << (material->GetFractionVector()[i])/CLHEP::perCent << " %"  << G4endl;
+    }
+}
+
 void BDSMaterials::ListMaterials() const
 {
-  G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl;
+  // always print out vacuum composition
+  G4Material* vacuum = GetMaterial("vacuum");
+  G4cout<< "\"vacuum\" composition: " << G4endl;
+  PrintBasicMaterialMassFraction(vacuum);
+  G4cout<< "pressure    = " << vacuum->GetPressure()/CLHEP::bar          << " bar"   << G4endl;
+  G4cout<< "temperature = " << vacuum->GetTemperature()/CLHEP::kelvin    << " K"     << G4endl;
+  G4cout<< "density     = " << vacuum->GetDensity()/(CLHEP::g/CLHEP::m3) << " g/m^3" << G4endl << G4endl;
+  
+  G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl << G4endl;
 
   if (!elements.empty())
     {

@@ -121,6 +121,9 @@ private:
   void DensityCheck(const G4double  density,
 		    const G4String& materialName) const;
 
+  /// Print mass fractions of consituents of a given material.
+  void PrintBasicMaterialMassFraction(G4Material* material) const;
+
   /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials;
   /// map of elements, no lowercase convention
