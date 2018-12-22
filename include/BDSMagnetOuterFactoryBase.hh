@@ -154,6 +154,10 @@ public:
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope
   virtual void CleanUp();
+
+  /// Non-virtual clean up that can be used in the constructor.
+  void CleanUpBase();
+  
   /// Virtual base destructor
   virtual ~BDSMagnetOuterFactoryBase() {}
 
