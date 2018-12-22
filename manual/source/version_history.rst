@@ -36,6 +36,8 @@ New Features
   multi-turn tracking for circular machines.
 * New option :code:`geant4Macro` and executable option :code:`--geant4Macro` to run an optional
   macro in the visualiser once it's started.
+* A warning will print if a user-defined material is more dense than 100g/cm3 as this is much higher
+  than any naturally occuring material (on Earth). The simulation will still proceed.
 
 General
 -------
