@@ -92,7 +92,10 @@ protected:
   /// base constructor
   BDSBeamPipeFactoryBase();
 
-  /// Initialiser and can be used to reset factory pointers after use
+  /// Initialiser and can be used to reset factory pointers after use. Non-virtual as
+  /// it's used in the constructor to avoid duplication of code, but it can't be virtual there.
+  void CleanUpBase();
+
   virtual void CleanUp();
   
   /// finalise beampipe construction
