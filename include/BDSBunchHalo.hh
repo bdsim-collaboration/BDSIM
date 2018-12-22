@@ -36,6 +36,10 @@ class BDSBunchHalo: public BDSBunch
 public:
   BDSBunchHalo();
   virtual ~BDSBunchHalo();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSBunchHalo& operator=(const BDSBunchHalo&) = delete;
+  BDSBunchHalo(BDSBunchHalo&) = delete;
+  /// @}
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,

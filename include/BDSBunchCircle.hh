@@ -37,6 +37,10 @@ class BDSBunchCircle: public BDSBunch
 public: 
   BDSBunchCircle(); 
   virtual ~BDSBunchCircle(); 
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSBunchCircle& operator=(const BDSBunchCircle&) = delete;
+  BDSBunchCircle(BDSBunchCircle&) = delete;
+  /// @}
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,

@@ -33,6 +33,11 @@ class BDSCCDChip
 public:
   BDSCCDChip(G4String aName, G4ThreeVector pixelSize, G4TwoVector nPixels);
   ~BDSCCDChip();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCCDChip& operator=(const BDSCCDChip&) = delete;
+  BDSCCDChip(BDSCCDChip&) = delete;
+  /// @}
+
   inline G4LogicalVolume* log(){return _log;}
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
