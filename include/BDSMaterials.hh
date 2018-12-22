@@ -58,7 +58,8 @@ protected:
   /// Add G4Material
   void AddMaterial(G4Material* material, G4String name);
   /// Add alias to a material
-  void AddMaterial(G4String    materialStr, G4String name);
+  void AddExistingMaterialAlias(const G4String &existingMaterialName,
+                                G4String alias);
 
   /** Add materials
       @param[in] Z        atomic number
@@ -124,9 +125,11 @@ private:
   /// Print mass fractions of consituents of a given material.
   void PrintBasicMaterialMassFraction(G4Material* material) const;
 
-  /// map of materials, convention name lowercase
-  std::map<G4String,G4Material*> materials;
-  /// map of elements, no lowercase convention
+  /// <ap of materials, convention name lowercase.
+  std::map<G4String, G4Material*> materials;
+  /// Maps of other names to existing materials. To avoid double deletion. Also in lower case.
+  std::map<G4String, G4Material*> aliases;
+  /// Map of elements, no lowercase convention.
   std::map<G4String,G4Element*>  elements;
   /// Material tables for storing pointers
   std::vector<G4MaterialPropertiesTable*> propertiesTables;

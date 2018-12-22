@@ -69,21 +69,21 @@ void BDSMaterials::DefineMetals()
   // solid materials
   // metals
   // standard single element metals
-  AddMaterial("Al", "aluminium");
-  AddMaterial("Be", "beryllium");
-  AddMaterial("C" , "carbon");
-  AddMaterial("Cr", "chromium");
-  AddMaterial("Cu", "copper");
-  AddMaterial("Fe", "iron");
-  AddMaterial("Pb", "lead");
-  AddMaterial("Mg", "magnesium");
-  AddMaterial("Ni", "nickel");
-  AddMaterial("Si", "silicon");
-  AddMaterial("Ti", "titanium");
-  AddMaterial("W" , "tungsten");
-  AddMaterial("U" , "uranium");
-  AddMaterial("V" , "vanadium");
-  AddMaterial("Zn", "zinc");
+  AddExistingMaterialAlias("Al", "aluminium");
+  AddExistingMaterialAlias("Be", "beryllium");
+  AddExistingMaterialAlias("C",  "carbon");
+  AddExistingMaterialAlias("Cr", "chromium");
+  AddExistingMaterialAlias("Cu", "copper");
+  AddExistingMaterialAlias("Fe", "iron");
+  AddExistingMaterialAlias("Pb", "lead");
+  AddExistingMaterialAlias("Mg", "magnesium");
+  AddExistingMaterialAlias("Ni", "nickel");
+  AddExistingMaterialAlias("Si", "silicon");
+  AddExistingMaterialAlias("Ti", "titanium");
+  AddExistingMaterialAlias("W",  "tungsten");
+  AddExistingMaterialAlias("U",  "uranium");
+  AddExistingMaterialAlias("V",  "vanadium");
+  AddExistingMaterialAlias("Zn", "zinc");
 
   // special forms
   std::list<int> singleElement = {1};
@@ -191,7 +191,7 @@ void BDSMaterials::DefineSuperconductors()
 {
   // niobium at 2K
   AddMaterial("niobium_2k", 8.57 , kStateSolid, 2, 1, {"Nb"}, std::list<int>{1});
-  AddMaterial("niobium_2k", "nb_2k"); // alias
+  AddExistingMaterialAlias("niobium_2k", "nb_2k"); // alias
   // niobium titanium at 4K
   AddMaterial("nbti_4k", 5.6  , kStateSolid, 4, 1, {"Nb","Ti"}, std::list<int>{1,1});
 }
@@ -747,7 +747,7 @@ void BDSMaterials::DefineLiquids()
   AddMaterial("liquidhelium", 0.12498, kStateLiquid, 4.15, 1, {"He"}, std::list<int>{1});
 
   // water
-  AddMaterial("G4_WATER", "water"); // use NIST water
+  AddExistingMaterialAlias("G4_WATER", "water"); // use NIST water
   G4Material* water = GetMaterial("water"); // get the material pointer back
 
   // add refractive index to G4_WATER material for cherenkov radiation to work
@@ -768,10 +768,10 @@ void BDSMaterials::DefineLiquids()
 
 void BDSMaterials::DefineGases()
 {
-  AddMaterial("N",  "nitrogen");
+  AddExistingMaterialAlias("N", "nitrogen");
 
   // air
-  AddMaterial("G4_AIR", "air");
+  AddExistingMaterialAlias("G4_AIR", "air");
   G4Material* g4AirMaterial = GetMaterial("air");
   const G4int airNEntries = 3;
   // source: NPL Tables of Physical & Chemical Constants. Refractive indices at
@@ -884,10 +884,12 @@ void BDSMaterials::AddMaterial(G4Material* material, G4String name)
     {G4cout << __METHOD_NAME__ << "Material \"" << name << "\" already exists" << G4endl; exit(1);}
 }
 
-void BDSMaterials::AddMaterial(G4String materialStr, G4String name)
+void BDSMaterials::AddExistingMaterialAlias(const G4String &existingMaterialName,
+                                            G4String alias)
 {
-  G4Material* material = GetMaterial(materialStr);
-  AddMaterial(material, name);
+  alias.toLower();
+  G4Material* material = GetMaterial(existingMaterialName);
+  aliases[alias] = material; // store in lower case as that's how we search
 }
 
 void BDSMaterials::AddMaterial(G4String name,
@@ -979,9 +981,16 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
         {return (*iter).second;}
       else
 	{
-	  ListMaterials();
-	  G4cout << __METHOD_NAME__ << "\"" << material << "\" is unknown." << G4endl;
-	  exit(1);
+	  // search aliases
+	  auto iter2 = aliases.find(material);
+	  if (iter2 != aliases.end())
+	    {return iter2->second;}
+	  else
+	    {// can't find it -> warn and exit
+	      ListMaterials();
+	      G4cout << __METHOD_NAME__ << "\"" << material << "\" is unknown." << G4endl;
+	      exit(1);
+	    }
 	}
     }
 }
