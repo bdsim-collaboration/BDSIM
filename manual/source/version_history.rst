@@ -118,6 +118,7 @@ Bug Fixes
 * Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for field maps.
 * Fix setting default seed state for random number generator if using recreate mode and progressing
   beyond an event stored in the file.
+* Fix setting the energy level of an ion - wasn't set from input.
   
 Output Changes
 --------------
