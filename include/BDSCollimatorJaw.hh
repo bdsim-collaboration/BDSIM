@@ -37,17 +37,17 @@ class BDSCollimatorJaw: public BDSAcceleratorComponent
 {
 public:
   BDSCollimatorJaw(G4String  nameIn,
-		   G4double  lengthIn,
-		   G4double  horizontalWidthIn,
-		   G4double  jaw1OffsetIn,
-		   G4double  jaw2OffsetIn,
-		   G4double  xHalfGapIn,
-		   G4double  yHalfHeightIn,
-		   G4bool    buildLeftJawIn,
-		   G4bool    buildRightJawIn,
-		   G4Material* collimatorMaterialIn,
-		   G4Material* vacuumMaterialIn,
-		   G4Colour*   colourIn = nullptr);
+                   G4double    lengthIn,
+                   G4double    horizontalWidthIn,
+                   G4double    xHalfGapIn,
+                   G4double    yHalfHeightIn,
+                   G4double    xsizeLeftIn,
+                   G4double    xsizeRightIn,
+                   G4bool      buildLeftJawIn,
+                   G4bool      buildRightJawIn,
+                   G4Material* collimatorMaterialIn,
+                   G4Material* vacuumMaterialIn,
+                   G4Colour*   colourIn = nullptr);
   virtual ~BDSCollimatorJaw();
 
   /// Accessor for collimator material.

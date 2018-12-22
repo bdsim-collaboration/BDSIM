@@ -48,6 +48,11 @@ public:
   
   virtual ~BDSIntegratorDipoleQuadrupole();
 
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorDipoleQuadrupole& operator=(const BDSIntegratorDipoleQuadrupole&) = delete;
+  BDSIntegratorDipoleQuadrupole(BDSIntegratorDipoleQuadrupole&) = delete;
+  /// @}
+
   /// Check if the quadrupole has finite strength and use drift if not. If finite strength,
   /// convert to local curvilinear coordiantes and check for paraxial approximation. If paraxial,
   /// use thick quadrupole matrix for transport, else use the G4ClassicalRK4 backup stepper.

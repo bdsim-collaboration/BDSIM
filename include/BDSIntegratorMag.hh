@@ -47,6 +47,10 @@ public:
 		   G4int        nVariablesIn);
   
   virtual ~BDSIntegratorMag();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorMag& operator=(const BDSIntegratorMag&) = delete;
+  BDSIntegratorMag(BDSIntegratorMag&) = delete;
+  /// @}
 
   /// Estimate maximum distance of curved solution and chord.
   inline virtual G4double DistChord() const {return distChordPrivate;}

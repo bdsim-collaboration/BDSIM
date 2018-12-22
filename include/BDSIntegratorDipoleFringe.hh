@@ -55,6 +55,11 @@ public:
   
   virtual ~BDSIntegratorDipoleFringe(){;}
 
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSIntegratorDipoleFringe& operator=(const BDSIntegratorDipoleFringe&) = delete;
+  BDSIntegratorDipoleFringe(BDSIntegratorDipoleFringe&) = delete;
+  /// @}
+
   /// The stepper for integration. Calls base class stepper.
   virtual void Stepper(const G4double yIn[6],
 		       const G4double dydx[6],
