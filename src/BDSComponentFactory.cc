@@ -651,7 +651,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   (*st)["hkick"] = scaling * hkick;
   (*st)["vkick"] = scaling * vkick;
 
-  // create fringe magnet strengths. Copies supplied stength object so it should contain all
+  // create fringe magnet strengths. Copies supplied strength object so it should contain all
   // the kicker strength information as well as the added fringe information
   BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element,
                                                                st,
@@ -801,16 +801,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["by"]    = unitField.y();
     }
 
-  if (fringeStIn)
-    {
-        (*fringeStIn)["bx"] = (*st)["bx"];
-        (*fringeStIn)["by"] = (*st)["by"];
-    }
-  if (fringeStOut)
-    {
-        (*fringeStOut)["bx"] = (*st)["bx"];
-        (*fringeStOut)["by"] = (*st)["by"];
-    }
+  (*fringeStIn) ["bx"] = (*st)["bx"];
+  (*fringeStIn) ["by"] = (*st)["by"];
+  (*fringeStOut)["bx"] = (*st)["bx"];
+  (*fringeStOut)["by"] = (*st)["by"];
 
   BDSMagnetType t;
   G4double defaultVHRatio = 1.5;
@@ -1176,10 +1170,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
   return new BDSCollimatorJaw(elementName,
 			      element->l*CLHEP::m,
 			      PrepareHorizontalWidth(element),
-                  element->xsize*CLHEP::m,
-                  element->ysize*CLHEP::m,
-                  element->xsizeLeft*CLHEP::m,
-                  element->xsizeRight*CLHEP::m,
+                              element->xsize*CLHEP::m,
+                              element->ysize*CLHEP::m,
+                              element->xsizeLeft*CLHEP::m,
+                              element->xsizeRight*CLHEP::m,
 			      true,
 			      true,
 			      PrepareMaterial(element, "G4_Cu"),
@@ -1762,8 +1756,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (el->magnetGeometryType == "")
-    {info->geometryType = globals->MagnetGeometryType();}
+ if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
+   {info->geometryType = globals->MagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
@@ -1847,7 +1841,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
-  G4Material* result;
+  G4Material* result = nullptr;
   if (el->vacuumMaterial == "")
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else

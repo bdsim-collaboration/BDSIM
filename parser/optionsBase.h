@@ -131,6 +131,7 @@ namespace GMAD
     double      vhRatio;
     double      coilWidthFraction;
     double      coilHeightFraction;
+    bool        ignoreLocalMagnetGeometry;
 
     /// geometry control
     bool preprocessGDML;

@@ -38,6 +38,10 @@ class BDSBunchEShell: public BDSBunch
 public: 
   BDSBunchEShell();  
   virtual ~BDSBunchEShell(); 
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSBunchEShell& operator=(const BDSBunchEShell&) = delete;
+  BDSBunchEShell(BDSBunchEShell&) = delete;
+  /// @}
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,

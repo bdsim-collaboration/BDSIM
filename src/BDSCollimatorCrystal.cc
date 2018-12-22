@@ -50,7 +50,9 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn,
   halfGapLeft(halfGapLeftIn),
   halfGapRight(halfGapRightIn),
   angleYAxisLeft(angleYAxisLeftIn),
-  angleYAxisRight(angleYAxisRightIn)
+  angleYAxisRight(angleYAxisRightIn),
+  crystalLeft(nullptr),
+  crystalRight(nullptr)
 {;}
 
 BDSCollimatorCrystal::~BDSCollimatorCrystal()

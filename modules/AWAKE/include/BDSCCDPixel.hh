@@ -30,6 +30,10 @@ class BDSCCDPixel
 public:
   BDSCCDPixel(G4ThreeVector size, G4String name);
   ~BDSCCDPixel();
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCCDPixel& operator=(const BDSCCDPixel&) = delete;
+  BDSCCDPixel(BDSCCDPixel&) = delete;
+  /// @}
   G4LogicalVolume* log();
   G4String name();
   G4ThreeVector size();
