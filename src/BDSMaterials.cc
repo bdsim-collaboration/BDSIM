@@ -1062,7 +1062,14 @@ void BDSMaterials::ListMaterials() const
   
   G4cout << "Defined materials are:" << G4endl;
   for (auto material : materials)
-    {G4cout << material.second->GetName() << G4endl;}
+    {
+      G4cout << material.first;
+      G4String realName = material.second->GetName();
+      if (realName != material.first)
+	{G4cout << " (" << material.second->GetName() << ")" << G4endl;}
+      else
+	{G4cout << G4endl;}
+    }
   G4cout << G4endl;
   G4cout << "Available NIST materials are:" << G4endl;
   G4NistManager::Instance()->ListMaterials("all");
