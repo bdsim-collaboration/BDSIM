@@ -74,15 +74,13 @@ public:
   /// @}
 
   /// @{ Function to calculate on the fly the parameters.
-  std::vector<int>     getCharge();
   std::vector<U>       getKineticEnergy();
   std::vector<U>       getMass();
   std::vector<U>       getRigidity();
   std::vector<bool>    getIsIon();
   std::vector<int>     getIonA();
   std::vector<int>     getIonZ();
-  /// @}
-  
+  /// @}  
   
   BDSOutputROOTEventSampler();
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
@@ -103,7 +101,7 @@ public:
   inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
   inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
   /// @}
-  
+
   void FillMR();  ///< Calculate and fill mass and rigidity.
   void FillMRK(); ///< Calculate and fill mass, rigidity, and kinetic energy.
   void FillMRI(); ///< Calculate and fill mass, rigidity and ion properties.

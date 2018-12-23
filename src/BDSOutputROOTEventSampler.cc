@@ -148,17 +148,6 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
 }
 
 template <class U>
-std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
-{
-  std::vector<U> result(n);
-  if (!particleTable)
-    {return result;}
-  for (int i = 0; i < n; ++i)
-    {result[i] = (U)particleTable->Mass(partID[i]);}
-  return result;
-}
-
-template <class U>
 std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
 {
   std::vector<U> result(n);
@@ -166,6 +155,17 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
     {return result;}
   for (int i = 0; i < n; ++i)
     {result[i] = (U)particleTable->KineticEnergy(partID[i], energy[i]);}
+  return result;
+}
+
+template <class U>
+std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
+{
+  std::vector<U> result(n);
+  if (!particleTable)
+    {return result;}
+  for (int i = 0; i < n; ++i)
+    {result[i] = (U)particleTable->Mass(partID[i]);}
   return result;
 }
 
