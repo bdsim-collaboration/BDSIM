@@ -61,7 +61,10 @@ public:
   int                modelID;
   std::vector<int>   turnNumber;
 
-  U                  S;   // Will not need this when have global transforms
+  U                  S;
+
+  std::vector<U>     r;
+  std::vector<U>     rp;
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
@@ -87,12 +90,14 @@ public:
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
   void Fill(const BDSSamplerHit* hit,
-	    G4bool storeCharge = false);
+	    G4bool storeCharge = false,
+	    G4bool storeRadius = false);
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,
 	    const G4int pdgID,
 	    const G4int turnsTaken,
 	    const G4int beamlineIndex);
+  void FillRRp(const BDSParticleCoordsFull& coords); ///< Calculate r and rp from coords and fill.
 #endif
 
   /// @{ Calculate and fill calculated variables.
@@ -112,7 +117,7 @@ public:
 
   static BDSOutputROOTGeant4Data* particleTable;
 
-  ClassDef(BDSOutputROOTEventSampler,3);
+  ClassDef(BDSOutputROOTEventSampler,4);
 };
 
 #endif
