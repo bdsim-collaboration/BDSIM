@@ -267,6 +267,7 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
 
     bool        storeSamplerAll;
+    bool        storeSamplerRadius;
     bool        storeSamplerCharge;
     bool        storeSamplerKineticEnergy;
     bool        storeSamplerMass;

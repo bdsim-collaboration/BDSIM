@@ -234,6 +234,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeSamplerAll          = false;
+  storeSamplerRadius       = false;
   storeSamplerCharge       = false;
   storeSamplerKineticEnergy = false;
   storeSamplerMass         = false;
