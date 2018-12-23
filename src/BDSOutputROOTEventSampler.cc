@@ -150,7 +150,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
 template <class U>
 std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
 {
-  std::vector<U> result(n);
+  std::vector<U> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
@@ -161,7 +161,7 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
 template <class U>
 std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
 {
-  std::vector<U> result(n);
+  std::vector<U> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
@@ -172,7 +172,7 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
 template <class U>
 std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 {
-  std::vector<U> result(n);
+  std::vector<U> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
@@ -183,7 +183,7 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 template <class U>
 std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
 {
-  std::vector<bool> result(n);
+  std::vector<bool> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
@@ -194,7 +194,7 @@ std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
 template <class U>
 std::vector<int> BDSOutputROOTEventSampler<U>::getIonA()
 {
-  std::vector<int> result(n);
+  std::vector<int> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
@@ -205,7 +205,7 @@ std::vector<int> BDSOutputROOTEventSampler<U>::getIonA()
 template <class U>
 std::vector<int> BDSOutputROOTEventSampler<U>::getIonZ()
 {
-  std::vector<int> result(n);
+  std::vector<int> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
