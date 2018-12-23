@@ -3565,6 +3565,9 @@ following options.
 | storeSamplerMass                  | Stores corresponding mass (in GeV) of particle for every entry in  |
 |                                   | the sampler.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerRadius                | Calculate and store the radius in space and angle (x,y and xp,yp)  |
+|                                   | for the sampler data.                                              |
++-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not         |

@@ -25,6 +25,7 @@ New Features
   the energy loss output. More granular than :code:`storeElossLinks`.
 * New option :code:`storeGeant4Data` to control whether the basic particle data is stored in
   the output for all particles used or not.
+* New option :code:`storeSamplerRadius` for whether to store the radius (x,y and xp,yp) in the sampler output.
 * New option :code:`storeSamplerAll` to conveniently store all optional sampler data with one option.
 * Access to data version in DataLoader in analysis.
 * External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
@@ -130,6 +131,8 @@ Output Changes
   quantities such as the model.
 * Boolean flag store in even info as to whether the primary was absorbed in a collimator or not.
 * New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
+* New option :code:`storeSamplerRadius` for whether to store the radius (x,y and xp,yp) in the sampler output.
+* New option :code:`storeSamplerAll` to conveniently store all optional sampler data with one option.
 * New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
   detail of their output.
@@ -140,7 +143,6 @@ Output Changes
   respectively.
 * New members in :code:`Event.Info` that are the integrated energy deposite in various parts
   for that event. These are for convenience and are the integrals of the various Eloss parts.
-* New option :code:`storeSamplerAll` to conveniently store all optional sampler data with one option.
 
 Output Classes Versions
 -----------------------
@@ -170,7 +172,7 @@ Output Classes Versions
 +-------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventRunInfo     | N           | 2               | 2               |
 +-------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventSampler     | N           | 3               | 3               |
+| BDSOutputROOTEventSampler     | N           | 3               | 4               |
 +-------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventTrajectory  | N           | 2               | 2               |
 +-------------------------------+-------------+-----------------+-----------------+
