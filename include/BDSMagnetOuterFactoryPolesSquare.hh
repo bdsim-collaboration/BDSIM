@@ -55,7 +55,11 @@ private:
   BDSMagnetOuterFactoryPolesSquare(); 
   static BDSMagnetOuterFactoryPolesSquare* _instance;
 
+  /// Clean up all memebers used.
   virtual void CleanUp();
+
+  /// Clean up for this factory. Non-virtual as used in constructor.
+  void CleanUpPolesSquare();
 
   /// Create yoke that connects poles and container to put them in
   virtual void CreateYokeAndContainerSolid(const G4String& name,

@@ -85,12 +85,16 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
 
   storeGeant4Data      = g->StoreGeant4Data();
   storeModel           = g->StoreModel();
+  storeSamplerRadius   = g->StoreSamplerRadius();
   storeSamplerCharge   = g->StoreSamplerCharge();
   storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
 
+  // radius doesn't require a look up of any other PDG info so it doesn't need
+  // to involved in the following optimisation groupings of various options
+  
   // charge is required for rigidity calculation so force storage from sampler hits
   if (storeSamplerRigidity && !storeSamplerCharge)
     {storeSamplerCharge = true;}
@@ -103,6 +107,14 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeOption3 = storeOption1 && storeSamplerIon;
   // everything
   storeOption4 = storeOption2 && storeSamplerIon;
+
+  // easy option for everything - overwrite bools we've just set individually
+  if (g->StoreSamplerAll())
+    {
+      storeOption4       = true;
+      storeSamplerCharge = true;
+      storeSamplerRadius = true;
+    }
 }
 
 void BDSOutput::InitialiseGeometryDependent()
@@ -391,7 +403,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     {
       G4int samplerID = (*hits)[i]->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill((*hits)[i], storeSamplerCharge);
+      samplerTrees[samplerID]->Fill((*hits)[i], storeSamplerCharge, storeSamplerRadius);
     }
   
   // extra information

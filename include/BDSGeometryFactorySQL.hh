@@ -67,7 +67,11 @@ public:
 				     G4double suggestedHorizontalWidth = 0);
 
 protected:
+  /// Clean up members.
   virtual void CleanUp();
+
+  /// Non-virtual clean up as used in constructor.
+  void CleanUpSQL();
 
 private:
   /// Private default constructor as singleton pattern.

@@ -67,7 +67,7 @@ G4double BDSGeometryFactorySQL::defaultRigidity = std::numeric_limits<double>::m
 
 BDSGeometryFactorySQL::BDSGeometryFactorySQL()
 {
-  CleanUp();
+  CleanUpSQL();
 }
 
 BDSGeometryFactorySQL::~BDSGeometryFactorySQL()
@@ -84,8 +84,12 @@ BDSGeometryFactorySQL* BDSGeometryFactorySQL::Instance()
 
 void BDSGeometryFactorySQL::CleanUp()
 {
+  CleanUpSQL();
   BDSGeometryFactoryBase::CleanUp();
+}
 
+void BDSGeometryFactorySQL::CleanUpSQL()
+{
   unShiftedExtents.clear();
   
   precisionRegionSQL     = nullptr;
@@ -123,6 +127,8 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
 						  G4double suggestedLength,
 						  G4double suggestedHorizontalWidth)
 {
+  CleanUp();
+  
   // strip of the file name effectively
   G4String containingDir = BDS::GetFullPath(fileName, true);
 #ifdef BDSDEBUG

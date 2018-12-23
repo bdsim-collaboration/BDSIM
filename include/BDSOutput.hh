@@ -232,6 +232,7 @@ private:
   /// @{ Sampler storage option.
   G4bool storeGeant4Data;
   G4bool storeModel;
+  G4bool storeSamplerRadius;
   G4bool storeSamplerCharge;
   G4bool storeSamplerKineticEnergy;
   G4bool storeSamplerMass;

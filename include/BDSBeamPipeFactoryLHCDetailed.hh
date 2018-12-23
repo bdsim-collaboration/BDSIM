@@ -69,6 +69,10 @@ private:
   BDSBeamPipeFactoryLHCDetailed(); ///< Private default constructor - singleton pattern.
   static BDSBeamPipeFactoryLHCDetailed* instance; ///< Singleton instance.
 
+  /// Do the actual clean up of members here in a non-virtual function so it can be
+  /// used in the constructor.
+  void CleanUpLHCDetailed();
+
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 

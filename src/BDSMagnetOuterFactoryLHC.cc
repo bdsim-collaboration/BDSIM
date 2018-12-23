@@ -54,9 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   isLeftOffset(isLeftOffsetIn)
-{
-  CleanUp();
-}
+{;}
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 							   G4double     length,

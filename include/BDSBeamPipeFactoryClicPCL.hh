@@ -65,10 +65,13 @@ private:
 		       G4double margin = 0);
 
 protected:
-  /// Clear member vectors and run base class clean up to clear pointers between runs
+  /// Clear member vectors and run base class clean up to clear pointers between runs.
   virtual void CleanUp();
   
 private:
+  /// Clear member vectors - used for both initialisation and virtual CleanUp.
+  void CleanUpClicPCL();
+  
   /// Overloads BDSBeamPipeFactoryPoints to make asymmetric extents, otherwise the same.
   virtual BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
 					       G4Material* vacuumMaterialIn,

@@ -36,13 +36,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBeamPipeFactoryPoints::BDSBeamPipeFactoryPoints()
 {
-  CleanUp();
+  CleanUpPoints();
 }
 
 BDSBeamPipeFactoryPoints::~BDSBeamPipeFactoryPoints()
 {;}
 
 void BDSBeamPipeFactoryPoints::CleanUp()
+{
+  CleanUpPoints();
+  BDSBeamPipeFactoryBase::CleanUp();
+}
+
+void BDSBeamPipeFactoryPoints::CleanUpPoints()
 {
   intersectionRadius = 0;
   extentX            = 0;
@@ -56,8 +62,6 @@ void BDSBeamPipeFactoryPoints::CleanUp()
 
   beamPipeInnerSolid = nullptr;
   beamPipeOuterSolid = nullptr;
-
-  BDSBeamPipeFactoryBase::CleanUp();
 }
 
 void BDSBeamPipeFactoryPoints::AppendPoint(std::vector<G4TwoVector>& vec,
