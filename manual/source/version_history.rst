@@ -63,6 +63,8 @@ General
 * In recreate mode, there is explicit print out about when the seed is set and if if was successfully
   loaded from the output file.
 * The Cherenkov example has now been updated to show 3 materials (air, water, YAG).
+* Fixes from static code analysis for virtual functions called in constructors of factories,
+  shadow member variables and initialisation of crystal variables in parser.
 
 Materials
 ---------
