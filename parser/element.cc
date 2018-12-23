@@ -528,9 +528,11 @@ void Element::flush()
 
   colour = "";
 
-  crystalLeft  = "";
-  crystalRight = "";
-  crystalBoth  = "";
+  crystalLeft            = "";
+  crystalRight           = "";
+  crystalBoth            = "";
+  crystalAngleYAxisLeft  = 0;
+  crystalAngleYAxisRight = 0;
   
   angleSet = false;
 }

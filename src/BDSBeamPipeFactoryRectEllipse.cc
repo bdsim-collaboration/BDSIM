@@ -62,9 +62,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
 							   G4double    beamPipeThicknessIn,
 							   G4Material* beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clean up after last usage
   CleanUp();
   
@@ -167,9 +164,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String      nameIn,
 							   G4double      beamPipeThicknessIn,
 							   G4Material*   beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clean up after last usage
   CleanUp();
   

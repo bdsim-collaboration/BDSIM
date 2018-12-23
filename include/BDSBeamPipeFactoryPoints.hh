@@ -157,6 +157,9 @@ private:
   /// Solid for outer surface of beam pipe.
   G4VSolid* beamPipeOuterSolid;
 
+  /// Actual clean up here for this class only.
+  void CleanUpPoints();
+
   /// Create the vacuum, inner & outer, container and container subtraction solids.
   /// Optional flag buildLongForIntersection builds the solids longer by 1.5x length
   /// in preparation for them to be intersected for angled faces, saving code duplication.

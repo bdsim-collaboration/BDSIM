@@ -40,10 +40,15 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
   nSegmentsPerCircle  = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   sensitiveBeamPipe   = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
   sensitiveVacuum     = BDSGlobalConstants::Instance()->SensitiveVacuum();
-  CleanUp();
+  CleanUpBase(); // non-virtual call in constructor
 }
 
 void BDSBeamPipeFactoryBase::CleanUp()
+{
+  CleanUpBase();
+}
+
+void BDSBeamPipeFactoryBase::CleanUpBase()
 {
   vacuumSolid               = nullptr;
   beamPipeSolid             = nullptr;

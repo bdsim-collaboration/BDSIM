@@ -50,10 +50,15 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   defaultUserLimits  = BDSGlobalConstants::Instance()->DefaultUserLimits();
 
   // initialise variables and pointers that'll be used by the factory
-  CleanUp();
+  CleanUpBase();
 }
 
 void BDSMagnetOuterFactoryBase::CleanUp()
+{
+  CleanUpBase();
+}
+
+void BDSMagnetOuterFactoryBase::CleanUpBase()
 {
   poleSolid            = nullptr;
   yokeSolid            = nullptr;

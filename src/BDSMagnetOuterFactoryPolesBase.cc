@@ -55,7 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
   BDSMagnetOuterFactoryPolesBase(1.1)
 {
-  CleanUp();
+  CleanUpPolesBase();
 }
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn):
@@ -69,13 +69,17 @@ BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStop
   // now the base class constructor should be called first which
   // should call clean up (in the derived class) which should initialise
   // the variables I think, but doing here just to be sure.
-  CleanUp();
+  CleanUpPolesBase();
 }
 
 void BDSMagnetOuterFactoryPolesBase::CleanUp()
 {
+  CleanUpPolesBase();
   BDSMagnetOuterFactoryBase::CleanUp();
+}
 
+void BDSMagnetOuterFactoryPolesBase::CleanUpPolesBase()
+{
   yokeStartRadius       = 0;
   yokeFinishRadius      = 0;
   magnetContainerRadius = 0;

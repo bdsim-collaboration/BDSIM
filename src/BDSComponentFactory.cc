@@ -1366,6 +1366,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
     {left  = PrepareCrystalInfo(G4String(element->crystalLeft));}
   else
     {right = PrepareCrystalInfo(G4String(element->crystalRight));}
+
+  if (left && !right &&  BDS::IsFinite(element->crystalAngleYAxisRight))
+    {
+      G4cout << G4endl << G4endl << __METHOD_NAME__
+             << "Left crystal being used but right angle set - perhaps check input for element "
+             << elementName << G4endl << G4endl;
+    }
+  if (!left && right &&  BDS::IsFinite(element->crystalAngleYAxisLeft))
+    {
+      G4cout << G4endl << G4endl << __METHOD_NAME__
+	     << "Right crystal being used but left angle set - perhaps check input for element "
+	     << elementName << G4endl << G4endl;
+    }
   
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,

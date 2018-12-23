@@ -108,10 +108,15 @@ G4double BDSBeamPipeFactoryClicPCL::CalculateIntersectionRadius(G4double aper1,
   return result;
 }
 
-void BDSBeamPipeFactoryClicPCL::CleanUp()
+void BDSBeamPipeFactoryClicPCL::CleanUpClicPCL()
 {
   extentYLow  = 0;
   extentYHigh = 0;
+}
+
+void BDSBeamPipeFactoryClicPCL::CleanUp()
+{
+  CleanUpClicPCL();
   BDSBeamPipeFactoryPoints::CleanUp();
 }
 
