@@ -103,6 +103,14 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeOption3 = storeOption1 && storeSamplerIon;
   // everything
   storeOption4 = storeOption2 && storeSamplerIon;
+
+  // easy option for everything - overwrite bools we've just set individually
+  if (g->StoreSamplerAll())
+    {
+      storeOption4       = true;
+      storeSamplerCharge = true;
+      storeSamplerRadius = true;
+    }
 }
 
 void BDSOutput::InitialiseGeometryDependent()

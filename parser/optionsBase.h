@@ -266,6 +266,7 @@ namespace GMAD
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
 
+    bool        storeSamplerAll;
     bool        storeSamplerCharge;
     bool        storeSamplerKineticEnergy;
     bool        storeSamplerMass;

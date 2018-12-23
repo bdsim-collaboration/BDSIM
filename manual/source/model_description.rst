@@ -3551,6 +3551,12 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output. Default on.  |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerAll                   | Convenience option to turn on all optional sampler output.         |
+|                                   | Equivalent to turning on `storeSamplerCharge`,                     |
+|                                   | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
+|                                   | `storeSamplerRigidity`, `storeSamplerIon`. Overrides these         |
+|                                   | options even if they are explicitly set to off (0).                |
++-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerKineticEnergy         | Stores corresponding kinetic energy of particle for every entry in |
