@@ -65,6 +65,9 @@ public:
 
   std::vector<U>     r;
   std::vector<U>     rp;
+  std::vector<U>     phi;
+  std::vector<U>     phip;
+
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
@@ -97,7 +100,7 @@ public:
 	    const G4int pdgID,
 	    const G4int turnsTaken,
 	    const G4int beamlineIndex);
-  void FillRRp(const BDSParticleCoordsFull& coords); ///< Calculate r and rp from coords and fill.
+  void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
 #endif
 
   /// @{ Calculate and fill calculated variables.

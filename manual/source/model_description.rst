@@ -3605,7 +3605,7 @@ following options.
 | storeSamplerMass                  | Stores corresponding mass (in GeV) of particle for every entry in  |
 |                                   | the sampler.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerRadius                | Calculate and store the radius in space and angle (x,y and xp,yp)  |
+| storeSamplerPolarCoords           | Calculate and store the polar coordinates (r, phi) and (rp, phip)  |
 |                                   | for the sampler data.                                              |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
