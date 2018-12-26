@@ -59,7 +59,7 @@ template
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit,
 					G4bool storeCharge,
-					G4bool storeRadius)
+					G4bool storePolarCoords)
 {
   // get single values
   n++;
@@ -86,7 +86,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit,
   if (storeCharge)
     {charge.push_back((int)(hit->charge / (G4double)CLHEP::eplus));}
 
-  if (storeRadius)
+  if (storePolarCoords)
     {FillPolarCoords(hit->coords);}
 }
 
@@ -120,16 +120,17 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 template <class U>
 void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& coords)
 {
-  auto xCoord = coords.x / CLHEP::m;
-  auto yCoord = coords.y / CLHEP::m;
-  auto xpCoord = coords.xp / CLHEP::radian;
-  auto ypCoord = coords.yp / CLHEP::radian;
+  double xCoord  = coords.x  / CLHEP::m;
+  double yCoord  = coords.y  / CLHEP::m;
+  double xpCoord = coords.xp / CLHEP::radian;
+  double ypCoord = coords.yp / CLHEP::radian;
 
   // we have to tolerate possible sqrt errors here
   double rValue = std::sqrt(std::pow(xCoord, 2) + std::pow(yCoord, 2));
   if (!std::isnormal(rValue))
     {rValue = 0;}
   r.push_back(static_cast<U>(rValue));
+  
   double rpValue = std::sqrt(std::pow(xpCoord, 2) + std::pow(ypCoord, 2));
   if (!std::isnormal(rpValue))
     {rpValue = 0;}

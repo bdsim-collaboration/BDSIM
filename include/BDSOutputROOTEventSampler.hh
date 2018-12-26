@@ -94,7 +94,7 @@ public:
 #ifndef __ROOTBUILD__
   void Fill(const BDSSamplerHit* hit,
 	    G4bool storeCharge = false,
-	    G4bool storeRadius = false);
+	    G4bool storePolarCoords = false);
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,
 	    const G4int pdgID,
