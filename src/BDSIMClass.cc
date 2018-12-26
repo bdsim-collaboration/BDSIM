@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventAction.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
@@ -383,6 +384,7 @@ BDSIM::~BDSIM()
   delete bdsOutput;
   
   // order important here because of singletons relying on each other
+  delete BDSGeometryFactory::Instance();
   delete BDSAcceleratorModel::Instance();
   delete BDSTemporaryFiles::Instance();
   delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials

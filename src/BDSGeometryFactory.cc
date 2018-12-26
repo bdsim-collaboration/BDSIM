@@ -50,6 +50,9 @@ BDSGeometryFactory::BDSGeometryFactory()
 
 BDSGeometryFactory::~BDSGeometryFactory()
 {
+  delete BDSGeometryFactoryGDML::Instance();
+  delete BDSGeometryFactoryGMAD::Instance();
+  delete BDSGeometryFactorySQL::Instance();
   instance = nullptr;
   for (auto& geom : storage)
     {delete geom;}
