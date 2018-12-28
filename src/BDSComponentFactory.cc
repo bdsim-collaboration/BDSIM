@@ -1160,12 +1160,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  if (element->material.empty())
-    {
-      G4cout << __METHOD_NAME__ << "warning no material for collimator \"" << elementName
-	     << "\". Using G4_Cu by default" << G4endl;
-    }
   
   return new BDSCollimatorJaw(elementName,
 			      element->l*CLHEP::m,
@@ -1176,7 +1170,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
                               element->xsizeRight*CLHEP::m,
 			      true,
 			      true,
-			      PrepareMaterial(element, "G4_Cu"),
+			      PrepareMaterial(element),
 			      PrepareVacuumMaterial(element),
 			      PrepareColour(element));
 }
