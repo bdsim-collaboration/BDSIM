@@ -1130,12 +1130,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      PrepareHorizontalWidth(element),
+				      PrepareMaterial(element),
+				      PrepareVacuumMaterial(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      G4String(element->material),
-				      G4String(element->vacuumMaterial),
 				      PrepareColour(element));
 }
 
@@ -1147,12 +1147,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
+				     PrepareMaterial(element),
+				     PrepareVacuumMaterial(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     G4String(element->material),
-				     G4String(element->vacuumMaterial),
 				     PrepareColour(element));
 }
 

@@ -34,25 +34,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-BDSCollimator::BDSCollimator(G4String  nameIn,
-			     G4double  lengthIn,
-			     G4double  horizontalWidthIn,
-			     G4String  typeIn,
-			     G4double  xApertureIn,
-			     G4double  yApertureIn,
-			     G4double  xOutApertureIn,
-			     G4double  yOutApertureIn,
-			     G4String  collimatorMaterialIn,
-			     G4String  vacuumMaterialIn,
-			     G4Colour* colourIn):
+BDSCollimator::BDSCollimator(G4String    nameIn,
+			     G4double    lengthIn,
+			     G4double    horizontalWidthIn,
+			     G4String    typeIn,
+			     G4Material* collimatorMaterialIn,
+			     G4Material* vacuumMaterialIn,
+			     G4double    xApertureIn,
+			     G4double    yApertureIn,
+			     G4double    xOutApertureIn,
+			     G4double    yOutApertureIn,
+			     G4Colour*   colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   horizontalWidth(horizontalWidthIn),
+  collimatorMaterial(collimatorMaterialIn),
+  vacuumMaterial(vacuumMaterialIn),
   xAperture(xApertureIn),
   yAperture(yApertureIn),
   xOutAperture(xOutApertureIn),
   yOutAperture(yOutApertureIn),
-  collimatorMaterial(collimatorMaterialIn),
-  vacuumMaterial(vacuumMaterialIn),
   colour(colourIn)
 {
   if (!BDS::IsFinite(horizontalWidth))
@@ -93,12 +93,6 @@ BDSCollimator::BDSCollimator(G4String  nameIn,
         }
     }
 
-  if (collimatorMaterialIn == "")
-    {
-      G4cout << __METHOD_NAME__ << "Warning - no material set for collimator - using copper" << G4endl;
-      collimatorMaterial = "G4_Cu";
-    }
-
   collimatorSolid = nullptr;
   innerSolid      = nullptr;
   vacuumSolid     = nullptr;
@@ -111,6 +105,14 @@ BDSCollimator::BDSCollimator(G4String  nameIn,
 
 BDSCollimator::~BDSCollimator()
 {;}
+
+G4String BDSCollimator::Material() const
+{
+  if (collimatorMaterial)
+    {return collimatorMaterial->GetName();}
+  else
+    {return "none";}
+}
 
 void BDSCollimator::BuildContainerLogicalVolume()
 {
@@ -163,10 +165,9 @@ void BDSCollimator::Build()
     }
   else
     {collimatorSolid = outerSolid;}
-
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(collimatorMaterial);
+  
   G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,          // solid
-                                                      material,                 // material
+                                                      collimatorMaterial,       // material
                                                       name + "_collimator_lv"); // name
 
   // register it in a set of collimator logical volumes
@@ -197,15 +198,8 @@ void BDSCollimator::Build()
 
   if (buildVacuumAndAperture)
     {
-      G4Material *vMaterial = nullptr;
-
-      if (vacuumMaterial == "")
-        {vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial;}
-      else
-        {vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);}
-
       G4LogicalVolume *vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
-                                                      vMaterial,            // material
+                                                      vacuumMaterial,       // material
                                                       name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(containerVisAttr);
