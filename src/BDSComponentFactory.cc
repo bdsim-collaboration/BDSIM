@@ -2166,6 +2166,15 @@ G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
     {return BDSMaterials::Instance()->GetMaterial(materialName);}
 }
 
+G4Material* BDSComponentFactory::PrepareMaterial(Element const* el)
+{
+  G4String materialName = el->material;
+  if (materialName.empty())
+    {G4cout << __METHOD_NAME__ << "element \"" << el->name << "\" has no material specified." << G4endl; exit(1);}
+  else
+    {return BDSMaterials::Instance()->GetMaterial(materialName);}
+}
+
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 					      BDSAcceleratorComponent* component) const
 {
