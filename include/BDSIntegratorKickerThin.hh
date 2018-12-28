@@ -86,9 +86,6 @@ private:
   /// Cache if the fringe or pole face effects are to be applied
   G4bool hasEntranceFringe;
   G4bool hasExitFringe;
-
-  /// Cache of whether input parameters are 0 and therefore whether to kick at all.
-  G4bool zeroStrength;
 };
 
 #endif

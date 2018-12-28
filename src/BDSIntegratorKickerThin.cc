@@ -30,12 +30,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 						 G4double                 brhoIn,
 						 G4Mag_EqRhs*             eqOfMIn,
-                         G4double                 minimumRadiusOfCurvatureIn):
+						 G4double                 minimumRadiusOfCurvatureIn):
   BDSIntegratorMag(eqOfMIn, 6),
   hkick((*strength)["hkick"]),
   vkick((*strength)["vkick"]),
   brho(brhoIn)
 {
+  // set base class member
   zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
 
   // duplicate magnetstrength for fringe field integrators as all its physical parameters are set for the magnet
