@@ -40,7 +40,7 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String    name,
 
 void BDSCollimatorElliptical::BuildInnerCollimator()
 {
-  if(tapered)
+  if (tapered)
     {
       G4double zmax = chordLength * (xOutAperture + xAperture) / xAperture;
 
@@ -65,7 +65,7 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
                                          xAperture,                // x half width
                                          yAperture,                // y half width
                                          chordLength);             // z half length
-    // z half length long for unambiguous subtraction
+      // z half length long for unambiguous subtraction
 
       vacuumSolid = new G4EllipticalTube(name + "_inner_solid",    // name
                                          xAperture - lengthSafety, // x half width

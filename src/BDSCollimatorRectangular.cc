@@ -42,7 +42,7 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String    name,
 
 void BDSCollimatorRectangular::BuildInnerCollimator()
 {
-  if(tapered)
+  if (tapered)
     {
       // Make subtracted volume longer than the solid volume
       G4double xGradient = std::abs((xAperture - xOutAperture)) / chordLength;
@@ -72,7 +72,7 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
                               xAperture,                // x half width
                               yAperture,                // y half width
                               chordLength);             // z half length
-    // z half length long for unambiguous subtraction
+      // z half length long for unambiguous subtraction
 
       vacuumSolid = new G4Box(name + "_vacuum_solid",   // name
                               xAperture - lengthSafety, // x half width
