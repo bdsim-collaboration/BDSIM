@@ -45,7 +45,7 @@ class BDSSamplerSD: public G4VSensitiveDetector
 public:
   /// Construct a sampler with name and type (plane/cylinder).
   explicit BDSSamplerSD(G4String name);
-  ~BDSSamplerSD();
+  virtual ~BDSSamplerSD();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).
