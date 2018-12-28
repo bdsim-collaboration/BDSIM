@@ -38,7 +38,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(BDSOutputROOTEventModel)
 
 BDSOutputROOTEventModel::BDSOutputROOTEventModel():
-  n(0)
+  n(0),
+  storeCollimatorInfo(false)
 {;}
 
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
@@ -133,9 +134,16 @@ void BDSOutputROOTEventModel::Flush()
   collimatorIndices.clear();
   collimatorIndicesByName.clear();
   nCollimators = 0;
+  collimatorInfo.clear();
+  storeCollimatorInfo = false;
 }
 
 #ifndef __ROOTBUILD__
+BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
+    n(0),
+    storeCollimatorInfo(storeCollimatorInfoIn)
+{;}
+
 void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
 				   const std::map<G4String, G4int>& collimatorIndicesByNameIn)
 {
@@ -154,6 +162,17 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (!beamline)
     {return;} // in case of generatePrimariesOnly there is no model - return
+
+  if (storeCollimatorInfo)
+    {
+      for (auto index : collimatorIndices)
+        {
+          const BDSBeamlineElement* element = beamline->at(index);
+          BDSOutputROOTEventCollimatorInfo info;
+          info.Fill(element);
+          collimatorInfo.push_back(info);
+        }
+    }
 
   double angle;
   CLHEP::Hep3Vector axis;

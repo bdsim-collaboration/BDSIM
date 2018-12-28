@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTMODEL_H
 #define BDSOUTPUTROOTEVENTMODEL_H
 
+#include "BDSOutputROOTEventCollimatorInfo.hh"
+
 #include <map>
 #include <vector>
 #include <string>
@@ -119,6 +121,9 @@ public:
   std::map<std::string, int> collimatorIndicesByName;
   
   int nCollimators; ///< Number of collimators in beam line.
+  std::vector<BDSOutputROOTEventCollimatorInfo> collimatorInfo; ///< Collimator information explicitly.
+
+  bool storeCollimatorInfo;
 
   /// Default constructor
   BDSOutputROOTEventModel();
@@ -130,6 +135,8 @@ public:
   void Flush();
   
 #ifndef __ROOTBUILD__
+  /// Constructor for whether to store collimator information or not.
+  BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn);
   /// Fill root output
   virtual void Fill(const std::vector<G4int>& collimatorIndicesIn = {},
 		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {});

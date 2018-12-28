@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   localSamplersInitialised(false)
 {
+  G4bool storeCollimatorInfo = globals->StoreCollimationInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
@@ -62,7 +63,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
-  modelOutput   = new BDSOutputROOTEventModel();
+  modelOutput   = new BDSOutputROOTEventModel(storeCollimatorInfo);
 
   eLoss      = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					  storeGlobal, storeTime, storeStepLength,
