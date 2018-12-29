@@ -19,36 +19,56 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOLLIMATORHIT_H
 #define BDSCOLLIMATORHIT_H
 
+#include "globals.hh"
 #include "G4VHit.hh"
+#include "G4ThreeVector.hh"
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
+
+class BDSEnergyCounterHit;
+
+/**
+ * @brief Snapshot of information for particle passing through a collimator.
+ *
+ * Everything public for simplicity of the class.
+ * 
+ * @author Laurie Nevay
+ */
 
 class BDSCollimatorHit: public G4VHit
 {
 public:
   BDSCollimatorHit();
+  BDSCollimatorHit(G4int                collimatorIndexIn,
+		   G4ThreeVector        preStepPointIn,
+		   BDSEnergyCounterHit* energyDepositionHitIn);
 
-  virtual ~BDSCollimatorHit();
+  virtual ~BDSCollimatorHit(){;}
 
-  inline void* operator new(size_t) ;
+  inline void* operator new(size_t);
   inline void operator delete(void *aHit);
-
-private:
-
-  G4bool interacted;
-  G4bool primaryStopped;
-
-  G4double xIn;
-  G4double yIn;
-  G4double zIn;
-  G4double SIn;
   
-  G4double energyDeposit;
-  G4double partID;
-  G4dobule weight;
-  G4double stepLength;
+  G4int    collimatorIndex;   ///< Index of collimator the hit is in.
+  G4ThreeVector preStepPoint; ///< Local pre step point (z from centre of object).
 
-  G4int collimatorIndex;
-
-
+  /// Pointer to the externally created energy deposition hit for the step in the
+  /// collimator this hit will correspond to.
+  BDSEnergyCounterHit* energyDepositionHit;
 };
+
+typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
+extern G4Allocator<BDSCollimatorHit> BDSCollimatorHitAllocator;
+
+inline void* BDSCollimatorHit::operator new(size_t)
+{
+  void* aHit;
+  aHit=(void*) BDSCollimatorHitAllocator.MallocSingle();
+  return aHit;
+}
+
+inline void BDSCollimatorHit::operator delete(void *aHit)
+{
+  BDSCollimatorHitAllocator.FreeSingle((BDSCollimatorHit*) aHit);
+}
 
 #endif
