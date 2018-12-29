@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEnergyCounterSD.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSSDFilterIon.hh"
+#include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSVolumeExitSD.hh"
@@ -44,6 +46,9 @@ BDSSDManager::~BDSSDManager()
 {
   // no need to delete SD's as they are all registered in G4SDManager
   _instance = nullptr;
+
+  for (auto kv : filters)
+    {delete kv.second;}
 }
 
 BDSSDManager::BDSSDManager()
@@ -51,6 +56,9 @@ BDSSDManager::BDSSDManager()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
+  filters["primary"] = new BDSSDFilterPrimary("Primary");
+  filters["ion"]     = new BDSSDFilterIon("Ion");
+  
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
   // sampler plane

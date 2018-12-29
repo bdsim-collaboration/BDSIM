@@ -21,10 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Version.hh"
 
+#include <map>
+
 class BDSEnergyCounterSD;
 class BDSSamplerSD;
 class BDSTerminatorSD;
 class BDSVolumeExitSD;
+
+class G4VSDFilter;
 
 #if G4VERSION_NUMBER < 1030
 // In this case we use only the energy counter SD and return it
@@ -102,6 +106,9 @@ private:
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
+
+  /// Map of all filters used. This class owns a single instance of each.
+  std::map<G4String, G4VSDFilter*> filters;
 };
 
 #endif
