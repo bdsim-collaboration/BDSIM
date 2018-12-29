@@ -42,7 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name,
 				       G4bool   stopSecondariesIn,
 				       G4bool   verboseIn):
-  G4VSensitiveDetector("energy_counter/"+name),
+  BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
   verbose(verboseIn),
   colName(name),
@@ -340,4 +340,10 @@ G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
   energyCounterCollection->insert(ECHit);
    
   return true;
+}
+
+G4VHit* BDSEnergyCounterSD::last() const
+{
+  BDSEnergyCounterHit* lastHit = energyCounterCollection->GetVector()->back();
+  return dynamic_cast<G4VHit*>(lastHit);
 }
