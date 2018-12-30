@@ -45,16 +45,10 @@ class G4VSolid;
 class BDSMagnetOuterFactoryPolesSquare: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  /// Singelton accessor.
-  static BDSMagnetOuterFactoryPolesSquare* Instance();
-  
-  virtual ~BDSMagnetOuterFactoryPolesSquare();
+  BDSMagnetOuterFactoryPolesSquare();
+  virtual ~BDSMagnetOuterFactoryPolesSquare(){;}
 
 private:
-  /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesSquare(); 
-  static BDSMagnetOuterFactoryPolesSquare* instance;
-
   /// Clean up all memebers used.
   virtual void CleanUp();
 

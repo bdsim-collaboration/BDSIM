@@ -136,6 +136,13 @@ private:
   /// Accessor method to dispatch to appropriate derived factory
   BDSTunnelFactoryBase* GetAppropriateFactory(BDSTunnelType tunnelType);
 
+  /// @{ Factory instance.
+  BDSTunnelFactoryBase* circular;
+  BDSTunnelFactoryBase* elliptical;
+  BDSTunnelFactoryBase* rectangular;
+  BDSTunnelFactoryBase* square;
+  BDSTunnelFactoryBase* rectaboveground;
+  /// @}
 };
 
 

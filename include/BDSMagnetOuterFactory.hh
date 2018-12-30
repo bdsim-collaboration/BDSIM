@@ -86,6 +86,16 @@ private:
 				     const BDSMagnetOuterInfo* outerInfo,
 				     const BDSBeamPipe*        beamPipe) const;
 
+  /// @{ Factory instance.
+  BDSMagnetOuterFactoryBase* none;
+  BDSMagnetOuterFactoryBase* cylindrical;
+  BDSMagnetOuterFactoryBase* polescircular;
+  BDSMagnetOuterFactoryBase* polessquare;
+  BDSMagnetOuterFactoryBase* polesfacet;
+  BDSMagnetOuterFactoryBase* polesfacetcrop;
+  BDSMagnetOuterFactoryBase* lhcright;
+  BDSMagnetOuterFactoryBase* lhcleft;
+  /// @}
 };
 
 

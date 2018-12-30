@@ -35,17 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSMagnetOuterFactoryPolesCircular: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  /// Singleton accessor.
-  static BDSMagnetOuterFactoryPolesCircular* Instance();
-  
-  virtual ~BDSMagnetOuterFactoryPolesCircular();
-
-private:
-  /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesCircular(){;};
-
-  /// Singleton instance.
-  static BDSMagnetOuterFactoryPolesCircular* instance;
+  BDSMagnetOuterFactoryPolesCircular();
+  virtual ~BDSMagnetOuterFactoryPolesCircular(){;}
 };
 
 #endif

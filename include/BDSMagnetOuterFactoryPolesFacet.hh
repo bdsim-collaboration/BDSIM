@@ -40,17 +40,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSMagnetOuterFactoryPolesFacet: public BDSMagnetOuterFactoryPolesFacetCommon
 {
 public:
-  /// Singleton accessor
-  static BDSMagnetOuterFactoryPolesFacet* Instance();
-  
-  virtual ~BDSMagnetOuterFactoryPolesFacet();
-
-private:
-  /// Private constructor as singleton
   BDSMagnetOuterFactoryPolesFacet();
-
-  /// Singleton instance.
-  static BDSMagnetOuterFactoryPolesFacet* instance;
+  virtual ~BDSMagnetOuterFactoryPolesFacet(){;}
 };
 
 #endif
