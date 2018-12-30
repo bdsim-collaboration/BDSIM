@@ -10,8 +10,12 @@ simple_testing(io-write-ascii-seed-state "--file=sc.gmad --writeSeedState" "")
 simple_testing(io-load-ascii-seed-state "--file=sc.gmad --seedStateFileName=../../data/output.seedstate.txt --ngenerate=1" "")
 
 # write optional sampler data
-simple_testing(io-sampler-extras        "--file=sc_samplerextras.gmad --ngenerate=10" "")
-simple_testing(io-sampler-extras-all    "--file=sc_samplerextrasall.gmad --ngenerate=10" "")
+simple_testing(io-sampler-extras          "--file=sc_samplerextras.gmad --ngenerate=10"          "")
+simple_testing(io-sampler-extras-all      "--file=sc_samplerextrasall.gmad --ngenerate=10"       "")
+simple_testing(io-sampler-extras-charge   "--file=sc_samplerextras_charge.gmad --ngenerate=10"   "")
+simple_testing(io-sampler-extras-ion      "--file=sc_samplerextras_ion.gmad --ngenerate=10"      "")
+simple_testing(io-sampler-extras-mass     "--file=sc_samplerextras_mass.gmad --ngenerate=10"     "")
+simple_testing(io-sampler-extras-rigidity "--file=sc_samplerextras_rigidity.gmad --ngenerate=10" "")
 
 # write optional eloss data
 simple_testing(io-eloss-extras          "--file=sc_elossextras.gmad  --ngenerate=10" "")
