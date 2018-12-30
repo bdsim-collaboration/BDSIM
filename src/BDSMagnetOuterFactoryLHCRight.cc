@@ -30,8 +30,7 @@ BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
 
 BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
   BDSMagnetOuterFactoryLHC(false)
-{
-}
+{;}
 
 BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
 {
