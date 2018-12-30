@@ -96,7 +96,7 @@ private:
   TChain     *modelTree              = nullptr;
 
   /// Singleton instance.
-  static EventDisplay *_instance;
+  static EventDisplay* instance;
 
   ClassDef(EventDisplay,1);
 };
