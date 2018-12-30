@@ -23,7 +23,7 @@ BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::instance = nullptr;
 
 BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSMagnetOuterFactoryLHCLeft();}
   return instance;
 }

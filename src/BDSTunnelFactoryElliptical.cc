@@ -43,7 +43,7 @@ BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::instance = nullptr;
 
 BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSTunnelFactoryElliptical();}
   return instance;
 }

@@ -68,7 +68,7 @@ Parser* Parser::instance = nullptr;
 
 Parser* Parser::Instance()
 {
-  if(instance==nullptr) {
+  if (!instance) {
     std::cerr << "Parser has not been initialized!" << std::endl;
     exit(1);
   }

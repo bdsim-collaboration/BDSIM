@@ -38,7 +38,7 @@ BDSBeamPipeFactory* BDSBeamPipeFactory::instance = nullptr;
 
 BDSBeamPipeFactory* BDSBeamPipeFactory::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSBeamPipeFactory();}
   return instance;
 }

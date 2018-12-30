@@ -27,7 +27,7 @@ BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::instance = nul
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSAcceleratorComponentRegistry();}
   return instance;
 }

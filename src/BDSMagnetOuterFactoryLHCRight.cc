@@ -23,7 +23,7 @@ BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::instance = nullptr
 
 BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSMagnetOuterFactoryLHCRight();}
   return instance;
 }

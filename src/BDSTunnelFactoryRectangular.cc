@@ -40,7 +40,7 @@ BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::instance = nullptr;
 
 BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSTunnelFactoryRectangular();}
   return instance;
 }
