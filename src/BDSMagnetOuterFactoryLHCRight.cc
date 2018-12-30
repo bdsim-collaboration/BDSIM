@@ -17,22 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSMagnetOuterFactoryLHCRight.hh"
-#include "BDSMagnetOuterFactoryLHC.hh"
-
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::instance = nullptr;
-
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
-{
-  if (!instance)
-    {instance = new BDSMagnetOuterFactoryLHCRight();}
-  return instance;
-}
 
 BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
   BDSMagnetOuterFactoryLHC(false)
 {;}
-
-BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
-{
-  instance = nullptr;
-}

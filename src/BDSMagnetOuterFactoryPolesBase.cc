@@ -56,6 +56,12 @@ BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
   BDSMagnetOuterFactoryPolesBase(1.1)
 {
   CleanUpPolesBase();
+  cylindrical = new BDSMagnetOuterFactoryCylindrical();
+}
+
+BDSMagnetOuterFactoryPolesBase::~BDSMagnetOuterFactoryPolesBase()
+{
+  delete cylindrical;
 }
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn):
@@ -176,8 +182,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      nam
 							       G4double      containerLength,
 							       const BDSMagnetOuterInfo* recipe)
 {
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,
-								      containerLength,recipe);
+  return cylindrical->CreateSolenoid(name,length,beamPipe,containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
@@ -186,8 +191,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      na
 								G4double      containerLength,
 								const BDSMagnetOuterInfo* recipe)
 {
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,
-								       containerLength,recipe);
+  return cylindrical->CreateMultipole(name,length,beamPipe,containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
@@ -196,8 +200,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      nam
 							       G4double      containerLength,
 							       const BDSMagnetOuterInfo* recipe)
 {
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,
-								      containerLength,recipe);
+  return cylindrical->CreateRfCavity(name,length,beamPipe,containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuonSpoiler(G4String      name,
@@ -206,8 +209,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuonSpoiler(G4String      
 								  G4double      containerLength,
 								  const BDSMagnetOuterInfo* recipe)
 {
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,
-									 containerLength,recipe);
+  return cylindrical->CreateMuonSpoiler(name,length,beamPipe,containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String                  name,
