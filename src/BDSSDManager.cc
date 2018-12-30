@@ -36,19 +36,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MultiSensitiveDetector.hh"
 #endif
 
-BDSSDManager* BDSSDManager::_instance = nullptr;
+BDSSDManager* BDSSDManager::instance = nullptr;
 
 BDSSDManager* BDSSDManager::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSSDManager();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSSDManager();}
+  return instance;
 }
 
 BDSSDManager::~BDSSDManager()
 {
   // no need to delete SD's as they are all registered in G4SDManager
-  _instance = nullptr;
+  instance = nullptr;
 
   for (auto kv : filters)
     {delete kv.second;}

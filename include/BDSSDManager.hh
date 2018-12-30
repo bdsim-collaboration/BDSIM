@@ -97,7 +97,7 @@ private:
   BDSSDManager(const BDSSDManager&) = delete;
   BDSSDManager& operator=(const BDSSDManager&) = delete;
  
-  static BDSSDManager* _instance;
+  static BDSSDManager* instance;
 
   /// @{ SD instance.
   BDSSamplerSD*       samplerPlane;
