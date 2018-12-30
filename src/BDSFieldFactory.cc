@@ -134,7 +134,7 @@ BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSFieldFactory();}
   return instance;
 }

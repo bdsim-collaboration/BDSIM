@@ -23,15 +23,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSTunnelInfo.hh"
 
-#include "globals.hh"                 // geant4 globals / types
+#include "globals.hh"
 
-BDSTunnelFactorySquare* BDSTunnelFactorySquare::_instance = nullptr;
+BDSTunnelFactorySquare* BDSTunnelFactorySquare::instance = nullptr;
 
 BDSTunnelFactorySquare* BDSTunnelFactorySquare::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactorySquare();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactorySquare();}
+  return instance;
 }
 
 BDSTunnelFactorySquare::BDSTunnelFactorySquare()
@@ -39,7 +39,7 @@ BDSTunnelFactorySquare::BDSTunnelFactorySquare()
 
 BDSTunnelFactorySquare::~BDSTunnelFactorySquare()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSection(G4String    name,

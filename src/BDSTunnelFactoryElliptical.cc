@@ -39,13 +39,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = nullptr;
+BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::instance = nullptr;
 
 BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactoryElliptical();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactoryElliptical();}
+  return instance;
 }
 
 BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical()
@@ -53,7 +53,7 @@ BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical()
 
 BDSTunnelFactoryElliptical::~BDSTunnelFactoryElliptical()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      name,

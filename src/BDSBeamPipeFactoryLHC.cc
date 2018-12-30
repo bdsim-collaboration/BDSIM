@@ -35,23 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <utility>                         // for std::pair
 
-
-BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::instance = nullptr;
-
-BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryLHC();}
-  return instance;
-}
-
 BDSBeamPipeFactoryLHC::BDSBeamPipeFactoryLHC()
 {;}
-
-BDSBeamPipeFactoryLHC::~BDSBeamPipeFactoryLHC()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
 						   G4double    lengthIn,

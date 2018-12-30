@@ -99,7 +99,7 @@ protected:
 
 private:
   /// Singleton instance
-  static BDSMaterials* _instance;
+  static BDSMaterials* instance;
 
   ///@{ Methods called by constructor
   void DefineMetals();

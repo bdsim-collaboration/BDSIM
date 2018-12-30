@@ -37,13 +37,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::_instance = nullptr;
+BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::instance = nullptr;
 
 BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactoryRectAboveGround();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactoryRectAboveGround();}
+  return instance;
 }
 
 BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
@@ -57,7 +57,7 @@ BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSTunnelFactoryRectAboveGround::TidyUp()

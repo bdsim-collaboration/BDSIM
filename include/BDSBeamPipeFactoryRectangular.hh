@@ -33,9 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBeamPipeFactoryRectangular: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryRectangular* Instance(); /// Singleton accessor.
-  
-  virtual ~BDSBeamPipeFactoryRectangular();
+  BDSBeamPipeFactoryRectangular();
+  virtual ~BDSBeamPipeFactoryRectangular(){;}
 
   virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,
 				      G4double    lengthIn,
@@ -60,14 +59,8 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryRectangular(); ///< Private default constructor - singelton pattern.
-  static BDSBeamPipeFactoryRectangular* instance; ////< Singleton instance.
-
-  //abstract common build features to one function
-  //use member variables unique to this factory to pass them around
-
-  /// only the solids are unique, once we have those, the logical volumes and placement in the
-  /// container are the same.  group all this functionality together
+  /// Only the solids are unique, once we have those, the logical volumes and placement in the
+  /// container are the same.  Group all this functionality together.
   BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
 				       G4Material* vacuumMaterialIn,
 				       G4Material* beamPipeMaterialIn,

@@ -111,7 +111,7 @@ private:
   /// @}
   
   /// The singleton instane
-  static BDSPhysicalVolumeInfoRegistry* _instance;
+  static BDSPhysicalVolumeInfoRegistry* instance;
 
   /// Registry is a map - note 'register' is a protected keyword.
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> readOutRegister;

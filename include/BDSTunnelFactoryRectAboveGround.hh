@@ -73,7 +73,7 @@ public:
 							       
 private:
   /// Singleton pattern instance
-  static BDSTunnelFactoryRectAboveGround* _instance;
+  static BDSTunnelFactoryRectAboveGround* instance;
 
   /// Private constructor as singleton pattern
   BDSTunnelFactoryRectAboveGround();
