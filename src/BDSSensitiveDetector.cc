@@ -18,6 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSSensitiveDetector.hh"
 
+#include "G4VSDFilter.hh"
+
+class G4TouchableHistory;
+
 BDSSensitiveDetector::BDSSensitiveDetector(G4String name):
   G4VSensitiveDetector(name)
 {;}
