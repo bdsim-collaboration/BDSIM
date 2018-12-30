@@ -76,6 +76,7 @@ BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStop
   // should call clean up (in the derived class) which should initialise
   // the variables I think, but doing here just to be sure.
   CleanUpPolesBase();
+  cylindrical = new BDSMagnetOuterFactoryCylindrical();
 }
 
 void BDSMagnetOuterFactoryPolesBase::CleanUp()
