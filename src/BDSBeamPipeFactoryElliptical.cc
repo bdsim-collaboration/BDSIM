@@ -32,22 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>                           // sin, cos, fabs
 
-BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::instance = nullptr;
-
-BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryElliptical();}
-  return instance;
-}
-
 BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
 {;}
-
-BDSBeamPipeFactoryElliptical::~BDSBeamPipeFactoryElliptical()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
 							  G4double    lengthIn,

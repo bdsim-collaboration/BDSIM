@@ -25,23 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-
-BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::instance = nullptr;
-
-BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryRaceTrack();}
-  return instance;
-}
-
 BDSBeamPipeFactoryRaceTrack::BDSBeamPipeFactoryRaceTrack()
 {;}
-
-BDSBeamPipeFactoryRaceTrack::~BDSBeamPipeFactoryRaceTrack()
-{
-  instance = nullptr;
-}
 
 void BDSBeamPipeFactoryRaceTrack::GenerateRaceTrack(std::vector<G4TwoVector>& vec,
 						    G4double x,

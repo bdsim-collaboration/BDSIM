@@ -35,22 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::instance = nullptr;
-
-BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryRectEllipse();}
-  return instance;
-}
-
 BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
 {;}
-
-BDSBeamPipeFactoryRectEllipse::~BDSBeamPipeFactoryRectEllipse()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
 							   G4double    lengthIn,

@@ -32,22 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <utility>               // for std::pair
 
-BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::instance = nullptr;
-
-BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryCircular();}
-  return instance;
-}
-
 BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
 {;}
-
-BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
 							G4double    lengthIn,

@@ -39,17 +39,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * horizontal and vertical semi-axes of the ellipse. Note, will aper1,2 should be
  * < aper1,2 otherwise an elliptical tube will be more efficient.
  * 
- * Singleton pattern.
- * 
  * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRectEllipse: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryRectEllipse* Instance(); ///< Singleton accessor.
-  
-  virtual ~BDSBeamPipeFactoryRectEllipse();
+  BDSBeamPipeFactoryRectEllipse();
+  virtual ~BDSBeamPipeFactoryRectEllipse(){;}
 
   virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,
 				      G4double    lengthIn,
@@ -74,12 +71,6 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryRectEllipse(); ///< Private default constructor - singleton pattern.
-  static BDSBeamPipeFactoryRectEllipse* instance; ///< Singleton instance.
-
-  //abstract common build features to one function
-  //use member variables unique to this factory to pass them around
-
   /// only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  group all this functionality together
   BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
