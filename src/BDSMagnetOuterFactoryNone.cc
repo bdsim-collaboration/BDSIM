@@ -32,7 +32,7 @@ BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::instance = nullptr;
 
 BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSMagnetOuterFactoryNone();}
   return instance;
 }

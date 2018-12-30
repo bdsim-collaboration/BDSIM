@@ -45,7 +45,7 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
-  if(instance == nullptr)
+  if (!instance)
     {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions(),
 				       BDSParser::Instance()->GetBeam());}
   return instance;

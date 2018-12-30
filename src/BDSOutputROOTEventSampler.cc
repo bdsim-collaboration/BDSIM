@@ -59,7 +59,7 @@ template
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit,
 					G4bool storeCharge,
-					G4bool storeRadius)
+					G4bool storePolarCoords)
 {
   // get single values
   n++;
@@ -86,8 +86,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit,
   if (storeCharge)
     {charge.push_back((int)(hit->charge / (G4double)CLHEP::eplus));}
 
-  if (storeRadius)
-    {FillRRp(hit->coords);}
+  if (storePolarCoords)
+    {FillPolarCoords(hit->coords);}
 }
 
 template <class U>
@@ -114,21 +114,37 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
-  FillRRp(coords);
+  FillPolarCoords(coords);
 }
 
 template <class U>
-void BDSOutputROOTEventSampler<U>::FillRRp(const BDSParticleCoordsFull& coords)
+void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& coords)
 {
+  double xCoord  = coords.x  / CLHEP::m;
+  double yCoord  = coords.y  / CLHEP::m;
+  double xpCoord = coords.xp / CLHEP::radian;
+  double ypCoord = coords.yp / CLHEP::radian;
+
   // we have to tolerate possible sqrt errors here
-  double rValue = std::sqrt( std::pow(coords.x/CLHEP::m, 2) + std::pow(coords.y/CLHEP::m, 2));
+  double rValue = std::sqrt(std::pow(xCoord, 2) + std::pow(yCoord, 2));
   if (!std::isnormal(rValue))
     {rValue = 0;}
-  r.push_back((U)rValue);
-  double rpValue = std::sqrt( std::pow(coords.xp/CLHEP::radian, 2) + std::pow(coords.yp/CLHEP::radian, 2));
+  r.push_back(static_cast<U>(rValue));
+  
+  double rpValue = std::sqrt(std::pow(xpCoord, 2) + std::pow(ypCoord, 2));
   if (!std::isnormal(rpValue))
     {rpValue = 0;}
-  rp.push_back((U)rpValue);
+  rp.push_back(static_cast<U>(rpValue));
+
+  double phiValue = std::atan2(xCoord, yCoord);
+  if (!std::isnormal(phiValue))
+    {phiValue = -1;}
+  phi.push_back(static_cast<U>(phiValue));
+
+  double phipValue = std::atan2(xpCoord, ypCoord);
+  if (!std::isnormal(phipValue))
+    {phipValue = -1;}
+  phip.push_back(static_cast<U>(phipValue));
 }
 
 //#else

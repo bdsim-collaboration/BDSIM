@@ -83,6 +83,18 @@ private:
   /// Return the appropriate factory singleton pointer given a type.
   BDSBeamPipeFactoryBase* GetAppropriateFactory(BDSBeamPipeType beamPipeTypeIn);
 
+  /// @{ Factory instance.
+  BDSBeamPipeFactoryBase* circular;
+  BDSBeamPipeFactoryBase* elliptical;
+  BDSBeamPipeFactoryBase* rectangular;
+  BDSBeamPipeFactoryBase* lhc;
+  BDSBeamPipeFactoryBase* lhcdetailed;
+  BDSBeamPipeFactoryBase* rectellipse;
+  BDSBeamPipeFactoryBase* racetrack;
+  BDSBeamPipeFactoryBase* octagonal;
+  BDSBeamPipeFactoryBase* circularvacuum;
+  BDSBeamPipeFactoryBase* clicpcl;
+  /// @}
 };
 
 

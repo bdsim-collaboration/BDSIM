@@ -131,7 +131,7 @@ private:
   BDSTunnelFactory();
 
   /// Singleton instance
-  static BDSTunnelFactory* _instance;
+  static BDSTunnelFactory* instance;
 
   /// Accessor method to dispatch to appropriate derived factory
   BDSTunnelFactoryBase* GetAppropriateFactory(BDSTunnelType tunnelType);

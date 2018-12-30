@@ -25,21 +25,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Factory for CLIC post collision line beam pipes.
  * 
- * Singleton pattern.
- * 
  * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryClicPCL: public BDSBeamPipeFactoryPoints
 {
 public:
-  static BDSBeamPipeFactoryClicPCL* Instance(); /// Singleton accessor.  
-  virtual ~BDSBeamPipeFactoryClicPCL();
+  BDSBeamPipeFactoryClicPCL();
+  virtual ~BDSBeamPipeFactoryClicPCL(){;}
   
 private:
-  BDSBeamPipeFactoryClicPCL(); ///< Private default constructor - singelton pattern.
-  static BDSBeamPipeFactoryClicPCL* instance; ///< Singleton instance.
-  
   /// Generate quarters of a circle to represent the edges joined by straight lines.
   /// Overloaded (required) from BDSBeamPipeFactoryPoints
   virtual void GeneratePoints(G4double aper1,

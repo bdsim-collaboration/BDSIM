@@ -35,22 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4Material;
 
-BDSBeamPipeFactoryCircularVacuum* BDSBeamPipeFactoryCircularVacuum::instance = nullptr;
-
-BDSBeamPipeFactoryCircularVacuum* BDSBeamPipeFactoryCircularVacuum::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryCircularVacuum();}
-  return instance;
-}
-
 BDSBeamPipeFactoryCircularVacuum::BDSBeamPipeFactoryCircularVacuum()
 {;}
-
-BDSBeamPipeFactoryCircularVacuum::~BDSBeamPipeFactoryCircularVacuum()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CreateBeamPipe(G4String    nameIn,
 							      G4double    lengthIn,

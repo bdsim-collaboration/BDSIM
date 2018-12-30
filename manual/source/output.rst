@@ -76,9 +76,9 @@ and cannot be usably stored.
 +----------------------+----------------------+-----------------------------------------------+
 | Format               | Syntax               | Description                                   |
 +======================+======================+===============================================+
-| None                 | --output=none        | No output is written                          |
+| None                 | -\\-output=none      | No output is written                          |
 +----------------------+----------------------+-----------------------------------------------+
-| ROOT Event (Default) | --output=rootevent   | A ROOT file with details of the model built,  |
+| ROOT Event (Default) | -\\-output=rootevent | A ROOT file with details of the model built,  |
 |                      |                      | options used, seed states, and event-by-event |
 |                      |                      | information (default and recommended).        |
 +----------------------+----------------------+-----------------------------------------------+
@@ -219,7 +219,7 @@ ParticleInfo Struct
 +=====================+================+===================================+
 | name                | std::string    | Name of particle                  |
 +---------------------+----------------+-----------------------------------+
-| charge              | int            | Particle Data Group ID            |
+| charge              | int            | Particle charge in units of *e*   |
 +---------------------+----------------+-----------------------------------+
 | mass                | double         | Particle Data Group mass in GeV   |
 +---------------------+----------------+-----------------------------------+
@@ -232,7 +232,7 @@ IonInfo Struct
 +=====================+================+====================================+
 | name                | std::string    | Name of particle                   |
 +---------------------+----------------+------------------------------------+
-| charge              | int            | Particle Data Group ID             |
+| charge              | int            | Particle charge in units of *e*    |
 +---------------------+----------------+------------------------------------+
 | mass                | double         | Particle Data Group mass in GeV    |
 +---------------------+----------------+------------------------------------+

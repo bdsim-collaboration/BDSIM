@@ -31,7 +31,7 @@ BDSColours* BDSColours::instance = nullptr;
 
 BDSColours* BDSColours::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSColours();}
   return instance;
 }

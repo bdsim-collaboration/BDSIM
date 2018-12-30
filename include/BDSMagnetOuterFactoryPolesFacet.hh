@@ -50,7 +50,7 @@ private:
   BDSMagnetOuterFactoryPolesFacet();
 
   /// Singleton instance.
-  static BDSMagnetOuterFactoryPolesFacet* _instance;
+  static BDSMagnetOuterFactoryPolesFacet* instance;
 };
 
 #endif

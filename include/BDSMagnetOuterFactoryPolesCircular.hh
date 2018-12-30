@@ -45,7 +45,7 @@ private:
   BDSMagnetOuterFactoryPolesCircular(){;};
 
   /// Singleton instance.
-  static BDSMagnetOuterFactoryPolesCircular* _instance;
+  static BDSMagnetOuterFactoryPolesCircular* instance;
 };
 
 #endif

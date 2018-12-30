@@ -47,7 +47,7 @@ BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::instance = n
 
 BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSMagnetOuterFactoryCylindrical();}
   return instance;
 }

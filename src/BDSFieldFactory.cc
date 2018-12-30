@@ -134,7 +134,7 @@ BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::Instance()
 {
-  if (instance == nullptr)
+  if (!instance)
     {instance = new BDSFieldFactory();}
   return instance;
 }
@@ -537,7 +537,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
     case BDSFieldType::teleporter:
       {result = CreateTeleporter(info); break;}
     case BDSFieldType::rmatrix:
-      {result = CreateRmatrix(info); break;}
+      {result = CreateRMatrix(info); break;}
     case BDSFieldType::paralleltransporter:
       {result = CreateParallelTransport(info); break;}
     default:
@@ -756,7 +756,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateRmatrix(const BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateRMatrix(const BDSFieldInfo& info)
 {
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);

@@ -197,9 +197,9 @@ void BDSCollimator::Build()
 
   if (buildVacuumAndAperture)
     {
-      G4Material *vMaterial = nullptr;
+      G4Material* vMaterial = nullptr;
 
-      if (vacuumMaterial == "")
+      if (vacuumMaterial.empty())
         {vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial;}
       else
         {vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);}

@@ -36,13 +36,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4Material;
 
-BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::_instance = nullptr;
+BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::instance = nullptr;
 
 BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactoryRectangular();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactoryRectangular();}
+  return instance;
 }
 
 BDSTunnelFactoryRectangular::BDSTunnelFactoryRectangular()
@@ -50,7 +50,7 @@ BDSTunnelFactoryRectangular::BDSTunnelFactoryRectangular()
 
 BDSTunnelFactoryRectangular::~BDSTunnelFactoryRectangular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String      name,

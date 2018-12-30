@@ -37,13 +37,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
+BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::instance = nullptr;
 
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryPolesSquare();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSMagnetOuterFactoryPolesSquare();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare():
@@ -54,7 +54,7 @@ BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare():
 
 BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()

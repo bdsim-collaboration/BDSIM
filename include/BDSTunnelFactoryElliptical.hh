@@ -70,7 +70,7 @@ public:
 							       
 private:
   /// Singleton pattern instance
-  static BDSTunnelFactoryElliptical* _instance;
+  static BDSTunnelFactoryElliptical* instance;
 
   /// Private constructor as singleton pattern
   BDSTunnelFactoryElliptical();
