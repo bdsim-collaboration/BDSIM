@@ -79,6 +79,7 @@ BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
   delete polesfacetcrop;
   delete lhcright;
   delete lhcleft;
+  instance = nullptr;
 }
 
 BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
