@@ -17,35 +17,30 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSBeamline.hh"
 #include "BDSCollimatorSD.hh"
-#include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4AffineTransform.hh"
-#include "G4DynamicParticle.hh"
-#include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4ThreeVector.hh"
-#include "G4TouchableHistory.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VTouchable.hh"
 
+#include <map>
 #include <vector>
 
-BDSCollimatorSD::BDSCollimatorSD(G4String name,
-				 G4bool storeHitsForIonsIn,
-				 G4bool storeHitsForAllIn):
+BDSCollimatorSD::BDSCollimatorSD(G4String name):
   BDSSensitiveDetector("collimator/" + name),
   collimatorCollection(nullptr),
   itsCollectionName(name),
   itsHCID(-1),
-  globals(nullptr),
-  storeHitsForIons(storeHitsForIonsIn),
-  storeHitsForAll(storeHitsForAllIn),
   auxNavigator(new BDSAuxiliaryNavigator())
 {
   collectionName.insert(name);
@@ -69,14 +64,69 @@ void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
 #endif
-  
-  globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
-G4bool BDSCollimatorSD::ProcessHits(G4Step* step, G4TouchableHistory* /*readOutTH*/)
+G4bool BDSCollimatorSD::ProcessHits(G4Step* step, G4TouchableHistory* rOHist)
 {
-  return false;
+  std::vector<G4VHit*> hits;
+  return ProcessHitsOrdered(step, rOHist, hits);
 }
+
+G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
+					   G4TouchableHistory* /*rOHist*/,
+					   const std::vector<G4VHit*>& hits)
+{
+  G4VHit* lastHit = nullptr;
+  BDSEnergyCounterHit* lastHitEDep = nullptr;
+  if (!hits.empty())
+    {
+      lastHit = hits.back();
+      lastHitEDep = dynamic_cast<BDSEnergyCounterHit*>(lastHit);
+    }
+
+  // get pre step point in local coordinates.
+  BDSStep stepLocal = auxNavigator->ConvertToLocal(step);
+  G4ThreeVector preStepPointLocal = stepLocal.PreStepPoint();
+
+  // get which beam line it's in and the index
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
+
+  // map the index to a collimator index
+  BDSBeamline* beamline = nullptr;
+  G4int beamlineIndex   = -1;
+  G4int collimatorIndex = -1;
+
+  if (theInfo)
+    {
+      beamlineIndex = theInfo->GetBeamlineIndex();
+      beamline      = theInfo->GetBeamline();
+  
+      auto beamlineMap = mapping.find(beamline);
+      if (beamlineMap != mapping.end())
+	{
+	  const auto& indexMap = beamlineMap->second;
+	  collimatorIndex = indexMap.at(beamlineIndex);
+	}
+      else
+	{// create map for this beam line
+	  std::map<G4int, G4int> indexMap;
+	  std::vector<G4int> collimatorIndices = beamline->GetIndicesOfCollimators();
+	  for (G4int i = 0; i < (G4int)collimatorIndices.size(); i++)
+	    {indexMap[i] = collimatorIndices[i];}
+	  mapping[beamline] = indexMap;
+	  collimatorIndex = indexMap.at(beamlineIndex);
+	}
+    }
+  
+  BDSCollimatorHit* hit = new BDSCollimatorHit(beamline,
+					       collimatorIndex,
+					       preStepPointLocal,
+					       lastHitEDep);
+
+  collimatorCollection->insert(hit);
+  return true;
+}
+
 
 G4VHit* BDSCollimatorSD::last() const
 {
