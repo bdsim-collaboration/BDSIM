@@ -16,9 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSCollimatorSD.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterPrimary.hh"
@@ -89,11 +91,18 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029
-  // only multiple SDs since
+  // only multiple SDs since 10.3
   G4MultiSensitiveDetector* wcsd = new G4MultiSensitiveDetector("world_complete");
   SDMan->AddNewDetector(wcsd);
   wcsd->AddSD(worldECounter);
   wcsd->AddSD(worldExit);
   worldCompleteSD = wcsd;
 #endif
+
+  collimatorSD = new BDSCollimatorSD("collimator");
+  collimatorCompleteSD = new BDSMultiSensitiveDetectorOrdered("collimator_complete");
+  collimatorCompleteSD->AddSD(eCounter);
+  collimatorCompleteSD->AddSD(collimatorSD);
+  SDMan->AddNewDetector(collimatorSD);
+  SDMan->AddNewDetector(collimatorCompleteSD);
 }

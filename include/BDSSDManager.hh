@@ -23,7 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
+class BDSCollimatorSD;
 class BDSEnergyCounterSD;
+class BDSMultiSensitiveDetectorOrdered;
 class BDSSamplerSD;
 class BDSTerminatorSD;
 class BDSVolumeExitSD;
@@ -85,6 +87,9 @@ public:
   inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldECounter;}
 #endif
 
+  inline BDSCollimatorSD* GetCollimatorSD() const {return collimatorSD;}
+  inline BDSMultiSensitiveDetectorOrdered* GetCollimatorCompleteSD() const {return collimatorCompleteSD;}
+
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -106,6 +111,8 @@ private:
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
+  BDSCollimatorSD*    collimatorSD;
+  BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
