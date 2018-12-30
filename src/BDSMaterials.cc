@@ -28,13 +28,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <thread>
 
-BDSMaterials* BDSMaterials::_instance = nullptr;
+BDSMaterials* BDSMaterials::instance = nullptr;
 
 BDSMaterials* BDSMaterials::Instance()
 {
-  if(_instance==nullptr)
-    {_instance = new BDSMaterials();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSMaterials();}
+  return instance;
 }
 
 BDSMaterials::BDSMaterials()
@@ -1118,7 +1118,7 @@ BDSMaterials::~BDSMaterials()
   for (G4MaterialPropertiesTable* table : propertiesTables)
     {delete table;}
 
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)

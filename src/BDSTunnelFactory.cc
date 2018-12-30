@@ -30,13 +30,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSTunnelFactory* BDSTunnelFactory::_instance = nullptr;
+BDSTunnelFactory* BDSTunnelFactory::instance = nullptr;
 
 BDSTunnelFactory* BDSTunnelFactory::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactory();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactory();}
+  return instance;
 }
 
 BDSTunnelFactory::BDSTunnelFactory()
@@ -44,7 +44,7 @@ BDSTunnelFactory::BDSTunnelFactory()
 
 BDSTunnelFactory::~BDSTunnelFactory()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunnelType)

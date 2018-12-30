@@ -19,13 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterFactoryPolesFacetCrop.hh"
 
 
-BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::_instance = nullptr;
+BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::instance = nullptr;
 
 BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryPolesFacetCrop();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSMagnetOuterFactoryPolesFacetCrop();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryPolesFacetCrop::BDSMagnetOuterFactoryPolesFacetCrop():
@@ -34,7 +34,7 @@ BDSMagnetOuterFactoryPolesFacetCrop::BDSMagnetOuterFactoryPolesFacetCrop():
 
 BDSMagnetOuterFactoryPolesFacetCrop::~BDSMagnetOuterFactoryPolesFacetCrop()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesFacetCrop::CalculateStartAngles()

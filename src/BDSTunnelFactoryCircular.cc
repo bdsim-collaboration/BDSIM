@@ -38,13 +38,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>                         // for std::pair
 
 
-BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::_instance = nullptr;
+BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::instance = nullptr;
 
 BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSTunnelFactoryCircular();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSTunnelFactoryCircular();}
+  return instance;
 }
 
 BDSTunnelFactoryCircular::BDSTunnelFactoryCircular()
@@ -52,7 +52,7 @@ BDSTunnelFactoryCircular::BDSTunnelFactoryCircular()
 
 BDSTunnelFactoryCircular::~BDSTunnelFactoryCircular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      name,

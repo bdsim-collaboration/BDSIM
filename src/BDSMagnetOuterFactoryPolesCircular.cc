@@ -18,16 +18,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSMagnetOuterFactoryPolesCircular.hh"
 
-BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::_instance = nullptr;
+BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::instance = nullptr;
 
 BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryPolesCircular();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSMagnetOuterFactoryPolesCircular();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryPolesCircular::~BDSMagnetOuterFactoryPolesCircular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
