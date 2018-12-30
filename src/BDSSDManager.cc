@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDFilterIon.hh"
+#include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
@@ -58,8 +59,12 @@ BDSSDManager::BDSSDManager()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
-  filters["primary"] = new BDSSDFilterPrimary("Primary");
-  filters["ion"]     = new BDSSDFilterIon("Ion");
+  filters["primary"] = new BDSSDFilterPrimary("primary");
+  filters["ion"]     = new BDSSDFilterIon("ion");
+  BDSSDFilterOr* primaryOrIon = new BDSSDFilterOr("primary_or_ion");
+  primaryOrIon->RegisterFilter(filters["primary"]);
+  primaryOrIon->RegisterFilter(filters["ion"]);
+  filters["primaryorion"] = primaryOrIon;
   
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
@@ -103,6 +108,21 @@ BDSSDManager::BDSSDManager()
   collimatorCompleteSD = new BDSMultiSensitiveDetectorOrdered("collimator_complete");
   collimatorCompleteSD->AddSD(eCounter);
   collimatorCompleteSD->AddSD(collimatorSD);
+  // set up a filter for the collimator sensitive detector - always store primary hits
+  G4VSDFilter* filter = nullptr;
+  G4bool storeAll  = BDSGlobalConstants::Instance()->StoreCollimatorHitsAll();
+  G4bool storeIons = BDSGlobalConstants::Instance()->StoreCollimatorHitsIons();
+  if (storeAll)
+    {filter = nullptr;} // no filter -> store all
+  else if (storeIons) // primaries plus ion fragments
+    {filter = filters["primaryorion"];}
+  else
+    {filter = filters["primary"];} // just primaries
+
+  // we only want to attach the filter to the collimator SD and not the energy counter SD
+  // via the 'complete' SD. i.e. we always want energy deposition but collimator hits by
+  // the filter.
+  collimatorSD->SetFilter(filter);
   SDMan->AddNewDetector(collimatorSD);
   SDMan->AddNewDetector(collimatorCompleteSD);
 }
