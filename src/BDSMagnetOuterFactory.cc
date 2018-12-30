@@ -59,18 +59,6 @@ BDSMagnetOuterFactory* BDSMagnetOuterFactory::Instance()
 
 BDSMagnetOuterFactory::BDSMagnetOuterFactory()
 {
-  delete none;
-  delete cylindrical;
-  delete polescircular;
-  delete polessquare;
-  delete polesfacet;
-  delete polesfacetcrop;
-  delete lhcright;
-  delete lhcleft;
-}
-
-BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
-{
   none           = new BDSMagnetOuterFactoryNone();
   cylindrical    = new BDSMagnetOuterFactoryCylindrical();
   polescircular  = new BDSMagnetOuterFactoryPolesCircular();
@@ -79,6 +67,18 @@ BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
   polesfacetcrop = new BDSMagnetOuterFactoryPolesFacetCrop();
   lhcright       = new BDSMagnetOuterFactoryLHCRight();
   lhcleft        = new BDSMagnetOuterFactoryLHCLeft();
+}
+
+BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
+{
+  delete none;
+  delete cylindrical;
+  delete polescircular;
+  delete polessquare;
+  delete polesfacet;
+  delete polesfacetcrop;
+  delete lhcright;
+  delete lhcleft;
 }
 
 BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
