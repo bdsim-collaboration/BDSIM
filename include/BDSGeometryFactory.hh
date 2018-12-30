@@ -77,6 +77,12 @@ private:
 
   /// Get the appropriate geometry factory
   BDSGeometryFactoryBase* GetAppropriateFactory(BDSGeometryType type);
+
+  /// @{ Factory instance.
+  BDSGeometryFactoryBase* gdml;
+  BDSGeometryFactoryBase* gmad;
+  BDSGeometryFactoryBase* sql;
+  /// @}
 };
 
 #endif

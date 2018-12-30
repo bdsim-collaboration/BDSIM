@@ -51,12 +51,10 @@ class G4VisAttributes;
 class BDSGeometryFactorySQL: public BDSGeometryFactoryBase
 {
 public:
-  /// Singleton accessor
-  static BDSGeometryFactorySQL* Instance();
-
+  BDSGeometryFactorySQL();
+  virtual ~BDSGeometryFactorySQL(){;}
+  
   static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
-
-  virtual ~BDSGeometryFactorySQL();
 
   /// Main interface overrides base class method to construct a file with
   /// optional colour mapping.
@@ -74,12 +72,6 @@ protected:
   void CleanUpSQL();
 
 private:
-  /// Private default constructor as singleton pattern.
-  BDSGeometryFactorySQL();
-
-  /// Singleton instance
-  static BDSGeometryFactorySQL* instance;
-
   std::unordered_map<G4VSolid*, BDSExtent> unShiftedExtents;
 
   // For List of uniform fields for volumes
