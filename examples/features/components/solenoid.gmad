@@ -15,12 +15,3 @@ beam, particle="e-",
       sigmaXp=1e-3,
       sigmaY=1*mm,
       sigmaYp=1e-3;
-
-
-!option, integratorSet="geant4";
-
-option, maximumStepLength=1*mm;
-
-option, includeFringeFields=0;
-
-option, seed=123;
