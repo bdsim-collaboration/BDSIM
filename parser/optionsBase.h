@@ -250,6 +250,8 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
 
     bool        storeCollimationInfo;
+    bool        storeCollimatorHitsIons;
+    bool        storeCollimatorHitsAll;
     bool        storeEloss;
     bool        storeElossWorld;
     bool        storeElossTurn;

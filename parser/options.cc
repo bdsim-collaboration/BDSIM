@@ -299,6 +299,8 @@ void Options::PublishMembers()
   publish("trajNoTransportation",           &Options::trajNoTransportation);
 
   publish("storeCollimationInfo",           &Options::storeCollimationInfo);
+  publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
+  publish("storeCollimatorHitsAll",         &Options::storeCollimatorHitsAll);
   publish("storeEloss",                     &Options::storeEloss);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeElossTurn",                 &Options::storeElossTurn);

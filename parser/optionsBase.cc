@@ -219,6 +219,8 @@ OptionsBase::OptionsBase()
   trajNoTransportation     = false;
 
   storeCollimationInfo     = false;
+  storeCollimatorHitsIons  = false;
+  storeCollimatorHitsAll   = false;
   storeEloss               = true;
   storeElossWorld          = false;
   storeElossTurn           = false;
