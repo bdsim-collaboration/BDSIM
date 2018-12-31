@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -136,6 +136,13 @@ private:
   /// Accessor method to dispatch to appropriate derived factory
   BDSTunnelFactoryBase* GetAppropriateFactory(BDSTunnelType tunnelType);
 
+  /// @{ Factory instance.
+  BDSTunnelFactoryBase* circular;
+  BDSTunnelFactoryBase* elliptical;
+  BDSTunnelFactoryBase* rectangular;
+  BDSTunnelFactoryBase* square;
+  BDSTunnelFactoryBase* rectaboveground;
+  /// @}
 };
 
 

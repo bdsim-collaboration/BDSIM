@@ -65,6 +65,8 @@ General
 * The Cherenkov example has now been updated to show 3 materials (air, water, YAG).
 * Fixes from static code analysis for virtual functions called in constructors of factories,
   shadow member variables and initialisation of crystal variables in parser.
+* Significant reduction in use of the singleton pattern for beam pipe, magnet yoke,
+  tunnel and geometry factories.
 
 Materials
 ---------

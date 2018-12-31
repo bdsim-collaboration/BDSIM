@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -44,10 +44,6 @@ class G4VSolid;
  * 
  * Default values in constructors result in global defaults being used
  * ie beampipe material will be steel - the default from options.
- *
- * NOTE each derived class is expected to be a singleton but this can't be specified here
- * as it'd refer to the abstract base class - must be implemented in each derived class
- * utilised in BDSBeamPipeFactory.cc
  *
  * 'In' in argument variables is used to distinguish between that and possible
  * internal member variables with the same name - avoiding 'itsVariable'
