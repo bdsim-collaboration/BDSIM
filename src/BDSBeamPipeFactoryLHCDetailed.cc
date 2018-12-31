@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -41,16 +41,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <utility>                         // for std::pair
 
-
-BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::instance = nullptr;
-
-BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryLHCDetailed();}
-  return instance;
-}
-
 BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
 {
   coldBoreThickness    = 1.5*CLHEP::mm;
@@ -59,11 +49,6 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
   coolingPipeOffset    = 0.0;  //initialised only
   copperSkinThickness  = 75*CLHEP::um;
   CleanUpLHCDetailed();
-}
-
-BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
-{
-  instance = nullptr;
 }
 
 void BDSBeamPipeFactoryLHCDetailed::CleanUp()

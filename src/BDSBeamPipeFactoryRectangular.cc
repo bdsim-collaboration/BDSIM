@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -33,22 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>                           // sin, cos, fabs
 
-BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::instance = nullptr;
-
-BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
-{
-  if (instance == nullptr)
-    {instance = new BDSBeamPipeFactoryRectangular();}
-  return instance;
-}
 
 BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
 {;}
-
-BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
-{
-  instance = nullptr;
-}
 
 BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
 							   G4double    lengthIn,

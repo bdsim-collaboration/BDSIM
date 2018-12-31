@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -243,7 +243,7 @@ namespace GMAD
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;
-    double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
+    double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature.
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
     bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
@@ -268,6 +268,8 @@ namespace GMAD
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
 
+    bool        storeSamplerAll;
+    bool        storeSamplerPolarCoords;
     bool        storeSamplerCharge;
     bool        storeSamplerKineticEnergy;
     bool        storeSamplerMass;

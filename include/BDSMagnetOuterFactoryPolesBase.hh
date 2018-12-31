@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -51,7 +51,7 @@ class BDSMagnetOuterFactoryPolesBase: public BDSMagnetOuterFactoryBase
 public:
   BDSMagnetOuterFactoryPolesBase();
   explicit BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn);
-  virtual ~BDSMagnetOuterFactoryPolesBase(){;}
+  virtual ~BDSMagnetOuterFactoryPolesBase();
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String           name,             // name
@@ -352,6 +352,8 @@ protected:
 					   G4double    cDY,
 					   G4double    coilDY,
 					   G4double    intersectionRadius);
+
+  BDSMagnetOuterFactoryBase* cylindrical; ///< Default factory to fall back to.
 };
 
 #endif

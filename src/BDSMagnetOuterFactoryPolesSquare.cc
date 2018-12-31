@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -37,24 +37,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
-
-BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
-{
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryPolesSquare();}
-  return _instance;
-}
-
 BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare():
   BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/1.5)
 {
   CleanUp();
-}
-
-BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
-{
-  _instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()

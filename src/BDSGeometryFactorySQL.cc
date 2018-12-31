@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -61,25 +61,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <unordered_map>
 #include <vector>
 
-BDSGeometryFactorySQL* BDSGeometryFactorySQL::instance = nullptr;
-
 G4double BDSGeometryFactorySQL::defaultRigidity = std::numeric_limits<double>::max();
 
 BDSGeometryFactorySQL::BDSGeometryFactorySQL()
 {
   CleanUpSQL();
-}
-
-BDSGeometryFactorySQL::~BDSGeometryFactorySQL()
-{
-  instance = nullptr;
-}
-
-BDSGeometryFactorySQL* BDSGeometryFactorySQL::Instance()
-{
-  if (!instance)
-    {instance = new BDSGeometryFactorySQL();}
-  return instance;
 }
 
 void BDSGeometryFactorySQL::CleanUp()

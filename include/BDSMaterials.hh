@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
@@ -99,7 +99,7 @@ protected:
 
 private:
   /// Singleton instance
-  static BDSMaterials* _instance;
+  static BDSMaterials* instance;
 
   ///@{ Methods called by constructor
   void DefineMetals();
