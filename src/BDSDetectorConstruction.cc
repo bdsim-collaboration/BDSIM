@@ -228,7 +228,7 @@ void BDSDetectorConstruction::BuildBeamlines()
     }
 
   // print warning if beamline is approximately circular but flag isnt specfied
-  if (not circular and mainBeamline.massWorld->ElementAnglesSumToCircle())
+  if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
     {
       G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
              << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
