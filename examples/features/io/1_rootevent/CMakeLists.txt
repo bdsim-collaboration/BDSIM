@@ -14,6 +14,7 @@ simple_testing(io-sampler-extras          "--file=sc_samplerextras.gmad --ngener
 simple_testing(io-sampler-extras-all      "--file=sc_samplerextrasall.gmad --ngenerate=10"       "")
 simple_testing(io-sampler-extras-charge   "--file=sc_samplerextras_charge.gmad --ngenerate=10"   "")
 simple_testing(io-sampler-extras-ion      "--file=sc_samplerextras_ion.gmad --ngenerate=10"      "")
+simple_testing(io-sampler-extras-ke       "--file=sc_samplerextras_kineticenergy.gmad --ngenerate=10" "")
 simple_testing(io-sampler-extras-mass     "--file=sc_samplerextras_mass.gmad --ngenerate=10"     "")
 simple_testing(io-sampler-extras-rigidity "--file=sc_samplerextras_rigidity.gmad --ngenerate=10" "")
 
