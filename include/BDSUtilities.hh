@@ -103,10 +103,13 @@ namespace BDS
   /// Main goal is to close output stream / files.
   void HandleAborts(int signal_number);
 
-  ///@{ Determine whether a parameter is finite
+  ///@{ Determine whether a parameter is finite - ie > epsilon
   G4bool IsFinite(const G4double& variable);
   G4bool IsFinite(const G4ThreeVector& variable);
   ///@}
+
+  /// Test whether a number is non-zero - ie abs(number) > minimum number
+  G4bool NonZero(G4double variable);
 
   /// Check if character array is an integer, and returns the integer by reference
   G4bool IsInteger(const char* s, int& convertedInteger);

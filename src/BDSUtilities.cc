@@ -258,6 +258,14 @@ G4bool BDS::IsFinite(const G4double& variable)
     {return false;}
 }
 
+G4bool BDS::NonZero(G4double variable)
+{
+  if (std::abs(variable) > std::numeric_limits<double>::min())
+    {return true;}
+  else
+    {return false;}
+}
+
 G4bool BDS::IsFinite(const G4ThreeVector& variable)
 {
   G4bool resultX = BDS::IsFinite(variable.x());
