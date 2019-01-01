@@ -121,7 +121,7 @@ namespace BDS
   /// Test if a number is above a certain tolerance for tracking strength
   /// purposes. Currently at 1e-50 as potential can be small and squared. Uses
   /// IsFinite() with 1e-50 as tolerance.
-  G4bool FiniteStrength(G4double variable);
+  G4bool IsFiniteStrength(G4double variable);
 
   /// Check if character array is an integer, and returns the integer by reference
   G4bool IsInteger(const char* s, int& convertedInteger);

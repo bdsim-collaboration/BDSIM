@@ -261,7 +261,7 @@ G4bool BDS::NonZero(G4double value)
   return std::abs(value) > std::numeric_limits<double>::min();
 }
 
-G4bool BDS::FiniteStrength(G4double value)
+G4bool BDS::IsFiniteStrength(G4double value)
 {
   return IsFinite(value, 1e-50);
 }
