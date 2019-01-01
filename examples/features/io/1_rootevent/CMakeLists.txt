@@ -23,3 +23,6 @@ simple_testing(io-eloss-extras2         "--file=sc_elossextras2.gmad --ngenerate
 simple_testing(io-no-g4data   "--file=sc_nog4data.gmad --ngenerate=1" "")
 simple_testing(io-no-model    "--file=sc_no_model.gmad --ngenerate=1" "")
 simple_testing(io-no-eloss    "--file=sc_no_eloss.gmad --ngenerate=1" "")
+
+# scoring map
+simple_testing(io-scoring-map   "--file=sc_scoringmap.gmad" "")
