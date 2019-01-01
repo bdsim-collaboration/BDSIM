@@ -101,7 +101,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
 					    const G4double& momScaling)
 {
   // Protect against neutral particles, and zero field: drift through.
-  if (!BDS::IsFinite(fcof) || zeroStrength)
+  if (!BDS::IsFiniteStrength(fcof) || zeroStrength)
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       FudgeDistChordToZero(); // see doxygen in header for explanation
