@@ -182,7 +182,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   bendingRad *= momScaling;
 
   // rotate by pi/2 if field is only horizontal and tilt is zero - can only be from a vertical kicker
-  if (!BDS::IsFinite(tilt) and BDS::IsFinite(bx) and (!BDS::IsFinite(by)))
+  if (!BDS::IsFinite(tilt) && BDS::IsFinite(bx) && (!BDS::IsFinite(by)))
     {
       // rotate only by the sign of the field and not the magnitude.
       G4double sign = bx < 0 ? -1 : 1;
