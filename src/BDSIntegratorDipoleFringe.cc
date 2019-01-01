@@ -66,14 +66,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 
   // prepare magnet strength object for thin sextupole needed for curved polefaces
   BDSMagnetStrength* sextStrength = new BDSMagnetStrength();
-  std::vector<G4double> normalComponent;
-  normalComponent.push_back(0); // zero strength quadrupolar component
-  normalComponent.push_back(thinSextStrength); // sextupolar component
-  std::vector<G4String> normKeys = sextStrength->NormalComponentKeys();
-  auto kn = normalComponent.begin();
-  auto nkey = normKeys.begin();
-  for (; kn != normalComponent.end(); kn++, nkey++)
-    {(*sextStrength)[*nkey] = (*kn);}
+  (*sextStrength)["k2"] = thinSextStrength;
   // integrator for thin sextupole
   multipoleIntegrator = new BDSIntegratorMultipoleThin(sextStrength, brhoIn, eqOfMIn);
   delete sextStrength;
