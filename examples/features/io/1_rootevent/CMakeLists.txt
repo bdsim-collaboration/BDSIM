@@ -16,6 +16,7 @@ simple_testing(io-sampler-extras-charge   "--file=sc_samplerextras_charge.gmad -
 simple_testing(io-sampler-extras-ion      "--file=sc_samplerextras_ion.gmad --ngenerate=10"      "")
 simple_testing(io-sampler-extras-ke       "--file=sc_samplerextras_kineticenergy.gmad --ngenerate=10" "")
 simple_testing(io-sampler-extras-mass     "--file=sc_samplerextras_mass.gmad --ngenerate=10"     "")
+simple_testing(io-sampler-extras-option2  "--file=sc_samplerextras_option2.gmad --ngenerate=10"  "")
 simple_testing(io-sampler-extras-rigidity "--file=sc_samplerextras_rigidity.gmad --ngenerate=10" "")
 
 # write optional eloss data
