@@ -322,7 +322,7 @@ G4double BDS::FringeFieldCorrection(BDSMagnetStrength const* strength,
     }
   G4double hgap = (*strength)["hgap"];
   G4double vertGap = 2 * hgap;
-  G4double corrValue = fint * vertGap * (1.0 + std::pow(sin(pfAngle),2)) / cos(pfAngle);
+  G4double corrValue = fint * vertGap * (1.0 + std::pow(std::sin(pfAngle),2)) / std::cos(pfAngle);
   return corrValue;
 }
 
@@ -346,6 +346,6 @@ G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength,
     }
   G4double hgap    = (*strength)["hgap"];
   G4double vertGap = 2 * hgap;
-  G4double corrValue = fint * fintK2 * vertGap * tan(pfAngle);
+  G4double corrValue = fint * fintK2 * vertGap * std::tan(pfAngle);
   return corrValue;
 }
