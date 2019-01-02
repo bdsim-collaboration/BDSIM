@@ -181,7 +181,7 @@ namespace GMAD
 
     bool removeTemporaryFiles;
     
-    /// Sampler
+    // sampler options
     double   samplerDiameter;
 
     ///BLM geometry
@@ -196,7 +196,7 @@ namespace GMAD
     bool     turnOnOpticalSurface;
     ///@}
 
-    ///@{Cross section biasing parameters
+    ///@{ physics parameters
     double   scintYieldFactor;
     int      maximumPhotonsPerStep;
     int      maximumBetaChangePerStep;
@@ -218,11 +218,11 @@ namespace GMAD
     bool     usePositronToHadrons;
     ///@}
 
-    /// Biasing options
+    // biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
 
-    /// Tracking related parameters
+    // tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
     double   maximumTrackingTime; ///< Maximum tracking time per track [s].
@@ -296,10 +296,10 @@ namespace GMAD
     double   printFractionEvents;
     double   printFractionTurns;
 
-    /// Visualisation
+    // visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
 
-    /// Scoring Map
+    // scoring Map
     int    nbinsx;
     int    nbinsy;
     int    nbinsz;

@@ -146,10 +146,10 @@ Output Changes
   detail of their output.
 * New class BDSOutputROOTEventExit for a record of coordinates when a particle leaves a volume,
   use currently for exiting the world.
-* New structures ("branches") in the `Event` tree called :code:`Elossworld` and :code:`ElossWorldExit` for
+* New structures ("branches") in the `Event` tree called :code:`ElossWorld` and :code:`ElossWorldExit` for
   energy deposition in the world material and energy leaving the world (and therefore the simulation)
   respectively.
-* New members in :code:`Event.Info` that are the integrated energy deposite in various parts
+* New members in :code:`Event.Info` that are the integrated energy deposited in various parts
   for that event. These are for convenience and are the integrals of the various Eloss parts.
 
 Output Classes Versions

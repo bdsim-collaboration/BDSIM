@@ -52,6 +52,10 @@ typedef CLHEP::HepRotation G4RotationMatrix;
  * registered by the constructor and do not need to be registered separately
  * like all other volumes. There are safeguards to prevent double registration
  * and the consequential seg faults.
+ *
+ * Many accessors construct a new vector of pointers to return rather than a
+ * const reference to the member vector as the pointers from daughter objects
+ * are appended to the temporary vector. The originals are retained untouched.
  * 
  * @author Laurie Nevay
  */
