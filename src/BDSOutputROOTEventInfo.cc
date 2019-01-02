@@ -32,6 +32,7 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   primaryAbsorbedInCollimator(false),
   memoryUsageMb(0),
   energyDeposited(0),
+  energyDepositedVacuum(0),
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
   energyKilled(0),
@@ -52,6 +53,7 @@ void BDSOutputROOTEventInfo::Flush()
   primaryAbsorbedInCollimator = false;
   memoryUsageMb         = 0;
   energyDeposited       = 0;
+  energyDepositedVacuum = 0;
   energyDepositedWorld  = 0;
   energyDepositedTunnel = 0;
   energyKilled          = 0;

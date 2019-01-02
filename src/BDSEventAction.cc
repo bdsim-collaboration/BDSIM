@@ -230,6 +230,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   // we don't check the world energy hits here because the hits could be from
   // intended transport through air in part of the machine (a gap).
+  // similarly, there could be ionisation of the vacuum gas without a real impact
+  // so we don't check the vacuum energy deposition
   
   // primary hits and losses from
   const BDSTrajectoryPoint* primaryHit  = nullptr;
@@ -394,9 +396,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    evt->GetPrimaryVertex(),
 		    SampHC,
 		    hitsCylinder,
-		    energyCounterHits,
-		    tunnelEnergyCounterHits,
-		    worldEnergyCounterHits,
+		    eCounterHits,
+		    eCounterVacuumHits,
+		    eCounterTunnelHits,
+		    eCounterWorldHits,
 		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,

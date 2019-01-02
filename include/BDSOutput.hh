@@ -107,8 +107,9 @@ public:
 		 const BDSSamplerHitsCollection*       samplerHitsPlane,
 		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
 		 const BDSEnergyCounterHitsCollection* energyLoss,
-		 const BDSEnergyCounterHitsCollection* tunnelLoss,
-		 const BDSEnergyCounterHitsCollection* worldLoss,
+		 const BDSEnergyCounterHitsCollection* energyLossVacuum,
+		 const BDSEnergyCounterHitsCollection* energyLossTunnel,
+		 const BDSEnergyCounterHitsCollection* energyLossWorld,
 		 const BDSVolumeExitHitsCollection*    worldExitHits,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
@@ -139,7 +140,7 @@ private:
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, tunnel, world};
+  enum class LossType {energy, vacuum, tunnel, world};
 
   /// Write the header.
   virtual void WriteHeader() = 0;
@@ -250,6 +251,7 @@ private:
 
   /// @{ Integral when filling hit.
   G4double energyDeposited;
+  G4double energyDepositedVacuum;
   G4double energyDepositedWorld;
   G4double energyDepositedTunnel;
   G4double energyWorldExit;
