@@ -30,8 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct sdtypes_def
 {
-  enum type {samplerplane, samplercylinder, energydep, energydeptunnel, energydepworld,
-	     worldexit, worldcomplete, collimator, collimatorcomplete};
+  enum type {samplerplane, samplercylinder, terminator, energydep, energydeptunnel,
+	     energydepworld, worldexit, worldcomplete, collimator, collimatorcomplete};
 };
 
 typedef BDSTypeSafeEnum<sdtypes_def,int> BDSSDType;
