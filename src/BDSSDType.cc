@@ -29,6 +29,7 @@ std::map<BDSSDType, std::string>* BDSSDType::dictionary =
 					 {BDSSDType::samplercylinder,    "samplercylinder"},
 					 {BDSSDType::terminator,         "terminator"},
 					 {BDSSDType::energydep,          "energydep"},
+					 {BDSSDType::energydepvacuum,    "energydepvacuum"},
 					 {BDSSDType::energydeptunnel,    "energydeptunnel"},
 					 {BDSSDType::energydepworld,     "energydepworld"},
 					 {BDSSDType::worldexit,          "worldexit"},

@@ -87,11 +87,14 @@ BDSSDManager::BDSSDManager()
   eCounter = new BDSEnergyCounterSD("general", stopSecondaries, verbose);
   SDMan->AddNewDetector(eCounter);
 
-  tunnelECounter = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
-  SDMan->AddNewDetector(tunnelECounter);
+  eCounterVacuum = new BDSEnergyCounterSD("vacuum", stopSecondaries, verbose);
+  SDMan->AddNewDetector(eCounterVacuum);
 
-  worldECounter = new BDSEnergyCounterSD("worldLoss", stopSecondaries, verbose);
-  SDMan->AddNewDetector(worldECounter);
+  eCounterTunnel = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
+  SDMan->AddNewDetector(eCounterTunnel);
+
+  eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries, verbose);
+  SDMan->AddNewDetector(eCounterWorld);
 
   worldExit= new BDSVolumeExitSD("worldExit", true);
   SDMan->AddNewDetector(worldExit);
@@ -100,7 +103,7 @@ BDSSDManager::BDSSDManager()
   // only multiple SDs since 10.3
   G4MultiSensitiveDetector* wcsd = new G4MultiSensitiveDetector("world_complete");
   SDMan->AddNewDetector(wcsd);
-  wcsd->AddSD(worldECounter);
+  wcsd->AddSD(eCounterWorld);
   wcsd->AddSD(worldExit);
   worldCompleteSD = wcsd;
 #endif
@@ -140,10 +143,12 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType) co
       {return terminator; break;}
     case BDSSDType::energydep:
       {return eCounter; break;}
+    case BDSSDType::energydepvacuum:
+      {return eCounterVacuum; break;}
     case BDSSDType::energydeptunnel:
-      {return tunnelECounter; break;}
+      {return eCounterTunnel; break;}
     case BDSSDType::energydepworld:
-      {return worldECounter; break;}
+      {return eCounterWorld; break;}
     case BDSSDType::worldexit:
       {return worldExit; break;}
     case BDSSDType::worldcomplete:

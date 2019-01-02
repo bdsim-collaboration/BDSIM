@@ -76,11 +76,14 @@ public:
   /// SD for general energy counter.
   inline BDSEnergyCounterSD* GetEnergyCounterSD() const {return eCounter;}
 
+  /// SD for energy deposition in vacuum volumes.
+  inline BDSEnergyCounterSD* GetEnergyCounterVacuumSD() const {return eCounterVacuum;}
+
   /// SD for tunnel energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return tunnelECounter;}
+  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return eCounterTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return worldECounter;}
+  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return eCounterWorld;}
 
   /// SD for world exit hits.
   inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
@@ -111,8 +114,9 @@ private:
   BDSSamplerSD*       samplerCylinder;
   BDSTerminatorSD*    terminator;
   BDSEnergyCounterSD* eCounter;
-  BDSEnergyCounterSD* tunnelECounter;
-  BDSEnergyCounterSD* worldECounter;
+  BDSEnergyCounterSD* eCounterVacuum;
+  BDSEnergyCounterSD* eCounterTunnel;
+  BDSEnergyCounterSD* eCounterWorld;
   BDSVolumeExitSD*    worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
