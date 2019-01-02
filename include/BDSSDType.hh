@@ -36,12 +36,4 @@ struct sdtypes_def
 
 typedef BDSTypeSafeEnum<sdtypes_def,int> BDSSDType;
 
-/*
-namespace BDS
-{
-  /// Function that gives corresponding enum value for string (case-insensitive).
-  BDSSDType DetermineSDType(const G4String& sdType);
-}
-*/
-
 #endif
