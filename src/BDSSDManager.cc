@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
+#include "BDSSDType.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSVolumeExitSD.hh"
 
@@ -125,4 +126,35 @@ BDSSDManager::BDSSDManager()
   collimatorSD->SetFilter(filter);
   SDMan->AddNewDetector(collimatorSD);
   SDMan->AddNewDetector(collimatorCompleteSD);
+}
+
+G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType) const
+{
+  switch (sdType.underlying())
+    {
+    case BDSSDType::samplerplane:
+      {return samplerPlane; break;}
+    case BDSSDType::samplercylinder:
+      {return samplerCylinder; break;}
+    case BDSSDType::energydep:
+      {return eCounter; break;}
+    case BDSSDType::energydeptunnel:
+      {return tunnelECounter; break;}
+    case BDSSDType::energydepworld:
+      {return worldECounter; break;}
+    case BDSSDType::worldexit:
+      {return worldExit; break;}
+    case BDSSDType::worldcomplete:
+#if G4VERSION_NUMBER > 1029
+      {return worldCompleteSD; break;}
+#else
+      {return nullptr; break;}
+#endif
+    case BDSSDType::collimator:
+      {return collimatorSD; break;}
+    case BDSSDType::collimatorcomplete:
+      {return collimatorCompleteSD; break;}
+    default:
+      {return nullptr; break;}
+    }
 }

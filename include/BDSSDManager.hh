@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
+#include "BDSSDType.hh"
+
 #include "G4Version.hh"
 
 #include <map>
@@ -55,6 +57,9 @@ public:
   static BDSSDManager* Instance(); /// Singleton accessor.
 
   ~BDSSDManager();
+
+  /// Access a sensitive detector by the class enum.
+  G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType) const;
 
   /// SD for samplers (plane type).
   inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
