@@ -58,7 +58,9 @@ public:
 
   ~BDSSDManager();
 
-  /// Access a sensitive detector by the class enum.
+  /// Access a sensitive detector by the class enum. Default is a nullptr and also
+  /// in the case of Geant < 4.10.3 for world complete as requires multiple sensitive
+  /// detector. It's safe to set a nullptr to the SD of a logical volume.
   G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType) const;
 
   /// SD for samplers (plane type).

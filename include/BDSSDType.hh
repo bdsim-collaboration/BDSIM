@@ -25,6 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Type definition for sensitive detectors.
  * 
+ * Unlike the other class enum 'types' we don't need a determine type method
+ * as this enum is only used internally and not with user input yet.
+ * 
  * @author Laurie Nevay
  */
 
