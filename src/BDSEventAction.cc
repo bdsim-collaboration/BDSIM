@@ -218,14 +218,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // we infer this by seeing if there are any energy deposition hits at all - if there
   // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
   // may fool this..
-  if (energyCounterHits)
+  if (eCounterHits)
     {
-      if (energyCounterHits->entries() > 0)
+      if (eCounterHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
-  if (tunnelEnergyCounterHits)
+  if (eCounterTunnelHits)
     {
-      if (tunnelEnergyCounterHits->entries() > 0)
+      if (eCounterTunnelHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
   // we don't check the world energy hits here because the hits could be from
@@ -342,11 +342,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // loop over energy hits to connect trajectories
     if(sRangeToStore.size() != 0)
       {
-	G4int n_hit = energyCounterHits->entries();
+	G4int n_hit = eCounterHits->entries();
 	BDSEnergyCounterHit *hit;
 	for(G4int i=0;i<n_hit;i++)
 	  {
-	    hit = (*energyCounterHits)[i];
+	    hit = (*eCounterHits)[i];
 	    // G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
 	    double dS = hit->GetSHit();
 	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
