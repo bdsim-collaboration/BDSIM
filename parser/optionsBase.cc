@@ -236,6 +236,9 @@ OptionsBase::OptionsBase()
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  storeTrajectorySamplerID       = "";
+  storeTrajectoryELossSRange     = "";
+  
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
   storeSamplerCharge       = false;
