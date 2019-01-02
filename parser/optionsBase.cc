@@ -112,10 +112,6 @@ OptionsBase::OptionsBase()
   includeFringeFields  = true;
 
   yokeFields           = true;
-  sensitiveOuter       = true;
-  sensitiveBeamPipe    = true;
-  sensitiveTunnel      = true;
-  sensitiveVacuum      = false;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
@@ -211,13 +207,15 @@ OptionsBase::OptionsBase()
   killNeutrinos            = true;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
+  // hit generation
+  sensitiveOuter       = true;
+  sensitiveBeamPipe    = true;
+  sensitiveTunnel      = true;
+  sensitiveVacuum      = false;
+  
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  trajCutGTZ               = 1e99;  // minimum z position, so large default value
-  trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
-  trajConnect              = false; // connect disconnected trajectory trees
-  trajNoTransportation     = false;
-
+  
   storeCollimationInfo     = false;
   storeCollimatorHitsIons  = false;
   storeCollimatorHitsAll   = false;
@@ -232,10 +230,11 @@ OptionsBase::OptionsBase()
   storeElossPreStepKineticEnergy = false;
   storeElossModelID        = false;
   storeGeant4Data          = true;
-  storeTrajectory          = false;
-  storeTrajectoryDepth     = 1000000;
-  storeTrajectoryParticle   = "";
-  storeTrajectoryParticleID = "";
+  
+  storeTrajectory                = false;
+  storeTrajectoryDepth           = 1000000;
+  storeTrajectoryParticle        = "";
+  storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -244,17 +243,22 @@ OptionsBase::OptionsBase()
   storeSamplerMass         = false;
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;
+
+  trajCutGTZ               = 1e99;  // minimum z position, so large default value
+  trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
+  trajConnect              = false; // connect disconnected trajectory trees
+  trajNoTransportation     = false;
+  
   writePrimaries           = true;
   storeModel               = true;
 
   // circular options
   nturns                   = 1;
+  ptcOneTurnMapFileName    = "";
 
   printFractionEvents = 0.1;
   printFractionTurns  = 0.2;
-
-  ptcOneTurnMapFileName = "";
-
+  
   // visualisation
   nSegmentsPerCircle       = 50;
 

@@ -246,13 +246,7 @@ void Options::PublishMembers()
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumRange",                &Options::minimumRange);
-  publish("sensitiveOuter",              &Options::sensitiveOuter);
-  publish("sensitiveBeamlineComponents", &Options::sensitiveOuter); // backwards compatibility
-  publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
-  publish("sensitiveTunnel",             &Options::sensitiveTunnel);
-  publish("tunnelSensitive",             &Options::sensitiveTunnel);// backwards compatibility
-  publish("sensitiveVacuum",             &Options::sensitiveVacuum);
-  publish("sensitiveBLMs",               &Options::sensitiveBLMs);
+  
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);
   publish("prodCutPositrons",            &Options::prodCutPositrons);
@@ -291,12 +285,17 @@ void Options::PublishMembers()
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
 
+  // hit generation
+  publish("sensitiveOuter",              &Options::sensitiveOuter);
+  publish("sensitiveBeamlineComponents", &Options::sensitiveOuter); // backwards compatibility
+  publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
+  publish("sensitiveTunnel",             &Options::sensitiveTunnel);
+  publish("tunnelSensitive",             &Options::sensitiveTunnel);// backwards compatibility
+  publish("sensitiveVacuum",             &Options::sensitiveVacuum);
+  publish("sensitiveBLMs",               &Options::sensitiveBLMs);
+  
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
-  publish("trajConnect",                    &Options::trajConnect);
-  publish("trajCutGTZ",                     &Options::trajCutGTZ);
-  publish("trajCutLTR",                     &Options::trajCutLTR);
-  publish("trajNoTransportation",           &Options::trajNoTransportation);
 
   publish("storeCollimationInfo",           &Options::storeCollimationInfo);
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
@@ -312,14 +311,16 @@ void Options::PublishMembers()
   publish("storeElossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeGeant4Data",                &Options::storeGeant4Data);
+  
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
   publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
-  publish("storeTrajectorySamplerID"      , &Options::storeTrajectorySamplerID);
-  publish("storeTrajectoryELossSRange"    , &Options::storeTrajectoryELossSRange);
+  publish("storeTrajectorySamplerID",       &Options::storeTrajectorySamplerID);
+  publish("storeTrajectoryELossSRange",     &Options::storeTrajectoryELossSRange);
+
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
@@ -327,17 +328,22 @@ void Options::PublishMembers()
   publish("storeSamplerMass",               &Options::storeSamplerMass);
   publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);
   publish("storeSamplerIon",                &Options::storeSamplerIon);
+
+  publish("trajConnect",                    &Options::trajConnect);
+  publish("trajCutGTZ",                     &Options::trajCutGTZ);
+  publish("trajCutLTR",                     &Options::trajCutLTR);
+  publish("trajNoTransportation",           &Options::trajNoTransportation);
+
   publish("writePrimaries",                 &Options::writePrimaries);
   publish("storeModel",                     &Options::storeModel);
 
   // circular options
   publish("nturns",                   &Options::nturns);
+  publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
 
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
-
-  publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
