@@ -75,9 +75,10 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   output(outputIn),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
-  energyCounterCollID(-1),
-  tunnelEnergyCounterCollID(-1),
-  worldEnergyCounterCollID(-1),
+  eCounterID(-1),
+  eCounterVacuumID(-1),
+  eCounterTunnelID(-1),
+  eCounterWorldID(-1),
   worldExitCollID(-1),
   startTime(0),
   stopTime(0),
@@ -146,12 +147,13 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
-      samplerCollID_plane       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
-      samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
-      energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
-      tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      worldEnergyCounterCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
-      worldExitCollID           = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
+      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
+      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
+      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
+      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterVacuumSD()->GetName());
+      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
+      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
+      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
     }
   FireLaserCompton=true;
 
@@ -203,9 +205,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {hitsCylinder = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
 
   // energy deposition collections - eloss, tunnel hits
-  BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
-  BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
-  BDSEnergyCounterHitsCollection* worldEnergyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(worldEnergyCounterCollID));
+  typedef BDSEnergyCounterHitsCollection echc;
+  echc* eCounterHits       = (echc*)(HCE->GetHC(eCounterID));
+  echc* eCounterVacuumHits = (echc*)(HCE->GetHC(eCounterVacuumID));
+  echc* eCounterTunnelHits = (echc*)(HCE->GetHC(eCounterTunnelID));
+  echc* eCounterWorldHits  = (echc*)(HCE->GetHC(eCounterWorldID));
 
   // world exit hits
   BDSVolumeExitHitsCollection* worldExitHits = (BDSVolumeExitHitsCollection*)(HCE->GetHC(worldExitCollID));
