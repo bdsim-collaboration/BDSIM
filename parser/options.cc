@@ -301,6 +301,9 @@ void Options::PublishMembers()
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
   publish("storeCollimatorHitsAll",         &Options::storeCollimatorHitsAll);
   publish("storeEloss",                     &Options::storeEloss);
+  publish("storeElossHistograms",           &Options::storeElossHistograms);
+  publish("storeElossVacuum",               &Options::storeElossVacuum);
+  publish("storeElossTunnel",               &Options::storeElossTunnel);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);

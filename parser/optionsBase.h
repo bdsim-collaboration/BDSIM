@@ -254,6 +254,9 @@ namespace GMAD
     bool        storeCollimatorHitsIons;
     bool        storeCollimatorHitsAll;
     bool        storeEloss;
+    bool        storeElossHistograms;
+    bool        storeElossVacuum;
+    bool        storeElossTunnel;
     bool        storeElossWorld;
     bool        storeElossTurn;
     bool        storeElossLinks;

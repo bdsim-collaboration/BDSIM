@@ -220,6 +220,9 @@ OptionsBase::OptionsBase()
   storeCollimatorHitsIons  = false;
   storeCollimatorHitsAll   = false;
   storeEloss               = true;
+  storeElossHistograms     = true;
+  storeElossVacuum         = false;
+  storeElossTunnel         = false;
   storeElossWorld          = false;
   storeElossTurn           = false;
   storeElossLinks          = false;
