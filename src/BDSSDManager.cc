@@ -60,6 +60,15 @@ BDSSDManager::BDSSDManager()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
+  BDSGlobalConstants* g   = BDSGlobalConstants::Instance();
+  stopSecondaries         = g->StopSecondaries();
+  verbose                 = g->Verbose();
+  storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
+  storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
+  generateELossHits       = g->GenerateELossHits();
+  storeELossVacuum        = g->StoreELossVacuum();
+  storeELossWorld         = g->StoreELossWorld();
+  
   filters["primary"] = new BDSSDFilterPrimary("primary");
   filters["ion"]     = new BDSSDFilterIon("ion");
   BDSSDFilterOr* primaryOrIon = new BDSSDFilterOr("primary_or_ion");
@@ -80,9 +89,6 @@ BDSSDManager::BDSSDManager()
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
-
-  G4bool stopSecondaries = BDSGlobalConstants::Instance()->StopSecondaries();
-  G4bool verbose         = BDSGlobalConstants::Instance()->Verbose();
 
   eCounter = new BDSEnergyCounterSD("general", stopSecondaries, verbose);
   SDMan->AddNewDetector(eCounter);
@@ -114,11 +120,9 @@ BDSSDManager::BDSSDManager()
   collimatorCompleteSD->AddSD(collimatorSD);
   // set up a filter for the collimator sensitive detector - always store primary hits
   G4VSDFilter* filter = nullptr;
-  G4bool storeAll  = BDSGlobalConstants::Instance()->StoreCollimatorHitsAll();
-  G4bool storeIons = BDSGlobalConstants::Instance()->StoreCollimatorHitsIons();
-  if (storeAll)
+  if (storeCollimatorHitsAll)
     {filter = nullptr;} // no filter -> store all
-  else if (storeIons) // primaries plus ion fragments
+  else if (storeCollimatorHitsIons) // primaries plus ion fragments
     {filter = filters["primaryorion"];}
   else
     {filter = filters["primary"];} // just primaries
@@ -131,7 +135,8 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(collimatorCompleteSD);
 }
 
-G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType) const
+G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
+						      G4bool applyOptions) const
 {
   switch (sdType.underlying())
     {
@@ -142,13 +147,37 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType) co
     case BDSSDType::terminator:
       {return terminator; break;}
     case BDSSDType::energydep:
-      {return eCounter; break;}
+      {
+	if (applyOptions)
+	  {return generateELossHits ? eCounter : nullptr;}
+	else
+	  {return eCounter;}
+	break;
+      }
     case BDSSDType::energydepvacuum:
-      {return eCounterVacuum; break;}
+      {
+	if (applyOptions)
+	  {return storeELossVacuum ? eCounterVacuum : nullptr;}
+	else
+	  {return eCounterVacuum;}
+	break;
+      }
     case BDSSDType::energydeptunnel:
-      {return eCounterTunnel; break;}
+      {
+	if (applyOptions)
+	  {return storeELossTunnel ? eCounterVacuum : nullptr;}
+	else
+	  {return eCounterTunnel;}
+	break;
+      }
     case BDSSDType::energydepworld:
-      {return eCounterWorld; break;}
+      {
+	if (applyOptions)
+	  {return storeELossWorld ? eCounterWorld : nullptr;}
+	else
+	  {return eCounterWorld;}
+	break;
+      }
     case BDSSDType::worldexit:
       {return worldExit; break;}
     case BDSSDType::worldcomplete:

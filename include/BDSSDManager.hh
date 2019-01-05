@@ -60,8 +60,12 @@ public:
 
   /// Access a sensitive detector by the class enum. Default is a nullptr and also
   /// in the case of Geant < 4.10.3 for world complete as requires multiple sensitive
-  /// detector. It's safe to set a nullptr to the SD of a logical volume.
-  G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType) const;
+  /// detector. It's safe to set a nullptr to the SD of a logical volume. If applyOptions
+  /// is used, the correct SD will only be returned if required accoring to the options
+  /// in BDSGlobalConstants for storing hits. This way only hits are generated that are
+  /// required (cpu and memory efficient).
+  G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType,
+					  G4bool applyOptions = false) const;
 
   /// SD for samplers (plane type).
   inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
@@ -127,6 +131,17 @@ private:
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
+
+  /// @{ Cache of global constant option.
+  G4bool stopSecondaries;
+  G4bool verbose;
+  G4bool storeCollimatorHitsAll;
+  G4bool storeCollimatorHitsIons;
+  G4bool generateELossHits;
+  G4bool storeELossVacuum;
+  G4bool storeELossTunnel;
+  G4bool storeELossWorld;
+  /// @}
 };
 
 #endif
