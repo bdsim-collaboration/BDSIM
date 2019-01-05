@@ -52,10 +52,10 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
   G4bool storeGlobal     = globals->StoreELossGlobal();
-  G4bool storeTime       = globals->StoreElossTime();
-  G4bool storeStepLength = globals->StoreElossStepLength();
-  G4bool storePreStepKineticEnergy = globals->StoreElossPreStepKineticEnergy();
-  G4bool storeModelID    = globals->StoreElossModelID();
+  G4bool storeTime       = globals->StoreELossTime();
+  G4bool storeStepLength = globals->StoreELossStepLength();
+  G4bool storePreStepKineticEnergy = globals->StoreELossPreStepKineticEnergy();
+  G4bool storeModelID    = globals->StoreELossModelID();
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 

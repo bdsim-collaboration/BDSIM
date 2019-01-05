@@ -197,10 +197,10 @@ public:
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
-  inline G4bool   StoreElossTime()           const {return G4bool  (options.storeElossTime);}
-  inline G4bool   StoreElossStepLength()     const {return G4bool  (options.storeElossStepLength);}
-  inline G4bool   StoreElossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
-  inline G4bool   StoreElossModelID()        const {return G4bool  (options.storeElossModelID);}
+  inline G4bool   StoreELossTime()           const {return G4bool  (options.storeElossTime);}
+  inline G4bool   StoreELossStepLength()     const {return G4bool  (options.storeElossStepLength);}
+  inline G4bool   StoreELossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
+  inline G4bool   StoreELossModelID()        const {return G4bool  (options.storeElossModelID);}
   inline G4bool   StoreGeant4Data()          const {return G4bool  (options.storeGeant4Data);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
