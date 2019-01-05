@@ -192,6 +192,9 @@ public:
   inline G4bool   StoreCollimatorHitsIons()  const {return G4bool  (options.storeCollimatorHitsIons);}
   inline G4bool   StoreCollimatorHitsAll()   const {return G4bool  (options.storeCollimatorHitsAll);}
   inline G4bool   StoreELoss()               const {return G4bool  (options.storeEloss);}
+  inline G4bool   StoreELossHistograms()     const {return G4bool  (options.storeElossHistograms);}
+  inline G4bool   StoreELossVacuum()         const {return G4bool  (options.storeElossVacuum);}
+  inline G4bool   StoreELossTunnel()         const {return G4bool  (options.storeElossTunnel);}
   inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
@@ -265,6 +268,9 @@ public:
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
 
+  // options that are combinations of options.
+  inline G4bool GenerateELossHits() const {return G4bool(options.storeEloss || options.storeElossHistograms);}
+  
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}
