@@ -199,23 +199,20 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
   // samplers
-  BDSSamplerHitsCollection* SampHC = nullptr;
-  if(samplerCollID_plane >= 0)
-    {SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));}
-  
-  BDSSamplerHitsCollection* hitsCylinder = nullptr;
-  if(samplerCollID_cylin >= 0)
-    {hitsCylinder = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
+  typedef BDSSamplerHitsCollection shc;
+  shc* SampHC       = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane));
+  shc* hitsCylinder = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_cylin));
 
   // energy deposition collections - eloss, tunnel hits
   typedef BDSEnergyCounterHitsCollection echc;
-  echc* eCounterHits       = (echc*)(HCE->GetHC(eCounterID));
-  echc* eCounterVacuumHits = (echc*)(HCE->GetHC(eCounterVacuumID));
-  echc* eCounterTunnelHits = (echc*)(HCE->GetHC(eCounterTunnelID));
-  echc* eCounterWorldHits  = (echc*)(HCE->GetHC(eCounterWorldID));
+  echc* eCounterHits       = dynamic_cast<echc*>(HCE->GetHC(eCounterID));
+  echc* eCounterVacuumHits = dynamic_cast<echc*>(HCE->GetHC(eCounterVacuumID));
+  echc* eCounterTunnelHits = dynamic_cast<echc*>(HCE->GetHC(eCounterTunnelID));
+  echc* eCounterWorldHits  = dynamic_cast<echc*>(HCE->GetHC(eCounterWorldID));
 
   // world exit hits
-  BDSVolumeExitHitsCollection* worldExitHits = (BDSVolumeExitHitsCollection*)(HCE->GetHC(worldExitCollID));
+  typedef BDSVolumeExitHitsCollection vehc;
+  vehc* worldExitHits = dynamic_cast<vehc*>(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
