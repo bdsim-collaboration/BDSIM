@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSCollimatorSD.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -80,6 +81,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eCounterTunnelID(-1),
   eCounterWorldID(-1),
   worldExitCollID(-1),
+  collimatorCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -154,6 +156,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
       eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
       worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
+      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->GetCollimatorSD()->GetName());
     }
   FireLaserCompton=true;
 
@@ -232,6 +235,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // intended transport through air in part of the machine (a gap).
   // similarly, there could be ionisation of the vacuum gas without a real impact
   // so we don't check the vacuum energy deposition
+
+  // collimator hits if any
+  typedef BDSCollimatorHitsCollection chc;
+  chc* collimatorHits = dynamic_cast<chc*>(HCE->GetHC(collimatorCollID));
   
   // primary hits and losses from
   const BDSTrajectoryPoint* primaryHit  = nullptr;
