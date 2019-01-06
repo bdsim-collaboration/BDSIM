@@ -126,19 +126,18 @@ public:
   void RegisterSolid(G4VSolid* solid, G4bool internalCheck = false);
 
   /// Apply RegisterSolid() to a vector of solids
-  void RegisterSolid(std::vector<G4VSolid*> soilds);
+  void RegisterSolid(const std::vector<G4VSolid*>& soilds);
   
   /// Register a logical volume as belonging to this geometry component, which then becomes
   /// responsible for it. Note the container logical volume is automatically registered.
   void RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool internalCheck = false);
 
   /// Apply RegisterLogicalVolume() to a vector of logical volumes
-  void RegisterLogicalVolume(std::vector<G4LogicalVolume*> logicalVolumes);
-
-  /// Mark a volume as one that should be made sensitive. By default it is given the
-  /// general energy deposition sensitive detector but any can be assigned.
-  /// This method will also check and ensure that the sensitive logical volume is an already
-  /// registered logical volume with this geometry component.  
+  void RegisterLogicalVolume(const std::vector<G4LogicalVolume*>& logicalVolumes);
+  
+  /// Mark a volume as one that should be made sensitive. This method will also
+  /// check and ensure that the sensitive logical volume is an already registered
+  /// logical volume with this geometry component.  
   void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume,
 			       BDSSDType sensitivityType = BDSSDType::energydep);
 

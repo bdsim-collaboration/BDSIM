@@ -128,7 +128,7 @@ void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
 #endif
 }
 
-void BDSGeometryComponent::RegisterSolid(std::vector<G4VSolid*> solids)
+void BDSGeometryComponent::RegisterSolid(const std::vector<G4VSolid*>& solids)
 {
   for (auto solid : solids)
     {RegisterSolid(solid);}
@@ -166,7 +166,7 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume,
 #endif
 }
 
-void BDSGeometryComponent::RegisterLogicalVolume(std::vector<G4LogicalVolume*> logicalVolumes)
+void BDSGeometryComponent::RegisterLogicalVolume(const std::vector<G4LogicalVolume*>& logicalVolumes)
 {
   for (auto lv : logicalVolumes)
     {RegisterLogicalVolume(lv);}
