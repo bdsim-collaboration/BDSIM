@@ -25,16 +25,19 @@ G4Allocator<BDSCollimatorHit> BDSCollimatorHitAllocator;
 BDSCollimatorHit::BDSCollimatorHit():
   beamline(nullptr),
   collimatorIndex(0),
-  preStepPoint(G4ThreeVector()),
+  preStepPosition(G4ThreeVector()),
+  preStepMomentum(G4ThreeVector()),
   energyDepositionHit(nullptr)
 {;}
 
 BDSCollimatorHit::BDSCollimatorHit(const BDSBeamline*   beamlineIn,
 				   G4int                collimatorIndexIn,
-				   G4ThreeVector        preStepPointIn,
+				   const G4ThreeVector& preStepPositionIn,
+				   const G4ThreeVector& preStepMomentumIn,
 				   BDSEnergyCounterHit* energyDepositionHitIn):
   beamline(beamlineIn),
   collimatorIndex(collimatorIndexIn),
-  preStepPoint(preStepPointIn),
+  preStepPosition(preStepPositionIn),
+  preStepMomentum(preStepMomentumIn),
   energyDepositionHit(energyDepositionHitIn)
 {;}

@@ -42,7 +42,8 @@ public:
   BDSCollimatorHit();
   BDSCollimatorHit(const BDSBeamline*   beamlineIn,
 		   G4int                collimatorIndexIn,
-		   G4ThreeVector        preStepPointIn,
+		   const G4ThreeVector& preStepPositionIn,
+		   const G4ThreeVector& preStepMomentumIn,
 		   BDSEnergyCounterHit* energyDepositionHitIn);
 
   virtual ~BDSCollimatorHit(){;}
@@ -52,7 +53,8 @@ public:
 
   const BDSBeamline* beamline;   ///< Which beam line the collimator is in.
   G4int         collimatorIndex; ///< Index of collimator the hit is in.
-  G4ThreeVector preStepPoint;    ///< Local pre step point (z from centre of object).
+  G4ThreeVector preStepPosition; ///< Local pre step point (z from centre of object).
+  G4ThreeVector preStepMomentum; ///< Local pre step point momentum.
 
   /// Pointer to the externally created energy deposition hit for the step in the
   /// collimator this hit will correspond to.
