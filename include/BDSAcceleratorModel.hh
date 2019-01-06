@@ -68,7 +68,7 @@ public:
   inline G4VPhysicalVolume* WorldPV() const {return worldPV;}
 
   /// Register the main beam line set.
-  inline void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn) {mainBeamlineSet = setIn;}
+  void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn);
 
   /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
   void RegisterBeamlineSetExtra(G4String              name,
@@ -114,6 +114,10 @@ public:
   G4bool VolumeInSet(G4LogicalVolume* volume,
 		     G4String registryName);
 
+  /// Find a corresponding mass world beam line for a curvilinear (or bridge) beam
+  /// line from the registered beam line sets.
+  BDSBeamline* CorrespondingMassWorldBeamline(BDSBeamline* bl) const;
+
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -125,6 +129,12 @@ private:
 
   BDSBeamlineSet mainBeamlineSet;
   std::map<G4String, BDSBeamlineSet> extraBeamlines; ///< Extra beamlines.
+
+  /// Mapping from any curvilinear beam line to the corresponding mass world beam line.
+  std::map<BDSBeamline*, BDSBeamline*> clToMassWorldMap;
+
+  /// Utility function to apply mapping.
+  void MapBeamlineSet(const BDSBeamlineSet& setIn);
 
   BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
   BDSBeamline* placementBeamline;         ///< Placement beam line

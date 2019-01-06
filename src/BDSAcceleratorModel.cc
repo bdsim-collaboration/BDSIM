@@ -91,6 +91,12 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   instance = nullptr;
 }
 
+void BDSAcceleratorModel::RegisterBeamlineSetMain(const BDSBeamlineSet& setIn)
+{
+  mainBeamlineSet = setIn;
+  MapBeamlineSet(setIn);
+}
+
 void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String              name,
 						   const BDSBeamlineSet& setIn)
 {
@@ -98,6 +104,7 @@ void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String              name,
   if (search != extraBeamlines.end()) // already exists!
     {search->second.DeleteContents();} // delete pre-existing one for replacement
   extraBeamlines[name] = setIn;
+  MapBeamlineSet(setIn);
 }
 
 const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
@@ -152,4 +159,19 @@ G4bool BDSAcceleratorModel::VolumeInSet(G4LogicalVolume* volume,
       auto registry = volumeRegistries[registryName];
       return registry->find(volume) != registry->end();
     }
+}
+
+BDSBeamline* BDSAcceleratorModel::CorrespondingMassWorldBeamline(BDSBeamline* bl) const
+{
+  auto result = clToMassWorldMap.find(bl);
+  if (result != clToMassWorldMap.end())
+    { return result->second; }
+  else
+    { return nullptr; }
+}
+
+void BDSAcceleratorModel::MapBeamlineSet(const BDSBeamlineSet& setIn)
+{
+  clToMassWorldMap[setIn.curvilinearWorld]       = setIn.massWorld;
+  clToMassWorldMap[setIn.curvilinearBridgeWorld] = setIn.massWorld;
 }
