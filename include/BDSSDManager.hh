@@ -101,7 +101,10 @@ public:
   inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldECounter;}
 #endif
 
+  /// SD for collimator impact locations.
   inline BDSCollimatorSD* GetCollimatorSD() const {return collimatorSD;}
+
+  /// SD for collimator impacts + energy deposition at the same time in order.
   inline BDSMultiSensitiveDetectorOrdered* GetCollimatorCompleteSD() const {return collimatorCompleteSD;}
 
 private:

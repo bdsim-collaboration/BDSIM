@@ -42,6 +42,9 @@ class G4VHit;
  * This class creates BDSCollimatorHits for each collimator this SD is
  * attached to.
  * 
+ * This class is designed to work with BDSEnergyCounterSD in an ordered multi SD. If not,
+ * a nullptr will be stored for the energy deposition hit.
+ * 
  * @author Laurie Nevay
  */
 
