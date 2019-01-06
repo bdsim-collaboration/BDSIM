@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
+#include "BDSSDType.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -179,7 +180,7 @@ void BDSCollimatorJaw::Build()
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(leftJawLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(leftJawLV);}
+	{RegisterSensitiveVolume(leftJawLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* leftJawPV = new G4PVPlacement(nullptr,              // rotation
@@ -211,7 +212,7 @@ void BDSCollimatorJaw::Build()
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(rightJawLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(rightJawLV);}
+	{RegisterSensitiveVolume(rightJawLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* rightJawPV = new G4PVPlacement(nullptr,             // rotation
@@ -244,7 +245,7 @@ void BDSCollimatorJaw::Build()
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(collimatorLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(collimatorLV);}
+	{RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* collimatorPV = new G4PVPlacement(nullptr,                 // rotation
@@ -278,7 +279,7 @@ void BDSCollimatorJaw::Build()
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
       if (sensitiveVacuum)
-	{RegisterSensitiveVolume(vacuumLV);}
+	{RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
       
       G4PVPlacement* vacPV = new G4PVPlacement(nullptr,                 // rotation
 					       vacuumOffset,            // position

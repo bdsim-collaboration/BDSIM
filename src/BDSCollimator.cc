@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
+#include "BDSSDType.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -183,7 +184,7 @@ void BDSCollimator::Build()
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
   if (sensitiveOuter)
-    {RegisterSensitiveVolume(collimatorLV);}
+    {RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
                                             (G4ThreeVector)0,        // position
@@ -208,7 +209,7 @@ void BDSCollimator::Build()
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
       if (sensitiveVacuum)
-	{RegisterSensitiveVolume(vacuumLV);}
+	{RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
 
       G4PVPlacement *vacPV = new G4PVPlacement(colRotate,               // rotation
                                                (G4ThreeVector) 0,       // position
