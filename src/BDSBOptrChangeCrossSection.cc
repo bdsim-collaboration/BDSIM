@@ -37,7 +37,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 						       G4String name):
-  G4VBiasingOperator(name), fSetup(true), particleName(particleNameIn)
+  G4VBiasingOperator(name),
+  fSetup(true),
+  particleName(particleNameIn)
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
 
@@ -53,9 +55,6 @@ BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
 
 void BDSBOptrChangeCrossSection::StartRun()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // Setup stage:
   // Start by collecting processes under biasing, create needed biasing
   // operations and associate these operations to the processes:

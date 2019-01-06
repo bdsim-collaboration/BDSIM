@@ -129,9 +129,6 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
   
 void BDSBeamPipeInfo::CheckApertureInfo()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   switch (beamPipeType.underlying())
     {
     case BDSBeamPipeType::circular:

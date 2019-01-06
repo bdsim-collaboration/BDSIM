@@ -148,9 +148,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   emWillBeUsed(false),
   usingIons(false)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif 
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);

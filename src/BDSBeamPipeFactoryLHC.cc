@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipe.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 
 #include "globals.hh"                      // geant4 globals / types
@@ -48,10 +47,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
 						   G4double    beamPipeThicknessIn,
 						   G4Material* beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-   // clean up after last usage
+  // clean up after last usage
   CleanUp();
   
   // build the solids
@@ -158,9 +154,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String      nameIn,
 						   G4double      beamPipeThicknessIn,
 						   G4Material*   beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clean up after last usage
   CleanUp();
 

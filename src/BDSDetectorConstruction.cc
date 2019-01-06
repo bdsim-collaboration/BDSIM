@@ -144,7 +144,11 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
+  if (verbose || debug)
+    {
+      G4cout << __METHOD_NAME__
+	     << "starting accelerator geometry construction\n" << G4endl;
+    }
   
   // construct regions
   InitialiseRegions();
@@ -168,7 +172,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure
   ComponentPlacement(worldPV);
   
-  if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
+  if(verbose || debug)
+    {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
@@ -189,9 +194,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
 void BDSDetectorConstruction::InitialiseRegions()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
     {
       G4Region* region = new G4Region(G4String(r.name));
@@ -393,9 +395,6 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
 void BDSDetectorConstruction::BuildTunnel()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   const BDSBeamline* mainBeamLine = acceleratorModel->BeamlineMain();
   BDSBeamline* tunnelBeamline;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
@@ -407,9 +406,6 @@ void BDSDetectorConstruction::BuildTunnel()
 
 G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   std::vector<BDSExtentGlobal> extents;
 
   // These beamlines should always exist so are safe to access.
@@ -758,8 +754,6 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
-  if(debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
