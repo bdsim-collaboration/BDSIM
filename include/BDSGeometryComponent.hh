@@ -139,11 +139,12 @@ public:
   /// check and ensure that the sensitive logical volume is an already registered
   /// logical volume with this geometry component.  
   void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume,
-			       BDSSDType sensitivityType = BDSSDType::energydep);
+			       BDSSDType sensitivityType);
 
-  /// Apply RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume) to a vector of logical volumes
+  /// Apply RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume) to a
+  /// vector of logical volumes
   void RegisterSensitiveVolume(const std::vector<G4LogicalVolume*>& sensitiveVolumes,
-                               BDSSDType sensitivityType = BDSSDType::energydep);
+                               BDSSDType sensitivityType);
 
   /// Copy in a mapping of sensitive volumes to sensitive detectors.
   void RegisterSensitiveVolume(const std::map<G4LogicalVolume*, BDSSDType>& sensitiveVolumes);
