@@ -136,9 +136,9 @@ protected:
   BDSOutputROOTEventInfo*       evtInfo;    ///< Event information.
 
   std::vector<BDSOutputROOTEventCollimator*> collimators; ///< Collimator output struectures.
-  std::vector<std::string> collimatorNames; ///< Names of collimators in output structures.
-  G4int nCollimators;                       ///< Number of collimators in beam line.
-  std::vector<G4int> collimatorIndices;     ///< Indices in the beam line that are collimators.
+  std::vector<std::string>  collimatorNames;   ///< Names of collimators in output structures.
+  G4int                     nCollimators;      ///< Number of collimators in beam line.
+  std::vector<G4int>        collimatorIndices; ///< Indices in beam line that are collimators.
   std::map<G4String, G4int> collimatorIndicesByName; ///< Indices mapped to their name.
   
 private:
