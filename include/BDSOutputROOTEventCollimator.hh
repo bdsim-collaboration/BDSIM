@@ -21,7 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 class BDSCollimatorHit;
-class BDSTrajectoryPoint;
 #endif
 
 #include "TObject.h"
@@ -40,41 +39,42 @@ public:
   /// Default constructor for ROOT
   BDSOutputROOTEventCollimator();  
 
-  bool   interacted;
+  bool   primaryInteracted;
   bool   primaryStopped;
-  
-  double xIn;
-  double yIn;
-  double zIn;
-  double SIn;
-  double energyIn;
-  double xOut;
-  double yOut;
-  double zOut;
-  double SOut;
 
-  double energyDeposited; ///< Sum of energy deposits including weights.
+  int                 n;
+  std::vector<double> totalEnergy;
+  std::vector<double> energyDeposited;
+  std::vector<double> xIn;
+  std::vector<double> yIn;
+  std::vector<double> zIn;
+  std::vector<double> xpIn;
+  std::vector<double> ypIn;
+  std::vector<double> zpIn;
+  std::vector<double> T;
+  std::vector<double> weight;
+  std::vector<int>    partID;
+  std::vector<int>    turnNumber;
 
-  double impactParameterX;
-  double impactParameterY;
+  std::vector<double> impactParameterX;
+  std::vector<double> impactParameterY;
 
-  // optional
-  int n;
-  std::vector<float> energy;
-  std::vector<float> weight;
-  std::vector<int>   partID;
-  std::vector<float> z;           ///< Local z point for energy deposition.
-  std::vector<float> stepLength;
+  std::vector<bool>   isIon;
+  std::vector<int>    ionA;
+  std::vector<int>    ionZ;
 
-  // further optional coordinates
-  std::vector<float> x;
-  std::vector<float> y;
-  std::vector<float> T;       ///< Global time.
-  std::vector<int>   turn;
+  /// @{ These are not filled by default.
+  std::vector<int>    charge;
+  std::vector<double> kineticEnergy;
+  std::vector<double> mass;
+  std::vector<double> rigidity;
+  /// @}
+
+  double totalEnergyDeposited; ///< Sum of energy deposits including weights.
   
   virtual ~BDSOutputROOTEventCollimator();
 #ifndef __ROOTBUILD__
-  void Fill();
+  void Fill(const BDSCollimatorHit* hit);
 #endif
   virtual void Flush();
 

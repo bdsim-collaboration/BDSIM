@@ -19,27 +19,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventCollimator.hh"
 
 #ifndef __ROOTBUILD__
-//#include "BDSParticleCoords.hh"
+#include "BDSCollimatorHit.hh"
+#include "BDSEnergyCounterHit.hh"
 #endif
+
+#include <vector>
 
 ClassImp(BDSOutputROOTEventCollimator)
 
 BDSOutputROOTEventCollimator::BDSOutputROOTEventCollimator():
-  interacted(false),
+  primaryInteracted(false),
   primaryStopped(false),
-  xIn(0),
-  yIn(0),
-  zIn(0),
-  SIn(0),
-  energyIn(0),
-  xOut(0),
-  yOut(0),
-  zOut(0),
-  SOut(0),
-  energyDeposited(0),
-  impactParameterX(0),
-  impactParameterY(0),
-  n(0)
+  n(0),
+  totalEnergyDeposited(0)
 {;}
 
 BDSOutputROOTEventCollimator::~BDSOutputROOTEventCollimator()
@@ -47,33 +39,32 @@ BDSOutputROOTEventCollimator::~BDSOutputROOTEventCollimator()
 
 void BDSOutputROOTEventCollimator::Flush()
 {
-  interacted = false;
-  primaryStopped = false;
-  xIn = 0;
-  yIn = 0;
-  zIn = 0;
-  SIn = 0;
-  energyIn = 0;
-  xOut = 0;
-  yOut = 0;
-  zOut = 0;
-  SOut = 0;
-  energyDeposited = 0;
-  impactParameterX = 0;
-  impactParameterY = 0;
-  n = 0;
-  energy.clear();
+  primaryInteracted = false;
+  primaryStopped    = false;
+  n                 = 0;
+  xIn.clear();
+  yIn.clear();
+  zIn.clear();
+  xpIn.clear();
+  ypIn.clear();
+  zpIn.clear();
+  T.clear();
   weight.clear();
   partID.clear();
-  z.clear();
-  stepLength.clear();
-  x.clear();
-  y.clear();
-  T.clear();
-  turn.clear();
+  turnNumber.clear();
+  impactParameterX.clear();
+  impactParameterY.clear();
+  isIon.clear();
+  ionZ.clear();
+  ionA.clear();
+  charge.clear();
+  kineticEnergy.clear();
+  mass.clear();
+  rigidity.clear();
+  totalEnergyDeposited = 0;
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventCollimator::Fill()
+void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
 {;}
 #endif
