@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSCollimatorSD.hh"
@@ -98,16 +99,18 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
 
   // map the index to a collimator index
-  BDSBeamline* beamline = nullptr;
+  BDSBeamline* clBeamline = nullptr; // curvilinar beam line
+  BDSBeamline* mwBeamline = nullptr; // mass world beam line
   G4int beamlineIndex   = -1;
   G4int collimatorIndex = -1;
 
   if (theInfo)
     {
-      beamlineIndex = theInfo->GetBeamlineIndex();
-      beamline      = theInfo->GetBeamline();
+      beamlineIndex = theInfo->GetBeamlineIndex() - 1; // cl beam lines always have 1 more start and finish element
+      clBeamline    = theInfo->GetBeamline();
+      mwBeamline    = BDSAcceleratorModel::Instance()->CorrespondingMassWorldBeamline(clBeamline);
   
-      auto beamlineMap = mapping.find(beamline);
+      auto beamlineMap = mapping.find(mwBeamline);
       if (beamlineMap != mapping.end())
 	{
 	  const auto& indexMap = beamlineMap->second;
@@ -116,15 +119,15 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
       else
 	{// create map for this beam line
 	  std::map<G4int, G4int> indexMap;
-	  std::vector<G4int> collimatorIndices = beamline->GetIndicesOfCollimators();
+	  std::vector<G4int> collimatorIndices = mwBeamline->GetIndicesOfCollimators();
 	  for (G4int i = 0; i < (G4int)collimatorIndices.size(); i++)
-	    {indexMap[i] = collimatorIndices[i];}
-	  mapping[beamline] = indexMap;
-	  collimatorIndex = indexMap.at(beamlineIndex);
+	    {indexMap[collimatorIndices[i]] = i;}
+	  mapping[mwBeamline] = indexMap;
+	  collimatorIndex = indexMap.at(beamlineIndex); // cl beam line
 	}
     }
   
-  BDSCollimatorHit* hit = new BDSCollimatorHit(beamline,
+  BDSCollimatorHit* hit = new BDSCollimatorHit(mwBeamline,
 					       collimatorIndex,
 					       preStepPosLocal,
 					       preStepMomLocal,
