@@ -114,7 +114,6 @@ BDSOutputStructures::~BDSOutputStructures()
   delete beamOutput;
   delete optionsOutput;
   delete modelOutput;
-  delete primary;
   delete primaryGlobal;
   delete eLoss;
   delete eLossVacuum;
