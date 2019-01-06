@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
+class BDSCollimatorHit;
+typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;
@@ -114,6 +116,7 @@ public:
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
 		 const std::map<BDSTrajectory*, bool>& trajectories,
+		 const BDSCollimatorHitsCollection*    collimatorHits,
 		 const G4int                           turnsTaken);
 
   /// Close a file and open a new one.
@@ -201,6 +204,9 @@ private:
 
   /// Copy a set of trajectories to the output structure.
   void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
+
+  /// Fill collimator hits.
+  void FillCollimatorHits(const BDSCollimatorHitsCollection* hits);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);

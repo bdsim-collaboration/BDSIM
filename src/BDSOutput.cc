@@ -19,12 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSCollimatorHit.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
@@ -213,6 +215,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
+			  const BDSCollimatorHitsCollection*    collimatorHits,
 			  const G4int                           turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
@@ -250,6 +253,9 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (primaryLoss)
     {FillPrimaryLoss(primaryLoss);}
   FillTrajectories(trajectories);
+  if (collimatorHits)
+    {FillCollimatorHits(collimatorHits);}
+  
   WriteFileEventLevel();
   ClearStructuresEventLevel();
 }
@@ -446,10 +452,10 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     {return;}
   for (int i = 0; i < hits->entries(); i++)
     {
-      G4int samplerID = (*hits)[i]->samplerID;
+      const BDSSamplerHit* hit = (*hits)[i];
+      G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill((*hits)[i], storeSamplerCharge,
-                                    storeSamplerPolarCoords);
+      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords);
     }
 
   // extra information
@@ -599,6 +605,17 @@ void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajector
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
 #endif
   traj->Fill(trajectories);
+}
+
+void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits)
+{
+  G4int nHits = hits->entries();
+  for (G4int i = 0; i < nHits; i++)
+    {
+      BDSCollimatorHit* hit = (*hits)[i];
+      G4int collimatorIndex = hit->collimatorIndex;
+      collimators[collimatorIndex]->Fill(hit);
+    }
 }
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info)
