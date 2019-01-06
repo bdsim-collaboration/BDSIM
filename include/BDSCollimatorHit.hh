@@ -44,6 +44,7 @@ public:
 		   G4int                collimatorIndexIn,
 		   const G4ThreeVector& preStepPositionIn,
 		   const G4ThreeVector& preStepMomentumIn,
+		   G4double             totalEnergyIn,
 		   BDSEnergyCounterHit* energyDepositionHitIn);
 
   virtual ~BDSCollimatorHit(){;}
@@ -55,6 +56,7 @@ public:
   G4int         collimatorIndex; ///< Index of collimator the hit is in.
   G4ThreeVector preStepPosition; ///< Local pre step point (z from centre of object).
   G4ThreeVector preStepMomentum; ///< Local pre step point momentum.
+  G4double      totalEnergy;     ///< Total energy of particle.
 
   /// Pointer to the externally created energy deposition hit for the step in the
   /// collimator this hit will correspond to.

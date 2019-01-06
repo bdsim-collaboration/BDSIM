@@ -27,6 +27,7 @@ BDSCollimatorHit::BDSCollimatorHit():
   collimatorIndex(0),
   preStepPosition(G4ThreeVector()),
   preStepMomentum(G4ThreeVector()),
+  totalEnergy(0),
   energyDepositionHit(nullptr)
 {;}
 
@@ -34,10 +35,12 @@ BDSCollimatorHit::BDSCollimatorHit(const BDSBeamline*   beamlineIn,
 				   G4int                collimatorIndexIn,
 				   const G4ThreeVector& preStepPositionIn,
 				   const G4ThreeVector& preStepMomentumIn,
+				   G4double             totalEnergyIn,
 				   BDSEnergyCounterHit* energyDepositionHitIn):
   beamline(beamlineIn),
   collimatorIndex(collimatorIndexIn),
   preStepPosition(preStepPositionIn),
   preStepMomentum(preStepMomentumIn),
+  totalEnergy(totalEnergyIn),
   energyDepositionHit(energyDepositionHitIn)
 {;}

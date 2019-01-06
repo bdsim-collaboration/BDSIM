@@ -86,10 +86,13 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
 
   // get pre step point in local coordinates.
   BDSStep stepLocal = auxNavigator->ConvertToLocal(step);
+  G4StepPoint* preStepPoint = step->GetPreStepPoint();
   G4ThreeVector preStepPosLocal = stepLocal.PreStepPoint();
-  G4ThreeVector momGlobal       = step->GetPreStepPoint()->GetMomentumDirection();
+  G4ThreeVector momGlobal       = preStepPoint->GetMomentumDirection();
   // uses existing transform cached in aux navigator here
   G4ThreeVector preStepMomLocal = auxNavigator->ConvertAxisToLocal(momGlobal);
+
+  G4double totalEnergy = preStepPoint->GetTotalEnergy();
 
   // get which beam line it's in and the index
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
@@ -125,6 +128,7 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
 					       collimatorIndex,
 					       preStepPosLocal,
 					       preStepMomLocal,
+					       totalEnergy,
 					       lastHitEDep);
 
   collimatorCollection->insert(hit);
