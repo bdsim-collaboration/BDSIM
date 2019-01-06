@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
@@ -59,9 +60,6 @@ BDSOutputROOT::~BDSOutputROOT()
 
 void BDSOutputROOT::NewFile() 
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   G4String newFileName = GetNextFileName();
   
   theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
@@ -127,6 +125,16 @@ void BDSOutputROOT::NewFile()
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
                                  samplerTreeLocal,32000,0);
+    }
+
+  for (G4int i = 0; i < (G4int)collimators.size(); ++i)
+    {
+      auto collimatorLocal = collimators.at(i);
+      auto collimatorName  = collimatorNames.at(i);
+      // set the tree branches
+      theEventOutputTree->Branch((collimatorName+".").c_str(),
+				 "BDSOutputROOTEventCollimator",
+				 collimatorLocal,32000,0);
     }
 
   FillHeader(); // this fills and then calls WriteHeader() pure virtual implemented here
