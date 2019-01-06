@@ -17,9 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryBase.hh"
-
 #include "BDSColours.hh"
-#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
@@ -76,9 +74,6 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* beamPipeMaterialIn,
 						G4double    length)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   allSolids.push_back(vacuumSolid);
   allSolids.push_back(beamPipeSolid);
   /// build logical volumes
@@ -95,9 +90,6 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
 						 G4Material* vacuumMaterialIn,
 						 G4Material* beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // build the logical volumes
   vacuumLV   = new G4LogicalVolume(vacuumSolid,
 				   vacuumMaterialIn,

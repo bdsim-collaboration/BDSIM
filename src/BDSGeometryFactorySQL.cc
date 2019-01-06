@@ -532,10 +532,6 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
 
 G4LogicalVolume* BDSGeometryFactorySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int k)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   G4double lengthX;
   G4double lengthY;
   G4double lengthZ;

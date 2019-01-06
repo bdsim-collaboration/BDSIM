@@ -69,8 +69,6 @@ void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
 
 void SamplerAnalysis::CommonCtor()
 {
-  if(debug)
-    {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 
   //initialise a vector to store the coordinates of every event in a sampler
@@ -143,8 +141,6 @@ SamplerAnalysis::~SamplerAnalysis()
 
 void SamplerAnalysis::Initialise()
 {
-  if(debug)
-    {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 }
 

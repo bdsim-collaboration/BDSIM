@@ -42,9 +42,6 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   localToGlobalCL(G4AffineTransform()),
   volumeMargin(0.1*CLHEP::mm)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   numberOfInstances++;
 }
 

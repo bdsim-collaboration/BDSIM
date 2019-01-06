@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -174,9 +173,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
 							   G4double    beamPipeThickness,
 							   G4Material* beamPipeMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clean up after last usage
   CleanUp();
 
@@ -348,9 +344,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
 							   G4double      beamPipeThickness,
 							   G4Material*   beamPipeMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clean up after last usage
   CleanUp();
 
@@ -527,11 +520,7 @@ G4double BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      
 								  G4double      length,
 								  G4ThreeVector inputface,
 								  G4ThreeVector outputface)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
+{ 
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
   G4VSolid* vacCylSolid = new G4CutTubs(name + "_vacuum_cylinder",   // name
