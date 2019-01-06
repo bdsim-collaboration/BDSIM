@@ -150,6 +150,7 @@ void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 #else
       BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
 #endif
+      BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
     }
 }
 

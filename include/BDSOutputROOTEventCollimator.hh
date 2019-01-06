@@ -20,12 +20,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSOUTPUTROOTEVENTCOLLIMATOR_H
 
 #ifndef __ROOTBUILD__
+#include "G4Types.hh"
 class BDSCollimatorHit;
 #endif
 
 #include "TObject.h"
 
 #include <vector>
+
+class BDSOutputROOTGeant4Data;
 
 /**
  * @brief Data stored for each collimator per event.
@@ -75,8 +78,12 @@ public:
   virtual ~BDSOutputROOTEventCollimator();
 #ifndef __ROOTBUILD__
   void Fill(const BDSCollimatorHit* hit);
+  void FillExtras(G4bool fillIonInfo,
+		  G4bool fillAllExtras);
 #endif
   virtual void Flush();
+
+  static BDSOutputROOTGeant4Data* particleTable;
 
   ClassDef(BDSOutputROOTEventCollimator, 1);
 };
