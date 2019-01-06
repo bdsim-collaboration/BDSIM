@@ -77,8 +77,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   energyDepositedVacuum(0),
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
-  energyWorldExit(0),
-  nCollimators(0)
+  energyWorldExit(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
@@ -126,6 +125,7 @@ void BDSOutput::InitialiseGeometryDependent()
   PrepareCollimatorInformation();
   CreateHistograms();
   InitialiseSamplers();
+  InitialiseCollimators();
 }
 
 void BDSOutput::FillHeader()
@@ -172,8 +172,6 @@ void BDSOutput::FillModel()
       modelOutput->Fill(collimatorIndices, collimatorIndicesByName);
       WriteModel();
       ClearStructuresModel();
-      collimatorIndices.clear();
-      collimatorIndicesByName.clear();
     }
 }
 

@@ -21,12 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <map>
 #include <string>
 #include <vector>
 
 // forward declarations
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
+class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCoords;
 class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHeader;
@@ -58,6 +60,14 @@ protected:
 
   /// Construct samplers.
   void InitialiseSamplers();
+
+  /// Extract number of collimators and their names from beam line. Two stage
+  /// initialisation for collimators so histograms can be made if required or
+  /// not based on number of collimators.
+  void PrepareCollimatorInformation();
+
+  /// Construct collimtors.
+  void InitialiseCollimators();
 
   /// Clear the local geant4 data structure.
   void ClearStructuresGeant4Data();
@@ -124,6 +134,12 @@ protected:
   BDSOutputROOTEventTrajectory* traj;       ///< Trajectories.
   BDSOutputROOTEventHistograms* evtHistos;  ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;    ///< Event information.
+
+  std::vector<BDSOutputROOTEventCollimator*> collimators; ///< Collimator output struectures.
+  std::vector<std::string> collimatorNames; ///< Names of collimators in output structures.
+  G4int nCollimators;                       ///< Number of collimators in beam line.
+  std::vector<G4int> collimatorIndices;     ///< Indices in the beam line that are collimators.
+  std::map<G4String, G4int> collimatorIndicesByName; ///< Indices mapped to their name.
   
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry
@@ -131,6 +147,9 @@ private:
   /// should only prepare the local samplers once, hence this cache variable.
   G4bool localSamplersInitialised;
 
+  /// Whether we've setup the member vector of collimators. Similary to localSamplersInitialised.
+  G4bool localCollimatorsInitialised;
+  
   ///@{ Unused default constructors
   BDSOutputStructures() = delete;
   BDSOutputStructures(const BDSOutputStructures&) = delete;

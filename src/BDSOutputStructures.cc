@@ -16,12 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
@@ -42,10 +46,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <map>
+#include <string>
 #include <vector>
 
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
-  localSamplersInitialised(false)
+  nCollimators(0),
+  localSamplersInitialised(false),
+  localCollimatorsInitialised(false)
 {
   G4bool storeCollimatorInfo = globals->StoreCollimationInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
@@ -120,6 +128,10 @@ BDSOutputStructures::~BDSOutputStructures()
   delete evtInfo;
   delete runHistos;
   delete runInfo;
+  for (auto sampler : samplerTrees)
+    {delete sampler;}
+  for (auto collimator : collimators)
+    {delete collimator;}
 }
 
 G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
@@ -157,6 +169,34 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
+void BDSOutputStructures::PrepareCollimatorInformation()
+{
+  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  collimatorIndices = flatBeamline->GetIndicesOfCollimators();
+  nCollimators = (G4int)collimatorIndices.size();
+  
+  for (auto index : collimatorIndices)
+    {collimatorIndicesByName[flatBeamline->at(index)->GetName()] = index;}
+}
+
+void BDSOutputStructures::InitialiseCollimators()
+{
+  const std::string collimatorPrefix = "COLL_";
+  if (!localCollimatorsInitialised)
+    {
+      localCollimatorsInitialised = true;
+      const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+      for (auto index : collimatorIndices)
+	{
+	  const BDSBeamlineElement* el = flatBeamline->at(index);
+	  // use the 'placement' name for a unique name (with copynumer included)
+	  std::string collimatorName = collimatorPrefix + el->GetPlacementName();
+	  collimatorNames.push_back(collimatorName);
+	  collimators.push_back(new BDSOutputROOTEventCollimator());
+	}
+    }
+}
+
 void BDSOutputStructures::ClearStructuresGeant4Data()
 {
   geant4DataOutput->Flush();
@@ -184,9 +224,16 @@ void BDSOutputStructures::ClearStructuresOptions()
 
 void BDSOutputStructures::ClearStructuresEventLevel()
 {
-  // loop over sampler map and clear vectors
-  for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
-    {(*i)->Flush();}
+  localSamplersInitialised    = false;
+  localCollimatorsInitialised = false;
+  for (auto sampler : samplerTrees)
+    {sampler->Flush();}
+  for (auto collimator : collimators)
+    {collimator->Flush();}
+  collimatorNames.clear();
+  nCollimators = 0;
+  collimatorIndices.clear();
+  collimatorIndicesByName.clear();
   primaryGlobal->Flush();
   eLoss->Flush();
   eLossVacuum->Flush();
