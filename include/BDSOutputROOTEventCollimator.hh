@@ -58,7 +58,8 @@ public:
   std::vector<double> T;
   std::vector<double> weight;
   std::vector<int>    partID;
-  std::vector<int>    turnNumber;
+  std::vector<int>    parentID;
+  std::vector<int>    turn;
 
   std::vector<double> impactParameterX;
   std::vector<double> impactParameterY;
@@ -68,7 +69,7 @@ public:
   std::vector<int>    ionZ;
 
   /// Different length set of turn number.
-  std::set<int>       turnNumberSet;
+  std::set<int>       turnSet;
 
   /// @{ These are not filled by default.
   std::vector<int>    charge;

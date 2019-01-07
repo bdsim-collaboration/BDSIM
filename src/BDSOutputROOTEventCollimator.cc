@@ -62,13 +62,14 @@ void BDSOutputROOTEventCollimator::Flush()
   T.clear();
   weight.clear();
   partID.clear();
-  turnNumber.clear();
+  parentID.clear();
+  turn.clear();
   impactParameterX.clear();
   impactParameterY.clear();
   isIon.clear();
   ionZ.clear();
   ionA.clear();
-  turnNumberSet.clear();
+  turnSet.clear();
   charge.clear();
   kineticEnergy.clear();
   mass.clear();
@@ -103,9 +104,10 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
       T.push_back(eHit->GetGlobalTime() / CLHEP::ns);
       weight.push_back(w);
       partID.push_back(eHit->GetPartID());
+      parentID.push_back(eHit->GetParentID());
       G4int tn = eHit->GetTurnsTaken();
-      turnNumber.push_back(tn);
-      turnNumberSet.insert(tn);
+      turn.push_back(tn);
+      turnSet.insert(tn);
     }
 }
 
@@ -156,7 +158,6 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 	    }
         }
     }
-
 }
 
 #endif
