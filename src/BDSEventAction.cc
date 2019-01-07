@@ -253,7 +253,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   if (storeTrajectory && trajCont)
   {
-
     TrajectoryVector* trajVec = trajCont->GetVector();
 
 #ifdef BDSDEBUG

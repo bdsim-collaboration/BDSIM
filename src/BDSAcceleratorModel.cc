@@ -166,9 +166,9 @@ BDSBeamline* BDSAcceleratorModel::CorrespondingMassWorldBeamline(BDSBeamline* bl
 {
   auto result = clToMassWorldMap.find(bl);
   if (result != clToMassWorldMap.end())
-    { return result->second; }
+    {return result->second;}
   else
-    { return nullptr; }
+    {return nullptr;}
 }
 
 void BDSAcceleratorModel::MapBeamlineSet(const BDSBeamlineSet& setIn)
