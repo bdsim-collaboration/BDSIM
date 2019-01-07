@@ -61,9 +61,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 const std::set<G4String> BDSOutput::protectedNames = {
-  "Event", "Histos", "Info", "Primary", "PrimaryGlobal", "Eloss",
-  "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit", "ElossWorld",
-  "ElossWorldExit", "Trajectory"
+  "Event", "Histos", "Info", "Primary", "PrimaryGlobal",
+  "Eloss", "ElossVacuum", "ElossWorld", "ElossWorldExit",
+  "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit", "Trajectory"
 };
 
 BDSOutput::BDSOutput(G4String baseFileNameIn,
