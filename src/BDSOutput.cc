@@ -87,9 +87,10 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
-  storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
+  storeCollimatorLinks    = g->StoreCollimatorLinks();
+  // automatically store ion info if generating ion hits
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
-  storeCollimationInfo    = g->StoreCollimationInfo();
+  storeCollimatorInfo     = g->StoreCollimatorInfo();
   storeGeant4Data         = g->StoreGeant4Data();
   storeModel              = g->StoreModel();
   storeSamplerPolarCoords = g->StoreSamplerPolarCoords();
@@ -402,7 +403,7 @@ void BDSOutput::CreateHistograms()
 							 binedges);
     }
 
-  if (storeCollimationInfo && nCollimators > 0)
+  if (storeCollimatorInfo && nCollimators > 0)
     {
       histIndices1D["CollimatorPhitsPE"] = Create1DHistogram("CollimatorPhitsPE",
 							     "Primary Hits per Collimator",
@@ -562,7 +563,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	}
     }
 
-  if (storeCollimationInfo && nCollimators > 0 && (lossType == BDSOutput::LossType::energy))
+  if (storeCollimatorInfo && nCollimators > 0 && (lossType == BDSOutput::LossType::energy))
     {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
 }
 
@@ -586,7 +587,7 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
   runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   
-  if (storeCollimationInfo && nCollimators > 0)
+  if (storeCollimatorInfo && nCollimators > 0)
     {CopyFromHistToHist1D("PhitsPE", "CollimatorPhitsPE", collimatorIndices);}
 }
 
@@ -599,7 +600,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
   runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
   evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
 
-  if (storeCollimationInfo && nCollimators > 0)
+  if (storeCollimatorInfo && nCollimators > 0)
     {CopyFromHistToHist1D("PlossPE", "CollimatorPlossPE", collimatorIndices);}
 }
 
@@ -633,10 +634,10 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     }
   
   // if required loop over collimators and get them to calculate and fill extra information
-  if (storeCollimatorHitsAll || storeCollimatorHitsIons)
+  if (storeCollimatorLinks || storeCollimatorHitsIons)
     {
       for (auto collimator : collimators)
-	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorHitsAll);}
+	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorLinks);}
     }
 }
 

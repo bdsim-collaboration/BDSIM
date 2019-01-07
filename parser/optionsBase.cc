@@ -216,7 +216,8 @@ OptionsBase::OptionsBase()
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
   
-  storeCollimationInfo     = false;
+  storeCollimatorInfo      = false;
+  storeCollimatorLinks     = false;
   storeCollimatorHitsIons  = false;
   storeCollimatorHitsAll   = false;
   storeEloss               = true;

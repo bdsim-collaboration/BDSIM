@@ -188,7 +188,8 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
-  inline G4bool   StoreCollimationInfo()     const {return G4bool  (options.storeCollimationInfo);}
+  inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
+  inline G4bool   StoreCollimatorLinks()     const {return G4bool  (options.storeCollimatorLinks);}
   inline G4bool   StoreCollimatorHitsIons()  const {return G4bool  (options.storeCollimatorHitsIons);}
   inline G4bool   StoreCollimatorHitsAll()   const {return G4bool  (options.storeCollimatorHitsAll);}
   inline G4bool   StoreELoss()               const {return G4bool  (options.storeEloss);}

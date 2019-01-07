@@ -84,7 +84,7 @@ public:
 #ifndef __ROOTBUILD__
   void Fill(const BDSCollimatorHit* hit);
   void FillExtras(G4bool fillIonInfo,
-		  G4bool fillAllExtras);
+		  G4bool fillLinks);
 
   /// Setter for one off flag per event.
   inline void SetPrimaryStopped(G4bool primaryStoppedIn) {primaryStopped = primaryStoppedIn;}

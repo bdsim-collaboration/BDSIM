@@ -112,12 +112,12 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
 }
 
 void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
-					      G4bool fillAllExtras)
+					      G4bool fillLinks)
 {
   if (!particleTable)
     {return;}
 
-  if (!(fillIonInfo || fillAllExtras))
+  if (!(fillIonInfo || fillLinks))
     {return;}
   
   for (int i = 0; i < n; ++i)
@@ -132,7 +132,7 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 	      ionA.push_back(ionInfo.a);
 	      ionZ.push_back(ionInfo.z);
 	    }
-	  if (fillAllExtras)
+	  if (fillLinks)
 	    {
 	      charge.push_back(ionInfo.charge);
 	      mass.push_back(ionInfo.mass);
@@ -149,7 +149,7 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 	      ionA.push_back(0);
 	      ionZ.push_back(0);
 	    }
-	  if (fillAllExtras)
+	  if (fillLinks)
 	    {
 	      charge.push_back(pInfo.charge);
 	      mass.push_back(pInfo.mass);

@@ -241,9 +241,9 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
-  G4bool storeCollimatorHitsAll;
+  G4bool storeCollimatorLinks;
   G4bool storeCollimatorHitsIons;
-  G4bool storeCollimationInfo;
+  G4bool storeCollimatorInfo;
   G4bool storeGeant4Data;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;

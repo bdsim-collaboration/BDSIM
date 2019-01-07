@@ -297,7 +297,8 @@ void Options::PublishMembers()
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
 
-  publish("storeCollimationInfo",           &Options::storeCollimationInfo);
+  publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
+  publish("storeCollimatorLinks",           &Options::storeCollimatorLinks);
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
   publish("storeCollimatorHitsAll",         &Options::storeCollimatorHitsAll);
   publish("storeEloss",                     &Options::storeEloss);

@@ -55,7 +55,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   localSamplersInitialised(false),
   localCollimatorsInitialised(false)
 {
-  G4bool storeCollimatorInfo = globals->StoreCollimationInfo();
+  G4bool storeCollimatorInfo = globals->StoreCollimatorInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
