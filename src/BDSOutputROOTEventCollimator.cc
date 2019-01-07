@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #endif
 
+#include <set>
 #include <vector>
 
 class BDSOutputROOTGeant4Data;
@@ -67,6 +68,7 @@ void BDSOutputROOTEventCollimator::Flush()
   isIon.clear();
   ionZ.clear();
   ionA.clear();
+  turnNumberSet.clear();
   charge.clear();
   kineticEnergy.clear();
   mass.clear();
@@ -101,7 +103,9 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
       T.push_back(eHit->GetGlobalTime() / CLHEP::ns);
       weight.push_back(w);
       partID.push_back(eHit->GetPartID());
-      turnNumber.push_back(eHit->GetTurnsTaken());
+      G4int tn = eHit->GetTurnsTaken();
+      turnNumber.push_back(tn);
+      turnNumberSet.insert(tn);
     }
 }
 

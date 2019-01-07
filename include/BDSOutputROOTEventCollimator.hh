@@ -26,6 +26,7 @@ class BDSCollimatorHit;
 
 #include "TObject.h"
 
+#include <set>
 #include <vector>
 
 class BDSOutputROOTGeant4Data;
@@ -66,6 +67,9 @@ public:
   std::vector<int>    ionA;
   std::vector<int>    ionZ;
 
+  /// Different length set of turn number.
+  std::set<int>       turnNumberSet;
+
   /// @{ These are not filled by default.
   std::vector<int>    charge;
   std::vector<double> kineticEnergy;
@@ -80,6 +84,7 @@ public:
   void Fill(const BDSCollimatorHit* hit);
   void FillExtras(G4bool fillIonInfo,
 		  G4bool fillAllExtras);
+  
 #endif
   virtual void Flush();
 
