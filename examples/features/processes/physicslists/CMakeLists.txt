@@ -38,6 +38,7 @@ simple_testing_long(physics-qgsp-bic-hp       "--file=qgsp_bic_hp.gmad"         
 simple_testing_long(physics-shielding         "--file=shielding.gmad"              ${OVERLAP_CHECK})
 simple_testing(physics-stopping               "--file=stopping.gmad"               ${OVERLAP_CHECK})
 simple_testing(physics-synch-rad              "--file=synch_rad.gmad"              ${OVERLAP_CHECK})
+simple_testing(physics-verbose                "--file=em_verbose.gmad"             ${OVERLAP_CHECK})
 
 if (G4_MINOR_VERSION GREATER 1)
   simple_testing(physics-alias-spindecay   "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
