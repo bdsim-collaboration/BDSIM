@@ -118,6 +118,15 @@ public:
   /// line from the registered beam line sets.
   BDSBeamline* CorrespondingMassWorldBeamline(BDSBeamline* bl) const;
 
+  /// Return whether a beam line is a mass world beam line. If in the unlikely event the
+  /// beam line isn't registered, false is returned by default.
+  G4bool BeamlineIsMassWorld(BDSBeamline* bl) const;
+
+  /// Update a beam line pointer and index if required for the equivalent ones in the mass
+  /// world beam line. If the beam line supplied is a mass world one, nothing is done.
+  void MassWorldBeamlineAndIndex(BDSBeamline*& bl,
+				 G4int&        index) const;
+
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -132,6 +141,10 @@ private:
 
   /// Mapping from any curvilinear beam line to the corresponding mass world beam line.
   std::map<BDSBeamline*, BDSBeamline*> clToMassWorldMap;
+
+  /// Map from beam line pointer to whether that beam line object is a mass world one,
+  /// i.e. not a curvilinear or bridge one. 'TF' for true false.
+  std::map<BDSBeamline*, G4bool> massWorldMapTF;
 
   /// Utility function to apply mapping.
   void MapBeamlineSet(const BDSBeamlineSet& setIn);

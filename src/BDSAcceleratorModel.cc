@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
@@ -172,6 +173,33 @@ BDSBeamline* BDSAcceleratorModel::CorrespondingMassWorldBeamline(BDSBeamline* bl
 
 void BDSAcceleratorModel::MapBeamlineSet(const BDSBeamlineSet& setIn)
 {
+  clToMassWorldMap[setIn.massWorld]              = setIn.massWorld;
   clToMassWorldMap[setIn.curvilinearWorld]       = setIn.massWorld;
   clToMassWorldMap[setIn.curvilinearBridgeWorld] = setIn.massWorld;
+
+  massWorldMapTF[setIn.massWorld]              = true;
+  massWorldMapTF[setIn.curvilinearWorld]       = false;
+  massWorldMapTF[setIn.curvilinearBridgeWorld] = false;
+  if (setIn.endPieces) // optional 'beam line'
+    {massWorldMapTF[setIn.endPieces] = false;}
+}
+
+G4bool BDSAcceleratorModel::BeamlineIsMassWorld(BDSBeamline* bl) const
+{
+  return BDS::MapGetWithDefault(massWorldMapTF, bl, false);
+}
+
+void BDSAcceleratorModel::MassWorldBeamlineAndIndex(BDSBeamline*& bl,
+						    G4int& index) const
+{
+  if (!BeamlineIsMassWorld(bl))
+    {
+      // update pointer to mass world beam line
+      bl = clToMassWorldMap.at(bl);
+      // for both the curvilinear and curvilinear bridge worlds, there is one
+      // extra element, so we decrement the index by one here to get the index
+      // in the mass world.
+      if (index > 0) // shouldn't happen, but we shouldn't make it < 0
+	{index--;}
+    } // else leave unchanged..
 }
