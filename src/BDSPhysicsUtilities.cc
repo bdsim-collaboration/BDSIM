@@ -99,7 +99,16 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	}
     }
   else
-    {return new BDSModularPhysicsList(physicsList);}
+    {
+      BDSModularPhysicsList* result = new BDSModularPhysicsList(physicsList);
+#ifdef BDSDEBUG
+      result->Print();
+#else
+      if (BDSGlobalConstants::Instance()->Verbose())
+	{result->Print();}
+#endif
+      return result;
+    }
 }
 
 void BDS::ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,

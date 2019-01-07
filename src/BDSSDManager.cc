@@ -90,16 +90,16 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
 
-  eCounter = new BDSEnergyCounterSD("general", stopSecondaries, verbose);
+  eCounter = new BDSEnergyCounterSD("general", stopSecondaries);
   SDMan->AddNewDetector(eCounter);
 
-  eCounterVacuum = new BDSEnergyCounterSD("vacuum", stopSecondaries, verbose);
+  eCounterVacuum = new BDSEnergyCounterSD("vacuum", stopSecondaries);
   SDMan->AddNewDetector(eCounterVacuum);
 
-  eCounterTunnel = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
+  eCounterTunnel = new BDSEnergyCounterSD("tunnel", stopSecondaries);
   SDMan->AddNewDetector(eCounterTunnel);
 
-  eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries, verbose);
+  eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries);
   SDMan->AddNewDetector(eCounterWorld);
 
   worldExit= new BDSVolumeExitSD("worldExit", true);
