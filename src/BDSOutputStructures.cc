@@ -229,10 +229,6 @@ void BDSOutputStructures::ClearStructuresEventLevel()
     {sampler->Flush();}
   for (auto collimator : collimators)
     {collimator->Flush();}
-  collimatorNames.clear();
-  nCollimators = 0;
-  collimatorIndices.clear();
-  collimatorIndicesByName.clear();
   primaryGlobal->Flush();
   eLoss->Flush();
   eLossVacuum->Flush();
