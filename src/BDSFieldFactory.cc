@@ -246,7 +246,11 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.t*CLHEP::s),
 					    G4bool(definition.autoScale),
 					    fieldLimit);
-
+      if (BDSGlobalConstants::Instance()->Verbose())
+        {
+          G4cout << "Definition: \"" << definition.name << "\"" << G4endl;
+          G4cout << *info << G4endl;
+        }
       parserDefinitions[G4String(definition.name)] = info;
     }
 }
