@@ -623,11 +623,15 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     }
 
   // identify whether the primary loss point was in a collimator
-  G4int lossPointBLInd = primaryLossPoint->GetBeamLineIndex(); // always the mass world index
-  auto result = std::find(collimatorIndices.begin(), collimatorIndices.end(), lossPointBLInd);
-  if (result != collimatorIndices.end())
-    {collimators[(int)(result - collimatorIndices.begin())]->SetPrimaryStopped(true);}
-
+  // only do if there's a beam line, ie finished in a beam line
+  if (primaryLossPoint->GetBeamLine())
+    {
+      G4int lossPointBLInd = primaryLossPoint->GetBeamLineIndex(); // always the mass world index
+      auto result = std::find(collimatorIndices.begin(), collimatorIndices.end(), lossPointBLInd);
+      if (result != collimatorIndices.end())
+        {collimators[(int) (result - collimatorIndices.begin())]->SetPrimaryStopped(true);}
+    }
+  
   // if required loop over collimators and get them to calculate and fill extra information
   if (storeCollimatorHitsAll || storeCollimatorHitsIons)
     {
