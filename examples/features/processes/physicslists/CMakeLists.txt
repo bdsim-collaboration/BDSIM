@@ -112,7 +112,7 @@ simple_testing(physics-alias-synchrad    "--file=alias_synchrad.gmad"     ${OVER
 
 #incompatible physics lists
 simple_fail(physics-g4-incorrect      "--file=g4_incorrect.gmad"       ${OVERLAP_CHECK})
-simple_fail(physics-incompatible-1    "--file=incomaptible1.gmad"      ${OVERLAP_CHECK})
-simple_fail(physics-incompatible-2    "--file=incomaptible2.gmad"      ${OVERLAP_CHECK})
-simple_fail(physics-incompatible-3    "--file=incomaptible3.gmad"      ${OVERLAP_CHECK})
+simple_fail(physics-incompatible-1    "--file=incompatible1.gmad"      ${OVERLAP_CHECK})
+simple_fail(physics-incompatible-2    "--file=incompatible2.gmad"      ${OVERLAP_CHECK})
+simple_fail(physics-incompatible-3    "--file=incompatible3.gmad"      ${OVERLAP_CHECK})
 
