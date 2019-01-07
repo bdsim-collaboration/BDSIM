@@ -345,6 +345,11 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
 	}
     }
 
+  // convert meanP back to meanE
+  double m2 = std::pow(particleMass,2);
+  double meanP = optical[2][6];
+  optical[2][6] = std::sqrt(std::pow(meanP,2) + m2);
+
   //Write out the correlation x-y coefficient to the output as a metrix of horizontal-vertical coupling
   //Writen only to the x vector, but 0 is added to y and z vectors to keep all vector sizes the same
   optical[0][24]=cenMoms[0][2][1][1]/std::sqrt(cenMoms[0][2][2][0]*cenMoms[0][2][0][2]);
