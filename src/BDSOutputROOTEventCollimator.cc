@@ -117,7 +117,7 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
   if (!particleTable)
     {return;}
 
-  if (!fillIonInfo || !fillAllExtras)
+  if (!(fillIonInfo || fillAllExtras))
     {return;}
   
   for (int i = 0; i < n; ++i)
