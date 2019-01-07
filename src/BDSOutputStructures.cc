@@ -223,8 +223,6 @@ void BDSOutputStructures::ClearStructuresOptions()
 
 void BDSOutputStructures::ClearStructuresEventLevel()
 {
-  localSamplersInitialised    = false;
-  localCollimatorsInitialised = false;
   for (auto sampler : samplerTrees)
     {sampler->Flush();}
   for (auto collimator : collimators)
