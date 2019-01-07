@@ -90,7 +90,7 @@ void BDSIntegratorEulerOld::AdvanceChord(const G4double       h,
 {
   // determine effective curvature
   G4double localAMag = localA.mag();
-  if(BDS::IsFinite(localAMag))
+  if (BDS::IsFiniteStrength(localAMag))
     {
       // chord distance (simple quadratic approx)
       G4double h2 = h*h;

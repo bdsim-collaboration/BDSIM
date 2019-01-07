@@ -58,7 +58,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   const G4double fcof = eqOfM->FCof();
   
   // In case of zero field or neutral particles do a linear step:
-  if (zeroStrength || !BDS::IsFinite(fcof))
+  if (zeroStrength || !BDS::IsFiniteStrength(fcof))
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);

@@ -11,7 +11,18 @@ simpleCollimation: line = (fodoRaw,fodoCol);
 use,period=simpleCollimation;
 sample, all;
 
-option, ngenerate=5,
+option, useScoringMap=1,
+	nbinsx=50,
+	nbinsy=50,
+	nbinsz=10,
+	xmin = -2*m,
+	xmax = 2*m,
+	ymin = -2*m,
+	ymax = 2*m,
+	zmin = 0,
+	zmax = 5*m;
+
+option, ngenerate=10,
 	physicsList="em",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.1*cm,
@@ -20,9 +31,7 @@ option, ngenerate=5,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-    	buildTunnel=1,
-	checkOverlaps=1,
-	storeTrajectories=1;
+    	buildTunnel=1;
 
 beam, particle="e-",
       energy=1.0*GeV,
@@ -35,3 +44,4 @@ beam, particle="e-",
       alfy=0.0,
       X0=0.000,
       Y0=0.000;
+

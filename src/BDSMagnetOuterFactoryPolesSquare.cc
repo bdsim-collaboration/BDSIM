@@ -63,9 +63,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(const G4Strin
 								   const G4double& magnetContainerLength,
 								   const G4double& magnetContainerRadiusIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // square yoke - have to do subtraction between two solid boxes
   G4VSolid* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 				  yokeFinishRadius,           // x half width
@@ -153,9 +150,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 							    G4Colour*   colour,
 							    G4Material* outerMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
