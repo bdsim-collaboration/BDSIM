@@ -1,0 +1,3 @@
+include sc2.gmad;
+
+option, storeCollimatorHitsAll=1;
