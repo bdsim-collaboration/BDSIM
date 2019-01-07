@@ -84,6 +84,9 @@ public:
   void Fill(const BDSCollimatorHit* hit);
   void FillExtras(G4bool fillIonInfo,
 		  G4bool fillAllExtras);
+
+  /// Setter for one off flag per event.
+  inline void SetPrimaryStopped(G4bool primaryStoppedIn) {primaryStopped = primaryStoppedIn;}
   
 #endif
   virtual void Flush();

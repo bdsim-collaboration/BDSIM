@@ -53,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 
+#include <algorithm>
 #include <cmath>
 #include <ostream>
 #include <set>
@@ -86,15 +87,17 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
-  storeCollimationInfo = g->StoreCollimationInfo();
-  storeGeant4Data      = g->StoreGeant4Data();
-  storeModel           = g->StoreModel();
-  storeSamplerPolarCoords   = g->StoreSamplerPolarCoords();
-  storeSamplerCharge   = g->StoreSamplerCharge();
+  storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
+  storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
+  storeCollimationInfo    = g->StoreCollimationInfo();
+  storeGeant4Data         = g->StoreGeant4Data();
+  storeModel              = g->StoreModel();
+  storeSamplerPolarCoords = g->StoreSamplerPolarCoords();
+  storeSamplerCharge      = g->StoreSamplerCharge();
   storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
-  storeSamplerMass     = g->StoreSamplerMass();
-  storeSamplerRigidity = g->StoreSamplerRigidity();
-  storeSamplerIon      = g->StoreSamplerIon();
+  storeSamplerMass        = g->StoreSamplerMass();
+  storeSamplerRigidity    = g->StoreSamplerRigidity();
+  storeSamplerIon         = g->StoreSamplerIon();
 
   // polar coords don't require a look up of any other PDG info so it
   // doesn't need to involved in the following optimisation groupings
@@ -255,7 +258,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillPrimaryLoss(primaryLoss);}
   FillTrajectories(trajectories);
   if (collimatorHits)
-    {FillCollimatorHits(collimatorHits);}
+    {FillCollimatorHits(collimatorHits, primaryLoss);}
   
   WriteFileEventLevel();
   ClearStructuresEventLevel();
@@ -608,14 +611,28 @@ void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajector
   traj->Fill(trajectories);
 }
 
-void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits)
+void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
+				   const BDSTrajectoryPoint* primaryLossPoint)
 {
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)
     {
       BDSCollimatorHit* hit = (*hits)[i];
-      G4int collimatorIndex = hit->collimatorIndex;
+      G4int collimatorIndex = hit->collimatorIndex;      
       collimators[collimatorIndex]->Fill(hit);
+    }
+
+  // identify whether the primary loss point was in a collimator
+  G4int lossPointBLInd = primaryLossPoint->GetBeamLineIndex(); // always the mass world index
+  auto result = std::find(collimatorIndices.begin(), collimatorIndices.end(), lossPointBLInd);
+  if (result != collimatorIndices.end())
+    {collimators[(int)(result - collimatorIndices.begin())]->SetPrimaryStopped(true);}
+
+  // if required loop over collimators and get them to calculate and fill extra information
+  if (storeCollimatorHitsAll || storeCollimatorHitsIons)
+    {
+      for (auto collimator : collimators)
+	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorHitsAll);}
     }
 }
 

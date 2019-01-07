@@ -206,7 +206,8 @@ private:
   void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
 
   /// Fill collimator hits.
-  void FillCollimatorHits(const BDSCollimatorHitsCollection* hits);
+  void FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
+			  const BDSTrajectoryPoint* primaryLossPoint);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
@@ -240,6 +241,8 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
+  G4bool storeCollimatorHitsAll;
+  G4bool storeCollimatorHitsIons;
   G4bool storeCollimationInfo;
   G4bool storeGeant4Data;
   G4bool storeModel;
