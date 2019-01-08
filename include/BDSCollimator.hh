@@ -44,13 +44,18 @@ public:
 		G4Material* vacuumMaterial,
 		G4double    xApertureIn    = 0,
 		G4double    yApertureIn    = 0,
-		G4double    xOutApertureIn = 0,
-		G4double    yOutApertureIn = 0,
+		G4double    xApertureOutIn = 0,
+		G4double    yApertureOutIn = 0,
 		G4Colour*   colourIn       = nullptr);
   virtual ~BDSCollimator();
 
-  /// Accessor for collimator material.
+  /// @{ Accessor.
   virtual G4String Material() const;
+  virtual G4double XApertureIn()  const {return xAperture;}
+  virtual G4double XApertureOut() const {return xApertureOut;}
+  virtual G4double YApertureIn()  const {return yAperture;}
+  virtual G4double YApertureOut() const {return yApertureOut;}
+  /// @}
 
 protected:
   virtual void Build();
@@ -72,8 +77,8 @@ protected:
   G4Material* vacuumMaterial;     ///< Vacuum material.
   G4double    xAperture;          ///< Aperture at entrance in x dimension.
   G4double    yAperture;          ///< Aperture at entrance in y dimension.
-  G4double    xOutAperture;       ///< Aperture at exit in x dimension.
-  G4double    yOutAperture;       ///< Aperture at exit in y dimension.
+  G4double    xApertureOut;       ///< Aperture at exit in x dimension.
+  G4double    yApertureOut;       ///< Aperture at exit in y dimension.
   G4bool      tapered;            ///< Flag for tapered collimator.
   G4Colour*   colour;             ///< Colour of collimator.
 

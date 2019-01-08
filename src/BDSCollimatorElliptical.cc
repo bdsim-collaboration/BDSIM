@@ -30,22 +30,22 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String    name,
 						 G4Material* vacuumMaterial,
 						 G4double    xAperture,
 						 G4double    yAperture,
-						 G4double    xOutAperture,
-						 G4double    yOutAperture,
+						 G4double    xApertureOut,
+						 G4double    yApertureOut,
 						 G4Colour*   colour):
   BDSCollimator(name, length, horizontalWidth, "ecol",
 		collimatorMaterial, vacuumMaterial,
-		xAperture, yAperture,xOutAperture, yOutAperture, colour)
+		xAperture, yAperture,xApertureOut, yApertureOut, colour)
 {;}
 
 void BDSCollimatorElliptical::BuildInnerCollimator()
 {
   if (tapered)
     {
-      G4double zmax = chordLength * (xOutAperture + xAperture) / xAperture;
+      G4double zmax = chordLength * (xApertureOut + xAperture) / xAperture;
 
-      G4double xhalf = 0.5 * (xOutAperture + xAperture);
-      G4double yhalf = 0.5 * (yOutAperture + yAperture);
+      G4double xhalf = 0.5 * (xApertureOut + xAperture);
+      G4double yhalf = 0.5 * (yApertureOut + yAperture);
 
       innerSolid  = new G4EllipticalCone(name + "_inner_solid",    // name
                                          xhalf / zmax,             // Major axis of largest ellipse

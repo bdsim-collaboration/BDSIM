@@ -43,8 +43,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
 			     G4Material* vacuumMaterialIn,
 			     G4double    xApertureIn,
 			     G4double    yApertureIn,
-			     G4double    xOutApertureIn,
-			     G4double    yOutApertureIn,
+			     G4double    xApertureOutIn,
+			     G4double    yApertureOutIn,
 			     G4Colour*   colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   horizontalWidth(horizontalWidthIn),
@@ -52,8 +52,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   vacuumMaterial(vacuumMaterialIn),
   xAperture(xApertureIn),
   yAperture(yApertureIn),
-  xOutAperture(xOutApertureIn),
-  yOutAperture(yOutApertureIn),
+  xApertureOut(xApertureOutIn),
+  yApertureOut(yApertureOutIn),
   colour(colourIn)
 {
   if (!BDS::IsFinite(horizontalWidth))
@@ -68,26 +68,26 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
       exit(1);
     }
 
-  if ((xOutAperture > 0.5 * horizontalWidth) || (yOutAperture > 0.5 * horizontalWidth))
+  if ((xApertureOut > 0.5 * horizontalWidth) || (yApertureOut > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture exit bigger than width!" << G4endl;
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
-      G4cerr << "x aperture " << xOutAperture << " mm, y aperture " << yOutAperture << " mm" << G4endl;
+      G4cerr << "x aperture " << xApertureOut << " mm, y aperture " << yApertureOut << " mm" << G4endl;
       exit(1);
     }
 
-  if (BDS::IsFinite(xOutAperture) && (xAperture <= 0))
+  if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
     {
       G4cout << __METHOD_NAME__
              << "Warning - no entrance aperture set for collimator - exit aperture parameters will be ignored"
              << G4endl;
     }
 
-  if (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture) && BDS::IsFinite(xAperture) &&
+  if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
       BDS::IsFinite(yAperture))
     {
-      if ((xOutAperture / yOutAperture) != (xAperture / yAperture))
+      if ((xApertureOut / yApertureOut) != (xAperture / yAperture))
         {
           G4cout << __METHOD_NAME__ << "Warning - X/Y half axes ratio at entrance and exit apertures are not equal"
                  << G4endl;
@@ -98,7 +98,7 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   innerSolid      = nullptr;
   vacuumSolid     = nullptr;
 
-  tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
+  tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
 
   if (!colour)
     {colour = BDSColours::Instance()->GetColour("collimator");}
@@ -133,12 +133,12 @@ void BDSCollimator::Build()
 
   // Swap variables around if exit size is larger than entrance size
   // Rotation for tapered collimator (needed for tapered elliptical collimator)
-  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
+  G4bool isOutLarger = ((xApertureOut > xAperture) && (yApertureOut > yAperture));
   G4RotationMatrix* colRotate;
   if (tapered && isOutLarger)
     {
-      std::swap(xAperture,xOutAperture);
-      std::swap(yAperture,yOutAperture);
+      std::swap(xAperture,xApertureOut);
+      std::swap(yAperture,yApertureOut);
       colRotate = new G4RotationMatrix;
       colRotate->rotateX(CLHEP::pi);
       RegisterRotationMatrix(colRotate);
