@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RebdsimTypes.hh"
 
+class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -43,7 +44,8 @@ class Event
 {
 public:
   Event();
-  Event(bool debugIn,
+  Event(int  dataVersionIn,
+	bool debugIn,
 	bool processSamplersIn = false);
   void CommonCtor();
   virtual ~Event();
@@ -64,13 +66,15 @@ public:
 #ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double>* GetSampler(const std::string& name);
 #else
-  BDSOutputROOTEventSampler<float>* GetSampler(const std::string& name);
+  BDSOutputROOTEventSampler<float>*  GetSampler(const std::string& name);
 #endif
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>* GetSampler(const int& index);
+  BDSOutputROOTEventSampler<double>* GetSampler(int index);
 #else
-  BDSOutputROOTEventSampler<float>* GetSampler(const int& index);
+  BDSOutputROOTEventSampler<float>*  GetSampler(int index);
 #endif
+  BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
+  BDSOutputROOTEventCollimator*      GetCollimator(int index);
   /// @}
 
   /// Whether there is primary data in the output file.
@@ -81,7 +85,8 @@ public:
   void SetBranchAddress(TTree* t,
 			const RBDS::VectorString* samplerNames     = nullptr,
 			bool                      allBranchesOn    = false,
-			const RBDS::VectorString* branchesToTurnOn = nullptr);
+			const RBDS::VectorString* branchesToTurnOn = nullptr,
+			const RBDS::VectorString* collimatorNames  = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
@@ -101,6 +106,7 @@ public:
 #endif
   BDSOutputROOTEventHistograms* Histos;
   BDSOutputROOTEventInfo*       Info;
+  std::vector<BDSOutputROOTEventCollimator*> collimators;
   /// @}
 
   std::vector<std::string> samplerNames;
@@ -110,12 +116,23 @@ public:
   std::map<std::string, BDSOutputROOTEventSampler<float>* >  samplerMap;
 #endif
 
-private:
-  ClassDef(Event,1);
+  std::vector<std::string> collimatorNames;
+  std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
 
+private:
+  /// @{ Utility function to avoid repetition of code.
+  void SetBranchAddressCollimators(TTree* t,
+				   const RBDS::VectorString* collimatorNames);
+  void SetBranchAddressCollimatorSingle(TTree* t,
+					const std::string& name);
+  /// @}
+  
+  int  dataVersion     = 0;
   bool debug           = false;
   bool processSamplers = false;
   bool usePrimaries    = false;
+
+  ClassDef(Event, 2);
 };
 
 #endif

@@ -80,6 +80,7 @@ public:
   std::vector<std::string>   GetTreeNames()      {return treeNames;};
   std::vector<std::string>   GetBranchNames()    {return branchNames;}
   std::vector<std::string>   GetSamplerNames()   {return samplerNames;}
+  std::vector<std::string>   GetCollimatorNames(){return collimatorNames;}
   Header*                    GetHeader()         {return hea;}
   Geant4Data*                GetGeant4Data()     {return g4d;}
   Beam*                      GetBeam()           {return bea;}
@@ -113,10 +114,11 @@ private:
   Event*      evt;
   Run*        run;
 
-  std::vector<std::string>    fileNames;
-  std::vector<std::string>    treeNames;
-  std::vector<std::string>    branchNames;  // non-sampler branch names
-  std::vector<std::string>    samplerNames; // sampler branch names
+  std::vector<std::string> fileNames;
+  std::vector<std::string> treeNames;
+  std::vector<std::string> branchNames;  // non-sampler branch names
+  std::vector<std::string> samplerNames; // sampler branch names
+  std::vector<std::string> collimatorNames;
 
   TChain* heaChain;
   TChain* g4dChain;

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Event.hh"
 #include "RebdsimTypes.hh"
 
+#include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -32,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(Event)
 
 Event::Event():
+  dataVersion(0),
   debug(false),
   processSamplers(false),
   usePrimaries(false)
@@ -39,8 +41,10 @@ Event::Event():
   CommonCtor();
 }
 
-Event::Event(bool debugIn,
+Event::Event(int  dataVersionIn,
+	     bool debugIn,
 	     bool processSamplersIn):
+  dataVersion(dataVersionIn),
   debug(debugIn),
   processSamplers(processSamplersIn)
 {
@@ -59,6 +63,8 @@ Event::~Event()
   delete Info;
   for (auto s : Samplers)
     {delete s;}
+  for (auto c : collimators)
+    {delete c;}
 }
 
 void Event::CommonCtor()
@@ -91,9 +97,9 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(const std::string& name)
 }
 
 #ifdef __ROOTDOUBLE__
-BDSOutputROOTEventSampler<double>* Event::GetSampler(const int& index)
+BDSOutputROOTEventSampler<double>* Event::GetSampler(int index)
 #else
-BDSOutputROOTEventSampler<float>* Event::GetSampler(const int& index)
+BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
 #endif
 {
   if (index > (int) Samplers.size())
@@ -102,10 +108,11 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(const int& index)
     {return Samplers[index];}
 }
 
-void Event::SetBranchAddress(TTree *t,
+void Event::SetBranchAddress(TTree* t,
 			     const RBDS::VectorString* samplerNamesIn,
 			     bool                      allBranchesOn,
-			     const RBDS::VectorString* branchesToTurnOn)
+			     const RBDS::VectorString* branchesToTurnOn,
+			     const RBDS::VectorString* collimatorNamesIn)
 {
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
@@ -140,6 +147,9 @@ void Event::SetBranchAddress(TTree *t,
       t->SetBranchAddress("Histos.", &Histos);
       t->SetBranchAddress("TunnelHit.", &TunnelHit);
       t->SetBranchAddress("Trajectory.", &Trajectory);
+
+      if (dataVersion > 3)
+	{SetBranchAddressCollimators(t, collimatorNamesIn);}
     }
   else if (branchesToTurnOn)
     {
@@ -161,6 +171,8 @@ void Event::SetBranchAddress(TTree *t,
 	    {t->SetBranchAddress("TunnelHit.", &TunnelHit);}
 	  else if (name == "Trajectory")
 	    {t->SetBranchAddress("Trajectory.", &Trajectory);}
+	  else if (name.substr(0,4) == "COLL")
+	    {SetBranchAddressCollimatorSingle(t, name);}
 	}
     }
 
@@ -197,4 +209,30 @@ void Event::SetBranchAddress(TTree *t,
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNamesIn)[i] << " " << Samplers[i] << std::endl;}
 	}
     }
+}
+
+
+void Event::SetBranchAddressCollimators(TTree* t,
+					const RBDS::VectorString* collimatorNamesIn)
+{
+  if (collimatorNamesIn)
+    {
+      for (const auto& name : *collimatorNamesIn)
+	{
+	  collimators.resize((unsigned int)collimatorNamesIn->size());
+	  SetBranchAddressCollimatorSingle(t, name);
+	}
+    }
+}
+
+void Event::SetBranchAddressCollimatorSingle(TTree* t,
+					     const std::string& name)
+{
+  auto col = new BDSOutputROOTEventCollimator;
+  collimators.push_back(col);
+  collimatorNames.push_back(name);
+  collimatorMap[name] = col;
+
+  t->SetBranchAddress(name.c_str(), &collimators.back());
+  t->SetBranchStatus((name+"*").c_str(), 1);
 }

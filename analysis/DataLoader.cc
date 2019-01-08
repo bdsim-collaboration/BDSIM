@@ -147,7 +147,7 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       fileDataVersion = new int();
       (*fileDataVersion) = 0;
     }
-  for(const auto& fn : fileNamesTemp)
+  for (const auto& fn : fileNamesTemp)
     {
       if (backwardsCompatible)
 	{fileNames.push_back(fn);} // don't check if header -> old files don't have this
@@ -214,7 +214,8 @@ void DataLoader::BuildEventBranchNameList()
   Model* modTemporary = new Model();
   modTemporary->SetBranchAddress(mt);
   mt->GetEntry(0);
-  samplerNames = modTemporary->SamplerNames(); // copy sampler names out
+  samplerNames    = modTemporary->SamplerNames(); // copy sampler names out
+  collimatorNames = modTemporary->CollimatorNames();
   
   f->Close();
   delete f;
@@ -262,7 +263,7 @@ void DataLoader::SetBranchAddress(bool allOn,
       if (bToTurnOn->find("Event.") != bToTurnOn->end())
 	{evtBranches = &(*bToTurnOn).at("Event.");}
     }
-  evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches);
+  evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches, &collimatorNames);
 
   const RBDS::VectorString* runBranches = nullptr;
   if (bToTurnOn)
