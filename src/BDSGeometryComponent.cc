@@ -390,6 +390,8 @@ void BDSGeometryComponent::AttachSensitiveDetectors()
   BDSSDManager* sdm = BDSSDManager::Instance();
   for (auto mapping : sensitivity)
     {mapping.first->SetSensitiveDetector(sdm->SensitiveDetector(mapping.second, !overrideSensitivity));}
+  for (auto daughter : allDaughters)
+    {daughter->AttachSensitiveDetectors();}
 }
 
 void BDSGeometryComponent::ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv)
