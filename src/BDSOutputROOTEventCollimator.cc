@@ -100,18 +100,22 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
   zpIn.push_back(mom.z() / CLHEP::rad);
 
   // calculate impact parameters - note done in output units (as is info object)
-  G4double impactX = xIn.back() - info.offsetX;
-  G4double impactY = yIn.back() - info.offsetY;
+  G4double impactX = std::abs(xIn.back() - info.offsetX);
+  G4double impactY = std::abs(yIn.back() - info.offsetY);
   G4double impactZ = zIn.back();
 
   // interpolate aperture to that point
   G4double zFromStart = -0.5*info.length - impactZ;
+  if (zFromStart < 0 )
+    {zFromStart = 0;} // sometimes rounding problems
   G4double fraction   = zFromStart / info.length;
   G4double xAperAtZ = info.xSizeIn + differences.first  * fraction;
   G4double yAperAtZ = info.ySizeIn + differences.second * fraction;
 
-  impactX -= xAperAtZ;
-  impactY -= yAperAtZ;
+  // impact parameter is absolute
+  impactX = impactX - xAperAtZ;
+  impactY = impactY - yAperAtZ;
+
   if (BDS::IsFinite(info.tilt))
     {
       G4TwoVector impactPos(impactX, impactY);
