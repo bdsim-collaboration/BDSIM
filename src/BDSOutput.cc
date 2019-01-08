@@ -177,7 +177,10 @@ void BDSOutput::FillModel()
 {
   if (storeModel)
     {
-      modelOutput->Fill(collimatorIndices, collimatorIndicesByName);
+      modelOutput->Fill(collimatorIndices,
+			collimatorIndicesByName,
+			collimatorInfo,
+			collimatorNames);
       WriteModel();
       ClearStructuresModel();
     }

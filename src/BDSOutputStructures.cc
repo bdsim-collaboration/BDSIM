@@ -170,7 +170,7 @@ void BDSOutputStructures::InitialiseSamplers()
 
 void BDSOutputStructures::PrepareCollimatorInformation()
 {
-  const std::string collimatorPrefix = "COLL_";
+  const G4String collimatorPrefix = "COLL_";
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   collimatorIndices = flatBeamline->GetIndicesOfCollimators();
   nCollimators = (G4int)collimatorIndices.size();
@@ -180,7 +180,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
       // prepare output structure name
       const BDSBeamlineElement* el = flatBeamline->at(index);
       // use the 'placement' name for a unique name (with copynumer included)
-      std::string collimatorName = collimatorPrefix + el->GetPlacementName();
+      G4String collimatorName = collimatorPrefix + el->GetPlacementName();
       collimatorNames.push_back(collimatorName);
       collimatorIndicesByName[el->GetName()]          = index;
       collimatorIndicesByName[el->GetPlacementName()] = index;

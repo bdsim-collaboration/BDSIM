@@ -136,20 +136,25 @@ void BDSOutputROOTEventModel::Flush()
   nCollimators = 0;
   collimatorInfo.clear();
   storeCollimatorInfo = false;
+  collimatorBranchNamesUnique.clear();
 }
 
 #ifndef __ROOTBUILD__
 BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
-    n(0),
-    storeCollimatorInfo(storeCollimatorInfoIn)
+  n(0),
+  storeCollimatorInfo(storeCollimatorInfoIn)
 {;}
 
 void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
 				   const std::map<G4String, G4int>& collimatorIndicesByNameIn,
-				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn)
+				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
+				   const std::vector<G4String>& collimatorBranchNamesIn)
 {  
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {samplerNamesUnique.push_back(std::string(name)+".");}
+
+  for (const auto& name : collimatorBranchNamesIn)
+    {collimatorBranchNamesUnique.push_back((std::string)name + ".");}
   
   // get accelerator model
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();

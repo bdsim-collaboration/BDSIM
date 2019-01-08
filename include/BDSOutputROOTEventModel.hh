@@ -125,6 +125,9 @@ public:
 
   bool storeCollimatorInfo;
 
+  /// Vector of all collimator branch names in event tree used to load data.
+  std::vector<std::string> collimatorBranchNamesUnique;
+  
   /// Default constructor
   BDSOutputROOTEventModel();
   /// Destructor
@@ -137,10 +140,11 @@ public:
 #ifndef __ROOTBUILD__
   /// Constructor for whether to store collimator information or not.
   BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn);
-  /// Fill root output
+  /// Fill root output.
   virtual void Fill(const std::vector<G4int>& collimatorIndicesIn = {},
 		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {},
-		    const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn = {});
+		    const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn = {},
+		    const std::vector<G4String>& collimatorBranchNamesIn = {});
 #endif
 
   ClassDef(BDSOutputROOTEventModel,3);
