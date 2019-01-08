@@ -102,7 +102,7 @@ BDSOutputROOTEventSampler<double>* Event::GetSampler(int index)
 BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
 #endif
 {
-  if (index > (int) Samplers.size())
+  if (index >= (int) Samplers.size())
     {return nullptr;}
   else
     {return Samplers[index];}
@@ -125,7 +125,7 @@ BDSOutputROOTEventCollimator* Event::GetCollimator(const std::string& name)
 
 BDSOutputROOTEventCollimator* Event::GetCollimator(int index)
 {
-  if (index > (int) collimators.size())
+  if (index >= (int) collimators.size())
     {return nullptr;}
   else
     {return collimators[index];}
