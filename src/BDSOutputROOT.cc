@@ -127,6 +127,7 @@ void BDSOutputROOT::NewFile()
                                  samplerTreeLocal,32000,0);
     }
 
+  // build collimator structures
   for (G4int i = 0; i < (G4int)collimators.size(); ++i)
     {
       auto collimatorLocal = collimators.at(i);

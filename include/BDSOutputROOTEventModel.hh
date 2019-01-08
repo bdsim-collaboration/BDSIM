@@ -139,7 +139,8 @@ public:
   BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn);
   /// Fill root output
   virtual void Fill(const std::vector<G4int>& collimatorIndicesIn = {},
-		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {});
+		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {},
+		    const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn = {});
 #endif
 
   ClassDef(BDSOutputROOTEventModel,3);
