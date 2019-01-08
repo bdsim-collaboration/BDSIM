@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // forward declarations
@@ -142,6 +143,9 @@ protected:
   std::vector<G4int>        collimatorIndices; ///< Indices in beam line that are collimators.
   std::map<G4String, G4int> collimatorIndicesByName; ///< Indices mapped to their name.
   std::vector<BDSOutputROOTEventCollimatorInfo> collimatorInfo; ///< Collimator parameters.
+  /// Cache of aperture differences for each collimator info to avoid repeated calculation and
+  /// to avoid storing unncessary output in the collimator info.
+  std::vector<std::pair<G4double, G4double> >   collimatorDifferences;
   
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry
