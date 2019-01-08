@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSOUTPUTROOTEVENTCOLLIMATOR_H
 
 #ifndef __ROOTBUILD__
+#include "BDSOutputROOTEventCollimatorInfo.hh"
 #include "G4Types.hh"
 class BDSCollimatorHit;
 #endif
@@ -27,6 +28,7 @@ class BDSCollimatorHit;
 #include "TObject.h"
 
 #include <set>
+#include <utility>
 #include <vector>
 
 class BDSOutputROOTGeant4Data;
@@ -87,7 +89,9 @@ public:
   
   virtual ~BDSOutputROOTEventCollimator();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSCollimatorHit* hit);
+  void Fill(const BDSCollimatorHit* hit,
+	    const BDSOutputROOTEventCollimatorInfo& info,
+	    const std::pair<G4double, G4double>& differences);
   void FillExtras(G4bool fillIonInfo,
 		  G4bool fillLinks);
 

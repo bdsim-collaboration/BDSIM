@@ -22,9 +22,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 #include "BDSCollimatorHit.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4TwoVector.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
+
+#include <utility>
 #endif
 
 #include <set>
@@ -79,7 +84,9 @@ void BDSOutputROOTEventCollimator::Flush()
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
+void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
+					const BDSOutputROOTEventCollimatorInfo& info,
+					const std::pair<G4double, G4double>& differences)
 {
   n++;
   totalEnergy.push_back(hit->totalEnergy / CLHEP::GeV);
@@ -91,6 +98,29 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
   xpIn.push_back(mom.x() / CLHEP::rad);
   ypIn.push_back(mom.y() / CLHEP::rad);
   zpIn.push_back(mom.z() / CLHEP::rad);
+
+  // calculate impact parameters - note done in output units (as is info object)
+  G4double impactX = xIn.back() - info.offsetX;
+  G4double impactY = yIn.back() - info.offsetY;
+  G4double impactZ = zIn.back();
+
+  // interpolate aperture to that point
+  G4double zFromStart = -0.5*info.length - impactZ;
+  G4double fraction   = zFromStart / info.length;
+  G4double xAperAtZ = info.xSizeIn + differences.first  * fraction;
+  G4double yAperAtZ = info.ySizeIn + differences.second * fraction;
+
+  impactX -= xAperAtZ;
+  impactY -= yAperAtZ;
+  if (BDS::IsFinite(info.tilt))
+    {
+      G4TwoVector impactPos(impactX, impactY);
+      impactPos.rotate(info.tilt);
+      impactX = impactPos.x();
+      impactY = impactPos.y();
+    }
+  impactParameterX.push_back(impactX);
+  impactParameterY.push_back(impactY);
 
   BDSEnergyCounterHit* eHit = hit->energyDepositionHit;
   if (eHit)

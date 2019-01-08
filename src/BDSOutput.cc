@@ -611,7 +611,9 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     {
       BDSCollimatorHit* hit = (*hits)[i];
       G4int collimatorIndex = hit->collimatorIndex;      
-      collimators[collimatorIndex]->Fill(hit, collimatorInfo[collimatorIndex]);
+      collimators[collimatorIndex]->Fill(hit,
+					 collimatorInfo[collimatorIndex],
+					 collimatorDifferences[collimatorIndex]);
     }
 
   // identify whether the primary loss point was in a collimator
