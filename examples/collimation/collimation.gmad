@@ -3,19 +3,19 @@
 ! demonstrates partial removal of particles from beam pipe.
 
 d1: drift, l=1*m;
-c1: rcol, l=0.2*m, material="Cu", xsize=2*mm, ysize=2*mm;
-c2: rcol, l=0.4*m, material="W", xsize=1.6*mm, ysize=1.6*mm;
+c1: rcol, l=0.02*m, material="Cu", xsize=2*mm, ysize=2*mm;
+c2: rcol, l=0.2*m, material="W", xsize=2.6*mm, ysize=2.6*mm;
 
 l1: line=(d1,c1,d1,c2,d1);
 use, l1;
 
 beam, particle="e-",
       energy=10*GeV,
-      distrType="gauss",
-      sigmaX=2*mm,
-      sigmaY=2*mm,
-      sigmaXp=1e-4,
-      sigmaYp=1e-4;
+      distrType="ring",
+      Rmin = 2.2*mm,
+      Rmax = 2.3*mm,
+      sigmaXp=1e-6,
+      sigmaYp=1e-6;
 
 option, physicsList="em",
 	minimumKineticEnergy=50*MeV;
@@ -24,3 +24,8 @@ option, ngenerate=10;
 
 option, storeCollimatorInfo=1;
 option, elossHistoBinWidth=50*cm;
+
+!sample, range=c1;
+sample, all;
+
+!option, stopSecondaries=1;
