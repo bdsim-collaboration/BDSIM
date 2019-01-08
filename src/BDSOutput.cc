@@ -345,16 +345,6 @@ void BDSOutput::CalculateHistogramParameters()
   sMaxHistograms = nbins * binWidth;
 }
 
-void BDSOutput::PrepareCollimatorInformation()
-{
-  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  collimatorIndices = flatBeamline->GetIndicesOfCollimators();
-  nCollimators = (G4int)collimatorIndices.size();
-  
-  for (auto index : collimatorIndices)
-    {collimatorIndicesByName[flatBeamline->at(index)->GetName()] = index;}
-}
-
 void BDSOutput::CreateHistograms()
 {
   // construct output histograms

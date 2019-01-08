@@ -170,9 +170,6 @@ private:
 
   /// Calculate the number of bins and required maximum s.
   void CalculateHistogramParameters();
-
-  /// Extract collimator elements from the beam line and flag whether there are any at all.
-  void PrepareCollimatorInformation();
   
   /// Create histograms.
   void CreateHistograms();
