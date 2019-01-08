@@ -33,7 +33,7 @@ void BDSLine::Initialise()
   for (auto component : *this)
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Initialising component named: " << (*it)->GetName() << G4endl;
+      G4cout << __METHOD_NAME__ << "Initialising component named: " << component->GetName() << G4endl;
 #endif
       component->Initialise();
     }
