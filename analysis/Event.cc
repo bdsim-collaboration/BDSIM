@@ -110,17 +110,19 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
 
 BDSOutputROOTEventCollimator* Event::GetCollimator(const std::string& name)
 {
-  auto found = collimatorMap.find(name);
-  if (found != collimatorMap.end())
-    {return found->second;}
-  else
+  // help the user out with some variations on the naming that can be created
+  // due to our storage format
+  std::vector<std::string> variations = {name,
+                                         "COLL_" + name,
+                                         "COLL_" + name + "_0"};
+  for (const auto& var : variations)
     {
-      auto found2 = collimatorMap.find("COLL_" + name);
-      if (found2 != collimatorMap.end())
-	{return found2->second;}
-      else
-	{return nullptr;}
+      std::cout << (var == collimatorNames[0]) << std::endl;
+      auto found = collimatorMap.find(var);
+      if (found != collimatorMap.end())
+        {return found->second;}
     }
+  return nullptr; // wasn't found
 }
 
 BDSOutputROOTEventCollimator* Event::GetCollimator(int index)
