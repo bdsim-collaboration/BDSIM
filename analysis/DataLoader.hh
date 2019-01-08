@@ -130,7 +130,7 @@ private:
 
   int dataVersion; ///< Integer version of data loaded.
 
-  ClassDef(DataLoader,1);
+  ClassDef(DataLoader, 2);
 };
 
 #endif
