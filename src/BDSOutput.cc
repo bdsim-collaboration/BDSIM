@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
+#include "BDSOutputROOTEventCollimatorInfo.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
@@ -610,7 +611,7 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     {
       BDSCollimatorHit* hit = (*hits)[i];
       G4int collimatorIndex = hit->collimatorIndex;      
-      collimators[collimatorIndex]->Fill(hit);
+      collimators[collimatorIndex]->Fill(hit, collimatorInfo[collimatorIndex]);
     }
 
   // identify whether the primary loss point was in a collimator

@@ -170,29 +170,35 @@ void BDSOutputStructures::InitialiseSamplers()
 
 void BDSOutputStructures::PrepareCollimatorInformation()
 {
+  const std::string collimatorPrefix = "COLL_";
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   collimatorIndices = flatBeamline->GetIndicesOfCollimators();
   nCollimators = (G4int)collimatorIndices.size();
   
   for (auto index : collimatorIndices)
-    {collimatorIndicesByName[flatBeamline->at(index)->GetName()] = index;}
+    {
+      // prepare output structure name
+      const BDSBeamlineElement* el = flatBeamline->at(index);
+      // use the 'placement' name for a unique name (with copynumer included)
+      std::string collimatorName = collimatorPrefix + el->GetPlacementName();
+      collimatorNames.push_back(collimatorName);
+      collimatorIndicesByName[el->GetName()]          = index;
+      collimatorIndicesByName[el->GetPlacementName()] = index;
+      
+      BDSOutputROOTEventCollimatorInfo info;
+      info.Fill(el);
+      collimatorInfo.push_back(info);
+    }
 }
 
 void BDSOutputStructures::InitialiseCollimators()
 {
-  const std::string collimatorPrefix = "COLL_";
+
   if (!localCollimatorsInitialised)
     {
       localCollimatorsInitialised = true;
-      const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-      for (auto index : collimatorIndices)
-	{
-	  const BDSBeamlineElement* el = flatBeamline->at(index);
-	  // use the 'placement' name for a unique name (with copynumer included)
-	  std::string collimatorName = collimatorPrefix + el->GetPlacementName();
-	  collimatorNames.push_back(collimatorName);
-	  collimators.push_back(new BDSOutputROOTEventCollimator());
-	}
+      for (int i = 0; i < (int)collimatorIndices.size(); i++)
+	{collimators.push_back(new BDSOutputROOTEventCollimator());}
     }
 }
 

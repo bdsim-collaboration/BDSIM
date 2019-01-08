@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
 class BDSOutputROOTEventCollimator;
+class BDSOutputROOTEventCollimatorInfo;
 class BDSOutputROOTEventCoords;
 class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHeader;
@@ -62,8 +63,8 @@ protected:
   void InitialiseSamplers();
 
   /// Extract number of collimators and their names from beam line. Two stage
-  /// initialisation for collimators so histograms can be made if required or
-  /// not based on number of collimators.
+  /// initialisation for collimators so histograms can be made dynamically if
+  /// required or not based on number of collimators.
   void PrepareCollimatorInformation();
 
   /// Construct collimtors.
@@ -140,6 +141,7 @@ protected:
   G4int                     nCollimators;      ///< Number of collimators in beam line.
   std::vector<G4int>        collimatorIndices; ///< Indices in beam line that are collimators.
   std::map<G4String, G4int> collimatorIndicesByName; ///< Indices mapped to their name.
+  std::vector<BDSOutputROOTEventCollimatorInfo> collimatorInfo; ///< Collimator parameters.
   
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry

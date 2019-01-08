@@ -145,16 +145,9 @@ BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
 {;}
 
 void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
-				   const std::map<G4String, G4int>& collimatorIndicesByNameIn)
-{
-  for (const auto value : collimatorIndicesIn)
-    {collimatorIndices.push_back((int)value);}
-
-  nCollimators = (int)collimatorIndices.size();
-  
-  for (const auto& kv : collimatorIndicesByNameIn)
-    {collimatorIndicesByName[(std::string)kv.first] = (int)kv.second;}
-  
+				   const std::map<G4String, G4int>& collimatorIndicesByNameIn,
+				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn)
+{  
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {samplerNamesUnique.push_back(std::string(name)+".");}
   
@@ -165,13 +158,15 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
 
   if (storeCollimatorInfo)
     {
-      for (auto index : collimatorIndices)
-        {
-          const BDSBeamlineElement* element = beamline->at(index);
-          BDSOutputROOTEventCollimatorInfo info;
-          info.Fill(element);
-          collimatorInfo.push_back(info);
-        }
+      for (const auto value : collimatorIndicesIn)
+	{collimatorIndices.push_back((int)value);}
+      
+      nCollimators = (int)collimatorIndices.size();
+      
+      for (const auto& kv : collimatorIndicesByNameIn)
+	{collimatorIndicesByName[(std::string)kv.first] = (int)kv.second;}
+
+      collimatorInfo = collimatorInfoIn;
     }
 
   double angle;
