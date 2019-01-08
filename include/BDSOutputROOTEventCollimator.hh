@@ -60,6 +60,11 @@ public:
   std::vector<int>    partID;
   std::vector<int>    parentID;
   std::vector<int>    turn;
+  /// A primary can generate multiple hits on a single passage through a collimator,
+  /// but we're most interested in the first one where it impacted, so this is a flag
+  /// for that hit. The same primary may hit on subsequent turns (however unlikely) in
+  /// a ring so we must do this each turn.
+  std::vector<bool>   firstPrimaryHitThisTurn;
 
   std::vector<double> impactParameterX;
   std::vector<double> impactParameterY;

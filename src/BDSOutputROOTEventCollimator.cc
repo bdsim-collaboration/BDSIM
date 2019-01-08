@@ -64,6 +64,7 @@ void BDSOutputROOTEventCollimator::Flush()
   partID.clear();
   parentID.clear();
   turn.clear();
+  firstPrimaryHitThisTurn.clear();
   impactParameterX.clear();
   impactParameterY.clear();
   isIon.clear();
@@ -107,6 +108,15 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit)
       parentID.push_back(eHit->GetParentID());
       G4int tn = eHit->GetTurnsTaken();
       turn.push_back(tn);
+      // Mark if this is the first primary impact of this turn as there may
+      // be multiple 'hits' inside the collimator for a primary passing through
+      // but we're really interested in the first one. Judge by whether we have
+      // an hits for this turn already. We assume (safely) that the first entry
+      // for a given turn will be the primary.
+      if (parentID.back() == 0)
+	{firstPrimaryHitThisTurn.push_back(turnSet.find(tn) == turnSet.end());}
+      else
+	{firstPrimaryHitThisTurn.push_back(false);} // can't be true
       turnSet.insert(tn);
     }
 }
