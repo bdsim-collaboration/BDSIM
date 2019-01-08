@@ -3896,14 +3896,14 @@ and the beam tracked is a 20 GeV positron beam.
 * If no :code:`E0` variable is specified, it's assumed to be the same as :code:`energy`.
 	
 
-Generate Only the Distribution
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Generate Only the Input Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 BDSIM can generate only the input distribution and store it to file without creating a model or
 running any physics simulation. This is very fast and can be used to verify the input distribution
 with a large number of particles (for example, 10k to 100k in under one minute).
 
-BDSIM should be executed with the option `--generatePrimariesOnly` as described in
+BDSIM should be executed with the option `-\\-generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
 Beam in Output

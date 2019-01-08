@@ -32,9 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventModel.hh"
 
 #include "Analysis.hh"
+#include "BeamAnalysis.hh"
 #include "Config.hh"
 #include "DataLoader.hh"
-#include "BeamAnalysis.hh"
 #include "EventAnalysis.hh"
 #include "ModelAnalysis.hh"
 #include "OptionsAnalysis.hh"
