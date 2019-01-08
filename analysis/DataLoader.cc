@@ -227,6 +227,8 @@ void DataLoader::BuildEventBranchNameList()
 	{std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " << n << std::endl;}
       for (const auto& n : samplerNames)
 	{std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " << n << std::endl;}
+      for (const auto& n : collimatorNames)
+	{std::cout << "DataLoader::BuildEventBranchNameList> Collimator  : " << n << std::endl;}
     }
 }
 

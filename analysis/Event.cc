@@ -108,6 +108,29 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
     {return Samplers[index];}
 }
 
+BDSOutputROOTEventCollimator* Event::GetCollimator(const std::string& name)
+{
+  auto found = collimatorMap.find(name);
+  if (found != collimatorMap.end())
+    {return found->second;}
+  else
+    {
+      auto found2 = collimatorMap.find("COLL_" + name);
+      if (found2 != collimatorMap.end())
+	{return found2->second;}
+      else
+	{return nullptr;}
+    }
+}
+
+BDSOutputROOTEventCollimator* Event::GetCollimator(int index)
+{
+  if (index > (int) collimators.size())
+    {return nullptr;}
+  else
+    {return collimators[index];}
+}
+
 void Event::SetBranchAddress(TTree* t,
 			     const RBDS::VectorString* samplerNamesIn,
 			     bool                      allBranchesOn,
@@ -176,7 +199,7 @@ void Event::SetBranchAddress(TTree* t,
 	}
     }
 
-  if(debug)
+  if (debug)
     {
       std::cout << "Event::SetBranchAddress> Primary.         " << Primary       << std::endl;
       std::cout << "Event::SetBranchAddress> Eloss.           " << Eloss           << std::endl;
@@ -228,11 +251,11 @@ void Event::SetBranchAddressCollimators(TTree* t,
 void Event::SetBranchAddressCollimatorSingle(TTree* t,
 					     const std::string& name)
 {
-  auto col = new BDSOutputROOTEventCollimator;
+  BDSOutputROOTEventCollimator* col = new BDSOutputROOTEventCollimator();
   collimators.push_back(col);
   collimatorNames.push_back(name);
   collimatorMap[name] = col;
 
-  t->SetBranchAddress(name.c_str(), &collimators.back());
-  t->SetBranchStatus((name+"*").c_str(), 1);
+  t->SetBranchAddress((name + ".").c_str(), &collimators.back());
+  t->SetBranchStatus((name+".*").c_str(), 1);
 }
