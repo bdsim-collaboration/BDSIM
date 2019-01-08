@@ -191,7 +191,8 @@ public:
   /// Access all sensitive volumes belonging to this component
   virtual std::map<G4LogicalVolume*, BDSSDType> GetAllSensitiveVolumes() const;
 
-  /// Make all logical volumes sensitive (flagged only) - does not attach an SD.
+  /// Make all logical volumes sensitive by setting flag for later attachment with
+  /// AttachSensitiveDetectors. This propagates to all daughter volumes.
   inline void MakeAllVolumesSensitive(BDSSDType stype = BDSSDType::energydep) {RegisterSensitiveVolume(GetAllLogicalVolumes(), stype);}
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
