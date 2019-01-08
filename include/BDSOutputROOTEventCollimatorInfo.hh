@@ -48,6 +48,10 @@ public:
   double      offsetX;
   double      offsetY;
   std::string material;
+  double      xSizeIn;
+  double      ySizeIn;
+  double      xSizeOut;
+  double      ySizeOut;
   
   virtual ~BDSOutputROOTEventCollimatorInfo();
 #ifndef __ROOTBUILD__

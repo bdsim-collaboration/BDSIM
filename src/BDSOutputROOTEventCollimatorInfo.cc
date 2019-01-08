@@ -19,7 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 
 #ifndef __ROOTBUILD__
+#include "BDSAcceleratorComponent.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSCollimator.hh"
 #include "BDSTiltOffset.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -49,6 +51,10 @@ void BDSOutputROOTEventCollimatorInfo::Flush()
   offsetX       = 0;
   offsetY       = 0;
   material      = "";
+  xSizeIn       = 0;
+  ySizeIn       = 0;
+  xSizeOut      = 0;
+  ySizeOut      = 0;
 }
 
 #ifndef __ROOTBUILD__
@@ -71,5 +77,19 @@ void BDSOutputROOTEventCollimatorInfo::Fill(const BDSBeamlineElement* element)
       offsetY = 0;
     }
   material = element->GetMaterial();
+
+  BDSAcceleratorComponent* comp = element->GetAcceleratorComponent();
+  BDSCollimator* coll = dynamic_cast<BDSCollimator*>(comp);
+  if (coll)
+    {
+      xSizeIn  = coll->XApertureIn() / CLHEP::m;
+      ySizeIn  = coll->YApertureIn() / CLHEP::m;
+      xSizeOut = coll->XApertureOut() / CLHEP::m;
+      ySizeOut = coll->YApertureOut() / CLHEP::m;
+      if (xSizeOut < 0) // fix default -1 value to be the same as input
+	{xSizeOut = xSizeIn;}
+      if (ySizeOut < 0)
+	{ySizeOut = ySizeIn;}
+    }
 }
 #endif
