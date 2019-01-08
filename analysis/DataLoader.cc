@@ -81,7 +81,7 @@ void DataLoader::CommonCtor(std::string fileName)
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug);
-  evt = new Event(debug, processSamplers);
+  evt = new Event(dataVersion, debug, processSamplers);
   run = new Run(debug);
   
   heaChain = new TChain("Header",      "Header");
