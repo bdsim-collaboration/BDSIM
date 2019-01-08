@@ -151,10 +151,10 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
 				   const std::vector<G4String>& collimatorBranchNamesIn)
 {  
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-    {samplerNamesUnique.push_back(std::string(name)+".");}
+    {samplerNamesUnique.push_back(std::string(name) + ".");}
 
   for (const auto& name : collimatorBranchNamesIn)
-    {collimatorBranchNamesUnique.push_back((std::string)name + ".");}
+    {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}
   
   // get accelerator model
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
