@@ -1,4 +1,4 @@
-include sc2.gmad;
+include collimation.gmad;
 
 beam, particle="ion 12 6",
       energy=30*GeV;
