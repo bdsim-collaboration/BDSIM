@@ -147,7 +147,7 @@ public:
 		    const std::vector<G4String>& collimatorBranchNamesIn = {});
 #endif
 
-  ClassDef(BDSOutputROOTEventModel,3);
+  ClassDef(BDSOutputROOTEventModel, 4);
 };
 
 #endif
