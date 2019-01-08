@@ -99,6 +99,11 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   vacuumSolid     = nullptr;
 
   tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
+  if (!tapered)
+    {// copy for consistency in output and aperture prediction
+      xApertureOut = xAperture;
+      yApertureOut = yAperture;
+    }
 
   if (!colour)
     {colour = BDSColours::Instance()->GetColour("collimator");}
