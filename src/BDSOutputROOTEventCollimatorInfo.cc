@@ -36,7 +36,11 @@ BDSOutputROOTEventCollimatorInfo::BDSOutputROOTEventCollimatorInfo():
   tilt(0),
   offsetX(0),
   offsetY(0),
-  material("")
+  material(""),
+  xSizeIn(0),
+  ySizeIn(0),
+  xSizeOut(0),
+  ySizeOut(0)
 {;}
 
 BDSOutputROOTEventCollimatorInfo::~BDSOutputROOTEventCollimatorInfo()
