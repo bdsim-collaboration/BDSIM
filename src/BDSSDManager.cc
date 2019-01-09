@@ -67,6 +67,7 @@ BDSSDManager::BDSSDManager()
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
   generateELossHits       = g->GenerateELossHits();
   storeELossVacuum        = g->StoreELossVacuum();
+  storeELossTunnel        = g->StoreELossTunnel() || g->SensitiveTunnel();
   storeELossWorld         = g->StoreELossWorld();
   
   filters["primary"] = new BDSSDFilterPrimary("primary");
