@@ -66,3 +66,56 @@ tracks, so it must be turned on in this case too.
 If the user turns on trajectory storage, trajectories are created for every particle
 in the event and then filtered to store only the ones of interest in the output
 in the end of event action in `BDSEventAction`.
+
+Output
+======
+
+BDSIM writes currently to one format which is ROOT (we call it "root event" format).
+The code is designed so that other formats can be added in future without affecting
+the current structure of the program or output formats.
+
+Generally, we keep all the information we might want to store in the output in a
+base class called BDSOutputStructures. This contains only the basic information
+that will be stored. BDSOutput inherits this class and is an abstract interface for
+any specific output format. BDSOutput helps fill the objects in BDSOutputStructures
+as well as define the interface for all output.
+
+Any output format is represented by a class that inherits BDSOutput, such as
+BDSOutputROOT for example. We use ROOT objects and classes in BDSIM as they are
+convenient for preparing the output information from a particle physics study.
+BDSOutputROOT is relatively simple as it is relatively simple to store ROOT objects
+in a ROOT file. Any other output format that is written would have access to the
+information in the base class BDSOutputStructures and can translate and write that
+as required. We also define ROOT dictionaries and create shared libraries with all
+the classes used in the output so that they can be easily loaded again.
+
+* Generally, we use SI units + GeV and ns in the output.
+
+How A ROOT File Works
+---------------------
+
+The ROOT file system works by have an instance of whatever you want to store that
+exists in the current memory. The file is laid out pointing to these local objects
+(roughly SetBranchAddress('name in output', &localObject) ). The developer then
+sets the values of the local object, i.e. to the data they want to store. The
+Fill function (on a ROOT 'Tree') is then called which copies the data to the file.
+
+Loading the file is done in reverse. First a local empty object is created, the file
+is attached to it and GetEntry() is called which loads one entry from the output
+into the local object, which can then be read by the user just as if they'd created
+it then and there.
+
+A ROOT file can store data as one of objects in the file (such as a histogram), but
+the most common usage is with a 'Tree' (TTree class), that is really equivalent to
+a vector. Whatever structure the tree has is duplicated for each 'entry'. In a tree,
+there can be single objects or 'branches' with 'leaves' (so a maximum number of dimensions
+of 2). These objects may be basic C++ types or ROOT objects, or classes defined by
+the user. The ROOT file secretly stores a template of all classes stored in it, so
+even if a user class is used to write a file and later on, the software is lost, the
+data can still be read.
+
+In BDSIM, the main output tree is called "Event" and each entry in that tree represents
+one event in the simulation that starts with one primary particle fired into the accelerator.
+Everything you see in the Event tree is replicated for each event but with different data
+of course.
+

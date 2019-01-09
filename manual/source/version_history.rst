@@ -6,6 +6,8 @@ Expected Changes To Results
 
 * The density of the surrounding air has changed very slighty to that of the standard
   G4_AIR one.
+* Energy deposition in vacuum is now separated into a separate branch and is not mixed
+  with general Eloss.
 
 New Features
 ------------
