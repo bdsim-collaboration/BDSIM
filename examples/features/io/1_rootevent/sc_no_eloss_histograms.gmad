@@ -34,5 +34,6 @@ beam, particle="e-",
       X0=0.000,
       Y0=0.000;
 
-! note energy loss histograms are still stored
+
 option, storeEloss=0;
+option, storeElossHistograms=0;
