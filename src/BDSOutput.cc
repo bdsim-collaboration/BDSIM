@@ -399,15 +399,20 @@ void BDSOutput::CreateHistograms()
 
   if (storeCollimatorInfo && nCollimators > 0)
     {
-      histIndices1D["CollimatorPhitsPE"] = Create1DHistogram("CollimatorPhitsPE",
-							     "Primary Hits per Collimator",
-							     nCollimators, 0, nCollimators);
-      histIndices1D["CollimatorPlossPE"] = Create1DHistogram("CollimatorPlossPE",
-							     "Primary Loss per Collimator",
-							     nCollimators, 0, nCollimators);
-      histIndices1D["CollimatorElossPE"] = Create1DHistogram("CollimatorElossPE",
-							     "Energy Loss per Collimator",
-							     nCollimators, 0, nCollimators);
+      std::vector<G4String> collHistNames = {"CollimatorPhitsPE",
+					     "CollimatorPlossPE",
+					     "CollimatorElossPE",
+					     "CollimatorPrimaryInteracted"};
+      std::vector<G4String> collHistDesciptions = {"Primary Hits per Collimator",
+						   "Primary Loss per Collimator",
+						   "Energy Loss per Collimator",
+						   "Primary Interacted per Collimator"};
+      for (G4int i = 0; i < (G4int)collHistNames.size(); i++)
+	{
+	  histIndices1D[collHistNames[i]] = Create1DHistogram(collHistNames[i],
+							      collHistDesciptions[i],
+							      nCollimators, 0, nCollimators);
+	}
     }
   
   if (useScoringMap)
@@ -620,13 +625,16 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     }
 
   // identify whether the primary loss point was in a collimator
-  // only do if there's a beam line, ie finished in a beam line
-  if (primaryLossPoint->GetBeamLine())
+  // only do if there's a beam line, ie finished in a beam line, and there are collimators
+  if (primaryLossPoint->GetBeamLine() && nCollimators > 0)
     {
       G4int lossPointBLInd = primaryLossPoint->GetBeamLineIndex(); // always the mass world index
       auto result = std::find(collimatorIndices.begin(), collimatorIndices.end(), lossPointBLInd);
       if (result != collimatorIndices.end())
-        {collimators[(int) (result - collimatorIndices.begin())]->SetPrimaryStopped(true);}
+	{
+	  G4int collIndex = (int) (result - collimatorIndices.begin());
+	  collimators[collIndex]->SetPrimaryStopped(true);
+	}
     }
   
   // if required loop over collimators and get them to calculate and fill extra information
@@ -634,6 +642,15 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     {
       for (auto collimator : collimators)
 	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorLinks);}
+    }
+
+  // after all collimator hits have been filled, we summarise whether the primary
+  // interacted in a histogram
+  G4int histIndex = histIndices1D["CollimatorPrimaryInteracted"];
+  for (G4int i = 0; i < (G4int)collimators.size(); i++)
+    {
+      evtHistos->Fill1DHistogram(histIndex, i,
+				 (int)collimators[i]->primaryInteracted);
     }
 }
 
