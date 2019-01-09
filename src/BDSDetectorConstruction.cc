@@ -470,8 +470,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       worldSolid = geom->GetContainerSolid();
 
       // make the world sensitive to energy deposition with its own unique hits collection
-      if (BDSGlobalConstants::Instance()->StoreELossWorld())
-        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+      // this will be a nullptr depending on the options
+      worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe

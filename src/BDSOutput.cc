@@ -92,6 +92,10 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   // automatically store ion info if generating ion hits
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
   storeCollimatorInfo     = g->StoreCollimatorInfo();
+  storeELoss              = g->StoreELoss();
+  storeELossHistograms    = g->StoreELossHistograms();
+  storeELossTunnel        = g->StoreELossTunnel();
+  storeELossVacuum        = g->StoreELossVacuum();
   storeGeant4Data         = g->StoreGeant4Data();
   storeModel              = g->StoreModel();
   storeSamplerPolarCoords = g->StoreSamplerPolarCoords();
@@ -365,7 +369,8 @@ void BDSOutput::CreateHistograms()
   // create the histograms
   histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
   histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
-  histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
+  if (storeELossHistograms)
+    {histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);}
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
@@ -380,13 +385,16 @@ void BDSOutput::CreateHistograms()
   histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto",
 					       "Primary Loss per Element",
 					       binedges);
-  histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto",
-					       "Energy Loss per Element" ,
-					       binedges);
-
+  if (storeELossHistograms)
+    {
+      histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto",
+						   "Energy Loss per Element" ,
+						   binedges);
+    }
+  
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
-  if (tunnelBeamline)
+  if (tunnelBeamline && storeELossHistograms)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
       histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",
@@ -415,7 +423,7 @@ void BDSOutput::CreateHistograms()
 	}
     }
   
-  if (useScoringMap)
+  if (useScoringMap && storeELossHistograms)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
       G4int scInd = evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
@@ -521,27 +529,33 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	{
 	case BDSOutput::LossType::energy:
 	  {// number - 1 for the index
-	    eLoss->Fill(hit);
+	    if (storeELoss)
+	      {eLoss->Fill(hit);}
 	    energyDeposited += eW;
-	    runHistos->Fill1DHistogram(indEloss, sHit, eW);
-	    evtHistos->Fill1DHistogram(indEloss, sHit, eW);
-	    runHistos->Fill1DHistogram(indElossPE, sHit, eW);
-	    evtHistos->Fill1DHistogram(indElossPE, sHit, eW);
+	    if (storeELossHistograms)
+	      {
+		runHistos->Fill1DHistogram(indELoss, sHit, eW);
+		evtHistos->Fill1DHistogram(indELoss, sHit, eW);
+		runHistos->Fill1DHistogram(indELossPE, sHit, eW);
+		evtHistos->Fill1DHistogram(indELossPE, sHit, eW);
+	      }
 	    break;
 	  }
 	case BDSOutput::LossType::vacuum:
 	  {
-	    eLossVacuum->Fill(hit);
+	    if (storeELossVacuum)
+	      {eLossVacuum->Fill(hit);}
 	    energyDepositedVacuum += eW;
 	  }
 	case BDSOutput::LossType::tunnel:
 	  {
 	    energyDepositedTunnel += eW;
-	    eLossTunnel->Fill(hit);
-	    runHistos->Fill1DHistogram(indElossTunnel, sHit, eW);
-	    evtHistos->Fill1DHistogram(indElossTunnel, sHit, eW);
-	    runHistos->Fill1DHistogram(indElossTunnelPE, sHit, eW);
-	    evtHistos->Fill1DHistogram(indElossTunnelPE, sHit, eW);
+	    if (storeELossTunnel)
+	      {eLossTunnel->Fill(hit);}
+	    runHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
+	    evtHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
+	    runHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
+	    evtHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
 	    break;
 	  }
 	case BDSOutput::LossType::world:
@@ -562,7 +576,10 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	}
     }
 
-  if (storeCollimatorInfo && nCollimators > 0 && (lossType == BDSOutput::LossType::energy))
+  if (storeCollimatorInfo &&
+      nCollimators > 0 &&
+      (lossType == BDSOutput::LossType::energy) &&
+      storeELossHistograms)
     {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
 }
 

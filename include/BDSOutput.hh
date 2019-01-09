@@ -241,6 +241,10 @@ private:
   G4bool storeCollimatorLinks;
   G4bool storeCollimatorHitsIons;
   G4bool storeCollimatorInfo;
+  G4bool storeELoss;
+  G4bool storeELossHistograms;
+  G4bool storeELossTunnel;
+  G4bool storeELossVacuum;
   G4bool storeGeant4Data;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
