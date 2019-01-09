@@ -170,11 +170,15 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   partID.clear();
   parentID.clear();
   trackID.clear();
+  modelID = -1;
   turnNumber.clear();
+
   S = 0.0;
+
   r.clear();
   rp.clear();
-  modelID = -1;
+  phi.clear();
+  phip.clear();
 
   charge.clear();
   kineticEnergy.clear();
