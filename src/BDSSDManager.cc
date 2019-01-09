@@ -138,59 +138,61 @@ BDSSDManager::BDSSDManager()
 G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 						      G4bool applyOptions) const
 {
+  G4VSensitiveDetector* result = nullptr;
   switch (sdType.underlying())
     {
     case BDSSDType::samplerplane:
-      {return samplerPlane; break;}
+      {result = samplerPlane; break;}
     case BDSSDType::samplercylinder:
-      {return samplerCylinder; break;}
+      {result = samplerCylinder; break;}
     case BDSSDType::terminator:
-      {return terminator; break;}
+      {result = terminator; break;}
     case BDSSDType::energydep:
       {
 	if (applyOptions)
-	  {return generateELossHits ? eCounter : nullptr;}
+	  {result = generateELossHits ? eCounter : nullptr;}
 	else
-	  {return eCounter;}
+	  {result = eCounter;}
 	break;
       }
     case BDSSDType::energydepvacuum:
       {
 	if (applyOptions)
-	  {return storeELossVacuum ? eCounterVacuum : nullptr;}
+	  {result = storeELossVacuum ? eCounterVacuum : nullptr;}
 	else
-	  {return eCounterVacuum;}
+	  {result = eCounterVacuum;}
 	break;
       }
     case BDSSDType::energydeptunnel:
       {
 	if (applyOptions)
-	  {return storeELossTunnel ? eCounterVacuum : nullptr;}
+	  {result = storeELossTunnel ? eCounterTunnel : nullptr;}
 	else
-	  {return eCounterTunnel;}
+	  {result = eCounterTunnel;}
 	break;
       }
     case BDSSDType::energydepworld:
       {
 	if (applyOptions)
-	  {return storeELossWorld ? eCounterWorld : nullptr;}
+	  {result = storeELossWorld ? eCounterWorld : nullptr;}
 	else
-	  {return eCounterWorld;}
+	  {result = eCounterWorld;}
 	break;
       }
     case BDSSDType::worldexit:
-      {return worldExit; break;}
+      {result = worldExit; break;}
     case BDSSDType::worldcomplete:
 #if G4VERSION_NUMBER > 1029
-      {return worldCompleteSD; break;}
+      {result = worldCompleteSD; break;}
 #else
-      {return nullptr; break;}
+      {result = nullptr; break;}
 #endif
     case BDSSDType::collimator:
-      {return collimatorSD; break;}
+      {result = collimatorSD; break;}
     case BDSSDType::collimatorcomplete:
-      {return collimatorCompleteSD; break;}
+      {result = collimatorCompleteSD; break;}
     default:
-      {return nullptr; break;}
+      {result = nullptr; break;}
     }
+  return result;
 }
