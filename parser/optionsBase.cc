@@ -210,8 +210,6 @@ OptionsBase::OptionsBase()
   // hit generation
   sensitiveOuter       = true;
   sensitiveBeamPipe    = true;
-  sensitiveTunnel      = true;
-  sensitiveVacuum      = false;
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

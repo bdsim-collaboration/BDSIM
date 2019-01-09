@@ -49,7 +49,7 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
   sensitiveBeamPipe  = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
-  sensitiveVacuum    = BDSGlobalConstants::Instance()->SensitiveVacuum();
+  sensitiveVacuum    = BDSGlobalConstants::Instance()->StoreELossVacuum();
 
   CleanUpBase(); // initialise variables
 }

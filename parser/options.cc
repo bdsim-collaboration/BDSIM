@@ -289,9 +289,8 @@ void Options::PublishMembers()
   publish("sensitiveOuter",              &Options::sensitiveOuter);
   publish("sensitiveBeamlineComponents", &Options::sensitiveOuter); // backwards compatibility
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
-  publish("sensitiveTunnel",             &Options::sensitiveTunnel);
-  publish("tunnelSensitive",             &Options::sensitiveTunnel);// backwards compatibility
-  publish("sensitiveVacuum",             &Options::sensitiveVacuum);
+  publish("sensitiveTunnel",             &Options::storeElossTunnel);
+  publish("tunnelSensitive",             &Options::storeElossTunnel);// backwards compatibility
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
   
   // output

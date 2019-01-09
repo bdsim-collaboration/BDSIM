@@ -241,11 +241,9 @@ namespace GMAD
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
     bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
 
-    // hit generation
+    // hit generation - only two parts that go in the same collection / branch
     bool      sensitiveOuter;
     bool      sensitiveBeamPipe;
-    bool      sensitiveTunnel;
-    bool      sensitiveVacuum;
     
     // output related options
     int         numberOfEventsPerNtuple;

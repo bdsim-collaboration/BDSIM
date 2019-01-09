@@ -39,7 +39,7 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
   checkOverlaps       = g->CheckOverlaps();
   nSegmentsPerCircle  = g->NSegmentsPerCircle();
   sensitiveBeamPipe   = g->SensitiveBeamPipe();
-  sensitiveVacuum     = g->SensitiveVacuum() || g->StoreELossVacuum();
+  sensitiveVacuum     = g->StoreELossVacuum();
   CleanUpBase(); // non-virtual call in constructor
 }
 
