@@ -142,7 +142,7 @@ public:
   inline G4bool   BuildTunnelStraight()      const {return G4bool  (options.buildTunnelStraight);}
   inline G4double TunnelOffsetX()            const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()            const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
-  inline G4double ElossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
+  inline G4double ELossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
   inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
   inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}

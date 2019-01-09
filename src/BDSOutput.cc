@@ -250,7 +250,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (energyLossWorld)
     {FillEnergyLoss(energyLossWorld,  BDSOutput::LossType::world);}
   if (worldExitHits)
-    {FillElossWorldExitHits(worldExitHits);}
+    {FillELossWorldExitHits(worldExitHits);}
 
   // we do this after energy loss as the energy loss is integrated for
   // putting in event info
@@ -333,7 +333,7 @@ void BDSOutput::CalculateHistogramParameters()
 {
   // rounding up so last bin definitely covers smax
   // (max - min) / bin width -> min = 0 here.
-  const G4double binWidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
+  const G4double binWidth = BDSGlobalConstants::Instance()->ELossHistoBinWidth();
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (flatBeamline)
     {// don't access a nullptr
@@ -505,10 +505,10 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 			       const LossType lossType)
 {
   G4int n_hit = hits->entries();
-  G4int indEloss         = histIndices1D["Eloss"];
-  G4int indElossPE       = histIndices1D["ElossPE"];
-  G4int indElossTunnel   = histIndices1D["ElossTunnel"];
-  G4int indElossTunnelPE = histIndices1D["ElossTunnelPE"];
+  G4int indELoss         = histIndices1D["Eloss"];
+  G4int indELossPE       = histIndices1D["ElossPE"];
+  G4int indELossTunnel   = histIndices1D["ElossTunnel"];
+  G4int indELossTunnelPE = histIndices1D["ElossTunnelPE"];
   G4int indScoringMap    = 0;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
@@ -566,7 +566,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
     {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
 }
 
-void BDSOutput::FillElossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
+void BDSOutput::FillELossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
 {
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)
