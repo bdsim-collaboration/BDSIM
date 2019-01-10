@@ -3524,8 +3524,8 @@ Output Options
 The particle physics simulation in BDSIM can produce an impressive quantity of output
 information. The data describing a full record of every particle and their interaction
 would prove too difficult to manage or analyse sensibly. BDSIM records the most useful
-information, but provides options to record even more data. This is controlled with the
-following options.
+information, but provides options to record less or even more data. This is controlled
+with the following options.
 
 .. note:: These options may increase the output file size by a large amount. Use only the
 	  ones you need.
@@ -3540,16 +3540,65 @@ following options.
 | nperfile                          | Number of events to record per output file                         |
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveOuter                    | Whether the outer part of each component (other than the beam      |
-|                                   | pipe) records energy loss                                          |
+|                                   | pipe) records energy loss. `storeELoss` is required to be on for   |
+|                                   | this to work. The user may turn off energy loss from the           |
+|                                   | beam pipe and retain losses from the magnet outer in combination   |
+|                                   | with the next option `sensitiveBeamPipe`. Both are stored together |
+|                                   | in `Eloss` branch of the Event Tree in the output. Default on.     |
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveBeamPipe                 | Whether the beam pipe records energy loss. This includes cavities. |
+|                                   | This can be used in combination with the above option              |
+|                                   | `sensitiveOuter`, to control which energy loss is recorded.        |
+|                                   | Energy loss from this option is recorded in the `Eloss` branch     |
+|                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
-| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
+| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
+|                                   | only collimators is filled. Collimator structures are created in   |
+|                                   | the Event Tree of the output for each collimator and prefixed with |
+|                                   | "COLL\_" and contain hits from (only) primary particles.           |
+|                                   | Collimator summary histograms are also created and stored. Default |
+|                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeEloss                        | Whether to record any energy deposition at all. Default on. By     |
+| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | extra information is stored for each collimator hit.               |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
+|                                   | will now also be generated for all ions whether primary or         |
+|                                   | secondary. Default off.                                            |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsAll            | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | hits will be generated for all particles interacting with the      |
+|                                   | collimators whether primary or secondary and whether ion or not.   |
+|                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
 |                                   | `sensitiveVacuum` have no effect. Saves run time memory and output |
-|                                   | file size.                                                         |
+|                                   | file size. See next option `storeEloss` for combination.           |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossHistograms              | Whether to store energy deposition histograms `Eloss` and          |
+|                                   | `ElossPE`. This will automatically be on if `storeEloss` is on.    |
+|                                   | With `storeEloss` off, this option can be turned on to retain the  |
+|                                   | energy deposition histograms. If both this and `storeEloss` are    |
+|                                   | off, no energy deposition hits will be generated saving memory.    |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossVacuum                  | Whether to store energy deposition from the vacuum volumes as hits |
+|                                   | in the `ElossVacuum` branch and the corresponding summary          |
+|                                   | histograms. Default off.                                           |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossVacuumHistograms        | Whether to generate summary histograms of energy deposition in the |
+|                                   | vacuum volumes. If `storeElossVacuum` is on, this will be on. The  |
+|                                   | user may turn off `storeElossVacuum` but turn this on to store     |
+|                                   | the energy deposition histograms.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossTunnel                  | Whether to store energy deposition hits from the tunnel geometry   |
+|                                   | in the `TunnelHit` branch of the Event Tree. Default off.          |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossTunnelHistograms        | Whether to generate summary histograms of energy deposition in the |
+|                                   | tunnel volumes. If `storeElossTunnel` is on, this will be on. The  |
+|                                   | user may turn off `storeElossTunnel` but turn this on to store     |
+|                                   | the energy deposition histograms.                                  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
 |                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
@@ -3620,6 +3669,12 @@ following options.
 | storeTrajectoryDepth              | The depth of the particle tree to store the trajectories to  0 is  |
 |                                   | the primary, 1 is the first generation of secondaries, etc.        |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryELossSRange        | Ranges in curvilinear S coordinate that if a particular track      |
+|                                   | causes energy deposition in this range, its trajectory will be     |
+|                                   | stored. The value should be a string inside which are pairs of     |
+|                                   | numbers separated by a colon and ranges separated by whitespace    |
+|                                   | such as "0.3:1.23 45.6:47.6".                                      |
++-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryParticle           | The Geant4 name of particle(s) to only store trajectories for.     |
 |                                   | This is case sensitive. Multiple particle names can be used with   |
 |                                   | a space between them. e.g. "proton pi-".                           |
@@ -3631,6 +3686,10 @@ following options.
 | storeTrajectoryEnergyThreshold    | The threshold energy for storing trajectories. Trajectories for    |
 |                                   | any particles with energy less than this amount (in GeV) will not  |
 |                                   | be stored.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectorySamplerID          | If a trajectory reaches the name of these samplers, store that     |
+|                                   | trajectory. This value supplied should be a whitespace separated   |
+|                                   | string such as "cd1 qf32x".                                        |
 +-----------------------------------+--------------------------------------------------------------------+
 | trajConnect                       | Stores all the trajectories that connect a trajectory to be        |
 |                                   | stored all the way to the primary particle. For example, if the    |
