@@ -1010,7 +1010,7 @@ BDSIM produces six histograms by default during the simulation. These are:
 +--------------------------+-----------------------------------------------------------------+
 | Ploss                    | Primary loss. S location of the end of the primary track.       |
 +--------------------------+-----------------------------------------------------------------+
-| Eloss (\*)               | Energy deposition.                                              |
+| Eloss (\*)               | Energy deposition. Based on the data from 'Eloss' branch.       |
 +--------------------------+-----------------------------------------------------------------+
 | PhitsPE                  | Same as Phits, but binned per element in S. Note the values     |
 |                          | are not normalised to the bin width.                            |
@@ -1019,11 +1019,14 @@ BDSIM produces six histograms by default during the simulation. These are:
 |                          | are not normalised to the bin width.                            |
 +--------------------------+-----------------------------------------------------------------+
 | ElossPE (\*)             | Same as Eloss, but binned per element in S. Note the values     |
-|                          | are not normalised to the bin width.                            |
+|                          | are not normalised to the bin width. Based on the data from the |
+|                          | `Eloss` branch.                                                 |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnel (\*\*)       | Energy deposition in the tunnel.                                |
+| ElossTunnel (\*\*)       | Energy deposition in the tunnel. Based on data from the         |
+|                          | `TunnelHit` branch.                                             |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnelPE (\*\*)     | Energy deposition in the tunnel with per element binning.       |
+| ElossTunnelPE (\*\*)     | Energy deposition in the tunnel with per element binning. Based |
+|                          | on data from the `TunnelHit` branch.                            |
 +--------------------------+-----------------------------------------------------------------+
 | CollPhitsPE (\*\*\*)     | Primary hits where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PhitsPE   |
