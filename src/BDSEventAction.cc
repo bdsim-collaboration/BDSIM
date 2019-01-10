@@ -104,7 +104,6 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
   sRangeToStore             = globals->StoreTrajectoryELossSRange();
 
-
   printModulo = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
@@ -345,18 +344,17 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
     
     // loop over energy hits to connect trajectories
-    if(sRangeToStore.size() != 0)
+    if (sRangeToStore.size() != 0)
       {
 	G4int n_hit = eCounterHits->entries();
 	BDSEnergyCounterHit *hit;
-	for(G4int i=0;i<n_hit;i++)
+	for (G4int i = 0; i < n_hit; i++)
 	  {
 	    hit = (*eCounterHits)[i];
-	    // G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
 	    double dS = hit->GetSHit();
-	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
+	    for (const auto& v : sRangeToStore)
 	      {		
-		if ( dS >= (*v).first && dS <= (*v).second) 
+		if ( dS >= v.first && dS <= v.second) 
 		  {
 		    interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
 		    break;
@@ -366,18 +364,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
     
     // loop over samplers to connect trajectories
-    if(samplerIDsToStore.size() != 0)
+    if (samplerIDsToStore.size() != 0)
       {
 	G4int n_hit = SampHC->entries();
-	for(G4int i=0;i<n_hit;i++)
+	for (G4int i = 0; i < n_hit; i++)
 	  {
 	    G4int samplerIndex = (*SampHC)[i]->samplerID;
 	    BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
-	    // G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
-	    if(std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(),samplerIndex) != samplerIDsToStore.end())
-	      {
-		interestingTraj[trackIDMap[(*SampHC)[i]->trackID]] = true;
-	      }
+	    if (std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(), samplerIndex) != samplerIDsToStore.end())
+	      {interestingTraj[trackIDMap[(*SampHC)[i]->trackID]] = true;}
 	  }
       }
     
