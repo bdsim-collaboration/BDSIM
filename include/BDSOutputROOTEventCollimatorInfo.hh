@@ -20,8 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSOUTPUTROOTEVENTCOLLIMATORINFO_H
 
 #ifndef __ROOTBUILD__
-//class BDSCollimatorHit;
-//class BDSTrajectoryPoint;
 class BDSBeamlineElement;
 #endif
 
