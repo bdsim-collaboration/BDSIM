@@ -113,6 +113,9 @@ public:
   std::vector<float>       fintk2;
   std::vector<float>       fintxk2;
 
+  /// Whether optional collimator information was stored.
+  bool storeCollimatorInfo;
+  
   /// Optional cache of indices in beam line of collimators used to extract
   /// collimator information.
   std::vector<int> collimatorIndices;
@@ -122,8 +125,6 @@ public:
   
   int nCollimators; ///< Number of collimators in beam line.
   std::vector<BDSOutputROOTEventCollimatorInfo> collimatorInfo; ///< Collimator information explicitly.
-
-  bool storeCollimatorInfo;
 
   /// Vector of all collimator branch names in event tree used to load data.
   std::vector<std::string> collimatorBranchNamesUnique;

@@ -131,11 +131,11 @@ void BDSOutputROOTEventModel::Flush()
   fintk2.clear();
   fintxk2.clear();
 
+  storeCollimatorInfo = false;
   collimatorIndices.clear();
   collimatorIndicesByName.clear();
   nCollimators = 0;
   collimatorInfo.clear();
-  storeCollimatorInfo = false;
   collimatorBranchNamesUnique.clear();
 }
 
