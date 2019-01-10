@@ -45,44 +45,43 @@ public:
   /// Default constructor for ROOT
   BDSOutputROOTEventCollimator();  
 
-  bool   primaryInteracted;
-  bool   primaryStopped;
-
-  int                 n;
-  std::vector<double> totalEnergy;
-  std::vector<double> energyDeposited;
-  std::vector<double> xIn;
-  std::vector<double> yIn;
-  std::vector<double> zIn;
-  std::vector<double> xpIn;
-  std::vector<double> ypIn;
-  std::vector<double> zpIn;
-  std::vector<double> T;
-  std::vector<double> weight;
-  std::vector<int>    partID;
-  std::vector<int>    parentID;
-  std::vector<int>    turn;
+  bool               primaryInteracted;
+  bool               primaryStopped;
+  int                n;
+  std::vector<float> energy; ///< Total energy of particle for each hit.
+  std::vector<float> energyDeposited;
+  std::vector<float> xIn;
+  std::vector<float> yIn;
+  std::vector<float> zIn;
+  std::vector<float> xpIn;
+  std::vector<float> ypIn;
+  std::vector<float> zpIn;
+  std::vector<float> T;
+  std::vector<float> weight;
+  std::vector<int>   partID;
+  std::vector<int>   parentID;
+  std::vector<int>   turn;
   /// A primary can generate multiple hits on a single passage through a collimator,
   /// but we're most interested in the first one where it impacted, so this is a flag
   /// for that hit. The same primary may hit on subsequent turns (however unlikely) in
   /// a ring so we must do this each turn.
-  std::vector<bool>   firstPrimaryHitThisTurn;
+  std::vector<bool>  firstPrimaryHitThisTurn;
 
-  std::vector<double> impactParameterX;
-  std::vector<double> impactParameterY;
+  std::vector<float> impactParameterX;
+  std::vector<float> impactParameterY;
 
-  std::vector<bool>   isIon;
-  std::vector<int>    ionA;
-  std::vector<int>    ionZ;
+  std::vector<bool>  isIon;
+  std::vector<int>   ionA;
+  std::vector<int>   ionZ;
 
   /// Different length set of turn number.
-  std::set<int>       turnSet;
+  std::set<int>      turnSet;
 
   /// @{ These are not filled by default.
-  std::vector<int>    charge;
-  std::vector<double> kineticEnergy;
-  std::vector<double> mass;
-  std::vector<double> rigidity;
+  std::vector<int>   charge;
+  std::vector<float> kineticEnergy;
+  std::vector<float> mass;
+  std::vector<float> rigidity;
   /// @}
 
   double totalEnergyDeposited; ///< Sum of energy deposits including weights.

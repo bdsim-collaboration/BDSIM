@@ -56,7 +56,7 @@ void BDSOutputROOTEventCollimator::Flush()
   primaryInteracted = false;
   primaryStopped    = false;
   n                 = 0;
-  totalEnergy.clear();
+  energy.clear();
   energyDeposited.clear();
   xIn.clear();
   yIn.clear();
@@ -89,15 +89,15 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
 					const std::pair<G4double, G4double>& differences)
 {
   n++;
-  totalEnergy.push_back(hit->totalEnergy / CLHEP::GeV);
+  energy.push_back(hit->totalEnergy / CLHEP::GeV);
   const G4ThreeVector& pos = hit->preStepPosition;
   const G4ThreeVector& mom = hit->preStepMomentum;
-  xIn.push_back(pos.x() / CLHEP::m);
-  yIn.push_back(pos.y() / CLHEP::m);
-  zIn.push_back(pos.z() / CLHEP::m);
-  xpIn.push_back(mom.x() / CLHEP::rad);
-  ypIn.push_back(mom.y() / CLHEP::rad);
-  zpIn.push_back(mom.z() / CLHEP::rad);
+  xIn.push_back((float)pos.x() / CLHEP::m);
+  yIn.push_back((float)pos.y() / CLHEP::m);
+  zIn.push_back((float)pos.z() / CLHEP::m);
+  xpIn.push_back((float)mom.x() / CLHEP::rad);
+  ypIn.push_back((float)mom.y() / CLHEP::rad);
+  zpIn.push_back((float)mom.z() / CLHEP::rad);
 
   // calculate impact parameters - note done in output units (as is info object)
   G4double impactX = std::abs(xIn.back() - info.offsetX);
@@ -123,8 +123,8 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
       impactX = impactPos.x();
       impactY = impactPos.y();
     }
-  impactParameterX.push_back(impactX);
-  impactParameterY.push_back(impactY);
+  impactParameterX.push_back((float)impactX);
+  impactParameterY.push_back((float)impactY);
 
   BDSEnergyCounterHit* eHit = hit->energyDepositionHit;
   if (eHit)
@@ -135,9 +135,9 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
       
       primaryInteracted = primaryInteracted || eHit->GetParentID() == 0;
 
-      energyDeposited.push_back(eDep);
-      T.push_back(eHit->GetGlobalTime() / CLHEP::ns);
-      weight.push_back(w);
+      energyDeposited.push_back((float)eDep);
+      T.push_back((float)eHit->GetGlobalTime() / CLHEP::ns);
+      weight.push_back((float)w);
       partID.push_back(eHit->GetPartID());
       parentID.push_back(eHit->GetParentID());
       G4int tn = eHit->GetTurnsTaken();
@@ -180,8 +180,8 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 	    {
 	      charge.push_back(ionInfo.charge);
 	      mass.push_back(ionInfo.mass);
-	      rigidity.push_back(ionInfo.rigidity(totalEnergy[i], ionInfo.charge));
-	      kineticEnergy.push_back(particleTable->KineticEnergy(pid, totalEnergy[i]));
+	      rigidity.push_back(ionInfo.rigidity(energy[i], ionInfo.charge));
+	      kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
 	    }
         }
       else
@@ -197,8 +197,8 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 	    {
 	      charge.push_back(pInfo.charge);
 	      mass.push_back(pInfo.mass);
-	      rigidity.push_back(pInfo.rigidity(totalEnergy[i], pInfo.charge));
-	      kineticEnergy.push_back(particleTable->KineticEnergy(pid, totalEnergy[i]));
+	      rigidity.push_back(pInfo.rigidity(energy[i], pInfo.charge));
+	      kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
 	    }
         }
     }
