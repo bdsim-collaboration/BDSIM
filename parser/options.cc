@@ -289,6 +289,7 @@ void Options::PublishMembers()
   publish("sensitiveOuter",              &Options::sensitiveOuter);
   publish("sensitiveBeamlineComponents", &Options::sensitiveOuter); // backwards compatibility
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
+  publish("sensitiveBeampipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveTunnel",             &Options::storeElossTunnel);
   publish("tunnelSensitive",             &Options::storeElossTunnel);// backwards compatibility
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
@@ -306,8 +307,12 @@ void Options::PublishMembers()
   publish("storeELossHistograms",           &Options::storeElossHistograms);
   publish("storeElossVacuum",               &Options::storeElossVacuum);
   publish("storeELossVacuum",               &Options::storeElossVacuum);
+  publish("storeElossVacuumHistograms",     &Options::storeElossVacuumHistograms);
+  publish("storeELossVacuumHistograms",     &Options::storeElossVacuumHistograms);
   publish("storeElossTunnel",               &Options::storeElossTunnel);
   publish("storeELossTunnel",               &Options::storeElossTunnel);
+  publish("storeElossTunnelHistograms",     &Options::storeElossTunnelHistograms);
+  publish("storeELossTunnelHistograms",     &Options::storeElossTunnelHistograms);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeELossWorld",                &Options::storeElossWorld);
   publish("storeElossTurn",                 &Options::storeElossTurn);

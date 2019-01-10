@@ -214,24 +214,26 @@ OptionsBase::OptionsBase()
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
   
-  storeCollimatorInfo      = false;
-  storeCollimatorLinks     = false;
-  storeCollimatorHitsIons  = false;
-  storeCollimatorHitsAll   = false;
-  storeEloss               = true;
-  storeElossHistograms     = true;
-  storeElossVacuum         = false;
-  storeElossTunnel         = false;
-  storeElossWorld          = false;
-  storeElossTurn           = false;
-  storeElossLinks          = false;
-  storeElossLocal          = false;
-  storeElossGlobal         = false;
-  storeElossTime           = false;
-  storeElossStepLength     = false;
+  storeCollimatorInfo        = false;
+  storeCollimatorLinks       = false;
+  storeCollimatorHitsIons    = false;
+  storeCollimatorHitsAll     = false;
+  storeEloss                 = true;
+  storeElossHistograms       = true;
+  storeElossVacuum           = false;
+  storeElossVacuumHistograms = false;
+  storeElossTunnel           = false;
+  storeElossTunnelHistograms = false;
+  storeElossWorld            = false;
+  storeElossTurn             = false;
+  storeElossLinks            = false;
+  storeElossLocal            = false;
+  storeElossGlobal           = false;
+  storeElossTime             = false;
+  storeElossStepLength       = false;
   storeElossPreStepKineticEnergy = false;
-  storeElossModelID        = false;
-  storeGeant4Data          = true;
+  storeElossModelID          = false;
+  storeGeant4Data            = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 1000000;

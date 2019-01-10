@@ -88,22 +88,25 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
-  storeCollimatorLinks    = g->StoreCollimatorLinks();
+  storeCollimatorLinks       = g->StoreCollimatorLinks();
   // automatically store ion info if generating ion hits
-  storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
-  storeCollimatorInfo     = g->StoreCollimatorInfo();
-  storeELoss              = g->StoreELoss();
-  storeELossHistograms    = g->StoreELossHistograms();
-  storeELossTunnel        = g->StoreELossTunnel();
-  storeELossVacuum        = g->StoreELossVacuum();
-  storeGeant4Data         = g->StoreGeant4Data();
-  storeModel              = g->StoreModel();
-  storeSamplerPolarCoords = g->StoreSamplerPolarCoords();
-  storeSamplerCharge      = g->StoreSamplerCharge();
-  storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
-  storeSamplerMass        = g->StoreSamplerMass();
-  storeSamplerRigidity    = g->StoreSamplerRigidity();
-  storeSamplerIon         = g->StoreSamplerIon();
+  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
+  storeCollimatorInfo        = g->StoreCollimatorInfo();
+  storeELoss                 = g->StoreELoss();
+  // store histograms if storing general energy deposition as negligible in size
+  storeELossHistograms       = g->StoreELossHistograms() || storeELoss;
+  storeELossTunnel           = g->StoreELossTunnel();
+  storeELossTunnelHistograms = g->StoreELossTunnelHistograms() || storeELossTunnel;
+  storeELossVacuum           = g->StoreELossVacuum();
+  storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
+  storeGeant4Data            = g->StoreGeant4Data();
+  storeModel                 = g->StoreModel();
+  storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
+  storeSamplerCharge         = g->StoreSamplerCharge();
+  storeSamplerKineticEnergy  = g->StoreSamplerKineticEnergy();
+  storeSamplerMass           = g->StoreSamplerMass();
+  storeSamplerRigidity       = g->StoreSamplerRigidity();
+  storeSamplerIon            = g->StoreSamplerIon();
 
   // polar coords don't require a look up of any other PDG info so it
   // doesn't need to involved in the following optimisation groupings
@@ -367,10 +370,10 @@ void BDSOutput::CreateHistograms()
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
-  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
+  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax);
+  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax);
   if (storeELossHistograms)
-    {histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);}
+    {histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",nbins,smin,smax);}
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
@@ -391,10 +394,24 @@ void BDSOutput::CreateHistograms()
 						   "Energy Loss per Element" ,
 						   binedges);
     }
+  if (storeELossVacuumHistograms)
+    {
+      histIndices1D["ElossVacuum"] = Create1DHistogram("ElossVacuumHisto",
+						       "Energy Loss in Vacuum",
+						       nbins,smin,smax);
+      histIndices1D["ElossVacuumPE"] = Create1DHistogram("ElossVaccumPEHisto",
+							 "Energy Loss in Vacuum per Element" ,
+							 binedges);
+    }
   
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
-  if (tunnelBeamline && storeELossHistograms)
+  if (!tunnelBeamline)
+    {
+      storeELossTunnel = false;
+      storeELossTunnelHistograms = false;
+    }
+  if (storeELossTunnelHistograms)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
       histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",
@@ -407,12 +424,12 @@ void BDSOutput::CreateHistograms()
 
   if (storeCollimatorInfo && nCollimators > 0)
     {
-      std::vector<G4String> collHistNames = {"CollimatorPhitsPE",
-					     "CollimatorPlossPE",
-					     "CollimatorElossPE",
-					     "CollimatorPrimaryInteracted"};
-      std::vector<G4String> collHistDesciptions = {"Primary Hits per Collimator",
-						   "Primary Loss per Collimator",
+      std::vector<G4String> collHistNames = {"CollPhitsPE",
+					     "CollPlossPE",
+					     "CollElossPE",
+					     "CollPInteractedPE"};
+      std::vector<G4String> collHistDesciptions = {"Primary Hits per Coll",
+						   "Primary Loss per Coll",
 						   "Energy Loss per Collimator",
 						   "Primary Interacted per Collimator"};
       for (G4int i = 0; i < (G4int)collHistNames.size(); i++)
@@ -515,9 +532,21 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
   G4int n_hit = hits->entries();
   G4int indELoss         = histIndices1D["Eloss"];
   G4int indELossPE       = histIndices1D["ElossPE"];
-  G4int indELossTunnel   = histIndices1D["ElossTunnel"];
-  G4int indELossTunnelPE = histIndices1D["ElossTunnelPE"];
-  G4int indScoringMap    = 0;
+  G4int indELossTunnel   = -1;
+  G4int indELossTunnelPE = -1;
+  if (storeELossTunnelHistograms)
+    {
+      indELossTunnel   = histIndices1D["ElossTunnel"];
+      indELossTunnelPE = histIndices1D["ElossTunnelPE"];
+    }
+  G4int indELossVacuum   = -1;
+  G4int indELossVacuumPE = -1;
+  if (storeELossVacuumHistograms)
+    {
+      indELossVacuum   = histIndices1D["ElossVacuum"];
+      indELossVacuumPE = histIndices1D["ElossVacuumPE"];
+    }
+  G4int indScoringMap    = -1;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
   for (G4int i=0;i<n_hit;i++)
@@ -528,14 +557,14 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
       switch (lossType)
 	{
 	case BDSOutput::LossType::energy:
-	  {// number - 1 for the index
+	  {
+	    energyDeposited += eW;
 	    if (storeELoss)
 	      {eLoss->Fill(hit);}
-	    energyDeposited += eW;
 	    if (storeELossHistograms)
 	      {
-		runHistos->Fill1DHistogram(indELoss, sHit, eW);
-		evtHistos->Fill1DHistogram(indELoss, sHit, eW);
+		runHistos->Fill1DHistogram(indELoss,   sHit, eW);
+		evtHistos->Fill1DHistogram(indELoss,   sHit, eW);
 		runHistos->Fill1DHistogram(indELossPE, sHit, eW);
 		evtHistos->Fill1DHistogram(indELossPE, sHit, eW);
 	      }
@@ -543,19 +572,28 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  }
 	case BDSOutput::LossType::vacuum:
 	  {
+	    energyDepositedVacuum += eW;
 	    if (storeELossVacuum)
 	      {eLossVacuum->Fill(hit);}
-	    energyDepositedVacuum += eW;
+	    if (storeELossVacuumHistograms)
+	      {
+		evtHistos->Fill1DHistogram(indELossVacuum,   sHit, eW);
+		runHistos->Fill1DHistogram(indELossVacuumPE, sHit, eW);
+	      }
+	    break;
 	  }
 	case BDSOutput::LossType::tunnel:
 	  {
 	    energyDepositedTunnel += eW;
 	    if (storeELossTunnel)
 	      {eLossTunnel->Fill(hit);}
-	    runHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
-	    evtHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
-	    runHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
-	    evtHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
+	    if (storeELossTunnelHistograms)
+	      {
+		runHistos->Fill1DHistogram(indELossTunnel,   sHit, eW);
+		evtHistos->Fill1DHistogram(indELossTunnel,   sHit, eW);
+		runHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
+		evtHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
+	      }
 	    break;
 	  }
 	case BDSOutput::LossType::world:
@@ -580,7 +618,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
       nCollimators > 0 &&
       (lossType == BDSOutput::LossType::energy) &&
       storeELossHistograms)
-    {CopyFromHistToHist1D("ElossPE", "CollimatorElossPE", collimatorIndices);}
+    {CopyFromHistToHist1D("ElossPE", "CollElossPE", collimatorIndices);}
 }
 
 void BDSOutput::FillELossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
@@ -604,7 +642,7 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
   evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
   
   if (storeCollimatorInfo && nCollimators > 0)
-    {CopyFromHistToHist1D("PhitsPE", "CollimatorPhitsPE", collimatorIndices);}
+    {CopyFromHistToHist1D("PhitsPE", "CollPhitsPE", collimatorIndices);}
 }
 
 void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
@@ -617,7 +655,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
   evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
 
   if (storeCollimatorInfo && nCollimators > 0)
-    {CopyFromHistToHist1D("PlossPE", "CollimatorPlossPE", collimatorIndices);}
+    {CopyFromHistToHist1D("PlossPE", "CollPlossPE", collimatorIndices);}
 }
 
 void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)
@@ -663,7 +701,7 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
 
   // after all collimator hits have been filled, we summarise whether the primary
   // interacted in a histogram
-  G4int histIndex = histIndices1D["CollimatorPrimaryInteracted"];
+  G4int histIndex = histIndices1D["CollPInteractedPE"];
   for (G4int i = 0; i < (G4int)collimators.size(); i++)
     {
       evtHistos->Fill1DHistogram(histIndex, i,

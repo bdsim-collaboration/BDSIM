@@ -141,8 +141,8 @@ private:
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;
   G4bool generateELossHits;
-  G4bool storeELossVacuum;
-  G4bool storeELossTunnel;
+  G4bool generateELossVacuumHits;
+  G4bool generateELossTunnelHits;
   G4bool storeELossWorld;
   /// @}
 };

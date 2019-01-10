@@ -255,7 +255,9 @@ namespace GMAD
     bool        storeEloss;
     bool        storeElossHistograms;
     bool        storeElossVacuum;
+    bool        storeElossVacuumHistograms;
     bool        storeElossTunnel;
+    bool        storeElossTunnelHistograms;
     bool        storeElossWorld;
     bool        storeElossTurn;
     bool        storeElossLinks;

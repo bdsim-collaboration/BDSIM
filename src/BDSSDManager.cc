@@ -65,9 +65,9 @@ BDSSDManager::BDSSDManager()
   verbose                 = g->Verbose();
   storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
-  generateELossHits       = g->GenerateELossHits();
-  storeELossVacuum        = g->StoreELossVacuum();
-  storeELossTunnel        = g->StoreELossTunnel();
+  generateELossHits       = g->StoreELoss() || g->StoreELossHistograms();
+  generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
+  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms(); 
   storeELossWorld         = g->StoreELossWorld();
   
   filters["primary"] = new BDSSDFilterPrimary("primary");
@@ -159,7 +159,7 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::energydepvacuum:
       {
 	if (applyOptions)
-	  {result = storeELossVacuum ? eCounterVacuum : nullptr;}
+	  {result = generateELossVacuumHits ? eCounterVacuum : nullptr;}
 	else
 	  {result = eCounterVacuum;}
 	break;
@@ -167,7 +167,7 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::energydeptunnel:
       {
 	if (applyOptions)
-	  {result = storeELossTunnel ? eCounterTunnel : nullptr;}
+	  {result = generateELossTunnelHits ? eCounterTunnel : nullptr;}
 	else
 	  {result = eCounterTunnel;}
 	break;
