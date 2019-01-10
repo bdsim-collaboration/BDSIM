@@ -35,6 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 
 #include <map>
+#include <utility>
+#include <vector>
 
 class G4UserLimits;
 class G4VisAttributes;
@@ -212,8 +214,8 @@ public:
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
-  std::vector<int>                           StoreTrajectorySamplerIDs();
-  std::vector<std::pair<double,double>>      StoreTrajectoryELossSRange();
+  inline std::vector<G4int>                          StoreTrajectorySamplerIDs()  const {return samplerIDs;}
+  inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
   inline G4bool   StoreSamplerPolarCoords()  const {return G4bool  (options.storeSamplerPolarCoords);}
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
@@ -342,6 +344,18 @@ private:
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
+
+  /// Process the option string and fill the below vector.
+  void ProcessTrajectorySamplerIDs();
+
+  /// IDs of samplers to link trajectories from.
+  std::vector<G4int> samplerIDs;
+
+  /// Process the option string and fill the below vector.
+  void ProcessTrajectoryELossSRange();
+  
+  /// Pairs of S ranges to link trajectores to.
+  std::vector<std::pair<G4double, G4double> > elossSRange;
 };
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
