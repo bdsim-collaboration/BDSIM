@@ -47,7 +47,11 @@ BDSGeometryFactory* BDSGeometryFactory::Instance()
 
 BDSGeometryFactory::BDSGeometryFactory()
 {
+#ifdef USE_GDML
   gdml = new BDSGeometryFactoryGDML();
+#else
+  gdml = nullptr;
+#endif
   gmad = new BDSGeometryFactoryGMAD();
   sql  = new BDSGeometryFactorySQL();
 }
