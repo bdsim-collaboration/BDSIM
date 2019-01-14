@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef EVENT_H
 #define EVENT_H
 
+#include <map>
 #include <vector>
 
 #include "TROOT.h"
@@ -29,6 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "RebdsimTypes.hh"
 
 class BDSOutputROOTEventCollimator;
+class BDSOutputROOTEventCoords;
+class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -94,7 +97,11 @@ public:
 #else
   BDSOutputROOTEventSampler<float>* Primary;
 #endif
+  BDSOutputROOTEventCoords*     PrimaryGlobal;
   BDSOutputROOTEventLoss*       Eloss;
+  BDSOutputROOTEventLoss*       ElossVacuum;
+  BDSOutputROOTEventLoss*       ElossWorld;
+  BDSOutputROOTEventExit*       ElossWorldExit;
   BDSOutputROOTEventLoss*       PrimaryFirstHit;
   BDSOutputROOTEventLoss*       PrimaryLastHit;
   BDSOutputROOTEventLoss*       TunnelHit;

@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "RebdsimTypes.hh"
 
 #include "BDSOutputROOTEventCollimator.hh"
+#include "BDSOutputROOTEventCoords.hh"
+#include "BDSOutputROOtEventExit.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -54,7 +56,11 @@ Event::Event(int  dataVersionIn,
 Event::~Event()
 {
   delete Primary;
+  delete PrimaryGlobal;
   delete Eloss;
+  delete ElossVacuum;
+  delete ElossWorld;
+  delete ElossWorldExit;
   delete PrimaryFirstHit;
   delete PrimaryLastHit;
   delete TunnelHit;
@@ -74,7 +80,11 @@ void Event::CommonCtor()
 #else
   Primary         = new BDSOutputROOTEventSampler<float>();
 #endif
+  PrimaryGlobal   = new BDSOutputROOTEventCoords();
   Eloss           = new BDSOutputROOTEventLoss();
+  ElossVacuum     = new BDSOutputROOTEventLoss();
+  ElossWorld      = new BDSOutputROOTEventLoss();
+  ElossWorldExit  = new BDSOutputROOTEventExit();
   PrimaryFirstHit = new BDSOutputROOTEventLoss();
   PrimaryLastHit  = new BDSOutputROOTEventLoss();
   TunnelHit       = new BDSOutputROOTEventLoss();
@@ -156,6 +166,7 @@ void Event::SetBranchAddress(TTree* t,
       t->SetBranchAddress("Primary.", &Primary);
     }
 
+  // turn on info, primary first and last hit as they're not big -> low overhead
   t->SetBranchStatus("Info*", 1);
   t->SetBranchAddress("Info.", &Info);
   
@@ -174,7 +185,13 @@ void Event::SetBranchAddress(TTree* t,
       t->SetBranchAddress("Trajectory.", &Trajectory);
 
       if (dataVersion > 3)
-	{SetBranchAddressCollimators(t, collimatorNamesIn);}
+	{
+	  t->SetBranchAddress("PrimaryGlobal.",  &PrimaryGlobal);
+	  t->SetBranchAddress("ElossVacuum.",    &ElossVacuum);
+	  t->SetBranchAddress("ElossWorld.",     &ElossWorld);
+	  t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);
+	  SetBranchAddressCollimators(t, collimatorNamesIn);
+	}
     }
   else if (branchesToTurnOn)
     {
@@ -188,8 +205,16 @@ void Event::SetBranchAddress(TTree* t,
 	  // we can't automatically do this as SetBranchAddress must use the pointer
 	  // of the object type and not the base class (say TObject) so there's no
 	  // way to easily map these -> ifs
-	  if (name == "Eloss")
+	  if (name == "PrimaryGlobal")
+	    {t->SetBranchAddress("PrimaryGlobal.", &PrimaryGlobal);}
+	  else if (name == "Eloss")
 	    {t->SetBranchAddress("Eloss.", &Eloss);}
+	  else if (name == "ElossVacuum")
+	    {t->SetBranchAddress("ElossVacuum.", &ElossVacuum);}
+	  else if (name == "ElossWorld")
+	    {t->SetBranchAddress("ElossWorld.",  &ElossWorld);}
+	  else if (name == "ElossWorldExit")
+	    {t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);}
 	  else if (name == "Histos")
 	    {t->SetBranchAddress("Histos.", &Histos);}
 	  else if (name == "TunnelHit")
@@ -203,8 +228,12 @@ void Event::SetBranchAddress(TTree* t,
 
   if (debug)
     {
-      std::cout << "Event::SetBranchAddress> Primary.         " << Primary       << std::endl;
+      std::cout << "Event::SetBranchAddress> Primary.         " << Primary         << std::endl;
+      std::cout << "Event::SetBranchAddress> PrimaryGlobal.   " << PrimaryGlobal   << std::endl;
       std::cout << "Event::SetBranchAddress> Eloss.           " << Eloss           << std::endl;
+      std::cout << "Event::SetBranchAddress> ElossVacuum.     " << ElossVacuum     << std::endl;
+      std::cout << "Event::SetBranchAddress> ElossWorld.      " << ElossWorld      << std::endl;
+      std::cout << "Event::SetBranchAddress> ElossWorldExit.  " << ElossWorldExit  << std::endl;
       std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << PrimaryFirstHit << std::endl;
       std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << PrimaryLastHit  << std::endl;
       std::cout << "Event::SetBranchAddress> TunnelHit.       " << TunnelHit       << std::endl;
@@ -236,7 +265,6 @@ void Event::SetBranchAddress(TTree* t,
     }
 }
 
-
 void Event::SetBranchAddressCollimators(TTree* t,
 					const RBDS::VectorString* collimatorNamesIn)
 {
@@ -258,6 +286,6 @@ void Event::SetBranchAddressCollimatorSingle(TTree* t,
   collimatorNames.push_back(name);
   collimatorMap[name] = col;
 
-  t->SetBranchAddress((name + ".").c_str(), &collimators.back());
-  t->SetBranchStatus((name+".*").c_str(), 1);
+  t->SetBranchAddress(name.c_str(), &collimators.back());
+  t->SetBranchStatus((name+"*").c_str(), 1);
 }
