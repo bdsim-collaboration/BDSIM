@@ -21,7 +21,7 @@ Basic Examples
    :maxdepth: 3
 
    examples/airwatertarget
-   examples/collimation
+   examples/collimation-simple
    examples/simpleCollimation
    examples/simpleMachine
 
@@ -33,6 +33,7 @@ Start-to-finish examples with explanation.
 .. toctree::
    :maxdepth: 1
 
+   examples/collimation
    worked_example_atf2
 
 

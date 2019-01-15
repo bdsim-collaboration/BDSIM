@@ -1,3 +1,5 @@
+.. _collimation-advanced:
+
 Collimation
 ===========
 
@@ -37,7 +39,21 @@ computer.::
 
   bdsim --file=collimationOptics.gmad --outfile=o1 --batch --ngenerate=5000
 
-This produces an output file called "o1.root".
+This produces an output file called "o1.root". We can then calculate
+the optical functions and sizes of the beam after each element using
+the included rebdsimOptics tool.::
+
+  rebdsimOptics o1.root o1-optics.root
+
+This creates another file called "o1-optics.root" that contains only the
+optical function information. The Python utility `pybdsim` can be used
+to viusalise the data.::
+
+  ipython
+  >>> import pybdsim
+  >>> pybdsim.Plot.BDSIMOptics("o1-optics.root")
+
+.. note:: The setup for the analysis tools should have been done
 
 
 Losses
