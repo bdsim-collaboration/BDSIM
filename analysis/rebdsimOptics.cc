@@ -78,13 +78,15 @@ int main(int argc, char* argv[])
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
   headerTree->Fill();
+  headerTree->Write("", TObject::kOverwrite);
 
   auto modelTree = dl.GetModelTree();
   modelTree->CloneTree(-1, "fast");
-  outputFile->Write();
+  modelTree->Write("", TObject::kOverwrite);
 
   evtAnalysis->Write(outputFile);
   outputFile->Close();
-
+  delete outputFile;
+  
   return 0;
 }

@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
       headerTree->Fill();
+      headerTree->Write("", TObject::kOverwrite);
       
       for (auto& analysis : analyses)
 	{analysis->Write(outputFile);}
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
       // unforunately we have a folder called Model in histogram output files
       // avoid conflict when copying the model for plotting
       newTree->SetName("ModelTree");
-      outputFile->Write();
+      newTree->Write("", TObject::kOverwrite);
 
       outputFile->Close();
       delete outputFile;
