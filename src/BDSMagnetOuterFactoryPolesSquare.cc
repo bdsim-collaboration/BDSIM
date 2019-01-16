@@ -16,16 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMagnetOuterFactoryPolesSquare.hh"
-
 #include "BDSExtent.hh"
-#include "BDSDebug.hh"
-#include "BDSMagnetOuter.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMagnetOuter.hh"
+#include "BDSMagnetOuterFactoryPolesSquare.hh"
 #include "BDSMaterials.hh"
+#include "BDSSDType.hh"
 
 #include "globals.hh"
-
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4IntersectionSolid.hh"
@@ -36,6 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
+
+#include <map>
+#include <vector>
 
 BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare():
   BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/1.5)
@@ -63,9 +64,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(const G4Strin
 								   const G4double& magnetContainerLength,
 								   const G4double& magnetContainerRadiusIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // square yoke - have to do subtraction between two solid boxes
   G4VSolid* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 				  yokeFinishRadius,           // x half width
@@ -153,9 +151,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 							    G4Colour*   colour,
 							    G4Material* outerMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
@@ -255,7 +250,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
   
   outer->RegisterLogicalVolume(poleLVs);
   if (sensitiveOuter)
-    {outer->RegisterSensitiveVolume(poleLVs);}
+    {outer->RegisterSensitiveVolume(poleLVs, BDSSDType::energydep);}
   
   return outer;
 }

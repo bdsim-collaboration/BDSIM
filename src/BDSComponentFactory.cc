@@ -666,19 +666,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // check if the fringe effect is finite
   G4bool finiteEntrFringe = false;
   G4bool finiteExitFringe = false;
-  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) or
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) ||
           BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
     {finiteEntrFringe = true;}
-  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) or
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) ||
         BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
     {finiteExitFringe = true;}
 
   // only build the fringe elements if the poleface rotation or fringe field correction terms are finite
   G4bool buildEntranceFringe = false;
   G4bool buildExitFringe     = false;
-  if (BDS::IsFinite(element->e1) or finiteEntrFringe)
+  if (BDS::IsFinite(element->e1) || finiteEntrFringe)
     {buildEntranceFringe = true;}
-  if (BDS::IsFinite(element->e2) or finiteExitFringe)
+  if (BDS::IsFinite(element->e2) || finiteExitFringe)
     {buildExitFringe = true;}
   if (!includeFringeFields)
     {
@@ -700,7 +700,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       if (!BDS::IsFinite(element->B))
         {
           // only print warning if a poleface or fringe field effect was specified
-          if (buildEntranceFringe or buildExitFringe)
+          if (buildEntranceFringe || buildExitFringe)
             {
               G4cout << __METHOD_NAME__ << "Warning - finite B field required for kicker pole face and fringe fields,"
                         " effects are unavailable for element ""\"" << elementName << "\"." << G4endl;
@@ -712,7 +712,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       else if (type == KickerType::general)
         {
           // only print warning if a poleface or fringe field effect was specified
-          if (buildEntranceFringe or buildExitFringe)
+          if (buildEntranceFringe || buildExitFringe)
             {
               G4cerr << __METHOD_NAME__ << " Poleface and fringe field effects are unavailable "
                      << "for thin the (t)kicker element ""\"" << elementName << "\"." << G4endl;
@@ -1130,12 +1130,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      PrepareHorizontalWidth(element),
+				      PrepareMaterial(element),
+				      PrepareVacuumMaterial(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      G4String(element->material),
-				      G4String(element->vacuumMaterial),
 				      PrepareColour(element));
 }
 
@@ -1147,12 +1147,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
+				     PrepareMaterial(element),
+				     PrepareVacuumMaterial(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     G4String(element->material),
-				     G4String(element->vacuumMaterial),
 				     PrepareColour(element));
 }
 
@@ -1160,12 +1160,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  if (element->material.empty())
-    {
-      G4cout << __METHOD_NAME__ << "warning no material for collimator \"" << elementName
-	     << "\". Using G4_Cu by default" << G4endl;
-    }
   
   return new BDSCollimatorJaw(elementName,
 			      element->l*CLHEP::m,
@@ -1176,7 +1170,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
                               element->xsizeRight*CLHEP::m,
 			      true,
 			      true,
-			      PrepareMaterial(element, "G4_Cu"),
+			      PrepareMaterial(element),
 			      PrepareVacuumMaterial(element),
 			      PrepareColour(element));
 }
@@ -2162,6 +2156,15 @@ G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
   G4String materialName = el->material;
   if (materialName.empty())
     {return BDSMaterials::Instance()->GetMaterial(defaultMaterialName);}
+  else
+    {return BDSMaterials::Instance()->GetMaterial(materialName);}
+}
+
+G4Material* BDSComponentFactory::PrepareMaterial(Element const* el)
+{
+  G4String materialName = el->material;
+  if (materialName.empty())
+    {G4cout << __METHOD_NAME__ << "element \"" << el->name << "\" has no material specified." << G4endl; exit(1);}
   else
     {return BDSMaterials::Instance()->GetMaterial(materialName);}
 }

@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryBase.hh"
-
 #include "BDSColours.hh"
-#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSSDType.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
@@ -34,12 +33,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
-  lengthSafety        = BDSGlobalConstants::Instance()->LengthSafety();
+  BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  lengthSafety        = g->LengthSafety();
   lengthSafetyLarge   = 1*CLHEP::um;
-  checkOverlaps       = BDSGlobalConstants::Instance()->CheckOverlaps();
-  nSegmentsPerCircle  = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
-  sensitiveBeamPipe   = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
-  sensitiveVacuum     = BDSGlobalConstants::Instance()->SensitiveVacuum();
+  checkOverlaps       = g->CheckOverlaps();
+  nSegmentsPerCircle  = g->NSegmentsPerCircle();
+  sensitiveBeamPipe   = g->SensitiveBeamPipe();
+  sensitiveVacuum     = g->StoreELossVacuum();
   CleanUpBase(); // non-virtual call in constructor
 }
 
@@ -76,9 +76,6 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* beamPipeMaterialIn,
 						G4double    length)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   allSolids.push_back(vacuumSolid);
   allSolids.push_back(beamPipeSolid);
   /// build logical volumes
@@ -95,9 +92,6 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
 						 G4Material* vacuumMaterialIn,
 						 G4Material* beamPipeMaterialIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // build the logical volumes
   vacuumLV   = new G4LogicalVolume(vacuumSolid,
 				   vacuumMaterialIn,
@@ -181,9 +175,9 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   aPipe->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
   aPipe->RegisterPhysicalVolume(allPhysicalVolumes);
   if (sensitiveVacuum)
-    {aPipe->RegisterSensitiveVolume(vacuumLV);}
+    {aPipe->RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
   if (beamPipeLV && sensitiveBeamPipe)// in the case of the circular vacuum, there isn't a beampipeLV
-    {aPipe->RegisterSensitiveVolume(beamPipeLV);}
+    {aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::energydep);}
   aPipe->RegisterUserLimits(allUserLimits);
   aPipe->RegisterVisAttributes(allVisAttributes);
   

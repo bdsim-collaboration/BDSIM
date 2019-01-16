@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
+#include <limits>
 #include <map>
 #include <string>
 #include <utility>
@@ -102,11 +103,25 @@ namespace BDS
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.
   void HandleAborts(int signal_number);
+  
+  /// Return true if value is consistent with 0. This is done by checking the
+  /// difference between the value and 0 is within 'tolerance', which is by default
+  /// the minimum difference from zero, epsilon (~1e-15). If a very small but finite
+  /// number is a possibility, a different tolerance should be used.
+  G4bool IsFinite(G4double value,
+		  G4double tolerance = std::numeric_limits<double>::epsilon());
 
-  ///@{ Determine whether a parameter is finite
-  G4bool IsFinite(const G4double& variable);
-  G4bool IsFinite(const G4ThreeVector& variable);
-  ///@}
+  /// Apply IsFinite to each component of a 3-vector.
+  G4bool IsFinite(const G4ThreeVector& variable,
+		  G4double tolerance = std::numeric_limits<double>::epsilon());
+
+  /// Test whether a number is non-zero - ie abs(number) > minimum number
+  G4bool NonZero(G4double value);
+
+  /// Test if a number is above a certain tolerance for tracking strength
+  /// purposes. Currently at 1e-50 as potential can be small and squared. Uses
+  /// IsFinite() with 1e-50 as tolerance.
+  G4bool IsFiniteStrength(G4double variable);
 
   /// Check if character array is an integer, and returns the integer by reference
   G4bool IsInteger(const char* s, int& convertedInteger);
@@ -193,6 +208,16 @@ namespace BDS
 
   /// Take one long string and split on space and then on colon. "key1:value1 key2:value2" etc.
   std::map<G4String, G4String> GetUserParametersMap(G4String userParameters);
+
+  /// Generic function to get an item from a map with a default value and not throw an exception
+  /// from unsafe access. Saves writing the searching code everywhere. Based on:
+  /// https://stackoverflow.com/questions/2333728/stdmap-default-value
+  template <typename K, typename V>
+  V MapGetWithDefault(const std::map <K,V>& m, const K& key, const V& defaultValue)
+  {
+    typename std::map<K,V>::const_iterator it = m.find(key);
+    return it == m.end() ? defaultValue : it->second;
+  };
 }
 
 #endif

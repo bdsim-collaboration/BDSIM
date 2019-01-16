@@ -69,7 +69,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VSensitiveDetector.hh"
 #if G4VERSION_NUMBER > 1039
 #include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #endif
@@ -145,7 +144,11 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
+  if (verbose || debug)
+    {
+      G4cout << __METHOD_NAME__
+	     << "starting accelerator geometry construction\n" << G4endl;
+    }
   
   // construct regions
   InitialiseRegions();
@@ -169,7 +172,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure
   ComponentPlacement(worldPV);
   
-  if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
+  if(verbose || debug)
+    {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
@@ -190,9 +194,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
 void BDSDetectorConstruction::InitialiseRegions()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
     {
       G4Region* region = new G4Region(G4String(r.name));
@@ -228,7 +229,7 @@ void BDSDetectorConstruction::BuildBeamlines()
     }
 
   // print warning if beamline is approximately circular but flag isnt specfied
-  if (not circular and mainBeamline.massWorld->ElementAnglesSumToCircle())
+  if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
     {
       G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
              << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
@@ -394,9 +395,6 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
 void BDSDetectorConstruction::BuildTunnel()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   const BDSBeamline* mainBeamLine = acceleratorModel->BeamlineMain();
   BDSBeamline* tunnelBeamline;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
@@ -408,9 +406,6 @@ void BDSDetectorConstruction::BuildTunnel()
 
 G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   std::vector<BDSExtentGlobal> extents;
 
   // These beamlines should always exist so are safe to access.
@@ -475,8 +470,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       worldSolid = geom->GetContainerSolid();
 
       // make the world sensitive to energy deposition with its own unique hits collection
-      if (BDSGlobalConstants::Instance()->StoreELossWorld())
-        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+      // this will be a nullptr depending on the options
+      worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe
@@ -554,17 +549,13 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // Geant4 at the right time, so we have a separate placement call for them
   BDSBeamlineSet mainBL = BDSAcceleratorModel::Instance()->BeamlineSetMain();
   PlaceBeamlineInWorld(mainBL.massWorld,
-		       worldPV, checkOverlaps,
-		       BDSSDManager::Instance()->GetEnergyCounterSD(),
-		       true);
+		       worldPV, checkOverlaps, true);
   PlaceBeamlineInWorld(mainBL.endPieces,
-		       worldPV, checkOverlaps,
-		       BDSSDManager::Instance()->GetEnergyCounterSD());
+		       worldPV, checkOverlaps);
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
       PlaceBeamlineInWorld(acceleratorModel->TunnelBeamline(),
-			   worldPV, checkOverlaps,
-			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
+			   worldPV, checkOverlaps);
     }
   // No energy counter SD added here as individual placements have that attached
   // during construction time
@@ -582,7 +573,6 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamline,
 						   G4VPhysicalVolume*    containerPV,
 						   G4bool                checkOverlaps,
-						   G4VSensitiveDetector* sensitiveDetector,
 						   G4bool                setRegions,
 						   G4bool                registerInfo,
 						   G4bool                useCLPlacementTransform)
@@ -609,8 +599,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	    }
 	}
 
-      if (sensitiveDetector && BDSGlobalConstants::Instance()->StoreELoss())
-	{element->GetAcceleratorComponent()->SetSensitiveDetector(sensitiveDetector);}
+      // setup the sensitivity
+      element->GetAcceleratorComponent()->AttachSensitiveDetectors();
       
       G4String placementName = element->GetPlacementName() + "_pv";
       G4Transform3D* placementTransform = element->GetPlacementTransform();
@@ -764,8 +754,6 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
-  if(debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();

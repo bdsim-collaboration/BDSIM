@@ -40,11 +40,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VTouchable.hh"
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name,
-				       G4bool   stopSecondariesIn,
-				       G4bool   verboseIn):
-  G4VSensitiveDetector("energy_counter/"+name),
+				       G4bool   stopSecondariesIn):
+  BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
-  verbose(verboseIn),
   colName(name),
   energyCounterCollection(nullptr),
   HCIDe(-1),
@@ -199,41 +197,31 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
   G4double sHit = sBefore + randDist*(sAfter - sBefore);
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
-  
-  if(verbose)
-    {
-      G4cout << "BDSEnergyCounterSD: Current Volume: " 
-	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
-	     << "\tEvent:  " << eventnumber 
-	     << "\tEnergy: " << enrg/CLHEP::GeV 
-	     << "GeV\tPosition: " << sAfter/CLHEP::m <<" m"<< G4endl;
-    }
-  
-  weight     = track->GetWeight();
-  trackID    = track->GetTrackID();
-  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
+  weight      = track->GetWeight();
+  trackID     = track->GetTrackID();
+  turnstaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-                                                       enrg,
-						       preStepKineticEnergy,
-                                                       X, Y, Z,
-                                                       sBefore,
-                                                       sAfter,
-                                                       sHit,
-                                                       x, y, z,
-						       globalTime,
-                                                       ptype,
-                                                       trackID,
-                                                       parentID,
-                                                       weight,
-                                                       turnstaken,
-                                                       eventnumber,
-                                                       stepLength,
-                                                       beamlineIndex);
+  BDSEnergyCounterHit* hit = new BDSEnergyCounterHit(nCopy,
+						     enrg,
+						     preStepKineticEnergy,
+						     X, Y, Z,
+						     sBefore,
+						     sAfter,
+						     sHit,
+						     x, y, z,
+						     globalTime,
+						     ptype,
+						     trackID,
+						     parentID,
+						     weight,
+						     turnstaken,
+						     eventnumber,
+						     stepLength,
+						     beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(ECHit);
+  energyCounterCollection->insert(hit);
    
   return true;
 }
@@ -318,26 +306,32 @@ G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-                                                       enrg,
-						       preStepKineticEnergy,
-                                                       X, Y, Z,
-                                                       sBefore,
-                                                       sAfter,
-                                                       sHit,
-                                                       x, y, z,
-						       globalTime,
-                                                       ptype,
-                                                       trackID,
-                                                       parentID,
-                                                       weight,
-                                                       turnstaken,
-                                                       eventnumber,
-                                                       stepLength,
-                                                       beamlineIndex);
+  BDSEnergyCounterHit* hit = new BDSEnergyCounterHit(nCopy,
+						     enrg,
+						     preStepKineticEnergy,
+						     X, Y, Z,
+						     sBefore,
+						     sAfter,
+						     sHit,
+						     x, y, z,
+						     globalTime,
+						     ptype,
+						     trackID,
+						     parentID,
+						     weight,
+						     turnstaken,
+						     eventnumber,
+						     stepLength,
+						     beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(ECHit);
+  energyCounterCollection->insert(hit);
    
   return true;
+}
+
+G4VHit* BDSEnergyCounterSD::last() const
+{
+  BDSEnergyCounterHit* lastHit = energyCounterCollection->GetVector()->back();
+  return dynamic_cast<G4VHit*>(lastHit);
 }

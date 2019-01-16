@@ -118,10 +118,6 @@ G4bool BDSTunnelBuilder::BreakTunnel(BDSBeamline::const_iterator proposedStart,
 
 BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamline)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
   BDSTunnelInfo* defaultModel = BDSGlobalConstants::Instance()->TunnelInfo();
   G4double       offsetX      = BDSGlobalConstants::Instance()->TunnelOffsetX();
   G4double       offsetY      = BDSGlobalConstants::Instance()->TunnelOffsetY();

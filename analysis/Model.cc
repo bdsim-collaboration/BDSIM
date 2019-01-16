@@ -66,7 +66,7 @@ void Model::SetBranchAddress(TTree* t,
 	}
     }
   
-  t->SetBranchAddress("Model.",&model);
+  t->SetBranchAddress("Model.", &model);
 }
 
 std::vector<std::string> Model::SamplerNames() const
@@ -75,4 +75,9 @@ std::vector<std::string> Model::SamplerNames() const
     {return model->samplerNamesUnique;}
   else
     {return std::vector<std::string>();}
+}
+
+std::vector<std::string> Model::CollimatorNames() const
+{
+  return model ? model->collimatorBranchNamesUnique : std::vector<std::string>();
 }

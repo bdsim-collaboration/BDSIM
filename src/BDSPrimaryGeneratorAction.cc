@@ -203,7 +203,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge));
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
   vertex->Print();
 #endif
 }

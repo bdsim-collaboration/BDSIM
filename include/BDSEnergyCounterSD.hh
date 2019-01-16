@@ -20,8 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSENERGYCOUNTERSD_H
 
 #include "BDSEnergyCounterHit.hh"
-
-#include "G4VSensitiveDetector.hh"
+#include "BDSSensitiveDetector.hh"
 
 class BDSAuxiliaryNavigator;
 
@@ -39,12 +38,11 @@ class G4Track;
  * the curvilinear parallel world for curvilinear coordinates.
  */
 
-class BDSEnergyCounterSD: public G4VSensitiveDetector
+class BDSEnergyCounterSD: public BDSSensitiveDetector
 {
 public:
   BDSEnergyCounterSD(G4String name,
-		     G4bool   stopSecondariesIn,
-		     G4bool   verboseIn = false);
+		     G4bool   stopSecondariesIn);
   virtual ~BDSEnergyCounterSD();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
@@ -61,6 +59,9 @@ public:
   /// is no step here, so it's just the total energy of the particle.
   virtual G4bool ProcessHitsTrack(const G4Track* track,
 				  G4TouchableHistory* th);
+
+  /// Provide access to last hit.
+  virtual G4VHit* last() const;
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -69,7 +70,6 @@ private:
   BDSEnergyCounterSD() = delete;
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
-  G4bool   verbose;         ///< Cache of whether verbose output.
   G4String colName;         ///< Collection name.
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   G4int    HCIDe;
