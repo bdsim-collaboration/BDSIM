@@ -17,21 +17,49 @@ New Features
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
 * New wire scanner element "wirescanner" with cylindrical wire in a beam pipe.
-* New option :code:`storeEloss` to completely turn off generation of energy deposition hits to
-  save memory usage and output file size. Default on.
-* New option :code:`storeElossWorld` to turn on generation of energy deposition in the world
-  volume (i.e. the air) as well as record energy leaving the simulation. Default off.
-* New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
-* New option :code:`storeElossVacuum` to control whether energy deposition in the residual
-  gas in the beam pipe 'vacuum' is recorded.
-* New option :code:`storeElossModelID` to control whether the beam line index is stored in
-  the energy loss output. More granular than :code:`storeElossLinks`.
-* New option :code:`storeGeant4Data` to control whether the basic particle data is stored in
-  the output for all particles used or not.
-* New option :code:`storeSamplerPolarCoords` for whether to store the polar coordinates (r, phi and rp, phip) in the sampler output.
-* New option :code:`storeSamplerAll` to conveniently store all optional sampler data with one option.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++----------------------------+------------------------------------------------------------------+
+| **Option**                 | **Description**                                                  |
++============================+==================================================================+
+| collimatorInfo             | Store collimator structure with primary hits per collimator.     |
++----------------------------+------------------------------------------------------------------+
+| geant4Macro                | Fun an optional macro in the visualiser once it's started.       |
++----------------------------+------------------------------------------------------------------+
+| storeEloss                 | Ability to completely turn off generation of energy deposition   |
+|                            | hits to save memory usage and output file size. Default on.      |
++----------------------------+------------------------------------------------------------------+
+| storeElossModelID          | Control whether the beam line index is stored in the energy      |
+|                            | loss output. More granular than :code:`storeElossLinks`.         |
++----------------------------+------------------------------------------------------------------+
+| storeElossTurn             | Control whether energy deposition turn number is saved.          |
++----------------------------+------------------------------------------------------------------+
+| storeElossVacuum           | Control whether energy deposition in the residual gas in the     |
+|                            | beam pipe 'vacuum' is recorded.                                  |
++----------------------------+------------------------------------------------------------------+
+| storeELossWorld            | Turn on generation of energy deposition in the world volume      |
+|                            | (i.e. the air) as well as record energy leaving the simulation.  |
+|                            | Default off.                                                     |
++----------------------------+------------------------------------------------------------------+
+| storeGeant4Data            | Control whether the basic particle data is stored in the output  |
+|                            | for all particles used or not.                                   |
++----------------------------+------------------------------------------------------------------+
+| storeSamplerAll            | Conveniently store all optional sampler data with one option.    |
++----------------------------+------------------------------------------------------------------+
+| storeSamplerKineticEnergy  | Store kinetic energy in the sampler output.                      |
++----------------------------+------------------------------------------------------------------+
+| storeSamplerPolarCoords    | Store the polar coordinates (r, phi and rp, phip) in the         |
+|                            | sampler output.                                                  |
++----------------------------+------------------------------------------------------------------+
+| worldGeometryFile          | External geometry file for world geometry.                       |
++----------------------------+------------------------------------------------------------------+
+
 * Access to data version in DataLoader in analysis.
-* External geometry can be supplied as the world volume with the option :code:`worldGeometryFile`.
+* External geometry can be supplied as the world volume with the option
+  :code:`worldGeometryFile`.
 * New complete physics list for crystal channelling to achieve the correct result.
 * New ability to specify a different beam particle that is different from the design
   particle used for magnetic field strength calculations (:code:`beamParticleName`).
@@ -160,17 +188,14 @@ Output Changes
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
 * Boolean flag store in even info as to whether the primary was absorbed in a collimator or not.
-* New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
-* New option :code:`storeSamplerPolarCoords` for whether to store the polar coordinates (r, phi and rp, phip) in the sampler output.
-* New option :code:`storeSamplerAll` to conveniently store all optional sampler data with one option.
-* New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
+* New options to control level of output as described in table in new features..
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
   level of detail with extra variables of their output.
 * New class BDSOutputROOTEventExit for a record of coordinates when a particle leaves a volume,
   use currently for exiting the world.
-* New structures ("branches") in the `Event` tree called :code:`ElossWorld` and :code:`ElossWorldExit` for
-  energy deposition in the world material and energy leaving the world (and therefore the simulation)
-  respectively.
+* New structures ("branches") in the `Event` tree called :code:`ElossWorld` and
+  :code:`ElossWorldExit` for energy deposition in the world material and energy leaving
+  the world (and therefore the simulation) respectively.
 * New members in :code:`Event.Info` that are the integrated energy deposited in various parts
   for that event. These are for convenience and are the integrals of the various Eloss parts.
 
