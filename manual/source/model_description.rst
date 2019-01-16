@@ -5130,7 +5130,7 @@ produces the model shown below.
 * Colour names are case-sensitive.
 * New colour names must not clash with predefined BDSIM colour names.
 
-All available colours in BDSIM can be found by running BDSIM with the `--colours` command::
+All available colours in BDSIM can be found by running BDSIM with the `-\\-colours` command::
 
   bdsim --colours
 

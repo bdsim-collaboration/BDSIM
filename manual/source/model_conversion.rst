@@ -155,7 +155,7 @@ and higher order magnets, couple the emittance in horizontal and vertical direct
 is invalid for Twiss parameters. The default option in `rebdsimOptics` is to calculate the emittance only
 once for the first sampler and assume this for all subsequent samplers. In the case of acceleration, or
 where the geometrical emittance is expected to change, the emittance can be calculated at each sampler
-freshly. The executable option `--emittanceOnFly` should be used. ::
+freshly. The executable option `-\\-emittanceOnFly` should be used. ::
 
   rebdsimOptics op1.root op1_optics.root --emittanceOnFly
 

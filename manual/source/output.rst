@@ -31,8 +31,9 @@ Output Information
 The following information can be recorded from a BDSIM simulation:
 
 - Particle coordinates at a plane after each element - 'sampler' information.
-- Energy deposition 'hits' from any component.
+- Energy deposition 'hits' from any component, the air or the beam pipe vacuum.
 - Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
+- Optional information from hits in a collimator - see :ref:`bdsim-options-output`.
 - A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
 
 Samplers are 'attached' to a beam line element by using the sample command::
@@ -69,11 +70,13 @@ the simulation. This is handled automatically in BDSIM.
 It is thoroughly recommend to consult all the options at :ref:`bdsim-options-output`. However,
 consider the following points to reduce output data size:
 
+
 * If energy loss hits are not required (e.g. maybe only the pre-made histograms will suffice),
-   turn these off with the option :code:`storeELoss`.
+  turn these off with the option :code:`storeELoss`.
 * Eloss normally dominates the size of the output file as it has the largest number of hits with
   typically :math:`10^4` energy deposition hits per primary.
-* By default some basic information is store in "Geant4Data" for all particles used in the simualtion.
+* By default some basic information is store in "Geant4Data" for all particles used
+  in the simualtion.
   For a big study, it is worth turning this off as it's replicated in every file.
 * :code:`sample ,all;` is convenient, especially at the start of a study, but you should only
   attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
