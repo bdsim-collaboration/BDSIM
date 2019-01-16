@@ -1,4 +1,4 @@
-V1.3 - 2018 / 12 / ??
+V1.3 - 2019 / 01 / ??
 =====================
 
 Expected Changes To Results
@@ -17,6 +17,9 @@ New Features
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
 * New wire scanner element "wirescanner" with cylindrical wire in a beam pipe.
+* Complete CMake for user applications based on BDSIM.
+* BDSIM as a class for interfacing. Ability to add custom beam line components.
+  See :ref:`interfacing-section`.
 
 * New options:
 

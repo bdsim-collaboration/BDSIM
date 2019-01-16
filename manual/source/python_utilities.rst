@@ -30,3 +30,12 @@ or function.
    * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pymad8/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pytransport/>`_
+
+Geometry Preparation
+====================
+
+For preparation of custom geometry, we have developed a Python geometry package
+called `pyg4ometry`. This allows scripting of geometry creation in Python, visualisation
+and overlap checking outside Geant4. THe emitted GDML files can be loaded in BDSIM.
+
+Please visit `<https://bitbucket.org/jairhul/pyg4ometry>`_
