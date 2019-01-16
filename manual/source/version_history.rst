@@ -4,7 +4,7 @@ V1.3 - 2018 / 12 / ??
 Expected Changes To Results
 ---------------------------
 
-* The density of the surrounding air has changed very slighty to that of the standard
+* The density of the surrounding air has changed very slightly to that of the standard
   G4_AIR one.
 * Energy deposition in vacuum is now separated into a separate branch and is not mixed
   with general Eloss.
@@ -42,7 +42,7 @@ New Features
 * New option :code:`geant4Macro` and executable option :code:`--geant4Macro` to run an optional
   macro in the visualiser once it's started.
 * A warning will print if a user-defined material is more dense than 100g/cm3 as this is much higher
-  than any naturally occuring material (on Earth). The simulation will still proceed.
+  than any naturally occurring material (on Earth). The simulation will still proceed.
 * New optional collimator output structure in event made per collimator with prefix
   "COLL\_". Controlled by new option :code:`collimatorInfo`.
 * New mini-summary of collimators in Model tree when :code:`collimatorInfo` option is used.
@@ -100,8 +100,8 @@ Materials
 
 * "niobium" is now "niobium_2k" to better reflect the unusual temperature.
 * "nbti" is now "nbti_4k" to better reflect the unusual temperature.
-* "waterCkov" has been removed. "water or "G4_WATER" (the same) should be used. The refractive
-  index data has been added to G4_WATER.
+* "waterCkov" has been removed. "water" or "G4_WATER" (the same) should be used. The refractive
+  index data has been added to G4_WATER material.
 
 Developer Changes
 -----------------
@@ -129,7 +129,7 @@ Bug Fixes
   element record energy loss or not.
 * Degrader and undulator did not record energy deposition.
 * Energy deposition is now correctly recorded when tracks are artificially killed.
-* Fix particle channelling in cylindrical and torus shaped crystals. The crystal implementation
+* Fix crystal channelling with cylindrical and torus shaped crystals. The crystal implementation
   only works along the local X direction of any solid. Fixed by using a G4DisplacedSolid to
   allow use of more advanced geometries than a box.
 * Fix channelling physics for standard EM and hadronic processes as this requires process biasing.
@@ -139,8 +139,7 @@ Bug Fixes
 * Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for
   field maps.
 * Fix setting default seed state for random number generator if using recreate mode
-  and progressing
-  beyond an event stored in the file.
+  and progressing beyond an event stored in the file.
 * Fix setting the energy level of an ion - wasn't set from input.
 * SQL geometry factory didn't clean up after repeated use. This geometry isn't
   generally supported.
@@ -148,7 +147,7 @@ Bug Fixes
   tests of finite numbers. This would result in particles with small offsets in magnets or
   particles with high momentum that would see only very small deviations being tracked as
   if it were a drift.
-* Fixed segfaul crash from ROOT with rebdsim when there were more dimensions in the variables
+* Fixed segfault crash from ROOT with rebdsim when there were more dimensions in the variables
   than the declared number of dimensions. For example, "y:x" for Histogram1D.
   
 Output Changes
@@ -243,7 +242,7 @@ New Features
 * New "channelling" physics list for Geant4 crystal channelling physics process.
 * Field maps need not be in `x`, `y`, `z`, `t` order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension, i.e. it is now possible to specify a 1D field along the `z` direction.
-* Rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
+* Rebdsim can now analyse a select range of events specified by "EventStart" and "EventEnd" options.
   Issue #240.
 * Placements can now be made with respect to S,x, and y in the main beam line, with respect to a beam line
   element and lastly in global Cartesian coordinates.
@@ -282,7 +281,7 @@ General
 * long int used explicitly instead of int for event indices in analysis.
 * Reimplemented primary first hit and last hit. Last hit is now the end point of the
   primary trajectory. No more linear memory usage with tracking time.
-* Beam pipe extent calculation reimplemented and much less simplistic - used
+* Beam pipe extent calculation re-implemented and much less simplistic - used
   to check whether a pipe will fit inside a magnet.
 * Mini-contents for syntax section of manual, as it's grown to a large size.
 * New rmatrix element (experimental).
@@ -329,9 +328,9 @@ Output Changes
 Bug Fixes
 ---------
 
-* Fixed solenoid tracking. The anti-spiralling code in the dipole integrator that is desgined
+* Fixed solenoid tracking. The anti-spiralling code in the dipole integrator that is designed
   to stop infinite spiralling of low energy particles in strong fields was causing incorrect
-  tracking in solenoids. This has been fixed with the reimplementation of the solenoid matrix
+  tracking in solenoids. This has been fixed with the re-implementation of the solenoid matrix
   and now includes the fringe effects. Issue #255.
 * Fixed tracking bug where particle in very niche coordinates may reflect from a sampler
   at the end of a dipole with a very strongly angled pole face. #Issue 241.
@@ -369,7 +368,7 @@ Bug Fixes
 * Fixed reproducibility for the `ring` distribution that didn't use the same random number generator
   as every other distribution. Coordinates will be different for this distribution for the same seed now.
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
-* `square` beam distiribution now varies with :code:`envelopeT`.
+* `square` beam distribution now varies with :code:`envelopeT`.
 * Fixed S coordinate in output. Issues #247 and #248.
 * Fixed the setting of the sampler diameter where the user specifies a smaller one than that calcualted
   from the minimum bending radius.
