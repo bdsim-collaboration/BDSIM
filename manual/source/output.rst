@@ -653,6 +653,9 @@ BDSOutputROOTEventInfo
 | energyTotal                 | double            | The sum of the above energies for the       |
 |                             |                   | current event.                              |
 +-----------------------------+-------------------+---------------------------------------------+
+| nCollimatorsInteracted      | int               | The number of collimators the primary       |
+|                             |                   | particle interacted with.                   |
++-----------------------------+-------------------+---------------------------------------------+
 
 .. note:: :code:`energyDepositedVacuum` will only be non-zero if the option :code:`storeElossVacuum`
 	  is on which is off by default.
@@ -662,6 +665,9 @@ BDSOutputROOTEventInfo
 
 .. note:: :code:`energyWorldExit` will only be non-zero if Geant4.10.3 or later is used as well
 	  as the option :code:`storeElossWorld` is on that is off by default.
+
+.. note:: :code:`nCollimatorsInteracted` will only be non-zero if the option :code:`storeCollimatorInfo`
+	  is turned on which is off by default.
 
 .. warning:: One would expect the parameter `energyTotal` which is the sum of the energies
 	     to be equal to the incoming beam energy. This in reality depends on the physics

@@ -54,8 +54,9 @@ public:
   double energyWorldExit;       ///< Total energy leaving the world.
   double energyKilled;          ///< Total energy of killed particles that weren't in a sensitive volume.
   double energyTotal;           ///< Sum of above 5 variables that totals all energy.
+  int    nCollimatorsInteracted;///< Number of collimators primary interacted with.
   
-  ClassDef(BDSOutputROOTEventInfo,4);
+  ClassDef(BDSOutputROOTEventInfo, 4);
 };
 
 #endif

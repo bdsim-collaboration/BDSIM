@@ -267,6 +267,7 @@ private:
   G4double energyDepositedWorld;
   G4double energyDepositedTunnel;
   G4double energyWorldExit;
+  G4int    nCollimatorsInteracted;
   /// @}
 
   /// @{ Map of histogram name (short) to index of histogram in output.

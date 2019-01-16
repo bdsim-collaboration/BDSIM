@@ -81,7 +81,8 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   energyDepositedVacuum(0),
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
-  energyWorldExit(0)
+  energyWorldExit(0),
+  nCollimatorsInteracted(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
@@ -236,11 +237,12 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
   // looped over here -> do only once as expensive as lots of hits
-  energyDeposited       = 0;
-  energyDepositedVacuum = 0;
-  energyDepositedWorld  = 0;
-  energyDepositedTunnel = 0;
-  energyWorldExit       = 0;
+  energyDeposited        = 0;
+  energyDepositedVacuum  = 0;
+  energyDepositedWorld   = 0;
+  energyDepositedTunnel  = 0;
+  energyWorldExit        = 0;
+  nCollimatorsInteracted = 0;
   
   if (vertex)
     {FillPrimary(vertex, turnsTaken);}
@@ -258,12 +260,6 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillEnergyLoss(energyLossWorld,  BDSOutput::LossType::world);}
   if (worldExitHits)
     {FillELossWorldExitHits(worldExitHits);}
-
-  // we do this after energy loss as the energy loss is integrated for
-  // putting in event info
-  if (info)
-    {FillEventInfo(info);}
-  
   if (primaryHit)
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
@@ -271,6 +267,12 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   FillTrajectories(trajectories);
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
+
+  // we do this after energy loss and collimator hits as the energy loss
+  // is integrated for putting in event info and the number of colliamtors
+  // interacted with counted
+  if (info)
+    {FillEventInfo(info);}
   
   WriteFileEventLevel();
   ClearStructuresEventLevel();
@@ -463,6 +465,8 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
   evtInfo->energyTotal =  energyDeposited + energyDepositedVacuum + energyDepositedWorld + energyDepositedTunnel + energyWorldExit + ek;
+
+  evtInfo->nCollimatorsInteracted = nCollimatorsInteracted;
 }
 
 void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
@@ -706,6 +710,14 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
     {
       evtHistos->Fill1DHistogram(histIndex, i,
 				 (int)collimators[i]->primaryInteracted);
+    }
+
+
+  // loop over collimators and count the number that were interacted with in this event
+  for (const auto collimator : collimators)
+    {
+      if (collimator->primaryInteracted)
+	{nCollimatorsInteracted += 1;}
     }
 }
 

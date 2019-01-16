@@ -36,7 +36,8 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   energyDepositedWorld(0),
   energyDepositedTunnel(0),
   energyKilled(0),
-  energyTotal(0)
+  energyTotal(0),
+  nCollimatorsInteracted(0)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -58,4 +59,5 @@ void BDSOutputROOTEventInfo::Flush()
   energyDepositedTunnel = 0;
   energyKilled          = 0;
   energyTotal           = 0;
+  nCollimatorsInteracted = 0;
 }
