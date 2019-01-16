@@ -121,11 +121,14 @@ Bug Fixes
 * Fix A and Z being the wrong way around for ions in samplers.
 * Charge now correctly recorded in primaries and in samplers for partially stripped ions.
 * Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
-* Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for field maps.
-* Fix setting default seed state for random number generator if using recreate mode and progressing
+* Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for
+  field maps.
+* Fix setting default seed state for random number generator if using recreate mode
+  and progressing
   beyond an event stored in the file.
 * Fix setting the energy level of an ion - wasn't set from input.
-* SQL geometry factory didn't clean up after repeated use. This geometry isn't generally supported.
+* SQL geometry factory didn't clean up after repeated use. This geometry isn't
+  generally supported.
 * Fixed a bug where very weak actions on particles would not be taken due to too stringent a
   tests of finite numbers. This would result in particles with small offsets in magnets or
   particles with high momentum that would see only very small deviations being tracked as
