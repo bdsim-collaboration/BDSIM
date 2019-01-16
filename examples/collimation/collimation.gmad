@@ -44,3 +44,6 @@ sample, rcol;
 
 ! record distribution after shielding wall
 sample, range=s1;
+
+! we specify a seed so the example is reproducible for users
+option, seed=123;

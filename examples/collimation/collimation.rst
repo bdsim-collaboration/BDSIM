@@ -235,10 +235,16 @@ can be plotted with `pybdsim`.::
 
 This shows that the particles that interact with the first collimator are lost (in order)
 
-1) c3 collimator
-2) c2 collimator
-3) throughout the machine
-4) absorbed in the c1 collimator
+1) just after the c1 collimator in the beam pipe (\*)
+2) before the c1 collimator in the beam pipe (from back-scattering)
+3) c2 collimator
+4) c3 collimator
+5) throughout the machine
+
+.. note:: (\*) We should remember the binning in this histogram does not break at the
+	  element boundaries so particles stopping both in the collimator and just
+	  afterwards in the collimator could be in the same bin. We can always look
+	  at the 'per element' histogram from the merged histograms.
 
 When the machine diagram is added to the figure, a searching feature is activated. Right-clicking
 anywhere on the plot will print out in the Python terminal the nearest beam line element to
@@ -254,9 +260,111 @@ Similarly, we want to histogram the impact location, so `PrimaryFirstHit.S`, but
 only the events where the primary particle didn't impact the first collimator. Again,
 we use a selection in the histogram specification.::
 
-  # Object     treeName Histogram Name       #Bins Binning  Variable          Selection
-  Histogram1D  Event.   NoC1ImpactLossLocation {96}  {0:12}  PrimaryLastHit.S  COLL_c1_0.primaryInteracted==0
+  # Object     treeName Histogram Name       #Bins Binning  Variable           Selection
+  Histogram1D  Event.   NoC1ImpactLossLocation {96}  {0:12}  PrimaryFirstHit.S COLL_c1_0.primaryInteracted==0
+
+This is included in the example analysis configuration
+:code:`bdsim/examples/collimation/analysisConfig.txt` that contains the histograms
+for this and the other questions.
+
+This can be used with the following command::
+
+  rebdsim analysisConfig.txt data1.root data1-analysis.root
+
+Loading and plotting with `pybdsim`::
+
+  ipython
+  >>> from matplotlib.pyplot import *
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("data1-analysis.root")
+  >>> d.histogramspy
+  {'Event/MergedHistograms/CollElossPE': <pybdsim.Data.TH1 at 0x119f90ad0>,
+  'Event/MergedHistograms/CollPInteractedPE': <pybdsim.Data.TH1 at 0x119f909d0>,
+  'Event/MergedHistograms/CollPhitsPE': <pybdsim.Data.TH1 at 0x119f90b10>,
+  'Event/MergedHistograms/CollPlossPE': <pybdsim.Data.TH1 at 0x119f90b90>,
+  'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x119f90c10>,
+  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x119f90a10>,
+  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x119f90a50>,
+  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x119f82650>,
+  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x119f90910>,
+  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x119f90790>,
+  'Event/PerEntryHistograms/AfterShielding': <pybdsim.Data.TH2 at 0x119f90c90>,
+  'Event/PerEntryHistograms/C1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f90890>,
+  'Event/PerEntryHistograms/NoC1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f7d710>}
+  >>> pybdsim.Plot.Histogram1D(d.histogramspy['Event/PerEntryHistograms/NoC1ImpactLossLocation'])
+  >>> yscale('log', nonposy='clip')
+  >>> xlabel('S (m)')
+  >>> ylabel('Fraction of Primary Particles')
+  >>> pybdsim.Plot.AddMachineLatticeFromSurveyToFigure(gcf(), d.model)
 
 
- # Object     treeName Histogram Name       #Bins Binning  Variable          Selection
-  Histo
+.. figure:: collimation-question2.pdf
+	    :width: 90%
+	    :align: center
+
+Here we can see that particles that don't impact the first collimator impact the second one
+and the third one. Some make it to the end of the beam line where they 'hit' the air of the
+world volume. Inpsecting the raw data for Event.PrimaryFirstHit.S, we see some events with
+the value -1m. This is a value we put in the output when the impact was outside the curvilinear
+coordinate system, e.g. in the world volume away from the beam line. We can infer that the
+particles made it through the air of the world volume before reaching the boundary of the model.
+
+Question 3
+**********
+
+* What secondaries make it through the shielding wall created from impacts on the
+  first collimator?
+
+We could plot many quantities of the secondary particles coming through the shielding wall,
+but, here we suggest the 2D flux. We therefore have a sampler attached to the "s1" beam line
+element (the shielding wall) that records in the distribution of all particles after it.
+We plot the 2D distribution of these particles and then filter them. The filter includes:
+
+* must be a secondary particle - parentID > 0
+* primary impact must be in c1 collimator - COLL\_c1\_0.primaryInteracted is true
+
+This is the line added to the example analysis configuration file.::
+
+  # Object     treeName Histogram Name  #Bins   Binning             Variable  Selection
+  Histogram2D  Event.   AfterShielding  {50,50} {-2.5:2.5,-2.5:2.5} s1.y:s1.x COLL_c1_0.primaryInteracted&&s1.parentID>0
+
+.. note:: Our analysis configuration file is a relatively thin interface to TTree::Draw in ROOT
+	  and so we see the inconsistency in ROOT. All of our specifications are x, then y, then
+	  z if further dimensions are required. However, with ROOT it is 1D: x, 2D y vs x,
+	  3D x vs y vs z. The 2D variables are y:x here.
+
+This histogram can be plotted with `pybdsim`.::
+
+  ipython
+  >>> from matplotlib.pyplot import *
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("data1-analysis.root")
+  >>> d.histogramspy
+  {'Event/MergedHistograms/CollElossPE': <pybdsim.Data.TH1 at 0x119f90ad0>,
+  'Event/MergedHistograms/CollPInteractedPE': <pybdsim.Data.TH1 at 0x119f909d0>,
+  'Event/MergedHistograms/CollPhitsPE': <pybdsim.Data.TH1 at 0x119f90b10>,
+  'Event/MergedHistograms/CollPlossPE': <pybdsim.Data.TH1 at 0x119f90b90>,
+  'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x119f90c10>,
+  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x119f90a10>,
+  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x119f90a50>,
+  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x119f82650>,
+  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x119f90910>,
+  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x119f90790>,
+  'Event/PerEntryHistograms/AfterShielding': <pybdsim.Data.TH2 at 0x119f90c90>,
+  'Event/PerEntryHistograms/C1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f90890>,
+  'Event/PerEntryHistograms/NoC1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f7d710>}
+  >>> pybdsim.Plot.Histogram2D(d.histogramspy['Event/PerEntryHistograms/AfterShielding'], logNorm=True)
+  >>> xlabel('X (m)')
+  >>> ylabel('Y (m)')
+  >>> tight_layout()
+
+.. figure:: collimation-question3.pdf
+	    :width: 90%
+	    :align: center
+
+The value plotted is the number of particles per square bin size on average per particle
+simulated including all the filters.
+
+.. note:: The samplers by default are 5m wide, but may be shrunk to avoid geometrical overlaps
+	  in the case of a model with very large angle bends. Of course, this does not
+	  apply to this model.
