@@ -27,12 +27,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ProcessType.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
+#include "G4TransportationProcessType.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VProcess.hh"
 
 #include <map>
 #include <vector>
@@ -84,6 +87,19 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
       lastHit = hits.back();
       lastHitEDep = dynamic_cast<BDSEnergyCounterHit*>(lastHit);
     }
+
+  const G4VProcess* postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
+  if (!postProcess)
+    {return false;} // shouldn't happen - but for safety
+  G4int  processType       = postProcess->GetProcessType();
+  G4int  processSubType    = postProcess->GetProcessSubType();
+  G4bool initialised       = processType != -1;
+  G4bool notTransportation = processType != fTransportation;
+  G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+  G4bool notParallel       = processType != fParallel;
+  G4bool scatteringPoint   = initialised && notTransportation && notGeneral && notParallel;
+  if (!scatteringPoint)
+    {return false;} // don't store it - could just be step through thin collimator
 
   // get pre step point in local coordinates.
   BDSStep stepLocal = auxNavigator->ConvertToLocal(step);
