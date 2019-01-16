@@ -39,7 +39,8 @@ option, storeCollimatorInfo=1;
 ! make the default histogram binning a little smaller
 option, elossHistoBinWidth=10*cm;
 
+! sample all collimators - record distribution after each collimator
 sample, rcol;
-!sample, range=c1;
-!sample, range=c2;
-!sample, range=c3
+
+! record distribution after shielding wall
+sample, range=s1;
