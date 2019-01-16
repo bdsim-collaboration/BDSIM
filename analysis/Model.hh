@@ -42,6 +42,9 @@ public:
   /// Access all the unique sampler names from the model.
   std::vector<std::string> SamplerNames() const;
 
+  /// Access all the sampler branch names from the model.
+  std::vector<std::string> CollimatorNames() const;
+
   /// Set the branch addresses to address the contents of the file.
   void SetBranchAddress(TTree* t,
 			bool                      allBranchesOn    = true,
@@ -54,7 +57,7 @@ public:
 private:
   bool debug;
   
-  ClassDef(Model,1);
+  ClassDef(Model, 2);
 };
 
 #endif
