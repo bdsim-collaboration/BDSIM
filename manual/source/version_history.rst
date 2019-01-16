@@ -130,6 +130,8 @@ Bug Fixes
   tests of finite numbers. This would result in particles with small offsets in magnets or
   particles with high momentum that would see only very small deviations being tracked as
   if it were a drift.
+* Fixed segfaul crash from ROOT with rebdsim when there were more dimensions in the variables
+  than the declared number of dimensions. For example, "y:x" for Histogram1D.
   
 Output Changes
 --------------
