@@ -9,7 +9,7 @@ this example described in :ref:`example-collimation-advanced` with detailed
 collimation-specific information.
 
 The model consists of two collimators, followed by a triplet set of
-quadrupoles, a shielding wall and a third collimator. The colliamtors
+quadrupoles, a shielding wall and a third collimator. The collimators
 are made of successively denser material (carbon, copper and tungsten).
 
 The first step is to prepare some data to analyse. 1000 events runs in
@@ -81,7 +81,8 @@ it and look at the variables. A full explanation of the output here is described
 the analysis configuration text file that's used for analysis.
 
 To produce histograms, we prepare an input text file that describes which histograms
-we want to prepare. This file is described in detail in :ref:`analysis-preparing-analysis-config`.
+we want to prepare. This file is described in detail in
+:ref:`analysis-preparing-analysis-config`.
 Typically we start by copying an example from
 :code:`bdsim/examples/features/analysis/perEntryHistograms/analysisConfig.txt`.
 
@@ -97,7 +98,7 @@ The data can be analysed with the following command::
   rebdsim analysisConfigSimple.txt data1.root data1-histos.root
 
 This will produce an output file called :code:`data1-histos.root` that contains
-the requested histograms as well as a merged copy of any premade histograms
+the requested histograms as well as a merged copy of any pre-made histograms
 in the data file (such as energy deposition).
 
 If we start another ROOT session, or click the refresh button (top left, near "Draw Option",
@@ -110,7 +111,7 @@ file and view the histograms in ROOT.  We can also load the histograms in Python
   >>> d = pybdsim.Data.Load("data1-histos.root")
   >>> d.histograms
 
-This is described in the manual for pybdsim (see :ref:`python-utilities`) and the relevant
+This is described in the manual for `pybdsim` (see :ref:`python-utilities`) and the relevant
 section is `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/data.html>`_. This is what should
 be seen:
 
@@ -129,8 +130,8 @@ The following commands can be used to make a few simple plots in Python::
   >>> pybdsim.Plot.Histogram2D(d.histograms2dpy['Event/PerEntryHistograms/AllParticles'], logNorm=True)
 
 We leave it to the user to create their own plots, but the basic data exploration is
-provided and the user should consult the pybdsim source code (see `pybdsim/pybdsim/Plot.py`)
-for how we have made these plots using matplotlib.
+provided and the user should consult the `pybdsim` source code (see `pybdsim/pybdsim/Plot.py`)
+for how we have made these plots using `matplotlib`.
 
 The above commands create the following plots.
 

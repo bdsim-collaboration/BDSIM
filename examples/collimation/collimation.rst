@@ -23,7 +23,7 @@ shows general data exploration and analysis (see
 detailed collimation specific information.
 
 The model consists of two collimators, followed by a triplet set of
-quadrupoles, a shielding wall and a third collimator. The colliamtors
+quadrupoles, a shielding wall and a third collimator. The collimators
 are made of successively denser material (carbon, copper and tungsten).
 This looks like:
 
@@ -52,7 +52,7 @@ simulate a Gaussian beam that would nominally represent some 'core'
 beam that would be expected in the machine. Here we expect the losses
 to be very low. A specific bdsim input file is included that chooses
 a Gaussian distribution according to chosen Twiss parameters. Secondary
-partilces are stopped and the distribution is recorded after every
+particles are stopped and the distribution is recorded after every
 beam line element with the :code:`sample, all` command. Running this
 optics model takes around 10s to run 5000 particles on the developer's
 computer.::
@@ -71,7 +71,7 @@ the included rebdsimOptics tool.::
 
 This creates another file called "o1-optics.root" that contains only the
 optical function information. The Python utility `pybdsim` can be used
-to viusalise the data.::
+to visualise the data.::
 
   ipython
   >>> import pybdsim
@@ -108,7 +108,7 @@ there was any energy deposition. This can be done by browsing the output data
 file as described in :ref:`basic-data-inspection`, however, we'd like to look
 at the average energy loss and impacts quickly. Histograms of the primary
 particle impact and loss points as well as energy deposition are included by
-default per event in the output. A tool for conveninence (`rebdsimHistoMerge`)
+default per event in the output. A tool for convenience (`rebdsimHistoMerge`)
 allows averaging of these quickly as opposed to running `rebdsim` with an
 analysis configuration text file. This is run as follows::
 
@@ -159,20 +159,20 @@ record the primary first hit point and the loss point, but here we make use of t
 collimator specific information. The first collimator is called "c1" and the collimator
 hits are stored under the "COLL_c1_0" branch of the Event tree.
 
-.. note:: The name of the collimator is prefixed with "COLL_" to distinguish it
+.. note:: The name of the collimator is prefixed with "COLL\_" to distinguish it
 	  from a sampler which would have the name "c1". The suffix "_0" is because
 	  it's the 0th placement of that collimator in the beam line.
 
 In this collimator structure in the output there is a variable "primaryInteracted". This
 is a Boolean which is true if the primary particle interacted with the material of the
 collimator on that event. We use this as a 'selection' in the histogram. We prepare
-an analysis configuration text file for rebdsim (see :ref:`analysis-preparing-analysis-config`).
+an analysis configuration text file for `rebdsim` (see :ref:`analysis-preparing-analysis-config`).
 We can start from an example in BDSIM and edit that one. An example can be found in
 :code:`bdsim/examples/features/analysis/perEntryHistograms/analysisConfig.txt`.
 
 The variables in the histogram specification must be exactly as you see in the output
 file so it's useful to use a TBrowser in ROOT to browse the file while preparing the
-analysis configuation file. The following is the desired histogram specification.::
+analysis configuration file. The following is the desired histogram specification.::
   
   # Object     treeName Histogram Name       #Bins Binning  Variable          Selection
   Histogram1D  Event.   C1ImpactLossLocation {96}  {0:12}   PrimaryLastHit.S  COLL_c1_0.primaryInteracted
@@ -182,6 +182,68 @@ analysis configuation file. The following is the desired histogram specification
 An example analysis configuration file is included in
 :code:`bdsim/examples/collimation/analysisConfig.txt` that contains the histograms
 for this and subsequent questions.
+
+This can be used with the following command::
+
+  rebdsim analysisConfig.txt data1.root data1-analysis.root
+
+This produces a ROOT file called "data1-analysis.root" with the desired histograms. The
+histograms are by default made 'per event' (i.e. the histogram is made separately for
+each event, then these histograms are averaged), and the histogram "C1ImpactLossLocation"
+will be in the :code:`Event/PerEntryHistograms/` directory in the file. This histogram
+can be plotted with `pybdsim`.::
+
+  ipython
+  >>> from matplotlib.pyplot import *
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("data1-analysis.root")
+  >>> d.histogramspy
+  {'Event/MergedHistograms/CollElossPE': <pybdsim.Data.TH1 at 0x119f90ad0>,
+  'Event/MergedHistograms/CollPInteractedPE': <pybdsim.Data.TH1 at 0x119f909d0>,
+  'Event/MergedHistograms/CollPhitsPE': <pybdsim.Data.TH1 at 0x119f90b10>,
+  'Event/MergedHistograms/CollPlossPE': <pybdsim.Data.TH1 at 0x119f90b90>,
+  'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x119f90c10>,
+  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x119f90a10>,
+  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x119f90a50>,
+  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x119f82650>,
+  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x119f90910>,
+  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x119f90790>,
+  'Event/PerEntryHistograms/AfterShielding': <pybdsim.Data.TH2 at 0x119f90c90>,
+  'Event/PerEntryHistograms/C1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f90890>,
+  'Event/PerEntryHistograms/NoC1ImpactLossLocation': <pybdsim.Data.TH1 at 0x119f7d710>}
+  >>> pybdsim.Plot.Histogram1D(d.histogramspy['Event/PerEntryHistograms/C1ImpactLossLocation'])
+  >>> yscale('log', nonposy='clip')
+  >>> xlabel('S (m)')
+  >>> ylabel('Fraction of Primary Particles')
+  >>> pybdsim.Plot.AddMachineLatticeFromSurveyToFigure(gcf(), d.model)
+
+.. figure:: collimation-question1.pdf
+	    :width: 90%
+	    :align: center
+
+.. note:: The y axis here is fraction of total events, so the integral of this histogram
+	  is not 1 as not all particle impact the first collimator. This is however, the
+	  accurate fraction of the events simulated, so this is what is required to correctly
+	  scale to a correct rate of expected events for this beam distribution.
+
+* The variable d.model is the beam line model included with each output file and automatically
+  loaded with `pybdsim`.
+* the "nonposy='clip'" argument to `pyplot.yscale` avoids gaps in the line of the histogram
+  when plotting.
+* The command `d.histogramspy` is used to print out the numpy-converted histograms loaded
+  from the file by `pybdsim` so that the name can be copied and pasted into the next command.
+
+This shows that the particles that interact with the first collimator are lost (in order)
+
+1) c3 collimator
+2) c2 collimator
+3) throughout the machine
+4) absorbed in the c1 collimator
+
+When the machine diagram is added to the figure, a searching feature is activated. Right-clicking
+anywhere on the plot will print out in the Python terminal the nearest beam line element to
+that point. Here, we can right-click on any of the peaks to get the names of these beam line
+elements.
 
 Question 2
 **********
