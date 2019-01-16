@@ -1,9 +1,11 @@
+.. _example-collimation-simple:
+
 Collimation
 ===========
 
 This is an example to show how energy deposition and particle spectra
 from a small collimation system. There is a more detailed version of
-this example described in :ref:`collimation-advanced` with detailed
+this example described in :ref:`example-collimation-advanced` with detailed
 collimation-specific information.
 
 The model consists of two collimators, followed by a triplet set of
