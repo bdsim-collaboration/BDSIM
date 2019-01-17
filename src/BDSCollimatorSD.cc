@@ -66,7 +66,7 @@ void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(itsHCID, collimatorCollection);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "Hits Collection ID: " << itsHCID << G4endl;
 #endif
 }
 
