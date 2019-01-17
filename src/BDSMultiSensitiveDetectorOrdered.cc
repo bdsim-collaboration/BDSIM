@@ -69,21 +69,15 @@ G4bool BDSMultiSensitiveDetectorOrdered::ProcessHits(G4Step* step,
 						     G4TouchableHistory* /*row*/)
 {
   std::vector<G4VHit*> hits;
-  // overwrite a temporary pointer to avoid accessing vector repeatedly
-  G4VHit* lastHit = nullptr;
   G4bool result = true;
   for (auto sd : sensitiveDetectors)
     {
       // here we don't use Hit() as that calls the default ProcessHits 
       G4bool sdStored = sd->HitOrdered(step, hits);
       if (sdStored)
-	{
-	  G4VHit* newHit = sd->last();
-	  hits.push_back(newHit);
-	  lastHit = newHit; // lastHit now the one we've just stored
-	}
+	{hits.push_back(sd->last());}
       else
-	{lastHit = nullptr;} // there was no lastHit as not stored
+	{hits.push_back(nullptr);} // there was no lastHit as not stored
       result &= sdStored;
     }
   return result;
