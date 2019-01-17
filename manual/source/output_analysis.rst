@@ -28,6 +28,8 @@ Setup
 2) Environmental variables should be set.
 3) A ROOT logon macro may be written for convenience.
 
+.. when updating these instructions, update the duplicate instructions in installation.rst
+   
 Once BDSIM has been installed, the following environmental variables must be updated to
 allow `rebdsim` to function.  These can be set manually or added to your
 :code:`.profile` or :code:`.bashrc` file::
@@ -36,7 +38,7 @@ allow `rebdsim` to function.  These can be set manually or added to your
    export PATH=$PATH:$BDSIM/bin
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
-   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/
+   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser
 
 * Re-source your profile (or restart the terminal).
 * You should be able to execute 'rebdsim'
