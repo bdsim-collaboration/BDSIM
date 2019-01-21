@@ -36,7 +36,8 @@ class Model
 {
 public:
   Model();
-  Model(bool debugIn);
+  Model(bool debugIn,
+	int  dataVersionIn = 0);
   virtual ~Model();
 
   /// Access all the unique sampler names from the model.
@@ -56,6 +57,7 @@ public:
 
 private:
   bool debug;
+  int  dataVersion;
   
   ClassDef(Model, 2);
 };

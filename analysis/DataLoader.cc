@@ -82,8 +82,8 @@ void DataLoader::CommonCtor(std::string fileName)
   g4d = new Geant4Data(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
-  mod = new Model(debug);
-  evt = new Event(dataVersion, debug, processSamplers);
+  mod = new Model(debug, dataVersion);
+  evt = new Event(debug, processSamplers, dataVersion);
   run = new Run(debug);
   
   heaChain = new TChain("Header",      "Header");
@@ -218,7 +218,9 @@ void DataLoader::BuildEventBranchNameList()
   modTemporary->SetBranchAddress(mt);
   mt->GetEntry(0);
   samplerNames    = modTemporary->SamplerNames(); // copy sampler names out
-  collimatorNames = modTemporary->CollimatorNames();
+  // collimator names was only added in data version 4 - can leave as empty vector
+  if (dataVersion > 3)
+    {collimatorNames = modTemporary->CollimatorNames();}
   
   f->Close();
   delete f;
