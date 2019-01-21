@@ -47,9 +47,9 @@ class Event
 {
 public:
   Event();
-  Event(int  dataVersionIn,
-	bool debugIn,
-	bool processSamplersIn = false);
+  Event(bool debugIn,
+	bool processSamplersIn = false,
+	int  dataVersionIn     = 0);
   void CommonCtor();
   virtual ~Event();
 
@@ -134,9 +134,9 @@ private:
 					const std::string& name);
   /// @}
   
-  int  dataVersion     = 0;
   bool debug           = false;
   bool processSamplers = false;
+  int  dataVersion     = 0;
   bool usePrimaries    = false;
 
   ClassDef(Event, 2);

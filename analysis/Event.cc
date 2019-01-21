@@ -35,20 +35,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(Event)
 
 Event::Event():
-  dataVersion(0),
   debug(false),
   processSamplers(false),
+  dataVersion(0),
   usePrimaries(false)
 {
   CommonCtor();
 }
 
-Event::Event(int  dataVersionIn,
-	     bool debugIn,
-	     bool processSamplersIn):
-  dataVersion(dataVersionIn),
+Event::Event(bool debugIn,
+	     bool processSamplersIn,
+	     int  dataVersionIn):
   debug(debugIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  dataVersion(dataVersionIn)
 {
   CommonCtor();
 }
