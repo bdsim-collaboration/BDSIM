@@ -51,7 +51,35 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 The absolute path is not necessary, as the above environmental variables are used by ROOT
 to find the library.
 
-REBDSIM - General Analysis Tool
+Quick Recipes
+=============
+
+Inspect Histograms
+------------------
+
+* Run rebdsimHistoMerge on BDSIM output file (quick).
+* Browse output of rebdsimHistoMerge in TBrowser in ROOT.
+* See :ref:`rebdsim-histo-merge` for details.
+
+::
+
+   rebdsimHistoMerge output.root results.root
+
+Plot Energy Deposition \& Losses
+--------------------------------
+
+* Run rebdsimHistoMerge on BDSIM output file (quick).
+* Plot in Python using `pybdsim` using dedicated plotting function.
+
+::
+   
+   rebdsimHistoMerge output.root results.root
+   ipython
+   >>> import pybdsim
+   >>> pybdsim.Plot.LossAndEnergyDeposition("results.root")
+
+
+rebdsim - General Analysis Tool
 ===============================
 
 BDSIM is accompanied by an analysis tool called `rebdsim` ("root event BDSIM")
@@ -275,7 +303,7 @@ on-the-fly histograms.
 
 .. _rebdsim-combine:
 
-REBDSIMCOMBINE - Output Combination
+rebdsimCombine - Output Combination
 ===================================
 
 `rebdsimCombine` is a tool that can combine `rebdsim` output files correctly
@@ -290,8 +318,9 @@ in comparison to the analysis. `rebdsimCombine` is used as follows: ::
 where `<result.root>` is the desired name of the merge output file and `<file.root>` etc.
 are input files to be merged. This workflow is shown schematically in the figure below.
 
+.. _rebdsim-histo-merge:
 
-REBDSIMHISTOMERGE - Simple Histogram Merging
+rebdsimHistoMerge - Simple Histogram Merging
 ============================================
 
 BDSIM, by default, records a few histograms per event that typically include the primary
@@ -312,7 +341,7 @@ This creates a ROOT file called "results.root" that contains the average histogr
 across all events.  This can only operate on BDSIM output files, not `rebdsim`
 output files.
 
-REBDSIMOPTICS - Optical Functions
+rebdsimOptics - Optical Functions
 =================================
 
 `rebdsimOptics` is a tool to load sampler data from a BDSIM output file and calculate
@@ -356,7 +385,7 @@ the longer the analysis. Similarly, the more events simulated, the longer the an
 take. Of course either strategy can be used.
 
 Low-Data Volume
-***************
+---------------
 
 If the overall output data volume is relatively low, we recommend analysing all of the
 output files at once with `rebdsim`. In the `Analysis Configuration File`_ file,
@@ -381,7 +410,7 @@ This strategy works best for a relatively low number of events and data volume (
 numbers might be < 10000 events and < 10 GB of data).
 
 High-Data Volume
-****************
+----------------
 
 In this case, it is better to analyse each output file with `rebdsim` separately and then
 combine the results. In the case of per-event histograms, `rebdsim` provides the mean
@@ -519,6 +548,13 @@ includes the primaries ("Primary").
 .. note:: This loads all data into memory at once and is generally not as efficient
 	  as looping over event by event. This is provided for convenience, but may
 	  not scale well to very large data sets.
+
+.. warning:: This concatenates all events into one array, so the event by event
+	     nature of the data is lost. This may be acceptable in some cases, but
+	     it is worth considering making a 2D histogram directly using `rebdsim`
+	     rather than say loading the sampler data here and making a 2D plot.
+	     Certainly, if the statistical uncertainties are to be calculated, this
+	     is a far preferable route.
 
 REBDSIM Histograms
 ******************
@@ -689,10 +725,15 @@ The following classes are used for data loading and can be found in `bdsim/analy
 * Options.hh
 * Run.hh
 
+Numerical Methods
+=================
 
+Alogrithms used to accurately calculate quantities are described here. These are
+documented explicitly as a simple implementation of the mathematical formulae
+would result in an inaccurate answer in some cases.
 
 Numerically Stable Calculation of Mean \& Variance
-==================================================
+--------------------------------------------------
 
 To calculate the mean in the per-entry histograms as well as the associated error
 (the standard error on the mean), the following formulae are used:
@@ -743,7 +784,7 @@ with:
 
 
 Merging Histograms
-==================
+------------------
 
 `rebdsimCombine` merges histograms that already have the mean and the error on the
 mean in each bin. These are combined with a separate algorithm that is also numerically
