@@ -3860,10 +3860,12 @@ should only be used with understanding.
 Beam Parameters
 ---------------
 
-To specify the input particle distribution to the accelerator model, the `beam` command is
+BDSIM starts each event by simulating one particle from a beam distribution. A distribution is
+chosen by the user in the input GMAD and the particle coordinates are randomly generated according
+to this distribution. To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
 design total energy of the machine. This is used along with the particle species to calculate
-the momentum of the reference particle and therefore the magnetic rigidity that magnetic
+the momentum of the reference particle and therefore the magnetic rigidity that normalised magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
 is calculated using this if only the `angle` parameter has been specified.
 
@@ -4013,12 +4015,15 @@ reference
 ^^^^^^^^^
 This is a single particle with the same position and angle defined by the following parameters. The
 coordinates are the same for every particle fired using the reference distribution. It is therefore
-not likely to be useful to generate a large number of repeated events with this distribution.
+not likely to be useful to generate a large number of repeated events with this distribution unless
+the user wishes to explore the different outcome from the physics processes, which will be different
+each time should the particle interact. This distribution may be referred to as a 'pencil' distribution
+by other codes.
 
 These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may be defined with the `gauss`_ parameters, but with `X0` set to offset the centroid of the
-Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the particle
--including the rest mass.
+Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the
+particle - including the rest mass.
 
   .. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
 
@@ -4095,8 +4100,9 @@ Examples::
 	 sigma34 = 1.4e-3;
 
 .. note:: One should take care in defining, say, sigma16, as this is the covariance of the `x` position
-	  and energy. However, this may be proportional to momentum and not total energy. For such
-	  a *correlation* between `x` and `E`, other off-diagonal terms would be finite also.
+	  and energy. However, this may be proportional to momentum and not total energy. Note, for such
+	  a *correlation* between `x` and `E`, other off-diagonal terms in the covariance matrix should
+	  be finite also.
 
 gauss
 ^^^^^
