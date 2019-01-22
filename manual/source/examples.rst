@@ -25,6 +25,8 @@ Basic Examples
    examples/simpleCollimation
    examples/simpleMachine
 
+.. _worked-examples:
+   
 Worked Examples
 ---------------
 

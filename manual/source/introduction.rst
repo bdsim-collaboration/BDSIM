@@ -40,6 +40,9 @@ Example Applications
 * Laserwire detector signal to background ratio
 * ILC collimator efficiency study and detector backgrounds
 
+See :ref:`worked-examples` for walk through examples with exact commands and input
+required and example plots.
+
 Capabilities
 ============
 
