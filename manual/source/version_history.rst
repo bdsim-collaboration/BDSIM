@@ -28,9 +28,24 @@ New Features
 +----------------------------+------------------------------------------------------------------+
 | **Option**                 | **Description**                                                  |
 +============================+==================================================================+
-| collimatorInfo             | Store collimator structure with primary hits per collimator.     |
-+----------------------------+------------------------------------------------------------------+
 | geant4Macro                | Fun an optional macro in the visualiser once it's started.       |
++----------------------------+------------------------------------------------------------------+
+| ignoreLocalMagnetGeometry  | If turned on, this option means that only the magnet geometry    |
+|                            | from options will be used. Similar to `ignoreLocalAperture`.     |
++----------------------------+------------------------------------------------------------------+
+| storeCollimatorInfo        | Store collimator structure with primary hits per collimator.     |
++----------------------------+------------------------------------------------------------------+
+| storeCollimatorHitsAll     | If `storeCollimatorInfo` is on and collimator hits are           |
+|                            | generated, hits will be generated for all particles interacting  |
+|                            | with the collimators whether primary or secondary and whether    |
+|                            | ion or not.                                                      |
++----------------------------+------------------------------------------------------------------+
+| storeCollimatorHitsIons    | If `storeCollimatorInfo` is on and collimator hits are           |
+|                            | generated, `isIon`, `ionA` and `ionZ` variables are filled.      |
+|                            | Collimator hits will now also be generated for all ions.         |
++----------------------------+------------------------------------------------------------------+
+| storeCollimatorLinks       | If `storeCollimatorInfo` is on and collimator hits are           |
+|                            | generated, extra information is stored for each collimator hit.  |
 +----------------------------+------------------------------------------------------------------+
 | storeEloss                 | Ability to completely turn off generation of energy deposition   |
 |                            | hits to save memory usage and output file size. Default on.      |
@@ -174,10 +189,10 @@ Bug Fixes
 * Fix setting the energy level of an ion - wasn't set from input.
 * SQL geometry factory didn't clean up after repeated use. This geometry isn't
   generally supported.
-* Fixed a bug where very weak actions on particles would not be taken due to too stringent a
-  tests of finite numbers. This would result in particles with small offsets in magnets or
-  particles with high momentum that would see only very small deviations being tracked as
-  if it were a drift.
+* Fixed a bug where very weak actions on particles in tracking would not be taken due to
+  too stringent tests of finite numbers. This would result in particles with small offsets
+  in magnets or particles with high momentum that would see only very small deviations being
+  tracked as if it were a drift.
 * Fixed segfault crash from ROOT with rebdsim when there were more dimensions in the variables
   than the declared number of dimensions. For example, "y:x" for Histogram1D.
   

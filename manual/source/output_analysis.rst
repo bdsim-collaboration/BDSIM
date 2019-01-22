@@ -351,6 +351,8 @@ optical functions as well as beam sizes. It is run as follows::
 
 This creates a ROOT file called "optics.root" that contains the optical functions
 of the sampler data.
+
+See :ref:`optical-validation` for more details.
   
 Speed & Efficiency
 ==================
@@ -466,8 +468,28 @@ This can also be conveinently achieved with pybdsim: ::
   >>> import pybdsim
   >>> pybdsim.LoadROOTLibraries()
 
-This raise a Python exception if the libraries aren't found correctly. This is done
+This raises a Python exception if the libraries aren't found correctly. This is done
 automatically when any BDSIM output file is loaded using the ROOT libraries.
+
+IPython
+*******
+
+We recommend using iPython instead of pure Python to allow interactive exploration
+of the tools. After typing at the iPython prompt for example :code:`pybdsim.`, press
+the tab key and all of the available functions and objects inside `pybdsim` (in this
+case) will be shown.
+
+For any object, function or class, type a question mark after it to see the docstring
+associated with it. ::
+  
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("combined-ana.root")
+  >>> d.
+  d.ConvertToPybdsimHistograms d.histograms2d                
+  d.filename                   d.histograms2dpy              
+  d.histograms                 d.histograms3d               >
+  d.histograms1d               d.histograms3dpy              
+  d.histograms1dpy             d.histogramspy 
 
 General Data Loading
 ********************
@@ -487,6 +509,7 @@ to numpy arrays. The type can easily be inspected: ::
 
   >>> type(d)
   pybdsim.Data.RebdsimFile
+ 
 
 Looping Over Events
 *******************

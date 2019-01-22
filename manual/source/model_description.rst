@@ -224,7 +224,7 @@ Circular Machines
 -----------------
 
 To simulate circular machines, BDSIM should be executed with the `-\\-circular` executable option
-(see :ref:`executable-options` for all executable options). This installs special beam line
+(see :ref:`executable-options`). This installs special beam line
 elements called the `teleporter` and `terminator` at the end of the lattice that are described
 below.
 
@@ -3560,16 +3560,6 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
-|                                   | only collimators is filled. Collimator structures are created in   |
-|                                   | the Event Tree of the output for each collimator and prefixed with |
-|                                   | "COLL\_" and contain hits from (only) primary particles.           |
-|                                   | Collimator summary histograms are also created and stored. Default |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | extra information is stored for each collimator hit.               |
-+-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -3579,6 +3569,16 @@ with the following options.
 |                                   | hits will be generated for all particles interacting with the      |
 |                                   | collimators whether primary or secondary and whether ion or not.   |
 |                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
+|                                   | only collimators is filled. Collimator structures are created in   |
+|                                   | the Event Tree of the output for each collimator and prefixed with |
+|                                   | "COLL\_" and contain hits from (only) primary particles.           |
+|                                   | Collimator summary histograms are also created and stored. Default |
+|                                   | off.                                                               |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | extra information is stored for each collimator hit.               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |

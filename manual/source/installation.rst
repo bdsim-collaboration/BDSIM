@@ -23,7 +23,8 @@ To download the source from the git repository, use the command::
   git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. Also, the python utilities that come with BDSIM will be present.
+and documentation is provided. Also, the python utilities that come with BDSIM will be present
+when the `-\\-recursive` option is used.
 
 Download
 --------
@@ -67,8 +68,8 @@ Requirements
 
 .. note:: These are listed in the correct order of installation / requirement.
 
-Versions
---------
+Geant4 and ROOT Versions
+------------------------
 
 We have found some problems with certain versions of software and these should be
 avoided. Generally, we recommend the latest patch version of Geant4. These are the
@@ -77,6 +78,16 @@ problems we have found:
 * Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensivly in BDSIM.
+
+.. _mac-osx-issues:
+  
+Mac OS X Issues
+---------------
+  
+* Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
+  screen or worse, bits of the interface double size. This is an ongoing issue
+  and documented here:
+  https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
 
 Geant4 Environment
 ------------------
@@ -115,6 +126,8 @@ although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
 After this, `Building`_ can be started.
+
+.. warning:: For Mac OSX Mojave, see :ref:`mac-osx-issues`.
 
 Linux
 -----
