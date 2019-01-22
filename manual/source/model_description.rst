@@ -1667,6 +1667,10 @@ The magnet geometry is controlled by the following parameters.
 	  basis, but in this case they act as a default that will be used if none are
 	  specified by the element.
 
+.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), any
+	  per-element magnet geometry definitions will be ignored and the ones specified
+	  in Options will be used.
+
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +=======================+==============================================================+===============+===========+
@@ -3260,6 +3264,9 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | builTunnelFloor                  | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
+| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
+|                                  | during geometry construction (slower)                 |
++----------------------------------+-------------------------------------------------------+
 | coilWidthFraction                | 0.05 - 0.98 - fraction of available horizontal space  |
 |                                  | between pole and yoke that coil will occupy           |
 +----------------------------------+-------------------------------------------------------+
@@ -3276,22 +3283,23 @@ described in `Tunnel Geometry`_.
 |                                  | density. This is used for the gap between             |
 |                                  | tight-fitting container volumes and objects.          |
 +----------------------------------+-------------------------------------------------------+
+| horizontalWidth                  | The default full width of a magnet                    |
++----------------------------------+-------------------------------------------------------+
+| hStyle                           | Whether default dipole style is H-style vs. C-style   |
+|                                  | (default false)                                       |
++----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
-| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
-|                                  | during geometry construction (slower)                 |
-+----------------------------------+-------------------------------------------------------+
-| hStyle                           | Whether default dipole style is H-style vs. C-style   |
-|                                  | (default false)                                       |
+| ignoreLocalMagnetGeometry        | If this is true (1), any per-element magnet geometry  |
+|                                  | definitions will be ignored and the ones specified    |
+|                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | Whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
 +----------------------------------+-------------------------------------------------------+
 | magnetGeometryType               | The default magnet geometry style to use              |
-+----------------------------------+-------------------------------------------------------+
-| horizontalWidth                  | The default full width of a magnet                    |
 +----------------------------------+-------------------------------------------------------+
 | outerMaterial                    | The default material to use for the yoke of magnet    |
 |                                  | geometry                                              |
