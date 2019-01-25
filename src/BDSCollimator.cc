@@ -47,6 +47,9 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
 			     G4double    yApertureOutIn,
 			     G4Colour*   colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
+  collimatorSolid(nullptr),
+  innerSolid(nullptr),
+  vacuumSolid(nullptr),
   horizontalWidth(horizontalWidthIn),
   collimatorMaterial(collimatorMaterialIn),
   vacuumMaterial(vacuumMaterialIn),
@@ -93,10 +96,6 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
                  << G4endl;
         }
     }
-
-  collimatorSolid = nullptr;
-  innerSolid      = nullptr;
-  vacuumSolid     = nullptr;
 
   tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
   if (!tapered)
