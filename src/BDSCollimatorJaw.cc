@@ -235,10 +235,10 @@ void BDSCollimatorJaw::Build()
   // if no aperture but the code has got to this stage, build the collimator as a simple box.
   if (!buildAperture)
     {
-      G4VSolid *collimatorSolid = new G4Box(name + "_solid",
-					    horizontalWidth * 0.5 - lengthSafety,
-					    yHalfHeight - lengthSafety,
-					    chordLength * 0.5 - lengthSafety);
+      collimatorSolid = new G4Box(name + "_solid",
+				  horizontalWidth * 0.5 - lengthSafety,
+				  yHalfHeight - lengthSafety,
+				  chordLength * 0.5 - lengthSafety);
       RegisterSolid(collimatorSolid);
       
       G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,       // solid
