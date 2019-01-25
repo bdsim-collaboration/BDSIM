@@ -204,7 +204,7 @@ void BDSCollimator::Build()
 
   if (buildVacuumAndAperture)
     {
-      G4LogicalVolume *vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
+      G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
                                                       vacuumMaterial,       // material
                                                       name + "_vacuum_lv"); // name
 
@@ -216,7 +216,7 @@ void BDSCollimator::Build()
       if (sensitiveVacuum)
 	{RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
 
-      G4PVPlacement *vacPV = new G4PVPlacement(colRotate,               // rotation
+      G4PVPlacement* vacPV = new G4PVPlacement(colRotate,               // rotation
                                                (G4ThreeVector) 0,       // position
                                                vacuumLV,                // its logical volume
                                                name + "_vacuum_pv",     // its name
