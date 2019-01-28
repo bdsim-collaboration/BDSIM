@@ -224,7 +224,7 @@ Circular Machines
 -----------------
 
 To simulate circular machines, BDSIM should be executed with the `-\\-circular` executable option
-(see :ref:`executable-options` for all executable options). This installs special beam line
+(see :ref:`executable-options`). This installs special beam line
 elements called the `teleporter` and `terminator` at the end of the lattice that are described
 below.
 
@@ -1666,6 +1666,10 @@ The magnet geometry is controlled by the following parameters.
 .. note:: These can all be specified using the `option` command as well as on a per element
 	  basis, but in this case they act as a default that will be used if none are
 	  specified by the element.
+
+.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), any
+	  per-element magnet geometry definitions will be ignored and the ones specified
+	  in Options will be used.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
@@ -3260,6 +3264,9 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | builTunnelFloor                  | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
+| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
+|                                  | during geometry construction (slower)                 |
++----------------------------------+-------------------------------------------------------+
 | coilWidthFraction                | 0.05 - 0.98 - fraction of available horizontal space  |
 |                                  | between pole and yoke that coil will occupy           |
 +----------------------------------+-------------------------------------------------------+
@@ -3276,22 +3283,23 @@ described in `Tunnel Geometry`_.
 |                                  | density. This is used for the gap between             |
 |                                  | tight-fitting container volumes and objects.          |
 +----------------------------------+-------------------------------------------------------+
+| horizontalWidth                  | The default full width of a magnet                    |
++----------------------------------+-------------------------------------------------------+
+| hStyle                           | Whether default dipole style is H-style vs. C-style   |
+|                                  | (default false)                                       |
++----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
-| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
-|                                  | during geometry construction (slower)                 |
-+----------------------------------+-------------------------------------------------------+
-| hStyle                           | Whether default dipole style is H-style vs. C-style   |
-|                                  | (default false)                                       |
+| ignoreLocalMagnetGeometry        | If this is true (1), any per-element magnet geometry  |
+|                                  | definitions will be ignored and the ones specified    |
+|                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | Whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
 +----------------------------------+-------------------------------------------------------+
 | magnetGeometryType               | The default magnet geometry style to use              |
-+----------------------------------+-------------------------------------------------------+
-| horizontalWidth                  | The default full width of a magnet                    |
 +----------------------------------+-------------------------------------------------------+
 | outerMaterial                    | The default material to use for the yoke of magnet    |
 |                                  | geometry                                              |
@@ -3552,16 +3560,6 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
-|                                   | only collimators is filled. Collimator structures are created in   |
-|                                   | the Event Tree of the output for each collimator and prefixed with |
-|                                   | "COLL\_" and contain hits from (only) primary particles.           |
-|                                   | Collimator summary histograms are also created and stored. Default |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | extra information is stored for each collimator hit.               |
-+-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -3571,6 +3569,16 @@ with the following options.
 |                                   | hits will be generated for all particles interacting with the      |
 |                                   | collimators whether primary or secondary and whether ion or not.   |
 |                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
+|                                   | only collimators is filled. Collimator structures are created in   |
+|                                   | the Event Tree of the output for each collimator and prefixed with |
+|                                   | "COLL\_" and contain hits from (only) primary particles.           |
+|                                   | Collimator summary histograms are also created and stored. Default |
+|                                   | off.                                                               |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | extra information is stored for each collimator hit.               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
@@ -3860,10 +3868,12 @@ should only be used with understanding.
 Beam Parameters
 ---------------
 
-To specify the input particle distribution to the accelerator model, the `beam` command is
+BDSIM starts each event by simulating one particle from a beam distribution. A distribution is
+chosen by the user in the input GMAD and the particle coordinates are randomly generated according
+to this distribution. To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
 design total energy of the machine. This is used along with the particle species to calculate
-the momentum of the reference particle and therefore the magnetic rigidity that magnetic
+the momentum of the reference particle and therefore the magnetic rigidity that normalised magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
 is calculated using this if only the `angle` parameter has been specified.
 
@@ -4013,12 +4023,15 @@ reference
 ^^^^^^^^^
 This is a single particle with the same position and angle defined by the following parameters. The
 coordinates are the same for every particle fired using the reference distribution. It is therefore
-not likely to be useful to generate a large number of repeated events with this distribution.
+not likely to be useful to generate a large number of repeated events with this distribution unless
+the user wishes to explore the different outcome from the physics processes, which will be different
+each time should the particle interact. This distribution may be referred to as a 'pencil' distribution
+by other codes.
 
 These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may be defined with the `gauss`_ parameters, but with `X0` set to offset the centroid of the
-Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the particle
--including the rest mass.
+Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the
+particle - including the rest mass.
 
   .. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
 
@@ -4095,8 +4108,9 @@ Examples::
 	 sigma34 = 1.4e-3;
 
 .. note:: One should take care in defining, say, sigma16, as this is the covariance of the `x` position
-	  and energy. However, this may be proportional to momentum and not total energy. For such
-	  a *correlation* between `x` and `E`, other off-diagonal terms would be finite also.
+	  and energy. However, this may be proportional to momentum and not total energy. Note, for such
+	  a *correlation* between `x` and `E`, other off-diagonal terms in the covariance matrix should
+	  be finite also.
 
 gauss
 ^^^^^
@@ -5130,7 +5144,7 @@ produces the model shown below.
 * Colour names are case-sensitive.
 * New colour names must not clash with predefined BDSIM colour names.
 
-All available colours in BDSIM can be found by running BDSIM with the `--colours` command::
+All available colours in BDSIM can be found by running BDSIM with the `-\\-colours` command::
 
   bdsim --colours
 

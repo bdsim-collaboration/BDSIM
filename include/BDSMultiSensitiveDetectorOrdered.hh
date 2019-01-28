@@ -30,6 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Modified G4MultiSensitiveDetector that retains order and passes hits in sequence.
  *
+ * Generated G4VHit* objects are passed in order to each successive SD that should
+ * inherit BDSSensitiveDetector. If no hit is stored for that SD, a nullptr is inserted
+ * into the vector. That way, the vector will always have the same length for a given SD.
+ *
  * @author Laurie Nevay
  */
 

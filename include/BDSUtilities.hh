@@ -217,7 +217,7 @@ namespace BDS
   {
     typename std::map<K,V>::const_iterator it = m.find(key);
     return it == m.end() ? defaultValue : it->second;
-  };
+  }
 }
 
 #endif
