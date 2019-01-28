@@ -75,7 +75,7 @@ namespace GMAD
     double phase;     ///< phase of rf cavity (rad)
     double tOffset;   ///< time offset used for phase calculation (ns)
 
-    ///@{ rmatrix elements, only 4x4
+    ///@{ rmatrix elements, now 6x6
     double kick1;
     double kick2;
     double kick3;
@@ -84,18 +84,38 @@ namespace GMAD
     double rmat12;
     double rmat13;
     double rmat14;
+    double rmat15;
+    double rmat16;
     double rmat21;
     double rmat22;
     double rmat23;
     double rmat24;
+    double rmat25;
+    double rmat26;
     double rmat31;
     double rmat32;
     double rmat33;
     double rmat34;
+    double rmat35;
+    double rmat36;
     double rmat41;
     double rmat42;
     double rmat43;
     double rmat44;
+    double rmat45;
+    double rmat46;
+    double rmat51;
+    double rmat52;
+    double rmat53;
+    double rmat54;
+    double rmat55;
+    double rmat56;
+    double rmat61;
+    double rmat62;
+    double rmat63;
+    double rmat64;
+    double rmat65;
+    double rmat66;
     ///@}
 
 

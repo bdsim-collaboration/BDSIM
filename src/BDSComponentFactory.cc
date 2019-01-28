@@ -2258,21 +2258,44 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForRMatrix(Element 
   (*st)["rmat12"] = scaling * el->rmat12;
   (*st)["rmat13"] = scaling * el->rmat13;
   (*st)["rmat14"] = scaling * el->rmat14;
+  (*st)["rmat14"] = scaling * el->rmat15;
+  (*st)["rmat14"] = scaling * el->rmat16;
 
   (*st)["rmat21"] = scaling * el->rmat21;
   (*st)["rmat22"] = scaling * el->rmat22;
   (*st)["rmat23"] = scaling * el->rmat23;
   (*st)["rmat24"] = scaling * el->rmat24;
+  (*st)["rmat25"] = scaling * el->rmat25;
+  (*st)["rmat26"] = scaling * el->rmat26;
 
   (*st)["rmat31"] = scaling * el->rmat31;
   (*st)["rmat32"] = scaling * el->rmat32;
   (*st)["rmat33"] = scaling * el->rmat33;
   (*st)["rmat34"] = scaling * el->rmat34;
+  (*st)["rmat35"] = scaling * el->rmat35;
+  (*st)["rmat36"] = scaling * el->rmat36;
 
   (*st)["rmat41"] = scaling * el->rmat41;
   (*st)["rmat42"] = scaling * el->rmat42;
   (*st)["rmat43"] = scaling * el->rmat43;
   (*st)["rmat44"] = scaling * el->rmat44;
+  (*st)["rmat45"] = scaling * el->rmat45;
+  (*st)["rmat46"] = scaling * el->rmat46;
+
+  (*st)["rmat51"] = scaling * el->rmat41;
+  (*st)["rmat52"] = scaling * el->rmat42;
+  (*st)["rmat53"] = scaling * el->rmat43;
+  (*st)["rmat54"] = scaling * el->rmat44;
+  (*st)["rmat55"] = scaling * el->rmat45;
+  (*st)["rmat56"] = scaling * el->rmat46;
+
+  (*st)["rmat61"] = scaling * el->rmat41;
+  (*st)["rmat62"] = scaling * el->rmat42;
+  (*st)["rmat63"] = scaling * el->rmat43;
+  (*st)["rmat64"] = scaling * el->rmat44;
+  (*st)["rmat65"] = scaling * el->rmat45;
+  (*st)["rmat66"] = scaling * el->rmat46;
+
 
   return st;
 }
