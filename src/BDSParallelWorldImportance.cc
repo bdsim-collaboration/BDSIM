@@ -83,6 +83,9 @@ void BDSParallelWorldImportance::Construct()
 
   // build world
   BuildWorld();
+
+  // create an importance store which adds importance values to cells
+  AddIStore();
 }
 
 BDSParallelWorldImportance::~BDSParallelWorldImportance()
@@ -102,6 +105,7 @@ void BDSParallelWorldImportance::BuildWorld()
   G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(samplerWorldVis);
+  parallelLogicalVolumes.push_back(worldLV);
 
   // set limits
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
@@ -109,10 +113,15 @@ void BDSParallelWorldImportance::BuildWorld()
   std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
   std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
 
+  // loop over all parallel physical and logical volumes, place appropriately and add to store.
   for (G4int i=0; i < (G4int)parallelPVs.size(); i++)
     {
         G4LogicalVolume* lv = parallelLVs[i+1];
+        parallelLogicalVolumes.push_back(lv);
+
         G4VPhysicalVolume* pv = parallelPVs[i];
+
+        auto name = pv->GetName();
 
         G4VPhysicalVolume *parallelPV = new G4PVPlacement(pv->GetRotation(),
                                             pv->GetTranslation(),
@@ -121,15 +130,10 @@ void BDSParallelWorldImportance::BuildWorld()
                                             worldLV,
                                             false,
                                             0);
-
-        parallelPhysicalVolumes.push_back(parallelPV);
+        // second arg is replica number - if we assume no replication of cells for now, i should be 0??
+        G4GeometryCell cell(*parallelPV, 0);
+        imVolumeStore.AddPVolume(cell);
     }
-
-  //parallelLogicalVolumes.push_back(worldLV);
-  //imVolumeStore.AddPVolume(G4GeometryCell(*imWorldPV, 0));
-
-  // add all logical volumes inside parallel world to the parallelLogicalVolume vector
-  // add all physical volumes inside parallel world to the fPVolumeStore
 
   //SetSensitive();
 }
@@ -139,17 +143,7 @@ G4VPhysicalVolume &BDSParallelWorldImportance::GetWorldVolumeAddress() const{
 }
 
 G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
-
-  std::ostringstream os;
-  os << "cell_";
-  if (i<10) {
-    os << "0";
-  }
-  os << i;
-  G4String PVname = os.str();
-
-  const G4VPhysicalVolume *p=0;
-  p = imVolumeStore.GetPVolume(PVname);
+  const G4VPhysicalVolume *p = imVolumeStore.GetPVolume(i);
   if (p)
     {return G4GeometryCell(*p,0);}
   else {
@@ -159,38 +153,25 @@ G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
   }
 }
 
-G4String BDSParallelWorldImportance::GetCellName(G4int i) {
-  std::ostringstream os;
-  os << "cell_";
-  if (i<10) {
-    os << "0";
-  }
-  os << i;
-  G4String name = os.str();
-  return name;
-}
-
 void BDSParallelWorldImportance::AddIStore() {
   G4IStore* aIstore = G4IStore::GetInstance(imWorldPV->GetName());
 
   // create a geometry cell for the world volume replicaNumber is 0!
   G4GeometryCell gWorldVolumeCell(*imWorldPV, 0);
 
+  // set world volume importance to 1
+  aIstore->AddImportanceGeometryCell(1, gWorldVolumeCell);
+
   // set importance values and create scorers
   G4int numCells = (G4int) imVolumesAndValues.size();
 
-  G4int cell(1);
-  for (cell = 1; cell <= numCells; cell++) {
+  for (G4int cell = 0; cell < numCells; cell++) {
     G4GeometryCell gCell = GetGeometryCell(cell);
+    auto name = gCell.GetPhysicalVolume().GetName();
     G4double imp = std::pow(2.0, cell - 1);
+
+    //check that cell hasnt been added.
 
     aIstore->AddImportanceGeometryCell(imp, gCell.GetPhysicalVolume(), cell);
   }
-
-// create importance geometry cell pair for the "rest"cell
-// with the same importance as the last concrete cell
-  G4GeometryCell gCell = GetGeometryCell(numCells+1);
-
-  G4double imp = std::pow(2.0, numCells-1);
-  aIstore->AddImportanceGeometryCell(imp, gCell.GetPhysicalVolume(), numCells+1);
 }

@@ -24,50 +24,41 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSImportanceVolumeStore::BDSImportanceVolumeStore(){}
 
-
 BDSImportanceVolumeStore::~BDSImportanceVolumeStore(){}
 
-
 void BDSImportanceVolumeStore::AddPVolume(const G4GeometryCell &cell){
-
-  BDSSetGeometryCell::iterator it =
-          fSetGeometryCell.find(cell);
-  if (it != fSetGeometryCell.end()) {
-    G4cout << "BDSImportanceVolumeStore::AddPVolume: cell already stored"
-           << G4endl;
-    return;
-  }
-
+  BDSSetGeometryCell::iterator it = fSetGeometryCell.find(cell);
+  if (it != fSetGeometryCell.end())
+    {
+      G4cout << "BDSImportanceVolumeStore::AddPVolume: cell already stored"
+             << G4endl;
+      return;
+    }
   fSetGeometryCell.insert(cell);
 }
 
 const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(const G4String &name) const {
   const G4VPhysicalVolume *pvol = 0;
-  for (BDSSetGeometryCell::const_iterator it = fSetGeometryCell.begin();
-       it != fSetGeometryCell.end(); ++it) {
-    const G4VPhysicalVolume &vol = it->GetPhysicalVolume();
-    if (vol.GetName() == name) {
-      pvol =  &vol;
+  for (BDSSetGeometryCell::const_iterator it = fSetGeometryCell.begin(); it != fSetGeometryCell.end(); ++it)
+    {
+      const G4VPhysicalVolume &vol = it->GetPhysicalVolume();
+      if (vol.GetName() == name)
+        {pvol =  &vol;}
     }
-  }
-  if (!pvol) {
-    G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume named: "
-           << name << ", found" << G4endl;
-  }
+  if (!pvol)
+    {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume named: " << name << ", found" << G4endl;}
   return pvol;
 }
 
-G4String BDSImportanceVolumeStore::GetPNames() const {
-  G4String NameString;
-  for (BDSSetGeometryCell::const_iterator it = fSetGeometryCell.begin();
-       it != fSetGeometryCell.end(); ++it) {
-    const G4VPhysicalVolume &vol = it->GetPhysicalVolume();
-    std::ostringstream os;
-    os << vol.GetName() << "_" << it->GetReplicaNumber()
-       << "\n";
-    G4String cellname = os.str();
-
-    NameString += cellname;
+const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(const G4int &index) const
+  {
+    const G4GeometryCell &cell = *std::next(fSetGeometryCell.begin(), index);
+    const G4VPhysicalVolume *pvol = &cell.GetPhysicalVolume();
+    if (!pvol)
+      {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume for cell: " << index << ", found" << G4endl;}
+    return pvol;
   }
-  return NameString;
-}
+
+
+G4int BDSImportanceVolumeStore::size()
+  {return (G4int) fSetGeometryCell.size();}

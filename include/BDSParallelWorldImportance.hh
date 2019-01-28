@@ -80,8 +80,6 @@ public:
 
   BDSGeometryExternal* geom;
 
-  G4String GetCellName(G4int i);
-
   G4GeometryCell GetGeometryCell(G4int i);
 
   void AddIStore();

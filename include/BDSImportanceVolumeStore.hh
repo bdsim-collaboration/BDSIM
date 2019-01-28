@@ -38,14 +38,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef std::set< G4GeometryCell, G4GeometryCellComp > BDSSetGeometryCell;
 
-class BDSImportanceVolumeStore {
+class BDSImportanceVolumeStore
+{
 public:
     BDSImportanceVolumeStore();
     ~BDSImportanceVolumeStore();
 
+    /// Add geometry cell to the store
     void AddPVolume(const G4GeometryCell &cell);
+    /// Get named physical volume from store
     const G4VPhysicalVolume *GetPVolume(const G4String &name) const;
-    G4String GetPNames() const;
+    /// Get stores physical volume from index
+    const G4VPhysicalVolume *GetPVolume(const G4int &index) const;
+    /// Length of this store. Useful for debugging.
+    G4int size();
 
 private:
     BDSSetGeometryCell fSetGeometryCell;
