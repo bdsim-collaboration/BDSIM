@@ -460,14 +460,14 @@ void Element::flush()
   rmat52= 0;
   rmat53= 0;
   rmat54= 0;
-  rmat55= 0;
+  rmat55= 1.0;
   rmat56= 0;
   rmat61= 0;
   rmat62= 0;
   rmat63= 0;
   rmat64= 0;
   rmat65= 0;
-  rmat66= 0;
+  rmat66= 1.0;
 
   // degrader
   numberWedges = 1;
