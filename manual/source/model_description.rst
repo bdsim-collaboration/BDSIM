@@ -3614,7 +3614,7 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
 |                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
-|                                   | world volume as well.                                              |
+|                                   | world volume as well. Default off.                                 |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
