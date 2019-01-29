@@ -2738,11 +2738,10 @@ than BDSIM was compiled with respect to.
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-BDSIM uses the Geant4 physics lists directly and more details can be found in the Geant4 documentation:
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
 
-   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
-   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
-   * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
@@ -2992,6 +2991,11 @@ propagate the weights correctly.
 Geant4 Reference Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
+
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
 
@@ -3019,7 +3023,7 @@ prefix with "g4" to work in BDSIM.
 * ShieldingM
 * NuBeam
 
-The **optional** following suffixes may be added to specify the electromagnetif physics variant:
+The **optional** following suffixes may be added to specify the electromagnetic physics variant:
 
 * _EMV
 * _EMX
