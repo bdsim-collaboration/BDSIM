@@ -39,38 +39,38 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
   rmat12  = (*strength)["rmat12"];
   rmat13  = (*strength)["rmat13"];
   rmat14  = (*strength)["rmat14"];
-  rmat15  = (*strength)["rmat14"];
-  rmat16  = (*strength)["rmat14"];
+  rmat15  = (*strength)["rmat15"];
+  rmat16  = (*strength)["rmat16"];
   rmat21  = (*strength)["rmat21"];
   rmat22  = (*strength)["rmat22"];
   rmat23  = (*strength)["rmat23"];
   rmat24  = (*strength)["rmat24"];
-  rmat25  = (*strength)["rmat24"];
-  rmat26  = (*strength)["rmat24"];
+  rmat25  = (*strength)["rmat25"];
+  rmat26  = (*strength)["rmat26"];
   rmat31  = (*strength)["rmat31"];
   rmat32  = (*strength)["rmat32"];
   rmat33  = (*strength)["rmat33"];
   rmat34  = (*strength)["rmat34"];
-  rmat35  = (*strength)["rmat34"];
-  rmat36  = (*strength)["rmat34"];
+  rmat35  = (*strength)["rmat35"];
+  rmat36  = (*strength)["rmat36"];
   rmat41  = (*strength)["rmat41"];
   rmat42  = (*strength)["rmat42"];
   rmat43  = (*strength)["rmat43"];
   rmat44  = (*strength)["rmat44"];
-  rmat45  = (*strength)["rmat44"];
-  rmat46  = (*strength)["rmat44"];
-  rmat51  = (*strength)["rmat41"];
-  rmat52  = (*strength)["rmat42"];
-  rmat53  = (*strength)["rmat43"];
-  rmat54  = (*strength)["rmat44"];
-  rmat55  = (*strength)["rmat44"];
-  rmat56  = (*strength)["rmat44"];
-  rmat61  = (*strength)["rmat41"];
-  rmat62  = (*strength)["rmat42"];
-  rmat63  = (*strength)["rmat43"];
-  rmat64  = (*strength)["rmat44"];
-  rmat65  = (*strength)["rmat44"];
-  rmat66  = (*strength)["rmat44"];
+  rmat45  = (*strength)["rmat45"];
+  rmat46  = (*strength)["rmat46"];
+  rmat51  = (*strength)["rmat51"];
+  rmat52  = (*strength)["rmat52"];
+  rmat53  = (*strength)["rmat53"];
+  rmat54  = (*strength)["rmat54"];
+  rmat55  = (*strength)["rmat54"];
+  rmat56  = (*strength)["rmat54"];
+  rmat61  = (*strength)["rmat61"];
+  rmat62  = (*strength)["rmat62"];
+  rmat63  = (*strength)["rmat63"];
+  rmat64  = (*strength)["rmat64"];
+  rmat65  = (*strength)["rmat65"];
+  rmat66  = (*strength)["rmat66"];
 
 
 
@@ -131,7 +131,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
 
 
   G4double t = 0;
-  G4double dpoverp = 0;
+  G4double deltaEoverP = 0;
 
   // only proceed with thick matrix if particle is paraxial
   // judged by forward momentum > 0.9 and |transverse| < 0.1
@@ -142,12 +142,12 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x1         = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + t * rmat15 + dpoverp * rmat16 + kick1;
-  G4double xp1        = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp + rmat23 * y0 * CLHEP::milliradian + t * rmat25 + dpoverp * rmat26 + rmat24 * yp + kick2;
-  G4double y1         = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m+ t * rmat35 + dpoverp * rmat36 + kick3;
-  G4double yp1        = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp+ t * rmat45 + dpoverp * rmat46 + kick4;
-  G4double t1         = rmat51 * x0 * CLHEP::milliradian + rmat52 * xp + rmat53 * y0 * CLHEP::milliradian + rmat54 * yp+ t * rmat55 + dpoverp * rmat56;
-  G4double dpoverp1   = rmat61 * x0 * CLHEP::milliradian + rmat62 * xp + rmat63 * y0 * CLHEP::milliradian + rmat64 * yp+ t * rmat65 + dpoverp * rmat66;
+  G4double x1          = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + t * rmat15 + deltaEoverP * rmat16 + kick1;
+  G4double xp1         = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp + rmat23 * y0 * CLHEP::milliradian + t * rmat25 + deltaEoverP * rmat26 + rmat24 * yp + kick2;
+  G4double y1          = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m+ t * rmat35 + deltaEoverP * rmat36 + kick3;
+  G4double yp1         = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp+ t * rmat45 + deltaEoverP * rmat46 + kick4;
+  G4double t1          = rmat51 * x0 * CLHEP::milliradian + rmat52 * xp + rmat53 * y0 * CLHEP::milliradian + rmat54 * yp+ t * rmat55 + deltaEoverP * rmat56;
+  G4double deltaEoverP1 = rmat61 * x0 * CLHEP::milliradian + rmat62 * xp + rmat63 * y0 * CLHEP::milliradian + rmat64 * yp+ t * rmat65 + deltaEoverP * rmat66;
 
 
 
