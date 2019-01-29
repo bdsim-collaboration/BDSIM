@@ -2452,7 +2452,7 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | axisZ                   | Axis angle rotation z-component of unit vector                     |
 +-------------------------+--------------------------------------------------------------------+
-| angle                   | Axis angle angle to rotate about unit vector                       |
+| angle                   | Axis angle, angle to rotate about unit vector                      |
 +-------------------------+--------------------------------------------------------------------+
 | axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
 +-------------------------+--------------------------------------------------------------------+
