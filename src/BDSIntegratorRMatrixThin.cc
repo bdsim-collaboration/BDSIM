@@ -21,14 +21,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorRMatrixThin.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4Mag_EqRhs.hh"
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
+                                                   G4double                 brhoIn,
                                                    G4Mag_EqRhs* eqOfMIn,
+                                                   const BDSParticleDefinition* designParticle,
                                                    G4double maximumRadiusIn):
   BDSIntegratorMag(eqOfMIn, 6),
+  nominalBRho(brhoIn),
+  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
+  nominalEnergy(designParticle->TotalEnergy()),
+  nominalMass(designParticle->Mass()),
   maximumRadius(maximumRadiusIn)
 {
   kick1   = (*strength)["kick1"];
@@ -129,9 +136,17 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double yp = localMomUnit.y();
   G4double zp = localMomUnit.z();
 
+  // calculate relative energy difference
+  G4double nomMomentum = std::abs(nominalBRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
+  G4double deltaEnergy = eq->TotalEnergy(mom) - nominalEnergy;
+  // deltaE/P0 to match literature.
+  G4double deltaEoverP0 = deltaEnergy / (nomMomentum);
+
 
   G4double t = 0;
-  G4double deltaEoverP = 0;
+//  G4double deltaEoverP = 0;
+//  G4double restmass = 0;
+//  G4double E0 = std::sqrt(std::pow(momMag,2) + std::pow(restmass,2));
 
   // only proceed with thick matrix if particle is paraxial
   // judged by forward momentum > 0.9 and |transverse| < 0.1
@@ -142,14 +157,16 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x1          = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + t * rmat15 + deltaEoverP * rmat16 + kick1;
-  G4double xp1         = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp + rmat23 * y0 * CLHEP::milliradian + t * rmat25 + deltaEoverP * rmat26 + rmat24 * yp + kick2;
-  G4double y1          = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m+ t * rmat35 + deltaEoverP * rmat36 + kick3;
-  G4double yp1         = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp+ t * rmat45 + deltaEoverP * rmat46 + kick4;
-  G4double t1          = rmat51 * x0 * CLHEP::milliradian + rmat52 * xp + rmat53 * y0 * CLHEP::milliradian + rmat54 * yp+ t * rmat55 + deltaEoverP * rmat56;
-  G4double deltaEoverP1 = rmat61 * x0 * CLHEP::milliradian + rmat62 * xp + rmat63 * y0 * CLHEP::milliradian + rmat64 * yp+ t * rmat65 + deltaEoverP * rmat66;
+  G4double x1             = rmat11 * x0                      + rmat12 * xp * CLHEP::meter + rmat13 * y0                      + rmat14 * yp * CLHEP::meter + rmat15 * t + rmat16 * deltaEoverP0 + kick1;
+  G4double xp1            = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp                + rmat23 * y0 * CLHEP::milliradian + rmat24 * yp                + rmat25 * t + rmat26 * deltaEoverP0 + kick2;
+  G4double y1             = rmat31 * x0                      + rmat32 * xp * CLHEP::meter + rmat33 * y0                      + rmat34 * yp * CLHEP::meter + rmat35 * t + rmat36 * deltaEoverP0 + kick3;
+  G4double yp1            = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp                + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp                + rmat45 * t + rmat46 * deltaEoverP0 + kick4;
+  G4double t1             = rmat51 * x0                      + rmat52 * xp                + rmat53 * y0                      + rmat54 * yp                + rmat55 * t + rmat56 * deltaEoverP0;
+  G4double deltaEoverP0_1 = rmat61 * x0                      + rmat62 * xp                + rmat63 * y0                      + rmat64 * yp                + rmat65 * t + rmat66 * deltaEoverP0;
 
+  G4double E1 = deltaEoverP0_1 * nomMomentum + eq->TotalEnergy(mom);
 
+  momMag = std::sqrt(std::pow(E1,2) - std::pow(nominalMass,2));
 
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));

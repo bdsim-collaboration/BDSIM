@@ -21,17 +21,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORRMATRIXTHIN_HH
 
 #include "BDSIntegratorMag.hh"
+#include "BDSMagUsualEqRhs.hh"
 
 #include "globals.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
+class BDSParticleDefinition;
 
 /**
- * @brief Integrator that just moves the particle parallel to the s axis
- *
- * Teleporter for moving particles without changing angle but only advances the particle
- * by h.
+ * @brief Integrator that applies transfer matrix effect to particles passing through a thin element
  *
  * If the new particle x,y coordinates are greater than maximumRadius, they are clipped
  * to this value.
@@ -43,8 +42,10 @@ class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 {
 public:
   BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
-			   G4Mag_EqRhs* eqOfMIn,
-			   G4double maximumRadiusIn);
+                           G4double                 brhoIn,
+                           G4Mag_EqRhs* eqOfMIn,
+                           const BDSParticleDefinition* designParticle,
+                           G4double maximumRadiusIn);
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -97,6 +98,11 @@ private:
   G4double rmat64;
   G4double rmat65;
   G4double rmat66;
+
+  const G4double    nominalBRho;  ///< Cached magnet property, nominal magnetic rigidity
+  BDSMagUsualEqRhs* eq;
+  const G4double    nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalMass;    ///< Primary particle mass. Needed for recalculating nominal energy with scaling.
 
   G4double maximumRadius;
 };
