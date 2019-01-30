@@ -37,6 +37,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+ClassImp(PerEntryHistogram)
+
+PerEntryHistogram::PerEntryHistogram():
+  accumulator(nullptr),
+  chain(nullptr),
+  selection(""),
+  temp(nullptr),
+  result(nullptr),
+  command("")
+{;}
+
 PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 				     TChain*             chainIn):
   chain(chainIn),
