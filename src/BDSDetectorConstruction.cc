@@ -221,6 +221,14 @@ void BDSDetectorConstruction::BuildBeamlines()
 					      initialS,
 					      circular);
 
+#ifdef BDSDEBUG
+  G4cout << "Registry size "
+	 << BDSAcceleratorComponentRegistry::Instance()->size() << G4endl;
+  G4cout << "Parser beam line size "
+	 << BDSParser::Instance()->GetBeamline().size() << G4endl;
+  BDSAcceleratorComponentRegistry::Instance()->PrintNumberOfEachType();
+#endif
+  
   if (mainBeamline.massWorld->empty())
     {
       G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
