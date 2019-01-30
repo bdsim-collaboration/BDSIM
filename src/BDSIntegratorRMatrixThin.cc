@@ -164,9 +164,9 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double t1             = rmat51 * x0                      + rmat52 * xp                + rmat53 * y0                      + rmat54 * yp                + rmat55 * t + rmat56 * deltaEoverP0;
   G4double deltaEoverP0_1 = rmat61 * x0                      + rmat62 * xp                + rmat63 * y0                      + rmat64 * yp                + rmat65 * t + rmat66 * deltaEoverP0;
 
-  G4double E1 = deltaEoverP0_1 * nomMomentum + eq->TotalEnergy(mom);
+//  G4double E1 = deltaEoverP0_1 * nomMomentum + eq->TotalEnergy(mom);
 
-  momMag = std::sqrt(std::pow(E1,2) - std::pow(nominalMass,2));
+//  momMag = std::sqrt(std::pow(E1,2) - std::pow(nominalMass,2));
 
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
@@ -182,6 +182,33 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
     {y1 = -maximumRadius;}
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
-  G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+  G4ThreeVector localMomOut     = G4ThreeVector(xp1, yp1, zp1) * mom.mag();
+//  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+
+//[+E function here]
+//  G4double delta_E = 20*CLHEP::MeV;
+//  G4double E1 = eq->TotalEnergy(mom) + delta_E;
+//  localMomOut[2] = std::sqrt(std::pow(localMomOut[2],2) + std::pow(delta_E,2) + 2 * eq->TotalEnergy(mom) * delta_E);
+
+
+  // localMomOut = myFunc(localMomOut);
+  // convert to global coordinates for output
+  BDSStep globalOut = CurvilinearToGlobal(localPosOut, localMomOut, true);
+  G4ThreeVector globalPosOut = globalOut.PreStepPoint();
+  G4ThreeVector globalMomOut = globalOut.PostStepPoint();
+
+  // error along direction of travel really
+  G4ThreeVector globalMomOutU = globalMomOut.unit();
+  globalMomOutU *= 1e-10;
+
+  // write out values and errors
+  for (G4int i = 0; i < 3; i++)
+  {
+    yOut[i]     = globalPosOut[i];
+    yOut[i + 3] = globalMomOut[i];
+    yErr[i]     = globalMomOutU[i];
+    yErr[i + 3] = 1e-40;
+  }
+
+
 }
