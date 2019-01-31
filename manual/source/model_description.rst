@@ -3560,6 +3560,10 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
+|                                   | Energy loss from this option is recorded in the `Eloss` branch     |
+|                                   | of the Event Tree in the output. Default on.                       |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
