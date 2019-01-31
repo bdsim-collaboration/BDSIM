@@ -16,31 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "HistogramDef1D.hh"
+#include "AnalysisUtilities.hh"
+#include "BinGeneration.hh"
 
 #include "TROOT.h"
 
-ClassImp(HistogramDef1D)
+ClassImp(AnalysisUtilities)
 
-HistogramDef1D::HistogramDef1D():
-  xNBins(0),
-  xLow(0),
-  xHigh(0),
-  logarithmicX(false)
+AnalysisUtilities::AnalysisUtilities()
 {;}
 
-HistogramDef1D::HistogramDef1D(std::string treeNameIn,
-			       std::string histNameIn,
-			       int         xNBinsIn,
-			       double      xLowIn,
-			       double      xHighIn,
-			       std::string variableIn,
-			       std::string selectionIn,
-			       bool        perEntryIn,
-			       bool        logarithmicXIn):
-  HistogramDef(treeNameIn, histNameIn, 1, variableIn, selectionIn, perEntryIn),
-  xNBins(xNBinsIn),
-  xLow(xLowIn),
-  xHigh(xHighIn),
-  logarithmicX(logarithmicXIn)
+AnalysisUtilities::~AnalysisUtilities()
 {;}
+
+std::vector<double> AnalysisUtilities::LogSpace(double start,
+						double stop,
+						int    nBins,
+						double base,
+						bool   includeLastPoint)
+{
+  return RBDS::LogSpace(start, stop, nBins, base, includeLastPoint);
+}
+
+std::vector<double> AnalysisUtilities::LinSpace(double start,
+						double stop,
+						int    nBins,
+						bool   includeLastPoint)
+{
+  return RBDS::LinSpace(start, stop, nBins, includeLastPoint);
+}

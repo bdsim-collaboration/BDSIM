@@ -16,36 +16,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BINGENERATION_H
-#define BINGENERATION_H
+#ifndef ANALYSISUTILITIES_H
+#define ANALYSISUTILITIES_H
 
+#include "TROOT.h"
+
+#include <string>
 #include <vector>
 
-namespace RBDS
-{
+class HistogramDef;
+class HistogramDef1D;
+class HistogramDef2D;
+class HistogramDef3D;
 
-  /* @brief Class to generate logarithmic points.
-   *
-   * Based on solution on StackOverFlow:
-   * https://stackoverflow.com/a/21429452
-   */
-  template<typename T>
-  class Logspace
-  {
-  public:
-    Logspace(T first, T baseIn) : curValue(first), base(baseIn) {;}
-    
-    T operator()()
-    {
-      T retval = curValue;
-      curValue *= base;
-      return retval;
-    }
-    
-  private:
-    T curValue;
-    T base;
-  };
+class TH1;
+class TH1D;
+class TH2D;
+class TH3D;
+
+/**
+ * @brief Simple class to hold all unbound functions for ROOT.
+ *
+ * ROOT struggles to generate dictionaries for namespaced functions
+ * and global functions. Here, we have a simple class with no members
+ * that has the functions required.
+ *
+ * @author Laurie Nevay.
+ */
+
+class AnalysisUtilities
+{
+public:
+  AnalysisUtilities();
+  virtual ~AnalysisUtilities();
 
   /* @brief Method to generate evenly spaced points on a log scale.
    * 
@@ -63,6 +66,8 @@ namespace RBDS
 			       double stop,
 			       int    nBins,
 			       bool   includeLastPoint = true);
-}
   
+  ClassDef(AnalysisUtilities,1);
+};
+
 #endif
