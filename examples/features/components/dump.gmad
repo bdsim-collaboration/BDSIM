@@ -1,0 +1,7 @@
+d1: dump, l=0.2*m, horizontalWidth=20*cm;
+
+l1: line=(d1);
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
