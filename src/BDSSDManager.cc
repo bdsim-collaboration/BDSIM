@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSVolumeExitSD.hh"
 
 #include "G4SDManager.hh"
+#include "G4SDParticleFilter.hh"
 #include "G4Version.hh"
 
 #if G4VERSION_NUMBER > 1029
@@ -101,6 +102,12 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(eCounterTunnel);
 
   eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries);
+  // neutron filter for importance sampling as feature only works for neutrons.
+  if (!BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
+    {
+      G4SDParticleFilter *neutronFilter = new G4SDParticleFilter("neutronFilter", "neutron");
+      eCounter->SetFilter(neutronFilter);
+    }
   SDMan->AddNewDetector(eCounterWorld);
 
   worldExit= new BDSVolumeExitSD("worldExit", true);

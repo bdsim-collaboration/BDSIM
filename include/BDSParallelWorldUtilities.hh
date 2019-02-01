@@ -49,6 +49,11 @@ namespace BDS
   /// Register each parallel physics process to the main physics list.
   void RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
 			      G4VModularPhysicsList* physicsList);
+
+
+  void RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
+                                         std::vector<G4VUserParallelWorld*> worlds);
+
 }
 
 #endif

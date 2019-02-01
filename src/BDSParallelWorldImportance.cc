@@ -58,6 +58,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
 
+#include "G4MultiFunctionalDetector.hh"
+#include "G4SDManager.hh"
+#include "G4SDParticleFilter.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
 
@@ -110,6 +114,12 @@ void BDSParallelWorldImportance::BuildWorld()
   // set limits
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
+  if (BDSGlobalConstants::Instance()->StoreELossWorld())
+    {
+      worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
+      geom->AttachSensitiveDetectors();
+    }
+
   std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
   std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
 
@@ -134,12 +144,6 @@ void BDSParallelWorldImportance::BuildWorld()
         G4GeometryCell cell(*parallelPV, 0);
         imVolumeStore.AddPVolume(cell);
     }
-
-  //SetSensitive();
-}
-
-G4VPhysicalVolume &BDSParallelWorldImportance::GetWorldVolumeAddress() const{
-  return *imWorldPV;
 }
 
 G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
@@ -166,12 +170,46 @@ void BDSParallelWorldImportance::AddIStore() {
   G4int numCells = (G4int) imVolumesAndValues.size();
 
   for (G4int cell = 0; cell < numCells; cell++) {
-    G4GeometryCell gCell = GetGeometryCell(cell);
-    auto name = gCell.GetPhysicalVolume().GetName();
-    G4double imp = std::pow(2.0, cell - 1);
+    G4GeometryCell gCell  = GetGeometryCell(cell);
+    G4String cellName     = gCell.GetPhysicalVolume().GetName();
+    G4int importanceValue = GetCellImportanceValue(cellName);
 
-    //check that cell hasnt been added.
-
-    aIstore->AddImportanceGeometryCell(imp, gCell.GetPhysicalVolume(), cell);
+    //only add to store if it hasn't already been added.
+    if (!aIstore->IsKnown(gCell))
+      {aIstore->AddImportanceGeometryCell(importanceValue, gCell.GetPhysicalVolume(), cell);}
   }
+}
+
+G4int BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
+  {
+    //TODO: proper check that imVolumesAndValues contains the provided cellName
+
+    // cast value to int.
+    G4int importanceValue = (G4int)(imVolumesAndValues)[cellName];
+    // cell value should be finite - assume value of 1 (global value).
+    if (!BDS::IsFinite(importanceValue))
+      {importanceValue = 1;}
+    return importanceValue;
+  }
+
+void BDSParallelWorldImportance::ConstructSD()
+{
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+  // Sensitive Detector Name
+  G4String concreteSDname = "ConcreteSD";
+
+  G4MultiFunctionalDetector* MFDet = new G4MultiFunctionalDetector(concreteSDname);
+  SDman->AddNewDetector(MFDet); // Register SD to SDManager
+
+  G4String fltName,particleName;
+  G4SDParticleFilter* neutronFilter = new G4SDParticleFilter(fltName="neutronFilter", particleName="neutron");
+
+  MFDet->SetFilter(neutronFilter);
+
+  // set parallel volumes as sensitive.
+  for (auto it = parallelLogicalVolumes.begin(); it != parallelLogicalVolumes.end(); it++)
+    {SetSensitiveDetector((*it)->GetName(), MFDet);}
+
+  //TODO: Add scorers here if necessary. Follow recipe in G4 example B03ImportanceDetectorConstruction.
 }

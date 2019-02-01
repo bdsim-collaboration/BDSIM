@@ -93,9 +93,12 @@ std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
         {continue;}
 
       liness >> volume >> importanceValue;
-      volumes.push_back(volume);
+
+      // importance world should be GDML import, modify PV name accordingly.
+      G4String fullVolume = "importanceWorld_PREPEND" + volume + "_pv";
+      volumes.push_back(fullVolume);
       importanceValues.push_back(importanceValue);
-      importance[volume] = importanceValue;
+      importance[fullVolume] = importanceValue;
     }
 
   file.close();

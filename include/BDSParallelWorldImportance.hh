@@ -84,6 +84,8 @@ public:
 
   void AddIStore();
 
+  virtual void ConstructSD();
+
 private:
   /// assignment and copy constructor not implemented nor used
   BDSParallelWorldImportance& operator=(const BDSParallelWorldImportance&);
@@ -129,6 +131,9 @@ private:
   std::map<G4String, G4double> imVolumesAndValues;
 
   const BDSGlobalConstants* globals;
+
+  G4int GetCellImportanceValue(G4String cellName);
+
 };
 
 #endif
