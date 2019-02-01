@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
+#include "BDSDump.hh"
 #include "BDSElement.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
@@ -357,6 +358,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	  }
 	break;
       }
+    case ElementType::_DUMP:
+      {component = CreateDump(); break;}
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
@@ -1327,6 +1330,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 			   vacuumFieldInfo,
 			   outerFieldInfo,
 			   element->material));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  auto result = new BDSDump(elementName,
+			    element->l*CLHEP::m,
+			    element->horizontalWidth*CLHEP::m);
+  return result;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
