@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSImportanceFileLoader.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 
 #include <algorithm>
 #include <fstream>
@@ -32,35 +33,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "globals.hh"
-#include "G4String.hh"
-
 #ifdef USE_GZSTREAM
 #include "gzstream.h"
 #endif
-
-BDSImportanceFileLoader* BDSImportanceFileLoader::instance = nullptr;
-
-BDSImportanceFileLoader* BDSImportanceFileLoader::Instance()
-{
-  if (!instance)
-    {instance = new BDSImportanceFileLoader();}
-  return instance;
-}
 
 BDSImportanceFileLoader::BDSImportanceFileLoader()
 {;}
 
 BDSImportanceFileLoader::~BDSImportanceFileLoader()
-{instance = nullptr;}
-
+{;}
 
 std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
 {
   std::ifstream file;
+  std::vector<G4String> volumes;
+  std::vector<G4double> importanceValues;
 
   file.open(fileName);
-
 
   // test if file is valid
 #ifdef USE_GZSTREAM
@@ -78,7 +67,6 @@ std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
     {G4cout << "BDSIM importance file - loading \"" << fileName << "\"" << G4endl;}
 
   std::string line;
-
   std::map<G4String, G4double> importance;
 
   while (std::getline(file, line))

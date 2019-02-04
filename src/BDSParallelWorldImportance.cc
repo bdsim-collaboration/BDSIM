@@ -83,7 +83,8 @@ void BDSParallelWorldImportance::Construct()
 {
   // load the cell importance values
   G4String importanceMapFile = BDS::GetFullPath(globals->ImportanceVolumeMapFile());
-  imVolumesAndValues = BDSImportanceFileLoader::Instance()->Load(importanceMapFile);
+  BDSImportanceFileLoader importanceLoader;
+  imVolumesAndValues = importanceLoader.Load(importanceMapFile);
 
   // build world
   BuildWorld();
