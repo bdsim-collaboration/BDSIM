@@ -2721,6 +2721,11 @@ The Geant4 reference physics can be used by prefixing their name with "g4". See 
 .. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
 	  with any modular physics list.
 
+.. note:: The range cuts specified with BDSIM options to not apply by default and the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on'). The minimum kinetic
+	  energy option however always applies as it is achieved through user limits attached
+	  to each volume.
+
 For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
@@ -2996,6 +3001,11 @@ BDSIM allows use of the Geant4 reference physics lists directly and more details
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
+.. note:: The range cuts specified with BDSIM options to not apply by default and the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on'). The minimum kinetic energy
+	  option however always applies as this is achieved through user limits attached to each
+	  volume.
+  
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
 
@@ -3040,7 +3050,9 @@ Examples::
 
   option, physicsList="g4QBBC_EMV";
 
-  option, physicsList="g4FTFP_BERT_PEN";
+  option, physicsList="g4FTFP_BERT_PEN",
+          g4PhysicsUseBDISMRangeCuts=1,
+	  defaultRangeCut=10*cm;
 
 .. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
@@ -3061,6 +3073,8 @@ These cannot be used in combination with any other physics processes.
 |                           | for crystal channelling. The exact same physics as used in their example. |
 +---------------------------+---------------------------------------------------------------------------+
 
+.. note:: The range cuts specified with BDSIM options to not apply and cannot be used with a 'complete'
+	  physics list.
 
 
 .. _physics-biasing:
@@ -3451,6 +3465,10 @@ Physics Processes
 | defaultRangeCut                  | The default predicted range at which a particle is    |
 |                                  | cut. Overwrites other production cuts unless these    |
 |                                  | are explicitly set (default 1e-3) [m].                |
++----------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMRangeCuts       | If on, this will apply the BDSIM range cut lengths    |
+|                                  | to the Geant4 physics list used. This is off by       |
+|                                  | default.                                              |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
 |                                  | energy deposition recorded at that location [GeV].    |

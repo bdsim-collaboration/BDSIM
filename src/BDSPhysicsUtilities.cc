@@ -80,7 +80,11 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
           exit(1);
         }
       else
-        {result = factory.GetReferencePhysList(geant4PhysicsList); }
+        {
+	  result = factory.GetReferencePhysList(geant4PhysicsList);
+	  if (BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMRangeCuts())
+	    {BDS::SetRangeCuts(result);}
+	}
     }
   else if (completePhysics)
     {// we test one by one for the exact name of very specific physics lists
@@ -103,8 +107,10 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	}
     }
   else
-    {result = new BDSModularPhysicsList(physicsList);}
-  BDS::SetRangeCuts(result);
+    {
+      result = new BDSModularPhysicsList(physicsList);
+      BDS::SetRangeCuts(result); // always set our range cuts for our physics list
+    }
   return result;
 }
 
