@@ -1478,7 +1478,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,
 				    brho,
-				    BDSIntegratorType::g4nystromrk4,
+				    BDSIntegratorType::g4classicalrk4,
 				    awakeStrength,
 				    true,
 				    fieldTrans);
