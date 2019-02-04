@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSIMPORTANCEFILELOADER_H
 
 #include "globals.hh" // geant4 globals / types
+
 #include <map>
 #include <vector>
 
@@ -34,24 +35,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSImportanceFileLoader
 {
 public:
-  /// Singleton accessor.
-  static BDSImportanceFileLoader* Instance();
-
+  BDSImportanceFileLoader();
   ~BDSImportanceFileLoader();
 
   std::map<G4String, G4double> Load(G4String fileName);
-
-  std::vector<G4String> volumes;
-
-  std::vector<G4double> importanceValues;
-
-private:
-  /// Private default constructor as singleton
-  BDSImportanceFileLoader();
-
-  /// Singleton instance
-  static BDSImportanceFileLoader* instance;
-
 };
 
 #endif
