@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
 #endif
+#include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
@@ -84,6 +85,15 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	  result = factory.GetReferencePhysList(geant4PhysicsList);
 	  if (BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMRangeCuts())
 	    {BDS::SetRangeCuts(result);}
+	  if (BDSGlobalConstants::Instance()->MinimumKineticEnergy() > 0 ||
+	      BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMCutsAndLimits())
+	    {
+	      G4cout << "\nWARNING" << G4endl;
+	      G4cout << "Adding cuts and limits physics to Geant4 reference physics list" << G4endl;
+	      G4cout << "This is to obey the minimumKineticEnergy cut or due to "
+		     << "g4PhysicsUserBDSIMCutsAndLimits.\n" << G4endl;
+	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
+	    }
 	}
     }
   else if (completePhysics)
