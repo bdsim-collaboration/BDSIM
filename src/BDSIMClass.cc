@@ -207,9 +207,6 @@ int BDSIM::Initialise()
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
 
-  // physics biasing for importance sampling parallel world
-  BDS::RegisterImportanceSamplingPhysics(physList, samplerWorlds);
-
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
@@ -309,8 +306,11 @@ int BDSIM::Initialise()
   /// Initialize G4 kernel
   runManager->Initialize();
 
+  // physics biasing for importance sampling parallel world
+  BDS::RegisterImportanceSamplingPhysics(physList, samplerWorlds);
+
   /// Create importance store for parallel world importance sampling
-  // TODO: figure out how to run BDSParallelWorldImportance::AddIStore() from here.
+  BDS::AddIStore(samplerWorlds);
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();

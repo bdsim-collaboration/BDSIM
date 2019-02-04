@@ -25,6 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh"
 #include "BDSSamplerType.hh"
+#include "BDSUtilities.hh"
+
+#include "BDSParallelWorldImportance.hh"
 
 #include "parser/element.h"
 #include "parser/fastlist.h"
@@ -85,7 +88,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   // register of all created
   //std::map<G4String, G4VUserParallelWorld*> worlds;
   std::vector<G4VUserParallelWorld*> samplerWorlds;
-  samplerWorlds.push_back(samplerWorld);
+  samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
   
   for (auto info : worldInfos)
     {
@@ -102,7 +105,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	{
 	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
 	  //worlds[info.sequenceName + "_s"] = sWorld;
-	  samplerWorlds.push_back(sWorld);
+	  samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
     }
@@ -112,7 +115,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
       massWorld->RegisterParallelWorld(importanceWorld);
-      samplerWorlds.push_back(importanceWorld);
+      samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
     }
 
   return samplerWorlds;
@@ -136,25 +139,47 @@ void BDS::RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
 void BDS::RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
                                             std::vector<G4VUserParallelWorld*> worlds)
   {
-    // get importance world
-    G4String importanceWorldName = "importanceWorld_main";
-    G4VUserParallelWorld* importanceWorld;
-    for (auto world :worlds)
+    G4VUserParallelWorld* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
+    if (importanceWorld)
       {
-        if (std::strcmp(world->GetName(),importanceWorldName))
-          {importanceWorld = world; break;}
+        G4String importanceWorldName = importanceWorld->GetName();
+        BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
+        auto iworldName = iworld->GetName();
+        G4GeometrySampler *pgs = new G4GeometrySampler(iworld->GetWorldVolume(), "neutron");
+        pgs->SetParallel(true);
+
+        //G4VPhysicalVolume* wPV = G4TransportationManager::GetTransportationManager()->IsWorldExisting(importanceWorldName);
+        G4TransportationManager::GetTransportationManager()->GetParallelWorld(importanceWorldName);
+
+        G4IStore *iStore = G4IStore::GetInstance(importanceWorldName);
+        pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
+        pgs->PrepareImportanceSampling(iStore, 0);
+        pgs->Configure();
+
+        physicsList->RegisterPhysics(new G4ImportanceBiasing(pgs, importanceWorldName));
       }
-
-    // Do nothing for now.
-    /*
-    G4GeometrySampler* pgs = new G4GeometrySampler(importanceWorld->GetWorldVolume(), "neutron");
-    pgs->SetParallel(true);
-
-    G4IStore *iStore = G4IStore::GetInstance(importanceWorldName);
-    pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
-    pgs->PrepareImportanceSampling(iStore, 0);
-    pgs->Configure();
-
-    physicsList->RegisterPhysics(new G4ImportanceBiasing(&pgs,importanceWorldName));
-    */
   }
+
+void BDS::AddIStore(std::vector<G4VUserParallelWorld*> worlds)
+{
+  // get importance world
+  G4VUserParallelWorld* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
+  if (importanceWorld)
+    {
+      BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
+      iworld->AddIStore();
+    }
+}
+
+G4VUserParallelWorld* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds)
+{
+  // get importance world
+  G4String importanceWorldName = "importanceWorld_main";
+  G4VUserParallelWorld* importanceWorld = nullptr;
+  for (auto world : worlds)
+    {
+      if (std::strcmp(world->GetName(),importanceWorldName) == 0)
+        {importanceWorld = world; break;}
+    }
+  return importanceWorld;
+}

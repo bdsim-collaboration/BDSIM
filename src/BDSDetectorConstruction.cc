@@ -479,10 +479,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // make the world sensitive to energy deposition with its own unique hits collection
       // this will be a nullptr depending on the options.
-      // world shouldn't be sensitive if a parallel importance sampling world exists, that
-      // should be sensitive instead.
-      if (BDSGlobalConstants::Instance()->StoreELossWorld() &&
-          BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
+      if (BDSGlobalConstants::Instance()->StoreELossWorld())
         {
           worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
           geom->AttachSensitiveDetectors();

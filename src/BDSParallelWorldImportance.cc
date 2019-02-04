@@ -87,9 +87,6 @@ void BDSParallelWorldImportance::Construct()
 
   // build world
   BuildWorld();
-
-  // create an importance store which adds importance values to cells
-  AddIStore();
 }
 
 BDSParallelWorldImportance::~BDSParallelWorldImportance()
@@ -146,6 +143,10 @@ void BDSParallelWorldImportance::BuildWorld()
     }
 }
 
+G4VPhysicalVolume* BDSParallelWorldImportance::GetWorldVolume()
+  {return imWorldPV;}
+
+
 G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i){
   const G4VPhysicalVolume *p = imVolumeStore.GetPVolume(i);
   if (p)
@@ -176,7 +177,7 @@ void BDSParallelWorldImportance::AddIStore() {
 
     //only add to store if it hasn't already been added.
     if (!aIstore->IsKnown(gCell))
-      {aIstore->AddImportanceGeometryCell(importanceValue, gCell.GetPhysicalVolume(), cell);}
+      {aIstore->AddImportanceGeometryCell(importanceValue, gCell.GetPhysicalVolume(), 0);}
   }
 }
 

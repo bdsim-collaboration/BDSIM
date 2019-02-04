@@ -86,6 +86,8 @@ public:
 
   virtual void ConstructSD();
 
+  G4VPhysicalVolume* GetWorldVolume();
+
 private:
   /// assignment and copy constructor not implemented nor used
   BDSParallelWorldImportance& operator=(const BDSParallelWorldImportance&);
