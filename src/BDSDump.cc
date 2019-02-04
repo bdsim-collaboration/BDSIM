@@ -84,12 +84,11 @@ void BDSDump::BuildContainerLogicalVolume()
 
 void BDSDump::BuildUserLimits()
 {
-  auto limits = new G4UserLimits(1, // max 1mm step into dump
+  userLimits = new G4UserLimits(1, // max 1mm step into dump
 				 0, // max track length
 				 0, // max time
-				 std::numeric_limits<double>::max(),
+				 0, // max kinetic energy
 				 std::numeric_limits<double>::max());
 
-  RegisterUserLimits(limits);
-  containerLogicalVolume->SetUserLimits(limits);
+  RegisterUserLimits(userLimits);
 }
