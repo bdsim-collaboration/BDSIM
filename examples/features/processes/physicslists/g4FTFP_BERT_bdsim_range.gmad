@@ -12,3 +12,4 @@ beam, particle="e-",
       energy=30*GeV;
       
 option, defaultRangeCut=1*m;
+option, g4PhysicsUseBDSIMRangeCuts=1;
