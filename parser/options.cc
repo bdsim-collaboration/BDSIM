@@ -147,6 +147,8 @@ void Options::PublishMembers()
   // physics
   publish("physicsList",       &Options::physicsList);
   publish("physicsVerbose",    &Options::physicsVerbose);
+  publish("g4PhysicsUseBDSIMRangeCuts",     &Options::g4PhysicsUseBDSIMRangeCuts);
+  publish("g4PhysicsUseBDSIMCutsAndLimits", &Options::g4PhysicsUseBDSIMCutsAndLimits);
 
   // reproducibility
   publish("eventOffset",       &Options::eventOffset);
