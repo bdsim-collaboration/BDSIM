@@ -294,6 +294,8 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   if (BDSGlobalConstants::Instance()->Verbose())
 #endif
     {Print();}
+
+  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(0.2*CLHEP::eV, 1*CLHEP::TeV);
 }
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
@@ -943,6 +945,7 @@ void BDSModularPhysicsList::SynchRad()
   if(!physicsActivated["synch_rad"])
     {
       constructors.push_back(new BDSPhysicsSynchRad());
+
       physicsActivated["synch_rad"] = true;
     }
 }
