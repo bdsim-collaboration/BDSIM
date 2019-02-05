@@ -3129,6 +3129,40 @@ vacuum respectively::
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
 
+Importance Sampling
+^^^^^^^^^^^^^^^^^^^
+To enable importance sampling is available, the user must provide both a mass world and a separate importance
+sampling world as external geometry files. The mass world file should contain the appropriate volumes as if you
+were conducting a standard simulation without importance sampling. The importance world file should contain the
+volumes that will be the importance cells only. A third text file must also be provided which contains a map of the
+physical volumes that form the importance cells and their corresponding importance volumes.
+
+============================ ===========================================================
+Parameter                    Description
+worldGeometryFile            Geometry file containing the mass world
+importanceWorldGeometryFile  Geometry file containing the importance sampling world
+importanceVolumeMap          ASCII file containing a map of the importance world
+                             physical volumes and their corresponding importance values
+============================ ===========================================================
+
+Example::
+
+  option, worldGeometryFile="gdml:shielding-world.gdml",
+      importanceWorldGeometryFile="gdml:parallel-cell-world.gdml",
+      importanceVolumeMap="importanceValues.dat";
+
+.. note:: Both the mass world and importance sampling world must be the same size.
+
+.. note:: Both the mass world and importance sampling world must be large enough to encompass the machine
+    beamline. If not, BDSIM will exit.
+
+.. note:: It is down to the user to ensure the importance cells are correctly positioned.
+
+.. note:: If a importance cell physical volume is provided and not listed in the ascii map file,
+    BDSIM will exit.
+
+.. note:: The importance sampling world volume is assumed to have an importance value of 1.
+
 .. _bdsim-options:
 
 Options
