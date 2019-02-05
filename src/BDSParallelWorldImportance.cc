@@ -115,18 +115,23 @@ void BDSParallelWorldImportance::BuildWorld()
   std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
   std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
 
-  // loop over all parallel physical and logical volumes, place appropriately and add to store.
-  for (G4int i=0; i < (G4int)parallelPVs.size(); i++)
+  G4LogicalVolume* container = geom->GetContainerLogicalVolume();
+  container->GetNoDaughters();
+  for (int i = 0; i < container->GetNoDaughters(); i++)
     {
-      G4LogicalVolume* lv = parallelLVs[i+1];
+      auto daughter = container->GetDaughter(i);
+      daughter->SetMotherLogical(worldLV);
+      G4cout << daughter->GetName() << G4endl;
+
+      G4LogicalVolume* lv = daughter->GetLogicalVolume();
       parallelLogicalVolumes.push_back(lv);
 
       G4VPhysicalVolume* pv = parallelPVs[i];
 
-      G4VPhysicalVolume *parallelPV = new G4PVPlacement(pv->GetRotation(),
-                                            pv->GetTranslation(),
+      G4VPhysicalVolume *parallelPV = new G4PVPlacement(daughter->GetRotation(),
+                                            daughter->GetTranslation(),
                                             lv,
-                                            pv->GetName(),
+                                            daughter->GetName(),
                                             worldLV,
                                             false,
                                             0);
