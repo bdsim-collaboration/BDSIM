@@ -340,6 +340,7 @@ The following elements may be defined
 * `degrader`_
 * `muspoiler`_
 * `shield`_
+* `dump`_
 * `solenoid`_
 * `laser`_
 * `gap`_
@@ -1252,6 +1253,45 @@ Parameter          Description                         Default     Required
 =================  ==================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
+
+dump
+^^^^
+
+.. figure:: figures/dump.png
+	    :width: 50%
+	    :align: right
+
+`dump` defines a square or circular block of material that is an infinite absorber. All
+particles impacting the dump will be absorbed irrespective of the particle and physics
+processes.
+
+This is intended as a useful way to absorb a beam with no computational time. Normally,
+the world volume is filled with air. If the beam reaches the end of the beam line it will
+hit the air and likely create a shower of particles that will take some time to simulate.
+In this case, when this isn't required, it is recommended to use a dump object to absorb
+the beam.
+
+=================  ==================================  ===========  ===========
+Parameter          Description                         Default      Required
+`l`                Length [m]                          0            Yes
+`horizontalWidth`  Outer full width [m]                global       No
+`apertureType`     Which shape                         rectangular  No
+=================  ==================================  ===========  ===========
+
+How this works: the material of the dump is actually vacuum, but G4UserLimits are used to
+kill particles. This requires the cuts and limits physics process that is included automatically.
+In the case of using a Geant4 reference physics list (see :ref:`physics-geant4-lists`), the
+necessary process is added automatically to enforce this.
+
+The dump may accept `apertureType` with the value of either `circular` or `rectangular` for
+the shape of the dump. By default it is rectangular.
+
+Examples::
+
+  d1: dump, l=0.2*m, horizontalWidth=20*cm;
+  d2: dump, l=0.4*m, apertureType="circular";
+  d3: dump, l=0.3*m, apertureType="rectangular";
+
 
 solenoid
 ^^^^^^^^
