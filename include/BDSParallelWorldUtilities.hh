@@ -50,12 +50,14 @@ namespace BDS
   void RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
 			      G4VModularPhysicsList* physicsList);
 
-
+  /// Register importance sampling physics process to main physics list
   void RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
                                          std::vector<G4VUserParallelWorld*> worlds);
 
+  /// Get importance sampling world and call parallelWorldImportance AddIStore method.
   void AddIStore(std::vector<G4VUserParallelWorld*> worlds);
 
+  /// Get importance sampling world from list of parallel worlds
   G4VUserParallelWorld* GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds);
 
 }

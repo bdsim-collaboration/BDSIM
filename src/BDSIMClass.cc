@@ -306,11 +306,15 @@ int BDSIM::Initialise()
   /// Initialize G4 kernel
   runManager->Initialize();
 
-  // physics biasing for importance sampling parallel world
-  BDS::RegisterImportanceSamplingPhysics(physList, samplerWorlds);
+  // Importance sampling.
+  if (!BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
+    {
+      // physics biasing for parallel importance world
+      BDS::RegisterImportanceSamplingPhysics(physList, samplerWorlds);
 
-  /// Create importance store for parallel world importance sampling
-  BDS::AddIStore(samplerWorlds);
+      /// Create importance store for parallel importance world
+      BDS::AddIStore(samplerWorlds);
+    }
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();

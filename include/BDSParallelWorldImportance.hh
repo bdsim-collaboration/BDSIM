@@ -76,16 +76,15 @@ public:
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
 
-  G4VPhysicalVolume &GetWorldVolumeAddress() const;
-
-  BDSGeometryExternal* geom;
-
+  /// Get geometry cell from store.
   G4GeometryCell GetGeometryCell(G4int i);
 
+  /// Create IStore for all importance sampling geometry cells.
   void AddIStore();
 
   virtual void ConstructSD();
 
+  /// World volume getter required in parallel world utilities.
   G4VPhysicalVolume* GetWorldVolume();
 
 private:
@@ -116,25 +115,25 @@ private:
   bool debug = false;
 #endif
 
-  ///@{ Variable copied from global constants
-  G4bool verbose;
-  G4bool checkOverlaps;
-  ///@}
-
+  /// Importance sampling world volume
   G4VPhysicalVolume* imWorldPV;
 
   BDSExtent worldExtent; ///< Record of the world extent.
 
+  /// Logical volumes in importance sampling world
   std::vector< G4LogicalVolume* > parallelLogicalVolumes;
-  std::vector< G4VPhysicalVolume* > parallelPhysicalVolumes;
 
+  /// Store of geometry cells for importance volumes.
   BDSImportanceVolumeStore imVolumeStore;
 
+  /// Container for all user placed physical volumes and corresponding importance values.
   std::map<G4String, G4double> imVolumesAndValues;
 
+  /// Cached global constants instance.
   const BDSGlobalConstants* globals;
 
-  G4int GetCellImportanceValue(G4String cellName);
+  /// Get importance value of a given physical volume name.
+  G4double GetCellImportanceValue(G4String cellName);
 
 };
 

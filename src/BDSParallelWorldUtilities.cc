@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
@@ -140,23 +141,29 @@ void BDS::RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
                                             std::vector<G4VUserParallelWorld*> worlds)
   {
     G4VUserParallelWorld* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
+    //only register physics if the world exists
     if (importanceWorld)
       {
         G4String importanceWorldName = importanceWorld->GetName();
         BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
-        auto iworldName = iworld->GetName();
+
+        // create world geometry sampler
         G4GeometrySampler *pgs = new G4GeometrySampler(iworld->GetWorldVolume(), "neutron");
         pgs->SetParallel(true);
 
-        //G4VPhysicalVolume* wPV = G4TransportationManager::GetTransportationManager()->IsWorldExisting(importanceWorldName);
-        G4TransportationManager::GetTransportationManager()->GetParallelWorld(importanceWorldName);
-
+        // Get store, and prepare and configure world geometry sampler.
         G4IStore *iStore = G4IStore::GetInstance(importanceWorldName);
         pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
         pgs->PrepareImportanceSampling(iStore, 0);
         pgs->Configure();
 
+        // Now add to physics list
         physicsList->RegisterPhysics(new G4ImportanceBiasing(pgs, importanceWorldName));
+      }
+    else
+      {
+        G4cerr << __METHOD_NAME__ << "Importance sampling world not found." << G4endl;
+        exit(1);
       }
   }
 
@@ -168,6 +175,11 @@ void BDS::AddIStore(std::vector<G4VUserParallelWorld*> worlds)
     {
       BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
       iworld->AddIStore();
+    }
+  else
+    {
+      G4cerr << __METHOD_NAME__ << "Importance sampling world not found." << G4endl;
+      exit(1);
     }
 }
 
