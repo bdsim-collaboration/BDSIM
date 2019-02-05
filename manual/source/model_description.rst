@@ -224,7 +224,7 @@ Circular Machines
 -----------------
 
 To simulate circular machines, BDSIM should be executed with the `-\\-circular` executable option
-(see :ref:`executable-options` for all executable options). This installs special beam line
+(see :ref:`executable-options`). This installs special beam line
 elements called the `teleporter` and `terminator` at the end of the lattice that are described
 below.
 
@@ -340,6 +340,7 @@ The following elements may be defined
 * `degrader`_
 * `muspoiler`_
 * `shield`_
+* `dump`_
 * `solenoid`_
 * `laser`_
 * `gap`_
@@ -1253,6 +1254,45 @@ Parameter          Description                         Default     Required
 
 * The `aperture parameters`_ may also be specified.
 
+dump
+^^^^
+
+.. figure:: figures/dump.png
+	    :width: 50%
+	    :align: right
+
+`dump` defines a square or circular block of material that is an infinite absorber. All
+particles impacting the dump will be absorbed irrespective of the particle and physics
+processes.
+
+This is intended as a useful way to absorb a beam with no computational time. Normally,
+the world volume is filled with air. If the beam reaches the end of the beam line it will
+hit the air and likely create a shower of particles that will take some time to simulate.
+In this case, when this isn't required, it is recommended to use a dump object to absorb
+the beam.
+
+=================  ==================================  ===========  ===========
+Parameter          Description                         Default      Required
+`l`                Length [m]                          0            Yes
+`horizontalWidth`  Outer full width [m]                global       No
+`apertureType`     Which shape                         rectangular  No
+=================  ==================================  ===========  ===========
+
+How this works: the material of the dump is actually vacuum, but G4UserLimits are used to
+kill particles. This requires the cuts and limits physics process that is included automatically.
+In the case of using a Geant4 reference physics list (see :ref:`physics-geant4-lists`), the
+necessary process is added automatically to enforce this.
+
+The dump may accept `apertureType` with the value of either `circular` or `rectangular` for
+the shape of the dump. By default it is rectangular.
+
+Examples::
+
+  d1: dump, l=0.2*m, horizontalWidth=20*cm;
+  d2: dump, l=0.4*m, apertureType="circular";
+  d3: dump, l=0.3*m, apertureType="rectangular";
+
+
 solenoid
 ^^^^^^^^
 
@@ -1666,6 +1706,10 @@ The magnet geometry is controlled by the following parameters.
 .. note:: These can all be specified using the `option` command as well as on a per element
 	  basis, but in this case they act as a default that will be used if none are
 	  specified by the element.
+
+.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), any
+	  per-element magnet geometry definitions will be ignored and the ones specified
+	  in Options will be used.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
@@ -2448,7 +2492,7 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | axisZ                   | Axis angle rotation z-component of unit vector                     |
 +-------------------------+--------------------------------------------------------------------+
-| angle                   | Axis angle angle to rotate about unit vector                       |
+| angle                   | Axis angle, angle to rotate about unit vector                      |
 +-------------------------+--------------------------------------------------------------------+
 | axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
 +-------------------------+--------------------------------------------------------------------+
@@ -2717,6 +2761,15 @@ The Geant4 reference physics can be used by prefixing their name with "g4". See 
 .. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
 	  with any modular physics list.
 
+.. note:: The range cuts specified with BDSIM options to not apply by default and the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on').
+
+.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
+	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
+	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
+	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
+	  is the default option.
+
 For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
@@ -2734,11 +2787,10 @@ than BDSIM was compiled with respect to.
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-BDSIM uses the Geant4 physics lists directly and more details can be found in the Geant4 documentation:
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
 
-   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
-   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
-   * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
@@ -2988,6 +3040,20 @@ propagate the weights correctly.
 Geant4 Reference Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
+
+.. note:: The range cuts specified with BDSIM options to not apply by default and the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on').
+
+.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
+	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
+	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
+	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
+	  is the default option.
+  
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
 
@@ -3015,7 +3081,7 @@ prefix with "g4" to work in BDSIM.
 * ShieldingM
 * NuBeam
 
-The **optional** following suffixes may be added to specify the electromagnetif physics variant:
+The **optional** following suffixes may be added to specify the electromagnetic physics variant:
 
 * _EMV
 * _EMX
@@ -3032,7 +3098,22 @@ Examples::
 
   option, physicsList="g4QBBC_EMV";
 
-  option, physicsList="g4FTFP_BERT_PEN";
+  option, physicsList="g4FTFP_BERT_PEN",
+          g4PhysicsUseBDISMRangeCuts=1,
+	  defaultRangeCut=10*cm;
+
+This example turns on the cuts and limits. This applies the minimum kinetic energy but also the
+the maximum step length which is by default 110% the length of the element. If bad tracking behaviour
+is experienced (stuck particles etc.) this should be considered.::
+	  
+  option, physicsList="g4FTFP_BERT",
+          g4PhysicsUSeBDSIMCutsAndLimits=1;
+
+This following example will enforce a minimum kinetic energy but also limit the maximum step length
+(consequently) to 110% the length of the component and provide more robust tracking.::
+
+  option, physicsList="g4FTFP_BERT",
+          minimumKineticEnergy=20*GeV;
 
 .. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
@@ -3053,6 +3134,8 @@ These cannot be used in combination with any other physics processes.
 |                           | for crystal channelling. The exact same physics as used in their example. |
 +---------------------------+---------------------------------------------------------------------------+
 
+.. note:: The range cuts specified with BDSIM options to not apply and cannot be used with a 'complete'
+	  physics list.
 
 
 .. _physics-biasing:
@@ -3260,6 +3343,9 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | builTunnelFloor                  | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
+| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
+|                                  | during geometry construction (slower)                 |
++----------------------------------+-------------------------------------------------------+
 | coilWidthFraction                | 0.05 - 0.98 - fraction of available horizontal space  |
 |                                  | between pole and yoke that coil will occupy           |
 +----------------------------------+-------------------------------------------------------+
@@ -3276,22 +3362,23 @@ described in `Tunnel Geometry`_.
 |                                  | density. This is used for the gap between             |
 |                                  | tight-fitting container volumes and objects.          |
 +----------------------------------+-------------------------------------------------------+
+| horizontalWidth                  | The default full width of a magnet                    |
++----------------------------------+-------------------------------------------------------+
+| hStyle                           | Whether default dipole style is H-style vs. C-style   |
+|                                  | (default false)                                       |
++----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
-| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
-|                                  | during geometry construction (slower)                 |
-+----------------------------------+-------------------------------------------------------+
-| hStyle                           | Whether default dipole style is H-style vs. C-style   |
-|                                  | (default false)                                       |
+| ignoreLocalMagnetGeometry        | If this is true (1), any per-element magnet geometry  |
+|                                  | definitions will be ignored and the ones specified    |
+|                                  | in Options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | Whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
 +----------------------------------+-------------------------------------------------------+
 | magnetGeometryType               | The default magnet geometry style to use              |
-+----------------------------------+-------------------------------------------------------+
-| horizontalWidth                  | The default full width of a magnet                    |
 +----------------------------------+-------------------------------------------------------+
 | outerMaterial                    | The default material to use for the yoke of magnet    |
 |                                  | geometry                                              |
@@ -3440,6 +3527,16 @@ Physics Processes
 |                                  | cut. Overwrites other production cuts unless these    |
 |                                  | are explicitly set (default 1e-3) [m].                |
 +----------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
+|                                  | 110% of the component length - this makes the         |
+|                                  | tracking more robust and is the default with a        |
+|                                  | regular BDSIM physics list. The minimum kinetic       |
+|                                  | option is also obeyed. Default off.                   |
++----------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMRangeCuts       | If on, this will apply the BDSIM range cut lengths    |
+|                                  | to the Geant4 physics list used. This is off by       |
+|                                  | default.                                              |
++----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
 |                                  | energy deposition recorded at that location [GeV].    |
 +----------------------------------+-------------------------------------------------------+
@@ -3552,16 +3649,6 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
-|                                   | only collimators is filled. Collimator structures are created in   |
-|                                   | the Event Tree of the output for each collimator and prefixed with |
-|                                   | "COLL\_" and contain hits from (only) primary particles.           |
-|                                   | Collimator summary histograms are also created and stored. Default |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | extra information is stored for each collimator hit.               |
-+-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -3571,6 +3658,16 @@ with the following options.
 |                                   | hits will be generated for all particles interacting with the      |
 |                                   | collimators whether primary or secondary and whether ion or not.   |
 |                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
+|                                   | only collimators is filled. Collimator structures are created in   |
+|                                   | the Event Tree of the output for each collimator and prefixed with |
+|                                   | "COLL\_" and contain hits from (only) primary particles.           |
+|                                   | Collimator summary histograms are also created and stored. Default |
+|                                   | off.                                                               |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                   | extra information is stored for each collimator hit.               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
@@ -3602,7 +3699,7 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
 |                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
-|                                   | world volume as well.                                              |
+|                                   | world volume as well. Default off.                                 |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
@@ -3860,10 +3957,12 @@ should only be used with understanding.
 Beam Parameters
 ---------------
 
-To specify the input particle distribution to the accelerator model, the `beam` command is
+BDSIM starts each event by simulating one particle from a beam distribution. A distribution is
+chosen by the user in the input GMAD and the particle coordinates are randomly generated according
+to this distribution. To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
 design total energy of the machine. This is used along with the particle species to calculate
-the momentum of the reference particle and therefore the magnetic rigidity that magnetic
+the momentum of the reference particle and therefore the magnetic rigidity that normalised magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
 is calculated using this if only the `angle` parameter has been specified.
 
@@ -4013,12 +4112,15 @@ reference
 ^^^^^^^^^
 This is a single particle with the same position and angle defined by the following parameters. The
 coordinates are the same for every particle fired using the reference distribution. It is therefore
-not likely to be useful to generate a large number of repeated events with this distribution.
+not likely to be useful to generate a large number of repeated events with this distribution unless
+the user wishes to explore the different outcome from the physics processes, which will be different
+each time should the particle interact. This distribution may be referred to as a 'pencil' distribution
+by other codes.
 
 These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may be defined with the `gauss`_ parameters, but with `X0` set to offset the centroid of the
-Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the particle
--including the rest mass.
+Gaussian with respect to the reference trajectory. Note: **energy** is **total energy** of the
+particle - including the rest mass.
 
   .. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
 
@@ -4095,8 +4197,9 @@ Examples::
 	 sigma34 = 1.4e-3;
 
 .. note:: One should take care in defining, say, sigma16, as this is the covariance of the `x` position
-	  and energy. However, this may be proportional to momentum and not total energy. For such
-	  a *correlation* between `x` and `E`, other off-diagonal terms would be finite also.
+	  and energy. However, this may be proportional to momentum and not total energy. Note, for such
+	  a *correlation* between `x` and `E`, other off-diagonal terms in the covariance matrix should
+	  be finite also.
 
 gauss
 ^^^^^
@@ -5130,7 +5233,7 @@ produces the model shown below.
 * Colour names are case-sensitive.
 * New colour names must not clash with predefined BDSIM colour names.
 
-All available colours in BDSIM can be found by running BDSIM with the `--colours` command::
+All available colours in BDSIM can be found by running BDSIM with the `-\\-colours` command::
 
   bdsim --colours
 

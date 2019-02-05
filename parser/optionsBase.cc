@@ -65,6 +65,8 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList           = ""; //default - only transportation
   physicsVerbose        = false;
+  g4PhysicsUseBDSIMRangeCuts     = false;
+  g4PhysicsUseBDSIMCutsAndLimits = false;
   
   eventOffset           = 0;
   recreateSeedState     = true;
