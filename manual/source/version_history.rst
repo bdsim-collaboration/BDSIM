@@ -23,6 +23,8 @@ New Features
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
 * New wire scanner element "wirescanner" with cylindrical wire in a beam pipe.
 * Complete CMake for user applications based on BDSIM.
+* New code:`dump` beam line element that is an infinite absorber. This prevents simulations
+  running for a long time when particles may hit the air at the end of the beam line.
 * BDSIM as a class for interfacing. Ability to add custom beam line components.
   See :ref:`interfacing-section`.
 
