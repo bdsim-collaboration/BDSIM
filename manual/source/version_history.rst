@@ -7,11 +7,12 @@ Expected Changes To Results
 * The density of the surrounding air has changed very slightly to that of the standard
   G4_AIR one.
 * Energy deposition in vacuum is now separated into a separate branch and is not mixed
-  with general Eloss.
+  with general Eloss. Therefore, less energy deposition will be seen in the Eloss branch.
 * The minimum kinetic energy option will now be respected when using a Geant4 reference
   physics list, whereas it wasn't before.
-* The range cuts will now be applied when using a Geant4 reference physics list, whereas
-  they weren't before.
+* The range cuts can now be applied when using a Geant4 reference physics list if the
+  option :code:`g4PhysicsUseBDSIMRangeCuts` is turned on (=1). Previously, these had no
+  effect with a Geant4 reference physics list.
 
 New Features
 ------------
