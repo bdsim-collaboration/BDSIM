@@ -132,6 +132,10 @@ public:
   G4int PrintModuloEvents()                  const;
   G4int PrintModuloTurns()                   const;
   inline G4bool   PhysicsVerbose()           const {return G4bool  (options.physicsVerbose);}
+  
+  inline G4bool   G4PhysicsUseBDSIMRangeCuts()     const {return G4bool(options.g4PhysicsUseBDSIMRangeCuts);}
+  inline G4bool   G4PhysicsUseBDSIMCutsAndLimits() const {return G4bool(options.g4PhysicsUseBDSIMCutsAndLimits);}
+  
   inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
   inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
