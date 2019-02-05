@@ -49,8 +49,8 @@ void BDSDump::Build()
   BDSAcceleratorComponent::Build();
 
   // update container visualisation attributes
-  G4Colour* black = BDSColours::Instance()->GetColour("black");
-  G4VisAttributes* dumpVis = new G4VisAttributes(*black);
+  G4Colour* reallyreallydarkgrey = BDSColours::Instance()->GetColour("reallyreallydarkgrey");
+  G4VisAttributes* dumpVis = new G4VisAttributes(*reallyreallydarkgrey);
   RegisterVisAttributes(dumpVis);
   containerLogicalVolume->SetVisAttributes(dumpVis);
 }
