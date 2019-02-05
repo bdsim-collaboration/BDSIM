@@ -186,9 +186,8 @@ G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
     G4double importanceValue = (imVolumesAndValues)[cellName];
     if (!BDS::IsFinite(importanceValue))
       {
-        importanceValue = 1;
-        //warning: importance value for parallel world volume << pV << has not been supplied. Setting value to one.
-        G4cout << "" << G4endl;
+        G4cerr << __METHOD_NAME__<< "Importance value not found for cell " << cellName <<"." << G4endl;
+        exit(1);
       }
     return importanceValue;
   }
