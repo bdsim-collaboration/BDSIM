@@ -880,16 +880,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           kickerLine->AddComponent(startfringe);
         }
 
-      BDSMagnet* kicker = new BDSMagnet(t,
-                              baseName,
-                              kickerChordLength,
-                              bpInf,
-                              magOutInf,
-                              vacuumField);
-      kickerLine->AddComponent(kicker);
+        G4String kickerName = baseName + "_0";
+        BDSMagnet *kicker = new BDSMagnet(t, kickerName, kickerChordLength,
+                                          bpInf, magOutInf, vacuumField);
+        kickerLine->AddComponent(kicker);
 
-      if (buildEntranceFringe)
-        {
+        if (buildEntranceFringe) {
           G4String exitFringeName = baseName + "_e2_fringe";
           BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                         exitFringeName,
