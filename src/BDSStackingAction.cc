@@ -92,6 +92,10 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   // one particular point. Therefore, it has a different method in BDSEnergyCounterSD.
   if (classification == fKill)
     {
+    	auto pv = aTrack->GetVolume();
+    	G4cout << pv << G4endl;
+	    if (!pv)
+			{return classification;}
       G4VSensitiveDetector* sd = aTrack->GetVolume()->GetLogicalVolume()->GetSensitiveDetector();
       if (sd) // SD optional attachment to logical volume
 	{
