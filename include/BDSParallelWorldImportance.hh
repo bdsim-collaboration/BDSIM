@@ -120,9 +120,6 @@ private:
 
   BDSExtent worldExtent; ///< Record of the world extent.
 
-  /// Logical volumes in importance sampling world
-  std::vector< G4LogicalVolume* > parallelLogicalVolumes;
-
   /// Store of geometry cells for importance volumes.
   BDSImportanceVolumeStore imVolumeStore;
 

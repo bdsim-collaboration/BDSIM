@@ -74,29 +74,21 @@ void BDSParallelWorldImportance::BuildWorld()
   G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(visAttr));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(samplerWorldVis);
-  parallelLogicalVolumes.push_back(worldLV);
 
   // set limits
-  // vectors of all logical and physical volumes to save accessing from geometry in for loop below.
-  std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
-  std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
+  worldLV->SetUserLimits(userLimits);
 
   G4LogicalVolume* container = geom->GetContainerLogicalVolume();
-  container->GetNoDaughters();
-  for (int i = 0; i < container->GetNoDaughters(); i++)
+
+  // Set motherLV for all daughters to be world LV, and add geometry cell
+  for (G4int i = 0; i < container->GetNoDaughters(); i++)
     {
-      auto daughter = container->GetDaughter(i);
+      G4VPhysicalVolume* daughter = container->GetDaughter(i);
       daughter->SetMotherLogical(worldLV);
-      G4cout << daughter->GetName() << G4endl;
-
-      G4LogicalVolume* lv = daughter->GetLogicalVolume();
-      parallelLogicalVolumes.push_back(lv);
-
-      G4VPhysicalVolume* pv = parallelPVs[i];
 
       G4VPhysicalVolume *parallelPV = new G4PVPlacement(daughter->GetRotation(),
                                             daughter->GetTranslation(),
-                                            lv,
+                                            daughter->GetLogicalVolume(),
                                             daughter->GetName(),
                                             worldLV,
                                             false,
