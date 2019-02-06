@@ -9,4 +9,7 @@ add_subdirectory(7_beamGas)
 #add_subdirectory(8_xSection)
 add_subdirectory(9_cherenkov)
 add_subdirectory(processes_old)
-add_subdirectory(10_importanceSampling)
+
+
+simple_testing(physics-energy-limit-high  "--file=physics_energy_limit_high.gmad" "")
+simple_testing(physics-energy-limit-low   "--file=physics_energy_limit_low.gmad"  "")
