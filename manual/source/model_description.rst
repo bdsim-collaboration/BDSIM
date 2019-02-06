@@ -3549,6 +3549,18 @@ Physics Processes
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
 +----------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
+|                                  | This is usually 990 eV by default in Geant4. The user |
+|                                  | may change this if required. Warning, this must       |
+|                                  | be used only if the user understands how this will    |
+|                                  | affect the running of Geant4. [GeV]                   |
++----------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitHigh           | Optional upper energy level for all physics models.   |
+|                                  | This is usually 100 TeV by default in Geant4. The     |
+|                                  | user may change this if required. Warning, this must  |
+|                                  | be used only if the user understands how this will    |
+|                                  | affect the running of Geant4. [GeV]                   |
++----------------------------------+-------------------------------------------------------+
 | physicsList                      | Which physics lists to use - default tracking only    |
 +----------------------------------+-------------------------------------------------------+
 | physicsVerbose                   | Prints out all processes linked to primary particle   |
