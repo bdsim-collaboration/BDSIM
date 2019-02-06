@@ -129,8 +129,12 @@ private:
   /// Container for all user placed physical volumes and corresponding importance values.
   std::map<G4String, G4double> imVolumesAndValues;
 
-  /// Cached global constants instance.
-  const BDSGlobalConstants* globals;
+  ///@{ Cached global constants values.
+  G4UserLimits* userLimits;
+  G4String imVolMap;
+  G4String imGeomFile;
+  G4VisAttributes* visAttr;
+  ///@}
 
   /// Get importance value of a given physical volume name.
   G4double GetCellImportanceValue(G4String cellName);

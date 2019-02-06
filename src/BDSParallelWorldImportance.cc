@@ -40,13 +40,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
   G4VUserParallelWorld("importanceWorld_" + name)
 {
-  globals = BDSGlobalConstants::Instance();
+  userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  imVolMap   = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();
+  imGeomFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
+  visAttr    = BDSGlobalConstants::Instance()->VisibleDebugVisAttr();
 }
 
 void BDSParallelWorldImportance::Construct()
 {
   // load the cell importance values
-  G4String importanceMapFile = BDS::GetFullPath(globals->ImportanceVolumeMapFile());
+  G4String importanceMapFile = BDS::GetFullPath(imVolMap);
   BDSImportanceFileLoader importanceLoader;
   imVolumesAndValues = importanceLoader.Load(importanceMapFile);
 
@@ -60,8 +63,7 @@ BDSParallelWorldImportance::~BDSParallelWorldImportance()
 void BDSParallelWorldImportance::BuildWorld()
 {
   // load the importance world geometry
-  std::string geometryFile = globals->ImportanceWorldGeometryFile();
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry("importanceWorld", geometryFile, nullptr, 0, 0);
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry("importanceWorld", imGeomFile, nullptr, 0, 0);
 
   // clone mass world for parallel world PV
   imWorldPV = GetWorld();
@@ -69,14 +71,12 @@ void BDSParallelWorldImportance::BuildWorld()
   G4LogicalVolume *worldLV = imWorldPV->GetLogicalVolume();
 
   // set parallel world vis attributes
-  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
+  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(visAttr));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(samplerWorldVis);
   parallelLogicalVolumes.push_back(worldLV);
 
   // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
-
   // vectors of all logical and physical volumes to save accessing from geometry in for loop below.
   std::vector<G4LogicalVolume*> parallelLVs = geom->GetAllLogicalVolumes();
   std::vector<G4VPhysicalVolume*> parallelPVs = geom->GetAllPhysicalVolumes();
