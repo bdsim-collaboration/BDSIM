@@ -3171,7 +3171,7 @@ vacuum respectively::
 
 Importance Sampling
 ^^^^^^^^^^^^^^^^^^^
-To enable importance sampling is available, the user must provide both a mass world and a separate importance
+To enable importance sampling, the user must provide both a mass world and a separate importance
 sampling world as external geometry files. The mass world file should contain the appropriate volumes as if you
 were conducting a standard simulation without importance sampling. The importance world file should contain the
 volumes that will be the importance cells only. A third text file must also be provided which contains a map of the
@@ -3188,8 +3188,20 @@ importanceVolumeMap          ASCII file containing a map of the importance world
 Example::
 
   option, worldGeometryFile="gdml:shielding-world.gdml",
-      importanceWorldGeometryFile="gdml:parallel-cell-world.gdml",
+      importanceWorldGeometryFile="gdml:importance-cell-world.gdml",
       importanceVolumeMap="importanceValues.dat";
+
+An example of the world volume geometry (top), the importance sampling world geometry (middle), and
+an importance volume map (bottom) are shown below with an example beamline.
+
+.. figure:: figures/importanceSampling_massWorld.png
+	    :width: 60%
+
+.. figure:: figures/importanceSampling_importanceWorld.png
+	    :width: 60%
+
+.. figure:: figures/importanceSampling_VolumeMap.png
+	    :width: 75%
 
 .. note:: Both the mass world and importance sampling world must be the same size.
 
@@ -3198,10 +3210,10 @@ Example::
 
 .. note:: It is down to the user to ensure the importance cells are correctly positioned.
 
-.. note:: If a importance cell physical volume is provided and not listed in the ascii map file,
-    BDSIM will exit.
+.. note:: If a importance cell volume exists in the importance world geometry and is not listed
+    in the ascii map file with a importance value, BDSIM will exit.
 
-.. note:: The importance sampling world volume is assumed to have an importance value of 1.
+.. note:: The importance sampling world volume has an importance value of 1.
 
 .. _bdsim-options:
 
