@@ -78,6 +78,10 @@ namespace BDS
   /// to be applied to physics lists both from BDSIM's modular phyiscs list and other sources
   /// with the same mechanism.
   void SetRangeCuts(G4VModularPhysicsList* physicsList);
+
+  /// Check if the user has requested a changed energy validity range and set the appropriate
+  /// variables in the G4ProductionCutsTable.
+  void CheckAndSetEnergyValidityRange();
 }
 
 #endif

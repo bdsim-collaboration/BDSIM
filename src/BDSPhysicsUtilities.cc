@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsUtilities.hh"
+#include "BDSUtilities.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
 #include "globals.hh"
@@ -46,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PionMinus.hh"
 #include "G4PionPlus.hh"
 #include "G4Positron.hh"
+#include "G4ProductionCutsTable.hh"
 #include "G4Proton.hh"
 #include "G4PhysListFactory.hh"
 #include "G4ProcessManager.hh"
@@ -121,6 +123,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
       result = new BDSModularPhysicsList(physicsList);
       BDS::SetRangeCuts(result); // always set our range cuts for our physics list
     }
+  BDS::CheckAndSetEnergyValidityRange();
   return result;
 }
 
@@ -359,4 +362,32 @@ void BDS::SetRangeCuts(G4VModularPhysicsList* physicsList)
 #endif
 
   physicsList->DumpCutValuesTable();
+}
+
+void BDS::CheckAndSetEnergyValidityRange()
+{
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  G4double energyLimitLow     = globals->PhysicsEnergyLimitLow();
+  G4double energyLimitHigh    = globals->PhysicsEnergyLimitHigh();
+  G4bool   setEnergyLimitLow  = BDS::IsFinite(energyLimitLow);
+  G4bool   setEnergyLimitHigh = BDS::IsFinite(energyLimitHigh);
+  if (setEnergyLimitLow || setEnergyLimitHigh)
+    {
+      auto table = G4ProductionCutsTable::GetProductionCutsTable();
+      G4double defaultEnergyLimitLow  = table->GetLowEdgeEnergy();
+      G4double defaultEnergyLimitHigh = table->GetHighEdgeEnergy();
+      G4double elLow  = setEnergyLimitLow  ? energyLimitLow  : defaultEnergyLimitLow;
+      G4double elHigh = setEnergyLimitHigh ? energyLimitHigh : defaultEnergyLimitHigh;
+      table->SetEnergyRange(elLow, elHigh);
+      if (setEnergyLimitLow)
+	{
+	  G4cout << __METHOD_NAME__ << "set low energy limit:  "
+		 << elLow/CLHEP::MeV  << " MeV" << G4endl;
+	}
+      if (setEnergyLimitHigh)
+	{
+	  G4cout << __METHOD_NAME__ << "set high energy limit: "
+		 << elHigh/CLHEP::TeV << " TeV" << G4endl;
+	}
+    }
 }
