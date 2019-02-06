@@ -16,60 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSAuxiliaryNavigator.hh"
-#include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterSD.hh"
-#include "BDSExtent.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSImportanceFileLoader.hh"
-#include "BDSMaterials.hh"
 #include "BDSParallelWorldImportance.hh"
-#include "BDSParser.hh"
-#include "BDSPhysicalVolumeInfo.hh"
-#include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
-#include "BDSSurvey.hh"
 #include "BDSUtilities.hh"
 
-#include "parser/element.h"
-#include "parser/fastlist.h"
-#include "parser/options.h"
-#include "parser/physicsbiasing.h"
-#include "parser/placement.h"
-
-#include "globals.hh"
-#include "G4Box.hh"
 #include "G4GeometryCell.hh"
 #include "G4IStore.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
-#include "G4Navigator.hh"
-#include "G4ProductionCuts.hh"
+#include "G4MultiFunctionalDetector.hh"
 #include "G4PVPlacement.hh"
-#include "G4Region.hh"
-#include "G4Transform3D.hh"
-#include "G4Version.hh"
+#include "G4SDManager.hh"
+#include "G4SDParticleFilter.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
 
-#include "G4MultiFunctionalDetector.hh"
-#include "G4SDManager.hh"
-#include "G4SDParticleFilter.hh"
-
-#include "CLHEP/Units/SystemOfUnits.h"
-#include "CLHEP/Vector/EulerAngles.h"
-
-#include <iterator>
-#include <limits>
-#include <list>
-#include <map>
-#include <vector>
 
 BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
   G4VUserParallelWorld("importanceWorld_" + name)
