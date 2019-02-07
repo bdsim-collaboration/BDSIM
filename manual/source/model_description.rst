@@ -2761,7 +2761,7 @@ The Geant4 reference physics can be used by prefixing their name with "g4". See 
 .. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
 	  with any modular physics list.
 
-.. note:: The range cuts specified with BDSIM options to not apply by default and the option
+.. note:: The range cuts specified with BDSIM options do not apply by default and the option
 	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on').
 
 .. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
@@ -3099,7 +3099,7 @@ Examples::
   option, physicsList="g4QBBC_EMV";
 
   option, physicsList="g4FTFP_BERT_PEN",
-          g4PhysicsUseBDISMRangeCuts=1,
+          g4PhysicsUseBDSIMRangeCuts=1,
 	  defaultRangeCut=10*cm;
 
 This example turns on the cuts and limits. This applies the minimum kinetic energy but also the
@@ -3107,7 +3107,7 @@ the maximum step length which is by default 110% the length of the element. If b
 is experienced (stuck particles etc.) this should be considered.::
 	  
   option, physicsList="g4FTFP_BERT",
-          g4PhysicsUSeBDSIMCutsAndLimits=1;
+          g4PhysicsUseBDSIMCutsAndLimits=1;
 
 This following example will enforce a minimum kinetic energy but also limit the maximum step length
 (consequently) to 110% the length of the component and provide more robust tracking.::
