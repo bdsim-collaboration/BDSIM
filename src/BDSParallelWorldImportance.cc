@@ -149,9 +149,15 @@ G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
     G4double importanceValue = (imVolumesAndValues)[cellName];
     if (!BDS::IsFinite(importanceValue))
       {
-        G4cerr << __METHOD_NAME__<< "Importance value not found for cell " << cellName <<"." << G4endl;
+        G4cerr << __METHOD_NAME__<< "Importance value not found or is zero for cell " << cellName <<"." << G4endl;
         exit(1);
       }
+    if (importanceValue < 0)
+      {
+          G4cerr << __METHOD_NAME__<< "Importance value is negative for cell " << cellName <<"." << G4endl;
+          exit(1);
+      }
+
     return importanceValue;
   }
 
