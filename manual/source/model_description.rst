@@ -1561,7 +1561,8 @@ and make a placement at the appropriate point in global coordinates.
 +===================+==================================+==============+===============+
 | `geometryFile`    | Filename of geometry             | NA           | Yes           |
 +-------------------+----------------------------------+--------------+---------------+
-| `l`               | Length                           | NA           | Yes           |
+| `l`               | Length. Arc length in case of a  | NA           | Yes           |
+|                   | finite angle.                    |              |               |
 +-------------------+----------------------------------+--------------+---------------+
 | `horizontalWidth` | Diameter of component [m]        | NA           | Yes           |
 +-------------------+----------------------------------+--------------+---------------+
