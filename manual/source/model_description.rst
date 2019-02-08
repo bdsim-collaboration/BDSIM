@@ -2209,6 +2209,8 @@ Formats
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
+.. note:: BDSIM field maps by default have units :math:`cm,s`.
+
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
 +==================+============================================+
