@@ -112,7 +112,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     }
 
   // only create the importance parallel world if the file is specified
-  if (!BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
     {
       BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
       massWorld->RegisterParallelWorld(importanceWorld);
@@ -137,28 +137,27 @@ void BDS::RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
     {physicsList->RegisterPhysics(process);}
 }
 
-void BDS::RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
-                                            std::vector<G4VUserParallelWorld*> worlds)
+void BDS::AddIStore(G4GeometrySampler* pgs,
+                    std::vector<G4VUserParallelWorld*> worlds)
   {
-    G4VUserParallelWorld* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
+    // check the geometry sampler exists.
+    if (!pgs)
+      {
+        G4cerr << __METHOD_NAME__ << "Geometry sampler for importance sampling world not found." << G4endl;
+        exit(1);
+      }
+
+    BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
     //only register physics if the world exists
     if (importanceWorld)
       {
-        G4String importanceWorldName = importanceWorld->GetName();
-        BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
-
-        // create world geometry sampler
-        G4GeometrySampler *pgs = new G4GeometrySampler(iworld->GetWorldVolume(), "neutron");
-        pgs->SetParallel(true);
-
-        // Get store, and prepare and configure world geometry sampler.
-        G4IStore *iStore = G4IStore::GetInstance(importanceWorldName);
+        // Get store, and prepare importance sampling for importance geometry sampler
+        G4IStore *iStore = G4IStore::GetInstance(importanceWorld->GetName());
         pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
         pgs->PrepareImportanceSampling(iStore, 0);
         pgs->Configure();
 
-        // Now add to physics list
-        physicsList->RegisterPhysics(new G4ImportanceBiasing(pgs, importanceWorldName));
+        importanceWorld->AddIStore();
       }
     else
       {
@@ -167,23 +166,19 @@ void BDS::RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
       }
   }
 
-void BDS::AddIStore(std::vector<G4VUserParallelWorld*> worlds)
+G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
+                    G4VModularPhysicsList* physList)
 {
-  // get importance world
-  G4VUserParallelWorld* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
-  if (importanceWorld)
-    {
-      BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
-      iworld->AddIStore();
-    }
-  else
-    {
-      G4cerr << __METHOD_NAME__ << "Importance sampling world not found." << G4endl;
-      exit(1);
-    }
+  BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
+
+  // create world geometry sampler
+  G4GeometrySampler* pgs = new G4GeometrySampler(importanceWorld->GetWorldVolume(), "neutron");
+  pgs->SetParallel(true);
+  physList->RegisterPhysics(new G4ImportanceBiasing(pgs,importanceWorld->GetName()));
+  return pgs;
 }
 
-G4VUserParallelWorld* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds)
+BDSParallelWorldImportance* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds)
 {
   // get importance world
   G4String importanceWorldName = "importanceWorld_main";
@@ -193,5 +188,6 @@ G4VUserParallelWorld* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParalle
       if (std::strcmp(world->GetName(),importanceWorldName) == 0)
         {importanceWorld = world; break;}
     }
-  return importanceWorld;
+  BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
+  return iworld;
 }

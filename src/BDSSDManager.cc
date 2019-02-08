@@ -103,7 +103,7 @@ BDSSDManager::BDSSDManager()
 
   eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries);
   // neutron filter for importance sampling as feature only works for neutrons.
-  if (!BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
     {
       G4SDParticleFilter *neutronFilter = new G4SDParticleFilter("neutronFilter", "neutron");
       eCounter->SetFilter(neutronFilter);

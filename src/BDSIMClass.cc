@@ -183,7 +183,13 @@ int BDSIM::Initialise()
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
-  
+
+  // create geometry sampler and register importance sampling biasing. Has to be here
+  // before physicsList is "initialised" in run manager.
+  G4GeometrySampler* pgs = nullptr;
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
+    {pgs = BDS::GetGeometrySamplerAndRegisterImportanceBiasing(samplerWorlds,physList);}
+
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
@@ -306,15 +312,9 @@ int BDSIM::Initialise()
   /// Initialize G4 kernel
   runManager->Initialize();
 
-  // Importance sampling.
-  if (!BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile().empty())
-    {
-      // physics biasing for parallel importance world
-      BDS::RegisterImportanceSamplingPhysics(physList, samplerWorlds);
-
-      /// Create importance store for parallel importance world
-      BDS::AddIStore(samplerWorlds);
-    }
+  /// Create importance store for parallel importance world
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
+    {BDS::AddIStore(pgs, samplerWorlds);}
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();

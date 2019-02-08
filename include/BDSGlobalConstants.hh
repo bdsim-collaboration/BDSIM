@@ -311,6 +311,9 @@ public:
   void SetLaserwireWavelength(G4String aName, G4double aWavelength);
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
+  /// Is importance sampling being used
+  inline G4bool UseImportanceSampling() const{return !ImportanceWorldGeometryFile().empty();}
+
 private:  
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;

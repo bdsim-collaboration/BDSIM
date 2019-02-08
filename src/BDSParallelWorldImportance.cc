@@ -38,7 +38,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
-  G4VUserParallelWorld("importanceWorld_" + name)
+  G4VUserParallelWorld("importanceWorld_" + name),
+  imWorldPV(nullptr)
 {
   userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   imVolMap   = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();

@@ -20,7 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSPARALLELWORLDUTILITIES_H
 
 #include "BDSParallelWorldInfo.hh"
-
+#include "BDSParallelWorldImportance.hh"
+#include "G4GeometrySampler.hh"
 #include "globals.hh"
 
 #include <vector>
@@ -50,15 +51,16 @@ namespace BDS
   void RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
 			      G4VModularPhysicsList* physicsList);
 
-  /// Register importance sampling physics process to main physics list
-  void RegisterImportanceSamplingPhysics(G4VModularPhysicsList* physicsList,
-                                         std::vector<G4VUserParallelWorld*> worlds);
+  /// Get store, and prepare importance sampling for importance geometry sampler
+  void AddIStore(G4GeometrySampler* pgs,
+                  std::vector<G4VUserParallelWorld*> worlds);
 
-  /// Get importance sampling world and call parallelWorldImportance AddIStore method.
-  void AddIStore(std::vector<G4VUserParallelWorld*> worlds);
+  /// Create importance geometry sampler and register importance biasing with physics list
+  G4GeometrySampler* GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
+                                                      G4VModularPhysicsList* physicsList);
 
-  /// Get importance sampling world from list of parallel worlds
-  G4VUserParallelWorld* GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds);
+  /// Get importance sampling world from list of all parallel worlds
+  BDSParallelWorldImportance* GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds);
 
 }
 
