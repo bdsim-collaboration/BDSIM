@@ -136,6 +136,7 @@ crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }
+samplerplacement { return SAMPLERPLACEMENT; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }

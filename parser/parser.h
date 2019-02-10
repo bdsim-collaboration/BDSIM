@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "placement.h"
 #include "query.h"
 #include "region.h"
+#include "samplerplacement.h"
 #include "symbolmap.h"
 #include "tunnel.h"
 
@@ -227,6 +228,8 @@ namespace GMAD
     std::vector<Placement> placement_list;
     /// List of parser defined rf cavity models
     std::vector<CavityModel> cavitymodel_list;
+    /// List of parser defined sampler placements.
+    std::vector<SamplerPlacement> samplerplacement_list;
 
   private:
     // *****************
@@ -264,6 +267,8 @@ namespace GMAD
     Tunnel tunnel;
     /// RF Cavity model instance
     CavityModel cavitymodel;
+    /// Sampler placement instance
+    SamplerPlacement samplerplacement;
     
     /// Find object by name in list
     template <class C>

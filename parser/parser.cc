@@ -630,7 +630,8 @@ void Parser::Overwrite(const std::string& objectName)
   // find object and set values
 
   // possible object types are:
-  // element, atom, colour, crystal, field, material, physicsbiasing, placement, query, region, tunnel, cavitymodel
+  // element, atom, colour, crystal, field, material, physicsbiasing, placement,
+  // query, region, tunnel, cavitymodel, samplerplacement
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end()) {
@@ -655,6 +656,7 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<Region>     (objectName)) ) {}
     else if ( (extended = FindAndExtend<Tunnel>     (objectName)) ) {}
     else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
+    else if ( (extended = FindAndExtend<SamplerPlacement>(objectName)) ) {}
   }
 
   if (extended==false) {
@@ -795,6 +797,12 @@ namespace GMAD {
   template<>
   FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing, FastList<PhysicsBiasing>>(){return xsecbias_list;}
 
+  template<>
+  SamplerPlacement& Parser::GetGlobal(){return samplerplacement;}
+
+  template<>
+  std::vector<SamplerPlacement>& Parser::GetList<SamplerPlacement>() {return samplerplacement_list;}
+  
   template<>
   void Parser::ExtendValue(std::string property, double value)
   {extendedNumbers[property]=value;}
