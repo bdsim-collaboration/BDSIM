@@ -157,7 +157,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamlines();
 
   // construct placement geometry from parser
-  BDSBeamline* mainBeamLine =  BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
+  BDSBeamline* mainBeamLine = BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
 					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it

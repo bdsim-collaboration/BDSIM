@@ -634,16 +634,20 @@ void Parser::Overwrite(const std::string& objectName)
   // query, region, tunnel, cavitymodel, samplerplacement
   bool extended = false;
   auto element_it = element_list.find(objectName);
-  if (element_it != element_list.end()) {
-    ExtendObject(*element_it);
-    extended = true;
-  } else {
-    auto it = xsecbias_list.find(objectName);
-    if (it != xsecbias_list.end() ) {
-      ExtendObject(*it);
+  if (element_it != element_list.end())
+    {
+      ExtendObject(*element_it);
       extended = true;
     }
-  }
+  else
+    {
+      auto it = xsecbias_list.find(objectName);
+      if (it != xsecbias_list.end() )
+	{
+	  ExtendObject(*it);
+	  extended = true;
+	}
+    }
   // vectors
   if (extended == false) {
     if (      (extended = FindAndExtend<Atom>       (objectName)) ) {}
@@ -659,10 +663,12 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<SamplerPlacement>(objectName)) ) {}
   }
 
-  if (extended==false) {
-    std::cerr << "parser.h> Error: object \"" << objectName << "\" has not been defined and can't be extended." << std::endl;
-    exit(1);
-  }
+  if (extended==false)
+    {
+      std::cerr << "parser.h> Error: object \"" << objectName
+		<< "\" has not been defined and can't be extended." << std::endl;
+      exit(1);
+    }
 
   // clear maps
   extendedNumbers.clear();

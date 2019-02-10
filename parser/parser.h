@@ -122,13 +122,13 @@ namespace GMAD
     void add_csampler(const std::string& name, int count, ElementType type);
     /// Insert global object of parser class C in Container class
     template <class C, class Container=std::vector<C>>
-      void Add();
+    void Add();
     /// Get global object of parser class C
     template <class C>
-      C& GetGlobal();
+    C& GetGlobal();
     /// Get list for parser class C
     template <class C, class Container=std::vector<C>>
-      Container& GetList();
+    Container& GetList();
 
     /// find element
     Element& find_element(const std::string& element_name);
