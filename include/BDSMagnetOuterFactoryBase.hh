@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"         // geant4 globals / types
 
+#include <set>
 #include <vector>
 
 class BDSBeamPipe;
@@ -32,6 +33,7 @@ class BDSMagnetOuterInfo;
 
 class G4Colour;
 class G4Material;
+class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 class G4VSolid;
@@ -218,14 +220,14 @@ protected:
   G4VPhysicalVolume* yokePV;
   G4VisAttributes*   outerVisAttributes;
 
-  std::vector<G4LogicalVolume*>   allLogicalVolumes;
-  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
-  std::vector<G4RotationMatrix*>  allRotationMatrices;
-  std::vector<G4VSolid*>          allSolids;
-  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::set<G4LogicalVolume*>   allLogicalVolumes;
+  std::set<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::set<G4RotationMatrix*>  allRotationMatrices;
+  std::set<G4VSolid*>          allSolids;
+  std::set<G4VisAttributes*>   allVisAttributes;
 
-  BDSExtent                       magContExtent;
-  BDSGeometryComponent*           magnetContainer;
+  BDSExtent             magContExtent;
+  BDSGeometryComponent* magnetContainer;
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;

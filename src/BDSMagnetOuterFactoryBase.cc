@@ -32,6 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 
+#include <set>
+
 // Note the geometry cannot scale arbitrarily with this constant. It can be
 // upscaled for debugging purposes, however, the extruded solids that use
 // it may fail when this is increased to approximately 1mm and with certain
@@ -115,7 +117,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {outerVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("default"));}
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.push_back(outerVisAttr);
+  allVisAttributes.insert(outerVisAttr);
   if (poleLV)
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
