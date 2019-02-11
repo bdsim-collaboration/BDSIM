@@ -182,6 +182,7 @@ add_test(gmad-physics-biasing    ${gmadBinary} physicsbiasing.gmad)
 add_test(gmad-placement          ${gmadBinary} placement.gmad)
 add_test(gmad-placement-sequence ${gmadBinary} placement_sequence.gmad)
 add_test(gmad-region             ${gmadBinary} region.gmad)
+add_test(gmad-samplerplacement   ${gmadBinary} samplerplacement.gmad)
 add_test(gmad-tunnel             ${gmadBinary} tunnel.gmad)
 
 # test object extensions
