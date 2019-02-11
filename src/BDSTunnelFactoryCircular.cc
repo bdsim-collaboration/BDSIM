@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
+#include <set>
 #include <utility>                         // for std::pair
 
 BDSTunnelFactoryCircular::BDSTunnelFactoryCircular()
@@ -225,8 +226,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
       // z long for unambiguous intersection
 
       // register solids
-      solidsToBeRegistered.push_back(floorCylinder);
-      solidsToBeRegistered.push_back(floorBox);
+      solidsToBeRegistered.insert(floorCylinder);
+      solidsToBeRegistered.insert(floorBox);
       
       floorSolid = new G4IntersectionSolid(name + "_floor_solid",                      // name
 					   floorCylinder,                              // this
@@ -251,8 +252,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
       // floor container box z long for unambiguous intersection
 
       // register solids
-      solidsToBeRegistered.push_back(floorContainerCylinder);
-      solidsToBeRegistered.push_back(floorContainerBox);
+      solidsToBeRegistered.insert(floorContainerCylinder);
+      solidsToBeRegistered.insert(floorContainerBox);
 
       // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
       // by length safety a la rest of geometry to fit within its dimensions)
@@ -273,8 +274,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 						     outputFace);               // output face normal vector
 
       // register solids
-      solidsToBeRegistered.push_back(floorContainerSolid);
-      solidsToBeRegistered.push_back(tunnelContainerSolid);
+      solidsToBeRegistered.insert(floorContainerSolid);
+      solidsToBeRegistered.insert(tunnelContainerSolid);
 
       containerSolid = new G4UnionSolid(name + "_container_solid", // name
 					tunnelContainerSolid,      // this
@@ -288,7 +289,7 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 							  CLHEP::twopi,             // sweep angle
 							  inputFace,                // input face normal vector
 							  outputFace);              // output face normal vector
-      solidsToBeRegistered.push_back(intersectionSolidCylinder);
+      solidsToBeRegistered.insert(intersectionSolidCylinder);
 
       intersectionSolid = new G4SubtractionSolid(name + "_intersection_solid", // name
 						 intersectionSolidCylinder,    // this

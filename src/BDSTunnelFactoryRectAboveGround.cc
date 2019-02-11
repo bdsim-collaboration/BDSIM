@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
+#include <set>
 #include <utility>                         // for std::pair
 
 class BDSTunnelSection;
@@ -107,10 +108,10 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 				       tunnelInnerSolid);          // minus this
 
   // register solids
-  solidsToBeRegistered.push_back(tunnelOuterSolid);
-  solidsToBeRegistered.push_back(tunnelRectSolid);
-  solidsToBeRegistered.push_back(tunnelInnerSolid);
-  solidsToBeRegistered.push_back(tunnelRectSolid);
+  solidsToBeRegistered.insert(tunnelOuterSolid);
+  solidsToBeRegistered.insert(tunnelRectSolid);
+  solidsToBeRegistered.insert(tunnelInnerSolid);
+  solidsToBeRegistered.insert(tunnelRectSolid);
 
   containerSolid = BuildContainerStraight(name, length, tunnel1, tunnel2,
 					  tunnelThickness, slabDisplacement);
@@ -191,10 +192,10 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 							 tunnelInnerSolid);             // minus this
 
   // register solids
-  solidsToBeRegistered.push_back(tunnelOuterSolid);
-  solidsToBeRegistered.push_back(tunnelRectSolid);
-  solidsToBeRegistered.push_back(tunnelInnerSolid);
-  solidsToBeRegistered.push_back(tunnelSolidUnAngled);
+  solidsToBeRegistered.insert(tunnelOuterSolid);
+  solidsToBeRegistered.insert(tunnelRectSolid);
+  solidsToBeRegistered.insert(tunnelInnerSolid);
+  solidsToBeRegistered.insert(tunnelSolidUnAngled);
 
   // cut off the faces with the angled face solid
   tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
@@ -265,10 +266,10 @@ G4VSolid* BDSTunnelFactoryRectAboveGround::BuildContainerStraight(G4String name,
 					     lengthIn);
   
   // regsiter solids
-  solidsToBeRegistered.push_back(tunnelContainerOuterSlab);
-  solidsToBeRegistered.push_back(tunnelContainerOuterTunnel);
-  solidsToBeRegistered.push_back(tunnelContainerOuter);
-  solidsToBeRegistered.push_back(tunnelContainerInner);
+  solidsToBeRegistered.insert(tunnelContainerOuterSlab);
+  solidsToBeRegistered.insert(tunnelContainerOuterTunnel);
+  solidsToBeRegistered.insert(tunnelContainerOuter);
+  solidsToBeRegistered.insert(tunnelContainerInner);
   
   containerSolidL = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					   tunnelContainerOuter,        // this

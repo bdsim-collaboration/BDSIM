@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
+#include <set>
 #include <utility>                         // for std::pair
 
 class G4Material;
@@ -68,8 +69,8 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 					 length); // z half length - long for unambiguous subtraction
 
   // register solids
-  solidsToBeRegistered.push_back(tunnelOuterSolid);
-  solidsToBeRegistered.push_back(tunnelInnerSolid);
+  solidsToBeRegistered.insert(tunnelOuterSolid);
+  solidsToBeRegistered.insert(tunnelInnerSolid);
 
   tunnelSolid = new G4SubtractionSolid(name + "_tunnel_solid", // name
 				       tunnelOuterSolid,      // this
@@ -96,8 +97,8 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 				       length); // z half length - long for unambiguous subtraction
 
   // register solids
-  solidsToBeRegistered.push_back(soilOuterSolid);
-  solidsToBeRegistered.push_back(soilInnerSolid);
+  solidsToBeRegistered.insert(soilOuterSolid);
+  solidsToBeRegistered.insert(soilInnerSolid);
 
   soilSolid = new G4SubtractionSolid(name + "_soil_solid", // name
 				     soilOuterSolid,       // this
@@ -205,10 +206,10 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 							 tunnelInnerSolid);     // minus this
 
   // register solids
-  solidsToBeRegistered.push_back(faceSolid);
-  solidsToBeRegistered.push_back(tunnelOuterSolid);
-  solidsToBeRegistered.push_back(tunnelInnerSolid);
-  solidsToBeRegistered.push_back(tunnelSolidUnAngled);
+  solidsToBeRegistered.insert(faceSolid);
+  solidsToBeRegistered.insert(tunnelOuterSolid);
+  solidsToBeRegistered.insert(tunnelInnerSolid);
+  solidsToBeRegistered.insert(tunnelSolidUnAngled);
 
   // cut off the faces with the angled face solid
   tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
@@ -241,9 +242,9 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 						       soilInnerSolid);             // minus this
 
   // register solids
-  solidsToBeRegistered.push_back(soilOuterSolid);
-  solidsToBeRegistered.push_back(soilInnerSolid);
-  solidsToBeRegistered.push_back(soilSolidUnAngled);
+  solidsToBeRegistered.insert(soilOuterSolid);
+  solidsToBeRegistered.insert(soilInnerSolid);
+  solidsToBeRegistered.insert(soilSolidUnAngled);
 
   // make it angled
   soilSolid = new G4IntersectionSolid(name + "_soil_soild", // name
@@ -260,7 +261,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
   G4VSolid*     containerSolidInner  = nullptr;
   G4VSolid*     containerSolidSquare = nullptr;
 
-  solidsToBeRegistered.push_back(containerSolidOuter);
+  solidsToBeRegistered.insert(containerSolidOuter);
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -279,7 +280,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 					   floorSolidSquare,
 					   faceSolid);
 
-      solidsToBeRegistered.push_back(floorSolidSquare);
+      solidsToBeRegistered.insert(floorSolidSquare);
       
       // need to create a container for the tunnel + floor that only just contains it
       G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;

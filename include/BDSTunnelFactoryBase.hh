@@ -19,12 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSTUNNELFACTORYBASE_H
 #define BDSTUNNELFACTORYBASE_H
 
-#include "globals.hh"  // geant4 globals / types
-
 #include "BDSTunnelSection.hh"
 
-#include <vector>
+#include "globals.hh"  // geant4 globals / types
+#include "G4ThreeVector.hh"
 
+#include <set>
+
+class G4LogicalVolume;
 class G4Material;
 class G4VisAttributes;
 class G4VSolid;
@@ -210,8 +212,8 @@ protected:
 
   /// vectors of components that should be registered with the finished product
   /// which then owns the objects, rather than the factory derived from this class.
-  std::vector<G4VSolid*>        solidsToBeRegistered;
-  std::vector<G4VisAttributes*> visAttributesToBeRegistered;
+  std::set<G4VSolid*>        solidsToBeRegistered;
+  std::set<G4VisAttributes*> visAttributesToBeRegistered;
 };
 
 #endif
