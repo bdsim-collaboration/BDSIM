@@ -65,7 +65,7 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       if (IsRegisteredAllocated(component))
 	{return;}
       
-      allocatedComponents.push_back(component);
+      allocatedComponents.insert(component);
       if (BDSLine* line = dynamic_cast<BDSLine*>(component))
 	{// if line then also add constituents
 	  for (const auto element : *line)
@@ -128,9 +128,6 @@ G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)
 
 BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String name)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   try
     {return registry.at(name);}
   catch (const std::out_of_range& /*oor*/)
@@ -142,7 +139,7 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
 
 void BDSAcceleratorComponentRegistry::RegisterCurvilinearComponent(BDSAcceleratorComponent* component)
 {
-  curvilinearComponents.push_back(component);
+  curvilinearComponents.insert(component);
 }
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)

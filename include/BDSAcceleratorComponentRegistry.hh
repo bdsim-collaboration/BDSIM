@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iterator>
 #include <map>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -119,10 +120,10 @@ private:
   BDSAcceleratorComponentRegistry(BDSAcceleratorComponentRegistry&);
 
   /// Vector of created components not in registry, for memory management
-  std::vector<BDSAcceleratorComponent*> allocatedComponents;
+  std::set<BDSAcceleratorComponent*> allocatedComponents;
   
   /// Vector curvilinear components - purely for memory management.
-  std::vector<BDSAcceleratorComponent*> curvilinearComponents;
+  std::set<BDSAcceleratorComponent*> curvilinearComponents;
 
   /// Map to count the number of each type registered. We have to use std::string
   /// as G4String doesn't provide a hash for the unordered map. We use unordered map
@@ -130,10 +131,5 @@ private:
   /// which we only do for debug print out or once.
   std::unordered_map<std::string, int> typeCounter;
 };
-
-
-
-
-
 
 #endif
