@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace GMAD
 {
+  class SamplerPlacement;
+  
   /**
    * @brief Placement class for parser
    * 
@@ -66,7 +68,10 @@ namespace GMAD
     void print()const;
     /// set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+    void set_value(std::string property, T value);
+
+    /// Conversion constructor.
+    Placement(const SamplerPlacement& samplerPlacement);
 
   private:
     /// publish members
