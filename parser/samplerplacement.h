@@ -89,7 +89,7 @@ namespace GMAD
 	{set(this,property,value);}
       catch (const std::runtime_error&)
 	{
-	  std::cerr << "Error: placement> unknown option \"" << property
+	  std::cerr << "Error: samplerplacement> unknown option \"" << property
 		    << "\" with value " << value  << std::endl;
 	  exit(1);
 	}
