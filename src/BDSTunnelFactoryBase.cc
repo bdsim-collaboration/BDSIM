@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 
+#include <set>
+
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelComponent(nullptr),
   tunnelSection(nullptr),
@@ -260,7 +262,6 @@ void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
   // the only place where these are constructed, it's easier to do here.
   BDSAcceleratorComponentRegistry::Instance()->RegisterTunnelComponent(tunnelSection);
 }
-  
 
 void BDSTunnelFactoryBase::SetSensitiveVolumes()
 {
