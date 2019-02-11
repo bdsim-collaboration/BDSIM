@@ -19,15 +19,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldSampler.hh"
+#include "BDSParser.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerType.hh"
+
+#include "parser/samplerplacement.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
@@ -43,7 +48,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
   G4VUserParallelWorld("SamplerWorld_" + name),
   suffix(name),
-  samplerWorldVis(nullptr)
+  samplerWorldVis(nullptr),
+  generalPlane(nullptr)
 {;}
 
 BDSParallelWorldSampler::~BDSParallelWorldSampler()
@@ -53,13 +59,11 @@ BDSParallelWorldSampler::~BDSParallelWorldSampler()
   for (auto sampler : samplers)
     {delete sampler;}
   delete samplerWorldVis;
+  delete generalPlane;
 }
 
 void BDSParallelWorldSampler::Construct()
 {
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << G4endl;
-#endif
   G4VPhysicalVolume* samplerWorld   = GetWorld();
   G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
 
@@ -72,7 +76,7 @@ void BDSParallelWorldSampler::Construct()
   const G4bool checkOverlaps  = BDSGlobalConstants::Instance()->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
-  BDSSamplerPlane* generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);
+  generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);
   samplers.push_back(generalPlane); // register it
 
   // For each element in the beamline construct and place the appropriate type
@@ -85,26 +89,10 @@ void BDSParallelWorldSampler::Construct()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
 #endif
-      G4String name     = element->GetSamplerName();
-      G4double sEnd     = element->GetSPositionEnd();
+      G4String name = element->GetSamplerName();
+      G4double sEnd = element->GetSPositionEnd();
       
-      BDSSampler* sampler = nullptr;
-      switch (element->GetSamplerType().underlying())
-	{
-	case BDSSamplerType::plane:
-	  {sampler = generalPlane; break;}
-	case BDSSamplerType::cylinder:
-	  {
-	    G4double length = element->GetAcceleratorComponent()->GetChordLength();
-	    sampler = new BDSSamplerCylinder(name,
-					     length,
-					     samplerR);
-	    samplers.push_back(sampler); // register it - memory management
-	    break;
-	  }
-	default:
-	  continue; // leave as nullptr - shouldn't occur due to if at top
-	}
+      BDSSampler* sampler = BuildSampler(element->GetSamplerType(), samplerR);
       
       if (sampler)
 	{
@@ -132,7 +120,67 @@ void BDSParallelWorldSampler::Construct()
 	  placements.push_back(pl);
 	}
     }
-  
-  // now build arbitrary user specified samplers - ie those for detectors
-  // TBC
+
+  // Now user customised samplers
+  std::vector<GMAD::SamplerPlacement> samplerPlacements = BDSParser::Instance()->GetSamplerPlacements();
+
+  for (const auto& samplerPlacement : samplerPlacements)
+    {
+      // use main beamline - in future, multiple beam lines
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
+
+      G4String samplerName = G4String(samplerPlacement.name);
+      BDSBeamPipeType samplerShape = BDS::DetermineBeamPipeType(samplerPlacement.shape);
+      BDSSampler* sampler = BuildSampler(samplerShape,
+					 samplerPlacement.aper1*CLHEP::m,
+					 samplerPlacement.aper2*CLHEP::m,
+					 samplerPlacement.aper3*CLHEP::m,
+					 samplerPlacement.aper4*CLHEP::m);
+      G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
+									sampler,
+									transform);
+
+      G4PVPlacement* pl = new G4PVPlacement(transform,
+					    sampler->GetContainerLogicalVolume(),
+					    samplerName + "_pv",
+					    samplerWorldLV,
+					    false,
+					    samplerID,
+					    checkOverlaps);
+      placements.push_back(pl);
+    } 
+}
+
+BDSSampler* BDSParallelWorldSampler::BuildSampler(BDSSamplerType samplerType,
+						  G4double       samplerRadius) const
+{
+  BDSSampler* result = nullptr;
+  switch (samplerType.underlying())
+    {
+    case BDSSamplerType::plane:
+      {result = generalPlane; break;}
+    case BDSSamplerType::cylinder:
+      {
+	G4double length = element->GetAcceleratorComponent()->GetChordLength();
+	result = new BDSSamplerCylinder(name,
+					length,
+					samplerRadius);
+	samplers.push_back(sampler); // register it - memory management
+	break;
+      }
+    default:
+      {break;} // leave as nullptr - shouldn't occur due to if at top
+    }
+  return result;
+}
+
+BDSSampler* BDSParallelWorldSampler::BuildSampler(BDSBeamPipeType samplerShape,
+						  G4double        aper1,
+						  G4double        aper2,
+						  G4double        aper3,
+						  G4double        aper4) const
+{
+  return nullptr;
+
+
 }
