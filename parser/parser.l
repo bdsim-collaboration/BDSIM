@@ -140,6 +140,7 @@ samplerplacement { return SAMPLERPLACEMENT; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
+aperture {return APERTURE; }
 
 matdef { return MATERIAL; }
 atom { return ATOM; }
