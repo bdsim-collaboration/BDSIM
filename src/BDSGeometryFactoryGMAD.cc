@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <fstream>
 #include <map>
-#include <vector>
+#include <set>
 
 BDSGeometryFactoryGMAD::BDSGeometryFactoryGMAD()
 {;}
@@ -67,7 +67,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
 						     emptyMaterial,
 						     "container_lv");
-  // these are registered indpendently so aren't added to transient storage vectors
+  // these are registered indpendently so aren't added to transient storage sets
   
   G4String token;
   G4String token1;
@@ -80,7 +80,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 
   G4VisAttributes*   visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
-  vises.push_back(visAttr);
+  vises.insert(visAttr);
 
   G4int count = 0;
 
@@ -359,20 +359,20 @@ void BDSGeometryFactoryGMAD::Finish(G4String         name,
 				    G4double         y0,
 				    G4double         z0)
 {
-  solids.push_back(solid);
+  solids.insert(solid);
   
   G4Material* material = BDSMaterials::Instance()->GetMaterial(materialName);
   
   auto lv = new G4LogicalVolume(solid,
 				material,
 				name + "_lv");
-  lvs.push_back(lv);
+  lvs.insert(lv);
   
   auto rot = new G4RotationMatrix;
   rot->rotateX(phi*CLHEP::deg);
   rot->rotateY(theta*CLHEP::deg);
   rot->rotateZ(psi*CLHEP::deg);
-  rotations.push_back(rot);
+  rotations.insert(rot);
   
   auto pv = new G4PVPlacement(rot,		       // rotation
 			      G4ThreeVector(x0,y0,z0), // at (x0,y0,z0)
@@ -382,5 +382,5 @@ void BDSGeometryFactoryGMAD::Finish(G4String         name,
 			      false,		       // no boolean operation
 			      0,
 			      checkOverlaps);
-  pvs.push_back(pv);
+  pvs.insert(pv);
 }
