@@ -54,7 +54,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 								  G4bool        visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
@@ -229,7 +229,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
 									G4bool        visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,

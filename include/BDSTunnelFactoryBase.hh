@@ -187,7 +187,7 @@ protected:
 
   /// Reset factory members for next usage - avoids previously
   /// constructed parts being accidently used in new object
-  virtual void TidyUp();
+  virtual void CleanUp();
     
   BDSGeometryComponent* tunnelComponent;
   BDSTunnelSection*     tunnelSection;

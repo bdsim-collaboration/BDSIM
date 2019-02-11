@@ -319,7 +319,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
     }
 }
 
-void BDSTunnelFactoryBase::TidyUp()
+void BDSTunnelFactoryBase::CleanUp()
 {
   FactoryBaseCleanUp();
   tunnelSection     = nullptr;

@@ -46,9 +46,9 @@ BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
   containerYRadius = 0;
 }
 
-void BDSTunnelFactoryRectAboveGround::TidyUp()
+void BDSTunnelFactoryRectAboveGround::CleanUp()
 {
-  BDSTunnelFactoryBase::TidyUp();
+  BDSTunnelFactoryBase::CleanUp();
   containerXRadius = 0;
   containerYRadius = 0;
   slabXHalfWidth   = 0;
@@ -67,7 +67,7 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 								       G4bool      visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
@@ -136,7 +136,7 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 									     G4bool        visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,

@@ -52,7 +52,7 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      na
 								G4bool        visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
@@ -173,7 +173,7 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 								      G4bool        visible)
 {
   // tidy up things from previous usage if any - base class method
-  TidyUp();
+  CleanUp();
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
