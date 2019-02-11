@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 #include "G4RotationMatrix.hh"
 
+#include <set>
+
 class G4LogicalVolume;
 class G4Material;
 class G4PVPlacement;
@@ -111,13 +113,13 @@ protected:
 				   G4Material* vacuumMaterialIn,
 				   G4Material* beamPipeMaterialIn);
   /// Set visual attributes.
-  virtual void          SetVisAttributes();
+  virtual void SetVisAttributes();
 
   /// Set user limits.
   virtual void SetUserLimits(G4double length);
 
   /// Place volumes.
-  virtual void          PlaceComponents(G4String nameIn);
+  virtual void PlaceComponents(G4String nameIn);
 
   /// A local copy of global length safety variable.
   G4double         lengthSafety;
@@ -141,12 +143,12 @@ protected:
   G4PVPlacement*   beamPipePV;
 
   /// @{ For non standard parts for easy registration - ie not the specific ones above.
-  std::vector<G4LogicalVolume*>   allLogicalVolumes;
-  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
-  std::vector<G4RotationMatrix*>  allRotationMatrices;
-  std::vector<G4VSolid*>          allSolids;
-  std::vector<G4UserLimits*>      allUserLimits;
-  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::set<G4LogicalVolume*>   allLogicalVolumes;
+  std::set<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::set<G4RotationMatrix*>  allRotationMatrices;
+  std::set<G4VSolid*>          allSolids;
+  std::set<G4UserLimits*>      allUserLimits;
+  std::set<G4VisAttributes*>   allVisAttributes;
   /// @}
   
   /// @{ For recording the face normals in the finished pipe component.

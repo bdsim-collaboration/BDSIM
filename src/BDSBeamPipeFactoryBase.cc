@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
+#include <set>
+
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -76,8 +78,8 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* beamPipeMaterialIn,
 						G4double    length)
 {
-  allSolids.push_back(vacuumSolid);
-  allSolids.push_back(beamPipeSolid);
+  allSolids.insert(vacuumSolid);
+  allSolids.insert(beamPipeSolid);
   /// build logical volumes
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
@@ -105,8 +107,8 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    nameIn + "_container_lv");
-  allLogicalVolumes.push_back(vacuumLV);
-  allLogicalVolumes.push_back(beamPipeLV);
+  allLogicalVolumes.insert(vacuumLV);
+  allLogicalVolumes.insert(beamPipeLV);
 }
 
 void BDSBeamPipeFactoryBase::SetVisAttributes()
@@ -114,7 +116,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.push_back(pipeVisAttr);
+  allVisAttributes.insert(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
@@ -129,7 +131,7 @@ void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
 
   if (ul != defaultUL) // if it's not the default register it
-    {allUserLimits.push_back(ul);}
+    {allUserLimits.insert(ul);}
   vacuumLV->SetUserLimits(ul);
   beamPipeLV->SetUserLimits(ul);
   containerLV->SetUserLimits(ul);
@@ -157,8 +159,8 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 				 false,                        // no boolean operation
 				 0,                            // copy number
 				 checkOverlaps);               // whether to check overlaps
-  allPhysicalVolumes.push_back(vacuumPV);
-  allPhysicalVolumes.push_back(beamPipePV);
+  allPhysicalVolumes.insert(vacuumPV);
+  allPhysicalVolumes.insert(beamPipePV);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
