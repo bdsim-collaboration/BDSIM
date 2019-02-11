@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RotationMatrix.hh"
 
 #include <map>
-#include <vector>
+#include <set>
 
 class BDSCavity;
 class BDSCavityInfo;
@@ -90,12 +90,12 @@ protected:
   virtual BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
   
   /// @{ Holder for registration at end of construction.
-  std::vector<G4VSolid*>          allSolids;
-  std::vector<G4LogicalVolume*>   allLogicalVolumes;
-  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
-  std::vector<G4RotationMatrix*>  allRotationMatrices;
-  std::vector<G4UserLimits*>      allUserLimits;
-  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::set<G4VSolid*>          allSolids;
+  std::set<G4LogicalVolume*>   allLogicalVolumes;
+  std::set<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::set<G4RotationMatrix*>  allRotationMatrices;
+  std::set<G4UserLimits*>      allUserLimits;
+  std::set<G4VisAttributes*>   allVisAttributes;
   /// @}
   std::map<G4LogicalVolume*, BDSSDType> sensitiveVolumes; ///< Map to sensitivity for volumes.
 
