@@ -55,6 +55,7 @@ namespace GMAD
     /// @}
     bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
 
+    std::string apertureModel;
     std::string shape;
     double aper1;
     double aper2;

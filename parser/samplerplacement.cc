@@ -43,6 +43,7 @@ void SamplerPlacement::clear()
   axisZ = 0;
   angle = 0;
   axisAngle = false;
+  apertureModel = "";
   shape = "";
   aper1 = 0;
   aper2 = 0;
@@ -67,6 +68,7 @@ void SamplerPlacement::PublishMembers()
   publish("axisZ",         &SamplerPlacement::axisZ);
   publish("angle",         &SamplerPlacement::angle);
   publish("axisAngle",     &SamplerPlacement::axisAngle);
+  publish("apertureModel", &SamplerPlacement::apertureModel);
   publish("shape",         &SamplerPlacement::shape);
   publish("aper1",         &SamplerPlacement::aper1);
   publish("aper2",         &SamplerPlacement::aper2);
@@ -92,6 +94,7 @@ void SamplerPlacement::print()const
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
 	    << "axisAngle "     << axisAngle     << std::endl
+    	    << "apertureMode "  << apertureModel << std::endl
 	    << "shape "         << shape         << std::endl
 	    << "aper1 "         << aper1         << std::endl
 	    << "aper2 "         << aper2         << std::endl
