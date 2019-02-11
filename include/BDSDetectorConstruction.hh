@@ -38,6 +38,7 @@ namespace GMAD {
   struct Element;
   template<typename T> class FastList;
   class Placement;
+  class SamplerPlacement;
 }
 
 class BDSAcceleratorModel;
@@ -105,6 +106,11 @@ public:
   /// Create a transform based on the information in the placement.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine);
+
+  /// Create a sampler placement. Turns the sampler placement into a placement and uses
+  /// the above function.
+  static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+						const BDSBeamline*            bemaline);
   
 private:
   /// assignment and copy constructor not implemented nor used

@@ -639,6 +639,14 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+								const BDSBeamline*            beamline)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamline);
+}
+
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine)
 {
@@ -717,7 +725,6 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       
       result = G4Transform3D(*rm, translation);
     }
-
   
   return result;
 }
