@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
@@ -254,6 +255,10 @@ void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
 				       cumulativeAngle,
 				       tunnelComponent,
 				       intersectionSolid);
+
+  // nominally, we'd leave this to something outside the factory, but seeing as this is
+  // the only place where these are constructed, it's easier to do here.
+  BDSAcceleratorComponentRegistry::Instance()->RegisterTunnelComponent(tunnelSection);
 }
   
 

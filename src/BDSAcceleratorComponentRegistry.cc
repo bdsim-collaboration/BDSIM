@@ -50,6 +50,8 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
     {delete ac;}
   for (auto ac : curvilinearComponents)
     {delete ac;}
+  for (auto ac : tunnelComponents)
+    {delete ac;}
   
   instance = nullptr;
 }
@@ -140,6 +142,11 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
 void BDSAcceleratorComponentRegistry::RegisterCurvilinearComponent(BDSAcceleratorComponent* component)
 {
   curvilinearComponents.insert(component);
+}
+
+void BDSAcceleratorComponentRegistry::RegisterTunnelComponent(BDSAcceleratorComponent* component)
+{
+  tunnelComponents.insert(component);
 }
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)

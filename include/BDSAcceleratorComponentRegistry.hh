@@ -89,6 +89,10 @@ public:
   /// end of the program.
   void RegisterCurvilinearComponent(BDSAcceleratorComponent* component);
 
+  /// Register a tunnel component - purely to keep track of and delete at the end
+  /// of the program.
+  void RegisterTunnelComponent(BDSAcceleratorComponent* component);
+
   /// @{ Iterator mechanics
   typedef RegistryMap::iterator       iterator;
   typedef RegistryMap::const_iterator const_iterator;
@@ -124,6 +128,8 @@ private:
   
   /// Vector curvilinear components - purely for memory management.
   std::set<BDSAcceleratorComponent*> curvilinearComponents;
+
+  std::set<BDSAcceleratorComponent*> tunnelComponents;
 
   /// Map to count the number of each type registered. We have to use std::string
   /// as G4String doesn't provide a hash for the unordered map. We use unordered map
