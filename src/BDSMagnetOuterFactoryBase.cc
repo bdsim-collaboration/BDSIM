@@ -34,22 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <set>
 
-// Note the geometry cannot scale arbitrarily with this constant. It can be
-// upscaled for debugging purposes, however, the extruded solids that use
-// it may fail when this is increased to approximately 1mm and with certain
-// small / tight magnet shapes where the size of the magnet or components
-// becomse comparable to this constant. Upscaling only for debugging purposes.
-G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
-
 BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
 {
-  lengthSafety       = BDSGlobalConstants::Instance()->LengthSafety();
-  checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
-  visDebug           = BDSGlobalConstants::Instance()->VisDebug();
-  nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   sensitiveOuter     = BDSGlobalConstants::Instance()->SensitiveOuter();
-  containerVisAttr   = BDSGlobalConstants::Instance()->ContainerVisAttr();
-  defaultUserLimits  = BDSGlobalConstants::Instance()->DefaultUserLimits();
 
   // initialise variables and pointers that'll be used by the factory
   CleanUpBase();
@@ -62,6 +49,7 @@ void BDSMagnetOuterFactoryBase::CleanUp()
 
 void BDSMagnetOuterFactoryBase::CleanUpBase()
 {
+  FactoryBaseCleanUp();
   poleSolid            = nullptr;
   yokeSolid            = nullptr;
   containerSolid       = nullptr;
@@ -72,12 +60,6 @@ void BDSMagnetOuterFactoryBase::CleanUpBase()
   magnetContainerLV    = nullptr;
   yokePV               = nullptr;
   outerVisAttributes   = nullptr;
-
-  allLogicalVolumes.clear();
-  allPhysicalVolumes.clear();
-  allRotationMatrices.clear();
-  allSolids.clear();
-  allVisAttributes.clear();
 
   magnetContainer = nullptr;
 

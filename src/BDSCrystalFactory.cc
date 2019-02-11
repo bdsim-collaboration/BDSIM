@@ -59,7 +59,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSCrystalFactory::BDSCrystalFactory():
   maxStepFactor(1.1),
-  nSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()),
   nPoints(30)
 {
   CleanUp();
@@ -67,17 +66,11 @@ BDSCrystalFactory::BDSCrystalFactory():
 
 void BDSCrystalFactory::CleanUp()
 {
+  FactoryBaseCleanUp();
   crystalSolid      = nullptr;
   crystalLV         = nullptr;
   placementOffset   = G4ThreeVector();
   placementRotation = nullptr;
-  
-  allLogicalVolumes.clear();
-  allPhysicalVolumes.clear();
-  allRotationMatrices.clear();
-  allSolids.clear();
-  allUserLimits.clear();
-  allVisAttributes.clear();
 }
 
 BDSCrystal* BDSCrystalFactory::CreateCrystal(const G4String& name,

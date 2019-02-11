@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCAVITYFACTORYBASE_H
 #define BDSCAVITYFACTORYBASE_H
 
+#include "BDSFactoryBase.hh"
 #include "BDSSDType.hh"
 
 #include "globals.hh"
@@ -45,7 +46,7 @@ class G4VSolid;
  * @author Laurie Nevay
  */
 
-class BDSCavityFactoryBase
+class BDSCavityFactoryBase: public BDSFactoryBase
 {
 public:
   virtual ~BDSCavityFactoryBase(){;}
@@ -89,14 +90,6 @@ protected:
   /// Construct output object and register all temporary objects from vectors.
   virtual BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
   
-  /// @{ Holder for registration at end of construction.
-  std::set<G4VSolid*>          allSolids;
-  std::set<G4LogicalVolume*>   allLogicalVolumes;
-  std::set<G4VPhysicalVolume*> allPhysicalVolumes;
-  std::set<G4RotationMatrix*>  allRotationMatrices;
-  std::set<G4UserLimits*>      allUserLimits;
-  std::set<G4VisAttributes*>   allVisAttributes;
-  /// @}
   std::map<G4LogicalVolume*, BDSSDType> sensitiveVolumes; ///< Map to sensitivity for volumes.
 
   /// @{ Cache of particular solid or lv for common functionality in this class.
@@ -109,10 +102,7 @@ protected:
   /// @}
 
   /// @{ Cache of variable from BDSGlobalConstants.
-  G4double    lengthSafety;  
-  G4double    nSegmentsPerCircle;
   G4Material* emptyMaterial;
-  G4bool      checkOverlaps;
   /// @}
   G4bool      sensitiveBeamPipe;  ///< Whether the beam pipe will record energy deposition.
   G4bool      sensitiveVacuum;    ///< Whether the vacuum will record energy deposition.

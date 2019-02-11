@@ -80,7 +80,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 
   G4VisAttributes*   visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
-  vises.insert(visAttr);
+  allVisAttributes.insert(visAttr);
 
   G4int count = 0;
 
@@ -268,15 +268,15 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 			     (xmax - xmin)*0.5);
   containerLV->SetSolid(containerSolid); // update container solid
 
-  ApplyColourMapping(lvs, mapping);
-  ApplyUserLimits(lvs, BDSGlobalConstants::Instance()->DefaultUserLimits());
+  ApplyColourMapping(allLogicalVolumes, mapping);
+  ApplyUserLimits(allLogicalVolumes, BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV, Extent());
-  result->RegisterRotationMatrix(rotations);
-  result->RegisterVisAttributes(vises);
-  result->RegisterSolid(solids);
-  result->RegisterLogicalVolume(lvs);
-  result->RegisterPhysicalVolume(pvs);
+  result->RegisterRotationMatrix(allRotationMatrices);
+  result->RegisterVisAttributes(allVisAttributes);
+  result->RegisterSolid(allSolids);
+  result->RegisterLogicalVolume(allLogicalVolumes);
+  result->RegisterPhysicalVolume(allPhysicalVolumes);
 
   return result;
 }
@@ -359,20 +359,20 @@ void BDSGeometryFactoryGMAD::Finish(G4String         name,
 				    G4double         y0,
 				    G4double         z0)
 {
-  solids.insert(solid);
+  allSolids.insert(solid);
   
   G4Material* material = BDSMaterials::Instance()->GetMaterial(materialName);
   
   auto lv = new G4LogicalVolume(solid,
 				material,
 				name + "_lv");
-  lvs.insert(lv);
+  allLogicalVolumes.insert(lv);
   
   auto rot = new G4RotationMatrix;
   rot->rotateX(phi*CLHEP::deg);
   rot->rotateY(theta*CLHEP::deg);
   rot->rotateZ(psi*CLHEP::deg);
-  rotations.insert(rot);
+  allRotationMatrices.insert(rot);
   
   auto pv = new G4PVPlacement(rot,		       // rotation
 			      G4ThreeVector(x0,y0,z0), // at (x0,y0,z0)
@@ -382,5 +382,5 @@ void BDSGeometryFactoryGMAD::Finish(G4String         name,
 			      false,		       // no boolean operation
 			      0,
 			      checkOverlaps);
-  pvs.insert(pv);
+  allPhysicalVolumes.insert(pv);
 }

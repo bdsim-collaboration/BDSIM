@@ -44,10 +44,7 @@ class G4UserLimits;
 
 BDSCavityFactoryBase::BDSCavityFactoryBase()
 {
-  lengthSafety       = BDSGlobalConstants::Instance()->LengthSafety();
-  nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-  checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
   sensitiveBeamPipe  = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
   sensitiveVacuum    = BDSGlobalConstants::Instance()->StoreELossVacuum();
 
@@ -79,14 +76,7 @@ void BDSCavityFactoryBase::CleanUp()
 
 void BDSCavityFactoryBase::CleanUpBase()
 {
-  // we don't delete any pointers as this factory doesn't own them.
-  allSolids.clear();
-  allLogicalVolumes.clear();
-  allPhysicalVolumes.clear();
-  allRotationMatrices.clear();
-  allUserLimits.clear();
-  allVisAttributes.clear();
-  sensitiveVolumes.clear();
+  FactoryBaseCleanUp();
 
   vacuumSolid    = nullptr;
   cavitySolid    = nullptr;

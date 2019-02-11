@@ -36,10 +36,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   BDSGlobalConstants* g = BDSGlobalConstants::Instance();
-  lengthSafety        = g->LengthSafety();
-  lengthSafetyLarge   = 1*CLHEP::um;
-  checkOverlaps       = g->CheckOverlaps();
-  nSegmentsPerCircle  = g->NSegmentsPerCircle();
   sensitiveBeamPipe   = g->SensitiveBeamPipe();
   sensitiveVacuum     = g->StoreELossVacuum();
   CleanUpBase(); // non-virtual call in constructor
@@ -52,6 +48,7 @@ void BDSBeamPipeFactoryBase::CleanUp()
 
 void BDSBeamPipeFactoryBase::CleanUpBase()
 {
+  FactoryBaseCleanUp();
   vacuumSolid               = nullptr;
   beamPipeSolid             = nullptr;
   containerSolid            = nullptr;
@@ -61,13 +58,6 @@ void BDSBeamPipeFactoryBase::CleanUpBase()
   containerLV               = nullptr;
   vacuumPV                  = nullptr;
   beamPipePV                = nullptr;
-
-  allLogicalVolumes.clear();
-  allPhysicalVolumes.clear();
-  allRotationMatrices.clear();
-  allSolids.clear();
-  allUserLimits.clear();
-  allVisAttributes.clear();
 
   inputFaceNormal  = G4ThreeVector(0,0,-1);
   outputFaceNormal = G4ThreeVector(0,0, 1);

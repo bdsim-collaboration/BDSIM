@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBEAMPIPEFACTORYBASE_H
 
 #include "BDSBeamPipe.hh"
+#include "BDSFactoryBase.hh"
 
 #include "globals.hh"         // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -53,7 +54,7 @@ class G4VSolid;
  * @author Laurie Nevay
  */
 
-class BDSBeamPipeFactoryBase
+class BDSBeamPipeFactoryBase: public BDSFactoryBase
 {
 public:
   /// create a flat ended beampipe
@@ -120,15 +121,7 @@ protected:
 
   /// Place volumes.
   virtual void PlaceComponents(G4String nameIn);
-
-  /// A local copy of global length safety variable.
-  G4double         lengthSafety;
-
-  /// 1um safety that can be used for larger transverse safety.
-  G4double         lengthSafetyLarge;
   
-  G4bool           checkOverlaps;
-  G4double         nSegmentsPerCircle; ///< For visualisation improvement
   G4bool           sensitiveBeamPipe;  ///< Whether the beam pipe will record energy deposition.
   G4bool           sensitiveVacuum;    ///< Wehther the vacuum will record any energy deposition.
   G4VSolid*        vacuumSolid;
@@ -141,15 +134,6 @@ protected:
   G4LogicalVolume* containerLV;
   G4PVPlacement*   vacuumPV;
   G4PVPlacement*   beamPipePV;
-
-  /// @{ For non standard parts for easy registration - ie not the specific ones above.
-  std::set<G4LogicalVolume*>   allLogicalVolumes;
-  std::set<G4VPhysicalVolume*> allPhysicalVolumes;
-  std::set<G4RotationMatrix*>  allRotationMatrices;
-  std::set<G4VSolid*>          allSolids;
-  std::set<G4UserLimits*>      allUserLimits;
-  std::set<G4VisAttributes*>   allVisAttributes;
-  /// @}
   
   /// @{ For recording the face normals in the finished pipe component.
   G4ThreeVector inputFaceNormal;

@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSGEOMETRYFACTORYBASE_H
 
 #include "BDSExtent.hh"
+#include "BDSFactoryBase.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -42,7 +43,7 @@ class BDSGeometryExternal;
  * @author Laurie Nevay
  */
 
-class BDSGeometryFactoryBase
+class BDSGeometryFactoryBase: public BDSFactoryBase
 {
 public:
   BDSGeometryFactoryBase();
@@ -101,17 +102,6 @@ protected:
   /// @}
 
   BDSExtent Extent() const {return BDSExtent(xmin, xmax, ymin, ymax, zmin, zmax);}
-
-  /// @{ Transient vector / sets for construction.
-  std::set<G4RotationMatrix*>  rotations;
-  std::set<G4VPhysicalVolume*> pvs;
-  std::set<G4LogicalVolume*>   lvs;
-  std::set<G4VSolid*>          solids;
-  std::set<G4VisAttributes*>   vises;
-  /// @}
-
-  /// Cache of whether to check overlaps or not.
-  const G4bool checkOverlaps;
 };
 
 #endif

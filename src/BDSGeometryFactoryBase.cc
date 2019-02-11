@@ -31,8 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-BDSGeometryFactoryBase::BDSGeometryFactoryBase():
-  checkOverlaps(BDSGlobalConstants::Instance()->CheckOverlaps())
+BDSGeometryFactoryBase::BDSGeometryFactoryBase()
 {
   CleanUpBase();
 }
@@ -99,18 +98,13 @@ void BDSGeometryFactoryBase::CleanUp()
 
 void BDSGeometryFactoryBase::CleanUpBase()
 {
+  FactoryBaseCleanUp();
   xmin = 0;
   xmax = 0;
   ymin = 0;
   ymax = 0;
   zmin = 0;
   zmax = 0;
-
-  rotations.clear();
-  pvs.clear();
-  lvs.clear();
-  solids.clear();
-  vises.clear();
 }
 
 void BDSGeometryFactoryBase::ExpandExtent(const BDSExtent& ext)

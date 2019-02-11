@@ -108,10 +108,10 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 				       tunnelInnerSolid);          // minus this
 
   // register solids
-  solidsToBeRegistered.insert(tunnelOuterSolid);
-  solidsToBeRegistered.insert(tunnelRectSolid);
-  solidsToBeRegistered.insert(tunnelInnerSolid);
-  solidsToBeRegistered.insert(tunnelRectSolid);
+  allSolids.insert(tunnelOuterSolid);
+  allSolids.insert(tunnelRectSolid);
+  allSolids.insert(tunnelInnerSolid);
+  allSolids.insert(tunnelRectSolid);
 
   containerSolid = BuildContainerStraight(name, length, tunnel1, tunnel2,
 					  tunnelThickness, slabDisplacement);
@@ -192,10 +192,10 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 							 tunnelInnerSolid);             // minus this
 
   // register solids
-  solidsToBeRegistered.insert(tunnelOuterSolid);
-  solidsToBeRegistered.insert(tunnelRectSolid);
-  solidsToBeRegistered.insert(tunnelInnerSolid);
-  solidsToBeRegistered.insert(tunnelSolidUnAngled);
+  allSolids.insert(tunnelOuterSolid);
+  allSolids.insert(tunnelRectSolid);
+  allSolids.insert(tunnelInnerSolid);
+  allSolids.insert(tunnelSolidUnAngled);
 
   // cut off the faces with the angled face solid
   tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
@@ -266,10 +266,10 @@ G4VSolid* BDSTunnelFactoryRectAboveGround::BuildContainerStraight(G4String name,
 					     lengthIn);
   
   // regsiter solids
-  solidsToBeRegistered.insert(tunnelContainerOuterSlab);
-  solidsToBeRegistered.insert(tunnelContainerOuterTunnel);
-  solidsToBeRegistered.insert(tunnelContainerOuter);
-  solidsToBeRegistered.insert(tunnelContainerInner);
+  allSolids.insert(tunnelContainerOuterSlab);
+  allSolids.insert(tunnelContainerOuterTunnel);
+  allSolids.insert(tunnelContainerOuter);
+  allSolids.insert(tunnelContainerInner);
   
   containerSolidL = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					   tunnelContainerOuter,        // this
