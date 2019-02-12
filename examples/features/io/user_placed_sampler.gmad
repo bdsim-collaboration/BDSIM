@@ -1,5 +1,5 @@
 d1: drift, l=1*m;
-c1: rcol, l=10*cm, xsize=1*cm, ysize=10*cm;
+c1: rcol, l=10*cm, xsize=1*cm, ysize=10*cm, material="Cu";
 
 l1: line = (d1, c1, d1, d1, d1);
 use,period=l1;
@@ -16,4 +16,5 @@ beam, particle="e-",
 s1: samplerplacement, referenceElement="d1",
 		      referenceElementNumber=1,
 		      x=20*cm, y=-1*cm, z=30*cm,
-    		      axisAngle=1, axisY=1, angle=pi/4;
+    		      axisAngle=1, axisY=1, angle=pi/4,
+		      aper1=10*cm;
