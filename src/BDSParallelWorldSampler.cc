@@ -167,12 +167,7 @@ void BDSParallelWorldSampler::Construct()
 	{
 	  shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);
 	}
-      BDSSampler* sampler = BuildSampler(samplerName,
-					 samplerPlacement.shape,
-					 samplerPlacement.aper1*CLHEP::m,
-					 samplerPlacement.aper2*CLHEP::m,
-					 samplerPlacement.aper3*CLHEP::m,
-					 samplerPlacement.aper4*CLHEP::m);
+      BDSSampler* sampler = new BDSSampler(samplerName, shape);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);
@@ -186,27 +181,4 @@ void BDSParallelWorldSampler::Construct()
 					    checkOverlaps);
       placements.push_back(pl);
     } 
-}
-
-BDSSampler* BDSParallelWorldSampler::BuildSampler(G4String        name,
-						  G4String /*samplerShape*/,
-						  G4double        aper1,
-						  G4double        aper2,
-						  G4double        aper3,
-						  G4double        aper4) const
-{
-  if (!BDS::IsFinite(aper1))
-    {
-      G4cerr << "At least aper1 for samplerplacement \"" << name << "\" must be specified." << G4endl;
-      exit(1);
-    }
-  BDSBeamPipeInfo bpi = BDSBeamPipeInfo("circularvacuum",
-					aper1, aper2, aper3, aper4,
-				        "vacuum", 1, "vacuum");
-
-  BDSBeamPipe* bp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name, 10*CLHEP::um, &bpi);
-
-  BDSSampler* sampler = new BDSSampler(*bp);
-  delete bp;
-  return sampler;
 }

@@ -28,11 +28,10 @@ BDSSampler::BDSSampler(G4String nameIn):
   name(nameIn)
 {;}
 
-BDSSampler::BDSSampler(const BDSBeamPipe& beamPipe):
-  BDSGeometryComponent(beamPipe.GetContainerSolid(),
-		       beamPipe.GetContainerLogicalVolume(),
-		       beamPipe.GetExtent()),
-  name(beamPipe.GetName())
+BDSSampler::BDSSampler(G4String nameIn,
+		       BDSApertureInfo* shape):
+  BDSGeometryComponent(nullptr, nullptr),
+  name(nameIn)
 {;}
 
 void BDSSampler::CommonConstruction()

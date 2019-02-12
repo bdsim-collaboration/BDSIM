@@ -50,13 +50,6 @@ public:
 private:
   /// No default constructor.
   BDSParallelWorldSampler() = delete;
-
-  BDSSampler* BuildSampler(G4String        name,
-			   G4String samplerShape,
-			   G4double        aper1,
-			   G4double        aper2,
-			   G4double        aper3,
-			   G4double        aper4) const;
   
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
