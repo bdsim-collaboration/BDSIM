@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerType.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/samplerplacement.h"
 
@@ -172,15 +173,20 @@ void BDSParallelWorldSampler::Construct()
 }
 
 BDSSampler* BDSParallelWorldSampler::BuildSampler(G4String        name,
-						  G4String samplerShape,
+						  G4String /*samplerShape*/,
 						  G4double        aper1,
 						  G4double        aper2,
 						  G4double        aper3,
 						  G4double        aper4) const
-{    
-  BDSBeamPipeInfo bpi = BDSBeamPipeInfo(samplerShape,
+{
+  if (!BDS::IsFinite(aper1))
+    {
+      G4cerr << "At least aper1 for samplerplacement \"" << name << "\" must be specified." << G4endl;
+      exit(1);
+    }
+  BDSBeamPipeInfo bpi = BDSBeamPipeInfo("circularvacuum",
 					aper1, aper2, aper3, aper4,
-				        "vacuum", 0, "vacuum");
+				        "vacuum", 1, "vacuum");
 
   BDSBeamPipe* bp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name, 10*CLHEP::um, &bpi);
 
