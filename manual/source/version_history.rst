@@ -48,6 +48,10 @@ New Features
 | ignoreLocalMagnetGeometry        | If turned on, this option means that only the magnet geometry    |
 |                                  | from options will be used. Similar to `ignoreLocalAperture`.     |
 +----------------------------------+------------------------------------------------------------------+
+| physicsEnergyLimitLow            | Control minimum energy for all physics models. (advanced)        |
++----------------------------------+------------------------------------------------------------------+
+| physicsEnergyLimitHigh           | Control maximum energy for all physcis models. (advanced)        |
++----------------------------------+------------------------------------------------------------------+
 | storeCollimatorInfo              | Store collimator structure with primary hits per collimator.     |
 +----------------------------------+------------------------------------------------------------------+
 | storeCollimatorHitsAll           | If `storeCollimatorInfo` is on and collimator hits are           |
@@ -210,6 +214,8 @@ Bug Fixes
   tracked as if it were a drift.
 * Fixed segfault crash from ROOT with rebdsim when there were more dimensions in the variables
   than the declared number of dimensions. For example, "y:x" for Histogram1D.
+* Fixed rare bug where segfault would occur in trying to account for energy deposition of
+  artificially killed particles.
   
 Output Changes
 --------------

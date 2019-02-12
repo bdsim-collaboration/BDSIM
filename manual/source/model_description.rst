@@ -1561,7 +1561,8 @@ and make a placement at the appropriate point in global coordinates.
 +===================+==================================+==============+===============+
 | `geometryFile`    | Filename of geometry             | NA           | Yes           |
 +-------------------+----------------------------------+--------------+---------------+
-| `l`               | Length                           | NA           | Yes           |
+| `l`               | Length. Arc length in case of a  | NA           | Yes           |
+|                   | finite angle.                    |              |               |
 +-------------------+----------------------------------+--------------+---------------+
 | `horizontalWidth` | Diameter of component [m]        | NA           | Yes           |
 +-------------------+----------------------------------+--------------+---------------+
@@ -2209,6 +2210,8 @@ Formats
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
+.. note:: BDSIM field maps by default have units :math:`cm,s`.
+
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
 +==================+============================================+
@@ -2445,18 +2448,20 @@ There are 3 possible ways to place a piece of geometry.
 
 1) In global Cartesian coordinates.
 
-   `x`, `y`, `z` and any rotation are with respect to the world frame of reference.
-   
+   - `x`, `y`, `z` and any rotation are with respect to the world frame of reference.
+
+
 2) In curvilinear coordinates.
 
-   `s`, `x`, `y` are used along with a rotation. The transform for the distance `s` along the beamline
-   is first applied. `x`, `y` and the rotation are with respect to that frame.
+   - `s`, `x`, `y` are used along with a rotation. The transform for the distance `s` along the beamline
+     is first applied. `x`, `y` and the rotation are with respect to that frame.
+
 
 3) In curvilinear coordinates with respect to a beam line element by name.
 
-   The name of an element is used to look up its `s` coordinate. `s`, `x`, `y` and the rotation
-   are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
-   `s`.
+   - The name of an element is used to look up its `s` coordinate. `s`, `x`, `y` and the rotation
+     are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
+     `s`.
 
 The scenario is automatically selected based on which parameters are set. If `s` is finite, then
 it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
@@ -3548,6 +3553,18 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
++----------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
+|                                  | This is usually 990 eV by default in Geant4. The user |
+|                                  | may change this if required. Warning, this must       |
+|                                  | be used only if the user understands how this will    |
+|                                  | affect the running of Geant4. [GeV]                   |
++----------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitHigh           | Optional upper energy level for all physics models.   |
+|                                  | This is usually 100 TeV by default in Geant4. The     |
+|                                  | user may change this if required. Warning, this must  |
+|                                  | be used only if the user understands how this will    |
+|                                  | affect the running of Geant4. [GeV]                   |
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | Which physics lists to use - default tracking only    |
 +----------------------------------+-------------------------------------------------------+

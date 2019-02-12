@@ -884,7 +884,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           kickerLine->AddComponent(startfringe);
         }
       
-      G4String kickerName = baseName + "_0";
+      G4String kickerName = baseName + "_centre";
       BDSMagnet *kicker = new BDSMagnet(t, kickerName, kickerChordLength,
 					bpInf, magOutInf, vacuumField);
       kickerLine->AddComponent(kicker);

@@ -291,7 +291,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #ifdef BDSDEBUG
   if (true)
 #else
-  if (BDSGlobalConstants::Instance()->Verbose())
+  if (globals->Verbose())
 #endif
     {Print();}
 }

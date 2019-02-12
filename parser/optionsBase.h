@@ -91,6 +91,8 @@ namespace GMAD
     /// list of physics processes
     std::string physicsList;
     bool        physicsVerbose;
+    double      physicsEnergyLimitLow;
+    double      physicsEnergyLimitHigh;
     bool        g4PhysicsUseBDSIMRangeCuts;
     bool        g4PhysicsUseBDSIMCutsAndLimits;
     
@@ -227,6 +229,7 @@ namespace GMAD
     // tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
+    double   lengthSafetyLarge;
     double   maximumTrackingTime; ///< Maximum tracking time per track [s].
     double   maximumStepLength;   ///< Maximum permitted step length in any volume.
     double   maximumTrackLength;  ///< Maximum permitted track length [m].

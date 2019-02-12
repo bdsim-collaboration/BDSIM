@@ -147,6 +147,8 @@ void Options::PublishMembers()
   // physics
   publish("physicsList",       &Options::physicsList);
   publish("physicsVerbose",    &Options::physicsVerbose);
+  publish("physicsEnergyLimitLow",          &Options::physicsEnergyLimitLow);
+  publish("physicsEnergyLimitHigh",         &Options::physicsEnergyLimitHigh);
   publish("g4PhysicsUseBDSIMRangeCuts",     &Options::g4PhysicsUseBDSIMRangeCuts);
   publish("g4PhysicsUseBDSIMCutsAndLimits", &Options::g4PhysicsUseBDSIMCutsAndLimits);
 
@@ -270,6 +272,7 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
   publish("lengthSafety",             &Options::lengthSafety);
+  publish("lengthSafetyLarge",        &Options::lengthSafetyLarge);
   publish("maximumTrackingTime",      &Options::maximumTrackingTime);
   publish("maximumStepLength",        &Options::maximumStepLength);
   publish("maximumStepSize",          &Options::maximumStepLength);
