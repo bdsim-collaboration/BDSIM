@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-class G4Mag_EqRhs;
+class G4EqMagElectricField;
 class BDSMagnetStrength;
 
 /**
@@ -39,12 +39,14 @@ class BDSMagnetStrength;
  * @author Stewart Boogert
  */
 
-class BDSIntegratorRMatrixThin: public BDSIntegratorMag
+class BDSIntegratorRMatrixThin: public G4MagIntegratorStepper, public BDSIntegratorDrift, public BDSAuxiliaryNavigator
 {
 public:
   BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
-			   G4Mag_EqRhs* eqOfMIn,
-			   G4double maximumRadiusIn);
+                           G4EqMagElectricField* eqOfMIn,
+                           G4double maximumRadiusIn);
+
+
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -99,6 +101,36 @@ private:
   G4double rmat66;
 
   G4double maximumRadius;
+
+  /// General integrator that can be used as a backup if the particle momentum is
+  /// outside the (transverse) momentum range applicable for the integration scheme
+  /// used by the derived integrator.
+  G4MagIntegratorStepper* backupStepper;
+
+
+  /// Keep a reference to the underlying equation of motion, but through a higher
+  /// level pointer than G4EquationOfMotion* so we can use the correct methods. This
+  /// class doesn't own this.
+  G4EqMagElectricField* eqOfM;
+
+  /// Whether a magnet has a finite strength or not. Can be set in the constructor for
+  /// zero strength elements and then a drift routine is used before anything else.
+  G4bool zeroStrength;
+
+  /// Variable used to record the distance from the chord calculated during the step.
+  G4double distChordPrivate;
+
+  /// Cache of thin element length to know maximum possible length scale step
+  /// for coordinate lookup.
+  static G4double thinElementLength;
+
+  /// Cache of the fraction of the momentum outside which don't use a matrix
+  /// as it's just not feasible.
+  static G4double nominalMatrixRelativeMomCut;
+
+  /// Setter for distChord to private member.
+  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
+
 };
 
 #endif

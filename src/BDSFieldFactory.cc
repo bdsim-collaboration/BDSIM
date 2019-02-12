@@ -762,11 +762,11 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 
 BDSFieldObjects* BDSFieldFactory::CreateRMatrix(const BDSFieldInfo& info)
 {
-  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
-  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion,0.95*info.BeamPipeRadius());
+  BDSFieldEM* bGlobalField            = new BDSFieldEMZero();
+  G4EqMagElectricField* eqOfM         = new G4EqMagElectricField(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),eqOfM,0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
-                                                            bEqOfMotion, integrator);
+                                                            eqOfM, integrator);
   return completeField;
 }
 
