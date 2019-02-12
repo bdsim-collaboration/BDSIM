@@ -11,7 +11,9 @@ option, ngenerate=1,
 	
 beam, particle="e-",
       energy=10.0*GeV,
-      X0=1.01*cm,
+      X0=1.01*cm;
 
-s1: samplerplacement, referenceElement="d1", referenceElementNumber=1, x=20*cm, y=-1*cm, z=30*cm,
+s1: samplerplacement, referenceElement="d1",
+		      referenceElementNumber=1,
+		      x=20*cm, y=-1*cm, z=30*cm,
     		      axisAngle=1, axisY=1, angle=pi/4;
