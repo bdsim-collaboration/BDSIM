@@ -767,7 +767,7 @@ BDSFieldObjects* BDSFieldFactory::CreateRMatrix(const BDSFieldInfo& info)
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(), brho, bEqOfMotion, designParticle,0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
-                                                            eqOfM, integrator);
+                                                            bEqOfMotion, integrator);
   return completeField;
 }
 

@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-class G4EqMagElectricField;
+class G4Mag_EqRhs;
 class BDSMagnetStrength;
 class BDSParticleDefinition;
 
@@ -38,7 +38,7 @@ class BDSParticleDefinition;
  * @author Stewart Boogert
  */
 
-class BDSIntegratorRMatrixThin: public G4MagIntegratorStepper, public BDSIntegratorDrift, public BDSAuxiliaryNavigator
+class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 {
 public:
   BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
@@ -115,7 +115,7 @@ private:
   /// Keep a reference to the underlying equation of motion, but through a higher
   /// level pointer than G4EquationOfMotion* so we can use the correct methods. This
   /// class doesn't own this.
-  G4EqMagElectricField* eqOfM;
+  //G4EqMagElectricField* eqOfM;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.
@@ -126,11 +126,11 @@ private:
 
   /// Cache of thin element length to know maximum possible length scale step
   /// for coordinate lookup.
-  static G4double thinElementLength;
+//  static G4double thinElementLength;
 
   /// Cache of the fraction of the momentum outside which don't use a matrix
   /// as it's just not feasible.
-  static G4double nominalMatrixRelativeMomCut;
+//  static G4double nominalMatrixRelativeMomCut;
 
   /// Setter for distChord to private member.
   inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}

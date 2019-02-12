@@ -37,7 +37,7 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
                                                    G4double maximumRadiusIn):
   BDSIntegratorMag(eqOfMIn, 6),
   nominalBRho(brhoIn),
-  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
+//  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
   nominalEnergy(designParticle->TotalEnergy()),
   nominalMass(designParticle->Mass()),
   maximumRadius(maximumRadiusIn)
@@ -86,11 +86,11 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
 
   backupStepper = new G4ClassicalRK4(eqOfMIn, 6);
 
-  if (thinElementLength < 0)
-    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+//  if (thinElementLength < 0)
+//    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
-  if (nominalMatrixRelativeMomCut < 0)
-    {nominalMatrixRelativeMomCut = BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut();}
+//  if (nominalMatrixRelativeMomCut < 0)
+ //   {nominalMatrixRelativeMomCut = BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut();}
 
 
 #ifdef BDSDEBUG
