@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSApertureInfo.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineSet.hh"
 #include "BDSDebug.hh"
@@ -81,6 +82,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
     {delete f;}
   for (auto r : regions)
     {delete r.second;}
+  for (auto a : apertures)
+    {delete a.second;}
   for (auto c : cuts)
     {delete c.second;}
 

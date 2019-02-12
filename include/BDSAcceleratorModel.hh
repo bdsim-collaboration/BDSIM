@@ -101,6 +101,9 @@ public:
   /// it - note, no checking for double registration.
   void RegisterRegion(G4Region* region, G4ProductionCuts* cut);
 
+  /// Register a single aperture.
+  inline void RegisterAperture(G4String name, BDSApertureInfo* apertureIn) {apertures[name] = apertureIn;}
+  
   /// Register a map of apertures with associated names.
   void RegisterApertures(const std::map<G4String, BDSApertureInfo*>& aperturesIn);
 
