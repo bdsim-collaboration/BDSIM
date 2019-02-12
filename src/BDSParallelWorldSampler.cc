@@ -71,19 +71,20 @@ void BDSParallelWorldSampler::Construct()
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
-  const G4double samplerR     = 0.5*BDSGlobalConstants::Instance()->SamplerDiameter();
-  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  const G4bool checkOverlaps  = BDSGlobalConstants::Instance()->CheckOverlaps();
+  const G4double samplerRadius = 0.5*BDSGlobalConstants::Instance()->SamplerDiameter();
+  const BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->BeamlineMain();
+  const G4bool checkOverlaps   = BDSGlobalConstants::Instance()->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
-  generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);
+  generalPlane = new BDSSamplerPlane("Plane_sampler", samplerRadius);
   samplers.push_back(generalPlane); // register it
 
   // For each element in the beamline construct and place the appropriate type
   // of sampler if required. Info encoded in BDSBeamlineElement instance
   for (auto element : *beamline)
     {
-      if (element->GetSamplerType() == BDSSamplerType::none)
+      BDSSamplerType samplerType = element->GetSamplerType();
+      if (samplerType == BDSSamplerType::none)
 	{continue;}
       // else must be a valid sampler
 #ifdef BDSDEBUG
@@ -92,7 +93,23 @@ void BDSParallelWorldSampler::Construct()
       G4String name = element->GetSamplerName();
       G4double sEnd = element->GetSPositionEnd();
       
-      BDSSampler* sampler = BuildSampler(element->GetSamplerType(), samplerR);
+      BDSSampler* sampler = nullptr;
+      switch (samplerType.underlying())
+	{
+	case BDSSamplerType::plane:
+	  {sampler = generalPlane; break;}
+	case BDSSamplerType::cylinder:
+	  {
+	    G4double length = element->GetAcceleratorComponent()->GetChordLength();
+	    sampler = new BDSSamplerCylinder(name,
+					     length,
+					     samplerRadius);
+	    samplers.push_back(sampler); // register it - memory management
+	    break;
+	  }
+	default:
+	  {break;} // leave as nullptr - shouldn't occur due to if at top
+	}
       
       if (sampler)
 	{
@@ -149,29 +166,6 @@ void BDSParallelWorldSampler::Construct()
 					    checkOverlaps);
       placements.push_back(pl);
     } 
-}
-
-BDSSampler* BDSParallelWorldSampler::BuildSampler(BDSSamplerType samplerType,
-						  G4double       samplerRadius) const
-{
-  BDSSampler* result = nullptr;
-  switch (samplerType.underlying())
-    {
-    case BDSSamplerType::plane:
-      {result = generalPlane; break;}
-    case BDSSamplerType::cylinder:
-      {
-	G4double length = element->GetAcceleratorComponent()->GetChordLength();
-	result = new BDSSamplerCylinder(name,
-					length,
-					samplerRadius);
-	samplers.push_back(sampler); // register it - memory management
-	break;
-      }
-    default:
-      {break;} // leave as nullptr - shouldn't occur due to if at top
-    }
-  return result;
 }
 
 BDSSampler* BDSParallelWorldSampler::BuildSampler(BDSBeamPipeType samplerShape,

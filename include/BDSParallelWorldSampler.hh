@@ -19,9 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPARALLELWORLDSAMPER_H
 #define BDSPARALLELWORLDSAMPER_H
 
-#include "BDSApertureType.hh"
-#include "BDSSamplerType.hh"
+#include "BDSBeamPipeType.hh"
 
+#include "globals.hh"
 #include "G4String.hh"
 #include "G4VUserParallelWorld.hh"
 
@@ -51,12 +51,7 @@ private:
   /// No default constructor.
   BDSParallelWorldSampler() = delete;
 
-  /// Construct required sampler if required, else return plane one. Raiuds of sampler
-  /// is provided in case of constructing a general sampler.
-  BDSSampler* BuildSampler(BDSSamplerType samplerType,
-			   G4double       samplerRadius) const;
-
-  BDSSampler* BuildSampler(BDSApertureType samplerShape,
+  BDSSampler* BuildSampler(BDSBeamPipeType samplerShape,
 			   G4double aper1,
 			   G4double aper2,
 			   G4double aper3,
