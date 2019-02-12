@@ -68,7 +68,8 @@ namespace GMAD
     _UNDULATOR   = 70,
     _JCOL        = 71,
     _WIRESCANNER = 72,
-    _USERCOMPONENT = 73
+    _USERCOMPONENT = 73,
+    _DUMP          = 74
   };
 
   /// conversion from enum to string

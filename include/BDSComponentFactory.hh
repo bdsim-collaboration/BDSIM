@@ -239,6 +239,7 @@ private:
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     G4String name);
   BDSAcceleratorComponent* CreateUndulator();
+  BDSAcceleratorComponent* CreateDump();
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();

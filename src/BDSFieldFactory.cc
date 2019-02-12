@@ -1,14 +1,14 @@
 /* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -186,7 +186,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	    }
 	  // else rm is default rotation matrix
 	}
-      
+
       G4Transform3D transform = G4Transform3D(rm, offset);
 
       BDSFieldFormat magFormat = BDSFieldFormat::none;
@@ -198,7 +198,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  magFormat = BDS::DetermineFieldFormat(bf.first);
 	  magFile   = BDS::GetFullPath(bf.second);
 	}
-      
+
       BDSFieldFormat eleFormat = BDSFieldFormat::none;
       G4String       eleFile   = "";
       G4bool  eleFileSpecified = !definition.electricFile.empty();
@@ -208,7 +208,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  eleFormat = BDS::DetermineFieldFormat(ef.first);
 	  eleFile   = BDS::GetFullPath(ef.second);
 	}
-      
+
       BDSInterpolatorType magIntType = BDSInterpolatorType::nearest3d;
       if (magFileSpecified) // will warn if no interpolator specified (default "")
 	{magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));}
@@ -284,7 +284,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-  
+
   if (info.FieldType() == BDSFieldType::none)
     {return field;} // as nullptr
 
@@ -304,7 +304,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
     }
   return field;
 }
-      
+
 BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 						 const BDSMagnetStrength* scalingStrength,
 						 const G4String           scalingKey)
@@ -436,7 +436,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 	break;
       }
     }
-  
+
 
   BDSFieldMag* resultantField = field;
   // Set transform for local geometry offset
@@ -587,7 +587,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::kickerthin:
       integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::rmatrixthin:
-      integrator = new BDSIntegratorRMatrixThin(strength,eqOfM, info.BeamPipeRadius()); break;
+      integrator = new BDSIntegratorRMatrixThin(strength, brho, eqOfM, designParticle, info.BeamPipeRadius()); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -630,7 +630,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     default:
       break; // returns nullptr;
     }
-  
+
   return integrator;
 }
 
@@ -754,7 +754,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
 					   (*info.MagnetStrength())["length"],
 					   otm);
-						       
+
   BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
 						       bEqOfMotion, integrator);
   return completeField;
@@ -762,9 +762,10 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 
 BDSFieldObjects* BDSFieldFactory::CreateRMatrix(const BDSFieldInfo& info)
 {
-  BDSFieldEM* bGlobalField            = new BDSFieldEMZero();
-  G4EqMagElectricField* eqOfM         = new G4EqMagElectricField(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),eqOfM,0.95*info.BeamPipeRadius());
+  G4double brho                       = info.BRho();
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(), brho, bEqOfMotion, designParticle,0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
                                                             eqOfM, integrator);
   return completeField;

@@ -1,14 +1,14 @@
 /* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4Mag_EqRhs.hh"
@@ -30,13 +31,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ClassicalRK4.hh"
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
-                                                   G4EqMagElectricField* eqOfMIn,
+                                                   G4double                 brhoIn,
+                                                   G4Mag_EqRhs* eqOfMIn,
+                                                   const BDSParticleDefinition* designParticle,
                                                    G4double maximumRadiusIn):
-  G4MagIntegratorStepper(eqOfMIn, 6),
-  maximumRadius(maximumRadiusIn),
-  eqOfM(static_cast<BDSEmUsualEqRhs*>(eqOfMIn)),
-  zeroStrength(false),
-  distChordPrivate(0)
+  BDSIntegratorMag(eqOfMIn, 6),
+  nominalBRho(brhoIn),
+  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
+  nominalEnergy(designParticle->TotalEnergy()),
+  nominalMass(designParticle->Mass()),
+  maximumRadius(maximumRadiusIn)
 {
   kick1   = (*strength)["kick1"];
   kick2   = (*strength)["kick2"];
@@ -108,7 +112,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       yErr[i]   = 0;
       yErr[i+3] = 0;
     }
-  
+
   // check if beam particle, if so step as drift
   const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
@@ -143,6 +147,12 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double yp = localMomUnit.y();
   G4double zp = localMomUnit.z();
 
+  // calculate relative energy difference
+  G4double nomMomentum = std::abs(nominalBRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
+  G4double deltaEnergy = eq->TotalEnergy(mom) - nominalEnergy;
+  // deltaE/P0 to match literature.
+  G4double deltaEoverP0 = deltaEnergy / (nomMomentum);
+
 
   G4double t = 0;
   G4double deltaEoverP = 0;
@@ -165,11 +175,13 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double t1           = rmat51 * x0                      + rmat52 * xp                + rmat53 * y0                      + rmat54 * yp                + rmat55 * t + rmat56 * deltaEoverP;
   G4double deltaEoverP1 = rmat61 * x0                      + rmat62 * xp                + rmat63 * y0                      + rmat64 * yp                + rmat65 * t + rmat66 * deltaEoverP;
 
+//  G4double E1 = deltaEoverP0_1 * nomMomentum + eq->TotalEnergy(mom);
 
+//  momMag = std::sqrt(std::pow(E1,2) - std::pow(nominalMass,2));
 
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-  
+
   // need to check against aperture before returning
   if(x1 > maximumRadius)
     {x1 = maximumRadius;}
@@ -181,6 +193,33 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
     {y1 = -maximumRadius;}
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
-  G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+  G4ThreeVector localMomOut     = G4ThreeVector(xp1, yp1, zp1) * mom.mag();
+//  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+
+//[+E function here]
+//  G4double delta_E = 20*CLHEP::MeV;
+//  G4double E1 = eq->TotalEnergy(mom) + delta_E;
+//  localMomOut[2] = std::sqrt(std::pow(localMomOut[2],2) + std::pow(delta_E,2) + 2 * eq->TotalEnergy(mom) * delta_E);
+
+
+  // localMomOut = myFunc(localMomOut);
+  // convert to global coordinates for output
+  BDSStep globalOut = CurvilinearToGlobal(localPosOut, localMomOut, true);
+  G4ThreeVector globalPosOut = globalOut.PreStepPoint();
+  G4ThreeVector globalMomOut = globalOut.PostStepPoint();
+
+  // error along direction of travel really
+  G4ThreeVector globalMomOutU = globalMomOut.unit();
+  globalMomOutU *= 1e-10;
+
+  // write out values and errors
+  for (G4int i = 0; i < 3; i++)
+  {
+    yOut[i]     = globalPosOut[i];
+    yOut[i + 3] = globalMomOut[i];
+    yErr[i]     = globalMomOutU[i];
+    yErr[i + 3] = 1e-40;
+  }
+
+
 }

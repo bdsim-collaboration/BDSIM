@@ -31,6 +31,8 @@ or function.
    * `<http://www.pp.rhul.ac.uk/bdsim/pymad8/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pytransport/>`_
 
+.. _python-geometry-preparation:
+     
 Geometry Preparation
 ====================
 

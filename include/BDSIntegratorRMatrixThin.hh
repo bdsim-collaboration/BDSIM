@@ -1,14 +1,14 @@
 /* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -21,17 +21,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORRMATRIXTHIN_HH
 
 #include "BDSIntegratorMag.hh"
+#include "BDSMagUsualEqRhs.hh"
 
 #include "globals.hh"
 
 class G4EqMagElectricField;
 class BDSMagnetStrength;
+class BDSParticleDefinition;
 
 /**
- * @brief Integrator that just moves the particle parallel to the s axis
- *
- * Teleporter for moving particles without changing angle but only advances the particle
- * by h.
+ * @brief Integrator that applies transfer matrix effect to particles passing through a thin element
  *
  * If the new particle x,y coordinates are greater than maximumRadius, they are clipped
  * to this value.
@@ -43,10 +42,10 @@ class BDSIntegratorRMatrixThin: public G4MagIntegratorStepper, public BDSIntegra
 {
 public:
   BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
-                           G4EqMagElectricField* eqOfMIn,
+                           G4double                 brhoIn,
+                           G4Mag_EqRhs* eqOfMIn,
+                           const BDSParticleDefinition* designParticle,
                            G4double maximumRadiusIn);
-
-
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -99,6 +98,11 @@ private:
   G4double rmat64;
   G4double rmat65;
   G4double rmat66;
+
+  const G4double    nominalBRho;  ///< Cached magnet property, nominal magnetic rigidity
+  BDSMagUsualEqRhs* eq;
+  const G4double    nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalMass;    ///< Primary particle mass. Needed for recalculating nominal energy with scaling.
 
   G4double maximumRadius;
 
