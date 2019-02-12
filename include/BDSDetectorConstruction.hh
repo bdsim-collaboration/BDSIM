@@ -119,6 +119,9 @@ private:
 
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
+
+  /// Create all aperture definitions from parser and store in BDSAcceleratorModel.
+  void InitialiseApertures();
   
   /// Build the main beam line and then any other required beam lines.
   void BuildBeamlines();

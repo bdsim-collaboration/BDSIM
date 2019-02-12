@@ -127,6 +127,23 @@ void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut
   cuts[name]    = cut;
 }
 
+void BDSAcceleratorModel::RegisterApertures(const std::map<G4String, BDSApertureInfo*>& aperturesIn)
+{
+  apertures.insert(aperturesIn.begin(), aperturesIn.end());
+}
+
+BDSApertureInfo* BDSAcceleratorModel::Aperture(G4String name) const
+{
+  auto result = apertures.find(name);
+  if (result != apertures.end())
+    {return result->second;}
+  else
+    {
+      G4cerr << "Invalid aperture name \"" << name << "\"" << G4endl;
+      exit(1);
+    }
+}
+
 G4Region* BDSAcceleratorModel::Region(G4String name) const
 {
   auto result = regions.find(name);

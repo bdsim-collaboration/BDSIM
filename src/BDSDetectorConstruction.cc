@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSApertureInfo.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
@@ -152,6 +153,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   
   // construct regions
   InitialiseRegions();
+
+  InitialiseApertures();
   
   // construct the component list
   BuildBeamlines();
@@ -205,6 +208,21 @@ void BDSDetectorConstruction::InitialiseRegions()
       region->SetProductionCuts(cuts);
       acceleratorModel->RegisterRegion(region, cuts);
     }
+}
+
+void BDSDetectorConstruction::InitialiseApertures()
+{
+  std::map<G4String, BDSApertureInfo*> apertures;
+  for (const GMAD::Aperture& a : BDSParser::Instance()->GetApertures())
+    {
+      BDSApertureInfo* ap = new BDSApertureInfo(a.apertureType,
+						a.aper1 * CLHEP::m,
+						a.aper2 * CLHEP::m,
+						a.aper3 * CLHEP::m,
+						a.aper4 * CLHEP::m);
+      apertures[a.name] = ap;
+    }
+  acceleratorModel->RegisterApertures(apertures);
 }
 
 void BDSDetectorConstruction::BuildBeamlines()
