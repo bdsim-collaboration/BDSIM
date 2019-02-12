@@ -44,7 +44,7 @@ void SamplerPlacement::clear()
   angle = 0;
   axisAngle = false;
   apertureModel = "";
-  shape = "";
+  shape = "circular";
   aper1 = 0;
   aper2 = 0;
   aper3 = 0;
