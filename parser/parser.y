@@ -94,7 +94,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER
 %token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
-%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
+%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -297,6 +297,14 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
          }
      }
+     | VARIABLE ':' aperture
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : aperture" << std::endl;
+             Parser::Instance()->SetValue<Aperture>("name",*($1));
+             Parser::Instance()->Add<Aperture>();
+         }
+     }
      | VARIABLE ':' component
      {
          if(execute) {
@@ -373,6 +381,7 @@ query       : QUERY       ',' query_options
 tunnel      : TUNNEL      ',' tunnel_options
 xsecbias    : XSECBIAS    ',' xsecbias_options
 samplerplacement : SAMPLERPLACEMENT ',' samplerplacement_options
+aperture    : APERTURE    ',' aperture_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -387,6 +396,7 @@ object_noparams : MATERIAL
                 | TUNNEL
                 | XSECBIAS
                 | SAMPLERPLACEMENT
+                | APERTURE
 
 newinstance : VARIABLE ',' parameters
             {
@@ -859,6 +869,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
             }
         }
+        | APERTURE ',' aperture_options // aperture
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> APERTURE" << std::endl;
+              Parser::Instance()->Add<Aperture>();
+            }
+        }
 
 use_parameters :  VARIABLE
                {
@@ -1037,6 +1055,14 @@ xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                    { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);}
                  | paramassign '=' vecexpr xsecbias_options_extend
                    { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);}
+
+aperture_options_extend : /* nothing */
+                         | ',' aperture_options
+
+aperture_options : paramassign '=' aexpr aperture_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Aperture>((*$1),$3);}
+                  | paramassign '=' string aperture_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Aperture>(*$1,*$3);}
 
 option_parameters_extend : /* nothing */
                          | ',' option_parameters

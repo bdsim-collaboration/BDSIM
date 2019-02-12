@@ -187,6 +187,7 @@ add_test(gmad-tunnel             ${gmadBinary} tunnel.gmad)
 
 # test object extensions
 add_test(gmad-extend-atom             ${gmadBinary} extendatom.gmad)
+add_test(gmad-extend-aperture         ${gmadBinary} extendaperture.gmad)
 add_test(gmad-extend-cavitymodel      ${gmadBinary} extendcavitymodel.gmad)
 add_test(gmad-extend-colour           ${gmadBinary} extendcolour.gmad)
 add_test(gmad-extend-crystal          ${gmadBinary} extendcrystal.gmad)
