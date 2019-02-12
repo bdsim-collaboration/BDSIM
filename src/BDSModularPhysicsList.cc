@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
+#include "BDSPhysicsTransitionRadiation.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
 
@@ -194,6 +195,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("shielding",              &BDSModularPhysicsList::Shielding));
   physicsConstructors.insert(std::make_pair("stopping",               &BDSModularPhysicsList::Stopping));
   physicsConstructors.insert(std::make_pair("synch_rad",              &BDSModularPhysicsList::SynchRad));
+  physicsConstructors.insert(std::make_pair("transition_radiation",   &BDSModularPhysicsList::TransitionRadiation));
 #if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",                  &BDSModularPhysicsList::EmGS));
 #endif
@@ -944,6 +946,15 @@ void BDSModularPhysicsList::SynchRad()
     {
       constructors.push_back(new BDSPhysicsSynchRad());
       physicsActivated["synch_rad"] = true;
+    }
+}
+
+void BDSModularPhysicsList::TransitionRadiation()
+{
+  if (!physicsActivated["transition_radiation"])
+    {
+      constructors.push_back(new BDSPhysicsTransitionRadiation());
+      physicsActivated["transition_radiation"] = true;
     }
 }
 
