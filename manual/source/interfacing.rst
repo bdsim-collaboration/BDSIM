@@ -64,15 +64,25 @@ installation directory if not in a system directory to allow CMake to find that 
 Custom Beam Line Component
 ==========================
 
+.. warning:: If there are any geometrical overlaps (broken hierarchy, touching
+	     solids, overlapping separate solids at the same level of hierarchy),
+	     the Geant4 tracking may be wrong and the results cannot be trusted.
+	     This may lead to slow running models, inaccurate results, excessive
+	     navigation warnings, or worst of all: no warnings but inaccurate results.
+	     When developing custom geometry, the developer **must** ensure no
+	     geometrical overlaps are present before the model is used for a physics
+	     study.
+
 Whilst BDSIM provides the most common accelerator beam line components, we cannot foresee
 custom components that various accelerators may have. To insert a custom component, we
 would recommend using a geometry package such as `pyg4ometry` to prepare GDML geometry
-and using a generic beam line `element`. See :ref:`python-utilities` and :ref:`element`.
-A field map can also be overlaid.
+and using a generic beam line `element`. See :ref:`python-geometry-preparation` and
+the generic beam line element object, :ref:`element`. A field map can also be
+overlaid on this.
 
-However, if the user is familiar with Geant4 C++ or requires more detailed interaction
-with the simulation, it is possible to add a custom C++ beam line component to BDSIM. The
-user must define:
+However, if the user is familiar with Geant4 C++, Geant4 geometry or requires a
+more detailed interaction with the simulation, it is possible to add a custom
+C++ beam line component to BDSIM. The user must define:
 
 * A class that constructs the beam line component and that inherits BDSAcceleratorComponent.
 * A factory class that constructs an instance of the component. This should inherit
@@ -125,7 +135,7 @@ Input GMAD
 
 The key part in the input GMAD is to define a `usercomponent` beam line element. This takes
 and argument `userTypeName` to define the *type* of the element if more than one user
-component is regisertered. This beam line element can now be used normally in any line
+component is regisered. This beam line element can now be used normally in any line
 in BDSIM. To convey parameters to the new user-defined element, any parameter available
 for any other element may be used. These are defined in :code:`parser/element.hh`. Additional
 parameters may be supplied via the element member string "userParameters". This should
@@ -134,7 +144,8 @@ separated by a colon. For example::
 
   userParameters="variable1:0.4 variable2:bananas"
 
-The utility function BDS::GetUserParametersMap from \#include "BDSUtilities.hh" will split
+The utility function :code:`BDS::GetUserParametersMap` from
+:code:`#include "BDSUtilities.hh"` will split
 this up into a map of strings to strings such as:
 
 +-----------------+--------------+

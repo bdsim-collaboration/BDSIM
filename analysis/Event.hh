@@ -47,9 +47,9 @@ class Event
 {
 public:
   Event();
-  Event(int  dataVersionIn,
-	bool debugIn,
-	bool processSamplersIn = false);
+  Event(bool debugIn,
+	bool processSamplersIn = false,
+	int  dataVersionIn     = 0);
   void CommonCtor();
   virtual ~Event();
 
@@ -78,10 +78,15 @@ public:
 #endif
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
   BDSOutputROOTEventCollimator*      GetCollimator(int index);
+  int                                DataVersion() const {return dataVersion;}
   /// @}
 
   /// Whether there is primary data in the output file.
   inline bool UsePrimaries() const {return usePrimaries;}
+
+  /// Allow setting of data version if default constructor is used. If the default
+  /// constructor was used, this function should be used before SetBranchAddress().
+  inline void SetDataVersion(int dataVersionIn) {dataVersion = dataVersionIn;}
 
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
@@ -134,9 +139,9 @@ private:
 					const std::string& name);
   /// @}
   
-  int  dataVersion     = 0;
   bool debug           = false;
   bool processSamplers = false;
+  int  dataVersion     = 0;
   bool usePrimaries    = false;
 
   ClassDef(Event, 2);

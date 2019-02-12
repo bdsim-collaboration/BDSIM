@@ -23,7 +23,8 @@ To download the source from the git repository, use the command::
   git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. Also, the python utilities that come with BDSIM will be present.
+and documentation is provided. Also, the python utilities that come with BDSIM will be present
+when the `-\\-recursive` option is used.
 
 Download
 --------
@@ -67,8 +68,8 @@ Requirements
 
 .. note:: These are listed in the correct order of installation / requirement.
 
-Versions
---------
+Geant4 and ROOT Versions
+------------------------
 
 We have found some problems with certain versions of software and these should be
 avoided. Generally, we recommend the latest patch version of Geant4. These are the
@@ -77,6 +78,16 @@ problems we have found:
 * Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensivly in BDSIM.
+
+.. _mac-osx-issues:
+  
+Mac OS X Issues
+---------------
+  
+* Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
+  screen or worse, bits of the interface double size. This is an ongoing issue
+  and documented here:
+  https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
 
 Geant4 Environment
 ------------------
@@ -115,6 +126,8 @@ although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
 After this, `Building`_ can be started.
+
+.. warning:: For Mac OSX Mojave, see :ref:`mac-osx-issues`.
 
 Linux
 -----
@@ -247,12 +260,43 @@ You can then compile BDSIM with::
 
   > make
 
-BDSIM can then be installed (default directory /usr/local) for access from anywhere on the system with::
+BDSIM can then be installed (default directory /usr/local) for access from anywhere
+on the system with::
 
   > sudo make install
 
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
 From any directory on your computer, ``bdsim`` should be available.
+
+At this point, BDSIM itself will work, but more environmental variables must be
+set to use the analysis tools (this is a requirement of ROOT). These can be set
+manually or added to your :code:`.profile` or :code:`.bashrc` file::
+
+   export BDSIM=<bdsim-INSTALL-dir>
+   export PATH=$PATH:$BDSIM/bin
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
+   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
+   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser
+
+* Re-source your profile (or restart the terminal).
+* You should be able to execute 'rebdsim'
+
+.. figure:: figures/rebdsim_execution.png
+	    :width: 100%
+	    :align: center
+
+If the analysis will be regularly used interactively, it is worth automating the library
+loading in root by finding and editing the :code:`rootlogon.C` in your
+:code:`<root-install-dir>/macros/` directory.  Example text would be::
+
+  cout << "Loading rebdsim libraries" << endl;
+  gSystem->Load("librebdsimLib");
+  gSystem->Load("libbdsimRootEvent");
+
+.. note:: The file extension is omitted on purpose.
+
+The absolute path is not necessary, as the above environmental variables are used by ROOT
+to find the library.
 
 From the build directory you can verify your installation using a series of tests
 included with BDSIM (excluding long running tests)::

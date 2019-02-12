@@ -33,7 +33,7 @@ Past Authors
 * Jaime Van Oers (*RHUL*)
 * Will Parker (*RHUL*)
 * Yngve Levinsen (*CERN*)
-* G. Marchiori (*INFN*)
+* Giovanni Marchiori (*INFN*)
 * Olivier Dadoun (*LAL*)
 * Helmut Burkhardt (*CERN*)
 * Daniel Brewer (*RHUL*)
