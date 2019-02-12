@@ -24,7 +24,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "aperture.h"
 #include "atom.h"
 #include "beam.h"
 #include "cavitymodel.h"
@@ -231,8 +230,6 @@ namespace GMAD
     std::vector<CavityModel> cavitymodel_list;
     /// List of parser defined sampler placements.
     std::vector<SamplerPlacement> samplerplacement_list;
-    /// List of parser defined apertures.
-    std::vector<Aperture> aperture_list;
 
   private:
     // *****************
@@ -272,8 +269,6 @@ namespace GMAD
     CavityModel cavitymodel;
     /// Sampler placement instance
     SamplerPlacement samplerplacement;
-    /// Aperture instance.
-    Aperture aperture;
     
     /// Find object by name in list
     template <class C>

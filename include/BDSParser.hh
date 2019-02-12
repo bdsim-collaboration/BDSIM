@@ -107,9 +107,6 @@ public:
   /// Return sampler placement list.
   inline const std::vector<GMAD::SamplerPlacement>& GetSamplerPlacements() const {return samplerplacement_list;}
 
-  /// Return aperture list.
-  inline const std::vector<GMAD::Aperture>& GetApertures() const {return aperture_list;}
-  
 protected:
   /// Constructor from filename.
   explicit BDSParser(std::string filename);

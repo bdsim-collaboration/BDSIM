@@ -631,7 +631,7 @@ void Parser::Overwrite(const std::string& objectName)
 
   // possible object types are:
   // element, atom, colour, crystal, field, material, physicsbiasing, placement,
-  // query, region, tunnel, cavitymodel, samplerplacement, aperture
+  // query, region, tunnel, cavitymodel, samplerplacement
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end())
@@ -661,7 +661,6 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<Tunnel>     (objectName)) ) {}
     else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
     else if ( (extended = FindAndExtend<SamplerPlacement>(objectName)) ) {}
-    else if ( (extended = FindAndExtend<Aperture>   (objectName)) ) {}
   }
 
   if (extended==false)
@@ -809,12 +808,6 @@ namespace GMAD {
 
   template<>
   std::vector<SamplerPlacement>& Parser::GetList<SamplerPlacement>() {return samplerplacement_list;}
-
-  template<>
-  Aperture& Parser::GetGlobal() {return aperture;}
-
-  template<>
-  std::vector<Aperture>& Parser::GetList<Aperture>() {return aperture_list;}
   
   template<>
   void Parser::ExtendValue(std::string property, double value)
