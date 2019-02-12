@@ -177,7 +177,7 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(G4String        name,
 						  G4double        aper2,
 						  G4double        aper3,
 						  G4double        aper4) const
-{
+{    
   BDSBeamPipeInfo bpi = BDSBeamPipeInfo(samplerShape,
 					aper1, aper2, aper3, aper4,
 				        "vacuum", 0, "vacuum");
