@@ -39,7 +39,7 @@ std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
    {BDSApertureType::clicpcl,        "clicpcl"}
 });	
 
-BDSApertureType BDS::DetermineBeamPipeType(G4String apertureType)
+BDSApertureType BDS::DetermineApertureType(G4String apertureType)
 {
   std::map<G4String, BDSApertureType> types;
   types["circular"]       = BDSApertureType::circular;
