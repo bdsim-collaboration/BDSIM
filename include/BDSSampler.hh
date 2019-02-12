@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 
+class BDSBeamPipe;
+
 /**
  * @brief Base class and registry of sampler instances.
  * 
@@ -33,6 +35,8 @@ class BDSSampler: public BDSGeometryComponent
 {
 public:
   explicit BDSSampler(G4String nameIn);
+  /// Conversion constructor.
+  BDSSampler(const BDSBeamPipe& beamPipe);
   virtual ~BDSSampler(){;}
 
   /// Return the name of this sampler.

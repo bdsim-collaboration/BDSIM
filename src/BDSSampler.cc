@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBeamPipe.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 
@@ -25,6 +26,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSSampler::BDSSampler(G4String nameIn):
   BDSGeometryComponent(nullptr, nullptr),
   name(nameIn)
+{;}
+
+BDSSampler::BDSSampler(const BDSBeamPipe& beamPipe):
+  BDSGeometryComponent(beamPipe.GetContainerSolid(),
+		       beamPipe.GetContainerLogicalVolume(),
+		       beamPipe.GetExtent()),
+  name(beamPipe.GetName())
 {;}
 
 void BDSSampler::CommonConstruction()

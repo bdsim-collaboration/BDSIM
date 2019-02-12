@@ -19,6 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
@@ -147,8 +150,8 @@ void BDSParallelWorldSampler::Construct()
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
 
       G4String samplerName = G4String(samplerPlacement.name);
-      BDSBeamPipeType samplerShape = BDS::DetermineBeamPipeType(samplerPlacement.shape);
-      BDSSampler* sampler = BuildSampler(samplerShape,
+      BDSSampler* sampler = BuildSampler(samplerName,
+					 samplerPlacement.shape,
 					 samplerPlacement.aper1*CLHEP::m,
 					 samplerPlacement.aper2*CLHEP::m,
 					 samplerPlacement.aper3*CLHEP::m,
@@ -168,13 +171,20 @@ void BDSParallelWorldSampler::Construct()
     } 
 }
 
-BDSSampler* BDSParallelWorldSampler::BuildSampler(BDSBeamPipeType samplerShape,
+BDSSampler* BDSParallelWorldSampler::BuildSampler(G4String        name,
+						  G4String samplerShape,
 						  G4double        aper1,
 						  G4double        aper2,
 						  G4double        aper3,
 						  G4double        aper4) const
 {
-  return nullptr;
+  BDSBeamPipeInfo bpi = BDSBeamPipeInfo(samplerShape,
+					aper1, aper2, aper3, aper4,
+				        "vacuum", 0, "vacuum");
 
+  BDSBeamPipe* bp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name, 10*CLHEP::um, &bpi);
 
+  BDSSampler* sampler = new BDSSampler(*bp);
+  delete bp;
+  return sampler;
 }
