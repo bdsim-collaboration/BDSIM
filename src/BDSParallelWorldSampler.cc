@@ -70,16 +70,17 @@ BDSParallelWorldSampler::~BDSParallelWorldSampler()
 
 void BDSParallelWorldSampler::Construct()
 {
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   G4VPhysicalVolume* samplerWorld   = GetWorld();
   G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
 
-  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->VisibleDebugVisAttr()));
+  samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
-  const G4double samplerRadius = 0.5*BDSGlobalConstants::Instance()->SamplerDiameter();
+  const G4double samplerRadius = 0.5*globals->SamplerDiameter();
   const BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->BeamlineMain();
-  const G4bool checkOverlaps   = BDSGlobalConstants::Instance()->CheckOverlaps();
+  const G4bool checkOverlaps   = globals->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
   generalPlane = new BDSSamplerPlane("Plane_sampler", samplerRadius);
@@ -152,7 +153,7 @@ void BDSParallelWorldSampler::Construct()
       G4cout << "User placed sampler: \"" << samplerPlacement.name << "\"" << G4endl;
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
-
+      
       G4String samplerName = G4String(samplerPlacement.name);
       BDSApertureInfo* shape = nullptr;
       if (samplerPlacement.apertureModel.empty())
