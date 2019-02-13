@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerCustom.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
@@ -160,14 +161,11 @@ void BDSParallelWorldSampler::Construct()
 				      samplerPlacement.aper2*CLHEP::m,
 				      samplerPlacement.aper3*CLHEP::m,
 				      samplerPlacement.aper4*CLHEP::m);
-	  // register for deletion
-	  BDSAcceleratorModel::Instance()->RegisterAperture(samplerName + "_aperture", shape);
 	}
       else
-	{
-	  shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);
-	}
-      BDSSampler* sampler = new BDSSampler(samplerName, shape);
+	{shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
+      
+      BDSSampler* sampler = new BDSSamplerCustom(samplerName, *shape);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);

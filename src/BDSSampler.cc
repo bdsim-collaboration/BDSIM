@@ -28,12 +28,6 @@ BDSSampler::BDSSampler(G4String nameIn):
   name(nameIn)
 {;}
 
-BDSSampler::BDSSampler(G4String nameIn,
-		       BDSApertureInfo* shape):
-  BDSGeometryComponent(nullptr, nullptr),
-  name(nameIn)
-{;}
-
 void BDSSampler::CommonConstruction()
 {
   // Construct logical volume from solid. Note it's ok to have nullptr for material
