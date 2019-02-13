@@ -70,6 +70,7 @@ void SamplerPlacement::PublishMembers()
   publish("axisAngle",     &SamplerPlacement::axisAngle);
   publish("apertureModel", &SamplerPlacement::apertureModel);
   publish("shape",         &SamplerPlacement::shape);
+  publish("apertureType",  &SamplerPlacement::shape);
   publish("aper1",         &SamplerPlacement::aper1);
   publish("aper2",         &SamplerPlacement::aper2);
   publish("aper3",         &SamplerPlacement::aper3);
