@@ -14,7 +14,7 @@ beam, particle="e-",
       X0=1.01*cm;
 
 ! should fail as lhc not currently supported as a shape
-a1: aperture, apertureType="lhc",
+a1: aperture, apertureType="rectangular",
 	      aper1=6.5*cm,
 	      aper2=3*cm;
 
