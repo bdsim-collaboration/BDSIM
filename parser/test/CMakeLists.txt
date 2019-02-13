@@ -198,7 +198,7 @@ add_test(gmad-extend-physics-biasing  ${gmadBinary} extendphysicsbiasing.gmad)
 add_test(gmad-extend-placement        ${gmadBinary} extendplacement.gmad)
 add_test(gmad-extend-region           ${gmadBinary} extendregion.gmad)
 add_test(gmad-extend-samplerplacement ${gmadBinary} extendsamplerplacement.gmad)
-add_test(gmad-extend-tunnel           ${gamdBinary} extendtunnel.gmad)
+add_test(gmad-extend-tunnel           ${gmadBinary} extendtunnel.gmad)
 
 # test string (issue #126)
 add_test(gmad-string ${gmadBinary} string.gmad)
