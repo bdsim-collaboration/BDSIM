@@ -149,6 +149,7 @@ void BDSParallelWorldSampler::Construct()
 
   for (const auto& samplerPlacement : samplerPlacements)
     {
+      G4cout << "User placed sampler: \"" << samplerPlacement.name << "\"" << G4endl;
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
 
@@ -160,7 +161,8 @@ void BDSParallelWorldSampler::Construct()
 				      samplerPlacement.aper1*CLHEP::m,
 				      samplerPlacement.aper2*CLHEP::m,
 				      samplerPlacement.aper3*CLHEP::m,
-				      samplerPlacement.aper4*CLHEP::m);
+				      samplerPlacement.aper4*CLHEP::m,
+				      samplerPlacement.name);
 	}
       else
 	{shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}

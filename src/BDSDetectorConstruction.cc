@@ -219,7 +219,8 @@ void BDSDetectorConstruction::InitialiseApertures()
 						a.aper1 * CLHEP::m,
 						a.aper2 * CLHEP::m,
 						a.aper3 * CLHEP::m,
-						a.aper4 * CLHEP::m);
+						a.aper4 * CLHEP::m,
+						a.name);
       apertures[a.name] = ap;
     }
   acceleratorModel->RegisterApertures(apertures);
