@@ -30,12 +30,10 @@ std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
    {BDSApertureType::circular,       "circular"},
    {BDSApertureType::elliptical,     "elliptical"},
    {BDSApertureType::lhc,            "lhc"},
-   {BDSApertureType::lhcdetailed,    "lhcdetailed"},
    {BDSApertureType::rectangular,    "rectangular"},
    {BDSApertureType::rectellipse,    "rectellipse"},
    {BDSApertureType::racetrack,      "racetrack"},
    {BDSApertureType::octagonal,      "octagonal"},
-   {BDSApertureType::circularvacuum, "circularvacuum"},
    {BDSApertureType::clicpcl,        "clicpcl"}
 });	
 
@@ -46,12 +44,9 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["elliptical"]     = BDSApertureType::elliptical;
   types["rectangular"]    = BDSApertureType::rectangular;
   types["lhc"]            = BDSApertureType::lhc;
-  types["lhcscreen"]      = BDSApertureType::lhc; // shortcut for madx compatability
-  types["lhcdetailed"]    = BDSApertureType::lhcdetailed;
   types["rectellipse"]    = BDSApertureType::rectellipse;
   types["racetrack"]      = BDSApertureType::racetrack;
   types["octagonal"]      = BDSApertureType::octagonal;
-  types["circularvacuum"] = BDSApertureType::circularvacuum;
   types["clicpcl"]        = BDSApertureType::clicpcl;
 
   apertureType.toLower();

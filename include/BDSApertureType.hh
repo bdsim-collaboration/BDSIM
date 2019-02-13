@@ -32,8 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 struct aperturetypes_def
 {
   enum type {circular, rectangular, elliptical, lhc,
-	     lhcdetailed, rectellipse, racetrack, octagonal,
-	     circularvacuum, clicpcl};
+	     rectellipse, racetrack, octagonal, clicpcl};
 };
 
 typedef BDSTypeSafeEnum<aperturetypes_def,int> BDSApertureType;
