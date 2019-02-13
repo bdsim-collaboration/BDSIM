@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSUtilities.hh"
 
@@ -30,28 +31,30 @@ BDSApertureInfo::BDSApertureInfo(BDSApertureType apertureTypeIn,
 				 G4double        aper1In,
 				 G4double        aper2In,
 				 G4double        aper3In,
-				 G4double        aper4In):
+				 G4double        aper4In,
+				 G4String        nameForError):
   apertureType(apertureTypeIn),
   aper1(aper1In),
   aper2(aper2In),
   aper3(aper3In),
   aper4(aper4In)
 {
-  CheckApertureInfo();
+  CheckApertureInfo(nameForError);
 }
 
 BDSApertureInfo::BDSApertureInfo(G4String apertureTypeIn,
 				 G4double aper1In,
 				 G4double aper2In,
 				 G4double aper3In,
-				 G4double aper4In):
+				 G4double aper4In,
+				 G4String nameForError):
   aper1(aper1In),
   aper2(aper2In),
   aper3(aper3In),
   aper4(aper4In)
 {
   apertureType = BDS::DetermineApertureType(apertureTypeIn);
-  CheckApertureInfo();
+  CheckApertureInfo(nameForError);
 }
   
 BDSApertureInfo::BDSApertureInfo(BDSApertureInfo* defaultInfo,
@@ -59,7 +62,8 @@ BDSApertureInfo::BDSApertureInfo(BDSApertureInfo* defaultInfo,
 				 G4double         aper1In,
 				 G4double         aper2In,
 				 G4double         aper3In,
-				 G4double         aper4In)
+				 G4double         aper4In,
+				 G4String         nameForError)
 {
   if (apertureTypeIn == "")
     {apertureType = defaultInfo->apertureType;}
@@ -83,33 +87,41 @@ BDSApertureInfo::BDSApertureInfo(BDSApertureInfo* defaultInfo,
   else
     {aper4 = aper4In;}
   
-  CheckApertureInfo();
+  CheckApertureInfo(nameForError);
 }
   
-void BDSApertureInfo::CheckApertureInfo()
+void BDSApertureInfo::CheckApertureInfo(const G4String& nameForError)
 {
-  switch (apertureType.underlying())
+  try
     {
-    case BDSApertureType::circular:
-      {InfoOKForCircular();    break;}
-    case BDSApertureType::elliptical:
-      {InfoOKForElliptical();  break;}
-    case BDSApertureType::rectangular:
-      {InfoOKForRectangular(); break;}
-    case BDSApertureType::lhc:
-      {InfoOKForLHC();         break;}
-    case BDSApertureType::lhcdetailed:
-      {InfoOKForLHCDetailed(); break;}
-    case BDSApertureType::rectellipse:
-      {InfoOKForRectEllipse(); break;}
-    case BDSApertureType::racetrack:
-      {InfoOKForRaceTrack();   break;}
-    case BDSApertureType::octagonal:
-      {InfoOKForOctagonal();   break;}
-    case BDSApertureType::clicpcl:
-      {InfoOKForClicPCL();     break;}
-    default:
-      InfoOKForCircular();
+      switch (apertureType.underlying())
+	{
+	case BDSApertureType::circular:
+	  {InfoOKForCircular();    break;}
+	case BDSApertureType::elliptical:
+	  {InfoOKForElliptical();  break;}
+	case BDSApertureType::rectangular:
+	  {InfoOKForRectangular(); break;}
+	case BDSApertureType::lhc:
+	  {InfoOKForLHC();         break;}
+	case BDSApertureType::lhcdetailed:
+	  {InfoOKForLHCDetailed(); break;}
+	case BDSApertureType::rectellipse:
+	  {InfoOKForRectEllipse(); break;}
+	case BDSApertureType::racetrack:
+	  {InfoOKForRaceTrack();   break;}
+	case BDSApertureType::octagonal:
+	  {InfoOKForOctagonal();   break;}
+	case BDSApertureType::clicpcl:
+	  {InfoOKForClicPCL();     break;}
+	default:
+	  InfoOKForCircular();
+	}
+    }
+  catch (BDSException& exception)
+    {
+      exception.SetName(nameForError);
+      throw;
     }
 }
 
@@ -183,33 +195,14 @@ void BDSApertureInfo::CheckRequiredParametersSet(G4bool setAper1,
   G4cout << "aper3: " << aper3 << " check it? " << setAper3 << G4endl;
   G4cout << "aper4: " << aper4 << " check it? " << setAper4 << G4endl;
 #endif
-  G4bool shouldExit = false;
-  if (setAper1)
-    {
-      if (!BDS::IsFinite(aper1))
-	{G4cerr << "\"aper1\" not set, but required to be" << G4endl; shouldExit = true;}
-    }
-
-  if (setAper2)
-    {
-      if (!BDS::IsFinite(aper2))
-	{G4cerr << "\"aper2\" not set, but required to be" << G4endl; shouldExit = true;}
-    }
-
-  if (setAper3)
-    {
-      if (!BDS::IsFinite(aper3))
-	{G4cerr << "\"aper3\" not set, but required to be" << G4endl; shouldExit = true;}
-    }
-
-  if (setAper4)
-    {
-      if (!BDS::IsFinite(aper4))
-	{G4cerr << "\"aper4\" not set, but required to be" << G4endl; shouldExit = true;}
-    }
-
-  if (shouldExit)
-    {exit(1);}
+  if (setAper1 && !BDS::IsFinite(aper1))
+    {throw BDSException("","\"aper1\" not set, but required to be.");}
+  if (setAper2 && !BDS::IsFinite(aper2))
+    {throw BDSException("","\"aper2\" not set, but required to be.");}
+  if (setAper3 && !BDS::IsFinite(aper3))
+    {throw BDSException("","\"aper3\" not set, but required to be.");}
+  if (setAper4 && !BDS::IsFinite(aper4))
+    {throw BDSException("","\"aper4\" not set, but required to be.");}
 }
 
 void BDSApertureInfo::InfoOKForCircular()
@@ -232,16 +225,10 @@ void BDSApertureInfo::InfoOKForLHC()
   CheckRequiredParametersSet(true, true, true, false);
 
   if ((aper3 > aper1) && (aper2 < aper3))
-    {
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape" << G4endl;
-      exit(1);
-    }
+    {throw BDSException("WARNING - \"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 
   if ((aper3 > aper2) && (aper1 < aper3))
-    {
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape" << G4endl;
-      exit(1);
-    }
+    {throw BDSException("WARNING - \"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 }
 
 void BDSApertureInfo::InfoOKForLHCDetailed()
@@ -282,9 +269,9 @@ void BDSApertureInfo::InfoOKForOctagonal()
   CheckRequiredParametersSet(true, true, true, true);
 
   if (aper3 >= aper1)
-    {G4cerr << "aper3 is >= aper1 - invalid for an octagonal aperture"; exit(1);}
+    {throw BDSException("aper3 is >= aper1 - invalid for an octagonal aperture");}
   if (aper4 >= aper2)
-    {G4cerr << "aper4 is >= aper2 - invalid for an octagonal aperture"; exit(1);}
+    {throw BDSException("aper4 is >= aper2 - invalid for an octagonal aperture");}
 }
 
 void BDSApertureInfo::InfoOKForClicPCL()
