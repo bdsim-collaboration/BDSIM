@@ -218,6 +218,7 @@ Bug Fixes
   than the declared number of dimensions. For example, "y:x" for Histogram1D.
 * Fixed rare bug where segfault would occur in trying to account for energy deposition of
   artificially killed particles.
+* Fix memory leak of sampler structures (relatively small).
   
 Output Changes
 --------------
