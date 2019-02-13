@@ -1,5 +1,4 @@
-tunnel, name="t1",
-	type="circular",
+t1: tunnel, type="circular",
 	aper1=2.0*m,
 	aper2=3.0*m,
 	offsetX=0.0*m,
@@ -12,6 +11,6 @@ tunnel, name="t1",
 	startElement="d1",
 	endElement="d1";
 
-tunnel: startElement="d2";
+t1: startElement="d2";
 
 d1: drift, l=1.2*m;

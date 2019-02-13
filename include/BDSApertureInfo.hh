@@ -41,14 +41,16 @@ public:
 		  G4double        aper1In,
 		  G4double        aper2In,
 		  G4double        aper3In,
-		  G4double        aper4In);
+		  G4double        aper4In,
+		  G4String        nameForError = "");
 
   /// Constructor with string descriptors of aperture type. Automatically determined.
   BDSApertureInfo(G4String apertureTypeIn,
 		  G4double aper1In,
 		  G4double aper2In,
 		  G4double aper3In,
-		  G4double aper4In);
+		  G4double aper4In,
+		  G4String nameForError = "");
 
   /// Constructor that allows a default model to be used as backup. Checks on parameter
   /// validity are done after substituting unset values by values from defaultInfo.
@@ -57,11 +59,12 @@ public:
 		  G4double         aper1In,
 		  G4double         aper2In,
 		  G4double         aper3In,
-		  G4double         aper4In);
+		  G4double         aper4In,
+		  G4String         nameForError = "");
 
   /// Function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
-  void CheckApertureInfo();
+  void CheckApertureInfo(const G4String& nameForError);
 
   /// Return a BDSExtent instance for the transverse extents - extent in Z is 0 as this is
   /// only aperture information. Includes beam pipe thickness.

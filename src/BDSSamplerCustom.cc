@@ -41,8 +41,8 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
   */
   switch (shape.apertureType.underlying())
     {
-    case BDSApertureType::circular::
-    case BDSApertureType::circularvacuum::
+    case BDSApertureType::circular:
+    case BDSApertureType::circularvacuum:
       {
 	containerSolid = new G4Tubs(name + "_solid",
 				    0,
@@ -70,7 +70,7 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
     }
   
 
-  BDSExtent ae = shape->Extent();
+  BDSExtent ae = shape.Extent();
   G4double  dz = BDSSamplerPlane::chordLength * 0.5;
   SetExtent(BDSExtent(ae.XNeg(), ae.XPos(), ae.YNeg(), ae.YPos(), -dz, dz));
 

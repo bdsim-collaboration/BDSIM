@@ -46,6 +46,9 @@ protected:
   /// and visualisation options.
   void CommonConstruction();
 
+  /// Name of this sampler
+  const G4String name;
+
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSSampler() = delete;
@@ -54,9 +57,6 @@ private:
   BDSSampler& operator=(const BDSSampler&) = delete;
   BDSSampler(BDSSampler&) = delete;
   /// @}
-  
-  /// Name of this sampler
-  G4String name;
 };
 
 #endif
