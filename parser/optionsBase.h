@@ -220,6 +220,7 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     collimatorsAreInfiniteAbsorbers;
     ///@}
 
     // biasing options

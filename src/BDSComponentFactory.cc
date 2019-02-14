@@ -93,6 +93,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/crystal.h"
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <utility>
 #include <include/BDSFieldBuilder.hh>
@@ -397,6 +398,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
       component->SetMinimumKineticEnergy(element->minimumKineticEnergy*CLHEP::GeV);
+
+      // infinite absorbers for collimators - must be done after SetMinimumKineticEnergy and
+      // specific to these elements. must be done before initialise too.
+      switch (element->type)
+	{
+	case ElementType::_ECOL:
+	case ElementType::_RCOL:
+	case ElementType::_JCOL:
+	  {
+	    if (BDSGlobalConstants::Instance()->CollimatorsAreInfiniteAbsorbers())
+	      {component->SetMinimumKineticEnergy(std::numeric_limits<double>::max());}
+	    break;
+	  }
+	default:
+	  {break;}	  
+	}
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory

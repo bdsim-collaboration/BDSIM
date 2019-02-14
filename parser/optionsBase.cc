@@ -185,6 +185,7 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  collimatorsAreInfiniteAbsorbers = false;
   
   // biasing options
   defaultBiasVacuum        = "";
