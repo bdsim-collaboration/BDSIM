@@ -76,22 +76,26 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
 {
 #ifdef BDSDEBUG
-  auto status = track->GetTrackStatus();
-  G4String name;
-  switch (status)
-    {
-    case G4TrackStatus::fAlive:
-      {name = "fAlive"; break;}
-    case G4TrackStatus::fStopButAlive:
-      {name = "fStopButAlive"; break;}
-    case G4TrackStatus::fKillTrackAndSecondaries:
-      {name = "fKillTrackAndSecondaries"; break;}
-    case G4TrackStatus::fStopAndKill:
-      {name = "fStopAndKill"; break;}
-    default:
-      {name = "other"; break;}
-    }  
-  G4cout << "track ID " << track->GetTrackID() << " status " << name << G4endl;
+  G4int trackID = track->GetTrackID();
+  if (trackID < 100)
+    {// limit range of debug output
+      auto status = track->GetTrackStatus();
+      G4String name;
+      switch (status)
+	{
+	case G4TrackStatus::fAlive:
+	  {name = "fAlive"; break;}
+	case G4TrackStatus::fStopButAlive:
+	  {name = "fStopButAlive"; break;}
+	case G4TrackStatus::fKillTrackAndSecondaries:
+	  {name = "fKillTrackAndSecondaries"; break;}
+	case G4TrackStatus::fStopAndKill:
+	  {name = "fStopAndKill"; break;}
+	default:
+	  {name = "other"; break;}
+	}  
+      G4cout << "track ID " << trackID << " status " << name << G4endl;
+    }
 #endif
   if (track->GetParentID() == 0)
     {
