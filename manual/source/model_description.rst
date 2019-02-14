@@ -1115,6 +1115,11 @@ Parameter          Description                        Default     Required
 `horizontalWidth`  Outer full width [m]               0.5 m       No
 =================  =================================  ==========  ===========
 
+* The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
+  particles below this kinetic energy in the collimator. This is useful to match other simulations
+  where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
+  user should specify an energy greater than the total beam energy.
+
 .. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
 
@@ -1126,7 +1131,9 @@ Examples::
 
    ! Tapered
    TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
-
+   ! with kinetic energy limit
+   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+   
 
 ecol
 ^^^^
@@ -1175,12 +1182,18 @@ Parameter          Description                        Default     Required
 * Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
   that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
   no jaws will be built and BDSIM will exit.
+* The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
+  particles below this kinetic energy in the collimator. This is useful to match other simulations
+  where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
+  user should specify an energy greater than the total beam energy.
 
 Examples::
 
    ! Standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
+   ! with kinetic energy limit
+   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
 
 degrader
 ^^^^^^^^
