@@ -219,6 +219,7 @@ Bug Fixes
 * Fixed rare bug where segfault would occur in trying to account for energy deposition of
   artificially killed particles.
 * Fix memory leak of sampler structures (relatively small).
+* Fixed parsing of + or - symbols with ion definition. Now supports H- ion.
   
 Output Changes
 --------------
