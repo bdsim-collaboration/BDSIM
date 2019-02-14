@@ -96,7 +96,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <string>
 #include <utility>
-#include <include/BDSFieldBuilder.hh>
 
 using namespace GMAD;
 
