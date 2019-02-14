@@ -162,7 +162,7 @@ namespace GMAD
     double degraderOffset;
     ///@}
 
-    ///@[ for wirescanner
+    ///@{ for wirescanner
     double wireDiameter;
     double wireLength;
     double wireOffsetX;
