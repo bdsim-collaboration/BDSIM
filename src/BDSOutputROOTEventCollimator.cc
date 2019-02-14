@@ -130,8 +130,10 @@ void BDSOutputROOTEventCollimator::Fill(const BDSCollimatorHit* hit,
   if (eHit)
     {
       G4double eDep = eHit->GetEnergy() / CLHEP::GeV;
+      G4double eW   = eHit->GetEnergyWeighted() / CLHEP::GeV;
       G4double w    = eHit->GetWeight();
-      totalEnergyDeposited += eDep * w;
+      
+      totalEnergyDeposited += eW;
       
       primaryInteracted = primaryInteracted || eHit->GetParentID() == 0;
 
