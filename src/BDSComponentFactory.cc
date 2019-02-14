@@ -396,6 +396,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
+      component->SetMinimumKineticEnergy(element->minimumKineticEnergy*CLHEP::GeV);
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
