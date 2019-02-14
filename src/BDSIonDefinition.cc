@@ -39,6 +39,8 @@ BDSIonDefinition::BDSIonDefinition(G4String definition):
       G4String message("Invalid ion definition: \"" + definition + "\" -> A is less than Z");
       throw BDSException(__METHOD_NAME__, message);
     }
+  if (charge < 0)
+    {G4cout << __METHOD_NAME__ << "Using ion with -ve charge -> implies at least 1 extra electron." << G4endl;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSIonDefinition const& io)
