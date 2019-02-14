@@ -91,13 +91,17 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
   const G4VProcess* postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
   if (!postProcess)
     {return false;} // shouldn't happen - but for safety
-  G4int  processType       = postProcess->GetProcessType();
-  G4int  processSubType    = postProcess->GetProcessSubType();
-  G4bool initialised       = processType != -1;
-  G4bool notTransportation = processType != fTransportation;
-  G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
-  G4bool notParallel       = processType != fParallel;
-  G4bool scatteringPoint   = initialised && notTransportation && notGeneral && notParallel;
+  G4int  processType        = postProcess->GetProcessType();
+  G4int  processSubType     = postProcess->GetProcessSubType();
+  G4bool initialised        = processType != -1;
+  // step is not of interest if it was caused by just a transportation limit - ie no physics happened.
+  // we should still generate the hit though if the process was due to artifical energy cuts etc.
+  G4bool notTransportation  = processType != fTransportation;
+  G4bool notTransportation2 = processSubType != G4TransportationProcessType::COUPLED_TRANSPORTATION;
+  G4bool notTransportation3 = processSubType != G4TransportationProcessType::TRANSPORTATION;
+  G4bool notTransportation4 = processSubType != G4TransportationProcessType ::STEP_LIMITER;
+  G4bool notParallel        = processType != fParallel;
+  G4bool scatteringPoint    = initialised && notTransportation && notTransportation2 && notTransportation3&& notTransportation4 && notParallel;
   if (!scatteringPoint)
     {return false;} // don't store it - could just be step through thin collimator
 
