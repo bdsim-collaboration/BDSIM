@@ -50,7 +50,7 @@ std::ostream& operator<< (std::ostream& out, BDSIonDefinition const& io)
 
 void BDSIonDefinition::Parse(const G4String& definition)
 {
-  std::regex numberMatch("([0-9]+)");
+  std::regex numberMatch("(\\+*-*[0-9]+)");
 
   auto wordsBegin = std::sregex_iterator(definition.begin(), definition.end(), numberMatch);
   auto wordsEnd   = std::sregex_iterator();
