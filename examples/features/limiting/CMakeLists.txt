@@ -4,3 +4,4 @@ simple_testing(limit-minrange "--file=minimumRange.gmad"         ${OVERLAP_CHECK
 simple_testing(limit-none     "--file=standard.gmad"             ${OVERLAP_CHECK})
 simple_testing(limit-range    "--file=range.gmad"                ${OVERLAP_CHECK})
 simple_testing(limit-minke-collimator "--file=minimumKineticEnergyCollimator.gmad" ${OVERLAP_CHECK})
+simple_testing(limit-inf-abs-col      "--file=collimatorsAreInfiniteAbsorbers.gmad" ${OVERLAP_CHECK})
