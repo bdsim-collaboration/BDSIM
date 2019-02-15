@@ -54,7 +54,6 @@ at each step in the simulation. This records information, such as: all coordinat
 type, state and the physics process that determined that step.
 
 
-
 Output Data Selection \& Reduction
 ----------------------------------
 
@@ -554,7 +553,10 @@ different value per-event run in BDSIM.
 |                     |                                  | accelerator material.                            |
 +---------------------+----------------------------------+--------------------------------------------------+
 | ElossVacuum (\*)    | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
-|                     |                                  | accelerator vacuum onlyl                         |
+|                     |                                  | accelerator vacuum only                          |
++---------------------+----------------------------------+--------------------------------------------------+
+| ElossTunnel (\*)    | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
+|                     |                                  | material                                         |
 +---------------------+----------------------------------+--------------------------------------------------+
 | ElossWorld (\*)     | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
 |                     |                                  | volume - by default the air.                     |
@@ -571,9 +573,6 @@ different value per-event run in BDSIM.
 |                     |                                  | is -1 (m) it means the particle finished away    |
 |                     |                                  | from the beam line where there was no            |
 |                     |                                  | curvilinear coordinate system present.           |
-+---------------------+----------------------------------+--------------------------------------------------+
-| TunnelHit           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
-|                     |                                  | material                                         |
 +---------------------+----------------------------------+--------------------------------------------------+
 | Trajectory          | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
 |                     |                                  | took and the associated physics processes        |
@@ -592,7 +591,8 @@ different value per-event run in BDSIM.
 |                     |                                  | default only for primary particle hits.          |
 +---------------------+----------------------------------+--------------------------------------------------+
 
-* (\*) ElossVacuum, ElossWorld and ElossWorldExit are empty by default and controlled by the option :code:`storeElossWorld`.
+* (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
+  option :code:`storeElossWorld`.
 * (\*\*) COLL_xxxx is only added per collimator when the option :code:`storeCollimatorInfo` is used.
 
 The types and names of the contents of each class can be found in the header files in
@@ -647,7 +647,7 @@ BDSOutputROOTEventInfo
 | energyDepositedWorld        | double            | (GeV) Integrated energy in the ElossWorld   |
 |                             |                   | structure including the statistical weight. |
 +-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedTunnel       | double            | (GeV) Integrated energy in the TunnelHits   |
+| energyDepositedTunnel       | double            | (GeV) Integrated energy in the ElossTunnel  |
 |                             |                   | including the statistical weight.           |
 +-----------------------------+-------------------+---------------------------------------------+
 | energyWorldExit             | double            | (GeV) Integrated energy of all particles    |
@@ -1037,10 +1037,10 @@ BDSIM produces six histograms by default during the simulation. These are:
 |                          | `Eloss` branch.                                                 |
 +--------------------------+-----------------------------------------------------------------+
 | ElossTunnel (\*\*)       | Energy deposition in the tunnel. Based on data from the         |
-|                          | `TunnelHit` branch.                                             |
+|                          | `ElossTunnel` branch.                                           |
 +--------------------------+-----------------------------------------------------------------+
 | ElossTunnelPE (\*\*)     | Energy deposition in the tunnel with per element binning. Based |
-|                          | on data from the `TunnelHit` branch.                            |
+|                          | on data from the `ElossTunnel` branch.                          |
 +--------------------------+-----------------------------------------------------------------+
 | CollPhitsPE (\*\*\*)     | Primary hits where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PhitsPE   |

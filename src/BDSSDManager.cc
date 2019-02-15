@@ -16,19 +16,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSCollimatorSD.hh"
+#include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
-#include "BDSTerminatorSD.hh"
-#include "BDSVolumeExitSD.hh"
+#include "BDSSDTerminator.hh"
+#include "BDSSDVolumeExit.hh"
 
 #include "G4SDManager.hh"
 #include "G4Version.hh"
@@ -80,44 +80,44 @@ BDSSDManager::BDSSDManager()
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
   // sampler plane
-  samplerPlane = new BDSSamplerSD("plane");
+  samplerPlane = new BDSSDSampler("plane");
   SDMan->AddNewDetector(samplerPlane);
 
   // Sampler cylindrical
-  samplerCylinder = new BDSSamplerSD("cylinder");
+  samplerCylinder = new BDSSDSampler("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
-  terminator  = new BDSTerminatorSD("terminator");
+  terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  eCounter = new BDSEnergyCounterSD("general", stopSecondaries);
-  SDMan->AddNewDetector(eCounter);
+  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries);
+  SDMan->AddNewDetector(energyDeposition);
 
-  eCounterVacuum = new BDSEnergyCounterSD("vacuum", stopSecondaries);
-  SDMan->AddNewDetector(eCounterVacuum);
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries);
+  SDMan->AddNewDetector(energyDepositionVacuum);
 
-  eCounterTunnel = new BDSEnergyCounterSD("tunnel", stopSecondaries);
-  SDMan->AddNewDetector(eCounterTunnel);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries);
+  SDMan->AddNewDetector(energyDepositionTunnel);
 
-  eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries);
-  SDMan->AddNewDetector(eCounterWorld);
+  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries);
+  SDMan->AddNewDetector(energyDepositionWorld);
 
-  worldExit= new BDSVolumeExitSD("worldExit", true);
+  worldExit= new BDSSDVolumeExit("worldExit", true);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029
   // only multiple SDs since 10.3
   G4MultiSensitiveDetector* wcsd = new G4MultiSensitiveDetector("world_complete");
   SDMan->AddNewDetector(wcsd);
-  wcsd->AddSD(eCounterWorld);
+  wcsd->AddSD(energyDepositionWorld);
   wcsd->AddSD(worldExit);
   worldCompleteSD = wcsd;
 #endif
 
-  collimatorSD = new BDSCollimatorSD("collimator");
+  collimatorSD = new BDSSDCollimator("collimator");
   collimatorCompleteSD = new BDSMultiSensitiveDetectorOrdered("collimator_complete");
-  collimatorCompleteSD->AddSD(eCounter);
+  collimatorCompleteSD->AddSD(energyDeposition);
   collimatorCompleteSD->AddSD(collimatorSD);
   // set up a filter for the collimator sensitive detector - always store primary hits
   G4VSDFilter* filter = nullptr;
@@ -151,33 +151,33 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::energydep:
       {
 	if (applyOptions)
-	  {result = generateELossHits ? eCounter : nullptr;}
+	  {result = generateELossHits ? energyDeposition : nullptr;}
 	else
-	  {result = eCounter;}
+	  {result = energyDeposition;}
 	break;
       }
     case BDSSDType::energydepvacuum:
       {
 	if (applyOptions)
-	  {result = generateELossVacuumHits ? eCounterVacuum : nullptr;}
+	  {result = generateELossVacuumHits ? energyDepositionVacuum : nullptr;}
 	else
-	  {result = eCounterVacuum;}
+	  {result = energyDepositionVacuum;}
 	break;
       }
     case BDSSDType::energydeptunnel:
       {
 	if (applyOptions)
-	  {result = generateELossTunnelHits ? eCounterTunnel : nullptr;}
+	  {result = generateELossTunnelHits ? energyDepositionTunnel : nullptr;}
 	else
-	  {result = eCounterTunnel;}
+	  {result = energyDepositionTunnel;}
 	break;
       }
     case BDSSDType::energydepworld:
       {
 	if (applyOptions)
-	  {result = storeELossWorld ? eCounterWorld : nullptr;}
+	  {result = storeELossWorld ? energyDepositionWorld : nullptr;}
 	else
-	  {result = eCounterWorld;}
+	  {result = energyDepositionWorld;}
 	break;
       }
     case BDSSDType::worldexit:

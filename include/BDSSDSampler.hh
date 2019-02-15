@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSAMPLERSD_H
-#define BDSSAMPLERSD_H
+#ifndef BDSSDSAMPLER_H
+#define BDSSDSAMPLER_H
 
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 #include "BDSSensitiveDetector.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -34,18 +34,18 @@ class G4TouchableHistory;
 /**
  * @brief The sensitive detector class that provides sensitivity to BDSSampler instances.
  *
- * It creates BDSSamplerHit instances for each particle impact on a sampler this SD is
+ * It creates BDSHitSampler instances for each particle impact on a sampler this SD is
  * attached to.
  * 
  * Written and edited by many authors over time.
  */
 
-class BDSSamplerSD: public BDSSensitiveDetector
+class BDSSDSampler: public BDSSensitiveDetector
 { 
 public:
   /// Construct a sampler with name and type (plane/cylinder).
-  explicit BDSSamplerSD(G4String name);
-  virtual ~BDSSamplerSD();
+  explicit BDSSDSampler(G4String name);
+  virtual ~BDSSDSampler();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).
@@ -60,7 +60,7 @@ public:
 
 private:
   /// The hits collection for this sensitive detector class that's owned by each instance.
-  BDSSamplerHitsCollection* SamplerCollection;
+  BDSHitsCollectionSampler* SamplerCollection;
 
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;

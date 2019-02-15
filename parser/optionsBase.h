@@ -206,6 +206,7 @@ namespace GMAD
     int      maximumBetaChangePerStep;
     long     maximumTracksPerEvent;
     double   minimumKineticEnergy;
+    double   minimumKineticEnergyTunnel;
     double   minimumRange;
     double   defaultRangeCut;
     double   prodCutPhotons;
@@ -220,6 +221,8 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     collimatorsAreInfiniteAbsorbers;
+    bool     tunnelIsInfiniteAbsorber;
     ///@}
 
     // biasing options

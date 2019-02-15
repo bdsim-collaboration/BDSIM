@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSCOLLIMATORHIT_H
-#define BDSCOLLIMATORHIT_H
+#ifndef BDSHITCOLLIMATOR_H
+#define BDSHITCOLLIMATOR_H
 
 #include "globals.hh"
 #include "G4VHit.hh"
@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Allocator.hh"
 
 class BDSBeamline;
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 
 /**
  * @brief Snapshot of information for particle passing through a collimator.
@@ -36,18 +36,18 @@ class BDSEnergyCounterHit;
  * @author Laurie Nevay
  */
 
-class BDSCollimatorHit: public G4VHit
+class BDSHitCollimator: public G4VHit
 {
 public:
-  BDSCollimatorHit();
-  BDSCollimatorHit(const BDSBeamline*   beamlineIn,
+  BDSHitCollimator();
+  BDSHitCollimator(const BDSBeamline*   beamlineIn,
 		   G4int                collimatorIndexIn,
 		   const G4ThreeVector& preStepPositionIn,
 		   const G4ThreeVector& preStepMomentumIn,
 		   G4double             totalEnergyIn,
-		   BDSEnergyCounterHit* energyDepositionHitIn);
+		   BDSHitEnergyDeposition* energyDepositionHitIn);
 
-  virtual ~BDSCollimatorHit(){;}
+  virtual ~BDSHitCollimator(){;}
 
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -60,22 +60,22 @@ public:
 
   /// Pointer to the externally created energy deposition hit for the step in the
   /// collimator this hit will correspond to.
-  BDSEnergyCounterHit* energyDepositionHit;
+  BDSHitEnergyDeposition* energyDepositionHit;
 };
 
-typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
-extern G4Allocator<BDSCollimatorHit> BDSCollimatorHitAllocator;
+typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
+extern G4Allocator<BDSHitCollimator> BDSAllocatorCollimator;
 
-inline void* BDSCollimatorHit::operator new(size_t)
+inline void* BDSHitCollimator::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSCollimatorHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorCollimator.MallocSingle();
   return aHit;
 }
 
-inline void BDSCollimatorHit::operator delete(void *aHit)
+inline void BDSHitCollimator::operator delete(void *aHit)
 {
-  BDSCollimatorHitAllocator.FreeSingle((BDSCollimatorHit*) aHit);
+  BDSAllocatorCollimator.FreeSingle((BDSHitCollimator*) aHit);
 }
 
 #endif

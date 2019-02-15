@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
-#include "BDSTerminatorSD.hh"
+#include "BDSSDTerminator.hh"
 
 #include "G4ios.hh"
 #include "G4TouchableHistory.hh"
@@ -28,28 +28,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip>
 
-G4int BDSTerminatorSD::eventNumber = 0;
+G4int BDSSDTerminator::eventNumber = 0;
 
 
-BDSTerminatorSD::BDSTerminatorSD(G4String name)
+BDSSDTerminator::BDSSDTerminator(G4String name)
   :G4VSensitiveDetector(name)
 {
   moduloEvents = BDSGlobalConstants::Instance()->PrintModuloEvents();
   moduloTurns  = BDSGlobalConstants::Instance()->PrintModuloTurns();
 }
 
-BDSTerminatorSD::~BDSTerminatorSD()
+BDSSDTerminator::~BDSSDTerminator()
 {
   eventNumber = 0;
 }
 
-void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
+void BDSSDTerminator::Initialize(G4HCofThisEvent* /*HCE*/)
 {
   BDSGlobalConstants::Instance()->ResetTurnNumber();
   //we don't actually use HCE here as we don't need to log any of the particle info
 }
 
-G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSSDTerminator::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4Track* theTrack    = aStep->GetTrack();
   G4int parentID       = theTrack->GetParentID();
@@ -99,7 +99,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 }
 
 
-void BDSTerminatorSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
+void BDSSDTerminator::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
   BDSGlobalConstants::Instance()->ResetTurnNumber();
 }

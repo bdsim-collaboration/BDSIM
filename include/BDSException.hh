@@ -49,6 +49,7 @@ public:
 
   /// Allow setting of name later.
   void SetName(const std::string& nameIn) {name = nameIn;}
+  void AppendToMessage(const std::string& messageIn) {message += " " + messageIn;}
 
   /// @{ Data to print.
   std::string name;

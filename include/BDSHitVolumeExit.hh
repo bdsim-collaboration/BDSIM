@@ -16,30 +16,31 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSVOLUMEEXITHIT_H
-#define BDSVOLUMEEXITHIT_H
+#ifndef BDSHITVOLUMEEXIT_H
+#define BDSHITVOLUMEEXIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 
-class BDSVolumeExitHit;
+class BDSHitVolumeExit;
 
-typedef G4THitsCollection<BDSVolumeExitHit> BDSVolumeExitHitsCollection;
-extern G4Allocator<BDSVolumeExitHit> BDSVolumeExitHitAllocator;
+typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
+extern G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 
 /**
  * @brief Information recorded for a step leaving a volume.
  *
+ * @author Laurie Nevay
  */
 
-class BDSVolumeExitHit: public G4VHit
+class BDSHitVolumeExit: public G4VHit
 {
 public:
-  /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
+  /// Default (in effect) constructor for energy deposition hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSVolumeExitHit(G4double totalEnergyIn,
+  BDSHitVolumeExit(G4double totalEnergyIn,
 		   G4double postStepKineticEnergyIn,
 		   G4double XIn,
 		   G4double YIn,
@@ -51,7 +52,7 @@ public:
 		   G4double weightIn,
 		   G4int    turnsTakenIn);
   
-  virtual ~BDSVolumeExitHit(){;}
+  virtual ~BDSHitVolumeExit(){;}
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -80,19 +81,19 @@ public:
 
 private:
   /// Private default constructor (not implemented) as the constructor.
-  BDSVolumeExitHit() = delete;
+  BDSHitVolumeExit() = delete;
 };
 
-inline void* BDSVolumeExitHit::operator new(size_t)
+inline void* BDSHitVolumeExit::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSVolumeExitHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorVolumeExit.MallocSingle();
   return aHit;
 }
 
-inline void BDSVolumeExitHit::operator delete(void *aHit)
+inline void BDSHitVolumeExit::operator delete(void *aHit)
 {
- BDSVolumeExitHitAllocator.FreeSingle((BDSVolumeExitHit*) aHit);
+ BDSAllocatorVolumeExit.FreeSingle((BDSHitVolumeExit*) aHit);
 }
 
 #endif

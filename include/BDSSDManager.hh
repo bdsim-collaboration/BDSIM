@@ -25,19 +25,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-class BDSCollimatorSD;
-class BDSEnergyCounterSD;
+class BDSSDCollimator;
+class BDSSDEnergyDeposition;
 class BDSMultiSensitiveDetectorOrdered;
-class BDSSamplerSD;
-class BDSTerminatorSD;
-class BDSVolumeExitSD;
+class BDSSDSampler;
+class BDSSDTerminator;
+class BDSSDVolumeExit;
 
 class G4VSDFilter;
 
 #if G4VERSION_NUMBER < 1030
 // In this case we use only the energy counter SD and return it
 // as a base class pointer. Include header so casting works.
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #endif
 
 /**
@@ -68,44 +68,44 @@ public:
 					  G4bool applyOptions = false) const;
 
   /// SD for samplers (plane type).
-  inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
+  inline BDSSDSampler* SamplerPlane() const {return samplerPlane;}
 
   /// SD for samplers (cylinder type).
-  inline BDSSamplerSD* GetSamplerCylinderSD() const {return samplerCylinder;}
+  inline BDSSDSampler* SamplerCylinder() const {return samplerCylinder;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
-  inline BDSTerminatorSD* GetTerminatorSD() const {return terminator;}
+  inline BDSSDTerminator* Terminator() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterSD() const {return eCounter;}
+  inline BDSSDEnergyDeposition* EnergyDeposition() const {return energyDeposition;}
 
   /// SD for energy deposition in vacuum volumes.
-  inline BDSEnergyCounterSD* GetEnergyCounterVacuumSD() const {return eCounterVacuum;}
+  inline BDSSDEnergyDeposition* EnergyDepositionVacuum() const {return energyDepositionVacuum;}
 
   /// SD for tunnel energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return eCounterTunnel;}
+  inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return energyDepositionTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return eCounterWorld;}
+  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return energyDepositionWorld;}
 
   /// SD for world exit hits.
-  inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
+  inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
-  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* WorldComplete() const {return worldCompleteSD;}
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
-  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return eCounterWorld;}
+  inline G4VSensitiveDetector* WorldComplete() const {return energyDepositionWorld;}
 #endif
 
   /// SD for collimator impact locations.
-  inline BDSCollimatorSD* GetCollimatorSD() const {return collimatorSD;}
+  inline BDSSDCollimator* Collimator() const {return collimatorSD;}
 
   /// SD for collimator impacts + energy deposition at the same time in order.
-  inline BDSMultiSensitiveDetectorOrdered* GetCollimatorCompleteSD() const {return collimatorCompleteSD;}
+  inline BDSMultiSensitiveDetectorOrdered* CollimatorComplete() const {return collimatorCompleteSD;}
 
 private:
   /// Private default constructor for singleton.
@@ -117,19 +117,19 @@ private:
   static BDSSDManager* instance;
 
   /// @{ SD instance.
-  BDSSamplerSD*       samplerPlane;
-  BDSSamplerSD*       samplerCylinder;
-  BDSTerminatorSD*    terminator;
-  BDSEnergyCounterSD* eCounter;
-  BDSEnergyCounterSD* eCounterVacuum;
-  BDSEnergyCounterSD* eCounterTunnel;
-  BDSEnergyCounterSD* eCounterWorld;
-  BDSVolumeExitSD*    worldExit;
+  BDSSDSampler*       samplerPlane;
+  BDSSDSampler*       samplerCylinder;
+  BDSSDTerminator*    terminator;
+  BDSSDEnergyDeposition* energyDeposition;
+  BDSSDEnergyDeposition* energyDepositionVacuum;
+  BDSSDEnergyDeposition* energyDepositionTunnel;
+  BDSSDEnergyDeposition* energyDepositionWorld;
+  BDSSDVolumeExit*    worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
-  BDSCollimatorSD*    collimatorSD;
+  BDSSDCollimator*    collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.

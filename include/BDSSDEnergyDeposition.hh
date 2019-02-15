@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSENERGYCOUNTERSD_H
-#define BDSENERGYCOUNTERSD_H
+#ifndef BDSSDENERGYDEPOSITION_H
+#define BDSSDENERGYDEPOSITION_H
 
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSSensitiveDetector.hh"
 
 class BDSAuxiliaryNavigator;
@@ -30,7 +30,7 @@ class G4TouchableHistory;
 class G4Track;
 
 /**
- * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.
+ * @brief Generates BDSHitsEnergyDepositions from step information - uses curvilinear coords.
  *
  * This class interrogates a G4Step and generates an energy deposition hit if there was
  * a change in energy. This assigns the energy deposition to a point randomly (uniformly)
@@ -38,12 +38,12 @@ class G4Track;
  * the curvilinear parallel world for curvilinear coordinates.
  */
 
-class BDSEnergyCounterSD: public BDSSensitiveDetector
+class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
-  BDSEnergyCounterSD(G4String name,
+  BDSSDEnergyDeposition(G4String name,
 		     G4bool   stopSecondariesIn);
-  virtual ~BDSEnergyCounterSD();
+  virtual ~BDSSDEnergyDeposition();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
 
@@ -65,13 +65,13 @@ public:
   
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
-  BDSEnergyCounterSD(BDSEnergyCounterSD&);
-  BDSEnergyCounterSD() = delete;
+  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
+  BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
+  BDSSDEnergyDeposition() = delete;
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
   G4String colName;         ///< Collection name.
-  BDSEnergyCounterHitsCollection* energyCounterCollection;
+  BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;
   G4int    HCIDe;
 
   ///@{ per hit variable

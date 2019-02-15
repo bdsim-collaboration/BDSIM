@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSTERMINATORSD_H
-#define BDSTERMINATORSD_H
+#ifndef BDSSDTERMINATOR_H
+#define BDSSDTERMINATOR_H
 
 #include "G4VSensitiveDetector.hh"
 
@@ -27,11 +27,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSTerminatorSD: public G4VSensitiveDetector
+class BDSSDTerminator: public G4VSensitiveDetector
 {
 public:
-  explicit BDSTerminatorSD(G4String name);
-  virtual ~BDSTerminatorSD();
+  explicit BDSSDTerminator(G4String name);
+  virtual ~BDSSDTerminator();
 
   virtual void   Initialize (G4HCofThisEvent* HCE);
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);

@@ -16,14 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 
-G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
+G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
-BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
+BDSHitEnergyDeposition::BDSHitEnergyDeposition(const G4int&    nCopyIn,
 					 const G4double& energyIn,
 					 const G4double& preStepKineticEnergyIn,
 					 const G4double& XIn, 
@@ -67,5 +67,5 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
   beamlineIndex(beamlineIndexIn)
 {;}
 
-BDSEnergyCounterHit::~BDSEnergyCounterHit()
+BDSHitEnergyDeposition::~BDSHitEnergyDeposition()
 {;}

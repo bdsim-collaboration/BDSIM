@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
 

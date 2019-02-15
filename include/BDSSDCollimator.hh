@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSCOLLIMATORSD_H
-#define BDSCOLLIMATORSD_H
+#ifndef BDSSDCOLLIMATOR_H
+#define BDSSDCOLLIMATOR_H
 
-#include "BDSCollimatorHit.hh"
+#include "BDSHitCollimator.hh"
 #include "BDSSensitiveDetector.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSAuxiliaryNavigator;
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 
 class G4Step;
 class G4HCofThisEvent;
@@ -39,27 +39,27 @@ class G4VHit;
 /**
  * @brief The sensitive detector class that provides sensitivity to collimators instances.
  *
- * This class creates BDSCollimatorHits for each collimator this SD is
+ * This class creates BDSHitCollimators for each collimator this SD is
  * attached to.
  * 
- * This class is designed to work with BDSEnergyCounterSD in an ordered multi SD. If not,
+ * This class is designed to work with BDSSDEnergyDepositionB in an ordered multi SD. If not,
  * a nullptr will be stored for the energy deposition hit.
  * 
  * @author Laurie Nevay
  */
 
-class BDSCollimatorSD: public BDSSensitiveDetector
+class BDSSDCollimator: public BDSSensitiveDetector
 { 
 public:
   /// Include unique name for each instance.
-  explicit BDSCollimatorSD(G4String name);
+  explicit BDSSDCollimator(G4String name);
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSCollimatorSD& operator=(const BDSCollimatorSD&) = delete;
-  BDSCollimatorSD(BDSCollimatorSD&) = delete;
+  BDSSDCollimator& operator=(const BDSSDCollimator&) = delete;
+  BDSSDCollimator(BDSSDCollimator&) = delete;
   /// @}
 
-  virtual ~BDSCollimatorSD();
+  virtual ~BDSSDCollimator();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).
@@ -83,7 +83,7 @@ private:
   inline bool IsIon(const int& pdgID) const {return pdgID > 1000000000;}
   
   /// The hits collection for this sensitive detector class that's owned by each instance.
-  BDSCollimatorHitsCollection* collimatorCollection;
+  BDSHitsCollectionCollimator* collimatorCollection;
 
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;

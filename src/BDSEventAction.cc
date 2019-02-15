@@ -17,25 +17,25 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSCollimatorSD.hh"
+#include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSHitEnergyDeposition.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
-#include "BDSSamplerHit.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSHitSampler.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
-#include "BDSTerminatorSD.hh"
+#include "BDSSDTerminator.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
-#include "BDSVolumeExitSD.hh"
+#include "BDSSDVolumeExit.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -136,7 +136,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   // number feedback
   G4int event_number = evt->GetEventID();
-  BDSTerminatorSD::eventNumber = event_number; // update static member of terminator
+  BDSSDTerminator::eventNumber = event_number; // update static member of terminator
   eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}
@@ -148,14 +148,14 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
-      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
-      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
-      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
-      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterVacuumSD()->GetName());
-      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
-      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
-      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->GetCollimatorSD()->GetName());
+      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
+      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->SamplerCylinder()->GetName());
+      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->EnergyDeposition()->GetName());
+      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionVacuum()->GetName());
+      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionTunnel()->GetName());
+      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorld()->GetName());
+      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
+      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
     }
   FireLaserCompton=true;
 
@@ -198,19 +198,19 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
   // samplers
-  typedef BDSSamplerHitsCollection shc;
+  typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane));
   shc* hitsCylinder = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_cylin));
 
   // energy deposition collections - eloss, tunnel hits
-  typedef BDSEnergyCounterHitsCollection echc;
+  typedef BDSHitsCollectionEnergyDeposition echc;
   echc* eCounterHits       = dynamic_cast<echc*>(HCE->GetHC(eCounterID));
   echc* eCounterVacuumHits = dynamic_cast<echc*>(HCE->GetHC(eCounterVacuumID));
   echc* eCounterTunnelHits = dynamic_cast<echc*>(HCE->GetHC(eCounterTunnelID));
   echc* eCounterWorldHits  = dynamic_cast<echc*>(HCE->GetHC(eCounterWorldID));
 
   // world exit hits
-  typedef BDSVolumeExitHitsCollection vehc;
+  typedef BDSHitsCollectionVolumeExit vehc;
   vehc* worldExitHits = dynamic_cast<vehc*>(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
@@ -233,7 +233,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // so we don't check the vacuum energy deposition
 
   // collimator hits if any
-  typedef BDSCollimatorHitsCollection chc;
+  typedef BDSHitsCollectionCollimator chc;
   chc* collimatorHits = dynamic_cast<chc*>(HCE->GetHC(collimatorCollID));
   
   // primary hits and losses from
@@ -347,7 +347,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     if (sRangeToStore.size() != 0)
       {
 	G4int n_hit = eCounterHits->entries();
-	BDSEnergyCounterHit *hit;
+	BDSHitEnergyDeposition *hit;
 	for (G4int i = 0; i < n_hit; i++)
 	  {
 	    hit = (*eCounterHits)[i];
