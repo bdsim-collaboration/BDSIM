@@ -148,14 +148,14 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
-      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
-      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
-      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
-      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterVacuumSD()->GetName());
-      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
-      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
-      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->GetCollimatorSD()->GetName());
+      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
+      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->SamplerCylinder()->GetName());
+      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->EnergyDeposition()->GetName());
+      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionVacuum()->GetName());
+      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionTunnel()->GetName());
+      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorld()->GetName());
+      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
+      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
     }
   FireLaserCompton=true;
 

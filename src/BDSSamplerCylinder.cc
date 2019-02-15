@@ -41,5 +41,5 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String      nameIn,
 
   CommonConstruction();
 
-  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerCylinderSD());
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->SamplerCylinder());
 }

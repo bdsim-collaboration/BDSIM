@@ -500,7 +500,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // this will be a nullptr depending on the options
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
         {
-          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
+          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
         }
 
@@ -536,7 +536,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // make the world sensitive to energy deposition with its own unique hits collection
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
-        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());}
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe

@@ -154,7 +154,7 @@ void BDSScreenLayer::SetColour(G4Colour col)
 void BDSScreenLayer::AssignSampler()
 {
   G4String samplerName = name;
-  log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  log->SetSensitiveDetector(BDSSDManager::Instance()->SamplerPlane());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
   log->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }

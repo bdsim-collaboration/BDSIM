@@ -689,7 +689,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildSampler(BDSMySQLTable* aSQLTable, G
 
   lengthUserLimit = length*0.5;
   
-  aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->SamplerPlane());
 
   G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(Name,nullptr);
   

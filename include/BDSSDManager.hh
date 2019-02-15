@@ -68,33 +68,33 @@ public:
 					  G4bool applyOptions = false) const;
 
   /// SD for samplers (plane type).
-  inline BDSSDSampler* GetSamplerPlaneSD() const {return samplerPlane;}
+  inline BDSSDSampler* SamplerPlane() const {return samplerPlane;}
 
   /// SD for samplers (cylinder type).
-  inline BDSSDSampler* GetSamplerCylinderSD() const {return samplerCylinder;}
+  inline BDSSDSampler* SamplerCylinder() const {return samplerCylinder;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
-  inline BDSSDTerminator* GetTerminatorSD() const {return terminator;}
+  inline BDSSDTerminator* Terminator() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSSDEnergyDeposition* GetEnergyCounterSD() const {return eCounter;}
+  inline BDSSDEnergyDeposition* EnergyDeposition() const {return eCounter;}
 
   /// SD for energy deposition in vacuum volumes.
-  inline BDSSDEnergyDeposition* GetEnergyCounterVacuumSD() const {return eCounterVacuum;}
+  inline BDSSDEnergyDeposition* EnergyDepositionVacuum() const {return eCounterVacuum;}
 
   /// SD for tunnel energy counter.
-  inline BDSSDEnergyDeposition* GetEnergyCounterTunnelSD() const {return eCounterTunnel;}
+  inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return eCounterTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSSDEnergyDeposition* GetEnergyCounterWorldSD() const {return eCounterWorld;}
+  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return eCounterWorld;}
 
   /// SD for world exit hits.
-  inline BDSSDVolumeExit* GetWorldExitSD() const {return worldExit;}
+  inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
-  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* WorldComplete() const {return worldCompleteSD;}
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
@@ -102,10 +102,10 @@ public:
 #endif
 
   /// SD for collimator impact locations.
-  inline BDSSDCollimator* GetCollimatorSD() const {return collimatorSD;}
+  inline BDSSDCollimator* Collimator() const {return collimatorSD;}
 
   /// SD for collimator impacts + energy deposition at the same time in order.
-  inline BDSMultiSensitiveDetectorOrdered* GetCollimatorCompleteSD() const {return collimatorCompleteSD;}
+  inline BDSMultiSensitiveDetectorOrdered* CollimatorComplete() const {return collimatorCompleteSD;}
 
 private:
   /// Private default constructor for singleton.

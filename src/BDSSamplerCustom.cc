@@ -76,5 +76,5 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
 
   CommonConstruction();
 
-  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->SamplerPlane());
 }
