@@ -31,12 +31,13 @@ extern G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 /**
  * @brief Information recorded for a step leaving a volume.
  *
+ * @author Laurie Nevay
  */
 
 class BDSHitVolumeExit: public G4VHit
 {
 public:
-  /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
+  /// Default (in effect) constructor for energy deposition hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
   BDSHitVolumeExit(G4double totalEnergyIn,

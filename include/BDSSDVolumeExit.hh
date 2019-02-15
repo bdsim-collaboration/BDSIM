@@ -33,7 +33,7 @@ class G4Step;
 class G4TouchableHistory;
 
 /**
- * @brief Generates BDSVolumeExitHits if a particle is leaving a volume.
+ * @brief Generates BDSHitVolumeExits if a particle is leaving a volume.
  *
  * If the step results in exiting a volume, record the global coordinates.
  * Can do general volume exit or world volume exit (default). See G4StepStatus.
