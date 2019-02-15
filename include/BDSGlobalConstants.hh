@@ -291,6 +291,7 @@ public:
   inline G4VisAttributes*      VisibleDebugVisAttr()     const {return visibleDebugVisAttr;}
   inline G4VisAttributes*      ContainerVisAttr()        const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         DefaultUserLimits()       const {return defaultUserLimits;}
+  inline G4UserLimits*         DefaultUserLimitsTunnel() const {return defaultUserLimitsTunnel;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
@@ -346,6 +347,7 @@ private:
 
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
+  G4UserLimits* defaultUserLimitsTunnel;
   
   /// Turn Control
   G4int turnsTaken;
