@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
@@ -80,11 +80,11 @@ BDSSDManager::BDSSDManager()
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
   // sampler plane
-  samplerPlane = new BDSSamplerSD("plane");
+  samplerPlane = new BDSSDSampler("plane");
   SDMan->AddNewDetector(samplerPlane);
 
   // Sampler cylindrical
-  samplerCylinder = new BDSSamplerSD("cylinder");
+  samplerCylinder = new BDSSDSampler("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
   // Terminator sd to measure how many times that primary has passed through the terminator

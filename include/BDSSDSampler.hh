@@ -40,12 +40,12 @@ class G4TouchableHistory;
  * Written and edited by many authors over time.
  */
 
-class BDSSamplerSD: public BDSSensitiveDetector
+class BDSSDSampler: public BDSSensitiveDetector
 { 
 public:
   /// Construct a sampler with name and type (plane/cylinder).
-  explicit BDSSamplerSD(G4String name);
-  virtual ~BDSSamplerSD();
+  explicit BDSSDSampler(G4String name);
+  virtual ~BDSSDSampler();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).

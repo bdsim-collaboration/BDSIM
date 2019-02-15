@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMySQLTable.hh"
 #include "BDSMySQLVariable.hh"
 #include "BDSMySQLWrapper.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"

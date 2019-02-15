@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 

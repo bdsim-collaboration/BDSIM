@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSMultiSensitiveDetectorOrdered;
-class BDSSamplerSD;
+class BDSSDSampler;
 class BDSTerminatorSD;
 class BDSVolumeExitSD;
 
@@ -68,10 +68,10 @@ public:
 					  G4bool applyOptions = false) const;
 
   /// SD for samplers (plane type).
-  inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
+  inline BDSSDSampler* GetSamplerPlaneSD() const {return samplerPlane;}
 
   /// SD for samplers (cylinder type).
-  inline BDSSamplerSD* GetSamplerCylinderSD() const {return samplerCylinder;}
+  inline BDSSDSampler* GetSamplerCylinderSD() const {return samplerCylinder;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
@@ -117,8 +117,8 @@ private:
   static BDSSDManager* instance;
 
   /// @{ SD instance.
-  BDSSamplerSD*       samplerPlane;
-  BDSSamplerSD*       samplerCylinder;
+  BDSSDSampler*       samplerPlane;
+  BDSSDSampler*       samplerCylinder;
   BDSTerminatorSD*    terminator;
   BDSSDEnergyDeposition* eCounter;
   BDSSDEnergyDeposition* eCounterVacuum;

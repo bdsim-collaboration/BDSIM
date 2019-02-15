@@ -26,7 +26,7 @@ Work in progress.
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDManager.hh"
 #include "BDSCCDCamera.hh"
 #include "G4Box.hh"
