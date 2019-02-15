@@ -64,18 +64,18 @@ private:
 };
 
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
-extern G4Allocator<BDSHitSampler> BDSSamplerHitAllocator;
+extern G4Allocator<BDSHitSampler> BDSAllocatorSampler;
 
 inline void* BDSHitSampler::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSSamplerHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorSampler.MallocSingle();
   return aHit;
 }
 
 inline void BDSHitSampler::operator delete(void *aHit)
 {
-  BDSSamplerHitAllocator.FreeSingle((BDSHitSampler*) aHit);
+  BDSAllocatorSampler.FreeSingle((BDSHitSampler*) aHit);
 }
 
 #endif

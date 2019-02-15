@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4Allocator.hh"
 
-G4Allocator<BDSHitSampler> BDSSamplerHitAllocator;
+G4Allocator<BDSHitSampler> BDSAllocatorSampler;
 
 BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
 			     const BDSParticleCoordsFull& coordsIn,
