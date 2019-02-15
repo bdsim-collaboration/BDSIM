@@ -183,11 +183,11 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   BDSFieldInfo::defaultUL = defaultUserLimits; // update static member for field definitions
 
   defaultUserLimitsTunnel = new G4UserLimits(*defaultUserLimits);
-  defaultUserLimits->SetType("default_cuts_tunnel");
+  defaultUserLimitsTunnel->SetType("default_cuts_tunnel");
   if (BDS::IsFinite(MinimumKineticEnergyTunnel()))
-    {defaultUserLimits->SetUserMinEkine(MinimumKineticEnergyTunnel());}
+    {defaultUserLimitsTunnel->SetUserMinEkine(MinimumKineticEnergyTunnel());}
   if (TunnelIsInfiniteAbsorber())
-    {defaultUserLimits->SetUserMinEkine(std::numeric_limits<double>::max());}
+    {defaultUserLimitsTunnel->SetUserMinEkine(std::numeric_limits<double>::max());}
 }
 
 G4int BDSGlobalConstants::PrintModuloEvents() const
