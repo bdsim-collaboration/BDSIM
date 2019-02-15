@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSENERGYCOUNTERSD_H
-#define BDSENERGYCOUNTERSD_H
+#ifndef BDSSDENERGYDEPOSITION_H
+#define BDSSDENERGYDEPOSITION_H
 
 #include "BDSEnergyCounterHit.hh"
 #include "BDSSensitiveDetector.hh"
