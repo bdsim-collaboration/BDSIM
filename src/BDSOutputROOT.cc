@@ -97,8 +97,8 @@ void BDSOutputROOT::NewFile()
   // Build primary structures
   if (WritePrimaries())
     {
-      theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,32000,1);
-      theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,1);
+      theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,       32000, 1);
+      theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,  1);
     }
 
   // Build loss and hit structures
