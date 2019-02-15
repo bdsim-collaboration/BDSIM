@@ -227,7 +227,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
   /////////////////////////////////////////////////////////////////////////////////
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const BDSEnergyCounterHitsCollection *phc)
+void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition *phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }

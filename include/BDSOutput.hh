@@ -34,7 +34,7 @@ template <class T> class G4THitsCollection;
 class BDSHitCollimator;
 typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;
 class BDSHitEnergyDeposition;
-typedef G4THitsCollection<BDSHitEnergyDeposition> BDSEnergyCounterHitsCollection;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
 class BDSEventInfo;
 class BDSParticleCoordsFullGlobal;
 class BDSHitSampler;
@@ -108,10 +108,10 @@ public:
 		 const G4PrimaryVertex*                vertex,
 		 const BDSSamplerHitsCollection*       samplerHitsPlane,
 		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
-		 const BDSEnergyCounterHitsCollection* energyLoss,
-		 const BDSEnergyCounterHitsCollection* energyLossVacuum,
-		 const BDSEnergyCounterHitsCollection* energyLossTunnel,
-		 const BDSEnergyCounterHitsCollection* energyLossWorld,
+		 const BDSHitsCollectionEnergyDeposition* energyLoss,
+		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
+		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
+		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,
 		 const BDSVolumeExitHitsCollection*    worldExitHits,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
@@ -190,7 +190,7 @@ private:
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
-  void FillEnergyLoss(const BDSEnergyCounterHitsCollection *loss,
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition *loss,
 		      const LossType type);
 
   /// Fill a collection volume exit hits into the approprate output structure.

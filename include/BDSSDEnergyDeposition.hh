@@ -71,7 +71,7 @@ private:
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
   G4String colName;         ///< Collection name.
-  BDSEnergyCounterHitsCollection* energyCounterCollection;
+  BDSHitsCollectionEnergyDeposition* energyCounterCollection;
   G4int    HCIDe;
 
   ///@{ per hit variable

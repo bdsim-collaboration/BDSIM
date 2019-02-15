@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSHitEnergyDeposition;
 
-typedef G4THitsCollection<BDSHitEnergyDeposition> BDSEnergyCounterHitsCollection;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
 extern G4Allocator<BDSHitEnergyDeposition> BDSEnergyCounterHitAllocator;
 
 /**

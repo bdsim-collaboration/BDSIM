@@ -76,7 +76,7 @@ BDSSDEnergyDeposition::~BDSSDEnergyDeposition()
 
 void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 {
-  energyCounterCollection = new BDSEnergyCounterHitsCollection(GetName(),colName);
+  energyCounterCollection = new BDSHitsCollectionEnergyDeposition(GetName(),colName);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);

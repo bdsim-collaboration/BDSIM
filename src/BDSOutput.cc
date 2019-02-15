@@ -224,10 +224,10 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const G4PrimaryVertex*                vertex,
 			  const BDSSamplerHitsCollection*       samplerHitsPlane,
 			  const BDSSamplerHitsCollection*       samplerHitsCylinder,
-			  const BDSEnergyCounterHitsCollection* energyLoss,
-			  const BDSEnergyCounterHitsCollection* energyLossVacuum,
-			  const BDSEnergyCounterHitsCollection* energyLossTunnel,
-			  const BDSEnergyCounterHitsCollection* energyLossWorld,
+			  const BDSHitsCollectionEnergyDeposition* energyLoss,
+			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
+			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
+			  const BDSHitsCollectionEnergyDeposition* energyLossWorld,
 			  const BDSVolumeExitHitsCollection*    worldExitHits,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
@@ -530,7 +530,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     }
 }
 
-void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
+void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 			       const LossType lossType)
 {
   G4int n_hit = hits->entries();

@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
-typedef G4THitsCollection<BDSHitEnergyDeposition> BDSEnergyCounterHitsCollection;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -145,7 +145,7 @@ public:
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
   void Fill(const std::map<BDSTrajectory*, bool> &trajectory);
-  void Fill(const BDSEnergyCounterHitsCollection* phc);
+  void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 #endif
 
   /// Required to find beamline index careful including in streamer.

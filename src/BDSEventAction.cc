@@ -203,7 +203,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   shc* hitsCylinder = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_cylin));
 
   // energy deposition collections - eloss, tunnel hits
-  typedef BDSEnergyCounterHitsCollection echc;
+  typedef BDSHitsCollectionEnergyDeposition echc;
   echc* eCounterHits       = dynamic_cast<echc*>(HCE->GetHC(eCounterID));
   echc* eCounterVacuumHits = dynamic_cast<echc*>(HCE->GetHC(eCounterVacuumID));
   echc* eCounterTunnelHits = dynamic_cast<echc*>(HCE->GetHC(eCounterTunnelID));
