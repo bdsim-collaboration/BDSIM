@@ -1119,9 +1119,10 @@ Parameter          Description                        Default     Required
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
   user should specify an energy greater than the total beam energy.
-
-.. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
-	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
+* The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
+  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
+* All collimators can be made infinite absorbers with the general option
+  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 
 Examples::
@@ -1186,6 +1187,8 @@ Parameter          Description                        Default     Required
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
   user should specify an energy greater than the total beam energy.
+* All collimators can be made infinite absorbers with the general option
+  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 Examples::
 
@@ -3641,6 +3644,8 @@ described in `Tunnel Geometry`_.
 |                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
 
+.. _options-tracking:
+
 Tracking Options
 ^^^^^^^^^^^^^^^^
 
@@ -3655,6 +3660,10 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+|                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
+|                                  | killed and the energy recorded as deposited there.    |
++----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
 |                                  | magnets with finite poleface angles. The length of    |
 |                                  | the total element is conserved. (default = false).    |

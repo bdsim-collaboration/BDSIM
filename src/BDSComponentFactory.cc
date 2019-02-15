@@ -413,6 +413,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	default:
 	  {break;}	  
 	}
+      
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory

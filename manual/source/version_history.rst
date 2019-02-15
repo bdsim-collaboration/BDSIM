@@ -37,6 +37,10 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | **Option**                       | **Description**                                                  |
 +==================================+==================================================================+
+| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material of a       |
+|                                  | collimator (`rcol`, `ecol` and `jcol`) are killed and the energy |
+|                                  | recorded as deposited there.                                     |
++----------------------------------+------------------------------------------------------------------+
 | geant4Macro                      | Fun an optional macro in the visualiser once it's started.       |
 +----------------------------------+------------------------------------------------------------------+
 | g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to 110% of the    |
@@ -113,7 +117,7 @@ New Features
 * New optional collimator output structure in event made per collimator with prefix
   "COLL\_". Controlled by new option :code:`collimatorInfo`.
 * New mini-summary of collimators in Model tree when :code:`collimatorInfo` option is used.
-* New option for collimator elements :code:`minimumKineticEnergy` that allows the user to kill
+* New parameter for collimator elements :code:`minimumKineticEnergy` that allows the user to kill
   particles below a certain kinetic energy in a collimator.
 
 General
