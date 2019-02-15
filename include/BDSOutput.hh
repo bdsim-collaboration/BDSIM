@@ -38,7 +38,7 @@ typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposit
 class BDSEventInfo;
 class BDSParticleCoordsFullGlobal;
 class BDSHitSampler;
-typedef G4THitsCollection<BDSHitSampler> BDSSamplerHitsCollection;
+typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitVolumeExit;
@@ -106,8 +106,8 @@ public:
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                   info,
 		 const G4PrimaryVertex*                vertex,
-		 const BDSSamplerHitsCollection*       samplerHitsPlane,
-		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
+		 const BDSHitsCollectionSampler*       samplerHitsPlane,
+		 const BDSHitsCollectionSampler*       samplerHitsCylinder,
 		 const BDSHitsCollectionEnergyDeposition* energyLoss,
 		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
@@ -183,7 +183,7 @@ private:
   void FillEventInfo(const BDSEventInfo* info);
 
   /// Fill sampler hits into output structures.
-  void FillSamplerHits(const BDSSamplerHitsCollection* hits,
+  void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
 
   /// Fill the hit where the primary particle impact.

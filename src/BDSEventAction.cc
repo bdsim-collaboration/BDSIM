@@ -198,7 +198,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
   // samplers
-  typedef BDSSamplerHitsCollection shc;
+  typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane));
   shc* hitsCylinder = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_cylin));
 

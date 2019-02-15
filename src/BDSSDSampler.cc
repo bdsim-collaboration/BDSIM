@@ -55,7 +55,7 @@ BDSSDSampler::~BDSSDSampler()
 void BDSSDSampler::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
-  SamplerCollection = new BDSSamplerHitsCollection(GetName(),itsCollectionName);
+  SamplerCollection = new BDSHitsCollectionSampler(GetName(),itsCollectionName);
 
   // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)

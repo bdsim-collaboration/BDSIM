@@ -222,8 +222,8 @@ void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 
 void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const G4PrimaryVertex*                vertex,
-			  const BDSSamplerHitsCollection*       samplerHitsPlane,
-			  const BDSSamplerHitsCollection*       samplerHitsCylinder,
+			  const BDSHitsCollectionSampler*       samplerHitsPlane,
+			  const BDSHitsCollectionSampler*       samplerHitsCylinder,
 			  const BDSHitsCollectionEnergyDeposition* energyLoss,
 			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
@@ -469,7 +469,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->nCollimatorsInteracted = nCollimatorsInteracted;
 }
 
-void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
+void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
 				const BDSOutput::HitsType)
 {
 #ifdef BDSDEBUG

@@ -63,7 +63,7 @@ private:
   BDSHitSampler() = delete; ///< No default constructor.
 };
 
-typedef G4THitsCollection<BDSHitSampler> BDSSamplerHitsCollection;
+typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 extern G4Allocator<BDSHitSampler> BDSSamplerHitAllocator;
 
 inline void* BDSHitSampler::operator new(size_t)
