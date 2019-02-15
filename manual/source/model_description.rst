@@ -35,7 +35,13 @@ provided in order of requirement.
 * Sequence of Elements
   
   - :ref:`lattice-sequence`
-  - :ref:`sampler-output`
+
+* :ref:`sampler-output`
+
+  - :ref:`sampler-syntax`
+  - :ref:`sampler-dimensions`
+  - :ref:`sampler-visualisation`
+  - :ref:`user-sampler-placement`
     
 * Physics Processes
   
@@ -1109,8 +1115,14 @@ Parameter          Description                        Default     Required
 `horizontalWidth`  Outer full width [m]               0.5 m       No
 =================  =================================  ==========  ===========
 
-.. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
-	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
+* The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
+  particles below this kinetic energy in the collimator. This is useful to match other simulations
+  where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
+  user should specify an energy greater than the total beam energy.
+* The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
+  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
+* All collimators can be made infinite absorbers with the general option
+  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 
 Examples::
@@ -1120,7 +1132,9 @@ Examples::
 
    ! Tapered
    TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
-
+   ! with kinetic energy limit
+   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+   
 
 ecol
 ^^^^
@@ -1169,12 +1183,20 @@ Parameter          Description                        Default     Required
 * Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
   that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
   no jaws will be built and BDSIM will exit.
+* The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
+  particles below this kinetic energy in the collimator. This is useful to match other simulations
+  where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
+  user should specify an energy greater than the total beam energy.
+* All collimators can be made infinite absorbers with the general option
+  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 Examples::
 
    ! Standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
+   ! with kinetic energy limit
+   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
 
 degrader
 ^^^^^^^^
@@ -2650,13 +2672,24 @@ simulations currently).  Details are provided in :ref:`multiple-beamlines`.
 
 .. _sampler-output:
 
-Output After An Element - Samplers
-----------------------------------
+Output at a Plane - Samplers
+----------------------------
 
 BDSIM provides a `sampler` as a means to observe the particle distribution at a
 point in the lattice. A sampler is 'attached' to an already defined element
 and records all the particles passing through a plane at the **exit** face of
-that element. They are defined using the following syntax::
+that element.
+
+A sampler will record any particles passing through that plane in any direction.
+It is defined in reality by a box 5 x 5 m that is 1 nm thick. The user
+may consider it an infinitely thin plane.
+
+.. _sampler-syntax:
+
+Attaching a Sampler to a Beamline Element
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+They are defined using the following syntax::
 
   sample, range=<element_name>;
 
@@ -2704,18 +2737,22 @@ e.g. ::
   sample, quadrupole;
 
 .. note:: If a sampler is placed at the very beginning of the lattice, it may appear
-	  that approximately half of the primary particles seem to pass through it. This
+	  that only approximately half of the primary particles seem to pass through it. This
 	  is the correct behaviour, as unlike an optics program such as MADX, the sampler
 	  represents a thin plane in 3D space in BDSIM. If the beam distribution has some
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
+
+.. warning:: The record of the primary particle coordinates in the output ("Primary") may
+	     resemble a sampler but it is just a record of the initial coordinates. It is
+	     not a sampler and cannot record other secondary particles.
 
 .. _sampler-dimensions:
 	  
 Sampler Dimensions
 ^^^^^^^^^^^^^^^^^^
 
-The sampler is represented by a cube solid that is 1 pm thin along z and 5m wide
+The sampler is represented by a box solid that is 1 nm thick along z and 5m wide
 transversely in x and y. If a smaller or larger capture area for the samplers is required,
 the option *samplerDiameter* may be specified in the input gmad. ::
 
@@ -2726,8 +2763,11 @@ This affects all samplers.
 .. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
 	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
 	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
-	  value.
+	  value. We recommend reducing :code:`samplerDiameter` for low energy or strongly
+	  curving accelerators.
 
+.. _sampler-visualisation:
+	  
 Sampler Visualisation
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -2738,6 +2778,145 @@ visualise them, the following command should be used in the visualiser::
 
 The samplers will appear in semi-transparent green, as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
+
+.. _user-sampler-placement:
+
+Output at an Arbitrary Plane - User Placed Sampler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The user may place a sampler anywhere in the model with any orientation. This is called a
+`samplerplacement`. The sampler may have either a circular or rectangular (including
+square) shape and be placed with any orientation. A `samplerplacement` will record all
+particles travelling in any direction through it. A branch in the Event output will be
+create with the name of the `samplerplacement`. The user may define an arbitrary number of
+`samplerplacement`s.  A `samplerplacement` is defined with the following syntax::
+
+  s1: samplerplacement, referenceElement="d1",
+                        referenceElementNumber=1,
+			x=20*cm, y=-1*cm, z=30*cm,
+			axisAngle=1, axisY=1, angle=pi/4,
+			aper1=10*cm;
+
+This defines a circular (by default) sampler with radius 10 cm positioned with respect to
+the 2nd instnace of the d1 element (zero counting) in the main beam line with a rotation
+about the unit Y axis of :math:`\pi / 4`.
+
+Placement
+*********
+
+A `samplerplacement` may be placed in 3 ways.
+
+1) In global Cartesian coordinates.
+2) In curvilinear coordinates.
+3) In curvilinear coordinates with respsect ot a bema line element by name.
+
+The strategy is automatically determined based on the parameters set. The full list of
+parameters is described below, but the requried ones for each scenario are described in
+:ref:`placements`.
+
+Shape
+*****
+
+The sampler will be 1 nm thick in reality but may be treated by the user an
+infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
+physics of the simulation. The user may select the shape of the sampler from either
+circular or rectangular (including square). The parameter :code:`apertureType` should
+be specifed as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
+typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
+The meaning of these parameters is described in :ref:`aperture-parameters`.
+
+Parameters
+**********
+			
+The `samplerplacement` object accepts a number of parameters similar to other parts of BDSIM.
+These include a subset of the aperture parameters (see :ref:`aperture-parameters`) and the position
+information from the `placements`. The full list of accepted parameters is given below.
+
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x                                                 |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y                                                 |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z                                                 |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters)  |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation                                     |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle, angle to rotate about unit vector                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true)      |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string)         |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+|                         | is used more than once in the sequence. Zero counting.             |
++-------------------------+--------------------------------------------------------------------+
+| apertureType            | The shape of the sampler desired as described using the aperture   |
+|                         | syntax of BDSIM. Currently, only `circular` and `rectangular` are  |
+|                         | supported.                                                         |
++-------------------------+--------------------------------------------------------------------+
+| shape                   | An intuitive alias to `apertureType`.                              |
++-------------------------+--------------------------------------------------------------------+
+| aper1                   | Aperture parameter #1.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper2                   | Aperture parameter #2.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper3                   | Aperture parameter #3.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper4                   | Aperture parameter #4.                                             |
++-------------------------+--------------------------------------------------------------------+
+
+Examples
+********
+
+The following are examples of `samplerplacement`::
+
+   s1: samplerplacement, referenceElement="d1",
+                         referenceElementNumber=1,
+			 x=20*cm, y=-1*cm, z=30*cm,
+    			 axisAngle=1, axisY=1, angle=pi/4,
+			 aper1=10*cm;
+
+
+This places a circular sampler called "s1" with respect to the 2nd instance of the beam line
+element "d1". The x,y,z are offsets from the centre of this element along the direction of
+travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
+centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
+be circular (by default) with a radius of 10 cm.::
+
+   s2: samplerplacement, x=0.2*m, y=-1*cm, z=30.123*m,
+    			 axisAngle=1, axisY=1, angle=-pi/6,
+			 aper1=10*cm, aper2=5*cm, shape="rectangular";
+
+
+This will place a sampler called "s2" in global Cartesian coordinates approximately 30 m
+forward from the centre of model. The placement rotation is done in the global coordinate
+system. The sampler shape is rectangular and is 20 cm wide and 10 cm tall.
+
+User Sampler Visualisation
+**************************
+
+Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
+visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
+in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
+worlds) and other samplers. It is recommended to tick and untick the desired element to see
+it appear and disappear repeatedly.
+
 
 .. _physics-processes:
 
@@ -3418,6 +3597,9 @@ described in `Tunnel Geometry`_.
 | thinElementLength                | The length of all thinmultipoles and dipole           |
 |                                  | fringefields in a lattice (default 1e-6) [m]          |
 +----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
++----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
 |                                  | `circular`, `elliptical`, `square`, `rectangular`     |
 |                                  | (more to come in v0.9)                                |
@@ -3465,6 +3647,8 @@ described in `Tunnel Geometry`_.
 |                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
 
+.. _options-tracking:
+
 Tracking Options
 ^^^^^^^^^^^^^^^^
 
@@ -3479,6 +3663,10 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+|                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
+|                                  | killed and the energy recorded as deposited there.    |
++----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
 |                                  | magnets with finite poleface angles. The length of    |
 |                                  | the total element is conserved. (default = false).    |
@@ -3499,17 +3687,30 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | through any geometry in the model (not including the  |
 |                                  | world volume)                                         |
 +----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergy             | A particle below this energy will be killed and the   |
+|                                  | energy deposition recorded at that location [GeV]     |
++----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
+|                                  | tunnel sections will be killed and the energy         |
+|                                  | deposition recorded at that location [GeV]            |
++----------------------------------+-------------------------------------------------------+
 | minimumRadiusOfCurvature         | Minimum tolerable radius of curvature of a particle,  |
 |                                  | below which, the energy will be decreased by 2% on    |
 |                                  | each use of the integrators to prevent infinite       |
 |                                  | loops - should be just greater than width of beam     |
 |                                  | pipe [m].                                             |
 +----------------------------------+-------------------------------------------------------+
+| minimumRange                     | A particle that would not travel this range           |
+|                                  | (a distance) in the current material will be cut [m]  |
++----------------------------------+-------------------------------------------------------+
 | ptcOneTurnMapFileName            | File name for a one turn map prepared in PTC that is  |
 |                                  | used in the teleporter to improve the accuracy of     |
 |                                  | circular tracking. See :ref:`one-turn-map`.           |
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 
 .. _physics-process-options:
@@ -3543,13 +3744,17 @@ Physics Processes
 |                                  | default.                                              |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location [GeV].    |
+|                                  | energy deposition recorded at that location [GeV]     |
++----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
+|                                  | tunnel sections will be killed and the energy         |
+|                                  | deposition recorded at that location [GeV]            |
 +----------------------------------+-------------------------------------------------------+
 | minimumRange                     | A particle that would not travel this range           |
-|                                  | (a distance) in the current material will be cut [m]. |
+|                                  | (a distance) in the current material will be cut [m]  |
 +----------------------------------+-------------------------------------------------------+
 | neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
-|                                  | using the `neutron_tracking_cut` physics list [s].    |
+|                                  | using the `neutron_tracking_cut` physics list [s]     |
 +----------------------------------+-------------------------------------------------------+
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
@@ -3586,6 +3791,9 @@ Physics Processes
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | Whether to use synchrotron radiation processes        |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | Whether to produce Cherenkov radiation                |
 +----------------------------------+-------------------------------------------------------+
@@ -3707,7 +3915,7 @@ with the following options.
 |                                   | the energy deposition histograms.                                  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTunnel                  | Whether to store energy deposition hits from the tunnel geometry   |
-|                                   | in the `TunnelHit` branch of the Event Tree. Default off.          |
+|                                   | in the `ElossTunnel` branch of the Event Tree. Default off.        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTunnelHistograms        | Whether to generate summary histograms of energy deposition in the |
 |                                   | tunnel volumes. If `storeElossTunnel` is on, this will be on. The  |
@@ -4703,6 +4911,9 @@ BDSIM can build a tunnel around the beam line. Currently, there are two main way
 Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
 and are described in :ref:`tunnel-examples`.
 
+The automatic tunnel building is controlled through the following options used with the
+:code:`option` command.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
@@ -4714,6 +4925,9 @@ and are described in :ref:`tunnel-examples`.
 |                                  | just in a straight line (default = 0)                 |
 +----------------------------------+-------------------------------------------------------+
 | builTunnelFloor                  | Whether to add a floor to the tunnel                  |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
 |                                  | `circular`, `elliptical`, `square`, `rectangular`     |
@@ -4753,10 +4967,16 @@ shown as an example).
 The soil around the tunnel is typically symmetric, with the `tunnelSoilThickness` being added to
 the larger of the horizontal and vertical tunnel dimensions.
 
-.. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
-	  Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
-	  geometry. In future, it will be possible to override the automatic algorithm between
-	  certain elements in the beamline, but for now such situations must be avoided.
+Construction of the tunnel geometry may fail in particular cases of different beam lines.
+Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
+geometry. In future, it will be possible to override the automatic algorithm between
+certain elements in the beamline, but for now such situations must be avoided.
+
+.. note:: Surrounding the beam line with a tunnel completely means that every particle simulated
+	  will have to eventually hit something and not escape. This means that every single particle
+	  will likely create a shower of particles down to 0 energy. This can increase simulation time.
+	  To avoid this, or at least contorl this behaviour, it is recommended to use the options
+	  :code:`minimumKineticEnergyTunnel` or :code:`tunnelIsInfiniteAbsorber`.
 
 .. _materials-and-atoms:
 	  

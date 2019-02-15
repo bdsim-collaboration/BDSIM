@@ -16,30 +16,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSENERGYCOUNTERHIT_H
-#define BDSENERGYCOUNTERHIT_H
+#ifndef BDSHITENERGYDEPOSITION_H
+#define BDSHITENERGYDEPOSITION_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
-extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+extern G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
 /**
  * @brief Information recorded for a single piece of energy deposition.
  *
  */
 
-class BDSEnergyCounterHit: public G4VHit
+class BDSHitEnergyDeposition: public G4VHit
 {
 public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSEnergyCounterHit(const G4int&    nCopyIn           = 0,    // copy number of physical volume
+  BDSHitEnergyDeposition(const G4int&    nCopyIn           = 0,    // copy number of physical volume
 		      const G4double& energyIn          = 0,    // energy in this 'hit'
 		      const G4double& preStepKineticEnergy = 0, // pre step point kinetic energy
 		      const G4double& XIn               = 0,    // global x
@@ -61,7 +61,7 @@ public:
 		      const G4double& stepLengthIn      = 0,
 		      const G4int&    beamlineIndexIn   = -1);
   
-  virtual ~BDSEnergyCounterHit();
+  virtual ~BDSHitEnergyDeposition();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
@@ -92,7 +92,7 @@ private:
   /// Private default constructor (not implemented) as the constructor
   /// provided as defaults for everything which in effect provides a default
   /// constructor
-  BDSEnergyCounterHit();
+  BDSHitEnergyDeposition();
 
   G4int    copyNumber;
   G4double energy;
@@ -130,16 +130,16 @@ private:
   G4int    beamlineIndex;
 };
 
-inline void* BDSEnergyCounterHit::operator new(size_t)
+inline void* BDSHitEnergyDeposition::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSEnergyCounterHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorEnergyDeposition.MallocSingle();
   return aHit;
 }
 
-inline void BDSEnergyCounterHit::operator delete(void *aHit)
+inline void BDSHitEnergyDeposition::operator delete(void *aHit)
 {
- BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
+ BDSAllocatorEnergyDeposition.FreeSingle((BDSHitEnergyDeposition*) aHit);
 }
 
 #endif

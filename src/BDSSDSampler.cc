@@ -20,8 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSSDSampler.hh"
+#include "BDSHitSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-BDSSamplerSD::BDSSamplerSD(G4String name):
+BDSSDSampler::BDSSDSampler(G4String name):
   BDSSensitiveDetector("sampler/" + name),
   SamplerCollection(nullptr),
   itsCollectionName(name),
@@ -49,13 +49,13 @@ BDSSamplerSD::BDSSamplerSD(G4String name):
   collectionName.insert(name);
 }
 
-BDSSamplerSD::~BDSSamplerSD()
+BDSSDSampler::~BDSSDSampler()
 {;}
 
-void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
+void BDSSDSampler::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
-  SamplerCollection = new BDSSamplerHitsCollection(GetName(),itsCollectionName);
+  SamplerCollection = new BDSHitsCollectionSampler(GetName(),itsCollectionName);
 
   // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)
@@ -66,7 +66,7 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
   globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
-G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*/)
+G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*/)
 {
   // Do not store hit if the particle pre step point is not on the boundary
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
@@ -144,7 +144,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 			       energy,
 			       weight);
 
-  BDSSamplerHit* smpHit = new BDSSamplerHit(samplerID,
+  BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
 					    charge,
 					    PDGtype,
@@ -157,8 +157,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   return true; // the hit was stored
 }
 
-G4VHit* BDSSamplerSD::last() const
+G4VHit* BDSSDSampler::last() const
 {
-  BDSSamplerHit* lastHit = SamplerCollection->GetVector()->back();
+  BDSHitSampler* lastHit = SamplerCollection->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);
 }

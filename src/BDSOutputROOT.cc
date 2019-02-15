@@ -97,24 +97,24 @@ void BDSOutputROOT::NewFile()
   // Build primary structures
   if (WritePrimaries())
     {
-      theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,32000,1);
-      theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,1);
+      theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,       32000, 1);
+      theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,  1);
     }
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,      4000, 1);
-  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss", eLossVacuum,4000, 1);
-  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLoss", eLossWorld, 4000, 1);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,          4000, 1);
+  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss", eLossVacuum,    4000, 1);
+  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss", eLossTunnel,    4000, 2);
+  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLoss", eLossWorld,     4000, 1);
   theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventExit", eLossWorldExit, 4000, 1);
-  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,  4000, 2);
-  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit,   4000, 2);
-  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss", eLossTunnel,  4000, 2);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,      4000, 2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit,       4000, 2);
 
   // Build trajectory structures
-  theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
+  theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);
 
   // Build event histograms
-  theEventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
+  theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
 
   // build sampler structures
   for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)

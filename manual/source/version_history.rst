@@ -1,4 +1,4 @@
-V1.3 - 2019 / 01 / ??
+V1.3 - 2019 / 02 / ??
 =====================
 
 Expected Changes To Results
@@ -27,6 +27,8 @@ New Features
   running for a long time when particles may hit the air at the end of the beam line.
 * BDSIM as a class for interfacing. Ability to add custom beam line components.
   See :ref:`interfacing-section`.
+* New samplerplacement object that defines an arbitrarily placed sampler in the world that
+  may overlap with anything (see :ref:`user-sampler-placement`).
 
 * New options:
 
@@ -35,6 +37,10 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | **Option**                       | **Description**                                                  |
 +==================================+==================================================================+
+| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material of a       |
+|                                  | collimator (`rcol`, `ecol` and `jcol`) are killed and the energy |
+|                                  | recorded as deposited there.                                     |
++----------------------------------+------------------------------------------------------------------+
 | geant4Macro                      | Fun an optional macro in the visualiser once it's started.       |
 +----------------------------------+------------------------------------------------------------------+
 | g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to 110% of the    |
@@ -51,6 +57,9 @@ New Features
 | physicsEnergyLimitLow            | Control minimum energy for all physics models. (advanced)        |
 +----------------------------------+------------------------------------------------------------------+
 | physicsEnergyLimitHigh           | Control maximum energy for all physcis models. (advanced)        |
++----------------------------------+------------------------------------------------------------------+
+| minimumKineticEnergyTunnel       | Any particles below this energy (in GeV by default) will be      |
+|                                  | artificially killed in all BDSIM-generated tunnel segments.      |
 +----------------------------------+------------------------------------------------------------------+
 | storeCollimatorInfo              | Store collimator structure with primary hits per collimator.     |
 +----------------------------------+------------------------------------------------------------------+
@@ -91,6 +100,10 @@ New Features
 | storeSamplerPolarCoords          | Store the polar coordinates (r, phi and rp, phip) in the         |
 |                                  | sampler output.                                                  |
 +----------------------------------+------------------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | When turned on, any BDSIM-generated tunnel segments will absorb  |
+|                                  | and kill any particle of any energy. Used to speed up the        |
+|                                  | simulation. Default off.                                         |
++----------------------------------+------------------------------------------------------------------+
 | worldGeometryFile                | External geometry file for world geometry.                       |
 +----------------------------------+------------------------------------------------------------------+
 
@@ -111,6 +124,8 @@ New Features
 * New optional collimator output structure in event made per collimator with prefix
   "COLL\_". Controlled by new option :code:`collimatorInfo`.
 * New mini-summary of collimators in Model tree when :code:`collimatorInfo` option is used.
+* New parameter for collimator elements :code:`minimumKineticEnergy` that allows the user to kill
+  particles below a certain kinetic energy in a collimator.
 
 General
 -------
@@ -176,6 +191,8 @@ Developer Changes
   sensitive detector (previously general energy deposition) as the developer must be explicit
   about what sensitivity they want so nothing unexpected can happen.
 * BDSBeamline can now return indices of beam line elements of a certain type.
+* All sensitive detector classes have been renamed as have the accessor functions in BDSSDManager.
+  This is to make the naming more consistent.
   
 Bug Fixes
 ---------
@@ -216,10 +233,15 @@ Bug Fixes
   than the declared number of dimensions. For example, "y:x" for Histogram1D.
 * Fixed rare bug where segfault would occur in trying to account for energy deposition of
   artificially killed particles.
+* Fix memory leak of sampler structures (relatively small).
+* Fixed parsing of + or - symbols with ion definition. Now supports H- ion.
   
 Output Changes
 --------------
 
+* "TunnelHit" is now "EnergyLossTunnel" to be consistent. `rebdsim` and the analysis DataLoader
+  class (both Python and ROOT) are backwards compatible and both TunnelHit and ElossTunnel are
+  available. Only the correct one is filled with loaded data during analysis.
 * Much more granular control of what is stored in the output. See new options in 'new' section
   above.
 * Vacuum energy deposition separated from general energy deposition and now in its own branch.

@@ -93,8 +93,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> SHIELD DEGRADER GAP CRYSTALCOL WIRESCANNER
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER
 %token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR
-%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
+%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -241,6 +241,14 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<Placement>();
          }
      }
+     | VARIABLE ':' samplerplacement
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : samplerplacement" << std::endl;
+             Parser::Instance()->SetValue<SamplerPlacement>("name",*($1));
+             Parser::Instance()->Add<SamplerPlacement>();
+         }
+     }
      | VARIABLE ':' query
      {
          if(execute) {
@@ -287,6 +295,14 @@ decl : VARIABLE ':' component_with_params
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
              Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
              Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
+         }
+     }
+     | VARIABLE ':' aperture
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : aperture" << std::endl;
+             Parser::Instance()->SetValue<Aperture>("name",*($1));
+             Parser::Instance()->Add<Aperture>();
          }
      }
      | VARIABLE ':' component
@@ -364,6 +380,8 @@ cavitymodel : CAVITYMODEL ',' cavitymodel_options
 query       : QUERY       ',' query_options
 tunnel      : TUNNEL      ',' tunnel_options
 xsecbias    : XSECBIAS    ',' xsecbias_options
+samplerplacement : SAMPLERPLACEMENT ',' samplerplacement_options
+aperture    : APERTURE    ',' aperture_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -377,6 +395,8 @@ object_noparams : MATERIAL
                 | QUERY
                 | TUNNEL
                 | XSECBIAS
+                | SAMPLERPLACEMENT
+                | APERTURE
 
 newinstance : VARIABLE ',' parameters
             {
@@ -793,6 +813,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<Placement>();
             }
         }
+        | SAMPLERPLACEMENT ',' samplerplacement_options // placement
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> SAMPLERPLACEMENT" << std::endl;
+              Parser::Instance()->Add<SamplerPlacement>();
+            }
+        }
         | NEWCOLOUR ',' colour_options // colour
         {
           if(execute)
@@ -839,6 +867,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
             {
               if(ECHO_GRAMMAR) std::cout << "command -> XSECBIAS" << std::endl;
               Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
+            }
+        }
+        | APERTURE ',' aperture_options // aperture
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> APERTURE" << std::endl;
+              Parser::Instance()->Add<Aperture>();
             }
         }
 
@@ -962,6 +998,14 @@ placement_options : paramassign '=' aexpr placement_options_extend
                   | paramassign '=' string placement_options_extend
                     { if(execute) Parser::Instance()->SetValue<Placement>(*$1,*$3);}
 
+samplerplacement_options_extend : /* nothing */
+                         | ',' samplerplacement_options
+
+samplerplacement_options : paramassign '=' aexpr samplerplacement_options_extend
+                    { if(execute) Parser::Instance()->SetValue<SamplerPlacement>((*$1),$3);}
+                  | paramassign '=' string samplerplacement_options_extend
+                    { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*$1,*$3);}
+
 query_options_extend : /* nothing */
                      | ',' query_options
 
@@ -1011,6 +1055,14 @@ xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                    { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);}
                  | paramassign '=' vecexpr xsecbias_options_extend
                    { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);}
+
+aperture_options_extend : /* nothing */
+                         | ',' aperture_options
+
+aperture_options : paramassign '=' aexpr aperture_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Aperture>((*$1),$3);}
+                  | paramassign '=' string aperture_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Aperture>(*$1,*$3);}
 
 option_parameters_extend : /* nothing */
                          | ',' option_parameters

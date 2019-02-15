@@ -18,12 +18,11 @@ option, ngenerate=1,
 	beampipeThickness=0.1*cm,
 	outerDiameter=0.5*m,
 	defaultRangeCut=1*cm,	
-	prodCutPositrons=1*cm,
-	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm,
     	buildTunnel=1,
 	checkOverlaps=1,
 	storeTrajectories=1;
+
+option, storeElossTunnel=1;
 
 beam, particle="e-",
       energy=1.0*GeV,

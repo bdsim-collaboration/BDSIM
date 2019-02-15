@@ -31,18 +31,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
-class BDSCollimatorHit;
-typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
-class BDSEnergyCounterHit;
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+class BDSHitCollimator;
+typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
+class BDSHitEnergyDeposition;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
 class BDSEventInfo;
 class BDSParticleCoordsFullGlobal;
-class BDSSamplerHit;
-typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
+class BDSHitSampler;
+typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-class BDSVolumeExitHit;
-typedef G4THitsCollection<BDSVolumeExitHit> BDSVolumeExitHitsCollection;
+class BDSHitVolumeExit;
+typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
 
 class TRKBunch;
 
@@ -108,17 +108,17 @@ public:
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                   info,
 		 const G4PrimaryVertex*                vertex,
-		 const BDSSamplerHitsCollection*       samplerHitsPlane,
-		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
-		 const BDSEnergyCounterHitsCollection* energyLoss,
-		 const BDSEnergyCounterHitsCollection* energyLossVacuum,
-		 const BDSEnergyCounterHitsCollection* energyLossTunnel,
-		 const BDSEnergyCounterHitsCollection* energyLossWorld,
-		 const BDSVolumeExitHitsCollection*    worldExitHits,
+		 const BDSHitsCollectionSampler*       samplerHitsPlane,
+		 const BDSHitsCollectionSampler*       samplerHitsCylinder,
+		 const BDSHitsCollectionEnergyDeposition* energyLoss,
+		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
+		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
+		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,
+		 const BDSHitsCollectionVolumeExit*    worldExitHits,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
 		 const std::map<BDSTrajectory*, bool>& trajectories,
-		 const BDSCollimatorHitsCollection*    collimatorHits,
+		 const BDSHitsCollectionCollimator*    collimatorHits,
 		 const G4int                           turnsTaken);
 
   /// Close a file and open a new one.
@@ -189,18 +189,18 @@ private:
   void FillEventInfo(const BDSEventInfo* info);
 
   /// Fill sampler hits into output structures.
-  void FillSamplerHits(const BDSSamplerHitsCollection* hits,
+  void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
 
   /// Fill the hit where the primary particle impact.
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
-  void FillEnergyLoss(const BDSEnergyCounterHitsCollection *loss,
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition *loss,
 		      const LossType type);
 
   /// Fill a collection volume exit hits into the approprate output structure.
-  void FillELossWorldExitHits(const BDSVolumeExitHitsCollection* worldExitHits);
+  void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
@@ -209,7 +209,7 @@ private:
   void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
 
   /// Fill collimator hits.
-  void FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
+  void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
 
   /// Fill run level summary information.

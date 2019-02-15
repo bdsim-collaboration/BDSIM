@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSTrajectory.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -227,7 +227,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
   /////////////////////////////////////////////////////////////////////////////////
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const BDSEnergyCounterHitsCollection *phc)
+void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition *phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }

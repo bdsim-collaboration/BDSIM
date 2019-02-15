@@ -16,13 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSVolumeExitHit.hh"
+#include "BDSHitVolumeExit.hh"
 
 #include "G4Allocator.hh"
 
-G4Allocator<BDSVolumeExitHit> BDSVolumeExitHitAllocator;
+G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 
-BDSVolumeExitHit::BDSVolumeExitHit(G4double totalEnergyIn,
+BDSHitVolumeExit::BDSHitVolumeExit(G4double totalEnergyIn,
 				   G4double postStepKineticEnergyIn,
 				   G4double XIn,
 				   G4double YIn,

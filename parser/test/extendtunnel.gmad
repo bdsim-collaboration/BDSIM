@@ -1,0 +1,16 @@
+t1: tunnel, type="circular",
+	aper1=2.0*m,
+	aper2=3.0*m,
+	offsetX=0.0*m,
+	offsetY=0.5*m,
+	thickness=20*cm,
+	soilThickness=10*cm,
+	floorOffset=1*m,
+	material="Concrete",
+	soilMaterial="Soil",
+	startElement="d1",
+	endElement="d1";
+
+t1: startElement="d2";
+
+d1: drift, l=1.2*m;

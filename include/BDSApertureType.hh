@@ -16,28 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSParticleCoordsFull.hh"
-#include "BDSSamplerHit.hh"
+#ifndef BDSAPERTURETYPE_H
+#define BDSAPERTURETYPE_H
 
-#include "globals.hh"
-#include "G4Allocator.hh"
+#include "BDSTypeSafeEnum.hh"
+#include "globals.hh"         // geant4 globals / types
 
-G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
+/**
+ * @brief Type definition for aperture - used for comparison
+ * in factory methods.
+ * 
+ * @author Laurie Nevay
+ */
 
-BDSSamplerHit::BDSSamplerHit(G4int samplerIDIn,
-			     const BDSParticleCoordsFull& coordsIn,
-			     G4double chargeIn,
-			     G4int    pdgIDIn,
-			     G4int    parentIDIn,
-			     G4int    trackIDIn,
-			     G4int    turnsTakenIn,
-			     G4int    beamlineIndexIn):
-  samplerID(samplerIDIn),
-  coords(coordsIn),
-  charge(chargeIn),
-  pdgID(pdgIDIn),
-  parentID(parentIDIn),
-  trackID(trackIDIn),
-  turnsTaken(turnsTakenIn),
-  beamlineIndex(beamlineIndexIn)
-{;}
+struct aperturetypes_def
+{
+  enum type {circular, rectangular, elliptical, lhc,
+	     lhcdetailed, rectellipse, racetrack, octagonal,
+	     circularvacuum, clicpcl};
+};
+
+typedef BDSTypeSafeEnum<aperturetypes_def,int> BDSApertureType;
+
+namespace BDS
+{
+  /// function that gives corresponding enum value for string (case-insensitive)
+  BDSApertureType DetermineApertureType(G4String apertureType);
+}
+
+#endif
