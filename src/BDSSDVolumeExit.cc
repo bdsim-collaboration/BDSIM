@@ -41,7 +41,7 @@ BDSSDVolumeExit::BDSSDVolumeExit(G4String name,
 
 void BDSSDVolumeExit::Initialize(G4HCofThisEvent* HCE)
 {
-  collection = new BDSVolumeExitHitsCollection(GetName(), colName);
+  collection = new BDSHitsCollectionVolumeExit(GetName(), colName);
   if (HCIDve < 0)
     {HCIDve = G4SDManager::GetSDMpointer()->GetCollectionID(collection);}
   HCE->AddHitsCollection(HCIDve, collection);

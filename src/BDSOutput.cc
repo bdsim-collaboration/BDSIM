@@ -228,7 +228,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
 			  const BDSHitsCollectionEnergyDeposition* energyLossWorld,
-			  const BDSVolumeExitHitsCollection*    worldExitHits,
+			  const BDSHitsCollectionVolumeExit*    worldExitHits,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
@@ -625,7 +625,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
     {CopyFromHistToHist1D("ElossPE", "CollElossPE", collimatorIndices);}
 }
 
-void BDSOutput::FillELossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
+void BDSOutput::FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* hits)
 {
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)

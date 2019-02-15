@@ -42,7 +42,7 @@ typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitVolumeExit;
-typedef G4THitsCollection<BDSHitVolumeExit> BDSVolumeExitHitsCollection;
+typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
 
 class G4PrimaryVertex;
 
@@ -112,7 +112,7 @@ public:
 		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
 		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,
-		 const BDSVolumeExitHitsCollection*    worldExitHits,
+		 const BDSHitsCollectionVolumeExit*    worldExitHits,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
 		 const std::map<BDSTrajectory*, bool>& trajectories,
@@ -194,7 +194,7 @@ private:
 		      const LossType type);
 
   /// Fill a collection volume exit hits into the approprate output structure.
-  void FillELossWorldExitHits(const BDSVolumeExitHitsCollection* worldExitHits);
+  void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);

@@ -60,7 +60,7 @@ private:
   G4String     colName;        ///< Name prepared for collection.
   G4int        HCIDve;         ///< Hits collection ID for volume exit.
   G4StepStatus statusToMatch;  ///< World or volume exit status cache.
-  BDSVolumeExitHitsCollection* collection; ///< Hits collection.
+  BDSHitsCollectionVolumeExit* collection; ///< Hits collection.
 };
 
 #endif

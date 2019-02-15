@@ -210,7 +210,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   echc* eCounterWorldHits  = dynamic_cast<echc*>(HCE->GetHC(eCounterWorldID));
 
   // world exit hits
-  typedef BDSVolumeExitHitsCollection vehc;
+  typedef BDSHitsCollectionVolumeExit vehc;
   vehc* worldExitHits = dynamic_cast<vehc*>(HCE->GetHC(worldExitCollID));
 
   // primary hit something?

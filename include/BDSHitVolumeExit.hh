@@ -25,8 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSHitVolumeExit;
 
-typedef G4THitsCollection<BDSHitVolumeExit> BDSVolumeExitHitsCollection;
-extern G4Allocator<BDSHitVolumeExit> BDSVolumeExitHitAllocator;
+typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
+extern G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 
 /**
  * @brief Information recorded for a step leaving a volume.
@@ -86,13 +86,13 @@ private:
 inline void* BDSHitVolumeExit::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSVolumeExitHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorVolumeExit.MallocSingle();
   return aHit;
 }
 
 inline void BDSHitVolumeExit::operator delete(void *aHit)
 {
- BDSVolumeExitHitAllocator.FreeSingle((BDSHitVolumeExit*) aHit);
+ BDSAllocatorVolumeExit.FreeSingle((BDSHitVolumeExit*) aHit);
 }
 
 #endif

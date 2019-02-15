@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Allocator.hh"
 
-G4Allocator<BDSHitVolumeExit> BDSVolumeExitHitAllocator;
+G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 
 BDSHitVolumeExit::BDSHitVolumeExit(G4double totalEnergyIn,
 				   G4double postStepKineticEnergyIn,
