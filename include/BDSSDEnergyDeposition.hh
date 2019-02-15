@@ -30,7 +30,7 @@ class G4TouchableHistory;
 class G4Track;
 
 /**
- * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.
+ * @brief Generates BDSHitsEnergyDepositions from step information - uses curvilinear coords.
  *
  * This class interrogates a G4Step and generates an energy deposition hit if there was
  * a change in energy. This assigns the energy deposition to a point randomly (uniformly)
@@ -71,7 +71,7 @@ private:
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
   G4String colName;         ///< Collection name.
-  BDSHitsCollectionEnergyDeposition* energyCounterCollection;
+  BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;
   G4int    HCIDe;
 
   ///@{ per hit variable

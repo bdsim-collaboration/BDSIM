@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSHITENERGYCOUNTER_H
-#define BDSHITENERGYCOUNTER_H
+#ifndef BDSHITENERGYDEPOSITION_H
+#define BDSHITENERGYDEPOSITION_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"

@@ -44,7 +44,7 @@ BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
   BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
   colName(name),
-  energyCounterCollection(nullptr),
+  hitsCollectionEnergyDeposition(nullptr),
   HCIDe(-1),
   enrg(0.0),
   weight(0.0),
@@ -76,10 +76,10 @@ BDSSDEnergyDeposition::~BDSSDEnergyDeposition()
 
 void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 {
-  energyCounterCollection = new BDSHitsCollectionEnergyDeposition(GetName(),colName);
+  hitsCollectionEnergyDeposition = new BDSHitsCollectionEnergyDeposition(GetName(),colName);
   if (HCIDe < 0)
-    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
-  HCE->AddHitsCollection(HCIDe,energyCounterCollection);
+    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(hitsCollectionEnergyDeposition);}
+  HCE->AddHitsCollection(HCIDe,hitsCollectionEnergyDeposition);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
@@ -221,7 +221,7 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 						     beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(hit);
+  hitsCollectionEnergyDeposition->insert(hit);
    
   return true;
 }
@@ -325,13 +325,13 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 						     beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(hit);
+  hitsCollectionEnergyDeposition->insert(hit);
    
   return true;
 }
 
 G4VHit* BDSSDEnergyDeposition::last() const
 {
-  BDSHitEnergyDeposition* lastHit = energyCounterCollection->GetVector()->back();
+  BDSHitEnergyDeposition* lastHit = hitsCollectionEnergyDeposition->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);
 }
