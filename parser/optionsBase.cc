@@ -171,6 +171,7 @@ OptionsBase::OptionsBase()
   maximumBetaChangePerStep = 10;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
   minimumKineticEnergy     = 0;
+  minimumKineticEnergyTunnel = 0;
   minimumRange             = 0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
@@ -185,6 +186,8 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  collimatorsAreInfiniteAbsorbers = false;
+  tunnelIsInfiniteAbsorber        = false;
   
   // biasing options
   defaultBiasVacuum        = "";

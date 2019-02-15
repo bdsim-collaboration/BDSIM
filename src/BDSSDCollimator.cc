@@ -19,9 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
-#include "BDSCollimatorSD.hh"
+#include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSStep.hh"
@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-BDSCollimatorSD::BDSCollimatorSD(G4String name):
+BDSSDCollimator::BDSSDCollimator(G4String name):
   BDSSensitiveDetector("collimator/" + name),
   collimatorCollection(nullptr),
   itsCollectionName(name),
@@ -50,15 +50,15 @@ BDSCollimatorSD::BDSCollimatorSD(G4String name):
   collectionName.insert(name);
 }
 
-BDSCollimatorSD::~BDSCollimatorSD()
+BDSSDCollimator::~BDSSDCollimator()
 {
   delete auxNavigator;
 }
 
-void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
+void BDSSDCollimator::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Collimator hits collection
-  collimatorCollection = new BDSCollimatorHitsCollection(GetName(), itsCollectionName);
+  collimatorCollection = new BDSHitsCollectionCollimator(GetName(), itsCollectionName);
 
   // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)
@@ -70,34 +70,38 @@ void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSCollimatorSD::ProcessHits(G4Step* step, G4TouchableHistory* rOHist)
+G4bool BDSSDCollimator::ProcessHits(G4Step* step, G4TouchableHistory* rOHist)
 {
   std::vector<G4VHit*> hits;
   return ProcessHitsOrdered(step, rOHist, hits);
 }
 
-G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
+G4bool BDSSDCollimator::ProcessHitsOrdered(G4Step* step,
 					   G4TouchableHistory* /*rOHist*/,
 					   const std::vector<G4VHit*>& hits)
 {
   G4VHit* lastHit = nullptr;
-  BDSEnergyCounterHit* lastHitEDep = nullptr;
+  BDSHitEnergyDeposition* lastHitEDep = nullptr;
   if (!hits.empty())
     {
       lastHit = hits.back();
-      lastHitEDep = dynamic_cast<BDSEnergyCounterHit*>(lastHit);
+      lastHitEDep = dynamic_cast<BDSHitEnergyDeposition*>(lastHit);
     }
 
   const G4VProcess* postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
   if (!postProcess)
     {return false;} // shouldn't happen - but for safety
-  G4int  processType       = postProcess->GetProcessType();
-  G4int  processSubType    = postProcess->GetProcessSubType();
-  G4bool initialised       = processType != -1;
-  G4bool notTransportation = processType != fTransportation;
-  G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
-  G4bool notParallel       = processType != fParallel;
-  G4bool scatteringPoint   = initialised && notTransportation && notGeneral && notParallel;
+  G4int  processType        = postProcess->GetProcessType();
+  G4int  processSubType     = postProcess->GetProcessSubType();
+  G4bool initialised        = processType != -1;
+  // step is not of interest if it was caused by just a transportation limit - ie no physics happened.
+  // we should still generate the hit though if the process was due to artifical energy cuts etc.
+  G4bool notTransportation  = processType != fTransportation;
+  G4bool notTransportation2 = processSubType != G4TransportationProcessType::COUPLED_TRANSPORTATION;
+  G4bool notTransportation3 = processSubType != G4TransportationProcessType::TRANSPORTATION;
+  G4bool notTransportation4 = processSubType != G4TransportationProcessType ::STEP_LIMITER;
+  G4bool notParallel        = processType != fParallel;
+  G4bool scatteringPoint    = initialised && notTransportation && notTransportation2 && notTransportation3&& notTransportation4 && notParallel;
   if (!scatteringPoint)
     {return false;} // don't store it - could just be step through thin collimator
 
@@ -143,7 +147,7 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
 	}
     }
   
-  BDSCollimatorHit* hit = new BDSCollimatorHit(mwBeamline,
+  BDSHitCollimator* hit = new BDSHitCollimator(mwBeamline,
 					       collimatorIndex,
 					       preStepPosLocal,
 					       preStepMomLocal,
@@ -155,14 +159,14 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
 }
 
 
-G4VHit* BDSCollimatorSD::last() const
+G4VHit* BDSSDCollimator::last() const
 {
   auto hitsVector = collimatorCollection->GetVector();
   if (hitsVector->empty())
     {return nullptr;}
   else
     {
-      BDSCollimatorHit* lastHit = hitsVector->back();
+      BDSHitCollimator* lastHit = hitsVector->back();
       return dynamic_cast<G4VHit*>(lastHit);
     }
 }

@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
@@ -500,7 +500,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // this will be a nullptr depending on the options
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
         {
-          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
+          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
         }
 
@@ -536,7 +536,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // make the world sensitive to energy deposition with its own unique hits collection
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
-        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());}
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe

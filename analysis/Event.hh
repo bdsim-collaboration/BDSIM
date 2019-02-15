@@ -105,6 +105,7 @@ public:
   BDSOutputROOTEventCoords*     PrimaryGlobal;
   BDSOutputROOTEventLoss*       Eloss;
   BDSOutputROOTEventLoss*       ElossVacuum;
+  BDSOutputROOTEventLoss*       ElossTunnel;
   BDSOutputROOTEventLoss*       ElossWorld;
   BDSOutputROOTEventExit*       ElossWorldExit;
   BDSOutputROOTEventLoss*       PrimaryFirstHit;

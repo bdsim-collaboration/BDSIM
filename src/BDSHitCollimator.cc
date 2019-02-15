@@ -16,13 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSCollimatorHit.hh"
+#include "BDSHitCollimator.hh"
 
 #include "G4Allocator.hh"
 
-G4Allocator<BDSCollimatorHit> BDSCollimatorHitAllocator;
+G4Allocator<BDSHitCollimator> BDSAllocatorCollimator;
 
-BDSCollimatorHit::BDSCollimatorHit():
+BDSHitCollimator::BDSHitCollimator():
   beamline(nullptr),
   collimatorIndex(0),
   preStepPosition(G4ThreeVector()),
@@ -31,12 +31,12 @@ BDSCollimatorHit::BDSCollimatorHit():
   energyDepositionHit(nullptr)
 {;}
 
-BDSCollimatorHit::BDSCollimatorHit(const BDSBeamline*   beamlineIn,
+BDSHitCollimator::BDSHitCollimator(const BDSBeamline*   beamlineIn,
 				   G4int                collimatorIndexIn,
 				   const G4ThreeVector& preStepPositionIn,
 				   const G4ThreeVector& preStepMomentumIn,
 				   G4double             totalEnergyIn,
-				   BDSEnergyCounterHit* energyDepositionHitIn):
+				   BDSHitEnergyDeposition* energyDepositionHitIn):
   beamline(beamlineIn),
   collimatorIndex(collimatorIndexIn),
   preStepPosition(preStepPositionIn),

@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSParticleCoordsFull.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 
 #include "globals.hh"
 #include "G4Allocator.hh"
 
-G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
+G4Allocator<BDSHitSampler> BDSAllocatorSampler;
 
-BDSSamplerHit::BDSSamplerHit(G4int samplerIDIn,
+BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
 			     const BDSParticleCoordsFull& coordsIn,
 			     G4double chargeIn,
 			     G4int    pdgIDIn,

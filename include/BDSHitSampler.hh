@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSAMPLERHIT_H
-#define BDSSAMPLERHIT_H
+#ifndef BDSHITSAMPLER_H
+#define BDSHITSAMPLER_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -33,10 +33,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * Everything public for simplicity of the class.
  */
 
-class BDSSamplerHit: public G4VHit
+class BDSHitSampler: public G4VHit
 {
 public:
-  BDSSamplerHit(G4int samplerIDIn,
+  BDSHitSampler(G4int samplerIDIn,
 		const BDSParticleCoordsFull& coordsIn,
 		G4double chargeIn,
 		G4int    pdgIDIn,
@@ -45,7 +45,7 @@ public:
 		G4int    turnsTakenIn,
 		G4int    beamlineIndexIn);
   
-  virtual ~BDSSamplerHit(){;}
+  virtual ~BDSHitSampler(){;}
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -60,22 +60,22 @@ public:
   G4int                 beamlineIndex;
   
 private:
-  BDSSamplerHit() = delete; ///< No default constructor.
+  BDSHitSampler() = delete; ///< No default constructor.
 };
 
-typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
-extern G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
+typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
+extern G4Allocator<BDSHitSampler> BDSAllocatorSampler;
 
-inline void* BDSSamplerHit::operator new(size_t)
+inline void* BDSHitSampler::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSSamplerHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorSampler.MallocSingle();
   return aHit;
 }
 
-inline void BDSSamplerHit::operator delete(void *aHit)
+inline void BDSHitSampler::operator delete(void *aHit)
 {
-  BDSSamplerHitAllocator.FreeSingle((BDSSamplerHit*) aHit);
+  BDSAllocatorSampler.FreeSingle((BDSHitSampler*) aHit);
 }
 
 #endif

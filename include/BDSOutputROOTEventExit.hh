@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSOUTPUTROOTEVENTEXIT_H
 
 #ifndef __ROOTBUILD__
-class BDSVolumeExitHit;
+class BDSHitVolumeExit;
 #endif
 
 #include "TObject.h"
@@ -56,7 +56,7 @@ public:
   BDSOutputROOTEventExit();
   virtual ~BDSOutputROOTEventExit();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSVolumeExitHit* hit);
+  void Fill(const BDSHitVolumeExit* hit);
 #endif
   virtual void Flush();
 

@@ -92,8 +92,8 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	    {
 	      G4cout << "\nWARNING" << G4endl;
 	      G4cout << "Adding cuts and limits physics to Geant4 reference physics list" << G4endl;
-	      G4cout << "This is to obey the minimumKineticEnergy cut or due to "
-		     << "g4PhysicsUserBDSIMCutsAndLimits.\n" << G4endl;
+	      G4cout << "This is to obey the minimumKineticEnergy cut or due to the option\n"
+		     << "\"g4PhysicsUserBDSIMCutsAndLimits\".\n" << G4endl;
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
 	}

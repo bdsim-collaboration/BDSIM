@@ -59,6 +59,7 @@ Event::~Event()
   delete PrimaryGlobal;
   delete Eloss;
   delete ElossVacuum;
+  delete ElossTunnel;
   delete ElossWorld;
   delete ElossWorldExit;
   delete PrimaryFirstHit;
@@ -83,6 +84,7 @@ void Event::CommonCtor()
   PrimaryGlobal   = new BDSOutputROOTEventCoords();
   Eloss           = new BDSOutputROOTEventLoss();
   ElossVacuum     = new BDSOutputROOTEventLoss();
+  ElossTunnel     = new BDSOutputROOTEventLoss();
   ElossWorld      = new BDSOutputROOTEventLoss();
   ElossWorldExit  = new BDSOutputROOTEventExit();
   PrimaryFirstHit = new BDSOutputROOTEventLoss();
@@ -181,7 +183,10 @@ void Event::SetBranchAddress(TTree* t,
       t->SetBranchStatus("*", 1);
       t->SetBranchAddress("Eloss.", &Eloss);
       t->SetBranchAddress("Histos.", &Histos);
-      t->SetBranchAddress("TunnelHit.", &TunnelHit);
+      if (((*t).GetListOfBranches()->FindObject("TunnelHit.")) != nullptr)
+	{t->SetBranchAddress("TunnelHit.", &TunnelHit);}
+      else
+	{t->SetBranchAddress("ElossTunnel.", &ElossTunnel);}
       t->SetBranchAddress("Trajectory.", &Trajectory);
 
       if (dataVersion > 3)
@@ -211,6 +216,8 @@ void Event::SetBranchAddress(TTree* t,
 	    {t->SetBranchAddress("Eloss.", &Eloss);}
 	  else if (name == "ElossVacuum")
 	    {t->SetBranchAddress("ElossVacuum.", &ElossVacuum);}
+	  else if (name == "ElossTunnel")
+	    {t->SetBranchAddress("ElossTunnel.", &ElossTunnel);}
 	  else if (name == "ElossWorld")
 	    {t->SetBranchAddress("ElossWorld.",  &ElossWorld);}
 	  else if (name == "ElossWorldExit")
@@ -231,6 +238,7 @@ void Event::SetBranchAddress(TTree* t,
       std::cout << "Event::SetBranchAddress> Primary.         " << Primary         << std::endl;
       std::cout << "Event::SetBranchAddress> PrimaryGlobal.   " << PrimaryGlobal   << std::endl;
       std::cout << "Event::SetBranchAddress> Eloss.           " << Eloss           << std::endl;
+      std::cout << "Event::SetBranchAddress> ElossTunnel.     " << ElossTunnel     << std::endl;
       std::cout << "Event::SetBranchAddress> ElossVacuum.     " << ElossVacuum     << std::endl;
       std::cout << "Event::SetBranchAddress> ElossWorld.      " << ElossWorld      << std::endl;
       std::cout << "Event::SetBranchAddress> ElossWorldExit.  " << ElossWorldExit  << std::endl;
