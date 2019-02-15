@@ -36,18 +36,18 @@ class BDSEnergyCounterHit;
  * @author Laurie Nevay
  */
 
-class BDSCollimatorHit: public G4VHit
+class BDSHitCollimator: public G4VHit
 {
 public:
-  BDSCollimatorHit();
-  BDSCollimatorHit(const BDSBeamline*   beamlineIn,
+  BDSHitCollimator();
+  BDSHitCollimator(const BDSBeamline*   beamlineIn,
 		   G4int                collimatorIndexIn,
 		   const G4ThreeVector& preStepPositionIn,
 		   const G4ThreeVector& preStepMomentumIn,
 		   G4double             totalEnergyIn,
 		   BDSEnergyCounterHit* energyDepositionHitIn);
 
-  virtual ~BDSCollimatorHit(){;}
+  virtual ~BDSHitCollimator(){;}
 
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -63,19 +63,19 @@ public:
   BDSEnergyCounterHit* energyDepositionHit;
 };
 
-typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
-extern G4Allocator<BDSCollimatorHit> BDSCollimatorHitAllocator;
+typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;
+extern G4Allocator<BDSHitCollimator> BDSCollimatorHitAllocator;
 
-inline void* BDSCollimatorHit::operator new(size_t)
+inline void* BDSHitCollimator::operator new(size_t)
 {
   void* aHit;
   aHit=(void*) BDSCollimatorHitAllocator.MallocSingle();
   return aHit;
 }
 
-inline void BDSCollimatorHit::operator delete(void *aHit)
+inline void BDSHitCollimator::operator delete(void *aHit)
 {
-  BDSCollimatorHitAllocator.FreeSingle((BDSCollimatorHit*) aHit);
+  BDSCollimatorHitAllocator.FreeSingle((BDSHitCollimator*) aHit);
 }
 
 #endif

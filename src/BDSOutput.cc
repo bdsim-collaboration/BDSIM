@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSCollimatorHit.hh"
+#include "BDSHitCollimator.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventInfo.hh"
@@ -676,7 +676,7 @@ void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)
     {
-      BDSCollimatorHit* hit = (*hits)[i];
+      BDSHitCollimator* hit = (*hits)[i];
       G4int collimatorIndex = hit->collimatorIndex;      
       collimators[collimatorIndex]->Fill(hit,
 					 collimatorInfo[collimatorIndex],

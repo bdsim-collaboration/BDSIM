@@ -31,8 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
-class BDSCollimatorHit;
-typedef G4THitsCollection<BDSCollimatorHit> BDSCollimatorHitsCollection;
+class BDSHitCollimator;
+typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;

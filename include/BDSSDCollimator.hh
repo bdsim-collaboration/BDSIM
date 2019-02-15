@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDCOLLIMATOR_H
 #define BDSSDCOLLIMATOR_H
 
-#include "BDSCollimatorHit.hh"
+#include "BDSHitCollimator.hh"
 #include "BDSSensitiveDetector.hh"
 
 #include "globals.hh" // geant4 types / globals

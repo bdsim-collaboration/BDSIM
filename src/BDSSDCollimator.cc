@@ -147,7 +147,7 @@ G4bool BDSSDCollimator::ProcessHitsOrdered(G4Step* step,
 	}
     }
   
-  BDSCollimatorHit* hit = new BDSCollimatorHit(mwBeamline,
+  BDSHitCollimator* hit = new BDSHitCollimator(mwBeamline,
 					       collimatorIndex,
 					       preStepPosLocal,
 					       preStepMomLocal,
@@ -166,7 +166,7 @@ G4VHit* BDSSDCollimator::last() const
     {return nullptr;}
   else
     {
-      BDSCollimatorHit* lastHit = hitsVector->back();
+      BDSHitCollimator* lastHit = hitsVector->back();
       return dynamic_cast<G4VHit*>(lastHit);
     }
 }
