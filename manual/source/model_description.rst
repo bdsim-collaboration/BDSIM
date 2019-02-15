@@ -3597,6 +3597,9 @@ described in `Tunnel Geometry`_.
 | thinElementLength                | The length of all thinmultipoles and dipole           |
 |                                  | fringefields in a lattice (default 1e-6) [m]          |
 +----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
++----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
 |                                  | `circular`, `elliptical`, `square`, `rectangular`     |
 |                                  | (more to come in v0.9)                                |
@@ -3684,17 +3687,30 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | through any geometry in the model (not including the  |
 |                                  | world volume)                                         |
 +----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergy             | A particle below this energy will be killed and the   |
+|                                  | energy deposition recorded at that location [GeV]     |
++----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
+|                                  | tunnel sections will be killed and the energy         |
+|                                  | deposition recorded at that location [GeV]            |
++----------------------------------+-------------------------------------------------------+
 | minimumRadiusOfCurvature         | Minimum tolerable radius of curvature of a particle,  |
 |                                  | below which, the energy will be decreased by 2% on    |
 |                                  | each use of the integrators to prevent infinite       |
 |                                  | loops - should be just greater than width of beam     |
 |                                  | pipe [m].                                             |
 +----------------------------------+-------------------------------------------------------+
+| minimumRange                     | A particle that would not travel this range           |
+|                                  | (a distance) in the current material will be cut [m]  |
++----------------------------------+-------------------------------------------------------+
 | ptcOneTurnMapFileName            | File name for a one turn map prepared in PTC that is  |
 |                                  | used in the teleporter to improve the accuracy of     |
 |                                  | circular tracking. See :ref:`one-turn-map`.           |
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 
 .. _physics-process-options:
@@ -3728,13 +3744,17 @@ Physics Processes
 |                                  | default.                                              |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location [GeV].    |
+|                                  | energy deposition recorded at that location [GeV]     |
++----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
+|                                  | tunnel sections will be killed and the energy         |
+|                                  | deposition recorded at that location [GeV]            |
 +----------------------------------+-------------------------------------------------------+
 | minimumRange                     | A particle that would not travel this range           |
-|                                  | (a distance) in the current material will be cut [m]. |
+|                                  | (a distance) in the current material will be cut [m]  |
 +----------------------------------+-------------------------------------------------------+
 | neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
-|                                  | using the `neutron_tracking_cut` physics list [s].    |
+|                                  | using the `neutron_tracking_cut` physics list [s]     |
 +----------------------------------+-------------------------------------------------------+
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
@@ -3771,6 +3791,9 @@ Physics Processes
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | Whether to use synchrotron radiation processes        |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | Whether to produce Cherenkov radiation                |
 +----------------------------------+-------------------------------------------------------+
@@ -4888,6 +4911,9 @@ BDSIM can build a tunnel around the beam line. Currently, there are two main way
 Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
 and are described in :ref:`tunnel-examples`.
 
+The automatic tunnel building is controlled through the following options used with the
+:code:`option` command.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
@@ -4899,6 +4925,9 @@ and are described in :ref:`tunnel-examples`.
 |                                  | just in a straight line (default = 0)                 |
 +----------------------------------+-------------------------------------------------------+
 | builTunnelFloor                  | Whether to add a floor to the tunnel                  |
++----------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
+|                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
 |                                  | `circular`, `elliptical`, `square`, `rectangular`     |
@@ -4938,10 +4967,16 @@ shown as an example).
 The soil around the tunnel is typically symmetric, with the `tunnelSoilThickness` being added to
 the larger of the horizontal and vertical tunnel dimensions.
 
-.. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
-	  Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
-	  geometry. In future, it will be possible to override the automatic algorithm between
-	  certain elements in the beamline, but for now such situations must be avoided.
+Construction of the tunnel geometry may fail in particular cases of different beam lines.
+Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
+geometry. In future, it will be possible to override the automatic algorithm between
+certain elements in the beamline, but for now such situations must be avoided.
+
+.. note:: Surrounding the beam line with a tunnel completely means that every particle simulated
+	  will have to eventually hit something and not escape. This means that every single particle
+	  will likely create a shower of particles down to 0 energy. This can increase simulation time.
+	  To avoid this, or at least contorl this behaviour, it is recommended to use the options
+	  :code:`minimumKineticEnergyTunnel` or :code:`tunnelIsInfiniteAbsorber`.
 
 .. _materials-and-atoms:
 	  

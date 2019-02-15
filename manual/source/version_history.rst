@@ -58,6 +58,9 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | physicsEnergyLimitHigh           | Control maximum energy for all physcis models. (advanced)        |
 +----------------------------------+------------------------------------------------------------------+
+| minimumKineticEnergyTunnel       | Any particles below this energy (in GeV by default) will be      |
+|                                  | artificially killed in all BDSIM-generated tunnel segments.      |
++----------------------------------+------------------------------------------------------------------+
 | storeCollimatorInfo              | Store collimator structure with primary hits per collimator.     |
 +----------------------------------+------------------------------------------------------------------+
 | storeCollimatorHitsAll           | If `storeCollimatorInfo` is on and collimator hits are           |
@@ -96,6 +99,10 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | storeSamplerPolarCoords          | Store the polar coordinates (r, phi and rp, phip) in the         |
 |                                  | sampler output.                                                  |
++----------------------------------+------------------------------------------------------------------+
+| tunnelIsInfiniteAbsorber         | When turned on, any BDSIM-generated tunnel segments will absorb  |
+|                                  | and kill any particle of any energy. Used to speed up the        |
+|                                  | simulation. Default off.                                         |
 +----------------------------------+------------------------------------------------------------------+
 | worldGeometryFile                | External geometry file for world geometry.                       |
 +----------------------------------+------------------------------------------------------------------+
