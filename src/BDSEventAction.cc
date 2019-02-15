@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"

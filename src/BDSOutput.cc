@@ -41,7 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -485,7 +485,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     {return;}
   for (int i = 0; i < hits->entries(); i++)
     {
-      const BDSSamplerHit* hit = (*hits)[i];
+      const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
       samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords);

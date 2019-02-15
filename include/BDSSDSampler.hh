@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDSAMPLER_H
 #define BDSSDSAMPLER_H
 
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 #include "BDSSensitiveDetector.hh"
 
 #include "globals.hh" // geant4 types / globals

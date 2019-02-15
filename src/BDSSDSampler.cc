@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSHitSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -144,7 +144,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 			       energy,
 			       weight);
 
-  BDSSamplerHit* smpHit = new BDSSamplerHit(samplerID,
+  BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
 					    charge,
 					    PDGtype,
@@ -159,6 +159,6 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 
 G4VHit* BDSSDSampler::last() const
 {
-  BDSSamplerHit* lastHit = SamplerCollection->GetVector()->back();
+  BDSHitSampler* lastHit = SamplerCollection->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);
 }
