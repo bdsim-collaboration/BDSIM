@@ -63,19 +63,19 @@ public:
   BDSHitEnergyDeposition* energyDepositionHit;
 };
 
-typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;
-extern G4Allocator<BDSHitCollimator> BDSCollimatorHitAllocator;
+typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
+extern G4Allocator<BDSHitCollimator> BDSAllocatorCollimator;
 
 inline void* BDSHitCollimator::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSCollimatorHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorCollimator.MallocSingle();
   return aHit;
 }
 
 inline void BDSHitCollimator::operator delete(void *aHit)
 {
-  BDSCollimatorHitAllocator.FreeSingle((BDSHitCollimator*) aHit);
+  BDSAllocatorCollimator.FreeSingle((BDSHitCollimator*) aHit);
 }
 
 #endif

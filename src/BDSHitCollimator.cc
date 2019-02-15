@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Allocator.hh"
 
-G4Allocator<BDSHitCollimator> BDSCollimatorHitAllocator;
+G4Allocator<BDSHitCollimator> BDSAllocatorCollimator;
 
 BDSHitCollimator::BDSHitCollimator():
   beamline(nullptr),

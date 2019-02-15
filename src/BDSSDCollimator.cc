@@ -58,7 +58,7 @@ BDSSDCollimator::~BDSSDCollimator()
 void BDSSDCollimator::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Collimator hits collection
-  collimatorCollection = new BDSCollimatorHitsCollection(GetName(), itsCollectionName);
+  collimatorCollection = new BDSHitsCollectionCollimator(GetName(), itsCollectionName);
 
   // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)

@@ -233,7 +233,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // so we don't check the vacuum energy deposition
 
   // collimator hits if any
-  typedef BDSCollimatorHitsCollection chc;
+  typedef BDSHitsCollectionCollimator chc;
   chc* collimatorHits = dynamic_cast<chc*>(HCE->GetHC(collimatorCollID));
   
   // primary hits and losses from

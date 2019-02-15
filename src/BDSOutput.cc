@@ -232,7 +232,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
-			  const BDSCollimatorHitsCollection*    collimatorHits,
+			  const BDSHitsCollectionCollimator*    collimatorHits,
 			  const G4int                           turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
@@ -670,7 +670,7 @@ void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajector
   traj->Fill(trajectories);
 }
 
-void BDSOutput::FillCollimatorHits(const BDSCollimatorHitsCollection* hits,
+void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 				   const BDSTrajectoryPoint* primaryLossPoint)
 {
   G4int nHits = hits->entries();

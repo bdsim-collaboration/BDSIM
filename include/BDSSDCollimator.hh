@@ -83,7 +83,7 @@ private:
   inline bool IsIon(const int& pdgID) const {return pdgID > 1000000000;}
   
   /// The hits collection for this sensitive detector class that's owned by each instance.
-  BDSCollimatorHitsCollection* collimatorCollection;
+  BDSHitsCollectionCollimator* collimatorCollection;
 
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;
