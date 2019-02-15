@@ -48,18 +48,18 @@ class G4VHit;
  * @author Laurie Nevay
  */
 
-class BDSCollimatorSD: public BDSSensitiveDetector
+class BDSSDCollimator: public BDSSensitiveDetector
 { 
 public:
   /// Include unique name for each instance.
-  explicit BDSCollimatorSD(G4String name);
+  explicit BDSSDCollimator(G4String name);
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSCollimatorSD& operator=(const BDSCollimatorSD&) = delete;
-  BDSCollimatorSD(BDSCollimatorSD&) = delete;
+  BDSSDCollimator& operator=(const BDSSDCollimator&) = delete;
+  BDSSDCollimator(BDSSDCollimator&) = delete;
   /// @}
 
-  virtual ~BDSCollimatorSD();
+  virtual ~BDSSDCollimator();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).

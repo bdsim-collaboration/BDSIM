@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-class BDSCollimatorSD;
+class BDSSDCollimator;
 class BDSEnergyCounterSD;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSamplerSD;
@@ -102,7 +102,7 @@ public:
 #endif
 
   /// SD for collimator impact locations.
-  inline BDSCollimatorSD* GetCollimatorSD() const {return collimatorSD;}
+  inline BDSSDCollimator* GetCollimatorSD() const {return collimatorSD;}
 
   /// SD for collimator impacts + energy deposition at the same time in order.
   inline BDSMultiSensitiveDetectorOrdered* GetCollimatorCompleteSD() const {return collimatorCompleteSD;}
@@ -129,7 +129,7 @@ private:
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
-  BDSCollimatorSD*    collimatorSD;
+  BDSSDCollimator*    collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.

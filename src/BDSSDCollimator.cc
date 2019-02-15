@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
-#include "BDSCollimatorSD.hh"
+#include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-BDSCollimatorSD::BDSCollimatorSD(G4String name):
+BDSSDCollimator::BDSSDCollimator(G4String name):
   BDSSensitiveDetector("collimator/" + name),
   collimatorCollection(nullptr),
   itsCollectionName(name),
@@ -50,12 +50,12 @@ BDSCollimatorSD::BDSCollimatorSD(G4String name):
   collectionName.insert(name);
 }
 
-BDSCollimatorSD::~BDSCollimatorSD()
+BDSSDCollimator::~BDSSDCollimator()
 {
   delete auxNavigator;
 }
 
-void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
+void BDSSDCollimator::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Collimator hits collection
   collimatorCollection = new BDSCollimatorHitsCollection(GetName(), itsCollectionName);
@@ -70,13 +70,13 @@ void BDSCollimatorSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSCollimatorSD::ProcessHits(G4Step* step, G4TouchableHistory* rOHist)
+G4bool BDSSDCollimator::ProcessHits(G4Step* step, G4TouchableHistory* rOHist)
 {
   std::vector<G4VHit*> hits;
   return ProcessHitsOrdered(step, rOHist, hits);
 }
 
-G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
+G4bool BDSSDCollimator::ProcessHitsOrdered(G4Step* step,
 					   G4TouchableHistory* /*rOHist*/,
 					   const std::vector<G4VHit*>& hits)
 {
@@ -159,7 +159,7 @@ G4bool BDSCollimatorSD::ProcessHitsOrdered(G4Step* step,
 }
 
 
-G4VHit* BDSCollimatorSD::last() const
+G4VHit* BDSSDCollimator::last() const
 {
   auto hitsVector = collimatorCollection->GetVector();
   if (hitsVector->empty())
