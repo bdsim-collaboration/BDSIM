@@ -3892,7 +3892,7 @@ with the following options.
 |                                   | the energy deposition histograms.                                  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTunnel                  | Whether to store energy deposition hits from the tunnel geometry   |
-|                                   | in the `TunnelHit` branch of the Event Tree. Default off.          |
+|                                   | in the `ElossTunnel` branch of the Event Tree. Default off.        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTunnelHistograms        | Whether to generate summary histograms of energy deposition in the |
 |                                   | tunnel volumes. If `storeElossTunnel` is on, this will be on. The  |

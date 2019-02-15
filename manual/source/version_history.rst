@@ -1,4 +1,4 @@
-V1.3 - 2019 / 01 / ??
+V1.3 - 2019 / 02 / ??
 =====================
 
 Expected Changes To Results
@@ -184,6 +184,8 @@ Developer Changes
   sensitive detector (previously general energy deposition) as the developer must be explicit
   about what sensitivity they want so nothing unexpected can happen.
 * BDSBeamline can now return indices of beam line elements of a certain type.
+* All sensitive detector classes have been renamed as have the accessor functions in BDSSDManager.
+  This is to make the naming more consistent.
   
 Bug Fixes
 ---------
@@ -230,6 +232,9 @@ Bug Fixes
 Output Changes
 --------------
 
+* "TunnelHit" is now "EnergyLossTunnel" to be consistent. `rebdsim` and the analysis DataLoader
+  class (both Python and ROOT) are backwards compatible and both TunnelHit and ElossTunnel are
+  available. Only the correct one is filled with loaded data during analysis.
 * Much more granular control of what is stored in the output. See new options in 'new' section
   above.
 * Vacuum energy deposition separated from general energy deposition and now in its own branch.
