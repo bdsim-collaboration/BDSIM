@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
-#include "BDSVolumeExitSD.hh"
+#include "BDSSDVolumeExit.hh"
 
 #include "G4SDManager.hh"
 #include "G4Version.hh"
@@ -103,7 +103,7 @@ BDSSDManager::BDSSDManager()
   eCounterWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries);
   SDMan->AddNewDetector(eCounterWorld);
 
-  worldExit= new BDSVolumeExitSD("worldExit", true);
+  worldExit= new BDSSDVolumeExit("worldExit", true);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029

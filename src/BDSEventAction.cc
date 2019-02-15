@@ -35,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
-#include "BDSVolumeExitSD.hh"
+#include "BDSSDVolumeExit.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"

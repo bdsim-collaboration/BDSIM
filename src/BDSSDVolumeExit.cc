@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSVolumeExitHit.hh"
-#include "BDSVolumeExitSD.hh"
+#include "BDSSDVolumeExit.hh"
 
 #include "globals.hh"
 #include "G4SDManager.hh"
@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4StepStatus.hh"
 #include "G4Track.hh"
 
-BDSVolumeExitSD::BDSVolumeExitSD(G4String name,
+BDSSDVolumeExit::BDSSDVolumeExit(G4String name,
 				 G4bool   worldExitIn):
   G4VSensitiveDetector("volume_exit/" + name),
   colName(name),
@@ -39,7 +39,7 @@ BDSVolumeExitSD::BDSVolumeExitSD(G4String name,
   statusToMatch = worldExitIn ? G4StepStatus::fWorldBoundary : fGeomBoundary;
 }
 
-void BDSVolumeExitSD::Initialize(G4HCofThisEvent* HCE)
+void BDSSDVolumeExit::Initialize(G4HCofThisEvent* HCE)
 {
   collection = new BDSVolumeExitHitsCollection(GetName(), colName);
   if (HCIDve < 0)
@@ -51,7 +51,7 @@ void BDSVolumeExitSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSVolumeExitSD::ProcessHits(G4Step* aStep,
+G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
 				    G4TouchableHistory* /*th*/)
 {
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();

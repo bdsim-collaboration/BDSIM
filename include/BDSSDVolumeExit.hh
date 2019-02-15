@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSVOLUMEEXITSD_H
-#define BDSVOLUMEEXITSD_H
+#ifndef BDSSDVOLUMEEXIT_H
+#define BDSSDVOLUMEEXIT_H
 
 #include "BDSVolumeExitHit.hh"
 
@@ -39,13 +39,13 @@ class G4TouchableHistory;
  * Can do general volume exit or world volume exit (default). See G4StepStatus.
  */
 
-class BDSVolumeExitSD: public G4VSensitiveDetector
+class BDSSDVolumeExit: public G4VSensitiveDetector
 {
 public:
-  BDSVolumeExitSD(G4String name,
+  BDSSDVolumeExit(G4String name,
 		  G4bool   worldExit = true);
 
-  virtual ~BDSVolumeExitSD(){;}
+  virtual ~BDSSDVolumeExit(){;}
 
   virtual void Initialize(G4HCofThisEvent* HCE);
   virtual G4bool ProcessHits(G4Step* step,
@@ -53,9 +53,9 @@ public:
   
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSVolumeExitSD& operator=(const BDSVolumeExitSD&);
-  BDSVolumeExitSD(BDSVolumeExitSD&);
-  BDSVolumeExitSD() = delete;
+  BDSSDVolumeExit& operator=(const BDSSDVolumeExit&);
+  BDSSDVolumeExit(BDSSDVolumeExit&);
+  BDSSDVolumeExit() = delete;
 
   G4String     colName;        ///< Name prepared for collection.
   G4int        HCIDve;         ///< Hits collection ID for volume exit.

@@ -30,7 +30,7 @@ class BDSSDEnergyDeposition;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
-class BDSVolumeExitSD;
+class BDSSDVolumeExit;
 
 class G4VSDFilter;
 
@@ -90,7 +90,7 @@ public:
   inline BDSSDEnergyDeposition* GetEnergyCounterWorldSD() const {return eCounterWorld;}
 
   /// SD for world exit hits.
-  inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
+  inline BDSSDVolumeExit* GetWorldExitSD() const {return worldExit;}
 
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
@@ -124,7 +124,7 @@ private:
   BDSSDEnergyDeposition* eCounterVacuum;
   BDSSDEnergyDeposition* eCounterTunnel;
   BDSSDEnergyDeposition* eCounterWorld;
-  BDSVolumeExitSD*    worldExit;
+  BDSSDVolumeExit*    worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
 #endif
