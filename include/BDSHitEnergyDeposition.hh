@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHitEnergyDeposition;
 
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
-extern G4Allocator<BDSHitEnergyDeposition> BDSEnergyCounterHitAllocator;
+extern G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
 /**
  * @brief Information recorded for a single piece of energy deposition.
@@ -133,13 +133,13 @@ private:
 inline void* BDSHitEnergyDeposition::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSEnergyCounterHitAllocator.MallocSingle();
+  aHit=(void*) BDSAllocatorEnergyDeposition.MallocSingle();
   return aHit;
 }
 
 inline void BDSHitEnergyDeposition::operator delete(void *aHit)
 {
- BDSEnergyCounterHitAllocator.FreeSingle((BDSHitEnergyDeposition*) aHit);
+ BDSAllocatorEnergyDeposition.FreeSingle((BDSHitEnergyDeposition*) aHit);
 }
 
 #endif

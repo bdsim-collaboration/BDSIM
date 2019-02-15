@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 
-G4Allocator<BDSHitEnergyDeposition> BDSEnergyCounterHitAllocator;
+G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
 BDSHitEnergyDeposition::BDSHitEnergyDeposition(const G4int&    nCopyIn,
 					 const G4double& energyIn,
