@@ -33,8 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template <class T> class G4THitsCollection;
 class BDSHitCollimator;
 typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;
-class BDSEnergyCounterHit;
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+class BDSHitEnergyDeposition;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;
 class BDSParticleCoordsFullGlobal;
 class BDSSamplerHit;

@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
@@ -347,7 +347,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     if (sRangeToStore.size() != 0)
       {
 	G4int n_hit = eCounterHits->entries();
-	BDSEnergyCounterHit *hit;
+	BDSHitEnergyDeposition *hit;
 	for (G4int i = 0; i < n_hit; i++)
 	  {
 	    hit = (*eCounterHits)[i];

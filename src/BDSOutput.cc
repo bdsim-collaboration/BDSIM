@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSHitCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
@@ -555,7 +555,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
     {indScoringMap = histIndices3D["ScoringMap"];}
   for (G4int i=0;i<n_hit;i++)
     {
-      BDSEnergyCounterHit* hit = (*hits)[i];
+      BDSHitEnergyDeposition* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
       G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
       switch (lossType)

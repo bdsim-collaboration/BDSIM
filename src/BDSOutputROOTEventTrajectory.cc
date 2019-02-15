@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSTrajectory.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"

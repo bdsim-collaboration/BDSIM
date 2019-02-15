@@ -36,7 +36,7 @@ BDSHitCollimator::BDSHitCollimator(const BDSBeamline*   beamlineIn,
 				   const G4ThreeVector& preStepPositionIn,
 				   const G4ThreeVector& preStepMomentumIn,
 				   G4double             totalEnergyIn,
-				   BDSEnergyCounterHit* energyDepositionHitIn):
+				   BDSHitEnergyDeposition* energyDepositionHitIn):
   beamline(beamlineIn),
   collimatorIndex(collimatorIndexIn),
   preStepPosition(preStepPositionIn),

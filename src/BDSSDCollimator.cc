@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSStep.hh"
@@ -81,11 +81,11 @@ G4bool BDSSDCollimator::ProcessHitsOrdered(G4Step* step,
 					   const std::vector<G4VHit*>& hits)
 {
   G4VHit* lastHit = nullptr;
-  BDSEnergyCounterHit* lastHitEDep = nullptr;
+  BDSHitEnergyDeposition* lastHitEDep = nullptr;
   if (!hits.empty())
     {
       lastHit = hits.back();
-      lastHitEDep = dynamic_cast<BDSEnergyCounterHit*>(lastHit);
+      lastHitEDep = dynamic_cast<BDSHitEnergyDeposition*>(lastHit);
     }
 
   const G4VProcess* postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();

@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 #include "BDSHitCollimator.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -126,7 +126,7 @@ void BDSOutputROOTEventCollimator::Fill(const BDSHitCollimator* hit,
   impactParameterX.push_back((float)impactX);
   impactParameterY.push_back((float)impactY);
 
-  BDSEnergyCounterHit* eHit = hit->energyDepositionHit;
+  BDSHitEnergyDeposition* eHit = hit->energyDepositionHit;
   if (eHit)
     {
       G4double eDep = eHit->GetEnergy() / CLHEP::GeV;

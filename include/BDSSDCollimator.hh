@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSAuxiliaryNavigator;
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 
 class G4Step;
 class G4HCofThisEvent;

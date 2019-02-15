@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -202,7 +202,7 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   turnstaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSEnergyCounterHit* hit = new BDSEnergyCounterHit(nCopy,
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(nCopy,
 						     enrg,
 						     preStepKineticEnergy,
 						     X, Y, Z,
@@ -306,7 +306,7 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSEnergyCounterHit* hit = new BDSEnergyCounterHit(nCopy,
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(nCopy,
 						     enrg,
 						     preStepKineticEnergy,
 						     X, Y, Z,
@@ -332,6 +332,6 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 
 G4VHit* BDSSDEnergyDeposition::last() const
 {
-  BDSEnergyCounterHit* lastHit = energyCounterCollection->GetVector()->back();
+  BDSHitEnergyDeposition* lastHit = energyCounterCollection->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);
 }

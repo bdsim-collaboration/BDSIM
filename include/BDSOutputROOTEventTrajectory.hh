@@ -25,10 +25,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 
 #ifndef __ROOTBUILD__
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSEnergyCounterHitsCollection;
 #endif
 
 class BDSAuxiliaryNavigator;

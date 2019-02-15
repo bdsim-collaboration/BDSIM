@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Allocator.hh"
 
 class BDSBeamline;
-class BDSEnergyCounterHit;
+class BDSHitEnergyDeposition;
 
 /**
  * @brief Snapshot of information for particle passing through a collimator.
@@ -45,7 +45,7 @@ public:
 		   const G4ThreeVector& preStepPositionIn,
 		   const G4ThreeVector& preStepMomentumIn,
 		   G4double             totalEnergyIn,
-		   BDSEnergyCounterHit* energyDepositionHitIn);
+		   BDSHitEnergyDeposition* energyDepositionHitIn);
 
   virtual ~BDSHitCollimator(){;}
 
@@ -60,7 +60,7 @@ public:
 
   /// Pointer to the externally created energy deposition hit for the step in the
   /// collimator this hit will correspond to.
-  BDSEnergyCounterHit* energyDepositionHit;
+  BDSHitEnergyDeposition* energyDepositionHit;
 };
 
 typedef G4THitsCollection<BDSHitCollimator> BDSCollimatorHitsCollection;

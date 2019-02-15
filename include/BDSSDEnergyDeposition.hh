@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDENERGYDEPOSITION_H
 #define BDSSDENERGYDEPOSITION_H
 
-#include "BDSEnergyCounterHit.hh"
+#include "BDSHitEnergyDeposition.hh"
 #include "BDSSensitiveDetector.hh"
 
 class BDSAuxiliaryNavigator;
