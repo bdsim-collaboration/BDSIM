@@ -249,6 +249,7 @@ void Options::PublishMembers()
   publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
+  publish("minimumKineticEnergyTunnel",  &Options::minimumKineticEnergyTunnel);
   publish("minimumRange",                &Options::minimumRange);
   
   publish("prodCutPhotons",              &Options::prodCutPhotons);
@@ -265,6 +266,7 @@ void Options::PublishMembers()
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
+  publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
