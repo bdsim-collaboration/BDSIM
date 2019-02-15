@@ -45,7 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
-#include "BDSVolumeExitHit.hh"
+#include "BDSHitVolumeExit.hh"
 
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
@@ -630,7 +630,7 @@ void BDSOutput::FillELossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)
     {
-      BDSVolumeExitHit* hit = (*hits)[i];
+      BDSHitVolumeExit* hit = (*hits)[i];
       energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
       eLossWorldExit->Fill(hit);
     }

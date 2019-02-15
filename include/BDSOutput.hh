@@ -41,8 +41,8 @@ class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSSamplerHitsCollection;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-class BDSVolumeExitHit;
-typedef G4THitsCollection<BDSVolumeExitHit> BDSVolumeExitHitsCollection;
+class BDSHitVolumeExit;
+typedef G4THitsCollection<BDSHitVolumeExit> BDSVolumeExitHitsCollection;
 
 class G4PrimaryVertex;
 
