@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 
 class BDSSDCollimator;
-class BDSEnergyCounterSD;
+class BDSSDEnergyDeposition;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSamplerSD;
 class BDSTerminatorSD;
@@ -37,7 +37,7 @@ class G4VSDFilter;
 #if G4VERSION_NUMBER < 1030
 // In this case we use only the energy counter SD and return it
 // as a base class pointer. Include header so casting works.
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #endif
 
 /**
@@ -78,16 +78,16 @@ public:
   inline BDSTerminatorSD* GetTerminatorSD() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterSD() const {return eCounter;}
+  inline BDSSDEnergyDeposition* GetEnergyCounterSD() const {return eCounter;}
 
   /// SD for energy deposition in vacuum volumes.
-  inline BDSEnergyCounterSD* GetEnergyCounterVacuumSD() const {return eCounterVacuum;}
+  inline BDSSDEnergyDeposition* GetEnergyCounterVacuumSD() const {return eCounterVacuum;}
 
   /// SD for tunnel energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return eCounterTunnel;}
+  inline BDSSDEnergyDeposition* GetEnergyCounterTunnelSD() const {return eCounterTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return eCounterWorld;}
+  inline BDSSDEnergyDeposition* GetEnergyCounterWorldSD() const {return eCounterWorld;}
 
   /// SD for world exit hits.
   inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
@@ -120,10 +120,10 @@ private:
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
   BDSTerminatorSD*    terminator;
-  BDSEnergyCounterSD* eCounter;
-  BDSEnergyCounterSD* eCounterVacuum;
-  BDSEnergyCounterSD* eCounterTunnel;
-  BDSEnergyCounterSD* eCounterWorld;
+  BDSSDEnergyDeposition* eCounter;
+  BDSSDEnergyDeposition* eCounterVacuum;
+  BDSSDEnergyDeposition* eCounterTunnel;
+  BDSSDEnergyDeposition* eCounterWorld;
   BDSVolumeExitSD*    worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;

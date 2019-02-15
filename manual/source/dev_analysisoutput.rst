@@ -26,7 +26,7 @@ These 'hits' are then stored in a 'collection' (i.e. vector) that can be process
 at the end of an event.
 
 BDSIM provides several SD classes to prepare different types of information. The
-two main sensitive detector classes in BDSIM are `BDSEnergyCounterSD` and
+two main sensitive detector classes in BDSIM are `BDSSDEnergyDeposition` and
 `BDSSamplerSD`. These are responsible for generating energy deposition hits in
 accelerator components and for recording information in sampler volumes respectively.
 The hits are translated and put into output structures in the end of event action

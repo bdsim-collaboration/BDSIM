@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"

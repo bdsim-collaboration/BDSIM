@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"

@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSamplerSD.hh"
@@ -91,16 +91,16 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
 
-  eCounter = new BDSEnergyCounterSD("general", stopSecondaries);
+  eCounter = new BDSSDEnergyDeposition("general", stopSecondaries);
   SDMan->AddNewDetector(eCounter);
 
-  eCounterVacuum = new BDSEnergyCounterSD("vacuum", stopSecondaries);
+  eCounterVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries);
   SDMan->AddNewDetector(eCounterVacuum);
 
-  eCounterTunnel = new BDSEnergyCounterSD("tunnel", stopSecondaries);
+  eCounterTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries);
   SDMan->AddNewDetector(eCounterTunnel);
 
-  eCounterWorld = new BDSEnergyCounterSD("worldLoss", stopSecondaries);
+  eCounterWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries);
   SDMan->AddNewDetector(eCounterWorld);
 
   worldExit= new BDSVolumeExitSD("worldExit", true);

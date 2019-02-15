@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSEnergyCounterHit.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name,
+BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
 				       G4bool   stopSecondariesIn):
   BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
@@ -69,12 +69,12 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name,
   collectionName.insert(colName);
 }
 
-BDSEnergyCounterSD::~BDSEnergyCounterSD()
+BDSSDEnergyDeposition::~BDSSDEnergyDeposition()
 {
   delete auxNavigator;
 }
 
-void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
+void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 {
   energyCounterCollection = new BDSEnergyCounterHitsCollection(GetName(),colName);
   if (HCIDe < 0)
@@ -86,7 +86,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
+G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 				       G4TouchableHistory* /*th*/)
 {
   // Get the energy deposited along the step
@@ -226,7 +226,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
   return true;
 }
 
-G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
+G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 					    G4TouchableHistory* /*th*/)
 {
   parentID   = track->GetParentID(); // needed later on too
@@ -330,7 +330,7 @@ G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
   return true;
 }
 
-G4VHit* BDSEnergyCounterSD::last() const
+G4VHit* BDSSDEnergyDeposition::last() const
 {
   BDSEnergyCounterHit* lastHit = energyCounterCollection->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);

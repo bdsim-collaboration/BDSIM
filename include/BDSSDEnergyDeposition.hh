@@ -38,12 +38,12 @@ class G4Track;
  * the curvilinear parallel world for curvilinear coordinates.
  */
 
-class BDSEnergyCounterSD: public BDSSensitiveDetector
+class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
-  BDSEnergyCounterSD(G4String name,
+  BDSSDEnergyDeposition(G4String name,
 		     G4bool   stopSecondariesIn);
-  virtual ~BDSEnergyCounterSD();
+  virtual ~BDSSDEnergyDeposition();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
 
@@ -65,9 +65,9 @@ public:
   
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
-  BDSEnergyCounterSD(BDSEnergyCounterSD&);
-  BDSEnergyCounterSD() = delete;
+  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
+  BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
+  BDSSDEnergyDeposition() = delete;
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
   G4String colName;         ///< Collection name.
