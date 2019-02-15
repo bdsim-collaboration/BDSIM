@@ -24,4 +24,4 @@ beam, particle="e-",
       betx=1e-6*m,
       bety=1e-6*m;
 
-option, tunnelMinimumKineticEnergy=100*MeV;
+option, minimumKineticEnergyTunnel=100*MeV;

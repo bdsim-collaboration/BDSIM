@@ -6,4 +6,4 @@ simple_testing(limit-range            "--file=range.gmad"                       
 simple_testing(limit-minke-collimator "--file=minimumKineticEnergyCollimator.gmad" ${OVERLAP_CHECK})
 simple_testing(limit-inf-abs-col      "--file=collimatorsAreInfiniteAbs.gmad"      ${OVERLAP_CHECK})
 simple_testing(limit-minke-tunnel     "--file=minimumKineticEnergyTunnel.gmad"     ${OVERLAP_CHECK})
-simple_testing(limit-inf-abs-tunnel   "--file=tunnelIsInfinteAbsorber.gmad"        ${OVERLAP_CHECK})
+simple_testing(limit-inf-abs-tunnel   "--file=tunnelIsInfiniteAbs.gmad"            ${OVERLAP_CHECK})
