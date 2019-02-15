@@ -78,16 +78,16 @@ public:
   inline BDSSDTerminator* Terminator() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSSDEnergyDeposition* EnergyDeposition() const {return eCounter;}
+  inline BDSSDEnergyDeposition* EnergyDeposition() const {return energyDeposition;}
 
   /// SD for energy deposition in vacuum volumes.
-  inline BDSSDEnergyDeposition* EnergyDepositionVacuum() const {return eCounterVacuum;}
+  inline BDSSDEnergyDeposition* EnergyDepositionVacuum() const {return energyDepositionVacuum;}
 
   /// SD for tunnel energy counter.
-  inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return eCounterTunnel;}
+  inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return energyDepositionTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return eCounterWorld;}
+  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return energyDepositionWorld;}
 
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
@@ -98,7 +98,7 @@ public:
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
-  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return eCounterWorld;}
+  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return energyDepositionWorld;}
 #endif
 
   /// SD for collimator impact locations.
@@ -120,10 +120,10 @@ private:
   BDSSDSampler*       samplerPlane;
   BDSSDSampler*       samplerCylinder;
   BDSSDTerminator*    terminator;
-  BDSSDEnergyDeposition* eCounter;
-  BDSSDEnergyDeposition* eCounterVacuum;
-  BDSSDEnergyDeposition* eCounterTunnel;
-  BDSSDEnergyDeposition* eCounterWorld;
+  BDSSDEnergyDeposition* energyDeposition;
+  BDSSDEnergyDeposition* energyDepositionVacuum;
+  BDSSDEnergyDeposition* energyDepositionTunnel;
+  BDSSDEnergyDeposition* energyDepositionWorld;
   BDSSDVolumeExit*    worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
