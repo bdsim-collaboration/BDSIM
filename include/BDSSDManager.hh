@@ -98,7 +98,7 @@ public:
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
-  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return energyDepositionWorld;}
+  inline G4VSensitiveDetector* WorldComplete() const {return energyDepositionWorld;}
 #endif
 
   /// SD for collimator impact locations.
