@@ -29,7 +29,7 @@ class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
-class BDSTerminatorSD;
+class BDSSDTerminator;
 class BDSVolumeExitSD;
 
 class G4VSDFilter;
@@ -75,7 +75,7 @@ public:
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
-  inline BDSTerminatorSD* GetTerminatorSD() const {return terminator;}
+  inline BDSSDTerminator* GetTerminatorSD() const {return terminator;}
   
   /// SD for general energy counter.
   inline BDSSDEnergyDeposition* GetEnergyCounterSD() const {return eCounter;}
@@ -119,7 +119,7 @@ private:
   /// @{ SD instance.
   BDSSDSampler*       samplerPlane;
   BDSSDSampler*       samplerCylinder;
-  BDSTerminatorSD*    terminator;
+  BDSSDTerminator*    terminator;
   BDSSDEnergyDeposition* eCounter;
   BDSSDEnergyDeposition* eCounterVacuum;
   BDSSDEnergyDeposition* eCounterTunnel;

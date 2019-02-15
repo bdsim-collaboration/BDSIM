@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
-#include "BDSTerminatorSD.hh"
+#include "BDSSDTerminator.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
@@ -136,7 +136,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   // number feedback
   G4int event_number = evt->GetEventID();
-  BDSTerminatorSD::eventNumber = event_number; // update static member of terminator
+  BDSSDTerminator::eventNumber = event_number; // update static member of terminator
   eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}

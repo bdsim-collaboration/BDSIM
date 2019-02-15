@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
-#include "BDSTerminatorSD.hh"
+#include "BDSSDTerminator.hh"
 #include "BDSVolumeExitSD.hh"
 
 #include "G4SDManager.hh"
@@ -88,7 +88,7 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(samplerCylinder);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
-  terminator  = new BDSTerminatorSD("terminator");
+  terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
   eCounter = new BDSSDEnergyDeposition("general", stopSecondaries);

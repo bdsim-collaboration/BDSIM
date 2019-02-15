@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerPlane.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
-#include "BDSTerminatorSD.hh"
+#include "BDSSDTerminator.hh"
 #include "BDSTerminatorUserLimits.hh"
 
 #include "G4Box.hh"
