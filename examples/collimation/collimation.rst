@@ -177,7 +177,7 @@ analysis configuration file. The following is the desired histogram specificatio
   # Object     treeName Histogram Name       #Bins Binning  Variable          Selection
   Histogram1D  Event.   C1ImpactLossLocation {96}  {0:12}   PrimaryLastHit.S  COLL_c1_0.primaryInteracted
 
-.. note:: Take not of the "." in the variable names.
+.. note:: Take note of the "." in the variable names.
 
 An example analysis configuration file is included in
 :code:`bdsim/examples/collimation/analysisConfig.txt` that contains the histograms
@@ -329,9 +329,10 @@ This is the line added to the example analysis configuration file.::
   Histogram2D  Event.   AfterShielding  {50,50} {-2.5:2.5,-2.5:2.5} s1.y:s1.x COLL_c1_0.primaryInteracted&&s1.parentID>0
 
 .. note:: Our analysis configuration file is a relatively thin interface to TTree::Draw in ROOT
-	  and so we see the inconsistency in ROOT. All of our specifications are x, then y, then
-	  z if further dimensions are required. However, with ROOT it is 1D: x, 2D y vs x,
-	  3D x vs y vs z. The 2D variables are y:x here.
+	  and so we see the inconsistency in ROOT for the order of the variables to be histogrammed.
+	  All of our specifications are x, then y, then z if further dimensions are required.
+	  However, with ROOT, the variable to be histogrammed is 1D: x, 2D y vs x, 3D x vs y vs z.
+	  The 2D variables are y:x here. The number of bins and ranges are in x, y, z order always.
 
 This histogram can be plotted with `pybdsim`.::
 
