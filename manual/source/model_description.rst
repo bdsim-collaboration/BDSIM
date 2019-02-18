@@ -229,7 +229,7 @@ Both are equivalent.
 Circular Machines
 -----------------
 
-To simulate circular machines, BDSIM should be executed with the `-\\-circular` executable option
+To simulate circular machines, BDSIM should be executed with the :code:`--circular` executable option
 (see :ref:`executable-options`). This installs special beam line
 elements called the `teleporter` and `terminator` at the end of the lattice that are described
 below.
@@ -238,7 +238,7 @@ below.
 	  of the sequence to accommodate these elements. This has a minimal impact on tracking.
 
 Both the terminator and teleporter are invisible and very thin elements that are not normally
-shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
+shown in the visualiser. These can be visualised by executing BDSIM with the :code:`--vis_debug`
 executable option.
 
 The turn number is automatically stored in the energy loss output in the data when the
@@ -269,7 +269,7 @@ Not all optical models close perfectly in Cartesian coordinates, i.e. the ends d
 align. Some small offsets may be tolerable, as most tracking codes use curvilinear coordinates.
 To account for this, the teleporter is a small disk volume inserted to make up the space
 and shift particles transversely as if the ends matched up perfectly. This is automatically
-calculated and constructed when using the `-\\-circular` executable option.
+calculated and constructed when using the :code:`--circular` executable option.
 
 Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
@@ -4286,7 +4286,7 @@ BDSIM can generate only the input distribution and store it to file without crea
 running any physics simulation. This is very fast and can be used to verify the input distribution
 with a large number of particles (for example, 10k to 100k in under one minute).
 
-BDSIM should be executed with the option `-\\-generatePrimariesOnly` as described in
+BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
 Beam in Output
@@ -4985,7 +4985,7 @@ Materials and Atoms
 
 All chemical elements are available in BDSIM as well as the Geant4 NIST database
 of materials for use. Custom materials and can also be added via the parser. All materials
-available in BDSIM can be found by executing BDSIM with the `-\\-materials` option.::
+available in BDSIM can be found by executing BDSIM with the :code:`--materials` option. ::
 
   bdsim --materials
 
@@ -5470,7 +5470,7 @@ produces the model shown below.
 * Colour names are case-sensitive.
 * New colour names must not clash with predefined BDSIM colour names.
 
-All available colours in BDSIM can be found by running BDSIM with the `-\\-colours` command::
+All available colours in BDSIM can be found by running BDSIM with the :code:`--colours` command: ::
 
   bdsim --colours
 

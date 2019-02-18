@@ -24,7 +24,7 @@ To download the source from the git repository, use the command::
 
 This will create a directory called ``bdsim``, inside which all the code, examples
 and documentation is provided. Also, the python utilities that come with BDSIM will be present
-when the `-\\-recursive` option is used.
+when the :code:`--recursive` option is used.
 
 Download
 --------
