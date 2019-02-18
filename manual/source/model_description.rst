@@ -391,14 +391,11 @@ Magnet Strength Polarity
 	  corresponds to horizontal defocussing for a negatively charged particle.
 	  However, MADX treats all particles as positively charged for tracking purposes.
 
-.. versionadded:: 0.7
-
-
-		  BDSIM currently treats k absolutely, so to convert a MADX lattice for
-		  negatively particles, the MADX k values must be multiplied by -1. The
-		  pybdsim converter provides an option called `flipmagnets` for this
-		  purpose. This may be revised in future releases depending on changes
-		  to MADX.
+.. warning:: BDSIM currently treats k absolutely, so to convert a MADX lattice for
+	     negatively particles, the MADX k values must be multiplied by -1. The
+	     pybdsim converter provides an option called `flipmagnets` for this
+	     purpose. This may be revised in future releases depending on changes
+	     to MADX.
 
 
 Component Strength Scaling
@@ -1910,8 +1907,6 @@ double the number of poles as sides.
 
 LHC Left & Right - "`lhcleft`" | "`lhcright`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. versionadded:: 0.7
 
 `lhcleft` and `lhcright` provide more detailed magnet geometry appropriate for the LHC. Here, the
 left and right suffixes refer to the shift of the magnet body with respect to the reference beam line.
