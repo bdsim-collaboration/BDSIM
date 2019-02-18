@@ -11,5 +11,15 @@ How to run::
   bdsim --file=bl.gmad
 
 .. figure:: beamLoss.png
-	    :width: 80%
+	    :width: 100%
 	    :align: center
+
+Running 10 events with the following command in the visualiser session prompt, the
+following visualisation is produced. ::
+
+  /run/beamOn 10
+
+.. figure:: beamLoss-10events.png
+	    :width: 100%
+	    :align: center
+	    :figclass: align-center
