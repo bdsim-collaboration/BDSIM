@@ -1,2 +1,2 @@
-simple_testing(example-simple-collimation "--file=sc.gmad" ${OVERLAP_CHECK})
+simple_testing(example-beam-loss     "--file=bl.gmad" ${OVERLAP_CHECK})
 
