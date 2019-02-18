@@ -749,11 +749,15 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 }
 
 #if G4VERSION_NUMBER > 1009
-BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
- const std::list<std::string>& biasList,
- G4String defaultBias,
- G4String elementName)
+BDSBOptrMultiParticleChangeCrossSection*
+BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& biasList,
+					       G4String defaultBias,
+					       G4String elementName)
 {
+  // no accelerator components to bias
+  if (biasList.empty())
+    {return nullptr;}
+
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
 
@@ -793,7 +797,6 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
 #if G4VERSION_NUMBER > 1009
-
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
   if(debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
@@ -803,9 +806,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   
   G4bool useDefaultBiasVacuum   = !defaultBiasVacuum.empty();
   G4bool useDefaultBiasMaterial = !defaultBiasMaterial.empty();
-  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
-  G4bool biasesDefined = !biasObjectList.empty();
-  G4bool overallUseBiasing = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
+  const auto& biasObjectList    = BDSParser::Instance()->GetBiasing();
+  G4bool biasesDefined          = !biasObjectList.empty();
+  G4bool overallUseBiasing      = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
   G4cout << __METHOD_NAME__ << "Using generic biasing: " << BDS::BoolToString(overallUseBiasing) << G4endl;
   if (!overallUseBiasing)
     {return;} // no biasing used -> dont attach as just overhead for no reason
@@ -814,34 +817,46 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   for (auto const & item : *registry)
     {
       if (debug)
-	{G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
+        {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
       BDSAcceleratorComponent* accCom = item.second;
-      G4String                accName = accCom->GetName();
+      G4String accName = accCom->GetName();
+      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
       
       // Build vacuum bias object based on vacuum bias list in the component
-      auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
-      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV)
-	{
-	  if(debug)
-	    {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
-		    << " " << vacuumLV->GetName() << G4endl;}
-	  egVacuum->AttachTo(vacuumLV);
+      auto vacuumBiasList = accCom->GetBiasVacuumList();
+      if (!vacuumBiasList.empty())
+        {
+          auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
+	  if (vacuumLV)
+	    {
+	      if (debug)
+		{
+		  G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+			 << " " << vacuumLV->GetName() << G4endl;
+		}
+	      egVacuum->AttachTo(vacuumLV);
+	    }
 	}
       
       // Build material bias object based on material bias list in the component
-      auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
-      auto allLVs     = accCom->GetAllBiasingVolumes();
-      if(debug)
-	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
-      for (auto materialLV : allLVs)
+      auto materialBiasList = accCom->GetBiasMaterialList();
+      if (!materialBiasList.empty())
 	{
-	  if(materialLV != vacuumLV)
+	  auto egMaterial = BuildCrossSectionBias(materialBiasList, defaultBiasMaterial, accName);
+	  auto allLVs     = accCom->GetAllBiasingVolumes();
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
+	  for (auto materialLV : allLVs)
 	    {
-	      if(debug)
-		{G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
-			<< " " << (materialLV)->GetName() << G4endl;}
-	      egMaterial->AttachTo(materialLV);
+	      if(materialLV != vacuumLV)
+		{
+		  if(debug)
+		    {
+		      G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+			     << " " << (materialLV)->GetName() << G4endl;
+		    }
+		  egMaterial->AttachTo(materialLV);
+		}
 	    }
 	}
     }
