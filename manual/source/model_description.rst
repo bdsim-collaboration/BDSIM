@@ -138,7 +138,7 @@ Other Commands
 Examples
 ^^^^^^^^
 
-Examples::
+Examples: ::
 
    x = 1;
    y = 2.5-x;
@@ -295,7 +295,7 @@ turns, still accounting for the exceptions mentioned above.
 
 The map must be of the format as written by MADX-PTC's ``PTC_NORMAL``
 command.  A one turn map (in this case, 12th order) can be generated
-in MAD-X with the following::
+in MAD-X with the following ::
 
   PTC_CREATE_UNIVERSE;
   PTC_CREATE_LAYOUT, model=2,method=6,nst=10, exact=true, resplit, xbend;
@@ -303,7 +303,7 @@ in MAD-X with the following::
   write, table="map_table", file="my_oneturn_map_file";
   PTC_END;
 
-To use then use the one turn map with BDSIM::
+To use then use the one turn map with BDSIM ::
 
   option, ptcOneTurnMapFileName="path/to/my_oneturn_map_file";
 
@@ -317,7 +317,7 @@ Beamline Elements
 -----------------
 
 BDSIM provides a variety of different elements each with their own function, geometry and
-potential fields. Any element in BDSIM is described with the following pattern::
+potential fields. Any element in BDSIM is described with the following pattern ::
 
   name: type, parameter=value, parameter="string";
 
@@ -364,11 +364,11 @@ These are detailed in the following sections.
 Simple example, extend and copy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Example::
+Example: ::
 
   d1: drift, l=5*m;
 
-This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with::
+This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with ::
 
   d1: l=3*m, aper=0.1*m;
 
@@ -376,7 +376,7 @@ Note the omission of the type `drift`. This will change the length of `d1` to 3 
 
 .. Warning:: This only works for beam line elements and not other objects in GMAD syntax (such as a placement).
 
-An element can also be defined by copying an existing element::
+An element can also be defined by copying an existing element ::
 
   d2: d1, l=2*m;
 
@@ -411,7 +411,7 @@ but `energy`). To easily scale the strengths, every beam line element has the pa
 `scaling` that enables its strength to be directly scaled.
 
 In the case of a dipole, this scales the field but not the angle (the field may be calculated
-from the angle if none is specified). For example::
+from the angle if none is specified). For example ::
 
   beam, particle="e-",
         energy=10*GeV;
@@ -459,7 +459,7 @@ Parameter         Description          Default     Required
 
 * The `aperture parameters`_ may also be specified.
 
-Examples::
+Examples: ::
 
    l203b: drift, l=1*m;
    l204c: drift, l=3*cm, beampipeRadius=10*cm;
@@ -580,7 +580,7 @@ A few points about rbends:
 8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
 
-Examples::
+Examples: ::
 
    MRB20: rbend, l=3*m, angle=0.003;
    r1: rbend, l=5.43m, beampipeRadius=10*cm, B=2*Tesla;
@@ -700,7 +700,7 @@ A few points about sbends:
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
 
-Examples::
+Examples: ::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
    mb201x: sbend, l=304.2*cm, b=1.5*Tesla;
@@ -732,7 +732,7 @@ Parameter         Description                  Default     Required
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
-Examples::
+Examples: ::
 
    q1: quadrupole, l=0.3*m, k1=45.23;
    qm15ff: quadrupole, l=20*cm, k1=95.2;
@@ -763,7 +763,7 @@ Parameter         Description                  Default     Required
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
-Examples::
+Examples: ::
 
    sx1: sextupole, l=0.5*m, k2=4.678;
    sx2: sextupole, l=20*cm, k2=45.32, magnetGeometry="normalconducting";
@@ -794,7 +794,7 @@ Parameter         Description                  Default     Required
 A pure octupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
-Examples::
+Examples: ::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
 
@@ -824,7 +824,7 @@ described by :ref:`yoke-multipole-field`) is provided for the yoke.
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
-Examples::
+Examples: ::
 
    MXDEC3: decapole, l=0.3*m, k4=32.9;
 
@@ -854,7 +854,7 @@ Parameter         Description                  Default     Required
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 
-Examples::
+Examples: ::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
 
@@ -865,7 +865,7 @@ thinmultipole
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
 
-Examples::
+Examples: ::
 
    THINOCTUPOLE1 : thinmultipole , knl={ 0,0,1 } , ksl={ 0,0,0 };
 
@@ -926,7 +926,7 @@ The dipole field strength is then calculated with respect to the chord length:
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
-Examples::
+Examples: ::
 
    KX15v: vkicker, vkick=1.3e-5;
    KX17v: vkicker, vkick=-2.4e-2, l=0.5*m;
@@ -979,7 +979,7 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
-Examples::
+Examples: ::
 
    KX17h: hkicker, hkick=0.01;
    KX19h: hkicker, hkick=-1.3e-5, l=0.2*m;
@@ -1073,7 +1073,7 @@ element is used to find the phase offset.
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
 
-Simple examples::
+Simple examples: ::
 
    rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
    rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
@@ -1125,7 +1125,7 @@ Parameter          Description                        Default     Required
   :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 
-Examples::
+Examples: ::
 
    ! Standard
    TCP15: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm;
@@ -1190,7 +1190,7 @@ Parameter          Description                        Default     Required
 * All collimators can be made infinite absorbers with the general option
   :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
-Examples::
+Examples: ::
 
    ! Standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
@@ -1229,7 +1229,7 @@ Parameter              Description                              Default     Requ
           When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
           triangle.
 
-Examples::
+Examples: ::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
     DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm;
@@ -1308,7 +1308,7 @@ necessary process is added automatically to enforce this.
 The dump may accept `apertureType` with the value of either `circular` or `rectangular` for
 the shape of the dump. By default it is rectangular.
 
-Examples::
+Examples: ::
 
   d1: dump, l=0.2*m, horizontalWidth=20*cm;
   d2: dump, l=0.4*m, apertureType="circular";
@@ -1340,7 +1340,7 @@ Parameter          Description                   Default     Required
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 
-Examples::
+Examples: ::
 
    atlassol: solenoid, l=20*m, ks=0.004;
 
@@ -1378,7 +1378,7 @@ The user should take care to define a wire long enough to intercept the beam but
 short to fit inside the beam pipe given the offsets in x, y and z. Checks are made on the end
 points of the wire.
 
-Examples::
+Examples: ::
 
     ws45Deg: wirescanner, l=4*cm, wireDiameter=0.1*mm, wireLength=5*cm,
                           wireOffsetX=1*cm, angle=pi/4, wireMaterial="C",
@@ -1401,7 +1401,7 @@ Parameter         Description                                        Default    
 `waveLength`      Laser wavelength [m]                               532*nm      Yes
 ================  =================================================  ==========  ===========
 
-Examples::
+Examples: ::
 
    laserwire: laser, l=1*um, x=1, y=0, z=0, wavelength=532*nm;
 
@@ -1420,7 +1420,7 @@ Parameter              Description                              Default     Requ
 `angle`                Angle [rad]                              0           No
 ===================    =======================================  ==========  ===========
 
-Examples::
+Examples: ::
 
     GAP1: gap, l=0.25*m, angle=0.01*rad;
 
@@ -1468,7 +1468,7 @@ Parameter                   Description                                         
 
 * See :ref:`crystals` for the definition of a crystal object.
 
-Examples::
+Examples: ::
 
   lovelycrystal: crystal, material = "G4_Si",
 	       		data = "data/Si220pl",
@@ -1530,7 +1530,7 @@ Parameter                Description                    Default     Required
 * To generate radiation from particles propagating through the undulator field, synchrotron radiation
   physics must be included in the model's physicsList. See :ref:`physics-processes` for further details.
 
-Examples::
+Examples: ::
 
  u1: undulator, l=2.0*m, B=0.1*T, undulatorPeriod=0.2*m;
  u2: undulator, l=3.2*m, B=0.02*T, undulatorPeriod=0.16*m, undulatorGap=15*cm, undulatorMagnetHeight=10*cm;
@@ -1557,7 +1557,7 @@ Parameter         Description                   Default     Required
 .. note:: this permanently changes the coordinate frame, so care must be taken to undo any rotation
 	  if intended for only one component.
 
-Examples::
+Examples: ::
 
    rcolrot: transform3d, psi=pi/2;
 
@@ -1611,7 +1611,7 @@ Simple example::
 
   detector: element, geometryFile="gdml:atlasreduced.gdml", horizontalWidth=10*m,l=44*m;
 
-Example with field::
+Example with field: ::
 
   somefield: field, type="ebmap2d",
 		    eScaling = 3.1e3,
@@ -1640,7 +1640,7 @@ front of a component, but how would you record particles exiting a particular co
 The intended method is to use a `marker` and place it in the sequence after that element,
 then attach a sampler to the marker.
 
-Examples::
+Examples: ::
 
    m1: marker;
 
@@ -1773,7 +1773,7 @@ The magnet geometry is controlled by the following parameters.
 |                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
-Examples::
+Examples: ::
 
   option, magnetGeometryType = "polesfacetcrop",
           horizontalWidth = 0.5*m;
@@ -1977,7 +1977,7 @@ The misalignments can be controlled through the following parameters.
 |	       | beam bends.                                                                        |
 +--------------+------------------------------------------------------------------------------------+
 
-Examples::
+Examples: ::
 
   d1: drift, l=1*m, offsetX=1*cm;
   d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
@@ -2532,7 +2532,7 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 
 `referenceElementNumber` is the occurence of that element in the sequence. For example, if a sequence
-was::
+was: ::
 
   l1: line=(d1,sb1,d2,qd1,d2,df1,d2,sb1,d1);
 
@@ -2653,7 +2653,7 @@ beam line can be defined. This must be defined using the following syntax::
 
   use, period=<line_name>
 
-Examples::
+Examples: ::
 
    d1: drift, l=3.2*m;
    q1: quadrupole, l=20*cm, k1=4.5;
@@ -2724,7 +2724,7 @@ instance, the following syntax can be used::
 
   sample, range=<element_name>[index];
 
-To attach samplers after all elements::
+To attach samplers after all elements: ::
 
   sample, all;
 
@@ -2897,7 +2897,7 @@ This places a circular sampler called "s1" with respect to the 2nd instance of t
 element "d1". The x,y,z are offsets from the centre of this element along the direction of
 travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
 centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
-be circular (by default) with a radius of 10 cm.::
+be circular (by default) with a radius of 10 cm. ::
 
    s2: samplerplacement, x=0.2*m, y=-1*cm, z=30.123*m,
     			 axisAngle=1, axisY=1, angle=-pi/6,
@@ -3276,7 +3276,7 @@ The **optional** following suffixes may be added to specify the electromagnetic 
 * __GS
 * __SS
 
-Examples::
+Examples: ::
 
   option, physicsList="g4QBBC";
 
@@ -3288,13 +3288,13 @@ Examples::
 
 This example turns on the cuts and limits. This applies the minimum kinetic energy but also the
 the maximum step length which is by default 110% the length of the element. If bad tracking behaviour
-is experienced (stuck particles etc.) this should be considered.::
+is experienced (stuck particles etc.) this should be considered. ::
 	  
   option, physicsList="g4FTFP_BERT",
           g4PhysicsUSeBDSIMCutsAndLimits=1;
 
 This following example will enforce a minimum kinetic energy but also limit the maximum step length
-(consequently) to 110% the length of the component and provide more robust tracking.::
+(consequently) to 110% the length of the component and provide more robust tracking. ::
 
   option, physicsList="g4FTFP_BERT",
           minimumKineticEnergy=20*GeV;
@@ -4258,14 +4258,17 @@ is used to calculate the rigidity that is used along with normalised field stren
 :code:`k1` for quadrupoles) to calculate an absolute field or field gradient. However, it is
 often useful to simulate a beam of other particles. To specify a different central energy, the
 parameter :code:`E0` should be used. If a different particle is required the parameter
-:code:`beamParticleName` should be used. Examples::
+:code:`beamParticleName` should be used.
+
+Examples: ::
 
    beam, particle="e-",
          energy=100*GeV,
 	 beamParticleName="e+";
 
 This specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution parameters).::
+and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution
+parameters). ::
 
    beam, particle="e-",
          energy=100*GeV,
@@ -4367,7 +4370,7 @@ particle - including the rest mass.
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
 
-Examples::
+Examples: ::
 
   beam, particle = "e-",
         energy = 10*GeV,
@@ -4407,7 +4410,7 @@ is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma ma
 The user should take care to ensure they specify a positive definite matrix. BDSIM will
 emit an error and stop running if this is not the case.
 
-Examples::
+Examples: ::
 
    beam, particle = "e-",
          energy = 10*GeV,
@@ -4748,7 +4751,7 @@ appropriate parameters need to be defined for each individual distribution.
 	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
 	  and gaussTwiss (parameter set 2) for y. They will have the same settings.
 
-Examples::
+Examples: ::
 
   beam, particle="proton",
         energy=3500*GeV,
@@ -4853,7 +4856,7 @@ Acceptable tokens for the columns are:
 **Time Units**
 "s", "ms", "mus", "us", "ns", "mm/c", "nm/c"
 
-Examples::
+Examples: ::
 
   beam, particle = "e-",
         energy = 1*GeV,
@@ -5294,7 +5297,7 @@ crystal. The following parameters are required:
 It is entirely possible to add more shapes to the code. Please contact the developers
 :ref:`feature-request`.
 
-Examples::
+Examples: ::
 
   lovelycrystal: crystal, material = "G4_Si",
 	       		data = "data/Si220pl",
@@ -5431,7 +5434,7 @@ to 255. Once defined, a colour may not be redefined. The syntax to define a colo
 
 		NAME: newcolour, red=#, green=#, blue=#, alpha=#
 
-Examples::
+Examples: ::
   
   purple: newcolour, red=128, green=0, blue=128;
   col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="purple", material="copper";
