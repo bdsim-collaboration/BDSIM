@@ -58,13 +58,18 @@ on: http://www.pp.rhul.ac.uk/bdsim/download
 Requirements
 ============
 
-1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher, or clang 6 or higher.
+1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher,
+   or clang 6 or higher.
 2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_.
-4) `ROOT`_ 6.0 or higher, for output & analysis.
-5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
-6) Flex 2.5.37 or higher
-7) Bison 2.3 or higher
+4) *Optional* - Python 2.7 series for python utilities and easy data loading with ROOT.
+5) `ROOT`_ 6.0 or higher, for output & analysis compiled with python 2.7 support (default is 3 series).
+6) *Optional* - Qt5 libraries for best Geant4 visualiser.
+7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
+8) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or
+   higher (latest patch of that release). See `Geant4 Installation Guide`_
+9) Flex 2.5.37 or higher.
+10) Bison 2.3 or higher.
 
 .. note:: These are listed in the correct order of installation / requirement.
 
@@ -78,6 +83,7 @@ problems we have found:
 * Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensivly in BDSIM.
+* Geant4.10.5.0  - the cashkarp integrator for fields will always crash.
 
 .. _mac-osx-issues:
   
@@ -85,8 +91,8 @@ Mac OS X Issues
 ---------------
   
 * Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
-  screen or worse, bits of the interface double size. This is an ongoing issue
-  and documented here:
+  screen or worse, bits of the interface double size. The user must use Qt 5.12.1
+  or greater for these issues to be resolved. This issue is documented here:
   https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
 
 Geant4 Environment
@@ -279,7 +285,7 @@ manually or added to your :code:`.profile` or :code:`.bashrc` file::
    export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser
 
 * Re-source your profile (or restart the terminal).
-* You should be able to execute 'rebdsim'
+* You should be able to execute :code:`bdsim --help` or :code:`rebdsim`
 
 .. figure:: figures/rebdsim_execution.png
 	    :width: 100%
@@ -320,8 +326,8 @@ the following locations:
 * https://bitbucket.org/jairhul/pytransport
 
 These can all be set up separately, or alternatively the user can install all at
-once with a MakeFile added for convenience.  The Python package installer ("PIP") is
-required for this.
+once with the MakeFile added for convenience (running make command).  The Python package
+installer ("PIP") is required for this.
 
 .. note:: ROOT should be compiled with Python2.7 support for the full functionality of
 	  pybdsim data loading to be exploited.
@@ -355,8 +361,8 @@ command will give you and interface to CMake (from ``bdsim-build`` directory)::
 
   > ccmake .
 
-.. image:: figures/cmake_screenshot.jpg
-   :width: 80%
+.. image:: figures/cmake_screenshot.png
+   :width: 100%
    :align: center
 
 You can then use **up** and **down** arrows to select the desired parameter and
@@ -433,6 +439,8 @@ Make and install::
 
    > make
    > sudo make install
+
+.. _geant4-installation-guide:
 
 Geant4 Installation Guide
 -------------------------
