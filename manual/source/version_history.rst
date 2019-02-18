@@ -237,6 +237,7 @@ Bug Fixes
 * Fixed parsing of + or - symbols with ion definition. Now supports H- ion.
 * Fixed very slow memory leak associated with the primary trajectory. only visible for very
   large numbers of events.
+* Fixed dipole tracking for off-charge ions - reverts to backup integrator.
   
 Output Changes
 --------------
