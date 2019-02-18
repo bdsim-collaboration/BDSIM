@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Run.hh"
 #include "G4SDManager.hh"
 #include "G4TrajectoryContainer.hh"
+#include "G4TrajectoryPoint.hh"
 
 #include <algorithm>
 #include <chrono>
@@ -416,5 +417,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
+  if (event_number%1000 == 0)
+    {
+      G4cout << "Energy deposition pool size:        " << BDSAllocatorEnergyDeposition.GetAllocatedSize()  << G4endl;
+      G4cout << "Trajectory pool size:               " << bdsTrajectoryAllocator.GetAllocatedSize()        << G4endl;
+      G4cout << "Trajectory point pool size bdsim:   " << bdsTrajectoryPointAllocator.GetAllocatedSize()   << G4endl;
+      G4cout << "Trajectory point pool size:         " << aTrajectoryPointAllocator()->GetAllocatedSize()  << G4endl;
+      G4cout << "Trajectory point primary pool size: " << bdsTrajectoryPrimaryAllocator.GetAllocatedSize() << G4endl;
+    }
 #endif
 }
