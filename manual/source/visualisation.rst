@@ -22,6 +22,8 @@ Using the visualiser means that BDSIM will use more memory as it is required to
 store the trajectories of all particles to display them. By default, only 100 events
 will be accumulated for display. Events outside this will be discarded from the visualisation.
 
+.. _visualisation-default-colour-coding:
+
 Colour Coding
 -------------
 

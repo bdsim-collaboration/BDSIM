@@ -11,7 +11,7 @@ How to run::
   bdsim --file=bl.gmad
 
 .. figure:: beamLoss.png
-	    :width: 100%
+	    :width: 80%
 	    :align: center
 
 Running 10 events with the following command in the visualiser session prompt, the
@@ -22,4 +22,5 @@ following visualisation is produced. ::
 .. figure:: beamLoss-10events.png
 	    :width: 100%
 	    :align: center
-	    :figclass: align-center
+
+The default colour coding is described in :ref:`visualisation-default-colour-coding`.
