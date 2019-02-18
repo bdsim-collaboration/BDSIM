@@ -1,5 +1,5 @@
-Simple Collimation
-==================
+Beam Loss
+=========
 
 A simple example of a BDSIM model that sprays particles everywhere. It consists
 of four quadrupole magnets that are on but not designed to contain the beam.
@@ -8,8 +8,8 @@ machine components as well as the surrounding tunnel.
 
 How to run::
   
-  bdsim --file=sc.gmad
+  bdsim --file=bl.gmad
 
-.. figure:: simpleCollimation.png
+.. figure:: beamLoss.png
 	    :width: 80%
 	    :align: center

@@ -21,8 +21,8 @@ Basic Examples
    :maxdepth: 3
 
    examples/airwatertarget
+   examples/beamLoss
    examples/collimation-simple
-   examples/simpleCollimation
    examples/simpleMachine
 
 .. _worked-examples:
