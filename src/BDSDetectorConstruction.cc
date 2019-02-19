@@ -109,7 +109,6 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
     }
 
   UpdateSamplerDiameter();
-  useExternalGeometryWorld = false;
 }
 
 void BDSDetectorConstruction::UpdateSamplerDiameter()
@@ -468,24 +467,19 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 	{worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
 
-  G4String worldName = "World";
-  G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
+  G4String    worldName         = "World";
+  G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+  G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
+  G4VSolid*        worldSolid   = nullptr;
+  G4LogicalVolume* worldLV      = nullptr;
 
-  std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
-
-  BDSGeometryExternal* geom = nullptr;
-  if (geometryFile != "")
+  G4String worldGeometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
+  if (!worldGeometryFile.empty())
     {
-      geom = BDSGeometryFactory::Instance()->BuildGeometry("world", geometryFile, nullptr, 0, 0, true);
-      useExternalGeometryWorld = true;
-    }
-
-  G4LogicalVolume* worldLV;
-  G4VSolid* worldSolid;
-
-  if (useExternalGeometryWorld)
-    {
+      BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
+										worldGeometryFile,
+										nullptr,
+										0, 0, true);
       worldExtent = geom->GetExtent();
 
       BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());
@@ -494,13 +488,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // cannot construct world if any beamline extent is greater than the world extents
       if (!worldContainsAllBeamlines)
         {
-          G4cerr << __METHOD_NAME__ << "Beamlines cannot be constructed, beamline extents are larger than "
-                 << "the extents of the external world" << G4endl;
-          exit(1);
+	  G4String message = "Beamlines cannot be constructed, beamline extents are larger than \n";
+	  message += "the extents of the external world";
+	  throw BDSException(__METHOD_NAME__, message);
         }
 
-      worldLV = geom->GetContainerLogicalVolume();
       worldSolid = geom->GetContainerSolid();
+      worldLV    = geom->GetContainerLogicalVolume();
 
       // make the world sensitive to energy deposition with its own unique hits collection
       // this will be a nullptr depending on the options
@@ -508,16 +502,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
         {
           worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
-        }
-
-      // visual attributes
-      // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-      worldLV->SetVisAttributes(debugWorldVis);
-
-      // set limits
-      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+        }  
     }
   else
     {
@@ -543,16 +528,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // make the world sensitive to energy deposition with its own unique hits collection
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
         {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());}
-
-      // visual attributes
-      // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-      worldLV->SetVisAttributes(debugWorldVis);
-
-      // set limits
-      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
     }
+
+  // visual attributes
+  // copy the debug vis attributes but change to force wireframe
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  worldLV->SetVisAttributes(debugWorldVis);
+  
+  // set limits
+  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
