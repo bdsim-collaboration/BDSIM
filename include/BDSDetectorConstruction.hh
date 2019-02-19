@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSDETECTORCONSTRUCTION_H 
 
 #include "BDSExtent.hh"
+#include "BDSExtentGlobal.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
@@ -148,6 +149,13 @@ private:
   /// Detect whether the first element has an angled face such that it might overlap
   /// with a previous element.  Only used in case of a circular machine.
   G4bool UnsuitableFirstElement(std::list<GMAD::Element>::const_iterator element);
+
+  /// Calculate local extent of custom user sampler.
+  BDSExtent CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const;
+
+  /// Calculate the maximum global extent of all sampler placements from the parser. Beam line
+  /// supplied to calculate placements in some cases.
+  BDSExtentGlobal CalculateExtentOfSamplerPlacements(const BDSBeamline* beamLine) const;
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section

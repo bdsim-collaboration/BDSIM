@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
-#include "BDSSDEnergyDeposition.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSSamplerType.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
@@ -451,6 +452,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   for (const auto& bl : extras)
     {bl.second.GetExtentGlobals(extents);}
 
+  // inspect any sampler placements and calculate their extent without constructing them
+  extents.push_back(CalculateExtentOfSamplerPlacements(blMain.massWorld));
+
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
 
@@ -744,6 +748,36 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       result = G4Transform3D(*rm, translation);
     }
   
+  return result;
+}
+
+BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
+{
+  BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
+					     sp.aper1*CLHEP::m,
+					     sp.aper2*CLHEP::m,
+					     sp.aper3*CLHEP::m,
+					     sp.aper4*CLHEP::m,
+					     sp.name);
+  BDSExtent apertureExtent = aperture.Extent();
+  // aperture is only transverse - fiddle z
+  BDSExtent result = BDSExtent(apertureExtent.XNeg(), apertureExtent.XPos(),
+                               apertureExtent.YNeg(), apertureExtent.YPos(),
+                               1*CLHEP::um, 1*CLHEP::um);
+  return result;
+}
+
+BDSExtentGlobal BDSDetectorConstruction::CalculateExtentOfSamplerPlacements(const BDSBeamline* beamLine) const
+{
+  BDSExtentGlobal result;
+  std::vector<GMAD::SamplerPlacement> samplerPlacements = BDSParser::Instance()->GetSamplerPlacements();
+  for (const auto& samplerPlacement : samplerPlacements)
+    {
+      BDSExtent samplerExtent = CalculateExtentOfSamplerPlacement(samplerPlacement);
+      G4Transform3D placementTransform = CreatePlacementTransform(samplerPlacement, beamLine);
+      BDSExtentGlobal samplerExtentG = BDSExtentGlobal(samplerExtent, placementTransform);
+      result = result.ExpandToEncompass(samplerExtentG);
+    }
   return result;
 }
 
