@@ -683,13 +683,13 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
   // 3) w.r.t. element in beam line placement elementName + x,y,s + rotation
   
   // in all cases, need the rotation
-  G4RotationMatrix* rm = nullptr;
+  G4RotationMatrix rm = G4RotationMatrix();
   if (placement.axisAngle)
     {
       G4ThreeVector axis = G4ThreeVector(placement.axisX,
 					 placement.axisY,
 					 placement.axisZ);
-      rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
+      rm = G4RotationMatrix(axis, placement.angle*CLHEP::rad);
     }
   else
     {
@@ -700,10 +700,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
 							    placement.theta*CLHEP::rad,
 							    placement.psi*CLHEP::rad);
-	  rm = new G4RotationMatrix(ang);
+	  rm = G4RotationMatrix(ang);
 	}
-      else
-	{rm = new G4RotationMatrix();}
     } 
 
   // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
@@ -729,16 +727,15 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
 									 placement.x*CLHEP::m,
 									 placement.y*CLHEP::m);
-      G4Transform3D localRotation(*rm, G4ThreeVector());
-      result = beamlinePart * localRotation;
-      
+      G4Transform3D localRotation(rm, G4ThreeVector());
+      result = beamlinePart * localRotation;      
     }
   else if (BDS::IsFinite(placement.s))
     {// scenario 2
       G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
 									  placement.x*CLHEP::m,
 									  placement.y*CLHEP::m);
-      G4Transform3D localRotation(*rm, G4ThreeVector());
+      G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
     }
   else
@@ -748,7 +745,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 						placement.z*CLHEP::m);
       
       
-      result = G4Transform3D(*rm, translation);
+      result = G4Transform3D(rm, translation);
     }
   
   return result;
