@@ -146,7 +146,7 @@ void EventDisplay::DrawModel()
   TEveBoxSet* bs = new TEveBoxSet("model");
   bs->Reset(TEveBoxSet::kBT_FreeBox, kFALSE,64);
 
-  int i=0;
+  int i = 0;
   float vert[8*3];
   for(auto mp : model->model->midPos)
   {
@@ -229,14 +229,14 @@ void EventDisplay::DrawTunnelHits()
   bs->Reset(TEveBoxSet::kBT_AABox, kFALSE,64);
 
   for(int i=0;i<(int)event->TunnelHit->X.size();++i)
-  {
-    bs->AddBox(event->TunnelHit->X[i]*100.0,
-               event->TunnelHit->Y[i]*100.0,
-               event->TunnelHit->Z[i]*100.0,
-               -event->TunnelHit->energy[i]*5000.0,
-               -event->TunnelHit->energy[i]*5000.0,
-               -event->TunnelHit->energy[i]*5000.0);
-  }
+    {
+      bs->AddBox(event->TunnelHit->X[i]*100.0,
+		 event->TunnelHit->Y[i]*100.0,
+		 event->TunnelHit->Z[i]*100.0,
+		 -event->TunnelHit->energy[i]*5000.0,
+		 -event->TunnelHit->energy[i]*5000.0,
+		 -event->TunnelHit->energy[i]*5000.0);
+    }
   bs->RefitPlex();
 
   bs->SetMainColor(kWhite);
@@ -278,31 +278,27 @@ void EventDisplay::DrawTrajectories()
   std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->Trajectory->trajectories.size() << std::endl;
 
   int iTraj = 0;
-  for(auto t : event->Trajectory->trajectories) {
-
-    std::string trajNameAppend = std::string();
-    if(event->Trajectory->trackID[iTraj] == 1)
+  for (auto t : event->Trajectory->trajectories)
     {
-      trajNameAppend = "_primary";
+      std::string trajNameAppend = std::string();
+      if (event->Trajectory->trackID[iTraj] == 1)
+	{trajNameAppend = "_primary";}
+      else
+	{trajNameAppend = "_"+std::to_string(event->Trajectory->trackID[iTraj]);}
+      
+      TEveLine* et = new TEveLine((std::string("Trajectory")+trajNameAppend).c_str());
+      
+      for (auto tp : t)
+	{
+	  //std::cout << tp.x() << " " << tp.y() << " " << tp.z() << std::endl;
+	  et->SetNextPoint(tp.x()*100,
+			   tp.y()*100,
+			   tp.z()*100);
+	}
+      et->SetMainColor(kWhite);
+      gEve->AddElement(et);
+      gEve->Redraw3D();
+      
+      iTraj++;
     }
-    else
-    {
-      trajNameAppend = "_"+std::to_string(event->Trajectory->trackID[iTraj]);
-    }
-
-    TEveLine *et = new TEveLine((std::string("Trajectory")+trajNameAppend).c_str());
-
-    for(auto tp : t) {
-      //std::cout << tp.x() << " " << tp.y() << " " << tp.z() << std::endl;
-      et->SetNextPoint(tp.x()*100,
-                       tp.y()*100,
-                       tp.z()*100);
-    }
-    et->SetMainColor(kWhite);
-    gEve->AddElement(et);
-    gEve->Redraw3D();
-
-    iTraj++;
-
-  }
 }
