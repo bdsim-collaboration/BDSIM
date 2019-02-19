@@ -738,13 +738,23 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
 {
-  BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
-					     sp.aper1*CLHEP::m,
-					     sp.aper2*CLHEP::m,
-					     sp.aper3*CLHEP::m,
-					     sp.aper4*CLHEP::m,
-					     sp.name);
-  BDSExtent apertureExtent = aperture.Extent();
+  BDSExtent apertureExtent;
+  if (sp.apertureModel.empty())
+    {
+      BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
+						 sp.aper1 * CLHEP::m,
+						 sp.aper2 * CLHEP::m,
+						 sp.aper3 * CLHEP::m,
+						 sp.aper4 * CLHEP::m,
+						 sp.name);
+      apertureExtent = aperture.Extent();
+    }
+  else
+    {
+      BDSApertureInfo* aperture = BDSAcceleratorModel::Instance()->Aperture(sp.apertureModel);
+      apertureExtent = aperture->Extent();
+    }
+  
   // aperture is only transverse - fiddle z
   BDSExtent result = BDSExtent(apertureExtent.XNeg(), apertureExtent.XPos(),
                                apertureExtent.YNeg(), apertureExtent.YPos(),
