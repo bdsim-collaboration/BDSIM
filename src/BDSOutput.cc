@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSHitSampler.hh"
 #include "BDSStackingAction.hh"

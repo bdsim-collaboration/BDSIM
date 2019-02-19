@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TROOT.h"
 #include <vector>
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTEventParticleData;
 
 #ifndef __ROOTBUILD__ 
 #include "globals.hh"
@@ -118,7 +118,7 @@ public:
   void SetBranchAddress(TTree *);
   virtual void Flush();  ///< Clean Sampler
 
-  static BDSOutputROOTGeant4Data* particleTable;
+  static BDSOutputROOTEventParticleData* particleTable;
 
   ClassDef(BDSOutputROOTEventSampler,4);
 };

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Geant4Data.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 
 #include "TTree.h"
 
@@ -30,7 +30,7 @@ Geant4Data::Geant4Data():
 Geant4Data::Geant4Data(bool debugIn):
   debug(debugIn)
 {
-  geant4Data = new BDSOutputROOTGeant4Data();
+  geant4Data = new BDSOutputROOTEventParticleData();
 }
 
 Geant4Data::~Geant4Data()

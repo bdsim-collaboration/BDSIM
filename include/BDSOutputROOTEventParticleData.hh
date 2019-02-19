@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSOUTPUTROOTGEANT4DATA_H
-#define BDSOUTPUTROOTGEANT4DATA_H
+#ifndef BDSOUTPUTROOTEVENTPARTICLEDATA_H
+#define BDSOUTPUTROOTEVENTPARTICLEDATA_H
 
 #include "TObject.h"
 #include "TROOT.h"
@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * @author Laurie Nevay
  */
-class BDSOutputROOTGeant4Data: public TObject
+class BDSOutputROOTEventParticleData: public TObject
 {
 public:
   // structs up front
@@ -104,8 +104,8 @@ public:
     }  
   };
   
-  BDSOutputROOTGeant4Data();
-  virtual ~BDSOutputROOTGeant4Data(){;}
+  BDSOutputROOTEventParticleData();
+  virtual ~BDSOutputROOTEventParticleData(){;}
 
   /// Clear maps.
   virtual void Flush();
@@ -137,7 +137,7 @@ public:
   std::map<int, ParticleInfo> particles;
   std::map<int, IonInfo>      ions;
 
-  ClassDef(BDSOutputROOTGeant4Data,2);
+  ClassDef(BDSOutputROOTEventParticleData,2);
 };
 
 #endif

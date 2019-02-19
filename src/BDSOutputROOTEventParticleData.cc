@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 
 #include <map>
 
@@ -33,16 +33,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTGeant4Data)
 
-BDSOutputROOTGeant4Data::BDSOutputROOTGeant4Data()
+BDSOutputROOTEventParticleData::BDSOutputROOTEventParticleData()
 {;}
 
-void BDSOutputROOTGeant4Data::Flush()
+void BDSOutputROOTEventParticleData::Flush()
 {
   particles.clear();
   ions.clear();
 }
 
-const BDSOutputROOTGeant4Data::ParticleInfo BDSOutputROOTGeant4Data::GetParticleInfo(const int& pdgID) const
+const BDSOutputROOTEventParticleData::ParticleInfo BDSOutputROOTEventParticleData::GetParticleInfo(const int& pdgID) const
 {
   auto result = particles.find(pdgID);
   if (result != particles.end())
@@ -51,7 +51,7 @@ const BDSOutputROOTGeant4Data::ParticleInfo BDSOutputROOTGeant4Data::GetParticle
     {return ParticleInfo();}
 }
 
-const BDSOutputROOTGeant4Data::IonInfo BDSOutputROOTGeant4Data::GetIonInfo(const int& pdgID) const
+const BDSOutputROOTEventParticleData::IonInfo BDSOutputROOTEventParticleData::GetIonInfo(const int& pdgID) const
 {
   auto result = ions.find(pdgID);
   if (result != ions.end())
@@ -60,7 +60,7 @@ const BDSOutputROOTGeant4Data::IonInfo BDSOutputROOTGeant4Data::GetIonInfo(const
     {return IonInfo();}
 }
 
-int BDSOutputROOTGeant4Data::Charge(const int& pdgID) const
+int BDSOutputROOTEventParticleData::Charge(const int& pdgID) const
 {
   if (IsIon(pdgID))
     {
@@ -80,7 +80,7 @@ int BDSOutputROOTGeant4Data::Charge(const int& pdgID) const
     }
 }
 
-double BDSOutputROOTGeant4Data::Mass(const int& pdgID) const
+double BDSOutputROOTEventParticleData::Mass(const int& pdgID) const
 {
   if (IsIon(pdgID))
     {
@@ -100,7 +100,7 @@ double BDSOutputROOTGeant4Data::Mass(const int& pdgID) const
     }
 }
 
-double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
+double BDSOutputROOTEventParticleData::Rigidity(const int&    pdgID,
 					 const double& totalEnergy) const
 {
   if (IsIon(pdgID))
@@ -121,7 +121,7 @@ double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
     }
 }
 
-double BDSOutputROOTGeant4Data::KineticEnergy(const int&    pdgID,
+double BDSOutputROOTEventParticleData::KineticEnergy(const int&    pdgID,
 					      const double& totalEnergy) const
 {
   if (IsIon(pdgID))
@@ -142,7 +142,7 @@ double BDSOutputROOTGeant4Data::KineticEnergy(const int&    pdgID,
     }
 }
 
-std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
+std::string BDSOutputROOTEventParticleData::Name(const int& pdgID) const
 {
   if (IsIon(pdgID))
     {
@@ -162,7 +162,7 @@ std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
     }
 }
 
-int BDSOutputROOTGeant4Data::IonA(const int& pdgID) const
+int BDSOutputROOTEventParticleData::IonA(const int& pdgID) const
 {
   if (IsIon(pdgID))
     {
@@ -176,7 +176,7 @@ int BDSOutputROOTGeant4Data::IonA(const int& pdgID) const
     {return 0;}
 }
 
-int BDSOutputROOTGeant4Data::IonZ(const int& pdgID) const
+int BDSOutputROOTEventParticleData::IonZ(const int& pdgID) const
 {
   if (IsIon(pdgID))
     {
@@ -191,7 +191,7 @@ int BDSOutputROOTGeant4Data::IonZ(const int& pdgID) const
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
+void BDSOutputROOTEventParticleData::Fill(const G4bool& fillIons)
 {
   G4ParticleTable* pt = G4ParticleTable::GetParticleTable();
 
@@ -205,7 +205,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 
       int pdgID = static_cast<int>(particle->GetPDGEncoding());
 
-      BDSOutputROOTGeant4Data::ParticleInfo info = {(std::string)particleName,
+      BDSOutputROOTEventParticleData::ParticleInfo info = {(std::string)particleName,
 						    (int)particle->GetPDGCharge(),
 						    (double)particle->GetPDGMass()/CLHEP::GeV};
       particles[pdgID] = info;
@@ -231,7 +231,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 	  G4ParticleDefinition* def = ionTable->GetIon(atnum, atmass, eng);
 
 	  // package the information we need
-	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
+	  BDSOutputROOTEventParticleData::IonInfo ionDef = {(std::string)def->GetParticleName(),
 						     (int)def->GetPDGCharge(),
 						     (double)def->GetPDGMass()/CLHEP::GeV,
 						     (int)def->GetAtomicMass(),

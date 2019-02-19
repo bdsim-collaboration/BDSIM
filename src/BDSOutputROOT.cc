@@ -33,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 
 #include "TFile.h"
 #include "TObject.h"
@@ -83,7 +83,7 @@ void BDSOutputROOT::NewFile()
 
   // Build branches for each object
   theHeaderOutputTree->Branch("Header.",   "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theGeant4DataTree->Branch("Geant4Data.", "BDSOutputROOTGeant4Data",     geant4DataOutput, 32000, 1);
+  theGeant4DataTree->Branch("Geant4Data.", "BDSOutputROOTEventParticleData",     geant4DataOutput, 32000, 1);
   theBeamOutputTree->Branch("Beam.",       "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
   theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
   theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);

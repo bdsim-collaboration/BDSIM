@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 #include "BDSHitSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -67,7 +67,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 
-  geant4DataOutput = new BDSOutputROOTGeant4Data();
+  geant4DataOutput = new BDSOutputROOTEventParticleData();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();

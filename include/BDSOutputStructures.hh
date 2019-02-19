@@ -42,7 +42,7 @@ class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 template<class T> class BDSOutputROOTEventSampler;
 class BDSOutputROOTEventTrajectory;
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTEventParticleData;
 
 /**
  * @brief Holder for output information.
@@ -103,7 +103,7 @@ protected:
 			  std::vector<double>& edges);
   ///@}
 
-  BDSOutputROOTGeant4Data*   geant4DataOutput; ///< Geant4 information / particle tables.
+  BDSOutputROOTEventParticleData*   geant4DataOutput; ///< Geant4 information / particle tables.
   BDSOutputROOTEventHeader*  headerOutput;     ///< Information about the file.
   BDSOutputROOTEventBeam*    beamOutput;       ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput;    ///< Options output.

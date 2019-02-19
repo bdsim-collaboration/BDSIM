@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventCollimator.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 
 #ifndef __ROOTBUILD__
 #include "BDSHitCollimator.hh"
@@ -35,11 +35,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <vector>
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTEventParticleData;
 
 ClassImp(BDSOutputROOTEventCollimator)
 
-BDSOutputROOTGeant4Data* BDSOutputROOTEventCollimator::particleTable = nullptr;
+BDSOutputROOTEventParticleData* BDSOutputROOTEventCollimator::particleTable = nullptr;
 
 BDSOutputROOTEventCollimator::BDSOutputROOTEventCollimator():
   primaryInteracted(false),

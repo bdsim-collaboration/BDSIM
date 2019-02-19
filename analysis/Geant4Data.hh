@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TROOT.h"
 
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTEventParticleData.hh"
 
 class TTree;
 
@@ -42,7 +42,7 @@ public:
   void SetBranchAddress(TTree* t);
 
   /// Member that ROOT can map file data to locally.
-  BDSOutputROOTGeant4Data* geant4Data;
+  BDSOutputROOTEventParticleData* geant4Data;
 
 private:
   bool debug;
