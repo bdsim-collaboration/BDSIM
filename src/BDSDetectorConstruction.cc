@@ -459,12 +459,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	    {worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
+	{worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
 
   G4String worldName = "World";
   G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material *worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
 
   std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
 
@@ -475,8 +475,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       useExternalGeometryWorld = true;
     }
 
-  G4LogicalVolume *worldLV;
-  G4VSolid *worldSolid;
+  G4LogicalVolume* worldLV;
+  G4VSolid* worldSolid;
 
   if (useExternalGeometryWorld)
     {
@@ -506,7 +506,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
       debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
       worldLV->SetVisAttributes(debugWorldVis);
 
@@ -540,7 +540,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
       debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
       worldLV->SetVisAttributes(debugWorldVis);
 

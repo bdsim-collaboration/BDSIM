@@ -138,12 +138,12 @@ void EventDisplay::Draw()
 void EventDisplay::DrawModel()
 {
   std::cout << "EventDisplay::DrawModel>" << std::endl;
-  BDSOutputROOTEventOptions *ob = options->options;
+  BDSOutputROOTEventOptions* ob = options->options;
   std::cout << "EventDisplay::DrawModel> horizontalWidth " << ob->horizontalWidth << std::endl;
   double horizontalWidth = ob->horizontalWidth; // need cm
 
 
-  TEveBoxSet *bs = new TEveBoxSet("model");
+  TEveBoxSet* bs = new TEveBoxSet("model");
   bs->Reset(TEveBoxSet::kBT_FreeBox, kFALSE,64);
 
   int i=0;
@@ -209,7 +209,7 @@ void EventDisplay::DrawModel()
 void EventDisplay::DrawElossHits()
 {
   std::cout << "EventDisplay::DrawElossHits>" << std::endl;
-  TEvePointSet *ps = new TEvePointSet("Eloss");
+  TEvePointSet* ps = new TEvePointSet("Eloss");
   for(int i=0;i<(int)event->Eloss->X.size();++i)
   {
     ps->SetNextPoint(event->Eloss->X[i]*100.0,
@@ -225,7 +225,7 @@ void EventDisplay::DrawTunnelHits()
 {
   std::cout << "EventDisplay::DrawTunnelHits>" << std::endl;
 
-  TEveBoxSet *bs = new TEveBoxSet("TunnelHits");
+  TEveBoxSet* bs = new TEveBoxSet("TunnelHits");
   bs->Reset(TEveBoxSet::kBT_AABox, kFALSE,64);
 
   for(int i=0;i<(int)event->TunnelHit->X.size();++i)
@@ -251,7 +251,7 @@ void EventDisplay::DrawSamplers()
   // loop over samplers
   for(auto sampler : event->Samplers)
   {
-    TEvePointSet *ps = new TEvePointSet((std::string("Sampler_")+sampler->samplerName.c_str()).c_str());
+    TEvePointSet* ps = new TEvePointSet((std::string("Sampler_")+sampler->samplerName.c_str()).c_str());
 
     // Get coordinate tranform for sampler
     TVector3 mpos = model->model->endPos[sampler->modelID];
