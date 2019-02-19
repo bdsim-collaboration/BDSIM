@@ -518,7 +518,7 @@ Run Tree
 	    :width: 40%
 	    :align: center
 
-This tree contains two branches called "Histos." and "Info." which represent instances of
+This tree contains two branches called "Histos." and "Summary." which represent instances of
 :code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`,
 respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
 
@@ -539,7 +539,7 @@ different value per-event run in BDSIM.
 +---------------------+----------------------------------+--------------------------------------------------+
 | **Branch Name**     | **Type**                         | **Description**                                  |
 +=====================+==================================+==================================================+
-| Info                | BDSOutputROOTEventInfo           | Per-event information                            |
+| Summary (\+)        | BDSOutputROOTEventInfo           | Per-event summary information                    |
 +---------------------+----------------------------------+--------------------------------------------------+
 | Primary             | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
 |                     |                                  | simulation (before tracking)                     |
@@ -591,6 +591,7 @@ different value per-event run in BDSIM.
 |                     |                                  | default only for primary particle hits.          |
 +---------------------+----------------------------------+--------------------------------------------------+
 
+* (\+) This was called "Info" in BDSIM before V1.3.
 * (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
   option :code:`storeElossWorld`.
 * (\*\*) COLL_xxxx is only added per collimator when the option :code:`storeCollimatorInfo` is used.
