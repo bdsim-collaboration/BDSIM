@@ -93,9 +93,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/crystal.h"
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <utility>
-#include <include/BDSFieldBuilder.hh>
 
 using namespace GMAD;
 
@@ -396,6 +396,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
+      component->SetMinimumKineticEnergy(element->minimumKineticEnergy*CLHEP::GeV);
+
+      // infinite absorbers for collimators - must be done after SetMinimumKineticEnergy and
+      // specific to these elements. must be done before initialise too.
+      switch (element->type)
+	{
+	case ElementType::_ECOL:
+	case ElementType::_RCOL:
+	case ElementType::_JCOL:
+	  {
+	    if (BDSGlobalConstants::Instance()->CollimatorsAreInfiniteAbsorbers())
+	      {component->SetMinimumKineticEnergy(std::numeric_limits<double>::max());}
+	    break;
+	  }
+	default:
+	  {break;}	  
+	}
+      
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
@@ -866,7 +884,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   else
     {
-      BDSLine *kickerLine = new BDSLine(baseName);
+      BDSLine* kickerLine = new BDSLine(baseName);
       // subtract fringe length from kicker to preserve element length
       G4double kickerChordLength = chordLength;
       if (buildEntranceFringe)
@@ -877,7 +895,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       if (buildEntranceFringe)
         {
           G4String entrFringeName = baseName + "_e1_fringe";
-          BDSMagnet *startfringe = BDS::BuildDipoleFringe(element, 0, 0,
+          BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                           entrFringeName,
                                                           fringeStIn, brho,
                                                           integratorSet, fieldType);
@@ -885,14 +903,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
         }
       
       G4String kickerName = baseName + "_centre";
-      BDSMagnet *kicker = new BDSMagnet(t, kickerName, kickerChordLength,
+      BDSMagnet* kicker = new BDSMagnet(t, kickerName, kickerChordLength,
 					bpInf, magOutInf, vacuumField);
       kickerLine->AddComponent(kicker);
       
       if (buildEntranceFringe)
 	{
           G4String exitFringeName = baseName + "_e2_fringe";
-          BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, 0, 0,
+          BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                         exitFringeName,
                                                         fringeStOut, brho,
                                                         integratorSet, fieldType);
@@ -1347,10 +1365,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 
   G4double defaultHorizontalWidth = 40*CLHEP::cm;
   G4double horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
-  auto result = new BDSDump(elementName,
-			    element->l*CLHEP::m,
-			    horizontalWidth,
-			    circular);
+  BDSDump* result = new BDSDump(elementName,
+				element->l*CLHEP::m,
+				horizontalWidth,
+				circular);
   return result;
 }
 

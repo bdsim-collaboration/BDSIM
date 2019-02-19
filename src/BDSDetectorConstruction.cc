@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSApertureInfo.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
@@ -31,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
@@ -152,12 +153,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   
   // construct regions
   InitialiseRegions();
+
+  InitialiseApertures();
   
   // construct the component list
   BuildBeamlines();
 
   // construct placement geometry from parser
-  BDSBeamline* mainBeamLine =  BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
+  BDSBeamline* mainBeamLine = BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
 					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
@@ -205,6 +208,22 @@ void BDSDetectorConstruction::InitialiseRegions()
       region->SetProductionCuts(cuts);
       acceleratorModel->RegisterRegion(region, cuts);
     }
+}
+
+void BDSDetectorConstruction::InitialiseApertures()
+{
+  std::map<G4String, BDSApertureInfo*> apertures;
+  for (const GMAD::Aperture& a : BDSParser::Instance()->GetApertures())
+    {
+      BDSApertureInfo* ap = new BDSApertureInfo(a.apertureType,
+						a.aper1 * CLHEP::m,
+						a.aper2 * CLHEP::m,
+						a.aper3 * CLHEP::m,
+						a.aper4 * CLHEP::m,
+						a.name);
+      apertures[a.name] = ap;
+    }
+  acceleratorModel->RegisterApertures(apertures);
 }
 
 void BDSDetectorConstruction::BuildBeamlines()
@@ -440,12 +459,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	    {worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
+	{worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
 
   G4String worldName = "World";
   G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material *worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
 
   std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
 
@@ -456,8 +475,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       useExternalGeometryWorld = true;
     }
 
-  G4LogicalVolume *worldLV;
-  G4VSolid *worldSolid;
+  G4LogicalVolume* worldLV;
+  G4VSolid* worldSolid;
 
   if (useExternalGeometryWorld)
     {
@@ -482,13 +501,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // make world sensitive if importance sampling is needed
       if (BDSGlobalConstants::Instance()->StoreELossWorld() || BDSGlobalConstants::Instance()->UseImportanceSampling())
         {
-          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());
+          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
         }
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
       debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
       worldLV->SetVisAttributes(debugWorldVis);
 
@@ -518,11 +537,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
       // make the world sensitive to energy deposition with its own unique hits collection
       if (BDSGlobalConstants::Instance()->StoreELossWorld())
-        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetWorldCompleteSD());}
+        {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());}
 
       // visual attributes
       // copy the debug vis attributes but change to force wireframe
-      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
       debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
       worldLV->SetVisAttributes(debugWorldVis);
 
@@ -640,6 +659,14 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+								const BDSBeamline*            beamline)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamline);
+}
+
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine)
 {
@@ -718,17 +745,20 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       
       result = G4Transform3D(*rm, translation);
     }
-
   
   return result;
 }
 
 #if G4VERSION_NUMBER > 1009
-BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
- const std::list<std::string>& biasList,
- G4String defaultBias,
- G4String elementName)
+BDSBOptrMultiParticleChangeCrossSection*
+BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& biasList,
+					       G4String defaultBias,
+					       G4String elementName)
 {
+  // no accelerator components to bias
+  if (biasList.empty())
+    {return nullptr;}
+
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
 
@@ -768,7 +798,6 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
 #if G4VERSION_NUMBER > 1009
-
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
   if(debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
@@ -778,9 +807,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   
   G4bool useDefaultBiasVacuum   = !defaultBiasVacuum.empty();
   G4bool useDefaultBiasMaterial = !defaultBiasMaterial.empty();
-  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
-  G4bool biasesDefined = !biasObjectList.empty();
-  G4bool overallUseBiasing = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
+  const auto& biasObjectList    = BDSParser::Instance()->GetBiasing();
+  G4bool biasesDefined          = !biasObjectList.empty();
+  G4bool overallUseBiasing      = useDefaultBiasVacuum || useDefaultBiasMaterial || biasesDefined;
   G4cout << __METHOD_NAME__ << "Using generic biasing: " << BDS::BoolToString(overallUseBiasing) << G4endl;
   if (!overallUseBiasing)
     {return;} // no biasing used -> dont attach as just overhead for no reason
@@ -789,34 +818,46 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   for (auto const & item : *registry)
     {
       if (debug)
-	{G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
+        {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
       BDSAcceleratorComponent* accCom = item.second;
-      G4String                accName = accCom->GetName();
+      G4String accName = accCom->GetName();
+      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
       
       // Build vacuum bias object based on vacuum bias list in the component
-      auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
-      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV)
-	{
-	  if(debug)
-	    {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
-		    << " " << vacuumLV->GetName() << G4endl;}
-	  egVacuum->AttachTo(vacuumLV);
+      auto vacuumBiasList = accCom->GetBiasVacuumList();
+      if (!vacuumBiasList.empty())
+        {
+          auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
+	  if (vacuumLV)
+	    {
+	      if (debug)
+		{
+		  G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+			 << " " << vacuumLV->GetName() << G4endl;
+		}
+	      egVacuum->AttachTo(vacuumLV);
+	    }
 	}
       
       // Build material bias object based on material bias list in the component
-      auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
-      auto allLVs     = accCom->GetAllBiasingVolumes();
-      if(debug)
-	{G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
-      for (auto materialLV : allLVs)
+      auto materialBiasList = accCom->GetBiasMaterialList();
+      if (!materialBiasList.empty())
 	{
-	  if(materialLV != vacuumLV)
+	  auto egMaterial = BuildCrossSectionBias(materialBiasList, defaultBiasMaterial, accName);
+	  auto allLVs     = accCom->GetAllBiasingVolumes();
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
+	  for (auto materialLV : allLVs)
 	    {
-	      if(debug)
-		{G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
-			<< " " << (materialLV)->GetName() << G4endl;}
-	      egMaterial->AttachTo(materialLV);
+	      if(materialLV != vacuumLV)
+		{
+		  if(debug)
+		    {
+		      G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+			     << " " << (materialLV)->GetName() << G4endl;
+		    }
+		  egMaterial->AttachTo(materialLV);
+		}
 	    }
 	}
     }

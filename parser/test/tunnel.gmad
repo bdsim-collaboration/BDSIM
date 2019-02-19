@@ -1,5 +1,4 @@
-tunnel, name="t1",
-	type="circular",
+t1: tunnel, type="circular",
 	aper1=2.0*m,
 	aper2=3.0*m,
 	offsetX=0.0*m,
