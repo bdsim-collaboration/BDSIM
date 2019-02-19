@@ -146,17 +146,15 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   if (verbose || debug)
-    {
-      G4cout << __METHOD_NAME__
-	     << "starting accelerator geometry construction\n" << G4endl;
-    }
+    {G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;}
   
-  // construct regions
+  // construct all parser defined regions
   InitialiseRegions();
 
+  // construct all parser defined aperture objects
   InitialiseApertures();
   
-  // construct the component list
+  // construct the main beam line and any other secondary beam lines
   BuildBeamlines();
 
   // construct placement geometry from parser
@@ -172,7 +170,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // build world and calculate coordinates
   auto worldPV = BuildWorld();
 
-  // placement procedure
+  // placement procedure - put everything in the world
   ComponentPlacement(worldPV);
   
   if(verbose || debug)
@@ -255,16 +253,17 @@ void BDSDetectorConstruction::BuildBeamlines()
       exit(1);
     }
 
-  // print warning if beamline is approximately circular but flag isnt specfied
+  // print warning if beam line is approximately circular but flag isn't specified
   if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
     {
       G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
              << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
     }
 
-  // register the beamline in the holder class for the full model
+  // register the beam line in the holder class for the full model
   acceleratorModel->RegisterBeamlineSetMain(mainBeamline);
 
+  // build secondary beam lines
   // loop over placements and check if any are beam lines (have sequences specified)
   auto placements = BDSParser::Instance()->GetPlacements();
   for (const auto& placement : placements)
@@ -435,7 +434,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
   std::vector<BDSExtentGlobal> extents;
 
-  // These beamlines should always exist so are safe to access.
+  // these beam lines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
   blMain.GetExtentGlobals(extents);
 
