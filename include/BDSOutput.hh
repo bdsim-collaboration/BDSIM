@@ -138,6 +138,9 @@ protected:
   /// Whether primaries are to be written to file or not.
   inline G4bool WritePrimaries() const {return writePrimaries;}
 
+  /// Whether to create the collimator structures in the output or not.
+  inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
+
 private:
   /// Enum for different types of sampler hits that can be written out.
   enum class HitsType {plane, cylinder};
@@ -260,6 +263,10 @@ private:
   G4bool storeOption3;
   G4bool storeOption4;
   /// @}
+
+  /// Whether to create collimator output structures or not - based on
+  /// several collimator storage options.
+  G4bool createCollimatorOutputStructures;
 
   /// @{ Integral when filling hit.
   G4double energyDeposited;

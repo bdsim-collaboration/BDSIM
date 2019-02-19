@@ -90,9 +90,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeCollimatorLinks       = g->StoreCollimatorLinks();
-  // automatically store ion info if generating ion hits
+  // automatically store ion info if generating ion hits - this option
+  // controls generation and storage of the ion hits
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
+
+  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorLinks || storeCollimatorHitsIons;
+
   storeELoss                 = g->StoreELoss();
   // store histograms if storing general energy deposition as negligible in size
   storeELossHistograms       = g->StoreELossHistograms() || storeELoss;
