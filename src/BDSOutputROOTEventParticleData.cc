@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #endif
 
-ClassImp(BDSOutputROOTGeant4Data)
+ClassImp(BDSOutputROOTEventParticleData)
 
 BDSOutputROOTEventParticleData::BDSOutputROOTEventParticleData()
 {;}
