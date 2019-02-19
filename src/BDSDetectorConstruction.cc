@@ -433,20 +433,24 @@ void BDSDetectorConstruction::BuildTunnel()
 
 G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
+  // calculate extents of everything we need to place in the world first
   std::vector<BDSExtentGlobal> extents;
 
   // these beam lines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
   blMain.GetExtentGlobals(extents);
 
+  // check optional placement beam line (likevector of placements)
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
-  if (plBeamline) // optional placements beam line
+  if (plBeamline) // optional - may be nullptr
     {extents.push_back(plBeamline->GetExtentGlobal());}
-  
+
+  // check tunnel beam line
   BDSBeamline* tunnelBeamline = acceleratorModel->TunnelBeamline();
   if (tunnelBeamline)
     {extents.push_back(tunnelBeamline->GetExtentGlobal());}
 
+  // check extra beam lines
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   // extras is a map, so iterator has first and second for key and value
   for (const auto& bl : extras)
@@ -457,7 +461,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
-
   // loop over all extents from all beam lines
   for (const auto& ext : extents)
     {
