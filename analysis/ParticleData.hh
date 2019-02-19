@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ANALYSISGEANT4DATA_H
-#define ANALYSISGEANT4DATA_H
+#ifndef ANALYSISPARTICLEDATA_H
+#define ANALYSISPARTICLEDATA_H
 
 #include "TROOT.h"
 
@@ -26,17 +26,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TTree;
 
 /**
- * @brief Geant4 Data loader.
+ * @brief Particle Data loader.
  *
  * @author Laurie Nevay.
  */
 
-class Geant4Data
+class ParticleData
 {
 public:
-  Geant4Data();
-  Geant4Data(bool debugIn);
-  virtual ~Geant4Data();
+  ParticleData();
+  ParticleData(bool debugIn);
+  virtual ~ParticleData();
 
   /// Set the branch addresses to address the contents of the file.
   void SetBranchAddress(TTree* t);
@@ -47,7 +47,7 @@ public:
 private:
   bool debug;
   
-  ClassDef(Geant4Data,1);
+  ClassDef(ParticleData,1);
 };
 
 #endif

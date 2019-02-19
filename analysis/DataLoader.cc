@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Beam.hh"
 #include "Event.hh"
 #include "FileMapper.hh"
-#include "Geant4Data.hh"
+#include "ParticleData.hh"
 #include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -79,7 +79,7 @@ void DataLoader::CommonCtor(std::string fileName)
   BuildInputFileList(fileName);
 
   hea = new Header(debug);
-  g4d = new Geant4Data(debug);
+  g4d = new ParticleData(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug, dataVersion);
@@ -88,7 +88,7 @@ void DataLoader::CommonCtor(std::string fileName)
   
   heaChain = new TChain("Header",      "Header");
   if (!backwardsCompatible)
-    {g4dChain = new TChain("Geant4Data", "Geant4Data");}
+    {g4dChain = new TChain("ParticleData", "ParticleData");}
   beaChain = new TChain("Beam",       "Beam");
   optChain = new TChain("Options",    "Options");
   modChain = new TChain("Model",      "Model");

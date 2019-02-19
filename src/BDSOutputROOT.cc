@@ -74,7 +74,7 @@ void BDSOutputROOT::NewFile()
   theRootOutputFile->cd();
   
   theHeaderOutputTree  = new TTree("Header", "BDSIM Header");           // header
-  theGeant4DataTree    = new TTree("Geant4Data", "BDSIM Geant4 Data");  // geant4 data
+  theGeant4DataTree    = new TTree("ParticleData", "BDSIM Geant4 Data");  // geant4 data
   theBeamOutputTree    = new TTree("Beam", "BDSIM beam");               // beam data tree
   theOptionsOutputTree = new TTree("Options","BDSIM options");          // options data tree
   theModelOutputTree   = new TTree("Model","BDSIM model");              // model data tree
@@ -83,7 +83,7 @@ void BDSOutputROOT::NewFile()
 
   // Build branches for each object
   theHeaderOutputTree->Branch("Header.",   "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theGeant4DataTree->Branch("Geant4Data.", "BDSOutputROOTEventParticleData",     geant4DataOutput, 32000, 1);
+  theGeant4DataTree->Branch("ParticleData.", "BDSOutputROOTEventParticleData", geant4DataOutput, 32000, 1);
   theBeamOutputTree->Branch("Beam.",       "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
   theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
   theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);

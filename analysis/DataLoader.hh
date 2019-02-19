@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class Beam;
 class Event;
-class Geant4Data;
+class ParticleData;
 class Header;
 class Options;
 class Model;
@@ -82,7 +82,7 @@ public:
   std::vector<std::string>   GetSamplerNames()   {return samplerNames;}
   std::vector<std::string>   GetCollimatorNames(){return collimatorNames;}
   Header*                    GetHeader()         {return hea;}
-  Geant4Data*                GetGeant4Data()     {return g4d;}
+  ParticleData*                GetGeant4Data()     {return g4d;}
   Beam*                      GetBeam()           {return bea;}
   Options*                   GetOptions()        {return opt;}
   Model*                     GetModel()          {return mod;}
@@ -107,7 +107,7 @@ private:
   bool backwardsCompatible;
 
   Header*     hea;
-  Geant4Data* g4d;
+  ParticleData* g4d;
   Beam*       bea;
   Options*    opt;
   Model*      mod;
