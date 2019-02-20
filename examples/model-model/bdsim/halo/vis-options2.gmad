@@ -1,0 +1,22 @@
+option, outerDiameter=1*m;
+
+
+rangeCut = 50*m;
+
+option, physicsList="em em_extra ftfp_bert hadronic_elastic decay muon",
+	prodCutProtons   = rangeCut,
+	prodCutPositrons = rangeCut,
+	prodCutElectrons = rangeCut,
+	prodCutPhotons   = rangeCut,
+	defaultRangeCut  = rangeCut,
+	minimumRange = 2*mm;
+
+option,	minimumKineticEnergy = 10*MeV;
+
+! fix the seed so exactly reproducible for single job
+!option, seed=2018;
+
+! limit collimation simulation to 100 turns
+option, nturns=100;
+
+!option, stopSecondaries=1;
