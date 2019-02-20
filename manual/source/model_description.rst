@@ -2947,8 +2947,9 @@ The Geant4 reference physics can be used by prefixing their name with "g4". See 
 .. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
 	  with any modular physics list.
 
-.. note:: The range cuts specified with BDSIM options to not apply by default and the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on').
+.. note:: The range cuts specified with BDSIM options apply by default even with a Geant4
+	  reference physics list. This can be turned off with the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts=0`.
 
 .. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
 	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
@@ -3231,14 +3232,21 @@ BDSIM allows use of the Geant4 reference physics lists directly and more details
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
-.. note:: The range cuts specified with BDSIM options to not apply by default and the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 1 ('on').
+.. note:: The range cuts specified with BDSIM options apply by default and the option
+	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 0 ('off') to avoid this
+	  if required. The defaults are 1 mm, the same as Geant4.
 
 .. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
 	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
 	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
 	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
 	  is the default option.
+
+.. warning:: Turning off all limits may result in tracking warnings. The events should still proceed
+	     as normal, but Geant4 by default requests step lengths of 10 km or more, which often
+	     break the validity of the accelerator tracking routines. This is unavoidable, hence
+	     why we use the limits by default. BDSIM, by default applies step length limits of 110%
+	     the length of each volume.
   
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
@@ -3285,15 +3293,13 @@ Examples: ::
   option, physicsList="g4QBBC_EMV";
 
   option, physicsList="g4FTFP_BERT_PEN",
-          g4PhysicsUseBDISMRangeCuts=1,
-	  defaultRangeCut=10*cm;
+          g4PhysicsUSeBDSIMCutsAndLimits=0;
 
-This example turns on the cuts and limits. This applies the minimum kinetic energy but also the
-the maximum step length which is by default 110% the length of the element. If bad tracking behaviour
+This last example turns off the minimum kinetic energy and also the the maximum step length
+limit which is by default 110% the length of the element. If bad tracking behaviour
 is experienced (stuck particles etc.) this should be considered. ::
 	  
-  option, physicsList="g4FTFP_BERT",
-          g4PhysicsUSeBDSIMCutsAndLimits=1;
+  option, physicsList="g4FTFP_BERT";
 
 This following example will enforce a minimum kinetic energy but also limit the maximum step length
 (consequently) to 110% the length of the component and provide more robust tracking. ::

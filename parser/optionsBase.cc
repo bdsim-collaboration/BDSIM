@@ -67,8 +67,8 @@ OptionsBase::OptionsBase()
   physicsVerbose                 = false;
   physicsEnergyLimitLow          = 0;
   physicsEnergyLimitHigh         = 0;
-  g4PhysicsUseBDSIMRangeCuts     = false;
-  g4PhysicsUseBDSIMCutsAndLimits = false;
+  g4PhysicsUseBDSIMRangeCuts     = true;
+  g4PhysicsUseBDSIMCutsAndLimits = true;
   
   eventOffset           = 0;
   recreateSeedState     = true;
