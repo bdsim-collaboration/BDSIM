@@ -663,6 +663,128 @@ please contact us (see :ref:`support-section`).
    You will have to reconfigure Geant4 and install any necessary libraries (such as Qt or XMotif), then
    recompile Geant4, then recompile bdsim.
 
+2) Huge print out and failure when trying to load data in Python: ::
+
+     In [1]: import pybdsim
+     d =
+
+     In [2]: d = pybdsim.Data.Load("run1.root")
+
+     Error in cling::AutoloadingVisitor::InsertIntoAutoloadingState:
+     Missing FileEntry for ../parser/beamBase.h
+     requested to autoload type GMAD::BeamBase
+     Error in cling::AutoloadingVisitor::InsertIntoAutoloadingState:
+     Missing FileEntry for ../parser/optionsBase.h
+     requested to autoload type GMAD::OptionsBase
+     HeaderDict dictionary payload:33:10: fatal error: 'BDSOutputROOTEventHeader.hh' file not found
+     #include "BDSOutputROOTEventHeader.hh"
+               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     Error in <TInterpreter::AutoParse>: Error parsing payload code for class Header with content:
+     
+     #line 1 "HeaderDict dictionary payload"
+     
+     #ifndef G__VECTOR_HAS_CLASS_ITERATOR
+       #define G__VECTOR_HAS_CLASS_ITERATOR 1
+     #endif
+     #ifndef __ROOTBUILD__
+       #define __ROOTBUILD__ 1
+     #endif
+     
+     #define _BACKWARD_BACKWARD_WARNING_H
+     /* 
+     Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+     University of London 2001 - 2019.
+     
+     This file is part of BDSIM.
+     
+     BDSIM is free software: you can redistribute it and/or modify 
+     it under the terms of the GNU General Public License as published 
+     by the Free Software Foundation version 3 of the License.
+     
+     BDSIM is distributed in the hope that it will be useful, but 
+     WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+     
+     You should have received a copy of the GNU General Public License
+     along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+     */
+     #ifndef ANALYSISHEADER_H
+     #define ANALYSISHEADER_H
+     
+     #include "TROOT.h"
+     
+     #include "BDSOutputROOTEventHeader.hh"
+     
+     #include "RebdsimTypes.hh"
+     
+     class TTree;
+     
+     /**
+      * @brief Options loader.
+      *
+      * @author Laurie Nevay.
+      */
+     
+     class Header
+     {
+     public:
+       Header();
+       Header(bool debugIn);
+       virtual ~Header();
+     
+       /// Set the branch addresses to address the contents of the file.
+       void SetBranchAddress(TTree* t);
+     
+       /// Member that ROOT can map file data to locally.
+       BDSOutputROOTEventHeader* header;
+     
+     private:
+       bool debug;
+       
+       ClassDef(Header,1);
+     };
+     
+     #endif
+     
+     #undef  _BACKWARD_BACKWARD_WARNING_H
+     
+     Error in <TClass::LoadClassInfo>: no interpreter information for class Header is available even though it has a TClass initialization routine.
+     Error in <TClass::LoadClassInfo>: no interpreter information for class Header is available even though it has a TClass initialization routine.
+     ---------------------------------------------------------------------------
+     RuntimeError                              Traceback (most recent call last)
+     <ipython-input-2-ab00b7718588> in <module>()
+     ----> 1 d = pybdsim.Data.Load("run1.root")
+     
+     /Users/nevay/physics/reps/pybdsim/pybdsim/Data.pyc in Load(filepath)
+          60         return _LoadAscii(filepath)
+          61     elif extension == 'root':
+     ---> 62         return _LoadRoot(filepath)
+          63         try:
+          64             return _LoadRoot(filepath)
+     
+     /Users/nevay/physics/reps/pybdsim/pybdsim/Data.pyc in _LoadRoot(filepath)
+         149     LoadROOTLibraries()
+         150 
+     --> 151     fileType = _ROOTFileType(filepath) #throws warning if not a bdsim file
+         152 
+         153     if fileType == "BDSIM":
+     
+     /Users/nevay/physics/reps/pybdsim/pybdsim/Data.pyc in _ROOTFileType(filepath)
+         133     if not htree:
+         134         raise Warning("ROOT file \"{}\" is not a BDSIM one".format(fileToCheck))
+     --> 135     h = _ROOT.Header()
+         136     h.SetBranchAddress(htree)
+         137     htree.GetEntry(0)
+     
+     RuntimeError: Header::Header() =>
+         could not resolve ::()
+     
+     In [3]:
+
+In this case, neither ROOT_INCLUDE_PATH or (DY)LD_LIBRARY_PATH environmental variables have been
+set. See :ref:`installation-building` and :ref:`installation-environmental-variables`.
+        	
 2) Error from OpenGL::
 
      G4OpenGLImmediateX::CreateViewer: error flagged by negative view id in
