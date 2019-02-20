@@ -546,48 +546,48 @@ DRIFT_504: drift, aper1=0.05, aper2=0.05, aper3=0.05, aper4=0.05, apertureType="
 QUADCIL2: quadrupole, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular",
 	k1=0.0003920746631, l=10.0;
 DRIFT_505: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=3.0;
-COLPRIMY: rcol, l=1.0, material="carbon", outerDiameter=0.5, xsize=0.0317486957234,
+COLPRIMY: rcol, l=1.0, material="carbon", horizontalWidth=0.5, xsize=0.0317486957234,
 	ysize=0.0266067759565;
 DRIFT_506: drift, aper1=0.2, aper2=0.06, aper3=0.2088061302, aper4=0.2088061302,
 	apertureType="rectangular", l=11.0;
 QUADCIL3: quadrupole, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular",
 	k1=-0.002115744428, l=10.0;
 DRIFT_507: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=3.0;
-COLSECY: rcol, l=1.0, material="copper", outerDiameter=0.5, xsize=0.0589113666127,
+COLSECY: rcol, l=1.0, material="copper", horizontalWidth=0.5, xsize=0.0589113666127,
 	ysize=0.0368167532982;
 DRIFT_508: drift, aper1=0.2, aper2=0.08, aper3=0.2154065923, aper4=0.2154065923,
 	apertureType="rectangular", l=0.5;
 DRIFT_509: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=81.0;
 DRIFT_510: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=0.5;
-COLPRIMX: rcol, l=1.0, material="carbon", outerDiameter=0.5, xsize=0.0313323220915,
+COLPRIMX: rcol, l=1.0, material="carbon", horizontalWidth=0.5, xsize=0.0313323220915,
 	ysize=0.0606649883724;
 DRIFT_511: drift, aper1=0.07, aper2=0.2, aper3=0.211896201, aper4=0.211896201,
 	apertureType="rectangular", l=3.0;
 QUADCIR3: quadrupole, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular",
 	k1=0.002115744428, l=10.0;
 DRIFT_512: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=11.0;
-COLSECX: rcol, l=1.0, material="copper", outerDiameter=0.5, xsize=0.031577741187,
+COLSECX: rcol, l=1.0, material="copper", horizontalWidth=0.5, xsize=0.031577741187,
 	ysize=0.0325098721984;
 DRIFT_513: drift, aper1=0.076, aper2=0.2, aper3=0.2139532659, aper4=0.2139532659,
 	apertureType="rectangular", l=3.0;
 QUADCIR2: quadrupole, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular",
 	k1=-0.0003920746631, l=10.0;
 DRIFT_514: drift, aper1=0.2, aper2=0.2, aper3=0.2, aper4=0.2, apertureType="circular", l=33.5;
-COLTERT: rcol, l=1.0, material="tungsten", outerDiameter=0.5, xsize=0.0143438095563,
+COLTERT: rcol, l=1.0, material="tungsten", horizontalWidth=0.5, xsize=0.0143438095563,
 	ysize=0.00443736545901;
 DRIFT_515: drift, aper1=0.028, aper2=0.01, aper3=0.02973213749, aper4=0.02973213749,
 	apertureType="rectangular", l=5.5;
 QUADCIR1: quadrupole, aper1=0.05, aper2=0.05, aper3=0.05, aper4=0.05, apertureType="circular",
 	k1=-0.002953486067, l=10.0;
 DRIFT_516: drift, aper1=0.05, aper2=0.05, aper3=0.05, aper4=0.05, apertureType="circular", l=5.5;
-COLTERT2: rcol, l=1.0, material="tungsten", outerDiameter=0.5, xsize=0.00800612154054,
+COLTERT2: rcol, l=1.0, material="tungsten", horizontalWidth=0.5, xsize=0.00800612154054,
 	ysize=0.00613433196435;
 DRIFT_517: drift, aper1=0.01, aper2=0.014, aper3=0.01720465053, aper4=0.01720465053,
 	apertureType="rectangular", l=33.5;
 QUADCIR0: quadrupole, aper1=0.05, aper2=0.05, aper3=0.05, aper4=0.05, apertureType="circular",
 	k1=-0.002972770879, l=10.0;
 DRIFT_518: drift, aper1=0.05, aper2=0.05, aper3=0.05, aper4=0.05, apertureType="circular", l=5.5;
-COLTERT3: rcol, l=1.0, material="tungsten", outerDiameter=0.5, xsize=0.00522558056807,
+COLTERT3: rcol, l=1.0, material="tungsten", horizontalWidth=0.5, xsize=0.00522558056807,
 	ysize=0.00584305596384;
 DRIFT_519: drift, aper1=0.01, aper2=0.012, aper3=0.01562049935, aper4=0.01562049935,
 	apertureType="rectangular", l=11.0;
