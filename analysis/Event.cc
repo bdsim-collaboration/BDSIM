@@ -67,6 +67,7 @@ Event::~Event()
   delete TunnelHit;
   delete Trajectory;
   delete Histos;
+  delete Summary;
   delete Info;
   for (auto s : Samplers)
     {delete s;}
@@ -92,6 +93,7 @@ void Event::CommonCtor()
   TunnelHit       = new BDSOutputROOTEventLoss();
   Trajectory      = new BDSOutputROOTEventTrajectory();
   Histos          = new BDSOutputROOTEventHistograms();
+  Summary         = new BDSOutputROOTEventInfo();
   Info            = new BDSOutputROOTEventInfo();
 }
 
@@ -168,9 +170,17 @@ void Event::SetBranchAddress(TTree* t,
       t->SetBranchAddress("Primary.", &Primary);
     }
 
-  // turn on info, primary first and last hit as they're not big -> low overhead
-  t->SetBranchStatus("Info*", 1);
-  t->SetBranchAddress("Info.", &Info);
+  // turn on summary, primary first and last hit as they're not big -> low overhead
+  if (dataVersion < 4)
+    {// used to be called info but this clashes with root functions in TObject
+      t->SetBranchStatus("Info*", 1);
+      t->SetBranchAddress("Info.", &Info);
+    }
+  else
+    {
+      t->SetBranchStatus("Summary*", 1);
+      t->SetBranchAddress("Summary.", &Summary);
+    }
   
   t->SetBranchStatus("PrimaryFirstHit*", 1);
   t->SetBranchAddress("PrimaryFirstHit.", &PrimaryFirstHit);

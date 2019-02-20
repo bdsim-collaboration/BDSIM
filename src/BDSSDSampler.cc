@@ -18,10 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
+#include "BDSHitSampler.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
-#include "BDSHitSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"

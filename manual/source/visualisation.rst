@@ -25,7 +25,7 @@ will be accumulated for display. Events outside this will be discarded from the 
 .. _visualisation-default-colour-coding:
 
 Colour Coding
--------------
+=============
 
 The default colour coding of trajectories is the same as Geant4. This colour coding is
 green: neutral; blue: positively charged; red: negatively charged.

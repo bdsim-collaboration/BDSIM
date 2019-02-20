@@ -16,16 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSSDCollimator.hh"
 #include "BDSDebug.hh"
-#include "BDSSDEnergyDeposition.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
-#include "BDSSDSampler.hh"
+#include "BDSSDCollimator.hh"
+#include "BDSSDEnergyDeposition.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
 #include "BDSSDVolumeExit.hh"

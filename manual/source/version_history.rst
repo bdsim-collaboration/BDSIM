@@ -18,6 +18,7 @@ New Features
 ------------
 
 * Support for Geant4.10.5.
+* New environment script in :code:`<bdsim-install-dir>/bin/bdsim.sh` to make running BDSIM easier.
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
@@ -238,10 +239,17 @@ Bug Fixes
 * Fixed very slow memory leak associated with the primary trajectory. only visible for very
   large numbers of events.
 * Fixed dipole tracking for off-charge ions - reverts to backup integrator.
+* Fixed Pythonic range iteration of Event tree when trying to look at Info branch. Conflicted with
+  Info method of TObject. Now renamed to Summary.
   
 Output Changes
 --------------
 
+* "Info" branch of the Event and Run trees are now "Summmary". This is to avoid conflict with
+  ROOT TObject::Info() that could result in broken analysis or range iteration. The DataLoader
+  class in analysis (used by pybdsim.Data.Load) is backwards compatible. In the case of loading
+  older data with updated software, there will still be a member called Info that the data will
+  be loaded into. Python range iteration cannot be used in this case.
 * "TunnelHit" is now "EnergyLossTunnel" to be consistent. `rebdsim` and the analysis DataLoader
   class (both Python and ROOT) are backwards compatible and both TunnelHit and ElossTunnel are
   available. Only the correct one is filled with loaded data during analysis.

@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-
 #include "BDSSDTerminator.hh"
 
 #include "G4ios.hh"
