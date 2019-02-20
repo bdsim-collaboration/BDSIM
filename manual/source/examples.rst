@@ -17,6 +17,7 @@ Basic Examples
    examples/beamLoss
    examples/collimation-simple
    examples/simpleMachine
+   examples/model-model.rst
 
 .. _worked-examples:
    
