@@ -2809,6 +2809,13 @@ The strategy is automatically determined based on the parameters set. The full l
 parameters is described below, but the requried ones for each scenario are described in
 :ref:`placements`.
 
+.. warning:: This sampler can nominally overlap with any geometry. However, the user
+	     should **avoid** coplanar overlaps with other geometry. e.g. do not place
+	     one just at the end of an element or perfectly aligned with the face of an
+	     object. This will cause bad tracking and overlaps. This is a limitation of
+	     Geant4. The user placed samplers are slightly thicker than normal ones
+	     to help avoid this problem.
+
 Shape
 *****
 
