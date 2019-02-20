@@ -81,7 +81,8 @@ std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
 
       liness >> volume >> importanceValue;
 
-      // importance world should be GDML import, modify PV name accordingly.
+      // importance world should be GDML import created in pyg4ometry so modify PV name accordingly.
+      // dangerous to assume fixed behaviour of external package - susceptible to change.
       G4String fullVolume = "importanceWorld_PREPEND" + volume + "_pv";
       importanceValues.push_back(importanceValue);
       importance[fullVolume] = importanceValue;

@@ -150,13 +150,29 @@ G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
     G4double importanceValue = (imVolumesAndValues)[cellName];
     if (!BDS::IsFinite(importanceValue))
       {
-        G4cerr << __METHOD_NAME__<< "Importance value not found or is zero for cell " << cellName <<"." << G4endl;
+        G4String finalCellName = cellName;
+        // prependage and appendage added in pyg4ometry
+        G4String preString = "importanceWorld_PREPEND";
+        G4String postString = "_pv";
+
+        // only modify name if it contains the prestring - we modify in pyg4ometry (PREPEND)
+        // and this class (importanceWorld_), whereas the user will only know the name they defined.
+        // can't check for poststring as G4 PV naming convention includes it.
+        if (cellName.contains(preString))
+          {
+            cellName = cellName.erase(0, preString.size());
+            finalCellName = cellName.erase(cellName.size() - postString.size(), postString.size());
+          }
+
+        G4cerr << __METHOD_NAME__<< "An importance value was not found (or is " << G4endl;
+        G4cerr << "zero) for the importance world cell " << finalCellName <<". Please check that your importanceVolumeMap " << G4endl;
+        G4cerr << "file has a finite importance value for this volume." << G4endl;
         exit(1);
       }
     if (importanceValue < 0)
       {
-          G4cerr << __METHOD_NAME__<< "Importance value is negative for cell " << cellName <<"." << G4endl;
-          exit(1);
+        G4cerr << __METHOD_NAME__<< "Importance value is negative for cell " << cellName <<"." << G4endl;
+        exit(1);
       }
 
     return importanceValue;
