@@ -104,7 +104,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeELossTunnelHistograms = g->StoreELossTunnelHistograms() || storeELossTunnel;
   storeELossVacuum           = g->StoreELossVacuum();
   storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
-  storeGeant4Data            = g->StoreGeant4Data();
+  storeParticleData          = g->StoreParticleData();
   storeModel                 = g->StoreModel();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
   storeSamplerCharge         = g->StoreSamplerCharge();
@@ -157,7 +157,7 @@ void BDSOutput::FillHeader()
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
-  if (storeGeant4Data)
+  if (storeParticleData)
     {
       geant4DataOutput->Flush();
       geant4DataOutput->Fill(writeIons);

@@ -339,7 +339,7 @@ void Options::PublishMembers()
   publish("storeELossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
-  publish("storeGeant4Data",                &Options::storeGeant4Data);
+  publish("storeParticleData",              &Options::storeParticleData);
   
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);

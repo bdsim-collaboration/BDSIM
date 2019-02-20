@@ -250,7 +250,7 @@ private:
   G4bool storeELossTunnelHistograms;
   G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
-  G4bool storeGeant4Data;
+  G4bool storeParticleData;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
   G4bool storeSamplerCharge;

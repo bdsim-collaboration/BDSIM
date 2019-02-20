@@ -241,7 +241,7 @@ OptionsBase::OptionsBase()
   storeElossStepLength       = false;
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
-  storeGeant4Data            = true;
+  storeParticleData          = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 1000000;
