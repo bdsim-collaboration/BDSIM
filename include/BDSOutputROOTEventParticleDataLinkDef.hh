@@ -19,3 +19,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #pragma link C++ class BDSOutputROOTEventParticleData+;
 #pragma link C++ class BDSOutputROOTEventParticleData::ParticleInfo+;
 #pragma link C++ class BDSOutputROOTEventParticleData::IonInfo+;
+
+#pragma read sourceClass="BDSOutputROOTGeant4Data" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTEventParticleData"
+
+#pragma read sourceClass="BDSOutputROOTGeant4Data::ParticleInfo" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTEventParticleData::ParticleInfo"
+
+#pragma read sourceClass="BDSOutputROOTGeant4Data::IonInfo" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTEventParticleData::IonInfo"
