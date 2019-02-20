@@ -79,7 +79,7 @@ void DataLoader::CommonCtor(std::string fileName)
   BuildInputFileList(fileName);
 
   hea = new Header(debug);
-  g4d = new ParticleData(debug);
+  par = new ParticleData(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug, dataVersion);
@@ -88,7 +88,7 @@ void DataLoader::CommonCtor(std::string fileName)
   
   heaChain = new TChain("Header",      "Header");
   if (!backwardsCompatible)
-    {g4dChain = new TChain("ParticleData", "ParticleData");}
+    {parChain = new TChain("ParticleData", "ParticleData");}
   beaChain = new TChain("Beam",       "Beam");
   optChain = new TChain("Options",    "Options");
   modChain = new TChain("Model",      "Model");
@@ -102,12 +102,12 @@ void DataLoader::CommonCtor(std::string fileName)
 
   if (!backwardsCompatible)
     {
-      g4dChain->GetEntry(0); // load particle data
+      parChain->GetEntry(0); // load particle data
 #ifdef __ROOTDOUBLE__
-      BDSOutputROOTEventSampler<double>::particleTable = g4d->geant4Data;
+      BDSOutputROOTEventSampler<double>::particleTable = par->particleData;
 #else
-      BDSOutputROOTEventSampler<float>::particleTable = g4d->geant4Data;
-      BDSOutputROOTEventCollimator::particleTable = g4d->geant4Data;
+      BDSOutputROOTEventSampler<float>::particleTable = par->particleData;
+      BDSOutputROOTEventCollimator::particleTable = par->particleData;
 #endif
     }
 }
@@ -241,7 +241,7 @@ void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
   if (!backwardsCompatible)
-    {g4dChain->Add(fileNames[0].c_str());} // only require 1 copy
+    {parChain->Add(fileNames[0].c_str());} // only require 1 copy
   for (const auto& filename : fileNames)
     {
       heaChain->Add(filename.c_str());
@@ -257,7 +257,7 @@ void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
   if (!backwardsCompatible)
-    {g4d->SetBranchAddress(g4dChain);}
+    {par->SetBranchAddress(parChain);}
   hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches

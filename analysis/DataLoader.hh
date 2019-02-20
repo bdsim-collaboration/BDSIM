@@ -82,14 +82,14 @@ public:
   std::vector<std::string>   GetSamplerNames()   {return samplerNames;}
   std::vector<std::string>   GetCollimatorNames(){return collimatorNames;}
   Header*                    GetHeader()         {return hea;}
-  ParticleData*                GetGeant4Data()     {return g4d;}
+  ParticleData*              GetParticleData()   {return par;}
   Beam*                      GetBeam()           {return bea;}
   Options*                   GetOptions()        {return opt;}
   Model*                     GetModel()          {return mod;}
   Event*                     GetEvent()          {return evt;}
   Run*                       GetRun()            {return run;}
   TChain*                    GetHeaderTree()     {return heaChain;}
-  TChain*                    GetGeant4DataTree() {return g4dChain;}
+  TChain*                    GetParticleDataTree() {return parChain;}
   TChain*                    GetBeamTree()       {return beaChain;}
   TChain*                    GetOptionsTree()    {return optChain;}
   TChain*                    GetModelTree()      {return modChain;}
@@ -107,7 +107,7 @@ private:
   bool backwardsCompatible;
 
   Header*     hea;
-  ParticleData* g4d;
+  ParticleData* par;
   Beam*       bea;
   Options*    opt;
   Model*      mod;
@@ -121,7 +121,7 @@ private:
   std::vector<std::string> collimatorNames;
 
   TChain* heaChain;
-  TChain* g4dChain;
+  TChain* parChain;
   TChain* beaChain;
   TChain* optChain;
   TChain* modChain;
