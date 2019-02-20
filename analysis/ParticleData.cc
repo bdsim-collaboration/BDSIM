@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TTree.h"
 
-ClassImp(Geant4Data)
+ClassImp(ParticleData)
 
 ParticleData::ParticleData():
   ParticleData(false)
@@ -30,15 +30,15 @@ ParticleData::ParticleData():
 ParticleData::ParticleData(bool debugIn):
   debug(debugIn)
 {
-  geant4Data = new BDSOutputROOTEventParticleData();
+  particleData = new BDSOutputROOTEventParticleData();
 }
 
 ParticleData::~ParticleData()
 {
-  delete geant4Data;
+  delete particleData;
 }
 
 void ParticleData::SetBranchAddress(TTree* t)
 {
-  t->SetBranchAddress("ParticleData.", &geant4Data);
+  t->SetBranchAddress("ParticleData.", &particleData);
 }

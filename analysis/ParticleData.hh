@@ -42,7 +42,7 @@ public:
   void SetBranchAddress(TTree* t);
 
   /// Member that ROOT can map file data to locally.
-  BDSOutputROOTEventParticleData* geant4Data;
+  BDSOutputROOTEventParticleData* particleData;
 
 private:
   bool debug;
