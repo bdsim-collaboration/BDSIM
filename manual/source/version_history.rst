@@ -90,7 +90,7 @@ New Features
 |                                  | (i.e. the air) as well as record energy leaving the simulation.  |
 |                                  | Default off.                                                     |
 +----------------------------------+------------------------------------------------------------------+
-| storeGeant4Data                  | Control whether the basic particle data is stored in the output  |
+| storeParticleData                | Control whether the basic particle data is stored in the output  |
 |                                  | for all particles used or not.                                   |
 +----------------------------------+------------------------------------------------------------------+
 | storeSamplerAll                  | Conveniently store all optional sampler data with one option.    |
