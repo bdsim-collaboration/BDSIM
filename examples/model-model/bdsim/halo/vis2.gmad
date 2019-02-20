@@ -9,6 +9,6 @@ include vis-sequence2.gmad;
 include ../beam_COLPRIMX.gmad;
 beam, S0=0,
       energy=10*GeV;
-include vis-options2.gmad;
+include vis-options.gmad;
 
 option, ngenerate=1;

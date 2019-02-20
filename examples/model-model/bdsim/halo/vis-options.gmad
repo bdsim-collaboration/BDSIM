@@ -1,21 +1,10 @@
-option, outerDiameter=1*m;
+include h-options.gmad;
 
+! agressive cuts for fast visualisation
+option,	minimumKineticEnergy = 10*MeV;
+option, defaultRangeCut=50*m;
+
+! build a tunnel too
 option, buildTunnel=1,
 	tunnelSoilThickness=3*m,
 	tunnelOffsetX=0.5;
-
-rangeCut = 50*m;
-
-option, physicsList="g4FTFP_BERT",
-	defaultRangeCut  = rangeCut,
-	minimumRange = 2*mm;
-
-option,	minimumKineticEnergy = 10*MeV;
-
-! fix the seed so exactly reproducible for single job
-!option, seed=2018;
-
-! limit collimation simulation to 100 turns
-option, nturns=100;
-
-!option, stopSecondaries=1;

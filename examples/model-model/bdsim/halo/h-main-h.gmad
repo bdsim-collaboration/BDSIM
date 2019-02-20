@@ -11,8 +11,3 @@ include h-options.gmad;
 
 ! the element before the collimator
 sample, range=DRIFT_510;
-
-! sample all collimators
-sample, rcol;
-
-option, ngenerate=200;
