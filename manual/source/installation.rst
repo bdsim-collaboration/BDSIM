@@ -10,7 +10,7 @@ BDSIM is developed and used on Mac OSX and Linux.
 Tested systems:
 
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
-* Mac OSX 10.13.3 (High Sierra), XCode 9.3, Geant4.10.4.p02, ROOT 6.10/08, CLHEP 2.4.1.0, Qt5.12.0
+* Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
 * SLC6, GCC 4.9.3, Geant4.10.5.0, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
 * SLC6 as above with Geant4.10.4.p02, Geant4.10.3.p03, Geant4.10.2.p03, Geant4.10.1.p03
 
