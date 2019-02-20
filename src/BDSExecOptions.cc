@@ -51,6 +51,8 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
   
   if (options.recreate)
     {
+      G4cout << __METHOD_NAME__ << "Recreation mode. Loading options from recreate file:\n\""
+	     << options.recreateFileName << "\"\n" << G4endl;
       bool runBatch = options.batch;
       BDSOutputLoader loader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
@@ -58,9 +60,9 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
       // Give precedence to exec options - only ones that have been set.
       recreateOptions.Amalgamate(options, true);
       recreateBeam.Amalgamate(beam, true, options.startFromEvent);
-      options = recreateOptions; // Now replace member.
-      options.batch = runBatch; // override batch flag to allow control
-      beam    = recreateBeam;
+      options       = recreateOptions; // Now replace member.
+      options.batch = runBatch;        // override batch flag to allow control
+      beam          = recreateBeam;
     }
 }
 
