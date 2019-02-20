@@ -11,3 +11,4 @@ else()
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bdsim.sh.in ${CMAKE_INSTALL_PREFIX}/bin/bdsim.sh @ONLY)
