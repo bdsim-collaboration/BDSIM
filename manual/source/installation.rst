@@ -203,6 +203,8 @@ After this, `Building`_ can be started.
 
    After this, `Building`_ can be started.
 
+.. _installation-building:
+   
 Building
 --------
 
@@ -322,6 +324,8 @@ included with BDSIM (excluding long running tests)::
 
   > ctest -LE LONG
 
+.. _installation-environmental-variables:
+  
 Environmental Variables
 ***********************
 

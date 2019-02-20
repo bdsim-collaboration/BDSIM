@@ -16,23 +16,12 @@ Setup
 =====
 
 1) BDSIM must be installed after compilation for the analysis tools to function properly.
-2) Environmental variables should be set.
+2) Environmental variables should be set by sourcing :code:`<bdsim-install-dir>/bin/bdsim.sh`.
 3) A ROOT logon macro may optionally be written for convenience in loading libraries.
 
-.. when updating these instructions, update the duplicate instructions in installation.rst
-   
-Once BDSIM has been installed, the following environmental variables must be updated to
-allow `rebdsim` to function.  These can be set manually or added to your
-:code:`.profile` or :code:`.bashrc` file::
-
-   export BDSIM=<bdsim-INSTALL-dir>
-   export PATH=$PATH:$BDSIM/bin
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
-   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
-   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser
-
-* Re-source your profile (or restart the terminal).
-* You should be able to execute 'rebdsim'
+If the setup is correct, you should be able to execute 'rebdsim' in the terminal. See
+:ref:`installation-building` and :ref:`installation-environmental-variables` for more
+details.
 
 .. figure:: figures/rebdsim_execution.png
 	    :width: 100%
