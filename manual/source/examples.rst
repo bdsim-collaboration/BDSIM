@@ -17,6 +17,7 @@ Basic Examples
    examples/beamLoss
    examples/collimation-simple
    examples/simpleMachine
+   examples/model-model.rst
 
 .. _worked-examples:
    
@@ -28,7 +29,7 @@ Start-to-finish examples with explanation.
 .. toctree::
    :maxdepth: 1
 
-   examples/worked_example_collimation
+   worked_example_collimation/worked_example_collimation
    worked_example_atf2
 
 

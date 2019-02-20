@@ -18,6 +18,7 @@ New Features
 ------------
 
 * Support for Geant4.10.5.
+* New environment script in :code:`<bdsim-install-dir>/bin/bdsim.sh` to make running BDSIM easier.
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.

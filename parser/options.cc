@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace GMAD;
 
@@ -57,6 +59,40 @@ double Options::get_value(std::string property_name)const{
     }
   }
   return value;
+}
+
+std::string Options::get_value_string(std::string property_name) const
+{
+  try {
+    double value = get<double>(this, property_name);
+    std::ostringstream strs;
+    strs << value;
+    return strs.str();
+  }
+  catch (...) {
+    try {
+      int value = get<int>(this, property_name);
+      std::ostringstream strs;
+      strs << value;
+      return strs.str();
+    }
+    catch (...) {
+      try {
+	std::string value = get<std::string>(this, property_name);
+	return value;
+      }
+      catch (...) {
+	try {
+	  bool value = get<bool>(this, property_name);
+	  std::ostringstream strs;
+	  strs << std::boolalpha << value;
+	  return strs.str();
+	}
+	catch (...)
+	  {std::cerr << "Error " << property_name << std::endl; exit(1);}
+      }
+    }
+  }
 }
 
 void Options::Amalgamate(const Options& optionsIn, bool override)
