@@ -109,6 +109,7 @@ public:
 		 const BDSHitsCollectionSampler*       samplerHitsPlane,
 		 const BDSHitsCollectionSampler*       samplerHitsCylinder,
 		 const BDSHitsCollectionEnergyDeposition* energyLoss,
+		 const BDSHitsCollectionEnergyDeposition* energyLossFull,
 		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
 		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,

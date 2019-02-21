@@ -229,6 +229,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSHitsCollectionSampler*       samplerHitsPlane,
 			  const BDSHitsCollectionSampler*       samplerHitsCylinder,
 			  const BDSHitsCollectionEnergyDeposition* energyLoss,
+			  const BDSHitsCollectionEnergyDeposition* energyLossFull,
 			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
 			  const BDSHitsCollectionEnergyDeposition* energyLossWorld,
@@ -256,6 +257,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
   if (energyLoss)
     {FillEnergyLoss(energyLoss,       BDSOutput::LossType::energy);}
+  if (energyLossFull)
+    {FillEnergyLoss(energyLossFull,   BDSOutput::LossType::energy);}
   if (energyLossVacuum)
     {FillEnergyLoss(energyLossVacuum, BDSOutput::LossType::vacuum);}
   if (energyLossTunnel)
@@ -557,7 +560,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
   G4int indScoringMap    = -1;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
-  for (G4int i=0;i<n_hit;i++)
+  for (G4int i=0; i < n_hit; i++)
     {
       BDSHitEnergyDeposition* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
