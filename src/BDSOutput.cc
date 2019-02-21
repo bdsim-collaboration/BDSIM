@@ -229,6 +229,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSHitsCollectionSampler*       samplerHitsPlane,
 			  const BDSHitsCollectionSampler*       samplerHitsCylinder,
 			  const BDSHitsCollectionEnergyDeposition* energyLoss,
+			  const BDSHitsCollectionEnergyDeposition* energyLossFull,
 			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
 			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
 			  const BDSHitsCollectionEnergyDeposition* energyLossWorld,
@@ -256,6 +257,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
   if (energyLoss)
     {FillEnergyLoss(energyLoss,       BDSOutput::LossType::energy);}
+  if (energyLossFull)
+    {FillEnergyLoss(energyLossFull,   BDSOutput::LossType::energy);}
   if (energyLossVacuum)
     {FillEnergyLoss(energyLossVacuum, BDSOutput::LossType::vacuum);}
   if (energyLossTunnel)

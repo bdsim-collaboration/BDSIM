@@ -78,6 +78,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   eCounterID(-1),
+  eCounterFullID(-1),
   eCounterVacuumID(-1),
   eCounterTunnelID(-1),
   eCounterWorldID(-1),
@@ -152,6 +153,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
       samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->SamplerCylinder()->GetName());
       eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->EnergyDeposition()->GetName());
+      eCounterFullID   = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionFull()->GetName());
       eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionVacuum()->GetName());
       eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionTunnel()->GetName());
       eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorld()->GetName());
@@ -206,6 +208,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // energy deposition collections - eloss, tunnel hits
   typedef BDSHitsCollectionEnergyDeposition echc;
   echc* eCounterHits       = dynamic_cast<echc*>(HCE->GetHC(eCounterID));
+  echc* eCounterFullHits   = dynamic_cast<echc*>(HCE->GetHC(eCounterFullID));
   echc* eCounterVacuumHits = dynamic_cast<echc*>(HCE->GetHC(eCounterVacuumID));
   echc* eCounterTunnelHits = dynamic_cast<echc*>(HCE->GetHC(eCounterTunnelID));
   echc* eCounterWorldHits  = dynamic_cast<echc*>(HCE->GetHC(eCounterWorldID));
@@ -221,6 +224,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (eCounterHits)
     {
       if (eCounterHits->entries() > 0)
+	{eventInfo->SetPrimaryHitMachine(true);}
+    }
+  if (eCounterFullHits)
+    {
+      if (eCounterFullHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
   if (eCounterTunnelHits)
@@ -347,18 +355,39 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // loop over energy hits to connect trajectories
     if (sRangeToStore.size() != 0)
       {
-	G4int n_hit = eCounterHits->entries();
-	BDSHitEnergyDeposition *hit;
-	for (G4int i = 0; i < n_hit; i++)
+	if (eCounterHits)
 	  {
-	    hit = (*eCounterHits)[i];
-	    double dS = hit->GetSHit();
-	    for (const auto& v : sRangeToStore)
-	      {		
-		if ( dS >= v.first && dS <= v.second) 
-		  {
-		    interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
-		    break;
+	    G4int n_hit = eCounterHits->entries();
+	    BDSHitEnergyDeposition* hit;
+	    for (G4int i = 0; i < n_hit; i++)
+	      {
+		hit = (*eCounterHits)[i];
+		double dS = hit->GetSHit();
+		for (const auto& v : sRangeToStore)
+		  {		
+		    if ( dS >= v.first && dS <= v.second) 
+		      {
+			interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
+			break;
+		      }
+		  }
+	      }
+	  }
+	if (eCounterFullHits)
+	  {
+	    G4int n_hit = eCounterFullHits->entries();
+	    BDSHitEnergyDeposition* hit;
+	    for (G4int i = 0; i < n_hit; i++)
+	      {
+		hit = (*eCounterFullHits)[i];
+		double dS = hit->GetSHit();
+		for (const auto& v : sRangeToStore)
+		  {		
+		    if ( dS >= v.first && dS <= v.second) 
+		      {
+			interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
+			break;
+		      }
 		  }
 	      }
 	  }
@@ -396,6 +425,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    SampHC,
 		    hitsCylinder,
 		    eCounterHits,
+		    eCounterFullHits,
 		    eCounterVacuumHits,
 		    eCounterTunnelHits,
 		    eCounterWorldHits,
