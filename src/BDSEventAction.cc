@@ -453,7 +453,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (event_number%printModulo == 0)
 	{
 	  G4cout << "Energy deposition pool size:        " << BDSAllocatorEnergyDeposition.GetAllocatedSize()  << G4endl;
-	  G4cout << "Energy deposition full pool size:   " << BDSAllocatorEnergyDepositionExtra.GetAllocatedSize() << G4endl;
+	  G4cout << "Energy deposition extra pool size:  " << BDSAllocatorEnergyDepositionExtra.GetAllocatedSize() << G4endl;
 	  G4cout << "Collimator hits pool size:          " << BDSAllocatorCollimator.GetAllocatedSize()        << G4endl;
 	  G4cout << "Trajectory pool size:               " << bdsTrajectoryAllocator.GetAllocatedSize()        << G4endl;
 	  G4cout << "Trajectory point pool size bdsim:   " << bdsTrajectoryPointAllocator.GetAllocatedSize()   << G4endl;
