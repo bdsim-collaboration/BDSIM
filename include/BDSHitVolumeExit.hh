@@ -41,7 +41,9 @@ public:
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
   BDSHitVolumeExit(G4double totalEnergyIn,
+		   G4double preStepKineticEnergyIn,
 		   G4double postStepKineticEnergyIn,
+		   G4double stepLengthIn,
 		   G4double XIn,
 		   G4double YIn,
 		   G4double ZIn,
@@ -60,11 +62,13 @@ public:
   inline G4double TotalEnergyWeighted() const {return weight * totalEnergy;}
   
   G4double totalEnergy;
-
+  G4double preStepKineticEnergy;
+  
   /// Unlike kinetic energy recorded elsewhere, this is from the post-step point
   /// rather than the pre-step point because we want the kinetic energy leaving
   /// the volume.
   G4double postStepKineticEnergy;
+  G4double stepLength;
   
   /// @{ Global coordinate
   G4double X;

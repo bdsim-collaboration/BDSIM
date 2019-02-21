@@ -23,7 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
 
 BDSHitVolumeExit::BDSHitVolumeExit(G4double totalEnergyIn,
+				   G4double preStepKineticEnergyIn,
 				   G4double postStepKineticEnergyIn,
+				   G4double stepLengthIn,
 				   G4double XIn,
 				   G4double YIn,
 				   G4double ZIn,
@@ -34,7 +36,9 @@ BDSHitVolumeExit::BDSHitVolumeExit(G4double totalEnergyIn,
 				   G4double weightIn,
 				   G4int    turnsTakenIn):
   totalEnergy(totalEnergyIn),
+  preStepKineticEnergy(preStepKineticEnergyIn),
   postStepKineticEnergy(postStepKineticEnergyIn),
+  stepLength(stepLengthIn),
   X(XIn),
   Y(YIn),
   Z(ZIn),

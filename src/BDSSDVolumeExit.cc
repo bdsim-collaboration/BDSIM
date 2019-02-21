@@ -58,9 +58,11 @@ G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
 
   if (postStepPoint->GetStepStatus() == statusToMatch)
     {
-      G4double totalEnergy   = postStepPoint->GetTotalEnergy();
-      G4double kineticEnergy = postStepPoint->GetKineticEnergy();
-      G4ThreeVector position = postStepPoint->GetPosition();
+      G4double totalEnergy           = postStepPoint->GetTotalEnergy();
+      G4double preStepKineticEnergy  = aStep->GetPreStepPoint()->GetKineticEnergy();
+      G4double postStepKineticEnergy = postStepPoint->GetKineticEnergy();
+      G4double stepLength            = aStep->GetStepLength();
+      G4ThreeVector position         = postStepPoint->GetPosition();
       G4double T          = postStepPoint->GetGlobalTime();
       G4Track* track      = aStep->GetTrack();
       G4int    pdgID      = track->GetDefinition()->GetPDGEncoding();
@@ -70,7 +72,9 @@ G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
       G4int    turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
       
       BDSHitVolumeExit* hit = new BDSHitVolumeExit(totalEnergy,
-						   kineticEnergy,
+						   preStepKineticEnergy,
+						   postStepKineticEnergy,
+						   stepLength,
 						   position.x(),
 						   position.y(),
 						   position.z(),

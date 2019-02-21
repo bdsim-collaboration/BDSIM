@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitVolumeExit.hh"
 #endif
 
-ClassImp(BDSOutputROOTEventExit)
+ClassImp(BDSOutputROOTEventLossWorld)
 
 BDSOutputROOTEventLossWorld::BDSOutputROOTEventLossWorld()
 {
@@ -38,7 +38,9 @@ void BDSOutputROOTEventLossWorld::Fill(const BDSHitVolumeExit* hit)
 {
   n++;
   totalEnergy.push_back( (float &&) (hit->totalEnergy / CLHEP::GeV));
+  preStepKineticEnergy.push_back( (float &&) (hit->preStepKineticEnergy / CLHEP::GeV));
   postStepKineticEnergy.push_back( (float &&) (hit->postStepKineticEnergy / CLHEP::GeV));
+  stepLength.push_back( (float &&) (hit->stepLength / CLHEP::m));
   X.push_back( (float &&) (hit->X / CLHEP::m));
   Y.push_back( (float &&) (hit->Y / CLHEP::m));
   Z.push_back( (float &&) (hit->Z / CLHEP::m));
@@ -55,7 +57,9 @@ void BDSOutputROOTEventLossWorld::Flush()
 {
   n = 0;
   totalEnergy.clear();
+  preStepKineticEnergy.clear();
   postStepKineticEnergy.clear();
+  stepLength.clear();
   X.clear();
   Y.clear();
   Z.clear();

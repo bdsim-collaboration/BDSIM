@@ -39,17 +39,19 @@ class BDSHitVolumeExit;
 class BDSOutputROOTEventLossWorld: public TObject
 {
 public:
-  int                n = 0;   ///< Number of entries
-  std::vector<float> totalEnergy;  ///< Energy deposited in step
+  int                n = 0;                 ///< Number of entries.
+  std::vector<float> totalEnergy;           ///< Energy deposited in step.
+  std::vector<float> preStepKineticEnergy;  ///< Kinetic energy in GeV at pre step point.
   std::vector<float> postStepKineticEnergy; ///< Kinetic energy in GeV at post step point.
+  std::vector<float> stepLength;            ///< Step length.
 
   //// @{ Global coordinates
   std::vector<float> X;
   std::vector<float> Y;
   std::vector<float> Z;
   /// @}
-  std::vector<float> T; ///< Global time (time since beginning of event).
-
+  
+  std::vector<float> T;       ///< Global time (time since beginning of event).
   std::vector<int>   partID;  ///< ParticleID that create the deposit
   std::vector<int>   trackID; ///< TrackID that created the deposit
   std::vector<int>   parentID;///< ParentID that created the deposit
