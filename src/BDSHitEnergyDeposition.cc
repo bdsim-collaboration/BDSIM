@@ -23,8 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
-BDSHitEnergyDeposition::BDSHitEnergyDeposition(G4int    nCopyIn,
-					       G4double energyIn,
+BDSHitEnergyDeposition::BDSHitEnergyDeposition(G4double energyIn,
 					       G4double preStepKineticEnergyIn,
 					       G4double XIn, 
 					       G4double YIn, 
@@ -39,10 +38,8 @@ BDSHitEnergyDeposition::BDSHitEnergyDeposition(G4int    nCopyIn,
 					       G4int    parentIDIn,
 					       G4double weightIn, 
 					       G4int    turnsTakenIn,
-					       G4int    eventNoIn,
 					       G4double stepLengthIn,
 					       G4int    beamlineIndexIn):
-  copyNumber(nCopyIn),
   energy(energyIn),
   preStepKineticEnergy(preStepKineticEnergyIn),
   X(XIn),
@@ -58,7 +55,6 @@ BDSHitEnergyDeposition::BDSHitEnergyDeposition(G4int    nCopyIn,
   parentID(parentIDIn),
   weight(weightIn),
   turnsTaken(turnsTakenIn),
-  eventNo(eventNoIn),
   stepLength(stepLengthIn),
   beamlineIndex(beamlineIndexIn)
 {;}

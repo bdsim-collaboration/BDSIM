@@ -39,8 +39,7 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSHitEnergyDeposition(G4int    nCopyIn           = 0,    // copy number of physical volume
-			 G4double energyIn          = 0,    // energy in this 'hit'
+  BDSHitEnergyDeposition(G4double energyIn          = 0,    // energy in this 'hit'
 			 G4double preStepKineticEnergy = 0, // pre step point kinetic energy
 			 G4double XIn               = 0,    // global x
 			 G4double YIn               = 0,    // global y
@@ -55,7 +54,6 @@ public:
 			 G4int    parentID          = -1,   // Parent ID
 			 G4double weightIn          = 1,    // weight
 			 G4int    turnsTakenIn      = 1,    // turns taken if circular
-			 G4int    eventNoIn         = 0,    // event number
 			 G4double stepLengthIn      = 0,
 			 G4int    beamlineIndexIn   = -1);
   
@@ -64,7 +62,6 @@ public:
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
 
-  inline G4int    GetCopyNumber()      const {return copyNumber;}
   inline G4double GetEnergy()          const {return energy;}
   inline G4double GetPreStepKineticEnergy() const {return preStepKineticEnergy;}
   inline G4double GetX()               const {return X;} 
@@ -90,7 +87,6 @@ private:
   /// constructor
   BDSHitEnergyDeposition();
 
-  G4int    copyNumber;
   G4double energy;
   G4double preStepKineticEnergy;
   
@@ -118,7 +114,6 @@ private:
   G4int    parentID;
   G4double weight;
   G4int    turnsTaken;
-  G4int    eventNo;
   G4double stepLength;
   G4int    beamlineIndex;
 };
