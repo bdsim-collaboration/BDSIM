@@ -576,6 +576,7 @@ A few points about rbends:
    the option `includeFringeFields=0` (see `options`_).
 8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
+8) Rbends are limited in angle to less than pi/2.
 
 Examples: ::
 
@@ -696,6 +697,8 @@ A few points about sbends:
    the option `includeFringeFields=0` (see `options`_).
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
+8) Sbends are limited in angle to less than 2 pi. If the sbends are not split with the option dontSplitSBends,
+   an sbend will be limited in angle to a maximum of pi/2.
 
 Examples: ::
 
