@@ -884,7 +884,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   else
     {
-      BDSLine *kickerLine = new BDSLine(baseName);
+      BDSLine* kickerLine = new BDSLine(baseName);
       // subtract fringe length from kicker to preserve element length
       G4double kickerChordLength = chordLength;
       if (buildEntranceFringe)
@@ -895,7 +895,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       if (buildEntranceFringe)
         {
           G4String entrFringeName = baseName + "_e1_fringe";
-          BDSMagnet *startfringe = BDS::BuildDipoleFringe(element, 0, 0,
+          BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                           entrFringeName,
                                                           fringeStIn, brho,
                                                           integratorSet, fieldType);
@@ -903,14 +903,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
         }
       
       G4String kickerName = baseName + "_centre";
-      BDSMagnet *kicker = new BDSMagnet(t, kickerName, kickerChordLength,
+      BDSMagnet* kicker = new BDSMagnet(t, kickerName, kickerChordLength,
 					bpInf, magOutInf, vacuumField);
       kickerLine->AddComponent(kicker);
       
       if (buildEntranceFringe)
 	{
           G4String exitFringeName = baseName + "_e2_fringe";
-          BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, 0, 0,
+          BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                         exitFringeName,
                                                         fringeStOut, brho,
                                                         integratorSet, fieldType);
@@ -1365,10 +1365,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 
   G4double defaultHorizontalWidth = 40*CLHEP::cm;
   G4double horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
-  auto result = new BDSDump(elementName,
-			    element->l*CLHEP::m,
-			    horizontalWidth,
-			    circular);
+  BDSDump* result = new BDSDump(elementName,
+				element->l*CLHEP::m,
+				horizontalWidth,
+				circular);
   return result;
 }
 

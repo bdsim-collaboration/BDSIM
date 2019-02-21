@@ -77,8 +77,11 @@ public:
   /// particles appropriately.
   inline BDSSDTerminator* Terminator() const {return terminator;}
   
-  /// SD for general energy counter.
+  /// SD for general energy deposition.
   inline BDSSDEnergyDeposition* EnergyDeposition() const {return energyDeposition;}
+
+  /// SD for general energy deposition but always include extra half of information.
+  inline BDSSDEnergyDeposition* EnergyDepositionFull() const {return energyDepositionFull;}
 
   /// SD for energy deposition in vacuum volumes.
   inline BDSSDEnergyDeposition* EnergyDepositionVacuum() const {return energyDepositionVacuum;}
@@ -121,6 +124,7 @@ private:
   BDSSDSampler*       samplerCylinder;
   BDSSDTerminator*    terminator;
   BDSSDEnergyDeposition* energyDeposition;
+  BDSSDEnergyDeposition* energyDepositionFull;
   BDSSDEnergyDeposition* energyDepositionVacuum;
   BDSSDEnergyDeposition* energyDepositionTunnel;
   BDSSDEnergyDeposition* energyDepositionWorld;
@@ -144,6 +148,8 @@ private:
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;
   G4bool storeELossWorld;
+  G4bool storeELossExtras;
+  G4bool generateCollimatorHits;
   /// @}
 };
 

@@ -40,9 +40,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VTouchable.hh"
 
 BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
-				       G4bool   stopSecondariesIn):
+					     G4bool   stopSecondariesIn,
+					     G4bool   storeExtrasIn):
   BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
+  storeExtras(storeExtrasIn),
   colName(name),
   hitsCollectionEnergyDeposition(nullptr),
   HCIDe(-1),
@@ -51,19 +53,17 @@ BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
   X(0.0),
   Y(0.0),
   Z(0.0),
-  sBefore(0.0),
-  sAfter(0.0),
   x(0.0),
   y(0.0),
   z(0.0),
+  sBefore(0.0),
+  sAfter(0.0),
   globalTime(0.0),
   stepLength(0.0),
   ptype(0),
   trackID(-1),
   parentID(-1),
-  volName(""),
   turnstaken(0),
-  eventnumber(0),
   auxNavigator(new BDSAuxiliaryNavigator())
 {
   collectionName.insert(colName);
@@ -87,7 +87,7 @@ void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 }
 
 G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
-				       G4TouchableHistory* /*th*/)
+					  G4TouchableHistory* /*th*/)
 {
   // Get the energy deposited along the step
   enrg = aStep->GetTotalEnergyDeposit();
@@ -105,11 +105,6 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
 
   preStepKineticEnergy = preStepPoint->GetKineticEnergy();
-  
-  // avoid double getting pv
-  auto hitMassWorldPV = preStepPoint->GetPhysicalVolume();
-  volName             = hitMassWorldPV->GetName();
-  G4int nCopy         = hitMassWorldPV->GetCopyNo();
   
   // attribute the energy deposition to a uniformly random position along the step - correct!
   // random distance - store to use twice to ensure global and local represent the same point
@@ -195,30 +190,26 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
     }
   
   G4double sHit = sBefore + randDist*(sAfter - sBefore);
-  
-  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+
   weight      = track->GetWeight();
   trackID     = track->GetTrackID();
   turnstaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(nCopy,
-						     enrg,
-						     preStepKineticEnergy,
-						     X, Y, Z,
-						     sBefore,
-						     sAfter,
-						     sHit,
-						     x, y, z,
-						     globalTime,
-						     ptype,
-						     trackID,
-						     parentID,
-						     weight,
-						     turnstaken,
-						     eventnumber,
-						     stepLength,
-						     beamlineIndex);
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
+							   sHit,
+							   weight,
+							   storeExtras,
+							   preStepKineticEnergy,
+							   X, Y, Z,
+							   x, y, z,
+							   globalTime,
+							   ptype,
+							   trackID,
+							   parentID,
+							   turnstaken,
+							   stepLength,
+							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hitsCollectionEnergyDeposition->insert(hit);
@@ -227,7 +218,7 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 }
 
 G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
-					    G4TouchableHistory* /*th*/)
+					       G4TouchableHistory* /*th*/)
 {
   parentID   = track->GetParentID(); // needed later on too
   ptype      = track->GetDefinition()->GetPDGEncoding();
@@ -246,10 +237,6 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   X = posGlobal.x();
   Y = posGlobal.y();
   Z = posGlobal.z();
-  
-  // avoid double getting pv
-  auto hitMassWorldPV = track->GetVolume();
-  G4int nCopy         = hitMassWorldPV->GetCopyNo();
 
   // calculate local coordinates
   G4ThreeVector momGlobalUnit = track->GetMomentumDirection();
@@ -301,28 +288,23 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 	}
     }
   G4double sHit = sBefore; // duplicate
-  
-  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(nCopy,
-						     enrg,
-						     preStepKineticEnergy,
-						     X, Y, Z,
-						     sBefore,
-						     sAfter,
-						     sHit,
-						     x, y, z,
-						     globalTime,
-						     ptype,
-						     trackID,
-						     parentID,
-						     weight,
-						     turnstaken,
-						     eventnumber,
-						     stepLength,
-						     beamlineIndex);
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
+							   sHit,
+							   weight,
+							   preStepKineticEnergy,
+							   X, Y, Z,
+							   x, y, z,
+							   globalTime,
+							   ptype,
+							   trackID,
+							   parentID,
+							   turnstaken,
+							   stepLength,
+							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hitsCollectionEnergyDeposition->insert(hit);

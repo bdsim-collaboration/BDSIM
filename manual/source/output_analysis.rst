@@ -16,23 +16,12 @@ Setup
 =====
 
 1) BDSIM must be installed after compilation for the analysis tools to function properly.
-2) Environmental variables should be set.
+2) Environmental variables should be set by sourcing :code:`<bdsim-install-dir>/bin/bdsim.sh`.
 3) A ROOT logon macro may optionally be written for convenience in loading libraries.
 
-.. when updating these instructions, update the duplicate instructions in installation.rst
-   
-Once BDSIM has been installed, the following environmental variables must be updated to
-allow `rebdsim` to function.  These can be set manually or added to your
-:code:`.profile` or :code:`.bashrc` file::
-
-   export BDSIM=<bdsim-INSTALL-dir>
-   export PATH=$PATH:$BDSIM/bin
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
-   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
-   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser
-
-* Re-source your profile (or restart the terminal).
-* You should be able to execute 'rebdsim'
+If the setup is correct, you should be able to execute 'rebdsim' in the terminal. See
+:ref:`installation-building` and :ref:`installation-environmental-variables` for more
+details.
 
 .. figure:: figures/rebdsim_execution.png
 	    :width: 100%
@@ -176,7 +165,7 @@ Examples can be found in:
   Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
   Histogram1D  Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
   Histogram1D  Model.    componentLength {100}      {0.0:100}           Model.length        1
-  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Info.duration       1
+  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Summary.duration    1
   Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
   Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
   Histogram1DLog Event.  PrimaryXAbs     {20}       {-9:-3}      abs(Primary.x)                 1
@@ -192,16 +181,19 @@ Examples can be found in:
 * Empty lines are also ignored.
 * For bins and binning, the dimensions are separated by :code:`,`.
 * For bins and binning, the range from low to high is specified by :code:`low:high`.
-* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below for order of variables.
+* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`.
+  See warning below for order of variables.
 * Variables must contain the full 'address' of a variable inside a Tree.
-* Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get the kinetic energy of proton primaries in MeV).
+* Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get
+  the kinetic energy of proton primaries in MeV).
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
 * Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
 * If a Boolean and a weight is desired, multiply both with the Boolean in brackets, e.g.
   :code:`Eloss.energy*(Eloss.S>145.3)`.
 * True or False, as well as 1 or 0, may be used for Boolean options at the top.
-* ROOT special variables can be used as well, such as :code:`Entry$` amd :code:`Entries$`. See the documentation link immediately below.
+* ROOT special variables can be used as well, such as :code:`Entry$` amd :code:`Entries$`. See
+  the documentation link immediately below.
 
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than two events.
@@ -527,6 +519,10 @@ pybdsim. ::
 In this example, the variable :code:`event` will have the same structure as the
 Event tree in the BDSIM output. See :ref:`basic-data-inspection` for more details
 on how to browse the data.
+
+.. note:: The branch "Summary" in the Event and Run trees used to be called "Info"
+	  in BDSIM < V1.3. This conflicted with TOjbect::Info() so this looping in
+	  Python would work for any data in this branch, hence the change.
 
 Sampler Data
 ************

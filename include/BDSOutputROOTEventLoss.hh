@@ -94,5 +94,4 @@ public:
   ClassDef(BDSOutputROOTEventLoss,4);
 };
 
-
 #endif
