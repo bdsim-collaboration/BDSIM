@@ -33,11 +33,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTEventInfo: public TObject
 {  
 public:
-  BDSOutputROOTEventInfo();
-
-  virtual ~BDSOutputROOTEventInfo();
-  void Flush();
-  
   time_t startTime; ///< Time stamp at start of event.
   time_t stopTime;  ///< Time stamp at end of event.
   float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
@@ -55,6 +50,11 @@ public:
   double energyKilled;          ///< Total energy of killed particles that weren't in a sensitive volume.
   double energyTotal;           ///< Sum of above 5 variables that totals all energy.
   int    nCollimatorsInteracted;///< Number of collimators primary interacted with.
+  
+  BDSOutputROOTEventInfo();
+
+  virtual ~BDSOutputROOTEventInfo();
+  void Flush();
   
   ClassDef(BDSOutputROOTEventInfo, 4);
 };

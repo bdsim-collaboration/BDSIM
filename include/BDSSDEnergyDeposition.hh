@@ -42,7 +42,8 @@ class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
   BDSSDEnergyDeposition(G4String name,
-		     G4bool   stopSecondariesIn);
+			G4bool   stopSecondariesIn,
+			G4bool   storeExtrasIn);
   virtual ~BDSSDEnergyDeposition();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
@@ -70,24 +71,25 @@ private:
   BDSSDEnergyDeposition() = delete;
 
   G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
+  G4bool   storeExtras;     ///< Whether to store extra information.
   G4String colName;         ///< Collection name.
   BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;
   G4int    HCIDe;
 
-  ///@{ per hit variable
+  ///@{ Per hit variable.
   G4double enrg;
   G4double preStepKineticEnergy;
   G4double weight;
-  G4double X,Y,Z,sBefore,sAfter; // global coordinates
-  G4double x,y,z;   // local coordinates
-  G4double globalTime; // time since start of event
+  G4double X,Y,Z;      // Global coordinates.
+  G4double x,y,z;      // Local coordinates.
+  G4double sBefore;
+  G4double sAfter;
+  G4double globalTime; // Time since start of event.
   G4double stepLength;
   G4int    ptype;
   G4int    trackID;
   G4int    parentID;
-  G4String volName;
   G4int    turnstaken;
-  G4int    eventnumber;
   ///@}
 
   /// Navigator for checking points in read out geometry

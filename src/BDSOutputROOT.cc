@@ -88,11 +88,11 @@ void BDSOutputROOT::NewFile()
   theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
   theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
   theRunOutputTree->Branch("Histos.",      "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
-  theRunOutputTree->Branch("Info.",        "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
+  theRunOutputTree->Branch("Summary.",     "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
   // Branches for event...
   // Event info output
-  theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
+  theEventOutputTree->Branch("Summary.",   "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
   if (WritePrimaries())
@@ -128,14 +128,17 @@ void BDSOutputROOT::NewFile()
     }
 
   // build collimator structures
-  for (G4int i = 0; i < (G4int)collimators.size(); ++i)
+  if (CreateCollimatorOutputStructures())
     {
-      auto collimatorLocal = collimators.at(i);
-      auto collimatorName  = collimatorNames.at(i);
-      // set the tree branches
-      theEventOutputTree->Branch((collimatorName+".").c_str(),
-				 "BDSOutputROOTEventCollimator",
-				 collimatorLocal,32000,0);
+      for (G4int i = 0; i < (G4int) collimators.size(); ++i)
+        {
+          auto collimatorLocal = collimators.at(i);
+          auto collimatorName  = collimatorNames.at(i);
+          // set the tree branches
+          theEventOutputTree->Branch((collimatorName + ".").c_str(),
+                                     "BDSOutputROOTEventCollimator",
+                                     collimatorLocal, 32000, 0);
+        }
     }
 
   FillHeader(); // this fills and then calls WriteHeader() pure virtual implemented here
