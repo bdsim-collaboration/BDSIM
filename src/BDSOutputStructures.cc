@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -86,7 +86,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 					   storeGlobal, storeTime, storeStepLength,
 					   storePreStepKineticEnergy);
   
-  eLossWorldExit = new BDSOutputROOTEventExit();
+  eLossWorldExit = new BDSOutputROOTEventLossWorld();
 
   pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
   pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);

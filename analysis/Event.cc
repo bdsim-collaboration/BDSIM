@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -87,7 +87,7 @@ void Event::CommonCtor()
   ElossVacuum     = new BDSOutputROOTEventLoss();
   ElossTunnel     = new BDSOutputROOTEventLoss();
   ElossWorld      = new BDSOutputROOTEventLoss();
-  ElossWorldExit  = new BDSOutputROOTEventExit();
+  ElossWorldExit  = new BDSOutputROOTEventLossWorld();
   PrimaryFirstHit = new BDSOutputROOTEventLoss();
   PrimaryLastHit  = new BDSOutputROOTEventLoss();
   TunnelHit       = new BDSOutputROOTEventLoss();

@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -25,16 +25,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventExit)
 
-BDSOutputROOTEventExit::BDSOutputROOTEventExit()
+BDSOutputROOTEventLossWorld::BDSOutputROOTEventLossWorld()
 {
   Flush();
 }
 
-BDSOutputROOTEventExit::~BDSOutputROOTEventExit()
+BDSOutputROOTEventLossWorld::~BDSOutputROOTEventLossWorld()
 {;}
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventExit::Fill(const BDSHitVolumeExit* hit)
+void BDSOutputROOTEventLossWorld::Fill(const BDSHitVolumeExit* hit)
 {
   n++;
   totalEnergy.push_back( (float &&) (hit->totalEnergy / CLHEP::GeV));
@@ -51,7 +51,7 @@ void BDSOutputROOTEventExit::Fill(const BDSHitVolumeExit* hit)
 }
 #endif
 
-void BDSOutputROOTEventExit::Flush()
+void BDSOutputROOTEventLossWorld::Flush()
 {
   n = 0;
   totalEnergy.clear();

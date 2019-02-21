@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCoords;
-class BDSOutputROOTEventExit;
+class BDSOutputROOTEventLossWorld;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -107,7 +107,7 @@ public:
   BDSOutputROOTEventLoss*       ElossVacuum;
   BDSOutputROOTEventLoss*       ElossTunnel;
   BDSOutputROOTEventLoss*       ElossWorld;
-  BDSOutputROOTEventExit*       ElossWorldExit;
+  BDSOutputROOTEventLossWorld*  ElossWorldExit;
   BDSOutputROOTEventLoss*       PrimaryFirstHit;
   BDSOutputROOTEventLoss*       PrimaryLastHit;
   BDSOutputROOTEventLoss*       TunnelHit;

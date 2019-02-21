@@ -561,7 +561,7 @@ different value per-event run in BDSIM.
 | ElossWorld (\*)     | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
 |                     |                                  | volume - by default the air.                     |
 +---------------------+----------------------------------+--------------------------------------------------+
-| ElossWorldExit (\*) | BDSOutputROOTEventExit           | Global coordinates of the point any track exits  |
+| ElossWorldExit (\*) | BDSOutputROOTEventLossWorld      | Global coordinates of the point any track exits  |
 |                     |                                  | the world volume and therefore the simulation.   |
 +---------------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit     | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
@@ -751,8 +751,8 @@ Extra information can be recorded but this typically dominates the output file s
 | storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 
-BDSOutputROOTEventExit
-**********************
+BDSOutputROOTEventLossWorld
+***************************
 
 For the point where particles exit the world, there is no concept of a curvilinear coordinate
 system so there are only global coordinates recorded.
