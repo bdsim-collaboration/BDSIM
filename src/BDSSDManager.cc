@@ -69,6 +69,15 @@ BDSSDManager::BDSSDManager()
   generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
   generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms(); 
   storeELossWorld         = g->StoreELossWorld();
+  storeELossExtras        = g->StoreELossTurn()
+    || g->StoreELossLinks()
+    || g->StoreELossLocal()
+    || g->StoreELossGlobal()
+    || g->StoreELossTime()
+    || g->StoreELossStepLength()
+    || g->StoreELossPreStepKineticEnergy()
+    || g->StoreELossModelID()
+    || g->StoreTrajectory(); // if we store trajectories, we need the edep track id
   
   filters["primary"] = new BDSSDFilterPrimary("primary");
   filters["ion"]     = new BDSSDFilterIon("ion");
