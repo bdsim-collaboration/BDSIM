@@ -91,16 +91,19 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries);
+  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDeposition);
 
-  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries);
+  energyDepositionFull = new BDSSDEnergyDeposition("general_full", stopSecondaries, true);
+  SDMan->AddNewDetector(energyDepositionFull);
+  
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDepositionVacuum);
 
-  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries);
+  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries, true);
   SDMan->AddNewDetector(energyDepositionWorld);
 
   worldExit= new BDSSDVolumeExit("worldExit", true);
