@@ -118,9 +118,10 @@ public:
   std::vector<BDSOutputROOTEventSampler<float>*>  Samplers;
 #endif
   BDSOutputROOTEventHistograms* Histos;
-  BDSOutputROOTEventInfo*       Info;
+  BDSOutputROOTEventInfo*       Summary;
   std::vector<BDSOutputROOTEventCollimator*> collimators;
   /// @}
+  BDSOutputROOTEventInfo*       Info;    ///< For backwards compatibility
 
   std::vector<std::string> samplerNames;
 #ifdef __ROOTDOUBLE__

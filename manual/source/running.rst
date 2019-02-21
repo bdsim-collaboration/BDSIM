@@ -133,29 +133,47 @@ Features:
 * Default option
 * Interactive visualisation of the accelerator model
 * Ability to view and rotate the accelerator model
-* Ability to run individual events
+* Ability to run and view individual events
+* Visualise events generated at run time
 * Typically slower than batch mode
 * No events run without user input
 
-To execute BDSIM in interactive mode, the user must simply not use the :code:`-\\-batch` command.
-The user can also specify a macro file using the :code:`-\\-vis_mac` option above; otherwise, BDSIM
+To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` command.
+The user can also specify a macro file using the :code:`--vis_mac` option above; otherwise, BDSIM
 will look for "vis.mac" in the current working directory. If not found, BDSIM will use its own
-default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
-executed a window such as this will appear (depending on the visualiser you use).
+default visualisation settings (typically the Qt visualiser, with extra menu buttons).
+
+Example::
+
+  bdsim --file=sm.gmad --outfile=run2
+
+This executes BDSIM for the simpleMachine example in :code:`bdsim/examples/simpleMachine` with ROOT
+output (default) to a file named "run2". The program is run interactively and the window shown
+below appears. From here, the user types into the visualiser terminal::
+
+  /run/beamOn 1
+
+This runs one event and visualises it. Each time this command is used, a new output file with a
+numerical suffix will be created.
 
 .. figure:: figures/visualisation/qtvisualiser.png
-   :width: 90%
+   :width: 100%
    :align: center
    :figclass: align-center
 
    BDSIM running interactively with OpenGL Qt visualiser from Geant4.
 
-Note: the visualiser is part of Geant4, so if the desired visualiser isn't available, you
-must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
-also uses the CMake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
-we recommend for its ease of use and high level of interactivity.
+To exit the visualiser, in the visualiser terminal type::
 
-More details can be found in :ref:`Visualisation`.
+  exit
+
+   
+More details of how to use the visualiser and common commands can be found in :ref:`Visualisation`.
+   
+.. note:: The visualiser is part of Geant4, so if the desired visualiser isn't available, you
+	  must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
+	  also uses the CMake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
+	  we recommend for its ease of use and high level of interactivity.
 
 .. note:: BDSIM simulates one particle at a time from the primary distribution and all of the
 	  associated secondaries. Each event is independent and different particles in the input
@@ -173,28 +191,16 @@ Features:
 * No user input
 * Typical use for a "job" on a farm
 
-To execute BDSIM in batch mode, simply use the :code:`-\\-batch` execution option.
+To execute BDSIM in batch mode, simply use the :code:`--batch` execution option.
 
-Examples
-========
-::
+Examples: ::
 
    bdsim --file=atf2.gmad --outfile=run1 --batch --seed=123
 
 This executes BDSIM for the ATF2 example with ROOT output to a file name "run1" in batch
 mode with a seed value of 123. The simulation runs the number of events specified by the
-:code:`ngenerate` options parameter in the input gmad file. ::
-
-      bdsim --file=sm.gmad --outfile=run2
-
-This executes BDSIM for the simpleMachine example with ROOT output to a file named
-"run2". The program is run interactively and the window in Figure appears. From here, the
-user types into the visualiser terminal::
-
-  /run/beamOn 1
-  exit
-
-,which runs one event and visualises it.
+:code:`ngenerate` options parameter in the input gmad file, which is 1 by default.
+     
 
 Recreate Mode
 =============
@@ -208,7 +214,7 @@ processes will be the same. For example::
 
   bdsim --file=mymodel.gmad --outfile=run1 --batch --ngenerate=100
 
-  # let's recreate event 87
+Now let us recreate event 87: ::
 
   bdsim --file=mymodle.gmad --outfile=selectevent --batch --ngenerate=1 --recreate=run1.root --startFromEvent=87
 
