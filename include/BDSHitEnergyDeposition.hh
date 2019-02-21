@@ -45,8 +45,6 @@ public:
 		      const G4double& XIn               = 0,    // global x
 		      const G4double& YIn               = 0,    // global y
 		      const G4double& ZIn               = 0,    // global x
-		      const G4double& SBeforeIn         = 0,    // s of pre step coordinate
-		      const G4double& SAfterIn          = 0,    // s of post step coordinate
 		      const G4double& SHitIn            = 0,    // assigned s of loss
 		      const G4double& xIn               = 0,    // local x
 		      const G4double& yIn               = 0,    // local y
@@ -72,8 +70,6 @@ public:
   inline G4double GetX()               const {return X;} 
   inline G4double GetY()               const {return Y;}
   inline G4double GetZ()               const {return Z;}
-  inline G4double GetSBefore()         const {return sBefore;}
-  inline G4double GetSAfter()          const {return sAfter;}
   inline G4double GetSHit()            const {return sHit;}
   inline G4double Getx()               const {return x;} 
   inline G4double Gety()               const {return y;}
@@ -103,9 +99,6 @@ private:
   G4double Y;
   G4double Z;
   /// @}
-  
-  G4double sBefore; ///< s coordinate of pre step point
-  G4double sAfter;  ///< s coordinate of post step point
 
   /// The position this energy deposition is assigned to. As we represent
   /// a Monte Carlo of discrete processes, this is randomly scattered along
