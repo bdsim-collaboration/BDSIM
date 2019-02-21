@@ -234,7 +234,7 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   X = posGlobal.x();
   Y = posGlobal.y();
   Z = posGlobal.z();
-  
+
   // calculate local coordinates
   G4ThreeVector momGlobalUnit = track->GetMomentumDirection();
   BDSStep stepLocal = auxNavigator->ConvertToLocal(posGlobal, momGlobalUnit, 1*CLHEP::mm, true, 1*CLHEP::mm);
