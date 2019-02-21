@@ -40,9 +40,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VTouchable.hh"
 
 BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
-				       G4bool   stopSecondariesIn):
+					     G4bool   stopSecondariesIn,
+					     G4bool   storeExtrasIn):
   BDSSensitiveDetector("energy_counter/"+name),
   stopSecondaries(stopSecondariesIn),
+  storeExtras(storeExtrasIn),
   colName(name),
   hitsCollectionEnergyDeposition(nullptr),
   HCIDe(-1),
@@ -85,7 +87,7 @@ void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 }
 
 G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
-				       G4TouchableHistory* /*th*/)
+					  G4TouchableHistory* /*th*/)
 {
   // Get the energy deposited along the step
   enrg = aStep->GetTotalEnergyDeposit();
@@ -195,18 +197,19 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   
   //create hits and put in hits collection of the event
   BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
-						     preStepKineticEnergy,
-						     X, Y, Z,
-						     sHit,
-						     x, y, z,
-						     globalTime,
-						     ptype,
-						     trackID,
-						     parentID,
-						     weight,
-						     turnstaken,
-						     stepLength,
-						     beamlineIndex);
+							   sHit,
+							   weight,
+							   storeExtras,
+							   preStepKineticEnergy,
+							   X, Y, Z,
+							   x, y, z,
+							   globalTime,
+							   ptype,
+							   trackID,
+							   parentID,
+							   turnstaken,
+							   stepLength,
+							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hitsCollectionEnergyDeposition->insert(hit);
@@ -215,7 +218,7 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 }
 
 G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
-					    G4TouchableHistory* /*th*/)
+					       G4TouchableHistory* /*th*/)
 {
   parentID   = track->GetParentID(); // needed later on too
   ptype      = track->GetDefinition()->GetPDGEncoding();
@@ -234,7 +237,7 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   X = posGlobal.x();
   Y = posGlobal.y();
   Z = posGlobal.z();
-  
+
   // calculate local coordinates
   G4ThreeVector momGlobalUnit = track->GetMomentumDirection();
   BDSStep stepLocal = auxNavigator->ConvertToLocal(posGlobal, momGlobalUnit, 1*CLHEP::mm, true, 1*CLHEP::mm);
@@ -290,18 +293,18 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   
   //create hits and put in hits collection of the event
   BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
-						     preStepKineticEnergy,
-						     X, Y, Z,
-						     sHit,
-						     x, y, z,
-						     globalTime,
-						     ptype,
-						     trackID,
-						     parentID,
-						     weight,
-						     turnstaken,
-						     stepLength,
-						     beamlineIndex);
+							   sHit,
+							   weight,
+							   preStepKineticEnergy,
+							   X, Y, Z,
+							   x, y, z,
+							   globalTime,
+							   ptype,
+							   trackID,
+							   parentID,
+							   turnstaken,
+							   stepLength,
+							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hitsCollectionEnergyDeposition->insert(hit);

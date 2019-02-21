@@ -154,6 +154,8 @@ General
   shadow member variables and initialisation of crystal variables in parser.
 * Significant reduction in use of the singleton pattern for beam pipe, magnet yoke,
   tunnel and geometry factories.
+* Reduced memory usage for energy deposition hits by removing unused numbers stored each time.
+* Reduced memory usage for energy deposition hits when not using extra variables such as the 'links'.
 
 
 Materials

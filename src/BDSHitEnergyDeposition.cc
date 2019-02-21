@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSHitEnergyDeposition.hh"
+#include "BDSHitEnergyDepositionExtra.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
@@ -24,40 +25,39 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
 BDSHitEnergyDeposition::BDSHitEnergyDeposition(G4double energyIn,
-					       G4double preStepKineticEnergyIn,
-					       G4double XIn, 
-					       G4double YIn, 
-					       G4double ZIn,
 					       G4double sHitIn,
-					       G4double xIn,
-					       G4double yIn,
-					       G4double zIn,
-					       G4double globalTimeIn,
-					       G4int    partIDIn,
-					       G4int    trackIDIn,
-					       G4int    parentIDIn,
-					       G4double weightIn, 
-					       G4int    turnsTakenIn,
-					       G4double stepLengthIn,
-					       G4int    beamlineIndexIn):
+					       G4double weightIn,
+					       G4bool   storeExtras,
+					       G4double preStepKineticEnergy,
+					       G4double X, 
+					       G4double Y, 
+					       G4double Z,
+					       G4double x,
+					       G4double y,
+					       G4double z,
+					       G4double globalTime,
+					       G4int    partID,
+					       G4int    trackID,
+					       G4int    parentID,
+					       G4int    turnsTaken,
+					       G4double stepLength,
+					       G4int    beamlineIndex):
   energy(energyIn),
-  preStepKineticEnergy(preStepKineticEnergyIn),
-  X(XIn),
-  Y(YIn),
-  Z(ZIn),
   sHit(sHitIn),
-  x(xIn),
-  y(yIn),
-  z(zIn),
-  globalTime(globalTimeIn),
-  partID(partIDIn),
-  trackID(trackIDIn),
-  parentID(parentIDIn),
   weight(weightIn),
-  turnsTaken(turnsTakenIn),
-  stepLength(stepLengthIn),
-  beamlineIndex(beamlineIndexIn)
-{;}
+  extra(nullptr)
+{
+  if (storeExtras)
+    {
+      extra = new BDSHitEnergyDepositionExtra(preStepKineticEnergy,
+					      X, Y, Z, x, y, z, globalTime,
+					      partID, trackID, parentID,
+					      turnsTaken, stepLength,
+					      beamlineIndex);
+    }
+}
 
 BDSHitEnergyDeposition::~BDSHitEnergyDeposition()
-{;}
+{
+  delete extra;
+}

@@ -69,6 +69,19 @@ BDSSDManager::BDSSDManager()
   generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
   generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms(); 
   storeELossWorld         = g->StoreELossWorld();
+  storeELossExtras        = g->StoreELossTurn()
+    || g->StoreELossLinks()
+    || g->StoreELossLocal()
+    || g->StoreELossGlobal()
+    || g->StoreELossTime()
+    || g->StoreELossStepLength()
+    || g->StoreELossPreStepKineticEnergy()
+    || g->StoreELossModelID()
+    || g->StoreTrajectory(); // if we store trajectories, we need the edep track id
+  generateCollimatorHits = storeCollimatorHitsAll
+                           || storeCollimatorHitsIons
+                           || g->StoreCollimatorInfo()
+                           || g->StoreCollimatorLinks();
   
   filters["primary"] = new BDSSDFilterPrimary("primary");
   filters["ion"]     = new BDSSDFilterIon("ion");
@@ -91,16 +104,19 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries);
+  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDeposition);
 
-  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries);
+  energyDepositionFull = new BDSSDEnergyDeposition("general_full", stopSecondaries, true);
+  SDMan->AddNewDetector(energyDepositionFull);
+  
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDepositionVacuum);
 
-  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries);
+  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries, true);
   SDMan->AddNewDetector(energyDepositionWorld);
 
   worldExit= new BDSSDVolumeExit("worldExit", true);
@@ -117,7 +133,7 @@ BDSSDManager::BDSSDManager()
 
   collimatorSD = new BDSSDCollimator("collimator");
   collimatorCompleteSD = new BDSMultiSensitiveDetectorOrdered("collimator_complete");
-  collimatorCompleteSD->AddSD(energyDeposition);
+  collimatorCompleteSD->AddSD(energyDepositionFull); // always generate full edep hits
   collimatorCompleteSD->AddSD(collimatorSD);
   // set up a filter for the collimator sensitive detector - always store primary hits
   G4VSDFilter* filter = nullptr;
@@ -191,7 +207,20 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::collimator:
       {result = collimatorSD; break;}
     case BDSSDType::collimatorcomplete:
-      {result = collimatorCompleteSD; break;}
+      {
+	if (applyOptions)
+	  {// if we're not going to store collimator specific information, just use
+	    // regular energy deposition hits to save memory (collimator hits require
+	    // full energy deposition hits, plus use extra memory themselves).
+	    if (generateCollimatorHits)
+	      {result = collimatorCompleteSD;}
+	    else
+	      {result = energyDeposition;}
+	  }
+	else
+	  {result = collimatorCompleteSD;}
+	break;
+      }
     default:
       {result = nullptr; break;}
     }
