@@ -148,6 +148,8 @@ private:
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;
   G4bool storeELossWorld;
+  G4bool storeELossExtras;
+  G4bool generateCollimatorHits;
   /// @}
 };
 

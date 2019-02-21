@@ -78,6 +78,10 @@ BDSSDManager::BDSSDManager()
     || g->StoreELossPreStepKineticEnergy()
     || g->StoreELossModelID()
     || g->StoreTrajectory(); // if we store trajectories, we need the edep track id
+  generateCollimatorHits = storeCollimatorHitsAll
+                           || storeCollimatorHitsIons
+                           || g->StoreCollimatorInfo()
+                           || g->StoreCollimatorLinks();
   
   filters["primary"] = new BDSSDFilterPrimary("primary");
   filters["ion"]     = new BDSSDFilterIon("ion");
@@ -129,7 +133,7 @@ BDSSDManager::BDSSDManager()
 
   collimatorSD = new BDSSDCollimator("collimator");
   collimatorCompleteSD = new BDSMultiSensitiveDetectorOrdered("collimator_complete");
-  collimatorCompleteSD->AddSD(energyDeposition);
+  collimatorCompleteSD->AddSD(energyDepositionFull); // always generate full edep hits
   collimatorCompleteSD->AddSD(collimatorSD);
   // set up a filter for the collimator sensitive detector - always store primary hits
   G4VSDFilter* filter = nullptr;
@@ -203,7 +207,18 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::collimator:
       {result = collimatorSD; break;}
     case BDSSDType::collimatorcomplete:
-      {result = collimatorCompleteSD; break;}
+      {
+	if (applyOptions)
+	  {
+	    if (generateCollimatorHits)
+	      {result = collimatorCompleteSD;}
+	    else
+	      {result = energyDeposition;}
+	  }
+	else
+	  {result = collimatorCompleteSD;}
+	break;
+      }
     default:
       {result = nullptr; break;}
     }
