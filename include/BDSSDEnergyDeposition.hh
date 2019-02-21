@@ -74,13 +74,15 @@ private:
   BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;
   G4int    HCIDe;
 
-  ///@{ per hit variable
+  ///@{ Per hit variable.
   G4double enrg;
   G4double preStepKineticEnergy;
   G4double weight;
-  G4double X,Y,Z,sBefore,sAfter; // global coordinates
-  G4double x,y,z;   // local coordinates
-  G4double globalTime; // time since start of event
+  G4double X,Y,Z;      // Global coordinates.
+  G4double x,y,z;      // Local coordinates.
+  G4double sBefore;
+  G4double sAfter;
+  G4double globalTime; // Time since start of event.
   G4double stepLength;
   G4int    ptype;
   G4int    trackID;

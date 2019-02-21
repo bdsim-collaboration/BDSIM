@@ -557,7 +557,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
   G4int indScoringMap    = -1;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
-  for (G4int i=0;i<n_hit;i++)
+  for (G4int i=0; i < n_hit; i++)
     {
       BDSHitEnergyDeposition* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
