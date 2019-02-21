@@ -209,7 +209,9 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
     case BDSSDType::collimatorcomplete:
       {
 	if (applyOptions)
-	  {
+	  {// if we're not going to store collimator specific information, just use
+	    // regular energy deposition hits to save memory (collimator hits require
+	    // full energy deposition hits, plus use extra memory themselves).
 	    if (generateCollimatorHits)
 	      {result = collimatorCompleteSD;}
 	    else
