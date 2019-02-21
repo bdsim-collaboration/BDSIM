@@ -94,13 +94,14 @@ private:
   BDSHitEnergyDeposition();
 
   G4double energy;
-  G4double weight;
 
   /// The position this energy deposition is assigned to. As we represent
   /// a Monte Carlo of discrete processes, this is randomly scattered along
   /// the length of the track this energy deposition corresponds to (uniform
   /// random distribution).
   G4double sHit;
+
+  G4double weight;
 
   BDSHitEnergyDepositionExtra* extra;
 };
