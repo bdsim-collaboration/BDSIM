@@ -446,18 +446,23 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       output->CloseAndOpenNewFile();
     }
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
-  if (event_number%1000 == 0)
+  G4cout << __METHOD_NAME__ << "end of event action done" << G4endl;
+#endif
+  if (verboseEvent || verboseEventNumber == event_number)
     {
-      G4cout << "Energy deposition pool size:        " << BDSAllocatorEnergyDeposition.GetAllocatedSize()  << G4endl;
-      G4cout << "Trajectory pool size:               " << bdsTrajectoryAllocator.GetAllocatedSize()        << G4endl;
-      G4cout << "Trajectory point pool size bdsim:   " << bdsTrajectoryPointAllocator.GetAllocatedSize()   << G4endl;
+      if (event_number%printModulo == 0)
+	{
+	  G4cout << "Energy deposition pool size:        " << BDSAllocatorEnergyDeposition.GetAllocatedSize()  << G4endl;
+	  G4cout << "Energy deposition full pool size:   " << BDSAllocatorEnergyDepositionExtra.GetAllocatedSize() << G4endl;
+	  G4cout << "Collimator hits pool size:          " << BDSAllocatorCollimator.GetAllocatedSize()        << G4endl;
+	  G4cout << "Trajectory pool size:               " << bdsTrajectoryAllocator.GetAllocatedSize()        << G4endl;
+	  G4cout << "Trajectory point pool size bdsim:   " << bdsTrajectoryPointAllocator.GetAllocatedSize()   << G4endl;
 #if G4VERSION_NUMBER > 1039
-      G4cout << "Trajectory point pool size:         " << aTrajectoryPointAllocator()->GetAllocatedSize()  << G4endl;
+	  G4cout << "Trajectory point pool size:         " << aTrajectoryPointAllocator()->GetAllocatedSize()  << G4endl;
 #else
-      G4cout << "Trajectory point pool size:         " << aTrajectoryPointAllocator->GetAllocatedSize()    << G4endl;
+	  G4cout << "Trajectory point pool size:         " << aTrajectoryPointAllocator->GetAllocatedSize()    << G4endl;
 #endif
-      G4cout << "Trajectory point primary pool size: " << bdsTrajectoryPrimaryAllocator.GetAllocatedSize() << G4endl;
+	  G4cout << "Trajectory point primary pool size: " << bdsTrajectoryPrimaryAllocator.GetAllocatedSize() << G4endl;
+	}
     }
-#endif
 }
