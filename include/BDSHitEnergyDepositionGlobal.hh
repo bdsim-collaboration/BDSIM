@@ -16,17 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSHITVOLUMEEXIT_H
-#define BDSHITVOLUMEEXIT_H
+#ifndef BDSHITENERGYDEPOSITIONGLOBAL_H
+#define BDSHITENERGYDEPOSITIONGLOBAL_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 
-class BDSHitEnergyDepoxitionWorld;
+class BDSHitEnergyDepositionGlobal;
 
-typedef G4THitsCollection<BDSHitEnergyDepoxitionWorld> BDSHitsCollectionVolumeExit;
-extern G4Allocator<BDSHitEnergyDepoxitionWorld> BDSAllocatorVolumeExit;
+typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
+extern G4Allocator<BDSHitEnergyDepositionGlobal> BDSAllocatorEnergyDepositionGlobal;
 
 /**
  * @brief Information recorded for a step leaving a volume.
@@ -34,27 +34,27 @@ extern G4Allocator<BDSHitEnergyDepoxitionWorld> BDSAllocatorVolumeExit;
  * @author Laurie Nevay
  */
 
-class BDSHitEnergyDepoxitionWorld: public G4VHit
+class BDSHitEnergyDepositionGlobal: public G4VHit
 {
 public:
   /// Default (in effect) constructor for energy deposition hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSHitEnergyDepoxitionWorld(G4double totalEnergyIn,
-		   G4double preStepKineticEnergyIn,
-		   G4double postStepKineticEnergyIn,
-		   G4double stepLengthIn,
-		   G4double XIn,
-		   G4double YIn,
-		   G4double ZIn,
-		   G4double TIn,
-		   G4int    partIDIn,
-		   G4int    trackIDIn,
-		   G4int    parentIDIn,
-		   G4double weightIn,
-		   G4int    turnsTakenIn);
+  BDSHitEnergyDepositionGlobal(G4double totalEnergyIn,
+			      G4double preStepKineticEnergyIn,
+			      G4double postStepKineticEnergyIn,
+			      G4double stepLengthIn,
+			      G4double XIn,
+			      G4double YIn,
+			      G4double ZIn,
+			      G4double TIn,
+			      G4int    pdgIDIn,
+			      G4int    trackIDIn,
+			      G4int    parentIDIn,
+			      G4double weightIn,
+			      G4int    turnsTakenIn);
   
-  virtual ~BDSHitEnergyDepoxitionWorld(){;}
+  virtual ~BDSHitEnergyDepositionGlobal(){;}
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -77,7 +77,7 @@ public:
   G4double T;
   /// @}
   
-  G4int    partID;
+  G4int    pdgID;
   G4int    trackID;
   G4int    parentID;
   G4double weight;
@@ -85,19 +85,19 @@ public:
 
 private:
   /// Private default constructor (not implemented) as the constructor.
-  BDSHitEnergyDepoxitionWorld() = delete;
+  BDSHitEnergyDepositionGlobal() = delete;
 };
 
-inline void* BDSHitEnergyDepoxitionWorld::operator new(size_t)
+inline void* BDSHitEnergyDepositionGlobal::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSAllocatorVolumeExit.MallocSingle();
+  aHit=(void*) BDSAllocatorEnergyDepositionGlobal.MallocSingle();
   return aHit;
 }
 
-inline void BDSHitEnergyDepoxitionWorld::operator delete(void *aHit)
+inline void BDSHitEnergyDepositionGlobal::operator delete(void *aHit)
 {
- BDSAllocatorVolumeExit.FreeSingle((BDSHitEnergyDepoxitionWorld*) aHit);
+ BDSAllocatorEnergyDepositionGlobal.FreeSingle((BDSHitEnergyDepositionGlobal*) aHit);
 }
 
 #endif
