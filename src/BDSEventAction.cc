@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSHitEnergyDeposition.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSHitEnergyDepositionExtra.hh"
 #include "BDSHitSampler.hh"
 #include "BDSOutput.hh"
@@ -29,10 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerInfo.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSDTerminator.hh"
-#include "BDSSDVolumeExit.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
@@ -212,11 +213,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   echc* eCounterFullHits   = dynamic_cast<echc*>(HCE->GetHC(eCounterFullID));
   echc* eCounterVacuumHits = dynamic_cast<echc*>(HCE->GetHC(eCounterVacuumID));
   echc* eCounterTunnelHits = dynamic_cast<echc*>(HCE->GetHC(eCounterTunnelID));
-  echc* eCounterWorldHits  = dynamic_cast<echc*>(HCE->GetHC(eCounterWorldID));
 
   // world exit hits
-  typedef BDSHitsCollectionVolumeExit vehc;
-  vehc* worldExitHits = dynamic_cast<vehc*>(HCE->GetHC(worldExitCollID));
+  typedef BDSHitsCollectionEnergyDepositionGlobal ecghc;
+  ecghc* eCounterWorldHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
+  ecghc* worldExitHits      = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there

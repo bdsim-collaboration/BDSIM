@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
@@ -28,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDSampler.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
-#include "BDSSDVolumeExit.hh"
 
 #include "G4SDManager.hh"
 #include "G4Version.hh"
@@ -116,10 +116,10 @@ BDSSDManager::BDSSDManager()
   energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries, storeELossExtras);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries, true);
+  energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss", stopSecondaries);
   SDMan->AddNewDetector(energyDepositionWorld);
 
-  worldExit= new BDSSDVolumeExit("worldExit", true);
+  worldExit= new BDSSDEnergyDepositionGlobal("worldExit", stopSecondaries);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029
