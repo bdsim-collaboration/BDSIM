@@ -581,6 +581,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 			       const LossType lossType)
 {
   G4int nHits            = hits->entries();
+  if (nHits == 0)
+    {return;}
   G4int indELoss         = histIndices1D["Eloss"];
   G4int indELossPE       = histIndices1D["ElossPE"];
   G4int indELossTunnel   = -1;
