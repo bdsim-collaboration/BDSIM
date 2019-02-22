@@ -550,6 +550,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
     }
 
   G4int nHits = hits->entries();
+  if (nHits == 0)
+    {return;}
   switch (lossType)
     {
     case BDSOutput::LossType::world:
@@ -559,8 +561,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyDepositedWorld += hit->TotalEnergyWeighted()/CLHEP::GeV;
 	    eLossWorld->Fill(hit);
-	    break;
 	  }
+        break;
       }
     case BDSOutput::LossType::worldexit:
       {
@@ -569,8 +571,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
 	    eLossWorldExit->Fill(hit);
-	    break;
 	  }
+        break;
       }
     default:
       {break;} // only to prevent compiler warning
