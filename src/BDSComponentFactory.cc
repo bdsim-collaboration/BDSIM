@@ -59,6 +59,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldFactory.hh"
@@ -2361,17 +2362,10 @@ void BDSComponentFactory::CalculateAngleAndFieldSBend(Element const* el,
   // un-split sbends are effectively rbends - don't construct a >pi/2 degree rbend
   // also cannot construct sbends with angles > pi/2
   if (BDSGlobalConstants::Instance()->DontSplitSBends() && (std::abs(angle) > CLHEP::pi/2.0))
-    {
-      G4cerr << "Error: the unsplit sbend "<< el->name << " cannot be constucted as it's bending angle "
-             << "is defined to be greater than pi/2." << G4endl;
-      exit(1);
-    }
+    {throw BDSException("Error: the unsplit sbend "+ el->name + " cannot be constucted as its bending angle is defined to be greater than pi/2.");}
+
   else if (std::abs(angle) > CLHEP::pi*2.0)
-    {
-      G4cerr << "Error: the sbend "<< el->name << " cannot be constucted as it's bending angle "
-             << "is defined to be greater than 2 pi." << G4endl;
-      exit(1);
-    }
+    {throw BDSException("Error: the sbend "+ el->name +" cannot be constucted as its bending angle is defined to be greater than 2 pi.");}
 }
 
 void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
@@ -2405,10 +2399,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
       angle = 2.0*std::asin(chordLength*0.5 / bendingRadius);
       if (std::isnan(angle))
-        {
-          G4cerr << "Field too strong for element " << el->name << ", magnet bending angle will be greater than pi." << G4endl;
-          exit(1);
-        }
+        {throw BDSException("Field too strong for element " + el->name + ", magnet bending angle will be greater than pi.");}
 
       arcLengthLocal = bendingRadius * angle;
     }
@@ -2432,11 +2423,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
   arcLength = std::abs(arcLengthLocal);
 
   if (std::abs(angle) > CLHEP::pi/2.0)
-    {
-      G4cerr << "Error: the rbend "<< el->name << " cannot be constucted as it's bending angle "
-             << "is defined to be greater than pi/2." << G4endl;
-      exit(1);
-    }
+    {throw BDSException("Error: the rbend " + el->name + " cannot be constucted as its bending angle is defined to be greater than pi/2.");}
 }
 
 G4double BDSComponentFactory::BendAngle(const Element* el) const
