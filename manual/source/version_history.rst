@@ -243,6 +243,8 @@ Bug Fixes
 * Fixed dipole tracking for off-charge ions - reverts to backup integrator.
 * Fixed Pythonic range iteration of Event tree when trying to look at Info branch. Conflicted with
   Info method of TObject. Now renamed to Summary.
+* Fixed catching the construction of dipoles with too large an angle. Limit rbends and unsplit
+  sbends to a maximum angle of pi/2, limit the maximum angle of all other dipoles to 2 pi.
   
 Output Changes
 --------------
