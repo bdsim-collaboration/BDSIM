@@ -578,7 +578,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 			       const LossType lossType)
 {
-  G4int n_hit            = hits->entries();
+  G4int nHits            = hits->entries();
   G4int indELoss         = histIndices1D["Eloss"];
   G4int indELossPE       = histIndices1D["ElossPE"];
   G4int indELossTunnel   = -1;
@@ -598,7 +598,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
   G4int indScoringMap    = -1;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
-  for (G4int i=0; i < n_hit; i++)
+  for (G4int i=0; i < nHits; i++)
     {
       BDSHitEnergyDeposition* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
