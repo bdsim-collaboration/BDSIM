@@ -104,8 +104,8 @@ void BDSOutputROOT::NewFile()
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",      eLoss,          4000, 1);
   theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",      eLossVacuum,    4000, 1);
-  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 2);
-  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLoss",      eLossWorld,     4000, 1);
+  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 1);
+  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
   theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
