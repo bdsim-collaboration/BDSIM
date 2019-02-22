@@ -94,7 +94,7 @@ public:
   inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorld() const {return energyDepositionWorld;}
 
   /// SD for world exit hits.
-  inline BDSSDEnergyDepositionGlobal* WorldExit() const {return worldExit;}
+  inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
@@ -129,7 +129,7 @@ private:
   BDSSDEnergyDeposition*       energyDepositionVacuum;
   BDSSDEnergyDeposition*       energyDepositionTunnel;
   BDSSDEnergyDepositionGlobal* energyDepositionWorld;
-  BDSSDEnergyDepositionGlobal* worldExit;
+  BDSSDVolumeExit*             worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
 #endif

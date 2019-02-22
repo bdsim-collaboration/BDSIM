@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSDTerminator.hh"
+#include "BDSSDVolumeExit.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"

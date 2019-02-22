@@ -41,18 +41,18 @@ public:
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
   BDSHitEnergyDepositionGlobal(G4double totalEnergyIn,
-			      G4double preStepKineticEnergyIn,
-			      G4double postStepKineticEnergyIn,
-			      G4double stepLengthIn,
-			      G4double XIn,
-			      G4double YIn,
-			      G4double ZIn,
-			      G4double TIn,
-			      G4int    pdgIDIn,
-			      G4int    trackIDIn,
-			      G4int    parentIDIn,
-			      G4double weightIn,
-			      G4int    turnsTakenIn);
+			       G4double preStepKineticEnergyIn,
+			       G4double postStepKineticEnergyIn,
+			       G4double stepLengthIn,
+			       G4double XIn,
+			       G4double YIn,
+			       G4double ZIn,
+			       G4double TIn,
+			       G4int    pdgIDIn,
+			       G4int    trackIDIn,
+			       G4int    parentIDIn,
+			       G4double weightIn,
+			       G4int    turnsTakenIn);
   
   virtual ~BDSHitEnergyDepositionGlobal(){;}
   
