@@ -559,6 +559,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyDepositedWorld += hit->TotalEnergyWeighted()/CLHEP::GeV;
 	    eLossWorld->Fill(hit);
+	    break;
 	  }
       }
     case BDSOutput::LossType::worldexit:
@@ -568,6 +569,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
 	    eLossWorldExit->Fill(hit);
+	    break;
 	  }
       }
     default:
