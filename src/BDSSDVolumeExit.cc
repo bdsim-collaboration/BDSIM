@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepoxitionWorld.hh"
 #include "BDSSDVolumeExit.hh"
 
 #include "globals.hh"
@@ -71,7 +71,7 @@ G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
       G4double weight     = track->GetWeight();
       G4int    turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
       
-      BDSHitVolumeExit* hit = new BDSHitVolumeExit(totalEnergy,
+      BDSHitEnergyDepoxitionWorld* hit = new BDSHitEnergyDepoxitionWorld(totalEnergy,
 						   preStepKineticEnergy,
 						   postStepKineticEnergy,
 						   stepLength,

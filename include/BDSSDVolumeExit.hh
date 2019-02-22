@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDVOLUMEEXIT_H
 #define BDSSDVOLUMEEXIT_H
 
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepoxitionWorld.hh"
 
 #include "globals.hh"
 #include "G4StepStatus.hh"

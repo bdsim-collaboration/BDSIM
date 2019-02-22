@@ -23,10 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 
-class BDSHitVolumeExit;
+class BDSHitEnergyDepoxitionWorld;
 
-typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
-extern G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
+typedef G4THitsCollection<BDSHitEnergyDepoxitionWorld> BDSHitsCollectionVolumeExit;
+extern G4Allocator<BDSHitEnergyDepoxitionWorld> BDSAllocatorVolumeExit;
 
 /**
  * @brief Information recorded for a step leaving a volume.
@@ -34,13 +34,13 @@ extern G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
  * @author Laurie Nevay
  */
 
-class BDSHitVolumeExit: public G4VHit
+class BDSHitEnergyDepoxitionWorld: public G4VHit
 {
 public:
   /// Default (in effect) constructor for energy deposition hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSHitVolumeExit(G4double totalEnergyIn,
+  BDSHitEnergyDepoxitionWorld(G4double totalEnergyIn,
 		   G4double preStepKineticEnergyIn,
 		   G4double postStepKineticEnergyIn,
 		   G4double stepLengthIn,
@@ -54,7 +54,7 @@ public:
 		   G4double weightIn,
 		   G4int    turnsTakenIn);
   
-  virtual ~BDSHitVolumeExit(){;}
+  virtual ~BDSHitEnergyDepoxitionWorld(){;}
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
@@ -85,19 +85,19 @@ public:
 
 private:
   /// Private default constructor (not implemented) as the constructor.
-  BDSHitVolumeExit() = delete;
+  BDSHitEnergyDepoxitionWorld() = delete;
 };
 
-inline void* BDSHitVolumeExit::operator new(size_t)
+inline void* BDSHitEnergyDepoxitionWorld::operator new(size_t)
 {
   void* aHit;
   aHit=(void*) BDSAllocatorVolumeExit.MallocSingle();
   return aHit;
 }
 
-inline void BDSHitVolumeExit::operator delete(void *aHit)
+inline void BDSHitEnergyDepoxitionWorld::operator delete(void *aHit)
 {
- BDSAllocatorVolumeExit.FreeSingle((BDSHitVolumeExit*) aHit);
+ BDSAllocatorVolumeExit.FreeSingle((BDSHitEnergyDepoxitionWorld*) aHit);
 }
 
 #endif

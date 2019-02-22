@@ -41,8 +41,8 @@ class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-class BDSHitVolumeExit;
-typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
+class BDSHitEnergyDepoxitionWorld;
+typedef G4THitsCollection<BDSHitEnergyDepoxitionWorld> BDSHitsCollectionVolumeExit;
 
 class G4PrimaryVertex;
 

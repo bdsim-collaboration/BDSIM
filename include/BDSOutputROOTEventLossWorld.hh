@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSOUTPUTROOTEVENTLOSSWORLD_H
 
 #ifndef __ROOTBUILD__
-class BDSHitVolumeExit;
+class BDSHitEnergyDepoxitionWorld;
 #endif
 
 #include "TObject.h"
@@ -61,7 +61,7 @@ public:
   BDSOutputROOTEventLossWorld();
   virtual ~BDSOutputROOTEventLossWorld();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSHitVolumeExit* hit);
+  void Fill(const BDSHitEnergyDepoxitionWorld* hit);
 #endif
   virtual void Flush();
 

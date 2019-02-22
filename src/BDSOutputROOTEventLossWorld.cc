@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepoxitionWorld.hh"
 #endif
 
 ClassImp(BDSOutputROOTEventLossWorld)
@@ -34,7 +34,7 @@ BDSOutputROOTEventLossWorld::~BDSOutputROOTEventLossWorld()
 {;}
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventLossWorld::Fill(const BDSHitVolumeExit* hit)
+void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepoxitionWorld* hit)
 {
   n++;
   totalEnergy.push_back( (float &&) (hit->totalEnergy / CLHEP::GeV));
