@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
-#include "BDSHitEnergyDepoxitionWorld.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #endif
 
 ClassImp(BDSOutputROOTEventLossWorld)
@@ -34,7 +34,7 @@ BDSOutputROOTEventLossWorld::~BDSOutputROOTEventLossWorld()
 {;}
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepoxitionWorld* hit)
+void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepositionGlobal* hit)
 {
   n++;
   totalEnergy.push_back( (float &&) (hit->totalEnergy / CLHEP::GeV));
@@ -45,7 +45,7 @@ void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepoxitionWorld* hit)
   Y.push_back( (float &&) (hit->Y / CLHEP::m));
   Z.push_back( (float &&) (hit->Z / CLHEP::m));
   T.push_back( (float &&) (hit->T / CLHEP::ns));
-  partID.push_back(hit->partID);
+  partID.push_back(hit->pdgID);
   trackID.push_back(hit->trackID);
   parentID.push_back(hit->parentID);
   weight.push_back(hit->weight);

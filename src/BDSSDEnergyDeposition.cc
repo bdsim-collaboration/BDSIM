@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
+#include "Randomize.hh"
 
 BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
 					     G4bool   stopSecondariesIn,

@@ -32,11 +32,11 @@ class BDSOutputROOTEventBeam;
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCollimatorInfo;
 class BDSOutputROOTEventCoords;
-class BDSOutputROOTEventLossWorld;
 class BDSOutputROOTEventHeader;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
+class BDSOutputROOTEventLossWorld;
 class BDSOutputROOTEventModel;
 class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
@@ -131,7 +131,7 @@ protected:
   BDSOutputROOTEventLoss*       pLastHit;       ///< Primary loss point.
   BDSOutputROOTEventLoss*       eLossVacuum;    ///< General energy deposition.
   BDSOutputROOTEventLoss*       eLossTunnel;    ///< Tunnel energy deposition.
-  BDSOutputROOTEventLoss*       eLossWorld;     ///< World energy deposition.
+  BDSOutputROOTEventLossWorld*  eLossWorld;     ///< World energy deposition.
   BDSOutputROOTEventLossWorld*  eLossWorldExit; ///< World exit hits.
   BDSOutputROOTEventTrajectory* traj;           ///< Trajectories.
   BDSOutputROOTEventHistograms* evtHistos;      ///< Event level histograms.
