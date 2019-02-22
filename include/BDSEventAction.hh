@@ -59,6 +59,7 @@ private:
   G4int samplerCollID_plane;
   G4int samplerCollID_cylin;
   G4int eCounterID;       ///< Collection ID for general energy deposition hits.
+  G4int eCounterFullID;   ///< Collection ID for general energy deposition full hits.
   G4int eCounterVacuumID; ///< Collection ID for the vacuum energy deposition hits.
   G4int eCounterTunnelID; ///< Collection ID for the tunnel energy deposition hits.
   G4int eCounterWorldID;  ///< Collection ID for the world energy deposition hits.
