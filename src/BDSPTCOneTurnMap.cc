@@ -146,7 +146,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
   // TurnsTaken() will actually return 2.  So lastTurnNumber, will be
   // one less than returned by TurnsTaken(), until it is incremented
   // below.  If (lastTurnNumber ==
-  // turnstaken (turn number seen in the TeleporterIntegrator), then
+  // turnsTaken (turn number seen in the TeleporterIntegrator), then
   // the map has already been applied on this turn.  In which case,
   // return the cached values below.
   if (lastTurnNumber < turnstaken)
@@ -268,7 +268,7 @@ G4double BDSPTCOneTurnMap::Evaluate(std::vector<PTCMapTerm>& terms,
 G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
                                               G4int turnstaken)
 {
-  // We have to use the externally provided turnstaken rather than
+  // We have to use the externally provided turnsTaken rather than
   // internal lastTurnNumber so that the OTM is definitely not applied
   // in this case (because lastTurnNumber member of this class will
   // not have the same value for multiple applications on the same
@@ -304,7 +304,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
          << G4endl;
   G4cout << __METHOD_NAME__
          << "beamOffsetS0 = " << BDS::BoolToString(beamOffsetS0) << G4endl;
-  G4cout << __METHOD_NAME__ << "turnstaken = " << turnstaken << G4endl;
+  G4cout << __METHOD_NAME__ << "turnsTaken = " << turnsTaken << G4endl;
   G4cout << __METHOD_NAME__ << "Is on first turn with S0 != 0?"
          << BDS::BoolToString(offsetBeamS0AndOnFirstTurn) << G4endl;
   G4cout << __METHOD_NAME__

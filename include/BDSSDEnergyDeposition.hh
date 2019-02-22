@@ -71,11 +71,11 @@ private:
   
   G4bool   storeExtras;     ///< Whether to store extra information.
   G4String colName;         ///< Collection name.
-  BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;
+  BDSHitsCollectionEnergyDeposition* hits;
   G4int    HCIDe;
 
   ///@{ Per hit variable.
-  G4double enrg;
+  G4double energy;
   G4double preStepKineticEnergy;
   G4double weight;
   G4double X,Y,Z;      // Global coordinates.
@@ -87,7 +87,7 @@ private:
   G4int    ptype;
   G4int    trackID;
   G4int    parentID;
-  G4int    turnstaken;
+  G4int    turnsTaken;
   ///@}
 
   /// Navigator for checking points in read out geometry
