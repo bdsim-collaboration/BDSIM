@@ -357,9 +357,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	{
 	  if (eCounterHits)
 	    {
-	      G4int n_hit = eCounterHits->entries();
+	      G4int nHits = eCounterHits->entries();
 	      BDSHitEnergyDeposition* hit;
-	      for (G4int i = 0; i < n_hit; i++)
+	      for (G4int i = 0; i < nHits; i++)
 		{
 		  hit = (*eCounterHits)[i];
 		  double dS = hit->GetSHit();
@@ -375,9 +375,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    }
 	  if (eCounterFullHits)
 	    {
-	      G4int n_hit = eCounterFullHits->entries();
+	      G4int nHits = eCounterFullHits->entries();
 	      BDSHitEnergyDeposition* hit;
-	      for (G4int i = 0; i < n_hit; i++)
+	      for (G4int i = 0; i < nHits; i++)
 		{
 		  hit = (*eCounterFullHits)[i];
 		  double dS = hit->GetSHit();
@@ -396,8 +396,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       // loop over samplers to connect trajectories
       if (samplerIDsToStore.size() != 0)
 	{
-	  G4int n_hit = SampHC->entries();
-	  for (G4int i = 0; i < n_hit; i++)
+	  G4int nHits = SampHC->entries();
+	  for (G4int i = 0; i < nHits; i++)
 	    {
 	      G4int samplerIndex = (*SampHC)[i]->samplerID;
 	      BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
