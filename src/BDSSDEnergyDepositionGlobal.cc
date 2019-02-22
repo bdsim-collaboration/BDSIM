@@ -32,10 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "Randomize.hh"
 
-BDSSDEnergyDepositionGlobal::BDSSDEnergyDepositionGlobal(G4String name,
-							 G4bool   stopSecondariesIn):
+BDSSDEnergyDepositionGlobal::BDSSDEnergyDepositionGlobal(G4String name):
   BDSSensitiveDetector("energy_deposiiton_global/"+name),
-  stopSecondaries(stopSecondariesIn),
   colName(name),
   hits(nullptr),
   HCIDe(-1),

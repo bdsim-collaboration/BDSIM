@@ -42,7 +42,6 @@ class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
   BDSSDEnergyDeposition(G4String name,
-			G4bool   stopSecondariesIn,
 			G4bool   storeExtrasIn);
   virtual ~BDSSDEnergyDeposition();
 
@@ -69,8 +68,7 @@ private:
   BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
   BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
   BDSSDEnergyDeposition() = delete;
-
-  G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
+  
   G4bool   storeExtras;     ///< Whether to store extra information.
   G4String colName;         ///< Collection name.
   BDSHitsCollectionEnergyDeposition* hitsCollectionEnergyDeposition;

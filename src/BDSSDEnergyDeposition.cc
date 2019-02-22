@@ -41,10 +41,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Randomize.hh"
 
 BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
-					     G4bool   stopSecondariesIn,
 					     G4bool   storeExtrasIn):
   BDSSensitiveDetector("energy_counter/"+name),
-  stopSecondaries(stopSecondariesIn),
   storeExtras(storeExtrasIn),
   colName(name),
   hitsCollectionEnergyDeposition(nullptr),

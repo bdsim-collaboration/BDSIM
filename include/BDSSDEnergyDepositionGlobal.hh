@@ -42,8 +42,7 @@ class G4Track;
 class BDSSDEnergyDepositionGlobal: public BDSSensitiveDetector
 {
 public:
-  BDSSDEnergyDepositionGlobal(G4String name,
-			      G4bool   stopSecondariesIn);
+  explicit BDSSDEnergyDepositionGlobal(G4String name);
   virtual ~BDSSDEnergyDepositionGlobal();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
@@ -69,8 +68,7 @@ private:
   BDSSDEnergyDepositionGlobal& operator=(const BDSSDEnergyDepositionGlobal&);
   BDSSDEnergyDepositionGlobal(BDSSDEnergyDepositionGlobal&);
   BDSSDEnergyDepositionGlobal() = delete;
-
-  G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
+  
   G4String colName;         ///< Collection name.
   BDSHitsCollectionEnergyDepositionGlobal* hits;
   G4int    HCIDe;
