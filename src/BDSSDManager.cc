@@ -68,7 +68,10 @@ BDSSDManager::BDSSDManager()
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
   generateELossHits       = g->StoreELoss() || g->StoreELossHistograms();
   generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
-  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms(); 
+  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
+
+  generateELossWorldContents = g->UseImportanceSampling() || g->StoreELossWorldContents();
+  
   storeELossWorld         = g->StoreELossWorld();
   storeELossExtras        = g->StoreELossTurn()
     || g->StoreELossLinks()
@@ -119,6 +122,9 @@ BDSSDManager::BDSSDManager()
 
   energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss");
   SDMan->AddNewDetector(energyDepositionWorld);
+
+  energyDepositionWorldContents = new BDSSDEnergyDepositionGlobal("worldLoss_contents");
+  SDMan->AddNewDetector(energyDepositionWorldContents);
 
   worldExit = new BDSSDVolumeExit("worldExit", true);
   SDMan->AddNewDetector(worldExit);
@@ -205,6 +211,14 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 #else
       {result = nullptr; break;}
 #endif
+    case BDSSDType::worldcontents:
+      {
+	if (applyOptions)
+	  {result = generateELossWorldContents ? energyDepositionWorldContents : nullptr;}
+	else
+	  {result = energyDepositionWorldContents;}
+	break;
+      }
     case BDSSDType::collimator:
       {result = collimatorSD; break;}
     case BDSSDType::collimatorcomplete:

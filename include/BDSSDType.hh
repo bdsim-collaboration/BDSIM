@@ -35,7 +35,7 @@ struct sdtypes_def
 {
   enum type {samplerplane, samplercylinder, terminator,
 	     energydep, energydepvacuum, energydeptunnel, energydepworld,
-	     worldexit, worldcomplete,
+	     worldexit, worldcomplete, worldcontents,
 	     collimator, collimatorcomplete};
 };
 

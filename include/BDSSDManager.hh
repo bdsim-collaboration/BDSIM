@@ -93,6 +93,9 @@ public:
   /// SD for energy deposition in the world volume.
   inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorld() const {return energyDepositionWorld;}
 
+  /// SD for energy deposition in things that were already placed in the externally provided world.
+  inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorldContents() const {return energyDepositionWorldContents;}
+
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
@@ -129,6 +132,7 @@ private:
   BDSSDEnergyDeposition*       energyDepositionVacuum;
   BDSSDEnergyDeposition*       energyDepositionTunnel;
   BDSSDEnergyDepositionGlobal* energyDepositionWorld;
+  BDSSDEnergyDepositionGlobal* energyDepositionWorldContents;
   BDSSDVolumeExit*             worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
@@ -147,6 +151,7 @@ private:
   G4bool generateELossHits;
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;
+  G4bool generateELossWorldContents;
   G4bool storeELossWorld;
   G4bool storeELossExtras;
   G4bool generateCollimatorHits;
