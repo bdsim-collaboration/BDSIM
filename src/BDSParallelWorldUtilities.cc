@@ -87,9 +87,9 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
 
   // register of all created
-  //std::map<G4String, G4VUserParallelWorld*> worlds;
-  std::vector<G4VUserParallelWorld*> samplerWorlds;
-  samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
+  // worlds that require the physics process so that their boundaries affect tracking
+  std::vector<G4VUserParallelWorld*> worldsRequiringPhysics;
+  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
   
   for (auto info : worldInfos)
     {
@@ -97,16 +97,13 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	{
 	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.sequenceName);
 	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
-	  //worlds[info.sequenceName + "_cl"] = cLWorld;
 	  massWorld->RegisterParallelWorld(cLWorld);
-	  //worlds[info.sequenceName + "_clb"] = cLBridgeWorld;
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
 	}
       if (info.samplerWorld)
 	{
 	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
-	  //worlds[info.sequenceName + "_s"] = sWorld;
-	  samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
+	  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
     }
@@ -116,10 +113,10 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
       massWorld->RegisterParallelWorld(importanceWorld);
-      samplerWorlds.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
+      worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
     }
 
-  return samplerWorlds;
+  return worldsRequiringPhysics;
 }
 
 std::vector<G4ParallelWorldPhysics*> BDS::ConstructSamplerParallelPhysics(std::vector<G4VUserParallelWorld*> worlds)

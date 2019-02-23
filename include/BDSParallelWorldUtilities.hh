@@ -40,8 +40,8 @@ namespace BDS
   std::vector<BDSParallelWorldInfo> NumberOfExtraWorldsRequired();
 
   /// Construct the default and any extra parallel worlds required and register them
-  /// to the main mass world argument. Returns the vector of sampler worlds as these
-  /// are required for the parallel world physics processes.
+  /// to the main mass world argument. Returns the vector of worlds that required a
+  /// physics process so that their boundaries are respected in tracking.
   std::vector<G4VUserParallelWorld*> ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld);
 
   /// Construct the parallel physics process for each sampler world.
