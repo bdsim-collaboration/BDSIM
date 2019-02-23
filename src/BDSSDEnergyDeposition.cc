@@ -38,17 +38,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
+#include "Randomize.hh"
 
 BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
-					     G4bool   stopSecondariesIn,
 					     G4bool   storeExtrasIn):
   BDSSensitiveDetector("energy_counter/"+name),
-  stopSecondaries(stopSecondariesIn),
   storeExtras(storeExtrasIn),
   colName(name),
-  hitsCollectionEnergyDeposition(nullptr),
+  hits(nullptr),
   HCIDe(-1),
-  enrg(0.0),
+  energy(0.0),
   weight(0.0),
   X(0.0),
   Y(0.0),
@@ -63,7 +62,7 @@ BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
   ptype(0),
   trackID(-1),
   parentID(-1),
-  turnstaken(0),
+  turnsTaken(0),
   auxNavigator(new BDSAuxiliaryNavigator())
 {
   collectionName.insert(colName);
@@ -76,10 +75,10 @@ BDSSDEnergyDeposition::~BDSSDEnergyDeposition()
 
 void BDSSDEnergyDeposition::Initialize(G4HCofThisEvent* HCE)
 {
-  hitsCollectionEnergyDeposition = new BDSHitsCollectionEnergyDeposition(GetName(),colName);
+  hits = new BDSHitsCollectionEnergyDeposition(GetName(),colName);
   if (HCIDe < 0)
-    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(hitsCollectionEnergyDeposition);}
-  HCE->AddHitsCollection(HCIDe,hitsCollectionEnergyDeposition);
+    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(hits);}
+  HCE->AddHitsCollection(HCIDe,hits);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
@@ -90,10 +89,10 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 					  G4TouchableHistory* /*th*/)
 {
   // Get the energy deposited along the step
-  enrg = aStep->GetTotalEnergyDeposit();
+  energy = aStep->GetTotalEnergyDeposit();
 
   //if the energy is 0, don't do anything
-  if (!BDS::IsFinite(enrg))
+  if (!BDS::IsFinite(energy))
     {return false;}
 
   G4Track* track = aStep->GetTrack();
@@ -193,10 +192,10 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 
   weight      = track->GetWeight();
   trackID     = track->GetTrackID();
-  turnstaken  = BDSGlobalConstants::Instance()->TurnsTaken();
+  turnsTaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(energy,
 							   sHit,
 							   weight,
 							   storeExtras,
@@ -207,12 +206,12 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 							   ptype,
 							   trackID,
 							   parentID,
-							   turnstaken,
+							   turnsTaken,
 							   stepLength,
 							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  hitsCollectionEnergyDeposition->insert(hit);
+  hits->insert(hit);
    
   return true;
 }
@@ -222,14 +221,14 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 {
   parentID   = track->GetParentID(); // needed later on too
   ptype      = track->GetDefinition()->GetPDGEncoding();
-  enrg       = track->GetTotalEnergy();
+  energy       = track->GetTotalEnergy();
   globalTime = track->GetGlobalTime();
   weight     = track->GetWeight();
   trackID    = track->GetTrackID();
   preStepKineticEnergy = track->GetKineticEnergy();
 
   //if the energy is 0, don't do anything
-  if (!BDS::IsFinite(enrg))
+  if (!BDS::IsFinite(energy))
     {return false;}
   
   stepLength = 0;
@@ -289,10 +288,10 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
     }
   G4double sHit = sBefore; // duplicate
 
-  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
+  turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(enrg,
+  BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(energy,
 							   sHit,
 							   weight,
 							   preStepKineticEnergy,
@@ -302,18 +301,18 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 							   ptype,
 							   trackID,
 							   parentID,
-							   turnstaken,
+							   turnsTaken,
 							   stepLength,
 							   beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  hitsCollectionEnergyDeposition->insert(hit);
+  hits->insert(hit);
    
   return true;
 }
 
 G4VHit* BDSSDEnergyDeposition::last() const
 {
-  BDSHitEnergyDeposition* lastHit = hitsCollectionEnergyDeposition->GetVector()->back();
+  BDSHitEnergyDeposition* lastHit = hits->GetVector()->back();
   return dynamic_cast<G4VHit*>(lastHit);
 }

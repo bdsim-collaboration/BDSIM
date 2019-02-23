@@ -16,34 +16,36 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #endif
 
-ClassImp(BDSOutputROOTEventExit)
+ClassImp(BDSOutputROOTEventLossWorld)
 
-BDSOutputROOTEventExit::BDSOutputROOTEventExit()
+BDSOutputROOTEventLossWorld::BDSOutputROOTEventLossWorld()
 {
   Flush();
 }
 
-BDSOutputROOTEventExit::~BDSOutputROOTEventExit()
+BDSOutputROOTEventLossWorld::~BDSOutputROOTEventLossWorld()
 {;}
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventExit::Fill(const BDSHitVolumeExit* hit)
+void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepositionGlobal* hit)
 {
   n++;
   totalEnergy.push_back( (float &&) (hit->totalEnergy / CLHEP::GeV));
+  preStepKineticEnergy.push_back( (float &&) (hit->preStepKineticEnergy / CLHEP::GeV));
   postStepKineticEnergy.push_back( (float &&) (hit->postStepKineticEnergy / CLHEP::GeV));
+  stepLength.push_back( (float &&) (hit->stepLength / CLHEP::m));
   X.push_back( (float &&) (hit->X / CLHEP::m));
   Y.push_back( (float &&) (hit->Y / CLHEP::m));
   Z.push_back( (float &&) (hit->Z / CLHEP::m));
   T.push_back( (float &&) (hit->T / CLHEP::ns));
-  partID.push_back(hit->partID);
+  partID.push_back(hit->pdgID);
   trackID.push_back(hit->trackID);
   parentID.push_back(hit->parentID);
   weight.push_back(hit->weight);
@@ -51,11 +53,13 @@ void BDSOutputROOTEventExit::Fill(const BDSHitVolumeExit* hit)
 }
 #endif
 
-void BDSOutputROOTEventExit::Flush()
+void BDSOutputROOTEventLossWorld::Flush()
 {
   n = 0;
   totalEnergy.clear();
+  preStepKineticEnergy.clear();
   postStepKineticEnergy.clear();
+  stepLength.clear();
   X.clear();
   Y.clear();
   Z.clear();

@@ -16,13 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSDENERGYDEPOSITION_H
-#define BDSSDENERGYDEPOSITION_H
+#ifndef BDSSDENERGYDEPOSITIONGLOBAL_H
+#define BDSSDENERGYDEPOSITIONGLOBAL_H
 
-#include "BDSHitEnergyDeposition.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSSensitiveDetector.hh"
-
-class BDSAuxiliaryNavigator;
 
 class G4HCofThisEvent;
 class G4Step;
@@ -30,20 +28,22 @@ class G4TouchableHistory;
 class G4Track;
 
 /**
- * @brief Generates BDSHitsEnergyDepositions from step information - uses curvilinear coords.
+ * @brief Generates BDSHitsEnergyDepositionGlobal from step information.
  *
  * This class interrogates a G4Step and generates an energy deposition hit if there was
  * a change in energy. This assigns the energy deposition to a point randomly (uniformly)
- * along the step.  It also uses a BDSAuxiliaryNavigator instance to use transforms from
- * the curvilinear parallel world for curvilinear coordinates.
+ * along the step.
+ * 
+ * It does not use curvilinear coordinates and only uses global coordinates.
+ * 
+ * @author Laurie Nevay
  */
 
-class BDSSDEnergyDeposition: public BDSSensitiveDetector
+class BDSSDEnergyDepositionGlobal: public BDSSensitiveDetector
 {
 public:
-  BDSSDEnergyDeposition(G4String name,
-			G4bool   storeExtrasIn);
-  virtual ~BDSSDEnergyDeposition();
+  explicit BDSSDEnergyDepositionGlobal(G4String name);
+  virtual ~BDSSDEnergyDepositionGlobal();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
 
@@ -65,33 +65,27 @@ public:
   
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition() = delete;
+  BDSSDEnergyDepositionGlobal& operator=(const BDSSDEnergyDepositionGlobal&);
+  BDSSDEnergyDepositionGlobal(BDSSDEnergyDepositionGlobal&);
+  BDSSDEnergyDepositionGlobal() = delete;
   
-  G4bool   storeExtras;     ///< Whether to store extra information.
   G4String colName;         ///< Collection name.
-  BDSHitsCollectionEnergyDeposition* hits;
+  BDSHitsCollectionEnergyDepositionGlobal* hits;
   G4int    HCIDe;
 
   ///@{ Per hit variable.
   G4double energy;
   G4double preStepKineticEnergy;
+  G4double postStepKineticEnergy;
+  G4double stepLength;
   G4double weight;
   G4double X,Y,Z;      // Global coordinates.
-  G4double x,y,z;      // Local coordinates.
-  G4double sBefore;
-  G4double sAfter;
   G4double globalTime; // Time since start of event.
-  G4double stepLength;
-  G4int    ptype;
+  G4int    pdgID;
   G4int    trackID;
   G4int    parentID;
   G4int    turnsTaken;
   ///@}
-
-  /// Navigator for checking points in read out geometry
-  BDSAuxiliaryNavigator* auxNavigator;
 };
 
 #endif

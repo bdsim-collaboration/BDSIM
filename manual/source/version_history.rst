@@ -267,7 +267,7 @@ Output Changes
 * New options to control level of output as described in table in new features..
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
   level of detail with extra variables of their output.
-* New class BDSOutputROOTEventExit for a record of coordinates when a particle leaves a volume,
+* New class BDSOutputROOTEventLossWorld for a record of coordinates when a particle leaves a volume,
   use currently for exiting the world.
 * New structures ("branches") in the `Event` tree called :code:`ElossWorld` and
   :code:`ElossWorldExit` for energy deposition in the world material and energy leaving
@@ -291,7 +291,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | Y           | NA              | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventExit            | Y           | NA              | 1               |
+| BDSOutputROOTEventLossWorld       | Y           | NA              | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHeader          | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+

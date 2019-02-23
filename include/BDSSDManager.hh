@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
+class BDSSDEnergyDepositionGlobal;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
@@ -90,7 +91,7 @@ public:
   inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return energyDepositionTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return energyDepositionWorld;}
+  inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorld() const {return energyDepositionWorld;}
 
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
@@ -120,27 +121,26 @@ private:
   static BDSSDManager* instance;
 
   /// @{ SD instance.
-  BDSSDSampler*       samplerPlane;
-  BDSSDSampler*       samplerCylinder;
-  BDSSDTerminator*    terminator;
-  BDSSDEnergyDeposition* energyDeposition;
-  BDSSDEnergyDeposition* energyDepositionFull;
-  BDSSDEnergyDeposition* energyDepositionVacuum;
-  BDSSDEnergyDeposition* energyDepositionTunnel;
-  BDSSDEnergyDeposition* energyDepositionWorld;
-  BDSSDVolumeExit*    worldExit;
+  BDSSDSampler*                samplerPlane;
+  BDSSDSampler*                samplerCylinder;
+  BDSSDTerminator*             terminator;
+  BDSSDEnergyDeposition*       energyDeposition;
+  BDSSDEnergyDeposition*       energyDepositionFull;
+  BDSSDEnergyDeposition*       energyDepositionVacuum;
+  BDSSDEnergyDeposition*       energyDepositionTunnel;
+  BDSSDEnergyDepositionGlobal* energyDepositionWorld;
+  BDSSDVolumeExit*             worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
-  BDSSDCollimator*    collimatorSD;
+  BDSSDCollimator* collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
 
   /// @{ Cache of global constant option.
-  G4bool stopSecondaries;
   G4bool verbose;
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;

@@ -41,8 +41,8 @@ class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-class BDSHitVolumeExit;
-typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
+class BDSHitEnergyDepositionGlobal;
+typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 
 class G4PrimaryVertex;
 
@@ -104,21 +104,21 @@ public:
 			    const G4int pdgID);
   
   /// Copy event information from Geant4 simulation structures to output structures.
-  void FillEvent(const BDSEventInfo*                   info,
-		 const G4PrimaryVertex*                vertex,
-		 const BDSHitsCollectionSampler*       samplerHitsPlane,
-		 const BDSHitsCollectionSampler*       samplerHitsCylinder,
-		 const BDSHitsCollectionEnergyDeposition* energyLoss,
-		 const BDSHitsCollectionEnergyDeposition* energyLossFull,
-		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
-		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
-		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,
-		 const BDSHitsCollectionVolumeExit*    worldExitHits,
-		 const BDSTrajectoryPoint*             primaryHit,
-		 const BDSTrajectoryPoint*             primaryLoss,
-		 const std::map<BDSTrajectory*, bool>& trajectories,
-		 const BDSHitsCollectionCollimator*    collimatorHits,
-		 const G4int                           turnsTaken);
+  void FillEvent(const BDSEventInfo*                            info,
+		 const G4PrimaryVertex*                         vertex,
+		 const BDSHitsCollectionSampler*                samplerHitsPlane,
+		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossTunnel,
+		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
+		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
+		 const BDSTrajectoryPoint*                      primaryHit,
+		 const BDSTrajectoryPoint*                      primaryLoss,
+		 const std::map<BDSTrajectory*, bool>&          trajectories,
+		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
   void CloseAndOpenNewFile();
@@ -147,7 +147,7 @@ private:
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, vacuum, tunnel, world};
+  enum class LossType {energy, vacuum, tunnel, world, worldexit};
 
   /// Write the header.
   virtual void WriteHeader() = 0;
@@ -194,11 +194,14 @@ private:
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
-  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition *loss,
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
+		      const LossType type);
+
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
   /// Fill a collection volume exit hits into the approprate output structure.
-  void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
+  //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);

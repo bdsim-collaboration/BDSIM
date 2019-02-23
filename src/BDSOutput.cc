@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitCollimator.hh"
 #include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
@@ -29,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 #include "BDSOutputROOTEventCoords.hh"
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -45,7 +46,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
-#include "BDSHitVolumeExit.hh"
 
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
@@ -224,21 +224,21 @@ void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
   ClearStructuresEventLevel();
 }
 
-void BDSOutput::FillEvent(const BDSEventInfo*                   info,
-			  const G4PrimaryVertex*                vertex,
-			  const BDSHitsCollectionSampler*       samplerHitsPlane,
-			  const BDSHitsCollectionSampler*       samplerHitsCylinder,
-			  const BDSHitsCollectionEnergyDeposition* energyLoss,
-			  const BDSHitsCollectionEnergyDeposition* energyLossFull,
-			  const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
-			  const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
-			  const BDSHitsCollectionEnergyDeposition* energyLossWorld,
-			  const BDSHitsCollectionVolumeExit*    worldExitHits,
-			  const BDSTrajectoryPoint*             primaryHit,
-			  const BDSTrajectoryPoint*             primaryLoss,
-			  const std::map<BDSTrajectory*,bool>&  trajectories,
-			  const BDSHitsCollectionCollimator*    collimatorHits,
-			  const G4int                           turnsTaken)
+void BDSOutput::FillEvent(const BDSEventInfo*                            info,
+			  const G4PrimaryVertex*                         vertex,
+			  const BDSHitsCollectionSampler*                samplerHitsPlane,
+			  const BDSHitsCollectionSampler*                samplerHitsCylinder,
+			  const BDSHitsCollectionEnergyDeposition*       energyLoss,
+			  const BDSHitsCollectionEnergyDeposition*       energyLossFull,
+			  const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
+			  const BDSHitsCollectionEnergyDeposition*       energyLossTunnel,
+			  const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
+			  const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
+			  const BDSTrajectoryPoint*                      primaryHit,
+			  const BDSTrajectoryPoint*                      primaryLoss,
+			  const std::map<BDSTrajectory*,bool>&           trajectories,
+			  const BDSHitsCollectionCollimator*             collimatorHits,
+			  const G4int                                    turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
   // looped over here -> do only once as expensive as lots of hits
@@ -266,7 +266,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (energyLossWorld)
     {FillEnergyLoss(energyLossWorld,  BDSOutput::LossType::world);}
   if (worldExitHits)
-    {FillELossWorldExitHits(worldExitHits);}
+    {FillEnergyLoss(worldExitHits,    BDSOutput::LossType::worldexit);}
   if (primaryHit)
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
@@ -537,10 +537,54 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
     }
 }
 
+void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,
+			       const LossType lossType)
+{
+  switch (lossType)
+    {
+    case BDSOutput::LossType::world:
+    case BDSOutput::LossType::worldexit:
+      {break;}
+    default:
+      {return; break;} // don't fill for other types of hits
+    }
+
+  G4int nHits = hits->entries();
+  if (nHits == 0)
+    {return;}
+  switch (lossType)
+    {
+    case BDSOutput::LossType::world:
+      {
+	for (G4int i=0; i < nHits; i++)
+	  {
+	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
+	    energyDepositedWorld += hit->TotalEnergyWeighted()/CLHEP::GeV;
+	    eLossWorld->Fill(hit);
+	  }
+        break;
+      }
+    case BDSOutput::LossType::worldexit:
+      {
+	for (G4int i = 0; i < nHits; i++)
+	  {
+	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
+	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
+	    eLossWorldExit->Fill(hit);
+	  }
+        break;
+      }
+    default:
+      {break;} // only to prevent compiler warning
+    }
+}
+
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 			       const LossType lossType)
 {
-  G4int n_hit = hits->entries();
+  G4int nHits            = hits->entries();
+  if (nHits == 0)
+    {return;}
   G4int indELoss         = histIndices1D["Eloss"];
   G4int indELossPE       = histIndices1D["ElossPE"];
   G4int indELossTunnel   = -1;
@@ -560,7 +604,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
   G4int indScoringMap    = -1;
   if (useScoringMap)
     {indScoringMap = histIndices3D["ScoringMap"];}
-  for (G4int i=0; i < n_hit; i++)
+  for (G4int i=0; i < nHits; i++)
     {
       BDSHitEnergyDeposition* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
@@ -607,12 +651,6 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 	      }
 	    break;
 	  }
-	case BDSOutput::LossType::world:
-	  {
-	    energyDepositedWorld += eW;
-	    eLossWorld->Fill(hit);
-	    break;
-	  }
 	default:
 	  {break;} // only to prevent compiler warning
 	}
@@ -630,17 +668,6 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
       (lossType == BDSOutput::LossType::energy) &&
       storeELossHistograms)
     {CopyFromHistToHist1D("ElossPE", "CollElossPE", collimatorIndices);}
-}
-
-void BDSOutput::FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* hits)
-{
-  G4int nHits = hits->entries();
-  for (G4int i = 0; i < nHits; i++)
-    {
-      BDSHitVolumeExit* hit = (*hits)[i];
-      energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
-      eLossWorldExit->Fill(hit);
-    }
 }
 
 void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
@@ -671,9 +698,6 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 
 void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
-#endif
   traj->Fill(trajectories);
 }
 

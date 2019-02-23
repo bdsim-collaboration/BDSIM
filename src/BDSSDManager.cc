@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
@@ -62,7 +63,6 @@ BDSSDManager::BDSSDManager()
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
   BDSGlobalConstants* g   = BDSGlobalConstants::Instance();
-  stopSecondaries         = g->StopSecondaries();
   verbose                 = g->Verbose();
   storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
@@ -105,22 +105,22 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries, storeELossExtras);
+  energyDeposition = new BDSSDEnergyDeposition("general", storeELossExtras);
   SDMan->AddNewDetector(energyDeposition);
 
-  energyDepositionFull = new BDSSDEnergyDeposition("general_full", stopSecondaries, true);
+  energyDepositionFull = new BDSSDEnergyDeposition("general_full", true);
   SDMan->AddNewDetector(energyDepositionFull);
   
-  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries, storeELossExtras);
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", storeELossExtras);
   SDMan->AddNewDetector(energyDepositionVacuum);
 
-  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries, storeELossExtras);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", storeELossExtras);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries, true);
+  energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss");
   SDMan->AddNewDetector(energyDepositionWorld);
 
-  worldExit= new BDSSDVolumeExit("worldExit", true);
+  worldExit = new BDSSDVolumeExit("worldExit", true);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029

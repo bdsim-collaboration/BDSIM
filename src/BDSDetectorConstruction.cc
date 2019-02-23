@@ -516,6 +516,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
+#else
+      G4cout << __METHOD_NAME__ << "World dimensions: " << worldR / CLHEP::m << " m" << G4endl;
 #endif
 
       worldExtent = BDSExtent(worldR);
