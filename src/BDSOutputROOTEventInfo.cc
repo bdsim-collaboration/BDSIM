@@ -47,21 +47,20 @@ BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
 
 void BDSOutputROOTEventInfo::Flush()
 {
-  startTime                    = time_t();
-  stopTime                     = time_t();
-  duration                     = 0;
-  seedStateAtStart             = "";
-  index                        = -1;
-  aborted                      = false;
-  primaryHitMachine            = false;
-  primaryAbsorbedInCollimator  = false;
-  memoryUsageMb                = 0;
-  energyDeposited              = 0;
-  energyDepositedVacuum        = 0;
-  energyDepositedWorld         = 0;
-  energyDepositedWorldContents = 0;
-  energyDepositedTunnel        = 0;
-  energyKilled                 = 0;
-  energyTotal                  = 0;
-  nCollimatorsInteracted       = 0;
+  startTime         = time_t();
+  stopTime          = time_t();
+  duration          = 0;
+  seedStateAtStart  = "";
+  index             = -1;
+  aborted           = false;
+  primaryHitMachine = false;
+  primaryAbsorbedInCollimator = false;
+  memoryUsageMb         = 0;
+  energyDeposited       = 0;
+  energyDepositedVacuum = 0;
+  energyDepositedWorld  = 0;
+  energyDepositedTunnel = 0;
+  energyKilled          = 0;
+  energyTotal           = 0;
+  nCollimatorsInteracted = 0;
 }
