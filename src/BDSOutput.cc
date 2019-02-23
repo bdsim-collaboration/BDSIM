@@ -65,6 +65,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 const std::set<G4String> BDSOutput::protectedNames = {
   "Event", "Histos", "Info", "Primary", "PrimaryGlobal",
   "Eloss", "ElossVacuum", "ElossTunnel", "ElossWorld", "ElossWorldExit",
+  "ElossWorldContents",
   "PrimaryFirstHit", "PrimaryLastHit", "Trajectory"
 };
 
@@ -80,6 +81,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   energyDeposited(0),
   energyDepositedVacuum(0),
   energyDepositedWorld(0),
+  energyDepositedWorldContents(0),
   energyDepositedTunnel(0),
   energyWorldExit(0),
   nCollimatorsInteracted(0)
@@ -104,6 +106,8 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeELossTunnelHistograms = g->StoreELossTunnelHistograms() || storeELossTunnel;
   storeELossVacuum           = g->StoreELossVacuum();
   storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
+  storeELossWorld            = g->StoreELossWorld();
+  storeELossWorldContents    = g->StoreELossWorldContents();
   storeGeant4Data            = g->StoreGeant4Data();
   storeModel                 = g->StoreModel();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
@@ -233,6 +237,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
 			  const BDSHitsCollectionEnergyDeposition*       energyLossTunnel,
 			  const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
+			  const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 			  const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 			  const BDSTrajectoryPoint*                      primaryHit,
 			  const BDSTrajectoryPoint*                      primaryLoss,
@@ -242,12 +247,13 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
   // looped over here -> do only once as expensive as lots of hits
-  energyDeposited        = 0;
-  energyDepositedVacuum  = 0;
-  energyDepositedWorld   = 0;
-  energyDepositedTunnel  = 0;
-  energyWorldExit        = 0;
-  nCollimatorsInteracted = 0;
+  energyDeposited              = 0;
+  energyDepositedVacuum        = 0;
+  energyDepositedWorld         = 0;
+  energyDepositedWorldContents = 0;
+  energyDepositedTunnel        = 0;
+  energyWorldExit              = 0;
+  nCollimatorsInteracted       = 0;
   
   if (vertex)
     {FillPrimary(vertex, turnsTaken);}
@@ -256,17 +262,19 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   if (samplerHitsCylinder)
     {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
   if (energyLoss)
-    {FillEnergyLoss(energyLoss,       BDSOutput::LossType::energy);}
+    {FillEnergyLoss(energyLoss,        BDSOutput::LossType::energy);}
   if (energyLossFull)
-    {FillEnergyLoss(energyLossFull,   BDSOutput::LossType::energy);}
+    {FillEnergyLoss(energyLossFull,    BDSOutput::LossType::energy);}
   if (energyLossVacuum)
-    {FillEnergyLoss(energyLossVacuum, BDSOutput::LossType::vacuum);}
+    {FillEnergyLoss(energyLossVacuum,  BDSOutput::LossType::vacuum);}
   if (energyLossTunnel)
-    {FillEnergyLoss(energyLossTunnel, BDSOutput::LossType::tunnel);}
+    {FillEnergyLoss(energyLossTunnel,  BDSOutput::LossType::tunnel);}
   if (energyLossWorld)
-    {FillEnergyLoss(energyLossWorld,  BDSOutput::LossType::world);}
+    {FillEnergyLoss(energyLossWorld,   BDSOutput::LossType::world);}
   if (worldExitHits)
-    {FillEnergyLoss(worldExitHits,    BDSOutput::LossType::worldexit);}
+    {FillEnergyLoss(worldExitHits,     BDSOutput::LossType::worldexit);}
+  if (energyLossWorldContents)
+    {FillEnergyLoss(energyLossWorldContents, BDSOutput::LossType::worldcontents);}
   if (primaryHit)
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
@@ -464,14 +472,21 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 {
   if (info)
     {*evtInfo = *(info->GetInfo());}
-  evtInfo->energyDeposited       = energyDeposited;
-  evtInfo->energyDepositedVacuum = energyDepositedVacuum;
-  evtInfo->energyDepositedWorld  = energyDepositedWorld;
-  evtInfo->energyDepositedTunnel = energyDepositedTunnel;
-  evtInfo->energyWorldExit       = energyWorldExit;
+  evtInfo->energyDeposited              = energyDeposited;
+  evtInfo->energyDepositedVacuum        = energyDepositedVacuum;
+  evtInfo->energyDepositedWorld         = energyDepositedWorld;
+  evtInfo->energyDepositedWorldContents = energyDepositedWorldContents;
+  evtInfo->energyDepositedTunnel        = energyDepositedTunnel;
+  evtInfo->energyWorldExit              = energyWorldExit;
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
-  evtInfo->energyTotal =  energyDeposited + energyDepositedVacuum + energyDepositedWorld + energyDepositedTunnel + energyWorldExit + ek;
+  evtInfo->energyTotal =  energyDeposited
+    + energyDepositedVacuum
+    + energyDepositedWorld
+    + energyDepositedWorldContents
+    + energyDepositedTunnel
+    + energyWorldExit
+    + ek;
 
   evtInfo->nCollimatorsInteracted = nCollimatorsInteracted;
 }
@@ -544,6 +559,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
     {
     case BDSOutput::LossType::world:
     case BDSOutput::LossType::worldexit:
+    case BDSOutput::LossType::worldcontents:
       {break;}
     default:
       {return; break;} // don't fill for other types of hits
@@ -571,6 +587,16 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
 	    eLossWorldExit->Fill(hit);
+	  }
+        break;
+      }
+    case BDSOutput::LossType::worldcontents:
+      {
+	for (G4int i = 0; i < nHits; i++)
+	  {
+	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
+	    energyDepositedWorldContents += hit->TotalEnergyWeighted()/CLHEP::GeV;
+	    eLossWorldContents->Fill(hit);
 	  }
         break;
       }

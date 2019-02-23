@@ -85,6 +85,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eCounterVacuumID(-1),
   eCounterTunnelID(-1),
   eCounterWorldID(-1),
+  eCounterWorldContentsID(-1),
   worldExitCollID(-1),
   collimatorCollID(-1),
   startTime(0),
@@ -153,15 +154,16 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
-      samplerCollID_plane = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
-      samplerCollID_cylin = g4SDMan->GetCollectionID(bdsSDMan->SamplerCylinder()->GetName());
-      eCounterID       = g4SDMan->GetCollectionID(bdsSDMan->EnergyDeposition()->GetName());
-      eCounterFullID   = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionFull()->GetName());
-      eCounterVacuumID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionVacuum()->GetName());
-      eCounterTunnelID = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionTunnel()->GetName());
-      eCounterWorldID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorld()->GetName());
-      worldExitCollID  = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
-      collimatorCollID = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
+      samplerCollID_plane      = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
+      samplerCollID_cylin      = g4SDMan->GetCollectionID(bdsSDMan->SamplerCylinder()->GetName());
+      eCounterID               = g4SDMan->GetCollectionID(bdsSDMan->EnergyDeposition()->GetName());
+      eCounterFullID           = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionFull()->GetName());
+      eCounterVacuumID         = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionVacuum()->GetName());
+      eCounterTunnelID         = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionTunnel()->GetName());
+      eCounterWorldID          = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorld()->GetName());
+      eCounterWorldContentsID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorldContents()->GetName());
+      worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
+      collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
     }
   FireLaserCompton=true;
 
@@ -217,8 +219,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // world exit hits
   typedef BDSHitsCollectionEnergyDepositionGlobal ecghc;
-  ecghc* eCounterWorldHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
-  ecghc* worldExitHits      = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
+  ecghc* eCounterWorldHits          = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
+  ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
+  ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
@@ -430,6 +433,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    eCounterVacuumHits,
 		    eCounterTunnelHits,
 		    eCounterWorldHits,
+		    eCounterWorldContentsHits,
 		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,

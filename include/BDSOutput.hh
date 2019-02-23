@@ -113,6 +113,7 @@ public:
 		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossTunnel,
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
+		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 		 const BDSTrajectoryPoint*                      primaryHit,
 		 const BDSTrajectoryPoint*                      primaryLoss,
@@ -147,7 +148,7 @@ private:
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, vacuum, tunnel, world, worldexit};
+  enum class LossType {energy, vacuum, tunnel, world, worldexit, worldcontents};
 
   /// Write the header.
   virtual void WriteHeader() = 0;
@@ -254,6 +255,8 @@ private:
   G4bool storeELossTunnelHistograms;
   G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
+  G4bool storeELossWorld; // for both world and world exit
+  G4bool storeELossWorldContents;
   G4bool storeGeant4Data;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
@@ -276,6 +279,7 @@ private:
   G4double energyDeposited;
   G4double energyDepositedVacuum;
   G4double energyDepositedWorld;
+  G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
   G4double energyWorldExit;
   G4int    nCollimatorsInteracted;
