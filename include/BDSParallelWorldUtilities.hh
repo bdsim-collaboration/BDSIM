@@ -45,7 +45,7 @@ namespace BDS
   std::vector<G4VUserParallelWorld*> ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld);
 
   /// Construct the parallel physics process for each sampler world.
-  std::vector<G4ParallelWorldPhysics*> ConstructSamplerParallelPhysics(std::vector<G4VUserParallelWorld*> worlds);
+  std::vector<G4ParallelWorldPhysics*> ConstructParallelWorldPhysics(std::vector<G4VUserParallelWorld *> worlds);
 
   /// Register each parallel physics process to the main physics list.
   void RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,

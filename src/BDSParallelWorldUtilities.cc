@@ -119,7 +119,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   return worldsRequiringPhysics;
 }
 
-std::vector<G4ParallelWorldPhysics*> BDS::ConstructSamplerParallelPhysics(std::vector<G4VUserParallelWorld*> worlds)
+std::vector<G4ParallelWorldPhysics*> BDS::ConstructParallelWorldPhysics(std::vector<G4VUserParallelWorld *> worlds)
 {
   std::vector<G4ParallelWorldPhysics*> result;
   for (auto world : worlds)

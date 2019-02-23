@@ -166,7 +166,7 @@ int BDSIM::Initialise()
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
   
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
-  auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
+  auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
@@ -181,14 +181,14 @@ int BDSIM::Initialise()
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
-  auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
+  auto samplerPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
   G4GeometrySampler* pgs = nullptr;
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
-    {pgs = BDS::GetGeometrySamplerAndRegisterImportanceBiasing(samplerWorlds,physList);}
+    {pgs = BDS::GetGeometrySamplerAndRegisterImportanceBiasing(parallelWorldsRequiringPhysics,physList);}
 
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
@@ -314,7 +314,7 @@ int BDSIM::Initialise()
 
   /// Create importance store for parallel importance world
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
-    {BDS::AddIStore(pgs, samplerWorlds);}
+    {BDS::AddIStore(pgs, parallelWorldsRequiringPhysics);}
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
