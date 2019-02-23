@@ -32,7 +32,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDVolumeExit.hh"
 
 #include "G4SDManager.hh"
-#include "G4SDParticleFilter.hh"
 #include "G4Version.hh"
 
 #if G4VERSION_NUMBER > 1029

@@ -566,7 +566,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
     }
 
   G4int nHits = hits->entries();
-  if (nHits == 0)
+  if (nHits == 0) // integer so ok to compare
     {return;}
   switch (lossType)
     {
