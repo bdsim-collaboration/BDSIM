@@ -361,6 +361,8 @@ void Options::PublishMembers()
   publish("storeELossTunnelHistograms",     &Options::storeElossTunnelHistograms);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeELossWorld",                &Options::storeElossWorld);
+  publish("storeElossWorldContents",        &Options::storeElossWorldContents);
+  publish("storeELossWorldContents",        &Options::storeElossWorldContents);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeELossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);
