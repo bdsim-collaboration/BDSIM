@@ -82,8 +82,9 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   eLossTunnel = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
 					   storePreStepKineticEnergy);
-  eLossWorld     = new BDSOutputROOTEventLossWorld();
-  eLossWorldExit = new BDSOutputROOTEventLossWorld();
+  eLossWorld         = new BDSOutputROOTEventLossWorld();
+  eLossWorldExit     = new BDSOutputROOTEventLossWorld();
+  eLossWolrdContents = new BDSOutputROOTEventLossWorld();
 
   pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
   pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
@@ -117,6 +118,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete eLossTunnel;
   delete eLossWorld;
   delete eLossWorldExit;
+  delete eLossWorldContents;
   delete pFirstHit;
   delete pLastHit;
   delete traj;
@@ -196,7 +198,6 @@ void BDSOutputStructures::PrepareCollimatorInformation()
 
 void BDSOutputStructures::InitialiseCollimators()
 {
-
   if (!localCollimatorsInitialised)
     {
       localCollimatorsInitialised = true;
@@ -242,6 +243,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   eLossTunnel->Flush();
   eLossWorld->Flush();
   eLossWorldExit->Flush();
+  eLossWorldContents->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
   traj->Flush();
