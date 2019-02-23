@@ -576,7 +576,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	  {
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyDepositedWorld += hit->TotalEnergyWeighted()/CLHEP::GeV;
-	    eLossWorld->Fill(hit);
+	    if (storeELossWorld)
+	      {eLossWorld->Fill(hit);}
 	  }
         break;
       }
@@ -586,7 +587,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	  {
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
-	    eLossWorldExit->Fill(hit);
+	    if (storeELossWorld)
+	      {eLossWorldExit->Fill(hit);}
 	  }
         break;
       }
@@ -596,7 +598,8 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	  {
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyDepositedWorldContents += hit->TotalEnergyWeighted()/CLHEP::GeV;
-	    eLossWorldContents->Fill(hit);
+	    if (storeELossWorldContents)
+	      {eLossWorldContents->Fill(hit);}
 	  }
         break;
       }
