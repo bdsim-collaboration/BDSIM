@@ -84,7 +84,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 					   storePreStepKineticEnergy);
   eLossWorld         = new BDSOutputROOTEventLossWorld();
   eLossWorldExit     = new BDSOutputROOTEventLossWorld();
-  eLossWolrdContents = new BDSOutputROOTEventLossWorld();
+  eLossWorldContents = new BDSOutputROOTEventLossWorld();
 
   pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
   pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
