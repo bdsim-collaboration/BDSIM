@@ -27,6 +27,7 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   stopTime(time_t()),
   duration(0),
   seedStateAtStart(""),
+  index(-1),
   aborted(false),
   primaryHitMachine(false),
   primaryAbsorbedInCollimator(false),
@@ -49,6 +50,7 @@ void BDSOutputROOTEventInfo::Flush()
   stopTime          = time_t();
   duration          = 0;
   seedStateAtStart  = "";
+  index             = -1;
   aborted           = false;
   primaryHitMachine = false;
   primaryAbsorbedInCollimator = false;
