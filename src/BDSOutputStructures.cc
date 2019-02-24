@@ -248,6 +248,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   pLastHit->Flush();
   traj->Flush();
   evtHistos->Flush();
+  evtInfo->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresRunLevel()
