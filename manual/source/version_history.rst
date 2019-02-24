@@ -30,6 +30,8 @@ New Features
   See :ref:`interfacing-section`.
 * New samplerplacement object that defines an arbitrarily placed sampler in the world that
   may overlap with anything (see :ref:`user-sampler-placement`).
+* New importance sampling implementation when using a user-supplied world geometry. (see
+  :ref:`physics-bias-importance-sampling`.
 
 * New options:
 
@@ -54,6 +56,11 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | ignoreLocalMagnetGeometry        | If turned on, this option means that only the magnet geometry    |
 |                                  | from options will be used. Similar to `ignoreLocalAperture`.     |
++----------------------------------+------------------------------------------------------------------+
+| importanceVolumeMap              | File path for text file that maps importance values to volumes.  |
++----------------------------------+------------------------------------------------------------------+
+| importanceWorldGeometryFile      | File path for the externally provided geometry that will be used |
+|                                  | as the parallel world for the importance sampling.               |
 +----------------------------------+------------------------------------------------------------------+
 | physicsEnergyLimitLow            | Control minimum energy for all physics models. (advanced)        |
 +----------------------------------+------------------------------------------------------------------+
@@ -87,9 +94,15 @@ New Features
 | storeElossVacuum                 | Control whether energy deposition in the residual gas in the     |
 |                                  | beam pipe 'vacuum' is recorded.                                  |
 +----------------------------------+------------------------------------------------------------------+
-| storeELossWorld                  | Turn on generation of energy deposition in the world volume      |
+| storeElossWorld                  | Turn on generation of energy deposition in the world volume      |
 |                                  | (i.e. the air) as well as record energy leaving the simulation.  |
 |                                  | Default off.                                                     |
++----------------------------------+------------------------------------------------------------------+
+| storeElossWorldContents          | Turn on generation and storage of energy deposition in any       |
+|                                  | included with the externally provided world geometry. Off by     |
+|                                  | default but turned on automatically when using importance        |
+|                                  | sampling. Allows the user to distinguish energy deposition in    |
+|                                  | the air as stored in ElossWorld from the contents of the world.  |
 +----------------------------------+------------------------------------------------------------------+
 | storeGeant4Data                  | Control whether the basic particle data is stored in the output  |
 |                                  | for all particles used or not.                                   |

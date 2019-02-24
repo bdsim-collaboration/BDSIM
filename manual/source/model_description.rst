@@ -3369,6 +3369,8 @@ vacuum respectively::
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
 
+.. _physics-bias-importance-sampling:
+  
 Importance Sampling
 ^^^^^^^^^^^^^^^^^^^
 To enable importance sampling, the user must provide both a mass world and a separate importance
