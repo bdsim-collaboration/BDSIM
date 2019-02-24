@@ -210,7 +210,7 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 #else
       {result = nullptr; break;}
 #endif
-    case BDSSDType::worldcontents:
+    case BDSSDType::energydepworldcontents:
       {
 	if (applyOptions)
 	  {result = generateELossWorldContents ? energyDepositionWorldContents : nullptr;}
