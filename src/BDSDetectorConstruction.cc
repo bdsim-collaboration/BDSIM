@@ -501,7 +501,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // make world sensitive if importance sampling is needed
       if (BDSGlobalConstants::Instance()->StoreELossWorld()
 	  || BDSGlobalConstants::Instance()->UseImportanceSampling()
-	  || BDSGlobalConstants::Instance()->StoreElossWorldContents())
+	  || BDSGlobalConstants::Instance()->StoreELossWorldContents())
         {
           worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
