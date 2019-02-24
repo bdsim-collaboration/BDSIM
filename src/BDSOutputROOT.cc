@@ -106,6 +106,9 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",      eLossVacuum,    4000, 1);
   theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 1);
   theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+  if (storeELossWorldContents)
+    {theEventOutputTree->Branch("ElossWorldContents.", "BDSOutputROOTEventLossWorld", eLossWorldContents, 4000, 1);}
+  
   theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
