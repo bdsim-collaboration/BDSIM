@@ -181,7 +181,7 @@ int BDSIM::Initialise()
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
-  auto samplerPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
+  auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
 
   // create geometry sampler and register importance sampling biasing. Has to be here
@@ -213,7 +213,7 @@ int BDSIM::Initialise()
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
 
-  BDS::RegisterSamplerPhysics(samplerPhysics, physList);
+  BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
     {physList->RegisterPhysics(biasPhysics);}
