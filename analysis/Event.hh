@@ -63,6 +63,7 @@ public:
   BDSOutputROOTEventLoss*            GetLossVacuum()       {return ElossVacuum;}
   BDSOutputROOTEventLoss*            GetLossTunnel()       {return ElossTunnel;}
   BDSOutputROOTEventLossWorld*       GetLossWorld()        {return ElossWorld;}
+  BDSOutputROOTEventLossWorld*       GetLossWorldContents(){return ElossWorldContents;}
   BDSOutputROOTEventLossWorld*       GetLossworldExit()    {return ElossWorldExit;}
   BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return PrimaryFirstHit;}
   BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return PrimaryLastHit;}
@@ -114,6 +115,7 @@ public:
   BDSOutputROOTEventLoss*       ElossVacuum;
   BDSOutputROOTEventLoss*       ElossTunnel;
   BDSOutputROOTEventLossWorld*  ElossWorld;
+  BDSOutputROOTEventLossWorld*  ElossWorldContents;
   BDSOutputROOTEventLossWorld*  ElossWorldExit;
   BDSOutputROOTEventLoss*       PrimaryFirstHit;
   BDSOutputROOTEventLoss*       PrimaryLastHit;
