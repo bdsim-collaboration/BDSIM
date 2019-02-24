@@ -19,14 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSHITENERGYDEPOSITIONGLOBAL_H
 #define BDSHITENERGYDEPOSITIONGLOBAL_H
 
+#include "globals.hh"
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
-#include "G4Allocator.hh"
-
-class BDSHitEnergyDepositionGlobal;
-
-typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
-extern G4Allocator<BDSHitEnergyDepositionGlobal> BDSAllocatorEnergyDepositionGlobal;
 
 /**
  * @brief Information recorded for a step leaving a volume.
@@ -54,10 +49,7 @@ public:
 			       G4double weightIn,
 			       G4int    turnsTakenIn);
   
-  virtual ~BDSHitEnergyDepositionGlobal(){;}
-  
-  inline void* operator new(size_t);
-  inline void operator delete(void *aHit);
+  virtual ~BDSHitEnergyDepositionGlobal();
 
   inline G4double TotalEnergyWeighted() const {return weight * totalEnergy;}
   
@@ -88,16 +80,6 @@ private:
   BDSHitEnergyDepositionGlobal() = delete;
 };
 
-inline void* BDSHitEnergyDepositionGlobal::operator new(size_t)
-{
-  void* aHit;
-  aHit=(void*) BDSAllocatorEnergyDepositionGlobal.MallocSingle();
-  return aHit;
-}
-
-inline void BDSHitEnergyDepositionGlobal::operator delete(void *aHit)
-{
- BDSAllocatorEnergyDepositionGlobal.FreeSingle((BDSHitEnergyDepositionGlobal*) aHit);
-}
+typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 
 #endif

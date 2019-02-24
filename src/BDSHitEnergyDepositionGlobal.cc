@@ -18,9 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSHitEnergyDepositionGlobal.hh"
 
-#include "G4Allocator.hh"
-
-G4Allocator<BDSHitEnergyDepositionGlobal> BDSAllocatorEnergyDepositionGlobal;
+#include "globals.hh"
 
 BDSHitEnergyDepositionGlobal::BDSHitEnergyDepositionGlobal(G4double totalEnergyIn,
 							   G4double preStepKineticEnergyIn,
@@ -48,4 +46,7 @@ BDSHitEnergyDepositionGlobal::BDSHitEnergyDepositionGlobal(G4double totalEnergyI
   parentID(parentIDIn),
   weight(weightIn),
   turnsTaken(turnsTakenIn)
+{;}
+
+BDSHitEnergyDepositionGlobal::~BDSHitEnergyDepositionGlobal()
 {;}
