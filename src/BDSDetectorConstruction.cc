@@ -49,6 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerType.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
+#include "BDSSDType.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
@@ -479,7 +480,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
 										nullptr,
-										0, 0, true);
+										0, 0, true, BDSSDType::energydepworldcontents);
       worldExtent = geom->GetExtent();
 
       BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());
