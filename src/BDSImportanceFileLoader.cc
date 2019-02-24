@@ -16,11 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "BDSDebug.hh"
 #include "BDSImportanceFileLoader.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "globals.hh"
 #include "G4String.hh"
 
 #include <algorithm>
@@ -34,18 +32,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 #ifdef USE_GZSTREAM
-#include "gzstream.h"
+#include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSImportanceFileLoader::BDSImportanceFileLoader()
+template <class T>
+BDSImportanceFileLoader<T>::BDSImportanceFileLoader()
 {;}
 
-BDSImportanceFileLoader::~BDSImportanceFileLoader()
+template <class T>
+BDSImportanceFileLoader<T>::~BDSImportanceFileLoader()
 {;}
 
-std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
+template <class T>
+std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fileName)
 {
-  std::ifstream file;
+  T file;
   std::vector<G4double> importanceValues;
 
   file.open(fileName);
@@ -70,7 +71,6 @@ std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
 
   while (std::getline(file, line))
     { // read a line only if it's not a blank one
-
       std::istringstream liness(line);
       std::string volume;
       G4double importanceValue;
@@ -92,3 +92,9 @@ std::map<G4String, G4double> BDSImportanceFileLoader::Load(G4String fileName)
 
   return importance;
 }
+
+template class BDSImportanceFileLoader<std::ifstream>;
+
+#ifdef USE_GZSTREAM
+template class BDSImportanceFileLoader<igzstream>;
+#endif

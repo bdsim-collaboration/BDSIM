@@ -26,19 +26,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @brief A loader for importance values used in importance sampling.
- *
- *
  * 
  * @author Will Shields
  */
 
+template <class T>
 class BDSImportanceFileLoader
 {
 public:
   BDSImportanceFileLoader();
   ~BDSImportanceFileLoader();
 
-  std::map<G4String, G4double> Load(G4String fileName);
+  std::map<G4String, G4double> Load(const G4String& fileName);
 };
 
 #endif

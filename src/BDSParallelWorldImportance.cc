@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4GeometryCell.hh"
 #include "G4IStore.hh"
 #include "G4LogicalVolume.hh"
@@ -37,6 +38,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
 
+#ifdef USE_GZSTREAM
+#include "src-external/gzstream/gzstream.h"
+#endif
+
+#include <string>
+#include <fstream>
 
 BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
   G4VUserParallelWorld("importanceWorld_" + name),
@@ -52,8 +59,20 @@ void BDSParallelWorldImportance::Construct()
 {
   // load the cell importance values
   G4String importanceMapFile = BDS::GetFullPath(imVolMap);
-  BDSImportanceFileLoader importanceLoader;
-  imVolumesAndValues = importanceLoader.Load(importanceMapFile);
+  if (importanceMapFile.rfind("gz") != std::string::npos)
+    {
+      #ifdef USE_GZSTREAM
+      BDSImportanceFileLoader<igzstream> loader;
+      imVolumesAndValues = loader.Load(importanceMapFile);
+#else
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
+#endif
+    }
+  else
+    {
+      BDSImportanceFileLoader<std::ifstream> loader;
+      imVolumesAndValues = loader.Load(importanceMapFile);
+    }
 
   // build world
   BuildWorld();
