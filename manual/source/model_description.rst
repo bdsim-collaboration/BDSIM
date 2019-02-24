@@ -3398,6 +3398,11 @@ Example: ::
 An example of the world volume geometry (top), the importance sampling world geometry (middle), and
 an importance volume map (bottom) are shown below with an example beamline.
 
+In the output a new branch in the event tree calls "ElossWorldContents" is automatically added
+when using importance sampling. This is the global energy deposition hits from any volumes
+that were in the externally supplied world - such as shielding blocks. This distinguishes
+the energy deposition in the world volume itself (i.e. the air).
+
 .. figure:: figures/importanceSampling_massWorld.png
 	    :width: 90%
 	    :align: center
