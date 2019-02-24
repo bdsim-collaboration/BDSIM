@@ -17,48 +17,47 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSImportanceVolumeStore.hh"
-#include <sstream>
 
+#include "globals.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include <algorithm>
+#include <set>
 
-BDSImportanceVolumeStore::BDSImportanceVolumeStore(){}
+BDSImportanceVolumeStore::BDSImportanceVolumeStore(){;}
 
-BDSImportanceVolumeStore::~BDSImportanceVolumeStore(){}
+BDSImportanceVolumeStore::~BDSImportanceVolumeStore(){;}
 
-void BDSImportanceVolumeStore::AddPVolume(const G4GeometryCell &cell){
+void BDSImportanceVolumeStore::AddPVolume(const G4GeometryCell& cell)
+{
   BDSSetGeometryCell::iterator it = fSetGeometryCell.find(cell);
   if (it != fSetGeometryCell.end())
     {
-      G4cout << "BDSImportanceVolumeStore::AddPVolume: cell already stored"
-             << G4endl;
+      G4cout << "BDSImportanceVolumeStore::AddPVolume: cell already stored" << G4endl;
       return;
     }
   fSetGeometryCell.insert(cell);
 }
 
-const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(const G4String &name) const {
-  const G4VPhysicalVolume *pvol = 0;
+const G4VPhysicalVolume* BDSImportanceVolumeStore::GetPVolume(const G4String& name) const
+{
+  const G4VPhysicalVolume* pvol = 0;
   for (BDSSetGeometryCell::const_iterator it = fSetGeometryCell.begin(); it != fSetGeometryCell.end(); ++it)
     {
-      const G4VPhysicalVolume &vol = it->GetPhysicalVolume();
+      const G4VPhysicalVolume& vol = it->GetPhysicalVolume();
       if (vol.GetName() == name)
-        {pvol =  &vol;}
+        {pvol = &vol;}
     }
   if (!pvol)
     {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume named: " << name << ", found" << G4endl;}
   return pvol;
 }
 
-const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(const G4int &index) const
-  {
-    const G4GeometryCell &cell = *std::next(fSetGeometryCell.begin(), index);
-    const G4VPhysicalVolume *pvol = &cell.GetPhysicalVolume();
-    if (!pvol)
-      {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume for cell: " << index << ", found" << G4endl;}
-    return pvol;
-  }
-
-
-G4int BDSImportanceVolumeStore::size()
-  {return (G4int) fSetGeometryCell.size();}
+const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(G4int index) const
+{
+  const G4GeometryCell& cell = *std::next(fSetGeometryCell.begin(), index);
+  const G4VPhysicalVolume* pvol = &cell.GetPhysicalVolume();
+  if (!pvol)
+    {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume for cell: " << index << ", found" << G4endl;}
+  return pvol;
+}

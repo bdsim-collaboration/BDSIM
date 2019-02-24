@@ -19,42 +19,42 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSIMPORTANCEVOLUMESTORE_H
 #define BDSIMPORTANCEVOLUMESTORE_H
 
-#include "globals.hh" // geant4 globals / types
-#include <map>
-#include <vector>
+#include "globals.hh"
+#include "G4GeometryCell.hh"
+#include "G4GeometryCellComp.hh"
+
+#include <set>
+
+class G4VPhysicalVolume;
+
+typedef std::set<G4GeometryCell, G4GeometryCellComp> BDSSetGeometryCell;
 
 /**
- * @brief
- *
- *
+ * @brief Registry of importance values.
  * 
  * @author Will Shields
  */
 
-#include "globals.hh"
-#include <set>
-#include "G4GeometryCell.hh"
-#include "G4GeometryCellComp.hh"
-
-typedef std::set< G4GeometryCell, G4GeometryCellComp > BDSSetGeometryCell;
-
 class BDSImportanceVolumeStore
 {
 public:
-    BDSImportanceVolumeStore();
-    ~BDSImportanceVolumeStore();
+  BDSImportanceVolumeStore();
+  ~BDSImportanceVolumeStore();
+  
+  /// Add geometry cell to the store.
+  void AddPVolume(const G4GeometryCell &cell);
 
-    /// Add geometry cell to the store
-    void AddPVolume(const G4GeometryCell &cell);
-    /// Get named physical volume from store
-    const G4VPhysicalVolume *GetPVolume(const G4String &name) const;
-    /// Get stores physical volume from index
-    const G4VPhysicalVolume *GetPVolume(const G4int &index) const;
-    /// Length of this store. Useful for debugging.
-    G4int size();
+  /// Get named physical volume from store.
+  const G4VPhysicalVolume* GetPVolume(const G4String &name) const;
 
+  /// Get stores physical volume from index.
+  const G4VPhysicalVolume* GetPVolume(G4int index) const;
+
+  /// Length of this store. Useful for debugging.
+  inline G4int size() const {return (G4int)fSetGeometryCell.size();}
+  
 private:
-    BDSSetGeometryCell fSetGeometryCell;
+  BDSSetGeometryCell fSetGeometryCell;
 };
 
 #endif
