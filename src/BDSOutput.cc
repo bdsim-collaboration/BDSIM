@@ -106,8 +106,8 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeELossTunnelHistograms = g->StoreELossTunnelHistograms() || storeELossTunnel;
   storeELossVacuum           = g->StoreELossVacuum();
   storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
-  storeELossWorld            = g->StoreELossWorld();
-  storeELossWorldContents    = g->StoreELossWorldContents();
+  storeELossWorld            = g->StoreELossWorld() || g->UseImportanceSampling();
+  storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
   storeGeant4Data            = g->StoreGeant4Data();
   storeModel                 = g->StoreModel();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
