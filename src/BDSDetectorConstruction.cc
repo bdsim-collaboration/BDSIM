@@ -504,8 +504,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 	  || BDSGlobalConstants::Instance()->UseImportanceSampling()
 	  || BDSGlobalConstants::Instance()->StoreELossWorldContents())
         {
-          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
           geom->AttachSensitiveDetectors();
+          // override the logical volume itself with a specific SD
+          worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());
         }  
     }
   else
