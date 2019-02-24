@@ -4,14 +4,10 @@ l0: line = (d1);
 lattice: line = (l0);
 use, period=lattice;
 
-!sample, all;
+beam, energy=2.0*GeV,
+    particle="neutron";
 
-beam, energy=10.0*GeV,
-    particle="proton";
-
-option, preprocessGDML=1,
-    checkOverlaps=1,
-    worldGeometryFile="gdml:shielding-world.gdml",
+option, worldGeometryFile="gdml:shielding-world.gdml",
     importanceWorldGeometryFile="gdml:parallel-cell-world.gdml",
     importanceVolumeMap="importanceValues.dat";
 
