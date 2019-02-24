@@ -39,6 +39,7 @@ class G4VSDFilter;
 // In this case we use only the energy counter SD and return it
 // as a base class pointer. Include header so casting works.
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #endif
 
 /**
