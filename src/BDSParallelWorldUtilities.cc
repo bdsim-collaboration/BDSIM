@@ -149,7 +149,7 @@ void BDS::AddIStore(G4GeometrySampler* pgs,
     if (importanceWorld)
       {
         // Get store, and prepare importance sampling for importance geometry sampler
-        G4IStore *iStore = G4IStore::GetInstance(importanceWorld->GetName());
+        G4IStore* iStore = G4IStore::GetInstance(importanceWorld->GetName());
         pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
         pgs->PrepareImportanceSampling(iStore, 0);
         pgs->Configure();
@@ -185,6 +185,6 @@ BDSParallelWorldImportance* BDS::GetImportanceSamplingWorld(std::vector<G4VUserP
       if (std::strcmp(world->GetName(),importanceWorldName) == 0)
         {importanceWorld = world; break;}
     }
-  BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
+  BDSParallelWorldImportance* iworld = dynamic_cast<BDSParallelWorldImportance*>(importanceWorld);
   return iworld;
 }
