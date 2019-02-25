@@ -2979,7 +2979,7 @@ by contacting the developers - see :ref:`feature-request`).
 
 BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
 
-* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
 Modular Physics Lists
@@ -3287,6 +3287,8 @@ The **optional** following suffixes may be added to specify the electromagnetic 
 * _LIV
 * _PEN
 * __GS
+* __LE
+* _WVI
 * __SS
 
 Examples: ::
