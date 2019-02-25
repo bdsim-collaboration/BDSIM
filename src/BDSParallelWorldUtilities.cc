@@ -172,6 +172,6 @@ BDSParallelWorldImportance* BDS::GetImportanceSamplingWorld(std::vector<G4VUserP
       if (std::strcmp(world->GetName(),importanceWorldName) == 0)
         {importanceWorld = world; break;}
     }
-  BDSParallelWorldImportance *iworld = dynamic_cast<BDSParallelWorldImportance *>(importanceWorld);
+  BDSParallelWorldImportance* iworld = dynamic_cast<BDSParallelWorldImportance*>(importanceWorld);
   return iworld;
 }

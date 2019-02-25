@@ -4,7 +4,7 @@ l0: line = (d1);
 lattice: line = (l0);
 use, period=lattice;
 
-beam, energy=2.0*GeV,
+beam, energy=1.3*GeV,
     particle="neutron";
 
 option, worldGeometryFile="gdml:shielding-world.gdml",
@@ -13,3 +13,6 @@ option, worldGeometryFile="gdml:shielding-world.gdml",
 
 option, physicsList="em_low em_extra hadronic_elastic decay ftfp_bert stopping";
 
+option, storeElossWorld=1;
+
+option, ngenerate=1;

@@ -284,7 +284,7 @@ BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice
 element.  Whilst these thin gaps have a negligible effect for a single
 pass or turn, over several turns it introduces a sizeable inaccuracy
 in the tracking (in the context of large circular models).
-To correct for this, BDSIM models can be supplmented
+To correct for this, BDSIM models can be supplemented
 with a one turn map which is applied at the end of each turn to right
 the primary back onto the correct trajectory.  To ensure physical
 results the one turn map is only applied to primaries, if they did not
@@ -2806,14 +2806,14 @@ A `samplerplacement` may be placed in 3 ways.
 
 1) In global Cartesian coordinates.
 2) In curvilinear coordinates.
-3) In curvilinear coordinates with respsect ot a bema line element by name.
+3) In curvilinear coordinates with respect to a beam line element by name.
 
 The strategy is automatically determined based on the parameters set. The full list of
-parameters is described below, but the requried ones for each scenario are described in
+parameters is described below, but the required ones for each scenario are described in
 :ref:`placements`.
 
 .. warning:: This sampler can nominally overlap with any geometry. However, the user
-	     should **avoid** coplanar overlaps with other geometry. e.g. do not place
+	     should **avoid** co-planar overlaps with other geometry. e.g. do not place
 	     one just at the end of an element or perfectly aligned with the face of an
 	     object. This will cause bad tracking and overlaps. This is a limitation of
 	     Geant4. The user placed samplers are slightly thicker than normal ones
@@ -2826,7 +2826,7 @@ The sampler will be 1 nm thick in reality but may be treated by the user an
 infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
 physics of the simulation. The user may select the shape of the sampler from either
 circular or rectangular (including square). The parameter :code:`apertureType` should
-be specifed as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
+be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
 typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
 The meaning of these parameters is described in :ref:`aperture-parameters`.
 
@@ -2919,7 +2919,7 @@ User Sampler Visualisation
 Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
 visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
 in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and untick the desired element to see
+worlds) and other samplers. It is recommended to tick and un-tick the desired element to see
 it appear and disappear repeatedly.
 
 
@@ -2979,7 +2979,7 @@ by contacting the developers - see :ref:`feature-request`).
 
 BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
 
-* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
 Modular Physics Lists
@@ -3287,6 +3287,8 @@ The **optional** following suffixes may be added to specify the electromagnetic 
 * _LIV
 * _PEN
 * __GS
+* __LE
+* _WVI
 * __SS
 
 Examples: ::
@@ -3325,7 +3327,7 @@ These cannot be used in combination with any other physics processes.
 +---------------------------+---------------------------------------------------------------------------+
 | **Physics List**          | **Description**                                                           |
 +===========================+===========================================================================+
-| completechannelling       | Modifed em option 4 plus channelling as per the Geant4 example            |
+| completechannelling       | Modified em option 4 plus channelling as per the Geant4 example           |
 |                           | for crystal channelling. The exact same physics as used in their example. |
 +---------------------------+---------------------------------------------------------------------------+
 
@@ -3423,7 +3425,7 @@ the energy deposition in the world volume itself (i.e. the air).
   beamline. If not, BDSIM will exit.
 * It is down to the user to ensure the importance cells are correctly positioned.
 * If a importance cell volume exists in the importance world geometry and is not listed
-  in the ascii map file with a importance value, BDSIM will exit.
+  in the ASCII map file with a importance value, BDSIM will exit.
 * The importance sampling world volume has an importance value of 1.
 
 .. _bdsim-options:
@@ -4322,7 +4324,7 @@ or::
 
 where `A`, `Z` and `Q` should be replaced by the atomic number, the number of protons
 in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
-ionised ion). In this case, it is recommended to use the `ion` physicslist.
+ionised ion). In this case, it is recommended to use the `ion` physics list.
 
 Available input distributions and their associated parameters are described in the following
 section.
@@ -4373,7 +4375,7 @@ Beam in Output
 ^^^^^^^^^^^^^^
 
 All of the beam parameters are stored in the output, as described in :ref:`output-beam-tree`. The
-particle coordinates used in the simualtion are stored directly in the Primary branch of the
+particle coordinates used in the simulation are stored directly in the Primary branch of the
 Event Tree, as described in :ref:`output-event-tree`.
 
 .. note:: These are the exact coordinates supplied to Geant4 at the beginning of the event.
