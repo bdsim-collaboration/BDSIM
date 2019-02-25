@@ -1,2 +1,2 @@
-simple_testing(importanceSampling    "--file=importanceSampling.gmad"   "")
-simple_testing(importanceSampling-gz "--file=importanceSamplingGZ.gmad" "")
+simple_testing(processes-importance-sampling    "--file=importanceSampling.gmad"   "")
+simple_testing(processes-importance-sampling-gz "--file=importanceSamplingGZ.gmad" "")
