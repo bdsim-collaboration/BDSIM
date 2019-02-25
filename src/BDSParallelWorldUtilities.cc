@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
@@ -139,28 +140,14 @@ void BDS::AddIStore(G4GeometrySampler* pgs,
   {
     // check the geometry sampler exists.
     if (!pgs)
-      {
-        G4cerr << __METHOD_NAME__ << "Geometry sampler for importance sampling world not found." << G4endl;
-        exit(1);
-      }
+      {throw BDSException(__METHOD_NAME__, "Geometry sampler for importance sampling world not found." );}
 
     BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
     //only register physics if the world exists
     if (importanceWorld)
-      {
-        // Get store, and prepare importance sampling for importance geometry sampler
-        G4IStore *iStore = G4IStore::GetInstance(importanceWorld->GetName());
-        pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
-        pgs->PrepareImportanceSampling(iStore, 0);
-        pgs->Configure();
-
-        importanceWorld->AddIStore();
-      }
+      {importanceWorld->AddIStore();}
     else
-      {
-        G4cerr << __METHOD_NAME__ << "Importance sampling world not found." << G4endl;
-        exit(1);
-      }
+      {throw BDSException(__METHOD_NAME__, "Importance sampling world not found.");}
   }
 
 G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
