@@ -52,12 +52,11 @@ namespace BDS
 			      G4VModularPhysicsList* physicsList);
 
   /// Get store, and prepare importance sampling for importance geometry sampler
-  void AddIStore(G4GeometrySampler* pgs,
-                  std::vector<G4VUserParallelWorld*> worlds);
+  void AddIStore(std::vector<G4VUserParallelWorld*> worlds);
 
   /// Create importance geometry sampler and register importance biasing with physics list
-  G4GeometrySampler* GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
-                                                      G4VModularPhysicsList* physicsList);
+  void RegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
+                                 G4VModularPhysicsList* physicsList);
 
   /// Get importance sampling world from list of all parallel worlds
   BDSParallelWorldImportance* GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds);

@@ -135,22 +135,17 @@ void BDS::RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
     {physicsList->RegisterPhysics(process);}
 }
 
-void BDS::AddIStore(G4GeometrySampler* pgs,
-                    std::vector<G4VUserParallelWorld*> worlds)
+void BDS::AddIStore(std::vector<G4VUserParallelWorld*> worlds)
   {
-    // check the geometry sampler exists.
-    if (!pgs)
-      {throw BDSException(__METHOD_NAME__, "Geometry sampler for importance sampling world not found." );}
-
     BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
-    //only register physics if the world exists
+    //only add importance store if the world exists
     if (importanceWorld)
       {importanceWorld->AddIStore();}
     else
       {throw BDSException(__METHOD_NAME__, "Importance sampling world not found.");}
   }
 
-G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
+void BDS::RegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
                     G4VModularPhysicsList* physList)
 {
   BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
@@ -159,7 +154,6 @@ G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vect
   G4GeometrySampler* pgs = new G4GeometrySampler(importanceWorld->GetWorldVolume(), "neutron");
   pgs->SetParallel(true);
   physList->RegisterPhysics(new G4ImportanceBiasing(pgs,importanceWorld->GetName()));
-  return pgs;
 }
 
 BDSParallelWorldImportance* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds)
