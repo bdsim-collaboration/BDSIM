@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
-#include "BDSOutputROOTEventExit.hh"
+#include "BDSOutputROOTEventLossWorld.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -102,13 +102,16 @@ void BDSOutputROOT::NewFile()
     }
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,          4000, 1);
-  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss", eLossVacuum,    4000, 1);
-  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss", eLossTunnel,    4000, 2);
-  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLoss", eLossWorld,     4000, 1);
-  theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventExit", eLossWorldExit, 4000, 1);
-  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,      4000, 2);
-  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit,       4000, 2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",      eLoss,          4000, 1);
+  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",      eLossVacuum,    4000, 1);
+  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 1);
+  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+  if (storeELossWorldContents)
+    {theEventOutputTree->Branch("ElossWorldContents.", "BDSOutputROOTEventLossWorld", eLossWorldContents, 4000, 1);}
+  
+  theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);

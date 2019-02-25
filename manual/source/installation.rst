@@ -87,6 +87,9 @@ Requirements \& Environment
 
 .. note:: These are listed in the correct order of installation / requirement.
 
+For nice analysis and use of `pybdsim` for model conversion, we recommend Python2.7 with
+matplotlib and numpy. ROOT should be installed with Python support in this case.
+
 Geant4 and ROOT Versions
 ------------------------
 
@@ -141,9 +144,26 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
+* XCode should be installed.
+* XCode command lines should be installed (xcode-select --install).
+* XQuartz should be installed - see `<https://www.xquartz.org>`_.
+* The `make` command is available in the terminal.
+
 We recommend obtaining :ref:`required-packages` using the `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
+
+For MacPorts you can do: ::
+
+  sudo port install root6 +python27
+  sudo port install xercesc3 flex bison clhep qt5
+  sudo port install py27-matplotlib py27-numpy
+
+* It is best to install Geant4 manually to ensure you use the system CLHEP option (required
+  by BDSIM for strong reproducibility) as well as visualiser choices and GDML geometry
+  loading.
+
+* See :ref:`geant4-installation-guide` to install Geant4.
 
 After this, `Building`_ can be started.
 

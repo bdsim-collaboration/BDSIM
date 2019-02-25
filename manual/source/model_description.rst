@@ -576,6 +576,7 @@ A few points about rbends:
    the option `includeFringeFields=0` (see `options`_).
 8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
+9) Rbends are limited in angle to less than pi/2.
 
 Examples: ::
 
@@ -696,6 +697,8 @@ A few points about sbends:
    the option `includeFringeFields=0` (see `options`_).
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
+8) Sbends are limited in angle to less than 2 pi. If the sbends are not split with the option dontSplitSBends,
+   an sbend will be limited in angle to a maximum of pi/2.
 
 Examples: ::
 
@@ -3339,15 +3342,20 @@ A physics biasing process can be defined with the keyword **xsecbias**.
 
 .. note:: This only works with Geant4 version 10.1 or higher.
 
-=================== ================================================
-Parameter           Description
-name                Biasing process name
-particle            Particle that will be biased
-proc                Process(es) to be biased
-flag                Flag which particles are biased for the process(es)
-                    (1=all, 2=primaries, 3=secondaries)
-xsecfact            Biasing factor(s) for the process(es)
-=================== ================================================
++------------------+------------------------------------------------------+
+| **Parameter**    | **Description**                                      |
++==================+======================================================+
+| name             | Biasing process name                                 |
++------------------+------------------------------------------------------+
+| particle         | Particle that will be biased                         |
++------------------+------------------------------------------------------+
+| proc             | Process(es) to be biased                             |
++------------------+------------------------------------------------------+
+| flag             | Flag which particles are biased for the process(es)  |
+|                  | (1=all, 2=primaries, 3=secondaries)                  |
++------------------+------------------------------------------------------+
+| xsecfact         | Biasing factor(s) for the process(es)                |
++------------------+------------------------------------------------------+
 
 Example::
 
@@ -3360,6 +3368,63 @@ vacuum respectively::
 
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
+
+.. _physics-bias-importance-sampling:
+  
+Importance Sampling
+^^^^^^^^^^^^^^^^^^^
+To enable importance sampling, the user must provide both a mass world and a separate importance
+sampling world as external geometry files. The mass world file should contain the appropriate
+volumes as if you were conducting a standard simulation without importance sampling. The
+importance world file should contain the volumes that will be the importance cells only. A
+third text file must also be provided which contains a map of the physical volumes that form
+the importance cells and their corresponding importance volumes.
+
++------------------------------+-------------------------------------------------------------+
+| **Parameter**                | **Description**                                             |
++==============================+=============================================================+
+| worldGeometryFile            | Geometry file containing the mass world                     |
++------------------------------+-------------------------------------------------------------+
+| importanceWorldGeometryFile  | Geometry file containing the importance sampling world      |
++------------------------------+-------------------------------------------------------------+
+| importanceVolumeMap          | ASCII file containing a map of the importance world         |
+|                              | physical volumes and their corresponding importance values  |
++------------------------------+-------------------------------------------------------------+
+
+Example: ::
+
+  option, worldGeometryFile="gdml:shielding-world.gdml",
+          importanceWorldGeometryFile="gdml:importance-cell-world.gdml",
+          importanceVolumeMap="importanceValues.dat";
+
+An example of the world volume geometry (top), the importance sampling world geometry (middle), and
+an importance volume map (bottom) are shown below with an example beamline.
+
+In the output a new branch in the event tree calls "ElossWorldContents" is automatically added
+when using importance sampling. This is the global energy deposition hits from any volumes
+that were in the externally supplied world - such as shielding blocks. This distinguishes
+the energy deposition in the world volume itself (i.e. the air).
+
+.. figure:: figures/importanceSampling_massWorld.png
+	    :width: 90%
+	    :align: center
+
+.. figure:: figures/importanceSampling_importanceWorld.png
+	    :width: 90%
+	    :align: center
+
+.. figure:: figures/importanceSampling_VolumeMap.png
+	    :width: 90%
+	    :align: center
+
+		    
+* Both the mass world and importance sampling world must be the same size.
+* Both the mass world and importance sampling world must be large enough to encompass the machine
+  beamline. If not, BDSIM will exit.
+* It is down to the user to ensure the importance cells are correctly positioned.
+* If a importance cell volume exists in the importance world geometry and is not listed
+  in the ascii map file with a importance value, BDSIM will exit.
+* The importance sampling world volume has an importance value of 1.
 
 .. _bdsim-options:
 
@@ -3879,6 +3944,10 @@ with the following options.
 | sensitiveBeamPipe                 | Whether the beam pipe records energy loss. This includes cavities. |
 |                                   | This can be used in combination with the above option              |
 |                                   | `sensitiveOuter`, to control which energy loss is recorded.        |
+|                                   | Energy loss from this option is recorded in the `Eloss` branch     |
+|                                   | of the Event Tree in the output. Default on.                       |
++-----------------------------------+--------------------------------------------------------------------+
+| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
