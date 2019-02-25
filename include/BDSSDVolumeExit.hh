@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDVOLUMEEXIT_H
 #define BDSSDVOLUMEEXIT_H
 
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 
 #include "globals.hh"
 #include "G4StepStatus.hh"
@@ -33,7 +33,7 @@ class G4Step;
 class G4TouchableHistory;
 
 /**
- * @brief Generates BDSHitVolumeExits if a particle is leaving a volume.
+ * @brief Generates BDSHitEnergyDepositionGlobals if a particle is leaving a volume.
  *
  * If the step results in exiting a volume, record the global coordinates.
  * Can do general volume exit or world volume exit (default). See G4StepStatus.
@@ -60,7 +60,7 @@ private:
   G4String     colName;        ///< Name prepared for collection.
   G4int        HCIDve;         ///< Hits collection ID for volume exit.
   G4StepStatus statusToMatch;  ///< World or volume exit status cache.
-  BDSHitsCollectionVolumeExit* collection; ///< Hits collection.
+  BDSHitsCollectionEnergyDepositionGlobal* hits; ///< Hits collection.
 };
 
 #endif

@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
+#include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4ParticleDefinition.hh"
@@ -166,7 +167,7 @@ int BDSIM::Initialise()
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
   
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
-  auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
+  auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
@@ -181,9 +182,15 @@ int BDSIM::Initialise()
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
-  auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
+  auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
-  
+
+  // create geometry sampler and register importance sampling biasing. Has to be here
+  // before physicsList is "initialised" in run manager.
+  G4GeometrySampler* pgs = nullptr;
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
+    {pgs = BDS::GetGeometrySamplerAndRegisterImportanceBiasing(parallelWorldsRequiringPhysics,physList);}
+
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
@@ -206,8 +213,8 @@ int BDSIM::Initialise()
   realWorld->SetDesignParticle(designParticle);
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
-  
-  BDS::RegisterSamplerPhysics(samplerPhysics, physList);
+
+  BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
     {physList->RegisterPhysics(biasPhysics);}
@@ -305,6 +312,10 @@ int BDSIM::Initialise()
 
   /// Initialize G4 kernel
   runManager->Initialize();
+
+  /// Create importance store for parallel importance world
+  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
+    {BDS::AddIStore(pgs, parallelWorldsRequiringPhysics);}
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();

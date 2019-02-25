@@ -208,6 +208,7 @@ public:
   inline G4bool   StoreELossTunnel()         const {return G4bool  (options.storeElossTunnel);}
   inline G4bool   StoreELossTunnelHistograms() const {return G4bool (options.storeElossTunnelHistograms);}
   inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
+  inline G4bool   StoreELossWorldContents()  const {return G4bool  (options.storeElossWorldContents);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
@@ -250,6 +251,8 @@ public:
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   inline G4String WorldGeometryFile()        const {return G4String(options.worldGeometryFile);}
+  inline G4String ImportanceWorldGeometryFile()  const {return G4String(options.importanceWorldGeometryFile);}
+  inline G4String ImportanceVolumeMapFile()      const {return G4String(options.importanceVolumeMap);}
   inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
   inline G4bool   YokeFields()               const {return G4bool  (options.yokeFields);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
@@ -312,6 +315,9 @@ public:
   inline G4ThreeVector GetLaserwireDir(G4String aName)        const {return lwDirection.at(aName);}
   void SetLaserwireWavelength(G4String aName, G4double aWavelength);
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
+
+  /// Is importance sampling being used
+  inline G4bool UseImportanceSampling() const{return !ImportanceWorldGeometryFile().empty();}
 
 private:  
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)

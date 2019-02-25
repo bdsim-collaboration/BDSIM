@@ -536,62 +536,68 @@ different value per-event run in BDSIM.
 
 .. tabularcolumns:: |p{0.15\textwidth}|p{0.35\textwidth}|p{0.4\textwidth}|
 
-+---------------------+----------------------------------+--------------------------------------------------+
-| **Branch Name**     | **Type**                         | **Description**                                  |
-+=====================+==================================+==================================================+
-| Summary (\+)        | BDSOutputROOTEventInfo           | Per-event summary information                    |
-+---------------------+----------------------------------+--------------------------------------------------+
-| Primary             | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
-|                     |                                  | simulation (before tracking)                     |
-+---------------------+----------------------------------+--------------------------------------------------+
-| PrimaryGlobal       | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
-|                     |                                  | particle. These are the same as those in         |
-|                     |                                  | "Primary" unless `S0` is specified in the beam   |
-|                     |                                  | distribution.                                    |
-+---------------------+----------------------------------+--------------------------------------------------+
-| Eloss               | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
-|                     |                                  | accelerator material.                            |
-+---------------------+----------------------------------+--------------------------------------------------+
-| ElossVacuum (\*)    | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
-|                     |                                  | accelerator vacuum only                          |
-+---------------------+----------------------------------+--------------------------------------------------+
-| ElossTunnel (\*)    | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
-|                     |                                  | material                                         |
-+---------------------+----------------------------------+--------------------------------------------------+
-| ElossWorld (\*)     | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
-|                     |                                  | volume - by default the air.                     |
-+---------------------+----------------------------------+--------------------------------------------------+
-| ElossWorldExit (\*) | BDSOutputROOTEventExit           | Global coordinates of the point any track exits  |
-|                     |                                  | the world volume and therefore the simulation.   |
-+---------------------+----------------------------------+--------------------------------------------------+
-| PrimaryFirstHit     | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
-|                     |                                  | step on the primary trajectory that wasn't due   |
-|                     |                                  | to tracking, i.e. the first interaction where a  |
-|                     |                                  | physics process was induced                      |
-+---------------------+----------------------------------+--------------------------------------------------+
-| PrimaryLastHit      | BDSOutputROOTEventLoss           | The end point of the primary trajectory. If S    |
-|                     |                                  | is -1 (m) it means the particle finished away    |
-|                     |                                  | from the beam line where there was no            |
-|                     |                                  | curvilinear coordinate system present.           |
-+---------------------+----------------------------------+--------------------------------------------------+
-| Trajectory          | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
-|                     |                                  | took and the associated physics processes        |
-+---------------------+----------------------------------+--------------------------------------------------+
-| Histos              | BDSOutputROOTEventHistograms     | Per-event histograms in vectors                  |
-+---------------------+----------------------------------+--------------------------------------------------+
-| xxxxx               | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
-|                     |                                  | sampler (here named 'xxxxx') that contains a     |
-|                     |                                  | record of all particles that passed through the  |
-|                     |                                  | sampler during the event. Note: this includes    |
-|                     |                                  | both primary and secondary particles.            |
-+---------------------+----------------------------------+--------------------------------------------------+
-| COLL_xxxx (\*\*)    | BDSOutputROOTEventCollimator     | A dynamically generated branch created per       |
-|                     |                                  | collimator when the :code:`storeCollimatorInfo`  |
-|                     |                                  | is used. Stores collimator hit information by    |
-|                     |                                  | default only for primary particle hits.          |
-+---------------------+----------------------------------+--------------------------------------------------+
++---------------------------+----------------------------------+--------------------------------------------------+
+| **Branch Name**           | **Type**                         | **Description**                                  |
++===========================+==================================+==================================================+
+| Summary (\+)              | BDSOutputROOTEventInfo           | Per-event summary information                    |
++---------------------------+----------------------------------+--------------------------------------------------+
+| Primary                   | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
+|                           |                                  | simulation (before tracking)                     |
++---------------------------+----------------------------------+--------------------------------------------------+
+| PrimaryGlobal             | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
+|                           |                                  | particle. These are the same as those in         |
+|                           |                                  | "Primary" unless `S0` is specified in the beam   |
+|                           |                                  | distribution.                                    |
++---------------------------+----------------------------------+--------------------------------------------------+
+| Eloss                     | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
+|                           |                                  | accelerator material.                            |
++---------------------------+----------------------------------+--------------------------------------------------+
+| ElossVacuum (\*)          | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
+|                           |                                  | accelerator vacuum only                          |
++---------------------------+----------------------------------+--------------------------------------------------+
+| ElossTunnel (\*)          | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
+|                           |                                  | material                                         |
++---------------------------+----------------------------------+--------------------------------------------------+
+| ElossWorld (\*)           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
+|                           |                                  | volume - by default the air.                     |
++---------------------------+----------------------------------+--------------------------------------------------+
+| ElossWorldContents (\+\+) | BDSOutputROOTEventLossWorld      | Global coordinates of energy deposition in any   |
+|                           |                                  | volume supplied inside an externally supplied    |
+|                           |                                  | world volume.                                    |
++---------------------------+----------------------------------+--------------------------------------------------+
+| ElossWorldExit (\*)       | BDSOutputROOTEventLossWorld      | Global coordinates of the point any track exits  |
+|                           |                                  | the world volume and therefore the simulation.   |
++---------------------------+----------------------------------+--------------------------------------------------+
+| PrimaryFirstHit           | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
+|                           |                                  | step on the primary trajectory that wasn't due   |
+|                           |                                  | to tracking, i.e. the first interaction where a  |
+|                           |                                  | physics process was induced                      |
++---------------------------+----------------------------------+--------------------------------------------------+
+| PrimaryLastHit            | BDSOutputROOTEventLoss           | The end point of the primary trajectory. If S    |
+|                           |                                  | is -1 (m) it means the particle finished away    |
+|                           |                                  | from the beam line where there was no            |
+|                           |                                  | curvilinear coordinate system present.           |
++---------------------------+----------------------------------+--------------------------------------------------+
+| Trajectory                | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
+|                           |                                  | took and the associated physics processes        |
++---------------------------+----------------------------------+--------------------------------------------------+
+| Histos                    | BDSOutputROOTEventHistograms     | Per-event histograms in vectors                  |
++---------------------------+----------------------------------+--------------------------------------------------+
+| xxxxx                     | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
+|                           |                                  | sampler (here named 'xxxxx') that contains a     |
+|                           |                                  | record of all particles that passed through the  |
+|                           |                                  | sampler during the event. Note: this includes    |
+|                           |                                  | both primary and secondary particles.            |
++---------------------------+----------------------------------+--------------------------------------------------+
+| COLL_xxxx (\*\*)          | BDSOutputROOTEventCollimator     | A dynamically generated branch created per       |
+|                           |                                  | collimator when the :code:`storeCollimatorInfo`  |
+|                           |                                  | is used. Stores collimator hit information by    |
+|                           |                                  | default only for primary particle hits.          |
++---------------------------+----------------------------------+--------------------------------------------------+
 
 * (\+) This was called "Info" in BDSIM before V1.3.
+* (\+\+) ElossWorldContents is only included if the option :code:`storeElossWorldContents` is turned on
+  or importance sampling is used.
 * (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
   option :code:`storeElossWorld`.
 * (\*\*) COLL_xxxx is only added per collimator when the option :code:`storeCollimatorInfo` is used.
@@ -751,8 +757,8 @@ Extra information can be recorded but this typically dominates the output file s
 | storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 
-BDSOutputROOTEventExit
-**********************
+BDSOutputROOTEventLossWorld
+***************************
 
 For the point where particles exit the world, there is no concept of a curvilinear coordinate
 system so there are only global coordinates recorded.

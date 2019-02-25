@@ -161,6 +161,8 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
     std::string worldGeometryFile;
+    std::string importanceWorldGeometryFile;
+    std::string importanceVolumeMap;
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
@@ -267,6 +269,7 @@ namespace GMAD
     bool        storeElossTunnel;
     bool        storeElossTunnelHistograms;
     bool        storeElossWorld;
+    bool        storeElossWorldContents;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;

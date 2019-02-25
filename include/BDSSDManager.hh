@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
+class BDSSDEnergyDepositionGlobal;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
@@ -38,6 +39,7 @@ class G4VSDFilter;
 // In this case we use only the energy counter SD and return it
 // as a base class pointer. Include header so casting works.
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #endif
 
 /**
@@ -90,7 +92,10 @@ public:
   inline BDSSDEnergyDeposition* EnergyDepositionTunnel() const {return energyDepositionTunnel;}
 
   /// SD for energy deposition in the world volume.
-  inline BDSSDEnergyDeposition* EnergyDepositionWorld() const {return energyDepositionWorld;}
+  inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorld() const {return energyDepositionWorld;}
+
+  /// SD for energy deposition in things that were already placed in the externally provided world.
+  inline BDSSDEnergyDepositionGlobal* EnergyDepositionWorldContents() const {return energyDepositionWorldContents;}
 
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
@@ -120,33 +125,34 @@ private:
   static BDSSDManager* instance;
 
   /// @{ SD instance.
-  BDSSDSampler*       samplerPlane;
-  BDSSDSampler*       samplerCylinder;
-  BDSSDTerminator*    terminator;
-  BDSSDEnergyDeposition* energyDeposition;
-  BDSSDEnergyDeposition* energyDepositionFull;
-  BDSSDEnergyDeposition* energyDepositionVacuum;
-  BDSSDEnergyDeposition* energyDepositionTunnel;
-  BDSSDEnergyDeposition* energyDepositionWorld;
-  BDSSDVolumeExit*    worldExit;
+  BDSSDSampler*                samplerPlane;
+  BDSSDSampler*                samplerCylinder;
+  BDSSDTerminator*             terminator;
+  BDSSDEnergyDeposition*       energyDeposition;
+  BDSSDEnergyDeposition*       energyDepositionFull;
+  BDSSDEnergyDeposition*       energyDepositionVacuum;
+  BDSSDEnergyDeposition*       energyDepositionTunnel;
+  BDSSDEnergyDepositionGlobal* energyDepositionWorld;
+  BDSSDEnergyDepositionGlobal* energyDepositionWorldContents;
+  BDSSDVolumeExit*             worldExit;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
 #endif
   /// @}
-  BDSSDCollimator*    collimatorSD;
+  BDSSDCollimator* collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
 
   /// @{ Cache of global constant option.
-  G4bool stopSecondaries;
   G4bool verbose;
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;
   G4bool generateELossHits;
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;
+  G4bool generateELossWorldContents;
   G4bool storeELossWorld;
   G4bool storeELossExtras;
   G4bool generateCollimatorHits;

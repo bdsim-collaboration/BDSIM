@@ -19,13 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSHITSAMPLER_H
 #define BDSHITSAMPLER_H
 
+#include "BDSParticleCoordsFull.hh"
+
+#include "globals.hh"
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
-
-#include "BDSParticleCoordsFull.hh"
-
-#include <ostream>
 
 /**
  * @brief The information recorded from a particle impacting a sampler.

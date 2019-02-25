@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSSDVolumeExit.hh"
 
 #include "globals.hh"
@@ -32,7 +32,7 @@ BDSSDVolumeExit::BDSSDVolumeExit(G4String name,
   G4VSensitiveDetector("volume_exit/" + name),
   colName(name),
   HCIDve(-1),
-  collection(nullptr)
+  hits(nullptr)
 {
   collectionName.insert(name);
 
@@ -41,10 +41,10 @@ BDSSDVolumeExit::BDSSDVolumeExit(G4String name,
 
 void BDSSDVolumeExit::Initialize(G4HCofThisEvent* HCE)
 {
-  collection = new BDSHitsCollectionVolumeExit(GetName(), colName);
+  hits = new BDSHitsCollectionEnergyDepositionGlobal(GetName(), colName);
   if (HCIDve < 0)
-    {HCIDve = G4SDManager::GetSDMpointer()->GetCollectionID(collection);}
-  HCE->AddHitsCollection(HCIDve, collection);
+    {HCIDve = G4SDManager::GetSDMpointer()->GetCollectionID(hits);}
+  HCE->AddHitsCollection(HCIDve, hits);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDve << G4endl;
@@ -58,9 +58,11 @@ G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
 
   if (postStepPoint->GetStepStatus() == statusToMatch)
     {
-      G4double totalEnergy   = postStepPoint->GetTotalEnergy();
-      G4double kineticEnergy = postStepPoint->GetKineticEnergy();
-      G4ThreeVector position = postStepPoint->GetPosition();
+      G4double totalEnergy           = postStepPoint->GetTotalEnergy();
+      G4double preStepKineticEnergy  = aStep->GetPreStepPoint()->GetKineticEnergy();
+      G4double postStepKineticEnergy = postStepPoint->GetKineticEnergy();
+      G4double stepLength            = aStep->GetStepLength();
+      G4ThreeVector position         = postStepPoint->GetPosition();
       G4double T          = postStepPoint->GetGlobalTime();
       G4Track* track      = aStep->GetTrack();
       G4int    pdgID      = track->GetDefinition()->GetPDGEncoding();
@@ -69,18 +71,20 @@ G4bool BDSSDVolumeExit::ProcessHits(G4Step* aStep,
       G4double weight     = track->GetWeight();
       G4int    turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
       
-      BDSHitVolumeExit* hit = new BDSHitVolumeExit(totalEnergy,
-						   kineticEnergy,
-						   position.x(),
-						   position.y(),
-						   position.z(),
-						   T,
-						   pdgID,
-						   trackID,
-						   parentID,
-						   weight,
-						   turnsTaken);
-      collection->insert(hit);
+      BDSHitEnergyDepositionGlobal* hit = new BDSHitEnergyDepositionGlobal(totalEnergy,
+									   preStepKineticEnergy,
+									   postStepKineticEnergy,
+									   stepLength,
+									   position.x(),
+									   position.y(),
+									   position.z(),
+									   T,
+									   pdgID,
+									   trackID,
+									   parentID,
+									   weight,
+									   turnsTaken);
+      hits->insert(hit);
       return true;
     }
   else
