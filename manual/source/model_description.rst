@@ -4005,6 +4005,10 @@ with the following options.
 |                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
 |                                   | world volume as well. Default off.                                 |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContents           | Whether to record energy deposition in the daughter volumes within |
+|                                   | the world volume when supplied as external world geometry.         |
+|                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
