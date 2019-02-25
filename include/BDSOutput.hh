@@ -41,8 +41,8 @@ class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-class BDSHitVolumeExit;
-typedef G4THitsCollection<BDSHitVolumeExit> BDSHitsCollectionVolumeExit;
+class BDSHitEnergyDepositionGlobal;
+typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 
 class TRKBunch;
 
@@ -106,21 +106,22 @@ public:
 			    const G4int pdgID);
   
   /// Copy event information from Geant4 simulation structures to output structures.
-  void FillEvent(const BDSEventInfo*                   info,
-		 const G4PrimaryVertex*                vertex,
-		 const BDSHitsCollectionSampler*       samplerHitsPlane,
-		 const BDSHitsCollectionSampler*       samplerHitsCylinder,
-		 const BDSHitsCollectionEnergyDeposition* energyLoss,
-		 const BDSHitsCollectionEnergyDeposition* energyLossFull,
-		 const BDSHitsCollectionEnergyDeposition* energyLossVacuum,
-		 const BDSHitsCollectionEnergyDeposition* energyLossTunnel,
-		 const BDSHitsCollectionEnergyDeposition* energyLossWorld,
-		 const BDSHitsCollectionVolumeExit*    worldExitHits,
-		 const BDSTrajectoryPoint*             primaryHit,
-		 const BDSTrajectoryPoint*             primaryLoss,
-		 const std::map<BDSTrajectory*, bool>& trajectories,
-		 const BDSHitsCollectionCollimator*    collimatorHits,
-		 const G4int                           turnsTaken);
+  void FillEvent(const BDSEventInfo*                            info,
+		 const G4PrimaryVertex*                         vertex,
+		 const BDSHitsCollectionSampler*                samplerHitsPlane,
+		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
+		 const BDSHitsCollectionEnergyDeposition*       energyLossTunnel,
+		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
+		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
+		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
+		 const BDSTrajectoryPoint*                      primaryHit,
+		 const BDSTrajectoryPoint*                      primaryLoss,
+		 const std::map<BDSTrajectory*, bool>&          trajectories,
+		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
   void CloseAndOpenNewFile();
@@ -148,12 +149,16 @@ protected:
   /// Whether to create the collimator structures in the output or not.
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
 
+  /// @{ Options for dynamic bits of output.
+  G4bool storeELossWorldContents;
+  /// @}
+
 private:
   /// Enum for different types of sampler hits that can be written out.
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, vacuum, tunnel, world};
+  enum class LossType {energy, vacuum, tunnel, world, worldexit, worldcontents};
 
   /// Write the header.
   virtual void WriteHeader() = 0;
@@ -200,11 +205,14 @@ private:
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
-  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition *loss,
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
+		      const LossType type);
+
+  void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
   /// Fill a collection volume exit hits into the approprate output structure.
-  void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
+  //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
@@ -257,6 +265,7 @@ private:
   G4bool storeELossTunnelHistograms;
   G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
+  G4bool storeELossWorld; // for both world and world exit
   G4bool storeGeant4Data;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
@@ -279,6 +288,7 @@ private:
   G4double energyDeposited;
   G4double energyDepositedVacuum;
   G4double energyDepositedWorld;
+  G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
   G4double energyWorldExit;
   G4int    nCollimatorsInteracted;

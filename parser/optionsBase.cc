@@ -131,6 +131,8 @@ OptionsBase::OptionsBase()
   emptyMaterial        = "G4_Galactic";
   worldMaterial        = "G4_AIR";
   worldGeometryFile    = "";
+  importanceWorldGeometryFile = "";
+  importanceVolumeMap  = "";
   worldVolumeMargin = 5; //m
 
   vacuumPressure       = 1e-12;
@@ -233,6 +235,7 @@ OptionsBase::OptionsBase()
   storeElossTunnel           = false;
   storeElossTunnelHistograms = false;
   storeElossWorld            = false;
+  storeElossWorldContents    = false;
   storeElossTurn             = false;
   storeElossLinks            = false;
   storeElossLocal            = false;

@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
+#include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSSDFilterIon.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
@@ -61,13 +62,15 @@ BDSSDManager::BDSSDManager()
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
   BDSGlobalConstants* g   = BDSGlobalConstants::Instance();
-  stopSecondaries         = g->StopSecondaries();
   verbose                 = g->Verbose();
   storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
   storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
   generateELossHits       = g->StoreELoss() || g->StoreELossHistograms();
   generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
-  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms(); 
+  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
+
+  generateELossWorldContents = g->UseImportanceSampling() || g->StoreELossWorldContents();
+  
   storeELossWorld         = g->StoreELossWorld();
   storeELossExtras        = g->StoreELossTurn()
     || g->StoreELossLinks()
@@ -104,22 +107,25 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  energyDeposition = new BDSSDEnergyDeposition("general", stopSecondaries, storeELossExtras);
+  energyDeposition = new BDSSDEnergyDeposition("general", storeELossExtras);
   SDMan->AddNewDetector(energyDeposition);
 
-  energyDepositionFull = new BDSSDEnergyDeposition("general_full", stopSecondaries, true);
+  energyDepositionFull = new BDSSDEnergyDeposition("general_full", true);
   SDMan->AddNewDetector(energyDepositionFull);
   
-  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", stopSecondaries, storeELossExtras);
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", storeELossExtras);
   SDMan->AddNewDetector(energyDepositionVacuum);
 
-  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", stopSecondaries, storeELossExtras);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", storeELossExtras);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDeposition("worldLoss", stopSecondaries, true);
+  energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss");
   SDMan->AddNewDetector(energyDepositionWorld);
 
-  worldExit= new BDSSDVolumeExit("worldExit", true);
+  energyDepositionWorldContents = new BDSSDEnergyDepositionGlobal("worldLoss_contents");
+  SDMan->AddNewDetector(energyDepositionWorldContents);
+
+  worldExit = new BDSSDVolumeExit("worldExit", true);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029
@@ -204,6 +210,14 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 #else
       {result = nullptr; break;}
 #endif
+    case BDSSDType::energydepworldcontents:
+      {
+	if (applyOptions)
+	  {result = generateELossWorldContents ? energyDepositionWorldContents : nullptr;}
+	else
+	  {result = energyDepositionWorldContents;}
+	break;
+      }
     case BDSSDType::collimator:
       {result = collimatorSD; break;}
     case BDSSDType::collimatorcomplete:

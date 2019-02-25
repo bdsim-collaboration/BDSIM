@@ -25,11 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 
-class BDSHitEnergyDeposition;
-
-typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
-extern G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
-
 /**
  * @brief Information recorded for a single piece of energy deposition.
  *
@@ -105,6 +100,9 @@ private:
 
   BDSHitEnergyDepositionExtra* extra;
 };
+
+typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+extern G4Allocator<BDSHitEnergyDeposition> BDSAllocatorEnergyDeposition;
 
 inline void* BDSHitEnergyDeposition::operator new(size_t)
 {
