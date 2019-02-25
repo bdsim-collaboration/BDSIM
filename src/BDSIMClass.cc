@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
-#incldue "G4GeometrySampler.hh"
+#include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4ParticleDefinition.hh"
