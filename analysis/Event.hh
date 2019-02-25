@@ -31,10 +31,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCoords;
-class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
+class BDSOutputROOTEventLossWorld;
 class BDSOutputROOTEventTrajectory;
 
 /**
@@ -60,11 +60,17 @@ public:
   BDSOutputROOTEventSampler<float>*  GetPrimaries() {return Primary;}
 #endif
   BDSOutputROOTEventLoss*            GetLoss()             {return Eloss;}
+  BDSOutputROOTEventLoss*            GetLossVacuum()       {return ElossVacuum;}
+  BDSOutputROOTEventLoss*            GetLossTunnel()       {return ElossTunnel;}
+  BDSOutputROOTEventLossWorld*       GetLossWorld()        {return ElossWorld;}
+  BDSOutputROOTEventLossWorld*       GetLossWorldContents(){return ElossWorldContents;}
+  BDSOutputROOTEventLossWorld*       GetLossworldExit()    {return ElossWorldExit;}
   BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return PrimaryFirstHit;}
   BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return PrimaryLastHit;}
   BDSOutputROOTEventLoss*            GetTunnelHit()        {return TunnelHit;}
   BDSOutputROOTEventTrajectory*      GetTrajectory()       {return Trajectory;}
   BDSOutputROOTEventHistograms*      GetHistograms()       {return Histos;}
+  BDSOutputROOTEventInfo*            GetSummary()          {return Summary;}
   BDSOutputROOTEventInfo*            GetInfo()             {return Info;}
 #ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double>* GetSampler(const std::string& name);
@@ -79,6 +85,8 @@ public:
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
   BDSOutputROOTEventCollimator*      GetCollimator(int index);
   int                                DataVersion() const {return dataVersion;}
+  const std::vector<std::string>&    GetSamplerNames() const {return samplerNames;}
+  const std::vector<std::string>&    GetCollimatorNames() const {return collimatorNames;}
   /// @}
 
   /// Whether there is primary data in the output file.
@@ -106,8 +114,9 @@ public:
   BDSOutputROOTEventLoss*       Eloss;
   BDSOutputROOTEventLoss*       ElossVacuum;
   BDSOutputROOTEventLoss*       ElossTunnel;
-  BDSOutputROOTEventLoss*       ElossWorld;
-  BDSOutputROOTEventExit*       ElossWorldExit;
+  BDSOutputROOTEventLossWorld*  ElossWorld;
+  BDSOutputROOTEventLossWorld*  ElossWorldContents;
+  BDSOutputROOTEventLossWorld*  ElossWorldExit;
   BDSOutputROOTEventLoss*       PrimaryFirstHit;
   BDSOutputROOTEventLoss*       PrimaryLastHit;
   BDSOutputROOTEventLoss*       TunnelHit;

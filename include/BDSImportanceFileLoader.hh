@@ -16,29 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSDTYPE_H
-#define BDSSDTYPE_H
+#ifndef BDSIMPORTANCEFILELOADER_H
+#define BDSIMPORTANCEFILELOADER_H
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+#include "globals.hh" // geant4 globals / types
+
+#include <map>
+#include <vector>
 
 /**
- * @brief Type definition for sensitive detectors.
+ * @brief A loader for importance values used in importance sampling.
  * 
- * Unlike the other class enum 'types' we don't need a determine type method
- * as this enum is only used internally and not with user input yet.
- * 
- * @author Laurie Nevay
+ * @author Will Shields
  */
 
-struct sdtypes_def
+template <class T>
+class BDSImportanceFileLoader
 {
-  enum type {samplerplane, samplercylinder, terminator,
-	     energydep, energydepvacuum, energydeptunnel, energydepworld,
-	     energydepworldcontents, worldexit, worldcomplete,
-	     collimator, collimatorcomplete};
-};
+public:
+  BDSImportanceFileLoader();
+  ~BDSImportanceFileLoader();
 
-typedef BDSTypeSafeEnum<sdtypes_def,int> BDSSDType;
+  std::map<G4String, G4double> Load(const G4String& fileName);
+};
 
 #endif

@@ -16,32 +16,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSHitVolumeExit.hh"
+#include "BDSHitEnergyDepositionGlobal.hh"
 
-#include "G4Allocator.hh"
+#include "globals.hh"
 
-G4Allocator<BDSHitVolumeExit> BDSAllocatorVolumeExit;
-
-BDSHitVolumeExit::BDSHitVolumeExit(G4double totalEnergyIn,
-				   G4double postStepKineticEnergyIn,
-				   G4double XIn,
-				   G4double YIn,
-				   G4double ZIn,
-				   G4double TIn,
-				   G4int    partIDIn,
-				   G4int    trackIDIn,
-				   G4int    parentIDIn,
-				   G4double weightIn,
-				   G4int    turnsTakenIn):
+BDSHitEnergyDepositionGlobal::BDSHitEnergyDepositionGlobal(G4double totalEnergyIn,
+							   G4double preStepKineticEnergyIn,
+							   G4double postStepKineticEnergyIn,
+							   G4double stepLengthIn,
+							   G4double XIn,
+							   G4double YIn,
+							   G4double ZIn,
+							   G4double TIn,
+							   G4int    pdgIDIn,
+							   G4int    trackIDIn,
+							   G4int    parentIDIn,
+							   G4double weightIn,
+							   G4int    turnsTakenIn):
   totalEnergy(totalEnergyIn),
+  preStepKineticEnergy(preStepKineticEnergyIn),
   postStepKineticEnergy(postStepKineticEnergyIn),
+  stepLength(stepLengthIn),
   X(XIn),
   Y(YIn),
   Z(ZIn),
   T(TIn),
-  partID(partIDIn),
+  pdgID(pdgIDIn),
   trackID(trackIDIn),
   parentID(parentIDIn),
   weight(weightIn),
   turnsTaken(turnsTakenIn)
+{;}
+
+BDSHitEnergyDepositionGlobal::~BDSHitEnergyDepositionGlobal()
 {;}
