@@ -169,8 +169,7 @@ void BDSParallelWorldImportance::AddIStore()
 
 G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
 {
-  // set importance value to 1 if trying to get the value for a PV that isnt provided by the user.
-  // cell value of 1 is global default
+  // exit if trying to get the importance value for a PV that isnt provided by the user.
   G4double importanceValue = (imVolumesAndValues)[cellName];
   if (!BDS::IsFinite(importanceValue))
     {
