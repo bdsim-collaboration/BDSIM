@@ -15,4 +15,4 @@ option, physicsList="em_low em_extra hadronic_elastic decay ftfp_bert stopping";
 
 option, storeElossWorld=1;
 
-option, ngenerate=2;
+option, ngenerate=1;
