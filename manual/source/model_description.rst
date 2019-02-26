@@ -2929,61 +2929,79 @@ Physics Processes
 -----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
-define **only** the processes that should be simulated so
-that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
-is provided and other processes must be specified to be used. Rather than specify each individual
-particle physics process on a per-particle basis, a series of "physics lists" are provided that
-are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
-the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
-Geant4 ones. These are fairly modular and can be added independently. More complete "reference
-physics lists" from Geant4 (i.e. including several electromagnetic and hadronic physics lists)
-are also accessible.
+define **only** the processess required so that the simulation covers the desired outcome
+want but is also efficient. Geant4 says, "There is no one model that covers all physics
+at all energy ranges."
 
-The modular physics list can be selected with the following syntax (delimited by a space)::
+By default, only tracking in magnetic fields is provided (e.g. **no** physics) and other
+processes must be specified to be used.
 
-  option, physicsList = "physicslistname anotherphysicslistname";
+Rather than specify each individual particle physics process on a per-particle basis,
+a series of "physics lists" are provided that are a predetermined set of physics processes
+suitable for a certain application. BDSIM follows the Geant4 ethos in this regard and the
+majority of those in BDSIM are simple shortcuts to the Geant4 ones.
 
-  option, physicsList = "em optical";
+There are 3 ways to specify physics lists in BDSIM:
 
-The Geant4 reference physics can be used by prefixing their name with "g4". See :ref:`physics-geant4-lists`.
+1) BDSIM's modular physics lists as described in :ref:`physics-modular-physics-lists`: ::
 
-.. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
-	  with any modular physics list.
+     option, physicsList = "em qgsp_bert";
+     
+These are modular and can be added independently. BDSIM provides a 'physics list' for
+a few discrete processes that aren't covered inside Geant4 reference physics lists such as
+crystal channelling and cherenkov radiation. It is possible to create a physics list similar
+to a Geant4 reference physics list using BDSIM's modular approach as internally Geant4 does
+the same thing.
 
-.. note:: The range cuts specified with BDSIM options apply by default even with a Geant4
-	  reference physics list. This can be turned off with the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts=0`.
+2) Geant4's reference physics lists as described in :ref:`physics-geant4-lists`: ::
 
-.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
-	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
-	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
-	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
-	  is the default option.
+     option, physicsList = "g4FTFTP_BERT";
+
+These are more complete "reference physics lists" that use several modular physics lists from Geant4
+like BDSIM but in a predefined way that Geant4 quote for references results. These have rather confusingly
+similar names. :code:`ftfp_bert` causes BDSIM to use :code:`G4HadronPhysicsFTFP_BERT` whereas
+:code:`g4FTFP_BERT` uses :code:`FTFP_BERT` in Geant4. We refer the pattern 1) as 'modular physics lists'
+and pattern 2) as Geant4 reference physics lists.
+
+3) A *complete* physics list. This is a custom solution for a particular application that is
+   hard coded in BDSIM. These all start with 'complete'. See :ref:`physics-complete-lists`. ::
+
+     option, physicsList = "completechannelling";
+
 
 For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
-.. note:: Using extra physics processes that are not required will slow the simulation and produce
-	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
-	  only use the minimal set of physics processes required.
-
-.. note:: The strings for the modular physics list are case-insensitive.
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
 time for BDSIM and it will not recognise a physics list that requires a later version of Geant4
 than BDSIM was compiled with respect to.
 
-A summary of the available physics lists in BDSIM is provided below (Others can be easily added
+A summary of the available physics lists in BDSIM is provided below (others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+See the Geant4 documentation for a more complete explanation of the physics lists.
 
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
+.. _physics-modular-physics-lists:
+  
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
+
+A modular phyiscs list can be made by specifying several physics lists separated by spaces. These
+are independent.
+
+* The strings for the modular physics list are case-insensitive.
+
+Examples: ::
+
+  option, physicsList="em ftfp_bert";
+
+  option, physicsList="em_low decay ion hadron_elastic qgsp_bert em_extra;
+  
 
 .. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
 	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
@@ -3230,20 +3248,24 @@ propagate the weights correctly.
 Geant4 Reference Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4
+documentation:
 
-* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `Physics List Guide`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
-.. note:: The range cuts specified with BDSIM options apply by default and the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 0 ('off') to avoid this
-	  if required. The defaults are 1 mm, the same as Geant4.
+Notes:
 
-.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
-	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
-	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
-	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
-	  is the default option.
+* Only one Geant4 reference physics list can be used and it cannot be used in combination
+  with any modular physics list.
+* The range cuts specified with BDSIM options apply by default and the option
+  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 0 ('off') to avoid this
+  if required. The defaults are 1 mm, the same as Geant4.
+* If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
+  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
+  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
+  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
+  is the default option.
 
 .. warning:: Turning off all limits may result in tracking warnings. The events should still proceed
 	     as normal, but Geant4 by default requests step lengths of 10 km or more, which often
@@ -3316,6 +3338,8 @@ This following example will enforce a minimum kinetic energy but also limit the 
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
 	  case sensitive.
 
+.. _physics-complete-lists:
+   
 Complete Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^
 
