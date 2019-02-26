@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
@@ -28,8 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
-
-#include "BDSParallelWorldImportance.hh"
 
 #include "parser/element.h"
 #include "parser/fastlist.h"
@@ -76,6 +75,8 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
 
 std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld)
 {
+  BDSAcceleratorModel* acceleratorModel = BDSAcceleratorModel::Instance();
+
   // standard worlds
   auto samplerWorld           = new BDSParallelWorldSampler("main");
   auto curvilinearWorld       = new BDSParallelWorldCurvilinear("main");
@@ -83,6 +84,9 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   massWorld->RegisterParallelWorld(samplerWorld);
   massWorld->RegisterParallelWorld(curvilinearWorld);
   massWorld->RegisterParallelWorld(curvilinearBridgeWorld);
+
+  // G4VUserDetectorConstruction doesn't delete parallel worlds so we should
+  acceleratorModel->RegisterParallelWorld(samplerWorld);
 
   // extra worlds for additional beam line placements
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
@@ -104,6 +108,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
       if (info.samplerWorld)
 	{
 	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
+	  acceleratorModel->RegisterParallelWorld(sWorld); // register for deletion with bdsim
 	  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
@@ -113,6 +118,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
     {
       BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
+      acceleratorModel->RegisterParallelWorld(importanceWorld);
       massWorld->RegisterParallelWorld(importanceWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
     }
