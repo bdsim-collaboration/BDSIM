@@ -49,5 +49,10 @@ int main(int argc, char** argv)
       std::cerr << std::endl << exception.what() << std::endl;
       exit(1);
     }
+  catch (const std::exception& exception)
+    {
+      std::cerr << std::endl << exception.what() << std::endl;
+      exit(1);
+    }
   return 0;
 }
