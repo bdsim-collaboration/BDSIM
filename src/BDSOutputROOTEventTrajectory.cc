@@ -143,7 +143,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       // loop over trajectory points and fill structures
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
 	{
-	  BDSTrajectoryPoint *point = static_cast<BDSTrajectoryPoint *>(traj->GetPoint(i));
+	  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
 	  
 	  // Position
 	  G4ThreeVector pos = point->GetPosition();
@@ -151,7 +151,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 					pos.getY() / CLHEP::m,
 					pos.getZ() / CLHEP::m));
 	  
-	  G4VPhysicalVolume *vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
+	  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
 	  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
 	  if(theInfo)
 	    {modelIndex.push_back(theInfo->GetBeamlineIndex());}
@@ -236,7 +236,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   /////////////////////////////////////////////////////////////////////////////////
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition *phc)
+void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition* phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }
