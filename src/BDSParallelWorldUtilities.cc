@@ -16,7 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
@@ -27,8 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
-
-#include "BDSParallelWorldImportance.hh"
 
 #include "parser/element.h"
 #include "parser/fastlist.h"
@@ -75,6 +75,8 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
 
 std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld)
 {
+  BDSAcceleratorModel* acceleratorModel = BDSAcceleratorModel::Instance();
+
   // standard worlds
   auto samplerWorld           = new BDSParallelWorldSampler("main");
   auto curvilinearWorld       = new BDSParallelWorldCurvilinear("main");
@@ -82,6 +84,9 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   massWorld->RegisterParallelWorld(samplerWorld);
   massWorld->RegisterParallelWorld(curvilinearWorld);
   massWorld->RegisterParallelWorld(curvilinearBridgeWorld);
+
+  // G4VUserDetectorConstruction doesn't delete parallel worlds so we should
+  acceleratorModel->RegisterParallelWorld(samplerWorld);
 
   // extra worlds for additional beam line placements
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
@@ -103,6 +108,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
       if (info.samplerWorld)
 	{
 	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
+	  acceleratorModel->RegisterParallelWorld(sWorld); // register for deletion with bdsim
 	  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
@@ -112,6 +118,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
     {
       BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
+      acceleratorModel->RegisterParallelWorld(importanceWorld);
       massWorld->RegisterParallelWorld(importanceWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
     }
@@ -134,36 +141,17 @@ void BDS::RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
     {physicsList->RegisterPhysics(process);}
 }
 
-void BDS::AddIStore(G4GeometrySampler* pgs,
-                    std::vector<G4VUserParallelWorld*> worlds)
+void BDS::AddIStore(std::vector<G4VUserParallelWorld*> worlds)
   {
-    // check the geometry sampler exists.
-    if (!pgs)
-      {
-        G4cerr << __METHOD_NAME__ << "Geometry sampler for importance sampling world not found." << G4endl;
-        exit(1);
-      }
-
     BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
-    //only register physics if the world exists
+    //only add importance store if the world exists
     if (importanceWorld)
-      {
-        // Get store, and prepare importance sampling for importance geometry sampler
-        G4IStore* iStore = G4IStore::GetInstance(importanceWorld->GetName());
-        pgs->SetWorld(iStore->GetParallelWorldVolumePointer());
-        pgs->PrepareImportanceSampling(iStore, 0);
-        pgs->Configure();
-
-        importanceWorld->AddIStore();
-      }
+      {importanceWorld->AddIStore();}
     else
-      {
-        G4cerr << __METHOD_NAME__ << "Importance sampling world not found." << G4endl;
-        exit(1);
-      }
+      {throw BDSException(__METHOD_NAME__, "Importance sampling world not found.");}
   }
 
-G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
+void BDS::RegisterImportanceBiasing(std::vector<G4VUserParallelWorld*> worlds,
                     G4VModularPhysicsList* physList)
 {
   BDSParallelWorldImportance* importanceWorld = BDS::GetImportanceSamplingWorld(worlds);
@@ -172,7 +160,6 @@ G4GeometrySampler* BDS::GetGeometrySamplerAndRegisterImportanceBiasing(std::vect
   G4GeometrySampler* pgs = new G4GeometrySampler(importanceWorld->GetWorldVolume(), "neutron");
   pgs->SetParallel(true);
   physList->RegisterPhysics(new G4ImportanceBiasing(pgs,importanceWorld->GetName()));
-  return pgs;
 }
 
 BDSParallelWorldImportance* BDS::GetImportanceSamplingWorld(std::vector<G4VUserParallelWorld*> worlds)

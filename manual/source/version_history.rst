@@ -64,7 +64,7 @@ New Features
 +----------------------------------+------------------------------------------------------------------+
 | physicsEnergyLimitLow            | Control minimum energy for all physics models. (advanced)        |
 +----------------------------------+------------------------------------------------------------------+
-| physicsEnergyLimitHigh           | Control maximum energy for all physcis models. (advanced)        |
+| physicsEnergyLimitHigh           | Control maximum energy for all physics models. (advanced)        |
 +----------------------------------+------------------------------------------------------------------+
 | minimumKineticEnergyTunnel       | Any particles below this energy (in GeV by default) will be      |
 |                                  | artificially killed in all BDSIM-generated tunnel segments.      |
@@ -234,7 +234,7 @@ Bug Fixes
 * Fix A and Z being the wrong way around for ions in samplers.
 * Charge now correctly recorded in primaries and in samplers for partially stripped ions.
 * Solenoid tracking fixed. Fringes are constructed as appropriate according to integrator set.
-* Fix possible nan values given to Geant4 tracking with miscalculated autoscale value for
+* Fix possible nan values given to Geant4 tracking with miscalculated auto-scaling value for
   field maps.
 * Fix setting default seed state for random number generator if using recreate mode
   and progressing beyond an event stored in the file.
@@ -262,7 +262,7 @@ Bug Fixes
 Output Changes
 --------------
 
-* "Info" branch of the Event and Run trees are now "Summmary". This is to avoid conflict with
+* "Info" branch of the Event and Run trees are now "Summary". This is to avoid conflict with
   ROOT TObject::Info() that could result in broken analysis or range iteration. The DataLoader
   class in analysis (used by pybdsim.Data.Load) is backwards compatible. In the case of loading
   older data with updated software, there will still be a member called Info that the data will

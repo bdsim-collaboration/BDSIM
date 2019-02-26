@@ -455,7 +455,7 @@ The library containing the analysis classes may be then loaded:
 
 The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
 
-This can also be conveinently achieved with pybdsim: ::
+This can also be conveniently achieved with pybdsim: ::
 
   >>> import pybdsim
   >>> pybdsim.Data.LoadROOTLibraries()
@@ -492,7 +492,7 @@ Any output file from the BDSIM set of tools can be loaded with: ::
   >>> d = pybdsim.Data.Load("myoutputfile.root")
 
 This will work for files from BDSIM, `rebdsim`, `rebdsimCombine`, `rebdsimHistoMerge`
-and `rebdsimOptics`. This funciton may return a different type of object depending
+and `rebdsimOptics`. This function may return a different type of object depending
 on the file that was loaded. The two types are `DataLoader`, which is the same as
 the `rebdsim` C++ class but in Python, and `RebdsimFile` (defined in
 :code:`pybdsim/pybdsim/Data.py`), which is a Python class
@@ -768,7 +768,7 @@ then the variance using that mean. The above equation can be rearranged to provi
 calculation with a single pass through the data, however, such algorithms are typically
 numerically unstable, i.e. they rely on a small difference between two very large numbers.
 With the finite precision of a number represented in a C++ double type (~15 significant
-digits), the instability may lead to unphysical results (negative variances) and generally
+digits), the instability may lead to un-physical results (negative variances) and generally
 incorrect results.
 
 The algorithm used in `rebdsim` to calculate the means and variances is an online, single-pass

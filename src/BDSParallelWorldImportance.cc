@@ -169,37 +169,45 @@ void BDSParallelWorldImportance::AddIStore()
 
 G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
 {
-  // set importance value to 1 if trying to get the value for a PV that isnt provided by the user.
-  // cell value of 1 is global default
-  G4double importanceValue = (imVolumesAndValues)[cellName];
-  if (!BDS::IsFinite(importanceValue))
-    {
-      G4String finalCellName = cellName;
-      // prependage and appendage added in pyg4ometry
-      G4String preString = "importanceWorld_PREPEND";
-      G4String postString = "_pv";
-      
-      // only modify name if it contains the prestring - we modify in pyg4ometry (PREPEND)
-      // and this class (importanceWorld_), whereas the user will only know the name they defined.
-      // can't check for poststring as G4 PV naming convention includes it.
-      if (cellName.contains(preString))
-	{
-	  cellName = cellName.erase(0, preString.size());
-	  finalCellName = cellName.erase(cellName.size() - postString.size(), postString.size());
-	}
+  auto result = imVolumesAndValues.find(cellName);
 
-      G4String message = "An importance value was not found (or is zero) for the importance world cell:\n \"";
-      message += finalCellName + "\". Please check that your importanceVolumeMap.\n";
-      message += "File has a finite importance value for this volume.";
-      throw BDSException(__METHOD_NAME__, message);
-    }
-  if (importanceValue < 0)
+  // prepare the user cellname for error message output.
+  G4String finalCellName = cellName;
+  // prependage and appendage added in pyg4ometry
+  G4String preString = "importanceWorld_PREPEND";
+  G4String postString = "_pv";
+  // only modify name if it contains the prestring - we modify in pyg4ometry (PREPEND)
+  // and this class (importanceWorld_), whereas the user will only know the name they defined.
+  // can't check for poststring as G4 PV naming convention includes it.
+  if (cellName.contains(preString))
     {
-      G4String message = "Importance value is negative for cell \"" + cellName + "\".";
+      cellName = cellName.erase(0, preString.size());
+      finalCellName = cellName.erase(cellName.size() - postString.size(), postString.size());
+    }
+
+  if (result != imVolumesAndValues.end())
+    {
+      G4double importanceValue = (*result).second;
+      // importance value must be finite and positive.
+      if (importanceValue < 0)
+        {
+          G4String message = "Importance value is negative for cell \"" + finalCellName + "\".";
+          throw BDSException(__METHOD_NAME__, message);
+        }
+      else if (!BDS::IsFinite(importanceValue))
+        {
+          G4String message = "Importance value is zero for cell \"" + finalCellName + "\".";
+          throw BDSException(__METHOD_NAME__, message);
+        }
+      return importanceValue;
+    }
+  else
+    {
+      // exit if trying to get the importance value for a PV that isnt provided by the user.
+      G4String message = "An importance value was not found for the cell \"" + finalCellName + "\" in \n";
+      message += "the importance world geometry.";
       throw BDSException(__METHOD_NAME__, message);
     }
-  
-  return importanceValue;
 }
 
 void BDSParallelWorldImportance::ConstructSD()
