@@ -3,8 +3,13 @@
 Analysis of Thin Target Products
 ================================
 
-* Based on :code:`<bdsim>/examples/target/target-p-cu.gmad`
+* Based on :code:`bdsim/examples/target/target-p-cu.gmad`
+  
+.. figure:: target-p-cu-10events.png
+	    :width: 80%
+	    :align: center
 
+  
 Contents
 --------
 
@@ -87,7 +92,7 @@ but care should be taken not to choose a length scale longer than the typical el
 length as you may see discontinuities in energy deposition close to boundaries. The default
 in Geant4 is 1 mm that roughly corresponds to ~keV energies for most particles.
 
-Specifying a seed allows the user to reproduce the simualtion exactly that's demonstrated
+Specifying a seed allows the user to reproduce the simulation exactly that's demonstrated
 here.
 
 The :code:`elossHistoBinWidth` option specifies the binning along the beam line for the
@@ -111,8 +116,21 @@ and BDSIM finishes.
 This creates an output ROOT file called `data1.root`. On the developer's laptop, this
 took approximately 8 seconds to run in total.
 
-Some of the terinal print out (which is kept to be as minimal as possible in BDSIM) is
-worth noting. The beam print out shows the kinetmatics of the beam particle chosen. ::
+The model can also be run interactively, but given the large number of secondary particles
+it is advisable to run a low number of events e.g. 1 to 10. In this case you would run
+BDSIM as follows: ::
+
+  bdsim --file=target-p-cu.gmad --outfile=data1
+
+Once the visualiser starts, enter the following command in the session terminal prompt
+at the bottom. (see :ref:`running-interactively`). ::
+
+  /run/beamOn 5
+
+A visualisation of 10 events can be seen at the beginning of this example.
+
+Some of the terminal print out (which is kept to be as minimal as possible in BDSIM) is
+worth noting. The beam print out shows the kinematics of the beam particle chosen. ::
 
   Design particle properties: 
   Particle:       "proton"
