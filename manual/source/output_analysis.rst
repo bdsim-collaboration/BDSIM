@@ -345,7 +345,9 @@ This creates a ROOT file called "optics.root" that contains the optical function
 of the sampler data.
 
 See :ref:`optical-validation` for more details.
-  
+
+.. _output-analysis-efficiency:
+
 Speed & Efficiency
 ==================
 
@@ -354,6 +356,10 @@ easily result in slow running analysis. To combat this, only the minimal variabl
 should be loaded that need to be. `rebdsim` automatically activates only the 'ROOT
 branches' it needs for the analysis. A few possible ways to improve performance are:
 
+* Reduce number of 2D or 3D histograms if possible. Analysis is linear in time with number
+  of bins.
+* Remove unnecessary histograms from your analysis configuration file.
+* Avoid unnecessary filters in the selection.
 * Turn off optical function calculations if they're not needed or don't make sense, i.e.
   if you're analysing the spray from a collimator in a sampler, it makes no sense to
   calculate the optical functions of that distribution.
@@ -366,6 +372,8 @@ each entry.
 
 `rebdsim` 'turns off' the loading of all data and only loads what is necessary for the
 given analysis.
+
+.. _output-analysis-scaling-up:
 
 Scaling Up - Parallelising Analysis
 -----------------------------------

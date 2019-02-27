@@ -191,6 +191,237 @@ linearly with range. We can use this as an idea of the approximate energy scale.
 Questions Answered
 ------------------
 
-1) What fraction of the beam makes it through the target?
-2) What spectrum of particles comes out after the target?
-3) How much energy is produced or reflected backwards from the target?
+ * `Question 1`_ What fraction of the beam makes it through the target?
+ * `Question 2`_ What spectrum of particles comes out after the target?
+ * `Question 3`_ How much energy is produced or reflected backwards from the target?
+
+
+Question 1
+**********
+
+* What fraction of the beam makes it through the target?
+
+Here we want to know the fraction of primary particles after the target. To do this we look
+at the data recorded in the sampler after the target. The target was called "c1" in the
+input so there will be a sampler structure in the Event tree of the output called "c1".
+
+To get this answer we can make a histogram using rebdsim. This may seem an unintuitive
+approach but it includes all the correct event averaging and uncertainty calculations.
+
+To analyse data and make histograms using rebdsim we use an analysis configuration text
+file. We start, as always, by copying an example from BDSIM that can be found in: ::
+
+  bdsim/examples/features/analysis/perEntryHistograms/analysisConfig.txt
+
+We histogram any value of any particle recorded in the sampler in a 1 bin histogram
+with the filter ("selection") that only primary particles are filled. The default
+histogramming is per event, i.e. normalised to the number of events. Below are two
+possible ways to achieve the same answer. ::
+
+  Histogram1D   Event. Q1PrimaryFraction   {2}  {-0.5:1.5} c1.parentID==0 c1.parentID==0
+  Histogram1D   Event. Q1PrimaryFraction2  {1}  {-2:2}     c1.x           c1.parentID==0
+
+This file for this example is provided in :code:`bdsim/examples/target/analysisConfig.txt`. We
+run rebdsim with the following command: ::
+
+  rebdsim analysisConfig.txt data1.root data1-analysis.root
+
+This produces an output ROOT file called `data1-analysis.root` that contains the desired
+histograms.
+
+The first histograms a Boolean of whether the parentID (the track ID of the particle that
+created that one) is 0 or not. Only primary particles have :code:`parentID==0` as they have
+no parent. This will happen for every particle recorded in the sampler including secondaries.
+We therefore add a "selection" (a filter) to only bin the particles where their parentID is 0.
+The Boolean will become a number when binned so it can either be a 0 or a 1. We choose histogram
+bins from 0.5 to 1.5 with two bins so that the centres are inside the bins.
+
+This will produce a histogram with two bins centred on 0 and 1. The value of the second bin
+centred on 1 is the answer.
+
+A second way is to histogram any one coordinate and apply the same filter of primaries only.
+In the above code we declare a 1 bin 1D histogram from -2 to +2 m to cover all values of x.
+The histogram contains one bin with the mean number of primaries per event that go through
+the sampler.
+
+We can extract this number easily with pybdsim. In iPython (or Python): ::
+
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("data1-analysis.root")
+  >>> d.histogramspy
+  {'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x129b37ad0>,
+  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x129b37a10>,
+  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x129b37a50>,
+  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x129b2a890>,
+  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x129b37990>,
+  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x129b37890>,
+  'Event/PerEntryHistograms/Q1PrimaryFraction': <pybdsim.Data.TH1 at 0x129b25790>,
+  'Event/PerEntryHistograms/Q2PrimaryFraction2': <pybdsim.Data.TH1 at 0x129ac0410>}
+
+  >>> q1ha = d.histogramspy['Event/PerEntryHistograms/Q1PrimaryFraction']
+  >>> type(q1ha)
+  <pybdsim.Data.TH1 at 0x129b25790>
+  >>> q1ha. <tab>
+              q1ha.contents   q1ha.hist       q1ha.title      q1ha.xlabel     q1ha.xunderflow 
+              q1ha.entries    q1ha.name       q1ha.xcentres   q1ha.xlowedge   q1ha.xwidths    
+              q1ha.errors     q1ha.nbinsx     q1ha.xhighedge  q1ha.xoverflow  q1ha.ylabel
+  >>> q1ha.contents
+  array([0.   , 0.755])
+  >>> q1ha.errors
+  array([0.        , 0.03048807])
+  >>> q1hb = d.histogramspy['Event/PerEntryHistograms/Q1PrimaryFraction2']
+  >>> q1hb.contents
+  array([0.755])
+  >>> q1ha.errors
+  array([0.03048807])
+
+
+So here we see two ways to find the answer of :math:`0.755 \pm 0.031` of the proton beam
+goes through remaining an intact proton. Note, this doesn't say whether it interacted or
+not, but just whether the primary made it through intact. If the proton had disintegrated
+then it would not be a primary anymore.
+
+Question 2
+**********
+
+* What spectrum of particles comes out after the target?
+
+So the ideal plot here would be histograms of different particle species for different
+energies. To do this, we again hsitogram the particles recorded in the sampler after
+the target. We histogram the energy for each particle species. The following analysis
+is used. ::
+
+  Histogram1D   Event.   Q2All                {130} {0:6500}    c1.energy      c1.zp>0
+  Histogram1D   Event.   Q2ProtonsPrimary     {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID==0
+  Histogram1D   Event.   Q2ProtonsSecondary   {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID>0
+  Histogram1D   Event.   Q2PiPlusMinus        {130} {0:6500}    c1.energy      c1.zp>0&&abs(c1.partID)==211
+  Histogram1D   Event.   Q2PiZero             {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==111
+  Histogram1D   Event.   Q2Electrons          {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==11
+  Histogram1D   Event.   Q2Positrons          {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==-11
+  Histogram1D   Event.   Q2Gammas             {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==22
+  Histogram1D   Event.   Q2Muons              {130} {0:6500}    c1.energy      c1.zp>0&&abs(c1.partID)==13
+
+This file for this example is provided in :code:`bdsim/examples/target/analysisConfig.txt`. We
+run rebdsim with the following command: ::
+
+  rebdsim analysisConfig.txt data1.root data1-analysis.root
+
+We can then load and plot the data in iPython (or Python) using pybdsim. This requires
+us to make our own plot. We can look at :code:`pybdsim/pybdsim/Plot.py : Histogram1D()`
+for inspiration and then make our own plot. Below is the Python code used to generate
+the plot. This is included with this example as :code:`plotSpectra.py`. ::
+
+  import matplotlib.pyplot as _plt
+  import pybdsim
+  from OrderedDict import OrderedDict
+  
+  def Spectra(filename, outputfilename='spectra', log=False):
+      d = pybdsim.Data.Load(filename)
+  
+      keys = OrderedDict([("All",               "All"),
+                          ("ProtonsPrimary",    "p (primary)"),
+                          ("ProtonsSecondary",  "p (secondary)"),
+                          ("Neutrons",          "n"),
+                          ("PiPlusMinus",       "$\pi^{\pm}$"),
+                          ("PiZero",            "$\pi^{0}$"),
+                          ("Electrons",         "e$^{-}$"),
+                          ("Positrons",         "e$^{+}$"),
+                          ("Gammas",            "$\gamma$"),
+                          ("Muons",             "$\mu^{\pm}$")])
+      
+      _plt.figure()
+      extra = "Log" if log else ""
+      for k,name in keys.iteritems():
+          ho  = d.histograms1dpy["Event/PerEntryHistograms/Q2"+extra+k]
+          h   = pybdsim.Data.PadHistogram1D(ho)
+          _plt.errorbar(h.xcentres, h.contents, yerr=h.errors, drawstyle="steps-mid", label=name)
+
+    binWidth = d.histogramspy["Event/PerEntryHistograms/Q2"+extra+"All"].xwidths[0]
+        
+    if log:
+        _plt.xscale("log")
+        _plt.ylabel("Number / Proton / d\,log(E) GeV")
+        _plt.xlim(9,6700)
+        _plt.ylim(1e-3,2)
+    else:
+        _plt.ylabel("Number / Proton / " + str(round(binWidth,0)) + " GeV")
+        _plt.xlim(-50,6600)
+        _plt.ylim(1e-3,1e3)
+
+    _plt.xlabel('Total Particle Energy (GeV)')
+    _plt.yscale('log', nonposy='clip')
+    _plt.legend(fontsize="small")
+    _plt.tight_layout()
+
+    if not outputfilename.endswith(".pdf"):
+        outputfilename += ".pdf"
+    _plt.savefig(outputfilename)
+
+We can use this as follows: ::
+
+  >>> import plotSpectra
+  >>> plotSpectra.Spectra('data1-analysis.root')
+
+This produces the following plot.
+
+.. figure:: target-q2-spectra.pdf
+	    :width: 100%
+	    :align: center
+
+	    Spectra of particles for 200 events through a 5cm target of copper.
+
+This doesn't look so informative at first glance. We can generate more statistics but we can
+also make a logarithmically binned plot. We add more lines to the analysisConfig.txt for
+rebdsim. See :ref:`output-analysis-configuration-file` for more details. Here are the lines
+we add: ::
+
+  Histogram1DLog  Event.  Q2LogAll              {100} {1:3.82}    c1.energy      c1.zp>0
+  Histogram1DLog  Event.  Q2LogProtonsPrimary   {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID==0
+  Histogram1DLog  Event.  Q2LogProtonsSecondary {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID>0
+  Histogram1DLog  Event.  Q2LogNeutrons         {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2112
+  Histogram1DLog  Event.  Q2LogPiPlusMinus      {100} {1:3.82}    c1.energy      c1.zp>0&&abs(c1.partID)==211
+  Histogram1DLog  Event.  Q2LogPiZero           {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==111
+  Histogram1DLog  Event.  Q2LogElectrons        {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==11
+  Histogram1DLog  Event.  Q2LogPositrons        {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==-11
+  Histogram1DLog  Event.  Q2LogGammas           {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==22
+  Histogram1DLog  Event.  Q2LogMuons            {100} {1:3.82}    c1.energy      c1.zp>0&&abs(c1.partID)==13
+
+We use the above plotting script in Python to make a logarithmically binned plot: ::
+
+  >>> import plotSpectra
+  >>> plotSpectra.Spectra('data1-analysis.root', log=True)
+
+This produces the following figure.
+
+.. figure:: target-q2-spectra-log.pdf
+	    :width: 100%
+	    :align: center
+
+	    Spectra of particles for 200 events through a 5cm target of copper.
+
+
+This is more informative but still we are lacking statistics. Given the first generation
+of data took less than 10 seconds, we can rerun 3000, reanalyse the new data using rebdsim
+and make new plots. Below are such plots for 3000 events. On the developer's computer took
+90 seconds to run.
+
+.. figure:: target-q2-spectra-3k.pdf
+	    :width: 100%
+	    :align: center
+
+	    Spectra of particles for 3000 events through a 5cm target of copper.
+
+.. figure:: target-q2-spectra-3k-log.pdf
+	    :width: 100%
+	    :align: center
+
+	    Spectra of particles for 3000 events through a 5cm target of copper.
+
+.. note:: The more histograms we add and the more filters we add, the slower the analysis will
+	  be. The analysis is actually very efficient for what it does. If the analysis
+	  becomes too long running, consider generating separate data files and analysing
+	  them separately, then combining the resultant histograms. For further details,
+	  see :ref:`output-analysis-scaling-up` and :ref:`output-analysis-efficiency`.
+	    
+Question 3
+**********

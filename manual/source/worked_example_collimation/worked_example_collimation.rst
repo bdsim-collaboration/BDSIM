@@ -160,10 +160,9 @@ learn about these impacts and losses in the collimation system.
 Questions Answered
 ------------------
 
-1) Where are particles absorbed that impact the first collimator?
-2) Where do particles impact that don't impact the first collimator?
-3) What secondaries make it through the shielding wall created from
-   impacts on the first collimator?
+* `Question 1`_ Where are particles absorbed that impact the first collimator?
+* `Question 2`_ Where do particles impact that don't impact the first collimator?
+* `Question 3`_ What secondaries make it through the shielding wall created from impacts on the first collimator?
 
 Question 1
 **********
