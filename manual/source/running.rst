@@ -125,6 +125,8 @@ in the simulation, i.e. where a particle hits.
 .. note:: For more information on the `-\\-circular` option and using BDSIM with circular machines,
 	  see :ref:`circular-machines`.
 
+.. _running-interactively:
+	  
 Interactively
 =============
 

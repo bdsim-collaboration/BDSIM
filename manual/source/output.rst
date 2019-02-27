@@ -53,6 +53,47 @@ Trajectories are vectors of trajectory points that record the information about 
 at each step in the simulation. This records information, such as: all coordinates, particle
 type, state and the physics process that determined that step.
 
+Particle Identification
+-----------------------
+
+BDSIM uses the standard Particle Data Group identification numbers for each particle type,
+similarly to Geant4. These are typically referred to as "partID". A table of the particles
+and explanation of the numbering scheme can be found online:
+
+* `<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
+
+Notes:
+  
+* These are integers.
+* A negative value represents the opposite charge from the definition of the particle, but
+  which doesn't necessarily mean it's negatively charged.
+
+A table of common particles is listed below:
+
++------------------+--------------+
+| **Name**         | **PDG ID**   |
++==================+==============+
+| proton           | 2212         |
++------------------+--------------+
+| electron         | 11           |
++------------------+--------------+
+| positron         | -11          |
++------------------+--------------+
+| gamma or photon  | 22           |
++------------------+--------------+
+| neutron          | 2112         |
++------------------+--------------+
+| pion positive    | 211          |
++------------------+--------------+
+| pion negative    | -211         |
++------------------+--------------+
+| pion zero        | 111          |
++------------------+--------------+
+| muon negative    | 13           |
++------------------+--------------+
+| muon positive    | -13          |
++------------------+--------------+
+
 
 Output Data Selection \& Reduction
 ----------------------------------

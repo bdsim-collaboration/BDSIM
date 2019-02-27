@@ -169,19 +169,32 @@ void BDSParallelWorldImportance::AddIStore()
 
 G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
 {
-  auto result = imVolumesAndValues.find(cellName);
-
   // prepare the user cellname for error message output.
   G4String finalCellName = cellName;
   // prependage and appendage added in pyg4ometry
-  G4String preString = "importanceWorld_PREPEND";
+  G4String preString1 = "importanceWorld_PREPEND";
+  G4String preString2 = "importanceWorld_";
   G4String postString = "_pv";
-  // only modify name if it contains the prestring - we modify in pyg4ometry (PREPEND)
+
+  // if the cellname only contains the second prepend string, it frustratingly has to be replaced with the
+  // first prepend as the first prepend string is automatically added to the map cell names when reading. This
+  // was done to match the cell pv names written by pyg4ometry which previously included PREPEND when writing.
+  // Have to check for PREPEND later anyway to maintain backwards compatibility.
+  G4String newName = cellName;
+  if (!cellName.contains(preString1) && cellName.contains(preString2))
+    {newName = cellName.replace(0,preString2.size(),preString1);}
+
+  // if the cellname is unmodified (e.g some other written geometry) then do nothing - up to
+  // user to match names in map file
+
+  auto result = imVolumesAndValues.find(newName);
+
+  // only modify name if it contains one of the prestrings - we modify in pyg4ometry ("PREPEND"/"")
   // and this class (importanceWorld_), whereas the user will only know the name they defined.
   // can't check for poststring as G4 PV naming convention includes it.
-  if (cellName.contains(preString))
+  if (cellName.contains(preString1))
     {
-      cellName = cellName.erase(0, preString.size());
+      cellName = cellName.erase(0, preString1.size());
       finalCellName = cellName.erase(cellName.size() - postString.size(), postString.size());
     }
 
