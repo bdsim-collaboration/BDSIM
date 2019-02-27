@@ -28,7 +28,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
-#include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4ParticleDefinition.hh"
@@ -187,9 +186,8 @@ int BDSIM::Initialise()
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
-  G4GeometrySampler* pgs = nullptr;
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
-    {pgs = BDS::GetGeometrySamplerAndRegisterImportanceBiasing(parallelWorldsRequiringPhysics,physList);}
+    {BDS::RegisterImportanceBiasing(parallelWorldsRequiringPhysics,physList);}
 
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
@@ -315,7 +313,7 @@ int BDSIM::Initialise()
 
   /// Create importance store for parallel importance world
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
-    {BDS::AddIStore(pgs, parallelWorldsRequiringPhysics);}
+    {BDS::AddIStore(parallelWorldsRequiringPhysics);}
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();

@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSImportanceFileLoader.hh"
 
 #include "globals.hh"
@@ -47,7 +49,6 @@ template <class T>
 std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fileName)
 {
   T file;
-  std::vector<G4double> importanceValues;
 
   file.open(fileName);
 
@@ -68,24 +69,52 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
 
   std::string line;
   std::map<G4String, G4double> importance;
-
+  G4int linenum = 1;
   while (std::getline(file, line))
     { // read a line only if it's not a blank one
       std::istringstream liness(line);
       std::string volume;
-      G4double importanceValue;
+      std::string importanceValueString;
+      std::string remainder;
 
       // Skip a line if it's only whitespace
       if (std::all_of(line.begin(), line.end(), isspace))
         {continue;}
 
-      liness >> volume >> importanceValue;
+      // exit if anything after the importance value
+      if (!(std::istringstream(line) >> volume >> importanceValueString).eof())
+        {
+          liness >> volume >> importanceValueString >> remainder;
+          G4String message = "Error: Unknown value \"" + remainder + "\" in line "+ std::to_string(linenum) +" of the importanceMapFile";
+          throw BDSException(message);
+        }
+
+      liness >> volume >> importanceValueString;
+
+      // exit if no importance value is supplied
+      if (importanceValueString.empty())
+        {
+          G4String message = "No importance value was found for cell \"" + volume + "\" in the importanceMapFile.";
+          throw BDSException(message);
+        }
+
+      G4double importanceValue = 0;
+      // read importance value string as a double but check if numeric
+      auto isNumeric = (std::istringstream(importanceValueString) >> importanceValue >> std::ws).eof();
+      // exit if non-numeric.
+      if (!isNumeric)
+        {
+          G4String message = "Error: Cell \"" + volume + "\" has importance value \"" + importanceValueString + "\",";
+          message += " importance value must be numeric.";
+          throw BDSException(message);
+        }
 
       // importance world should be GDML import created in pyg4ometry so modify PV name accordingly.
       // dangerous to assume fixed behaviour of external package - susceptible to change.
       G4String fullVolume = "importanceWorld_PREPEND" + volume + "_pv";
-      importanceValues.push_back(importanceValue);
       importance[fullVolume] = importanceValue;
+
+      linenum += 1;
     }
 
   file.close();
