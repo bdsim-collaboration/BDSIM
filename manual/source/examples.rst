@@ -18,17 +18,19 @@ Basic Examples
    examples/collimation-simple
    examples/simpleMachine
    examples/model-model.rst
+   examples/target-simple.rst
 
 .. _worked-examples:
    
 Worked Examples
 ---------------
 
-Start-to-finish examples with explanation.
+Detailed start-to-finish examples with explanation.
 
 .. toctree::
    :maxdepth: 1
 
+   worked_example_target/worked_example_target
    worked_example_collimation/worked_example_collimation
    worked_example_atf2
 

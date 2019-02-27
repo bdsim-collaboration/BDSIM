@@ -345,7 +345,9 @@ This creates a ROOT file called "optics.root" that contains the optical function
 of the sampler data.
 
 See :ref:`optical-validation` for more details.
-  
+
+.. _output-analysis-efficiency:
+
 Speed & Efficiency
 ==================
 
@@ -354,6 +356,10 @@ easily result in slow running analysis. To combat this, only the minimal variabl
 should be loaded that need to be. `rebdsim` automatically activates only the 'ROOT
 branches' it needs for the analysis. A few possible ways to improve performance are:
 
+* Reduce number of 2D or 3D histograms if possible. Analysis is linear in time with number
+  of bins.
+* Remove unnecessary histograms from your analysis configuration file.
+* Avoid unnecessary filters in the selection.
 * Turn off optical function calculations if they're not needed or don't make sense, i.e.
   if you're analysing the spray from a collimator in a sampler, it makes no sense to
   calculate the optical functions of that distribution.
@@ -366,6 +372,8 @@ each entry.
 
 `rebdsim` 'turns off' the loading of all data and only loads what is necessary for the
 given analysis.
+
+.. _output-analysis-scaling-up:
 
 Scaling Up - Parallelising Analysis
 -----------------------------------
@@ -455,7 +463,7 @@ The library containing the analysis classes may be then loaded:
 
 The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
 
-This can also be conveinently achieved with pybdsim: ::
+This can also be conveniently achieved with pybdsim: ::
 
   >>> import pybdsim
   >>> pybdsim.Data.LoadROOTLibraries()
@@ -492,7 +500,7 @@ Any output file from the BDSIM set of tools can be loaded with: ::
   >>> d = pybdsim.Data.Load("myoutputfile.root")
 
 This will work for files from BDSIM, `rebdsim`, `rebdsimCombine`, `rebdsimHistoMerge`
-and `rebdsimOptics`. This funciton may return a different type of object depending
+and `rebdsimOptics`. This function may return a different type of object depending
 on the file that was loaded. The two types are `DataLoader`, which is the same as
 the `rebdsim` C++ class but in Python, and `RebdsimFile` (defined in
 :code:`pybdsim/pybdsim/Data.py`), which is a Python class
@@ -768,7 +776,7 @@ then the variance using that mean. The above equation can be rearranged to provi
 calculation with a single pass through the data, however, such algorithms are typically
 numerically unstable, i.e. they rely on a small difference between two very large numbers.
 With the finite precision of a number represented in a C++ double type (~15 significant
-digits), the instability may lead to unphysical results (negative variances) and generally
+digits), the instability may lead to un-physical results (negative variances) and generally
 incorrect results.
 
 The algorithm used in `rebdsim` to calculate the means and variances is an online, single-pass

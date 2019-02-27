@@ -284,7 +284,7 @@ BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice
 element.  Whilst these thin gaps have a negligible effect for a single
 pass or turn, over several turns it introduces a sizeable inaccuracy
 in the tracking (in the context of large circular models).
-To correct for this, BDSIM models can be supplmented
+To correct for this, BDSIM models can be supplemented
 with a one turn map which is applied at the end of each turn to right
 the primary back onto the correct trajectory.  To ensure physical
 results the one turn map is only applied to primaries, if they did not
@@ -2806,14 +2806,14 @@ A `samplerplacement` may be placed in 3 ways.
 
 1) In global Cartesian coordinates.
 2) In curvilinear coordinates.
-3) In curvilinear coordinates with respsect ot a bema line element by name.
+3) In curvilinear coordinates with respect to a beam line element by name.
 
 The strategy is automatically determined based on the parameters set. The full list of
-parameters is described below, but the requried ones for each scenario are described in
+parameters is described below, but the required ones for each scenario are described in
 :ref:`placements`.
 
 .. warning:: This sampler can nominally overlap with any geometry. However, the user
-	     should **avoid** coplanar overlaps with other geometry. e.g. do not place
+	     should **avoid** co-planar overlaps with other geometry. e.g. do not place
 	     one just at the end of an element or perfectly aligned with the face of an
 	     object. This will cause bad tracking and overlaps. This is a limitation of
 	     Geant4. The user placed samplers are slightly thicker than normal ones
@@ -2826,7 +2826,7 @@ The sampler will be 1 nm thick in reality but may be treated by the user an
 infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
 physics of the simulation. The user may select the shape of the sampler from either
 circular or rectangular (including square). The parameter :code:`apertureType` should
-be specifed as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
+be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
 typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
 The meaning of these parameters is described in :ref:`aperture-parameters`.
 
@@ -2919,7 +2919,7 @@ User Sampler Visualisation
 Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
 visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
 in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and untick the desired element to see
+worlds) and other samplers. It is recommended to tick and un-tick the desired element to see
 it appear and disappear repeatedly.
 
 
@@ -2929,61 +2929,79 @@ Physics Processes
 -----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
-define **only** the processes that should be simulated so
-that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
-is provided and other processes must be specified to be used. Rather than specify each individual
-particle physics process on a per-particle basis, a series of "physics lists" are provided that
-are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
-the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
-Geant4 ones. These are fairly modular and can be added independently. More complete "reference
-physics lists" from Geant4 (i.e. including several electromagnetic and hadronic physics lists)
-are also accessible.
+define **only** the processess required so that the simulation covers the desired outcome
+want but is also efficient. Geant4 says, "There is no one model that covers all physics
+at all energy ranges."
 
-The modular physics list can be selected with the following syntax (delimited by a space)::
+By default, only tracking in magnetic fields is provided (e.g. **no** physics) and other
+processes must be specified to be used.
 
-  option, physicsList = "physicslistname anotherphysicslistname";
+Rather than specify each individual particle physics process on a per-particle basis,
+a series of "physics lists" are provided that are a predetermined set of physics processes
+suitable for a certain application. BDSIM follows the Geant4 ethos in this regard and the
+majority of those in BDSIM are simple shortcuts to the Geant4 ones.
 
-  option, physicsList = "em optical";
+There are 3 ways to specify physics lists in BDSIM:
 
-The Geant4 reference physics can be used by prefixing their name with "g4". See :ref:`physics-geant4-lists`.
+1) BDSIM's modular physics lists as described in :ref:`physics-modular-physics-lists`: ::
 
-.. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
-	  with any modular physics list.
+     option, physicsList = "em qgsp_bert";
+     
+These are modular and can be added independently. BDSIM provides a 'physics list' for
+a few discrete processes that aren't covered inside Geant4 reference physics lists such as
+crystal channelling and cherenkov radiation. It is possible to create a physics list similar
+to a Geant4 reference physics list using BDSIM's modular approach as internally Geant4 does
+the same thing.
 
-.. note:: The range cuts specified with BDSIM options apply by default even with a Geant4
-	  reference physics list. This can be turned off with the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts=0`.
+2) Geant4's reference physics lists as described in :ref:`physics-geant4-lists`: ::
 
-.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
-	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
-	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
-	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
-	  is the default option.
+     option, physicsList = "g4FTFTP_BERT";
+
+These are more complete "reference physics lists" that use several modular physics lists from Geant4
+like BDSIM but in a predefined way that Geant4 quote for references results. These have rather confusingly
+similar names. :code:`ftfp_bert` causes BDSIM to use :code:`G4HadronPhysicsFTFP_BERT` whereas
+:code:`g4FTFP_BERT` uses :code:`FTFP_BERT` in Geant4. We refer the pattern 1) as 'modular physics lists'
+and pattern 2) as Geant4 reference physics lists.
+
+3) A *complete* physics list. This is a custom solution for a particular application that is
+   hard coded in BDSIM. These all start with 'complete'. See :ref:`physics-complete-lists`. ::
+
+     option, physicsList = "completechannelling";
+
 
 For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
-.. note:: Using extra physics processes that are not required will slow the simulation and produce
-	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
-	  only use the minimal set of physics processes required.
-
-.. note:: The strings for the modular physics list are case-insensitive.
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
 time for BDSIM and it will not recognise a physics list that requires a later version of Geant4
 than BDSIM was compiled with respect to.
 
-A summary of the available physics lists in BDSIM is provided below (Others can be easily added
+A summary of the available physics lists in BDSIM is provided below (others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+See the Geant4 documentation for a more complete explanation of the physics lists.
 
-* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
+.. _physics-modular-physics-lists:
+  
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
+
+A modular phyiscs list can be made by specifying several physics lists separated by spaces. These
+are independent.
+
+* The strings for the modular physics list are case-insensitive.
+
+Examples: ::
+
+  option, physicsList="em ftfp_bert";
+
+  option, physicsList="em_low decay ion hadron_elastic qgsp_bert em_extra;
+  
 
 .. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
 	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
@@ -3230,20 +3248,24 @@ propagate the weights correctly.
 Geant4 Reference Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4 documentation:
+BDSIM allows use of the Geant4 reference physics lists directly and more details can be found in the Geant4
+documentation:
 
-* `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/index.html>`_
+* `Physics List Guide`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
-.. note:: The range cuts specified with BDSIM options apply by default and the option
-	  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 0 ('off') to avoid this
-	  if required. The defaults are 1 mm, the same as Geant4.
+Notes:
 
-.. note:: If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
-	  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
-	  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
-	  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
-	  is the default option.
+* Only one Geant4 reference physics list can be used and it cannot be used in combination
+  with any modular physics list.
+* The range cuts specified with BDSIM options apply by default and the option
+  :code:`g4PhysicsUseBDSIMRangeCuts` should be set to 0 ('off') to avoid this
+  if required. The defaults are 1 mm, the same as Geant4.
+* If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
+  physics process will be attached to the Geant4 reference physics list to enforce this cut. This
+  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
+  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
+  is the default option.
 
 .. warning:: Turning off all limits may result in tracking warnings. The events should still proceed
 	     as normal, but Geant4 by default requests step lengths of 10 km or more, which often
@@ -3287,6 +3309,8 @@ The **optional** following suffixes may be added to specify the electromagnetic 
 * _LIV
 * _PEN
 * __GS
+* __LE
+* _WVI
 * __SS
 
 Examples: ::
@@ -3314,6 +3338,8 @@ This following example will enforce a minimum kinetic energy but also limit the 
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
 	  case sensitive.
 
+.. _physics-complete-lists:
+   
 Complete Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3325,7 +3351,7 @@ These cannot be used in combination with any other physics processes.
 +---------------------------+---------------------------------------------------------------------------+
 | **Physics List**          | **Description**                                                           |
 +===========================+===========================================================================+
-| completechannelling       | Modifed em option 4 plus channelling as per the Geant4 example            |
+| completechannelling       | Modified em option 4 plus channelling as per the Geant4 example           |
 |                           | for crystal channelling. The exact same physics as used in their example. |
 +---------------------------+---------------------------------------------------------------------------+
 
@@ -3423,7 +3449,7 @@ the energy deposition in the world volume itself (i.e. the air).
   beamline. If not, BDSIM will exit.
 * It is down to the user to ensure the importance cells are correctly positioned.
 * If a importance cell volume exists in the importance world geometry and is not listed
-  in the ascii map file with a importance value, BDSIM will exit.
+  in the ASCII map file with a importance value, BDSIM will exit.
 * The importance sampling world volume has an importance value of 1.
 
 .. _bdsim-options:
@@ -3483,7 +3509,9 @@ Common Options
 +----------------------------------+-------------------------------------------------------+
 | beampipeMaterial                 | Default beam pipe material                            |
 +----------------------------------+-------------------------------------------------------+
-| elossHistoBinWidth               | The width of the histogram bins [m]                   |
+| elossHistoBinWidth               | The width of the default energy deposition and        |
+|                                  | particle loss histogram bins made as BDSIM runs [m]   |
+|                                  | Default 1.0 m                                         |
 +----------------------------------+-------------------------------------------------------+
 | eventNumberOffset                | Event that the recreation should start from           |
 +----------------------------------+-------------------------------------------------------+
@@ -3496,7 +3524,8 @@ Common Options
 |                                  | allowed to complete in a circular accelerator.        |
 |                                  | Requires --circular executable option to work.        |
 +----------------------------------+-------------------------------------------------------+
-| horizontalWidth                  | Default accelerator component full width [m]          |
+| horizontalWidth                  | Default accelerator component full width [m] Default  |
+|                                  | is 0.5 m.                                             |
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | The physics list to use                               |
 +----------------------------------+-------------------------------------------------------+
@@ -4003,6 +4032,10 @@ with the following options.
 |                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
 |                                   | world volume as well. Default off.                                 |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContents           | Whether to record energy deposition in the daughter volumes within |
+|                                   | the world volume when supplied as external world geometry.         |
+|                                   | Default off.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -4322,7 +4355,7 @@ or::
 
 where `A`, `Z` and `Q` should be replaced by the atomic number, the number of protons
 in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
-ionised ion). In this case, it is recommended to use the `ion` physicslist.
+ionised ion). In this case, it is recommended to use the `ion` physics list.
 
 Available input distributions and their associated parameters are described in the following
 section.
@@ -4373,7 +4406,7 @@ Beam in Output
 ^^^^^^^^^^^^^^
 
 All of the beam parameters are stored in the output, as described in :ref:`output-beam-tree`. The
-particle coordinates used in the simualtion are stored directly in the Primary branch of the
+particle coordinates used in the simulation are stored directly in the Primary branch of the
 Event Tree, as described in :ref:`output-event-tree`.
 
 .. note:: These are the exact coordinates supplied to Geant4 at the beginning of the event.
@@ -5556,133 +5589,139 @@ All available colours in BDSIM can be found by running BDSIM with the :code:`--c
 
 For convenience the predefined colours in BDSIM are:
 
-+--------------------+-----+-----+-----+-----+
-| Name               |  R  |  G  |  B  |  A  |
-+====================+=====+=====+=====+=====+
-|             LHCcoil| 229 | 191 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|           LHCcollar| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|       LHCcopperskin| 184 | 133 |  10 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             LHCyoke|   0 | 127 | 255 |   1 |
-+--------------------+-----+-----+-----+-----+
-|          LHCyokered| 209 |  25 |  25 |   1 |
-+--------------------+-----+-----+-----+-----+
-|         awakescreen| 175 | 196 | 222 |   1 |
-+--------------------+-----+-----+-----+-----+
-|   awakespectrometer|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|            beampipe| 102 | 102 | 102 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               black|   0 |   0 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                blue|   0 |   0 | 255 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               brown| 114 |  63 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                coil| 184 | 115 |  51 |   1 |
-+--------------------+-----+-----+-----+-----+
-|          collimator|  76 | 102 |  51 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             crystal| 175 | 196 | 222 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                cyan|   0 | 255 | 255 |   1 |
-+--------------------+-----+-----+-----+-----+
-|            decapole|  76 |  51 | 178 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             default| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|            degrader| 159 | 159 | 159 |   1 |
-+--------------------+-----+-----+-----+-----+
-|        dipolefringe| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               drift| 102 | 102 | 102 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                ecol|  76 | 102 |  51 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             element| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                 gap| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                gdml| 102 |  51 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                gray| 127 | 127 | 127 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               green|   0 | 255 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                grey| 127 | 127 | 127 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             hkicker|  76 |  51 | 178 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              kicker|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             magenta| 255 |   0 | 255 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              marker| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|           multipole| 118 | 135 | 153 |   1 |
-+--------------------+-----+-----+-----+-----+
-|         muonspoiler|   0 | 205 | 208 |   1 |
-+--------------------+-----+-----+-----+-----+
-|            octupole|   0 | 153 |  76 |   1 |
-+--------------------+-----+-----+-----+-----+
-| paralleltransporter| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|          quadrupole| 209 |  25 |  25 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               rbend|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                rcol|  76 | 102 |  51 |   1 |
-+--------------------+-----+-----+-----+-----+
-|     rectangularbend|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                 red| 255 |   0 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                  rf| 118 | 135 | 153 |   1 |
-+--------------------+-----+-----+-----+-----+
-|            rfcavity| 118 | 135 | 153 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             rmatrix| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               sbend|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              screen| 175 | 196 | 222 |   1 |
-+--------------------+-----+-----+-----+-----+
-|         screenframe| 178 | 178 | 178 | 0.4 |
-+--------------------+-----+-----+-----+-----+
-|          sectorbend|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|           sextupole| 255 | 204 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              shield| 138 | 135 | 119 |   1 |
-+--------------------+-----+-----+-----+-----+
-|                soil| 138 |  90 |   0 | 0.4 |
-+--------------------+-----+-----+-----+-----+
-|            solenoid| 255 | 139 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
-|           srfcavity| 175 | 196 | 222 |   1 |
-+--------------------+-----+-----+-----+-----+
-|       thinmultipole| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|         thinrmatrix| 229 | 229 | 229 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             tkicker|   0 | 102 | 204 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              tunnel| 138 | 135 | 119 |   1 |
-+--------------------+-----+-----+-----+-----+
-|         tunnelfloor| 127 | 127 | 114 |   1 |
-+--------------------+-----+-----+-----+-----+
-|           undulator| 159 | 159 | 159 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             vkicker| 186 |  84 | 211 |   1 |
-+--------------------+-----+-----+-----+-----+
-|             warning| 255 |  19 | 146 |   1 |
-+--------------------+-----+-----+-----+-----+
-|               white| 255 | 255 | 255 |   1 |
-+--------------------+-----+-----+-----+-----+
-|              yellow| 255 | 255 |   0 |   1 |
-+--------------------+-----+-----+-----+-----+
++---------------------+-----+-----+-----+-----+
+| Name                |  R  |  G  |  B  |  A  |
++=====================+=====+=====+=====+=====+
+|              LHCcoil| 229 | 191 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|            LHCcollar| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|        LHCcopperskin| 184 | 133 |  10 |   1 |
++---------------------+-----+-----+-----+-----+
+|              LHCyoke|   0 | 127 | 255 |   1 |
++---------------------+-----+-----+-----+-----+
+|           LHCyokered| 209 |  25 |  25 |   1 |
++---------------------+-----+-----+-----+-----+
+|          awakescreen| 175 | 196 | 222 |   1 |
++---------------------+-----+-----+-----+-----+
+|    awakespectrometer|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|             beampipe| 102 | 102 | 102 |   1 |
++---------------------+-----+-----+-----+-----+
+|                black|   0 |   0 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 blue|   0 |   0 | 255 |   1 |
++---------------------+-----+-----+-----+-----+
+|                brown| 114 |  63 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 coil| 184 | 115 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+|           collimator|  76 | 102 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+|              crystal| 175 | 196 | 222 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 cyan|   0 | 255 | 255 |   1 |
++---------------------+-----+-----+-----+-----+
+|             decapole|  76 |  51 | 178 |   1 |
++---------------------+-----+-----+-----+-----+
+|              default| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|             degrader| 159 | 159 | 159 |   1 |
++---------------------+-----+-----+-----+-----+
+|         dipolefringe| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|                drift| 102 | 102 | 102 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 ecol|  76 | 102 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+|              element| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|                  gap| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 gdml| 102 |  51 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 gray| 127 | 127 | 127 |   1 |
++---------------------+-----+-----+-----+-----+
+|                green|   0 | 255 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 grey| 127 | 127 | 127 |   1 |
++---------------------+-----+-----+-----+-----+
+|              hkicker|  76 |  51 | 178 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 jcol|  76 | 102 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+|               kicker|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|              magenta| 255 |   0 | 255 |   1 |
++---------------------+-----+-----+-----+-----+
+|               marker| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|            multipole| 118 | 135 | 153 |   1 |
++---------------------+-----+-----+-----+-----+
+|          muonspoiler|   0 | 205 | 208 |   1 |
++---------------------+-----+-----+-----+-----+
+|             octupole|   0 | 153 |  76 |   1 |
++---------------------+-----+-----+-----+-----+
+|  paralleltransporter| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|           quadrupole| 209 |  25 |  25 |   1 |
++---------------------+-----+-----+-----+-----+
+|                rbend|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 rcol|  76 | 102 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+| reallyreallydarkgrey|  51 |  51 |  51 |   1 |
++---------------------+-----+-----+-----+-----+
+|      rectangularbend|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|                  red| 255 |   0 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|                   rf| 118 | 135 | 153 |   1 |
++---------------------+-----+-----+-----+-----+
+|             rfcavity| 118 | 135 | 153 |   1 |
++---------------------+-----+-----+-----+-----+
+|              rmatrix| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|                sbend|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|               screen| 175 | 196 | 222 |   1 |
++---------------------+-----+-----+-----+-----+
+|          screenframe| 178 | 178 | 178 | 0.4 |
++---------------------+-----+-----+-----+-----+
+|           sectorbend|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|            sextupole| 255 | 204 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|               shield| 138 | 135 | 119 |   1 |
++---------------------+-----+-----+-----+-----+
+|                 soil| 138 |  90 |   0 | 0.4 |
++---------------------+-----+-----+-----+-----+
+|             solenoid| 255 | 139 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
+|            srfcavity| 175 | 196 | 222 |   1 |
++---------------------+-----+-----+-----+-----+
+|        thinmultipole| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|          thinrmatrix| 229 | 229 | 229 |   1 |
++---------------------+-----+-----+-----+-----+
+|              tkicker|   0 | 102 | 204 |   1 |
++---------------------+-----+-----+-----+-----+
+|               tunnel| 138 | 135 | 119 |   1 |
++---------------------+-----+-----+-----+-----+
+|          tunnelfloor| 127 | 127 | 114 |   1 |
++---------------------+-----+-----+-----+-----+
+|            undulator| 159 | 159 | 159 |   1 |
++---------------------+-----+-----+-----+-----+
+|              vkicker| 186 |  84 | 211 |   1 |
++---------------------+-----+-----+-----+-----+
+|              warning| 255 |  19 | 146 |   1 |
++---------------------+-----+-----+-----+-----+
+|                white| 255 | 255 | 255 |   1 |
++---------------------+-----+-----+-----+-----+
+|          wirescanner| 138 | 135 | 119 |   1 |
++---------------------+-----+-----+-----+-----+
+|               yellow| 255 | 255 |   0 |   1 |
++---------------------+-----+-----+-----+-----+
 
 .. _controlling-simulation-speed:
 

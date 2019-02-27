@@ -3,6 +3,23 @@
 Collimation
 ===========
 
+* Based on :code:`bdsim/examples/collimation`
+
+.. figure:: collimation-10events.png
+	    :width: 100%
+	    :align: center
+
+Contents
+--------
+
+* `Preparation`_
+* `Model Description`_
+* `Model Preparation`_
+* `Optics`_
+* `Losses`_
+* `Questions Answered`_
+
+
 Preparation
 -----------
 
@@ -12,8 +29,8 @@ Preparation
 * ROOT can be imported in Python
 * `pybdsim` has been installed.
 
-Description
------------
+Model Description
+-----------------
 
 This is an example to show how to turn on extra collimation output and
 how to analyse the data. This example shows information most relevant
@@ -28,7 +45,7 @@ are made of successively denser material (carbon, copper and tungsten).
 This looks like:
 
 .. figure:: collimation-10events.png
-	    :width: 90%
+	    :width: 100%
 	    :align: center
 
 Model Preparation
@@ -143,10 +160,9 @@ learn about these impacts and losses in the collimation system.
 Questions Answered
 ------------------
 
-1) Where are particles absorbed that impact the first collimator?
-2) Where do particles impact that don't impact the first collimator?
-3) What secondaries make it through the shielding wall created from
-   impacts on the first collimator?
+* `Question 1`_ Where are particles absorbed that impact the first collimator?
+* `Question 2`_ Where do particles impact that don't impact the first collimator?
+* `Question 3`_ What secondaries make it through the shielding wall created from impacts on the first collimator?
 
 Question 1
 **********
@@ -304,7 +320,7 @@ Loading and plotting with `pybdsim`::
 
 Here we can see that particles that don't impact the first collimator impact the second one
 and the third one. Some make it to the end of the beam line where they 'hit' the air of the
-world volume. Inpsecting the raw data for Event.PrimaryFirstHit.S, we see some events with
+world volume. Inspecting the raw data for Event.PrimaryFirstHit.S, we see some events with
 the value -1m. This is a value we put in the output when the impact was outside the curvilinear
 coordinate system, e.g. in the world volume away from the beam line. We can infer that the
 particles made it through the air of the world volume before reaching the boundary of the model.
