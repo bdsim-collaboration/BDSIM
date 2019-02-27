@@ -912,15 +912,15 @@ The dipole field strength is then calculated with respect to the chord length:
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
-        beginning or at the end of the vkicker. The length of the fringe field element can be set by the
-        option `thinElementLength` (see `options`_).
-      * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
-        as the vkick.
-      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
-      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
-        the option `includeFringeFields=0` (see `options`_).
-      * No pole face geometry is constructed.
+* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+  beginning or at the end of the vkicker. The length of the fringe field element can be set by the
+  option `thinElementLength` (see `options`_).
+* For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
+  as the vkick.
+* In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+* The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+  the option `includeFringeFields=0` (see `options`_).
+* No pole face geometry is constructed.
 
 
 A pure dipole field is provided in the beam pipe and a more general multipole (as
@@ -966,15 +966,15 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
-        beginning or at the end of the hkicker. The length of the fringe field element can be set by the
-        option `thinElementLength` (see `options`_).
-      * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
-        as the hkick.
-      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
-      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
-        the option `includeFringeFields=0` (see `options`_).
-      * No pole face geometry is constructed.
+* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+  beginning or at the end of the hkicker. The length of the fringe field element can be set by the
+  option `thinElementLength` (see `options`_).
+* For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
+  as the hkick.
+* In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+* The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+  the option `includeFringeFields=0` (see `options`_).
+* No pole face geometry is constructed.
 
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
