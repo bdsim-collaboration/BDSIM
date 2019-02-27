@@ -26,6 +26,7 @@ For each submodule:
    header structure.
    
    * Check data version in analysis.
+   * Check data version in :code:`analysis/DataLoader.cc` initialiser list.
    * Regenerate data samples in :code:`examples/features/data/`.
 
 6. Update version history (including submodule and data versions) in
