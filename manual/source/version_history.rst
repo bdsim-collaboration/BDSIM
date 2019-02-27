@@ -331,10 +331,10 @@ Output Class Versions
 Utilities
 ---------
 
-* pybdsim v1.9.0
-* pymadx v1.5.0
-* pymad8 v1.4.1
-* pytransport v1.2.1
+* pybdsim v2.0.0
+* pymadx v1.7.0
+* pymad8 v1.5.0
+* pytransport v1.3.0
 
 
 V1.2 - 2018 / 08 / 26
