@@ -87,6 +87,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 
   // G4VUserDetectorConstruction doesn't delete parallel worlds so we should
   acceleratorModel->RegisterParallelWorld(samplerWorld);
+  acceleratorModel->RegisterParallelWorld(curvilinearWorld);
+  acceleratorModel->RegisterParallelWorld(curvilinearBridgeWorld);
 
   // extra worlds for additional beam line placements
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
@@ -104,6 +106,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
 	  massWorld->RegisterParallelWorld(cLWorld);
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
+      acceleratorModel->RegisterParallelWorld(cLWorld);
+      acceleratorModel->RegisterParallelWorld(cLBridgeWorld);
 	}
       if (info.samplerWorld)
 	{
