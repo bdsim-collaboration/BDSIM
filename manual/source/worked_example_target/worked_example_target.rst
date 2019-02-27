@@ -6,7 +6,7 @@ Analysis of Thin Target Products
 * Based on :code:`bdsim/examples/target/target-p-cu.gmad`
   
 .. figure:: target-p-cu-10events.png
-	    :width: 80%
+	    :width: 100%
 	    :align: center
 
   
@@ -43,7 +43,7 @@ is built (a solid box of material). The width of the target is the default
 The model looks like:
 
 .. figure:: target-p-cu.png
-	    :width: 90%
+	    :width: 100%
 	    :align: center
 
 The input files for BDSIM can be found in :code:`<bdsim>/examples/target/`.

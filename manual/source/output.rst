@@ -65,8 +65,8 @@ and explanation of the numbering scheme can be found online:
 Notes:
   
 * These are integers.
-* A negative value represents the opposte charge from the definition of the particle, but
-  which doens't necessarily mean it's negatively charged.
+* A negative value represents the opposite charge from the definition of the particle, but
+  which doesn't necessarily mean it's negatively charged.
 
 A table of common particles is listed below:
 
