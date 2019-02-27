@@ -193,7 +193,7 @@ Questions Answered
 
  * `Question 1`_ What fraction of the beam makes it through the target?
  * `Question 2`_ What spectrum of particles comes out after the target?
- * `Question 3`_ How much energy is produced or reflected backwards from the target?
+ * `Question 3`_ How much energy is reflected backwards from the target?
 
 
 Question 1
@@ -301,6 +301,23 @@ is used. ::
   Histogram1D   Event.   Q2Gammas             {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==22
   Histogram1D   Event.   Q2Muons              {130} {0:6500}    c1.energy      c1.zp>0&&abs(c1.partID)==13
 
+After the target there is air as this is the default `worldMaterial` (see
+:ref:`options-common`). Potentially, a (likely secondary) particle could
+bounce back off of the air and go through the sampler before hitting the
+target again. We could change to the world material option to "vacuum"
+to avoid this or add the filter of the z component of the momentum is
+positive - i.e. forwards travelling. This is why we have :code:`c1.zp>0`
+in all of the selections above. We can quickly check if there are any backwards
+going particles at all by inspecting the data in a ROOT TBrowser (see
+:ref:`basic-data-inspection`). Below is a screenshot of ROOT.
+
+.. figure:: target-q2-backwards-going.png
+	    :width: 100%
+	    :align: center
+
+There are indeed some, although only a small fraction. This is for all particles across
+all events. We therefore use the filter to get the correct answer.
+  
 This file for this example is provided in :code:`bdsim/examples/target/analysisConfig.txt`. We
 run rebdsim with the following command: ::
 
@@ -425,3 +442,7 @@ and make new plots. Below are such plots for 3000 events. On the developer's com
 	    
 Question 3
 **********
+
+* How much energy is reflected backwards from the target?
+
+Our sampler for the target is after the target.
