@@ -1,4 +1,4 @@
-d1: drift, l=10*cm, apertureType="circularvacuum";
+d1: drift, l=10*cm;
 c1: rcol, l=5*cm, material="copper";
 l1: line=(d1,c1);
 use, l1;

@@ -29,6 +29,7 @@ Start-to-finish examples with explanation.
 .. toctree::
    :maxdepth: 1
 
+   worked_example_target/worked_example_target
    worked_example_collimation/worked_example_collimation
    worked_example_atf2
 
