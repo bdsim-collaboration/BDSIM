@@ -291,15 +291,15 @@ energies. To do this, we again hsitogram the particles recorded in the sampler a
 the target. We histogram the energy for each particle species. The following analysis
 is used. ::
 
-  Histogram1D   Event.   Q2All                {130} {0:6500}    c1.energy      c1.zp>0
-  Histogram1D   Event.   Q2ProtonsPrimary     {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID==0
-  Histogram1D   Event.   Q2ProtonsSecondary   {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID>0
-  Histogram1D   Event.   Q2PiPlusMinus        {130} {0:6500}    c1.energy      c1.zp>0&&abs(c1.partID)==211
-  Histogram1D   Event.   Q2PiZero             {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==111
-  Histogram1D   Event.   Q2Electrons          {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==11
-  Histogram1D   Event.   Q2Positrons          {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==-11
-  Histogram1D   Event.   Q2Gammas             {130} {0:6500}    c1.energy      c1.zp>0&&c1.partID==22
-  Histogram1D   Event.   Q2Muons              {130} {0:6500}    c1.energy      c1.zp>0&&abs(c1.partID)==13
+  Histogram1D  Event.  Q2All               {130} {0:6500}  c1.energy  c1.zp>0
+  Histogram1D  Event.  Q2ProtonsPrimary    {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID==0
+  Histogram1D  Event.  Q2ProtonsSecondary  {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID>0
+  Histogram1D  Event.  Q2PiPlusMinus       {130} {0:6500}  c1.energy  c1.zp>0&&abs(c1.partID)==211
+  Histogram1D  Event.  Q2PiZero            {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==111
+  Histogram1D  Event.  Q2Electrons         {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==11
+  Histogram1D  Event.  Q2Positrons         {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==-11
+  Histogram1D  Event.  Q2Gammas            {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==22
+  Histogram1D  Event.  Q2Muons             {130} {0:6500}  c1.energy  c1.zp>0&&abs(c1.partID)==13
 
 After the target there is air as this is the default `worldMaterial` (see
 :ref:`options-common`). Potentially, a (likely secondary) particle could
@@ -314,6 +314,10 @@ going particles at all by inspecting the data in a ROOT TBrowser (see
 .. figure:: target-q2-backwards-going.png
 	    :width: 100%
 	    :align: center
+
+	    Component of unit momentum recorded in sampler after target. Positive equates
+	    to forward going and negative to backwards going. Total number of particles
+	    across all particles in all events in the data.
 
 There are indeed some, although only a small fraction. This is for all particles across
 all events. We therefore use the filter to get the correct answer.
@@ -392,16 +396,16 @@ also make a logarithmically binned plot. We add more lines to the analysisConfig
 rebdsim. See :ref:`output-analysis-configuration-file` for more details. Here are the lines
 we add: ::
 
-  Histogram1DLog  Event.  Q2LogAll              {100} {1:3.82}    c1.energy      c1.zp>0
-  Histogram1DLog  Event.  Q2LogProtonsPrimary   {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID==0
-  Histogram1DLog  Event.  Q2LogProtonsSecondary {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2212&&c1.parentID>0
-  Histogram1DLog  Event.  Q2LogNeutrons         {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==2112
-  Histogram1DLog  Event.  Q2LogPiPlusMinus      {100} {1:3.82}    c1.energy      c1.zp>0&&abs(c1.partID)==211
-  Histogram1DLog  Event.  Q2LogPiZero           {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==111
-  Histogram1DLog  Event.  Q2LogElectrons        {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==11
-  Histogram1DLog  Event.  Q2LogPositrons        {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==-11
-  Histogram1DLog  Event.  Q2LogGammas           {100} {1:3.82}    c1.energy      c1.zp>0&&c1.partID==22
-  Histogram1DLog  Event.  Q2LogMuons            {100} {1:3.82}    c1.energy      c1.zp>0&&abs(c1.partID)==13
+  Histogram1DLog  Event.  Q2LogAll              {100} {1:3.82}  c1.energy  c1.zp>0
+  Histogram1DLog  Event.  Q2LogProtonsPrimary   {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID==0
+  Histogram1DLog  Event.  Q2LogProtonsSecondary {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID>0
+  Histogram1DLog  Event.  Q2LogNeutrons         {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2112
+  Histogram1DLog  Event.  Q2LogPiPlusMinus      {100} {1:3.82}  c1.energy  c1.zp>0&&abs(c1.partID)==211
+  Histogram1DLog  Event.  Q2LogPiZero           {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==111
+  Histogram1DLog  Event.  Q2LogElectrons        {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==11
+  Histogram1DLog  Event.  Q2LogPositrons        {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==-11
+  Histogram1DLog  Event.  Q2LogGammas           {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==22
+  Histogram1DLog  Event.  Q2LogMuons            {100} {1:3.82}  c1.energy  c1.zp>0&&abs(c1.partID)==13
 
 We use the above plotting script in Python to make a logarithmically binned plot: ::
 
@@ -445,4 +449,39 @@ Question 3
 
 * How much energy is reflected backwards from the target?
 
-Our sampler for the target is after the target.
+Our sampler attached to the target is actually after the target. Samplers are only
+ever after an element, so we prepared the model with a drift on the front. If
+we really didn't want to see the effect of scattering or energy deposition in the
+beam pipe, we could set the :code:`apertureType="circularvacuum"` and
+:code:`vacuumMaterial="air"` to set the material to air so it's consistent with
+the surroundings. However, here we don't mind. The :code:`sample, all;` command
+means the drift will have a sampler at the end of it, so before the target.
+
+We therefore bin any variable on this sampler with the selection of backwards going
+and weight by the energy. The histogram definition is as follows: ::
+
+  Histogram1D Event. Q3BackwardsEnergy {1} {-2:2} c1.x  c1.energy*c1.zp<0
+
+
+The weighting by energy means that each entry will be filled with the energy instead
+of the count 1. The Boolean filter becomes a number in ROOT and is either 1 or 0.
+
+This file for this example is provided in :code:`bdsim/examples/target/analysisConfig.txt`. We
+run rebdsim with the following command: ::
+
+  rebdsim analysisConfig.txt data1.root data1-analysis.root
+
+We inspect the histogram in pybdsim to get the value of the one bin.  In iPython: ::
+
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("data1-analysis.root")
+  >>> h = d.histogramspy['Event/PerEntryHistograms/Q3BackwardsEnergy']
+  >>> h.contents
+  array([3.90333333])
+  >>> h.errors
+  array([0.18876937])
+
+Therefore, we see that there is on average :math:`3.903 \pm 0.189` GeV reflected backwards
+per event, i.e. per 6.5 TeV proton hitting the target. This value was based on a sample of
+3000 events.
+  
