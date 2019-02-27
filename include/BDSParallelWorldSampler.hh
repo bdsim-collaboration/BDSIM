@@ -19,6 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPARALLELWORLDSAMPER_H
 #define BDSPARALLELWORLDSAMPER_H
 
+#include "BDSBeamPipeType.hh"
+
+#include "globals.hh"
 #include "G4String.hh"
 #include "G4VUserParallelWorld.hh"
 
@@ -51,14 +54,14 @@ private:
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
 
-  /// Cache of samplers to delete at the end
-  std::vector<BDSSampler*> samplers;
-
   /// Just the input part of the world name.
   G4String suffix;
 
   /// Visualisation attributes for the sampler world.
   G4VisAttributes* samplerWorldVis;
+
+  /// General single sampler we use for plane samplers.
+  BDSSampler* generalPlane;
 };
 
 #endif

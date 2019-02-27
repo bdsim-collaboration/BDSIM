@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSDETECTORCONSTRUCTION_H 
 
 #include "BDSExtent.hh"
+#include "BDSExtentGlobal.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
@@ -38,6 +39,7 @@ namespace GMAD {
   struct Element;
   template<typename T> class FastList;
   class Placement;
+  class SamplerPlacement;
 }
 
 class BDSAcceleratorModel;
@@ -105,6 +107,11 @@ public:
   /// Create a transform based on the information in the placement.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine);
+
+  /// Create a sampler placement. Turns the sampler placement into a placement and uses
+  /// the above function.
+  static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+						const BDSBeamline*            bemaline);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -113,6 +120,9 @@ private:
 
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
+
+  /// Create all aperture definitions from parser and store in BDSAcceleratorModel.
+  void InitialiseApertures();
   
   /// Build the main beam line and then any other required beam lines.
   void BuildBeamlines();
@@ -139,6 +149,13 @@ private:
   /// Detect whether the first element has an angled face such that it might overlap
   /// with a previous element.  Only used in case of a circular machine.
   G4bool UnsuitableFirstElement(std::list<GMAD::Element>::const_iterator element);
+
+  /// Calculate local extent of custom user sampler.
+  BDSExtent CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const;
+
+  /// Calculate the maximum global extent of all sampler placements from the parser. Beam line
+  /// supplied to calculate placements in some cases.
+  BDSExtentGlobal CalculateExtentOfSamplerPlacements(const BDSBeamline* beamLine) const;
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
@@ -175,7 +192,6 @@ private:
   G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
   G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
-  G4bool useExternalGeometryWorld;
 
   BDSComponentFactoryUser* userComponentFactory;
 };

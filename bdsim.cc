@@ -26,19 +26,33 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "BDSIMClass.hh"
+#include "BDSException.hh"
 
 #include <iostream>
 
 int main(int argc, char** argv)
 {
-  BDSIM* bds = new BDSIM(argc, argv);
-  if (!bds->Initialised())
+  try
     {
-      if (bds->InitialisationResult() == 1) // if 2 it's ok
-	{std::cout << "Intialisation failed" << std::endl; return 1;}
+      BDSIM* bds = new BDSIM(argc, argv);
+      if (!bds->Initialised())
+	{
+	  if (bds->InitialisationResult() == 1) // if 2 it's ok
+	    {std::cout << "Intialisation failed" << std::endl; return 1;}
+	}
+      else
+	{bds->BeamOn();}
+      delete bds;
     }
-  else
-    {bds->BeamOn();}
-  delete bds;
+  catch (const BDSException& exception)
+    {
+      std::cerr << std::endl << exception.what() << std::endl;
+      exit(1);
+    }
+  catch (const std::exception& exception)
+    {
+      std::cerr << std::endl << exception.what() << std::endl;
+      exit(1);
+    }
   return 0;
 }
