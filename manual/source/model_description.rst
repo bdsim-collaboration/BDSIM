@@ -3509,7 +3509,9 @@ Common Options
 +----------------------------------+-------------------------------------------------------+
 | beampipeMaterial                 | Default beam pipe material                            |
 +----------------------------------+-------------------------------------------------------+
-| elossHistoBinWidth               | The width of the histogram bins [m]                   |
+| elossHistoBinWidth               | The width of the default energy deposition and        |
+|                                  | particle loss histogram bins made as BDSIM runs [m]   |
+|                                  | Default 1.0 m                                         |
 +----------------------------------+-------------------------------------------------------+
 | eventNumberOffset                | Event that the recreation should start from           |
 +----------------------------------+-------------------------------------------------------+
@@ -3522,7 +3524,8 @@ Common Options
 |                                  | allowed to complete in a circular accelerator.        |
 |                                  | Requires --circular executable option to work.        |
 +----------------------------------+-------------------------------------------------------+
-| horizontalWidth                  | Default accelerator component full width [m]          |
+| horizontalWidth                  | Default accelerator component full width [m] Default  |
+|                                  | is 0.5 m.                                             |
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | The physics list to use                               |
 +----------------------------------+-------------------------------------------------------+

@@ -3,6 +3,17 @@
 Collimation
 ===========
 
+Contents
+--------
+
+* `Preparation`_
+* `Model Description`_
+* `Model Preparation`_
+* `Optics`_
+* `Losses`_
+* `Questions Answered`_
+
+
 Preparation
 -----------
 
@@ -12,8 +23,8 @@ Preparation
 * ROOT can be imported in Python
 * `pybdsim` has been installed.
 
-Description
------------
+Model Description
+-----------------
 
 This is an example to show how to turn on extra collimation output and
 how to analyse the data. This example shows information most relevant
