@@ -1172,6 +1172,8 @@ Parameter          Description                        Default     Required
 `horizontalWidth`  Outer full width [m]               0.5 m       No
 =================  =================================  ==========  ===========
 
+Notes: 
+
 * The `horizontalWidth` must be greater than 2x `xsize`.
 * To prevent the jaws overlapping with one another, a jaw cannot be constructed that crosses the
   X axis of the element (i.e supplying a negative `xsizeLeft` or `xsizeRight` will not work). Should
