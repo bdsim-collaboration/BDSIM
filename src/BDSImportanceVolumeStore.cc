@@ -39,19 +39,6 @@ void BDSImportanceVolumeStore::AddPVolume(const G4GeometryCell& cell)
   fSetGeometryCell.insert(cell);
 }
 
-const G4VPhysicalVolume* BDSImportanceVolumeStore::GetPVolume(const G4String& name) const
-{
-  const G4VPhysicalVolume* pvol = 0;
-  for (BDSSetGeometryCell::const_iterator it = fSetGeometryCell.begin(); it != fSetGeometryCell.end(); ++it)
-    {
-      const G4VPhysicalVolume& vol = it->GetPhysicalVolume();
-      if (vol.GetName() == name)
-        {pvol = &vol;}
-    }
-  if (!pvol)
-    {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume named: " << name << ", found" << G4endl;}
-  return pvol;
-}
 
 const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(G4int index) const
 {

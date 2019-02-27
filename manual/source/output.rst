@@ -53,6 +53,47 @@ Trajectories are vectors of trajectory points that record the information about 
 at each step in the simulation. This records information, such as: all coordinates, particle
 type, state and the physics process that determined that step.
 
+Particle Identification
+-----------------------
+
+BDSIM uses the standard Particle Data Group identification numbers for each particle type,
+similarly to Geant4. These are typically referred to as "partID". A table of the particles
+and explanation of the numbering scheme can be found online:
+
+* `<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
+
+Notes:
+  
+* These are integers.
+* A negative value represents the opposite charge from the definition of the particle, but
+  which doesn't necessarily mean it's negatively charged.
+
+A table of common particles is listed below:
+
++------------------+--------------+
+| **Name**         | **PDG ID**   |
++==================+==============+
+| proton           | 2212         |
++------------------+--------------+
+| electron         | 11           |
++------------------+--------------+
+| positron         | -11          |
++------------------+--------------+
+| gamma or photon  | 22           |
++------------------+--------------+
+| neutron          | 2112         |
++------------------+--------------+
+| pion positive    | 211          |
++------------------+--------------+
+| pion negative    | -211         |
++------------------+--------------+
+| pion zero        | 111          |
++------------------+--------------+
+| muon negative    | 13           |
++------------------+--------------+
+| muon positive    | -13          |
++------------------+--------------+
+
 
 Output Data Selection \& Reduction
 ----------------------------------
@@ -64,7 +105,7 @@ the detail of the output as well as the ability to turn bits off.
 
 This granularity is very useful when you have made small studies with the options you
 desire and now want to scale up the simulation to large statistics and the size of the data
-may become difficulat to deal with. At this point, the user can turn off any data they may
+may become difficult to deal with. At this point, the user can turn off any data they may
 not need to save space.
 
 If some output is not required, BDSIM will not generate the 'hit' information with sensitive
@@ -80,7 +121,7 @@ consider the following points to reduce output data size:
 * Eloss normally dominates the size of the output file as it has the largest number of hits with
   typically :math:`10^4` energy deposition hits per primary.
 * By default some basic information is store in "Geant4Data" for all particles used
-  in the simualtion.
+  in the simulation.
   For a big study, it is worth turning this off as it's replicated in every file.
 * :code:`sample ,all;` is convenient, especially at the start of a study, but you should only
   attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
@@ -105,7 +146,7 @@ Not all information described may be written by default. Options described in
 :ref:`bdsim-options-output` allow control over what is stored. The default options
 give a detailed picture with an acceptable file size. The true amount of information
 produced in the simulation of every particle and the steps taken is tremendous
-and cannot be usably stored.
+and cannot be usefully stored.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
@@ -609,7 +650,7 @@ The types and names of the contents of each class can be found in the header fil
 	     may displace the primary coordinates, e.g. 1km offset for 1um beam. For this reason
 	     the PrimaryGlobal structure always uses double precision numbers, unlike the Primary structure
 	     and the other samplers that use floating point precision numbers (unless the ROOTDOUBLE
-	     cmake option is used at compilation time for double precision in the samplers).
+	     CMake option is used at compilation time for double precision in the samplers).
 
 
 BDSOutputROOTEventInfo
@@ -877,7 +918,7 @@ Functions are provided that allow exploration of the data through the connection
 +-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
 | **Function**                      | **Return Type**                                 | **Description**                                         |
 +===================================+=================================================+=========================================================+
-| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process indexfrom       |
+| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process index from      |
 |                                   |                                                 | the ultimate parent of this particle up the             |
 |                                   |                                                 | trajectory table.                                       |
 +-----------------------------------+-------------------------------------------------+---------------------------------------------------------+

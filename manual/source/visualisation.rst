@@ -33,11 +33,11 @@ green: neutral; blue: positively charged; red: negatively charged.
 Common Useful Commands
 ======================
 
-Excute BDSIM with your input gmad file name: ::
+Execute BDSIM with your input gmad file name: ::
 
   bdsim --file=sm.gmad
 
-The following is a list of our most commonly used commands that can be useed in the
+The following is a list of our most commonly used commands that can be used in the
 session box (terminal prompt) inside the visualiser: 
 
 * :code:`/run/beamOn 3` - Runs three primary events
@@ -50,7 +50,7 @@ session box (terminal prompt) inside the visualiser:
 * :code:`/vis/viewer/set/viewpointThetaPhi 180 0` - look along the beam line
 * :code:`/bds/beamline/goto d1` - reposition the view point at beam line element named `d1`
 * :code:`/vis/viewer/set/projection p 75` - set the viewing style to perspective with angle 75 degrees
-* :code:`/vis/viewer/set/projection o` - set the projection to orthographi (no perspective)
+* :code:`/vis/viewer/set/projection o` - set the projection to orthographic (no perspective)
 * :code:`/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0` - add a cut away plane along the beam line making
   everything on one side invisible.
 * :code:`/vis/viewer/clearCutawayPlanes` - get rid of cut away planes
@@ -184,7 +184,7 @@ Geant4.
 To add another available visualiser, you must change the build options of Geant4
 (in ccmake), recompile and install it; then you must recompile BDSIM against
 the new Geant4. In the case where you simply update the Geant4 options in the same
-installation, this process is relatively quick and recompiling BDSIM only relinks
+installation, this process is relatively quick and recompiling BDSIM only re-links
 the libraries together (the last quick step of compilation).
 
 For Geant4 to enable other visualisers, it will require certain other 3rd party libraries

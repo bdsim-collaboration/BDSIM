@@ -44,9 +44,6 @@ public:
   /// Add geometry cell to the store.
   void AddPVolume(const G4GeometryCell &cell);
 
-  /// Get named physical volume from store.
-  const G4VPhysicalVolume* GetPVolume(const G4String &name) const;
-
   /// Get stores physical volume from index.
   const G4VPhysicalVolume* GetPVolume(G4int index) const;
 

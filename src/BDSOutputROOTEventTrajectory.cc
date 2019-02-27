@@ -143,7 +143,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       // loop over trajectory points and fill structures
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
 	{
-	  BDSTrajectoryPoint *point = static_cast<BDSTrajectoryPoint *>(traj->GetPoint(i));
+	  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
 	  
 	  // Position
 	  G4ThreeVector pos = point->GetPosition();
@@ -151,7 +151,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 					pos.getY() / CLHEP::m,
 					pos.getZ() / CLHEP::m));
 	  
-	  G4VPhysicalVolume *vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
+	  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
 	  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
 	  if(theInfo)
 	    {modelIndex.push_back(theInfo->GetBeamlineIndex());}
@@ -236,7 +236,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   /////////////////////////////////////////////////////////////////////////////////
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition *phc)
+void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition* phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }
@@ -273,31 +273,31 @@ void BDSOutputROOTEventTrajectory::Flush()
 #if 0
 std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackIndex)
 {
-  std::cout << "BDSOutputROOTEventTrajectory::findParentProcess> " << trackIndex << " " << parentID.size() << " " << parentIndex.size() << std::endl;
+  std::cout << "BDSOutputROOTEventTrajectory::findParentProcess> "
+	    << trackIndex << " " << parentID.size() << " " << parentIndex.size() << std::endl;
   int tid = trackIndex;
   int pid = parentID.at(tid);
   std::cout << pid << std::endl;
   int pin = parentIndex.at(tid);
   std::cout << pin << std::endl;
 
-  if(pin == -1) {
-    return std::pair<int,int>(-1,-1);
-  }
+  if(pin == -1)
+    {return std::pair<int,int>(-1,-1);}
   int sin = parentStepIndex.at(tid);
   std::cout << sin << std::endl;
 
-  while(pid > 0) {
-    if(pin == 0) {
-      break;
+  while(pid > 0)
+    {
+      if(pin == 0)
+	{break;}
+      tid = pin;
+      pid = parentID.at(tid);
+      pin = parentIndex.at(tid);
+      sin = parentStepIndex.at(tid);
+      
+      std::cout << tid << " " << pid << " " << pin << " " << sin << " " << std::endl;
     }
-    tid = pin;
-    pid = parentID.at(tid);
-    pin = parentIndex.at(tid);
-    sin = parentStepIndex.at(tid);
-
-    std::cout << tid << " " << pid << " " << pin << " " << sin << " " << std::endl;
-  }
-
+  
   return std::pair<int,int>(pin,sin);
 }
 #endif
@@ -312,7 +312,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   for (int i = 0;i<nstep; ++i)
     {
       int ppt = postProcessTypes[ti][i];
-      if(ppt != -1 && ppt != 1 && ppt != 10)
+      if (ppt != -1 && ppt != 1 && ppt != 10)
 	{
 	  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
 					      parentID[ti], parentIndex[ti],
@@ -345,7 +345,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
   int ti = trackID_trackIndex.at(trackid);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
-  while(ti != 0)
+  while (ti != 0)
     {
       int pi  = parentIndex.at(ti);
       int psi = parentStepIndex.at(ti);
@@ -377,25 +377,25 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
             << std::setw(wdt) << "p"         << " " << std::setw(wdt) << "p_x"      << " "
             << std::setw(wdt) << "p_y"       << " " << std::setw(wdt) << "p_z" << std::endl;
 
-  for(size_t j=0;j<trajectories[i].size();++j)
-  {
-    std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
-              << std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
-              << std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
-              << std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
-              << std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
-              << std::setw(wdt) << trajectories[i][j].X() << " " << std::setw(wdt) << trajectories[i][j].Y()   << " "
-              << std::setw(wdt) << trajectories[i][j].Z() << " " << std::setw(wdt) << energies[i][j]           << " "
-              << std::setw(wdt) << momenta[i][j].Mag()    << " " << std::setw(wdt) << momenta[i][j].X()        << " "
-              << std::setw(wdt) << momenta[i][j].Y()      << " " << std::setw(wdt) << momenta[i][j].Z() << std::endl;
-  }
+  for (size_t j=0; j<trajectories[i].size(); ++j)
+    {
+      std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
+		<< std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
+		<< std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
+		<< std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
+		<< std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
+		<< std::setw(wdt) << trajectories[i][j].X() << " " << std::setw(wdt) << trajectories[i][j].Y()   << " "
+		<< std::setw(wdt) << trajectories[i][j].Z() << " " << std::setw(wdt) << energies[i][j]           << " "
+		<< std::setw(wdt) << momenta[i][j].Mag()    << " " << std::setw(wdt) << momenta[i][j].X()        << " "
+		<< std::setw(wdt) << momenta[i][j].Y()      << " " << std::setw(wdt) << momenta[i][j].Z() << std::endl;
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
 {
-  for(int i=0; i< (int)t.preProcessTypes.size();++i)
+  for (int i=0; i< (int)t.preProcessTypes.size();++i)
     {
-      for(int j=0; j< (int)t.preProcessTypes[i].size(); ++j)
+      for (int j=0; j< (int)t.preProcessTypes[i].size(); ++j)
 	{
 	  //if(t.preProcessTypes[i][j] != 1 && t.preProcessTypes[i][j] != 7)
 	  //{

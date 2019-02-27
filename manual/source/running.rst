@@ -114,7 +114,7 @@ of the BDSIM model as well as a terminal prompt to control it. No events are sim
 without user input. BDSIM provides a basic visualisation "macro" for Geant4 using the Qt
 visualiser to start and add the geometry to the scene. This is found from the
 BDSIM installation directory or failing that the build directory. The user may provide
-their own custom visualisuation macro with the executable command :code:`--vis_mac=mymac.mac`.
+their own custom visualisation macro with the executable command :code:`--vis_mac=mymac.mac`.
 
 Alternatively, BDSIM can be run in batch mode, where no visualiser
 is used and the specified number of primary events is simulated and feedback is printed
@@ -125,6 +125,8 @@ in the simulation, i.e. where a particle hits.
 .. note:: For more information on the `-\\-circular` option and using BDSIM with circular machines,
 	  see :ref:`circular-machines`.
 
+.. _running-interactively:
+	  
 Interactively
 =============
 
