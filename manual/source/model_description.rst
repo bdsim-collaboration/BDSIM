@@ -1228,10 +1228,14 @@ degrader
 ^^^^^^^^
 
 .. figure:: figures/degrader.png
-        :width: 70%
-        :align: right
+	    :width: 60%
+	    :align: center
 
-`degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
+
+`degrader` defines interleaved pyramidal pieces of material. Depending on the physics list
+used, this is capable of reducing the beam energy. This happens only through interaction
+and the use of a physics list. Note, the default physics list in BDSIM is no physics and
+only magnetic tracking, in which case this component will have no effect.
 
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
