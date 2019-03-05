@@ -1113,7 +1113,7 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | ""           | Yes           |
+| `material`         | Outer material               | None         | Yes           |
 +--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
@@ -1121,6 +1121,8 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
+
+Notes: 
 
 * `horizontalWidth` should be big enough to encompass the xsize and ysize.
 * If no `xsize` or `ysize` are provided, they are assumed to be 0 and a solid block is made.
@@ -1182,7 +1184,7 @@ apertures which are the distances from the center of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | ""           | Yes           |
+| `material`         | Outer material               | None         | Yes           |
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
@@ -1190,6 +1192,7 @@ apertures which are the distances from the center of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
+
 
 Notes: 
 
@@ -1211,6 +1214,7 @@ Notes:
 * All collimators can be made infinite absorbers with the general option
   :code:`collimatorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
+
 Examples: ::
 
    ! Standard
@@ -1218,6 +1222,7 @@ Examples: ::
 
    ! with kinetic energy limit
    TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+
 
 degrader
 ^^^^^^^^
@@ -1242,13 +1247,13 @@ Parameter              Description                              Default     Requ
 `horizontalWidth`      Outer full width [m]                     global      No
 ===================    =======================================  ==========  ===========
 
-.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
-          position, and consequently the total material thickness the beam can propagate through. If both are
-          specified, `degraderOffset` will be ignored.
+.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
+	  lateral wedge position, and consequently the total material thickness the beam can propagate
+	  through. If both are specified, `degraderOffset` will be ignored. When numberWedges is specified
+	  to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges. When viewed from
+	  above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a
+	  right-angled triangle.
 
-          When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
-          When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
-          triangle.
 
 Examples: ::
 
@@ -1294,6 +1299,8 @@ Parameter          Description                         Default     Required
 `xsize`            Horizontal inner half aperture [m]  0           Yes
 `ysize`            Vertical inner half aperture [m]    0           No
 =================  ==================================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 
