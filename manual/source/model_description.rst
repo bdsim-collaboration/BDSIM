@@ -1113,16 +1113,17 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
+| `material`         | Outer material               | ""           | Yes           |
++--------------------+------------------------------+--------------+---------------+
+| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
++--------------------+------------------------------+--------------+---------------+
 | `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | G4_Cu        | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
 
-
+* `horizontalWidth` should be big enough to encompass the xsize and ysize.
+* If no `xsize` or `ysize` are provided, they are assumed to be 0 and a solid block is made.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
@@ -1156,11 +1157,13 @@ the aperture is elliptical and the `xsize` and `ysize` define the horizontal and
 half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
 axes of the entrance aperture must be the same ratio for the exit aperture.
 
+* All the same conditions for `rcol` apply for `ecol`.
+
 jcol
 ^^^^
 
 .. figure:: figures/jcol.png
-	    :width: 30%
+	    :width: 28%
 	    :align: right
 
 
@@ -1179,11 +1182,11 @@ apertures which are the distances from the center of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
+| `material`         | Outer material               | ""           | Yes           |
++--------------------+------------------------------+--------------+---------------+
 | `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | G4_Cu        | Yes           |
 +--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
