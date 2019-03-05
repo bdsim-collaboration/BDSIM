@@ -66,7 +66,7 @@ G4String BDS::GDMLSchemaLocation()
     }
   else
    {
-     G4cout << "ERROR: local GDML schema could not be found!" << G4endl;
+     G4cout << __METHOD_NAME__ << "ERROR: local GDML schema could not be found!" << G4endl;
      exit(1);
    }
 }
