@@ -1130,7 +1130,7 @@ volume is square.
 * The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
   `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
 * All collimators can be made infinite absorbers with the general option
-  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
+  :code:`collimatorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 
 Examples: ::
@@ -1206,7 +1206,7 @@ Notes:
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
   user should specify an energy greater than the total beam energy.
 * All collimators can be made infinite absorbers with the general option
-  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
+  :code:`collimatorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 Examples: ::
 
