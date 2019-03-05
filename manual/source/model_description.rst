@@ -440,8 +440,8 @@ drift
 ^^^^^
 
 .. figure:: figures/drift.png
-	    :width: 30%
-	    :align: right
+	    :width: 50%
+	    :align: center
 
 `drift` defines a straight beam pipe with no field.
 
@@ -453,6 +453,7 @@ Parameter         Description          Default     Required
 		  defined
 ================  ===================  ==========  =========
 
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 
@@ -466,7 +467,7 @@ rbend
 
 .. figure:: figures/rbend.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 .. |angleFieldComment| replace:: Either the total bending angle, `angle`, or the magnetic field, `B`, (in Tesla)
 				 for the nominal beam energy can be specified.
@@ -542,6 +543,8 @@ tracking still includes the pole face effects.
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
+Notes:
+
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
@@ -589,7 +592,7 @@ sbend
 
 .. figure:: figures/sbend.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 
 `sbend` defines a sector bend magnet. |angleFieldComment|
@@ -667,6 +670,8 @@ that the maximum tangential error in the aperture is 1 mm.
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
+Notes:
+
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
@@ -711,6 +716,7 @@ quadrupole
 
 .. figure:: figures/quadrupole.png
 	    :width: 30%
+	    :align: center
 
 `quadrupole` defines a quadrupole magnet. The strength parameter :math:`k_1` is defined as
 
@@ -724,6 +730,8 @@ Parameter         Description                  Default     Required
 `k1`              Quadrupole coefficient       0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -742,6 +750,7 @@ sextupole
 
 .. figure:: figures/sextupole.png
 	    :width: 30%
+	    :align: center
 
 `sextupole` defines a sextupole magnet. The strength parameter :math:`k_2` is defined as
 
@@ -755,6 +764,8 @@ Parameter         Description                  Default     Required
 `k2`              Sextupole coefficient        0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -773,6 +784,7 @@ octupole
 
 .. figure:: figures/octupole.png
 	    :width: 30%
+	    :align: center
 
 `octupole` defines an octupole magnet. The strength parameter :math:`k_3` is defined as
 
@@ -786,6 +798,8 @@ Parameter         Description                  Default     Required
 `k3`              Octupole coefficient         0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -803,6 +817,7 @@ decapole
 
 .. figure:: figures/decapole.png
 	    :width: 30%
+	    :align: center
 
 `decapole` defines a decapole magnet. The strength parameter :math:`k_4` is defined as
 
@@ -848,6 +863,8 @@ Parameter         Description                  Default     Required
 `ksl`             List of skew coefficients    0           No
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -1018,7 +1035,7 @@ rf
 
 .. figure:: figures/rfcavity.png
 	    :width: 50%
-	    :align: right
+	    :align: center
 
 `rf` or `rfcavity` defines an RF cavity with a time varying electric or electromagnetic field.
 There are several geometry and field options as well as ways to specify the strength.
@@ -1098,8 +1115,8 @@ rcol
 ^^^^
 
 .. figure:: figures/rcol.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
@@ -1151,8 +1168,8 @@ ecol
 ^^^^
 
 .. figure:: figures/ecol.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
@@ -1165,8 +1182,8 @@ jcol
 ^^^^
 
 .. figure:: figures/jcol.png
-	    :width: 28%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
@@ -1269,8 +1286,8 @@ muspoiler
 ^^^^^^^^^
 
 .. figure:: figures/muspoiler.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `muspoiler` defines a muon spoiler, which is a rotationally magnetised iron cylinder with
 a beam pipe in the middle. There is no magnetic field in the beam pipe.
@@ -1287,8 +1304,8 @@ shield
 ^^^^^^
 
 .. figure:: figures/shield.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `shield` defines a square block of material with a square aperture. The user may choose
 the outer width and inner horizontal and vertical apertures of the block. A beam pipe
@@ -1312,8 +1329,8 @@ dump
 ^^^^
 
 .. figure:: figures/dump.png
-	    :width: 50%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `dump` defines a square or circular block of material that is an infinite absorber. All
 particles impacting the dump will be absorbed irrespective of the particle and physics
@@ -1352,7 +1369,7 @@ solenoid
 
 .. figure:: figures/solenoid.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
 hard edge field profile. Fringes for the edge effects are provided by default and
@@ -1380,8 +1397,9 @@ wirescanner
 ^^^^^^^^^^^
 
 .. figure:: figures/wirescanner.png
-        :width: 20%
-        :align: right
+            :width: 40%
+	    :align: center
+
 
 `wirescanner` defines a cylindrical object within a beam pipe to represent a wire
 scanner typically use in an accelerator.
@@ -1397,6 +1415,8 @@ parameter              description                                      default 
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
 `wireMaterial`         material of wire                                 carbon      no
 =====================  ===============================================  ==========  ==========
+
+Notes:
 
 * The angle is the rotation from vertical in the clock-wise direction looing in the
   positive S direction (the usualy direction of the beam).
@@ -1460,8 +1480,8 @@ crystalcol
 ^^^^^^^^^^
 
 .. figure:: figures/crystalcol.png
-	   :width: 40%
-	   :align: right
+	    :width: 30%
+	    :align: center
 
 
 `crystalcol` defines a crystal collimator that uses crystals to channel particles. It is
@@ -1487,6 +1507,8 @@ Parameter                   Description                                         
 `crystalAngleYAxisLeft`     Rotation angle of left crystal [rad]                    0            No
 `crystalAngleYAxisRight`    Rotation angle of right crystal [rad]                   0            No
 ==========================  ======================================================  ===========  =========
+
+Notes:
 
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
@@ -1529,7 +1551,8 @@ undulator
 ^^^^^^^^^
 
 .. figure:: figures/undulator.png
-    :width: 60%
+	    :width: 60%
+	    :align: center
 
 `undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
 field components:
@@ -1551,6 +1574,8 @@ Parameter                Description                    Default     Required
 `undulatorMagnetHeight`  Undulator magnet height [m]    0           No
 `material`               Magnet outer material          Iron        No
 =======================  =============================  ==========  ===========
+
+Notes:
 
 * The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
 * The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
