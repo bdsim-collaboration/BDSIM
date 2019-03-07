@@ -1,15 +1,15 @@
 d1: drift, l=0.5;
 q : sbend, angle=0.05, l=0.5;
 d2: drift, l=0.5;
-m : marker;
+mark : marker;
 
-l : line = (d1,q,d2,m);
+l : line = (d1,q,d2,mark);
 
 use, period=l;
 
 sample, range=d1;
 sample, range=q;
 sample, range=d2;
-sample, range=m;
+sample, range=mark;
 
 
