@@ -95,13 +95,13 @@ TRKBunch* TRKAperture::CheckAperture(TRKBunch* bunch)
   std::cout << *bunch;
 #endif
 
-  //erase all the bad particles at the back of the vector in one foul swoop
+  //erase all the bad particles at the back of the vector in one fell swoop
   bunch->Erase(backactive+1,bunch->end());
 #ifdef TRKDEBUG
   std::cout << "BUNCH AFTER erasure" << std::endl;
   std::cout << *bunch;
 #endif
-  
+
   //now publish / shift all output particles to BDSIM here - TBC
   // for now lets just output them
 #ifdef TRKDEBUG
