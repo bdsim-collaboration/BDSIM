@@ -43,7 +43,8 @@ class TRKBunch
 { 
 public:
   TRKBunch(const GMAD::Beam& beam,
-	   BDSParticleDefinition* particle);
+	   BDSParticleDefinition* particle,
+	   long int nGenerate = 1);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
   
@@ -63,7 +64,7 @@ public:
 private:
   TRKBunch(); /// bunch must be instantiated with a number of particles  
 
-  int population;
+  long int population;
   std::vector <TRKParticle> bunch;
 
   /// populate particles using options and random number generator

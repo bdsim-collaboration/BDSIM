@@ -75,7 +75,7 @@ int main (int argc, char** argv)
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
-  TRKBunch* bunch = new TRKBunch(beam, beamParticle);
+  TRKBunch* bunch = new TRKBunch(beam, beamParticle, globalConstants->NGenerate());
   /// Write primaries to output file
   output->WriteTrackerBunch("primaries",bunch,true);
   
