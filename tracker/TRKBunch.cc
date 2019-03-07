@@ -30,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
 
@@ -39,7 +38,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKBunch::TRKBunch(const GMAD::Beam& beam,
-		   BDSParticleDefinition* particle)
+		   BDSParticleDefinition* particle,
+		   long int nGenerate):
+  population(nGenerate)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -75,9 +76,6 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
 
   // Initialise bunch
   BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(particle, beam);
-
-  // Update population according to changes in bunch type
-  population = BDSGlobalConstants::Instance()->NGenerate();
 
   //must have positive number of particles
   if (population < 0)
