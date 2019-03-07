@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 2.6.4)
 
-# Suppress policy CMP0042 warning (as of cmake 3.0.0)
-if (CMAKE_VERSION VERSION_LESS 3.9.0)
-    cmake_policy(SET CMP0042 OLD)
-endif()
+# set binary (for testing usage in macros)
+#set (bdsimBinary BDSFieldTest)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DTRKDEBUG")
@@ -19,9 +16,15 @@ file(GLOB TRKsources *.cc )
 
 add_library(tracker SHARED ${TRKsources})
 target_link_libraries(tracker bdsim gmad)
+#############
+## tracker #
+#############
 
 add_executable(trackerexec tracker.cc)
 set_target_properties(trackerexec PROPERTIES OUTPUT_NAME "tracker" VERSION ${BDSIM_VERSION})
-target_link_libraries(trackerexec bdsim tracker gmad)
+target_link_libraries(trackerexec tracker)
 
-bdsim_install_targets(trackerexec tracker)
+bdsim_install_targets(trackerexec)
+
+
+set (binary tracker)
