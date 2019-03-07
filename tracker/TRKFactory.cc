@@ -127,18 +127,19 @@ TRKStrategy* TRKFactory::CreateStrategy()
   switch(strategy)
     {
     case TRK::THIN:
-      result = new TRKThin(trackingsteps);
+      {result = new TRKThin(trackingsteps); break;}
     case TRK::THINSYMPLECTIC:
-      result = new TRKThinSymplectic(trackingsteps);
+      {result = new TRKThinSymplectic(trackingsteps); break;}
     case TRK::THICK:
-      result = new TRKThick(trackingsteps);
+      {result = new TRKThick(trackingsteps); break;}
     case TRK::HYBRID:
-      result = new TRKHybrid(trackingsteps);
+      {result = new TRKHybrid(trackingsteps); break;}
     default:
-      return nullptr;
+      {break;}
     }
   if (result)
     {result->SetMomentumAndEnergy(momentum, energy);}
+  return result;
 }
 
 TRK::Aperture TRKFactory::SetApertureEnum(std::string aIn)
