@@ -18,8 +18,10 @@ include_directories(../include)
 file(GLOB TRKsources *.cc )
 
 add_library(tracker SHARED ${TRKsources})
-target_link_libraries(tracker bdsim)
-target_link_libraries(tracker gmad)
+target_link_libraries(tracker bdsim gmad)
 
-bdsim_install_targets(tracker)
+add_executable(trackerexec tracker.cc)
+set_target_properties(trackerexec PROPERTIES OUTPUT_NAME "tracker" VERSION ${BDSIM_VERSION})
+target_link_libraries(trackerexec bdsim tracker gmad)
 
+bdsim_install_targets(trackerexec tracker)
