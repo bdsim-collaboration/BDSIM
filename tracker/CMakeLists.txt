@@ -24,7 +24,7 @@ add_executable(trackerexec tracker.cc)
 set_target_properties(trackerexec PROPERTIES OUTPUT_NAME "tracker" VERSION ${BDSIM_VERSION})
 target_link_libraries(trackerexec tracker)
 
-bdsim_install_targets(trackerexec)
+bdsim_install_targets(trackerexec tracker)
 
 
 set (binary tracker)
