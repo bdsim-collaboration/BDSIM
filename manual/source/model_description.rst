@@ -3639,8 +3639,12 @@ Common Options
 |                                  | by default air.                                       |
 +----------------------------------+-------------------------------------------------------+
 
+.. _options-general-run:
+
 General Run Options
 ^^^^^^^^^^^^^^^^^^^
+
+For a description of recreating events, see :ref:`running-recreation`.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -3662,11 +3666,20 @@ General Run Options
 |                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
 |                                  | Will only print out in an event that also prints out. |
 +----------------------------------+-------------------------------------------------------+
+| recreate                         | Whether to use recreation mode or not (default 0). If |
+|                                  | used as an executable option, this should be a string |
+|                                  | with a path to the :code:`recreateFileName`.          |
++----------------------------------+-------------------------------------------------------+
+| recreateFileName                 | Path to BDSIM output file to use for recreation.      |
++----------------------------------+-------------------------------------------------------+
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
 | seed                             | The integer seed value for the random number          |
 |                                  | generator                                             |
++----------------------------------+-------------------------------------------------------+
+| startFromEvent                   | Number of event to start from when recreating. 0      |
+|                                  | counting.                                             |
 +----------------------------------+-------------------------------------------------------+
 | writeSeedState                   | Writes the seed state of the last event start in      |
 |                                  | ASCII                                                 |
