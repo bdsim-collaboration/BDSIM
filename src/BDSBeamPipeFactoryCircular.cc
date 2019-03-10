@@ -57,13 +57,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
 			     CLHEP::twopi);                 // rotation finish angle
   
   beamPipeSolid = new G4Tubs(nameIn + "_pipe_solid",        // name
-			     aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
-			     aper1In + lengthSafety + beamPipeThicknessIn, // outer radius
+			     aper1In + lengthSafetyLarge,   // inner radius + length safety to avoid overlaps
+			     aper1In + lengthSafetyLarge + beamPipeThicknessIn, // outer radius
 			     lengthIn*0.5 - lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
-  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety + lengthSafetyLarge;
+  G4double containerRadius = aper1In + beamPipeThicknessIn + 2*lengthSafetyLarge;
   containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 			      0,                            // inner radius
 			      containerRadius,              // outer radius
@@ -152,17 +152,18 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   // fault in G4CutTubs
   G4VSolid* inner = new G4CutTubs(nameIn + "_pipe_inner_solid",  // name
 				  0,                             // inner radius
-				  aper1In + lengthSafety,        // outer radius
+				  aper1In + lengthSafetyLarge,   // outer radius
 				  lengthIn,                      // half length - long!
 				  0,                             // rotation start angle
 				  CLHEP::twopi,                  // rotation finish angle
 				  inputfaceIn,                   // input face normal
 				  outputfaceIn);                 // output face normal
 
+  G4double extraWidth = lengthSafetyLarge + beamPipeThicknessIn;
   G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
 				  0,                             // inner radius + length safety to avoid overlaps
-				  aper1In + lengthSafety + beamPipeThicknessIn,   // outer radius
-				  lengthIn*0.5 - lengthSafety, // half length
+				  aper1In + extraWidth,          // outer radius
+				  lengthIn*0.5 - lengthSafety,   // half length
 				  0,                             // rotation start angle
 				  CLHEP::twopi,                  // rotation finish angle
 				  inputfaceIn,                   // input face normal

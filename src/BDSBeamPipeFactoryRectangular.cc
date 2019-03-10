@@ -59,15 +59,16 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
   // beamPipeSolidInner will be the inner edge of the metal beampipe
   // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",   // name
-				 aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-				 aper2In + lengthSafety,         // y half width
-				 lengthIn);                      // length - full length for unambiguous subtraction
+  beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",// name
+				 aper1In + lengthSafetyLarge, // x half width - length safety to avoid overlaps
+				 aper2In + lengthSafetyLarge, // y half width
+				 lengthIn);                   // length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
-				 aper1In + beamPipeThicknessIn,  // x half width
-				 aper2In + beamPipeThicknessIn,  // y half width
+  G4double extraWidth = beamPipeThicknessIn + lengthSafetyLarge;
+  beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer", // name
+				 aper1In + extraWidth,         // x half width
+				 aper2In + extraWidth,         // y half width
 				 (lengthIn*0.5)-lengthSafety); // half length - lengthSafety to fit in container
   allSolids.insert(beamPipeSolidInner);
   allSolids.insert(beamPipeSolidOuter);
@@ -75,11 +76,11 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
   
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
+  G4double containerHalfWidthX = aper1In + extraWidth + lengthSafetyLarge;
+  G4double containerHalfWidthY = aper2In + extraWidth + lengthSafetyLarge;
   containerSolid = new G4Box(nameIn  + "_container_solid",  // name
-			     containerXHalfWidth,           // x half width
-			     containerYHalfWidth,           // y half width
+			     containerHalfWidthX,           // x half width
+			     containerHalfWidthY,           // y half width
 			     lengthIn*0.5);                 // half length
 					
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
@@ -194,16 +195,17 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
   // beamPipeSolidInner will be the inner edge of the metal beampipe
   // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",   // name
-				 aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-				 aper2In + lengthSafety,         // y half width
-				 4*lengthIn);                    // 2x full length for unambiguous subtraction
+  beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner", // name
+				 aper1In + lengthSafetyLarge,  // x half width - length safety to avoid overlaps
+				 aper2In + lengthSafetyLarge,  // y half width
+				 4*lengthIn);                  // 2x full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
-				 aper1In + beamPipeThicknessIn,  // x half width
-				 aper2In + beamPipeThicknessIn,  // y half width
-				 lengthIn);                      // full length for unambiguous intersection
+  G4double extraWidth = beamPipeThicknessIn + lengthSafetyLarge;
+  beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer", // name
+				 aper1In + extraWidth,         // x half width
+				 aper2In + extraWidth,         // y half width
+				 lengthIn);                    // full length for unambiguous intersection
   beamPipeSolidLong = new G4SubtractionSolid(nameIn + "_pipe_solid_long",
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
@@ -215,11 +217,11 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   allSolids.insert(beamPipeSolidOuter);
   allSolids.insert(beamPipeSolidLong);
   
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
+  containerHalfWidthX = aper1In + extraWidth + lengthSafetyLarge;
+  containerHalfWidthY = aper2In + extraWidth + lengthSafetyLarge;
   containerSolidLong = new G4Box(nameIn  + "_container_solid_long",// name
-				 containerXHalfWidth,              // x half width
-				 containerYHalfWidth,              // y half width
+				 containerHalfWidthX,              // x half width
+				 containerHalfWidthY,              // y half width
 				 lengthIn);                        // full length for unambiguous intersection
   angledFaceSolidContainer = new G4CutTubs(nameIn + "_angled_face_container",// name
 					   0,                                // inner radius

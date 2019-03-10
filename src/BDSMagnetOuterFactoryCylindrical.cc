@@ -251,16 +251,18 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
     {
       //circular beampipe so we can simply use its radius
       yokeSolid = new G4Tubs(name + "_yoke_solid",        // name
-			     beamPipe->GetContainerRadius() + 2*lengthSafety, // inner radius
+			     beamPipe->GetContainerRadius() + 2*lengthSafetyLarge, // inner radius
 			     horizontalWidth*0.5,           // outer radius
 			     length*0.5-lengthSafety,   // half length
 			     0,                           // rotation start angle
 			     CLHEP::twopi);               // rotation finish angle
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
+      // inner radius of container is less than inner radius  of yoke to contain it but still
+      // bigger than the outer radius of the beam pipe
       containerSolid = new G4Tubs(name + "_container_solid",      // name
-				  beamPipe->GetContainerRadius() + lengthSafety, // inner radius
-				  horizontalWidth*0.5 + lengthSafety,// outer radius
+				  beamPipe->GetContainerRadius() + lengthSafetyLarge, // inner radius
+				  horizontalWidth*0.5 + lengthSafetyLarge,// outer radius
 				  length*0.5,                      // half length
 				  0,                               // rotation start angle
 				  CLHEP::twopi);                   // rotation finish angle
@@ -281,7 +283,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
       //container is similar but slightly wider
       G4VSolid* containerSolidCylinder = new G4Tubs(name + "_container_solid_cylinder",// name
 						    0,  // inner radius - for unambiguous subtraction
-						    horizontalWidth*0.5 + lengthSafety,  // outer radius
+						    horizontalWidth*0.5 + lengthSafetyLarge,  // outer radius
 						    length*0.5,                        // half length
 						    0,                                 // rotation start angle
 						    CLHEP::twopi);                     // rotation finish angle

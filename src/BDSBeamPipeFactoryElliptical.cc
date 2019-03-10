@@ -58,22 +58,23 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
   // beamPipeSolidInner will be the inner edge of the metal beampipe
   // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
-					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-					    aper2In + lengthSafety,         // y half width
-					    lengthIn);                      // length - full length for unambiguous subtraction
+  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner", // name
+					    aper1In + lengthSafetyLarge,  // x half width - length safety to avoid overlaps
+					    aper2In + lengthSafetyLarge,  // y half width
+					    lengthIn);                    // length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
-					    aper1In + beamPipeThicknessIn,  // x half width
-					    aper2In + beamPipeThicknessIn,  // y half width
+  G4double extraWidth = lengthSafetyLarge + beamPipeThicknessIn;
+  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer", // name
+					    aper1In + extraWidth,         // x half width
+					    aper2In + extraWidth,         // y half width
 					    (lengthIn*0.5)-lengthSafety); // half length - lengthSafety to fit in container
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
   
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
+  G4double containerXHalfWidth = aper1In + extraWidth + lengthSafetyLarge;
+  G4double containerYHalfWidth = aper2In + extraWidth + lengthSafetyLarge;
   containerSolid = new G4EllipticalTube(nameIn  + "_container_solid",  // name
 					containerXHalfWidth,           // x half width
 					containerYHalfWidth,           // y half width
@@ -190,19 +191,20 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
   // beamPipeSolidInner will be the inner edge of the metal beampipe
   // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
-					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-					    aper2In + lengthSafety,         // y half width
-					    2*lengthIn);                    // 4x full length for unambiguous subtraction
+  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",// name
+					    aper1In + lengthSafetyLarge, // x half width - length safety to avoid overlaps
+					    aper2In + lengthSafetyLarge, // y half width
+					    2*lengthIn);                 // 4x full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
-					    aper1In + beamPipeThicknessIn,  // x half width
-					    aper2In + beamPipeThicknessIn,  // y half width
-					    lengthIn);                      // 2x full length for unambiguous intersection
+  G4double extraWidth = lengthSafetyLarge + beamPipeThicknessIn;
+  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",// name
+					    aper1In + extraWidth,        // x half width
+					    aper2In + extraWidth,        // y half width
+					    lengthIn);  // 2x full length for unambiguous intersection
   beamPipeSolidLong = new G4SubtractionSolid(nameIn + "_pipe_solid_long",
-					 beamPipeSolidOuter,
-					 beamPipeSolidInner); // outer minus inner
+					     beamPipeSolidOuter,
+					     beamPipeSolidInner); // outer minus inner
   allSolids.insert(beamPipeSolidInner);
   allSolids.insert(beamPipeSolidOuter);
   allSolids.insert(beamPipeSolidLong);
