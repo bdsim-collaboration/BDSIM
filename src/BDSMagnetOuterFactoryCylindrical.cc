@@ -373,8 +373,8 @@ void BDSMagnetOuterFactoryCylindrical::TestInputParameters(const BDSBeamPipe* be
     {
       // it's not circular - have a look at extents
       // +ve - -ve
-      G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
-      G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
+      G4double extentX = beamPipe->GetExtent().DX();
+      G4double extentY = beamPipe->GetExtent().DY();
       if ( (horizontalWidth < extentX) || (horizontalWidth < extentY) )
 	{
 	  // horizontalWidth isn't sufficient for range in x or y
