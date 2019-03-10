@@ -1468,18 +1468,17 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4bool individualCoilsSolids = false;
   if (buildPole)
     {
-      G4double cx = 0.5 * coilWidth;
-      G4double cy = 0.5 * coilHeight;
+      G4double cx = 0.5 * coilWidth - lsl;
+      G4double cy = 0.5 * coilHeight - lsl;
       coilSolid = new G4Box(name + "_coil_solid", // name
 			    cx,                   // x half width
 			    cy,                   // y half height
-			    sLength*0.5 - lsl);   // z half length - same as yoke
+			    sLength*0.5 - 2*lsl);   // z half length - same as yoke
       allSolids.insert(coilSolid);
     }
 
   // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
   // as the intersection is only done if one of the angles is finite.
-  
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     { 
       std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
@@ -1490,7 +1489,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       G4VSolid* angledFaces = new G4CutTubs(name + "_angled_face_solid", // name
 					    0,                           // inner radius
 					    intersectionRadius,          // outer radius
-					    length*0.5 - lsl,            // z half length
+					    length*0.5 - 2*lsl,            // z half length
 					    0,                           // start angle
 					    CLHEP::twopi,                // sweep angle
 					    inputFaceNormal,             // input face normal
@@ -1500,7 +1499,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       G4VSolid* angledFacesCont = new G4CutTubs(name + "_angled_face_cont_solid", // name
 						0,                           // inner radius
 						intersectionRadius,          // outer radius
-						length*0.5 - lengthSafety,   // z half length
+						length*0.5 - lsl,   // z half length
 						0,                           // start angle
 						CLHEP::twopi,                // sweep angle
 						inputFaceNormal,             // input face normal
