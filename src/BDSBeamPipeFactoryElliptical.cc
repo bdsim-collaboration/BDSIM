@@ -49,10 +49,10 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
   CleanUp();
   
   // build the solids
-  vacuumSolid   = new G4EllipticalTube(nameIn + "_vacuum_solid",       // name
-				       aper1In,                        // x half width
-				       aper2In,                        // y half width
-				       (lengthIn*0.5)-lengthSafety); // half length
+  vacuumSolid = new G4EllipticalTube(nameIn + "_vacuum_solid",       // name
+				     aper1In,                        // x half width
+				     aper2In,                        // y half width
+				     (lengthIn*0.5)-lengthSafety); // half length
 
   G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
