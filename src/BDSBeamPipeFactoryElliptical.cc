@@ -79,7 +79,8 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
 					containerYHalfWidth,           // y half width
 					lengthIn*0.5);                 // half length
 					
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, containerXHalfWidth, containerYHalfWidth);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String      nameIn,
@@ -99,29 +100,27 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String      nameIn,
   
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
-  
+
+  G4double containerRadiusX = 0;
+  G4double containerRadiusY = 0;
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn,
-			    inputFaceNormal, outputFaceNormal);
+			    inputFaceNormal, outputFaceNormal, containerRadiusX, containerRadiusY);
   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
-				 lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+				 lengthIn, containerRadiusX, containerRadiusY);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    nameIn,
 								   G4Material* vacuumMaterialIn,
 								   G4Material* beamPipeMaterialIn,
 								   G4double    lengthIn,
-								   G4double    aper1In,
-								   G4double    aper2In,
-								   G4double    beamPipeThicknessIn)
+								   G4double    containerRadiusX,
+								   G4double    containerRadiusY)
 {
-  // prepare a longer container subtraction solid
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
   // doesn't have to be angled as it's only used for transverse subtraction
   containerSubtractionSolid = new G4EllipticalTube(nameIn  + "_container_solid", // name
-						   containerXHalfWidth,          // x half width
-						   containerYHalfWidth,          // y half width
+						   containerRadiusX,             // x half width
+						   containerRadiusY,             // y half width
 						   lengthIn);                    // full length for unambiguous subtraction
 
 
@@ -129,10 +128,10 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
 					     beamPipeMaterialIn, lengthIn);
 
   // record extents
-  BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
+  BDSExtent ext = BDSExtent(containerRadiusX, containerRadiusY, lengthIn*0.5);
   
   // calculate radius if a tube were to be place around it
-  G4double containerRadius = std::max(containerXHalfWidth, containerYHalfWidth);
+  G4double containerRadius = std::max(containerRadiusX, containerRadiusY);
   
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext, containerRadius);
   
@@ -145,7 +144,9 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
 							     G4double      aper2In,
 							     G4double      beamPipeThicknessIn,
 							     G4ThreeVector inputfaceIn,
-							     G4ThreeVector outputfaceIn)
+							     G4ThreeVector outputfaceIn,
+							     G4double&     containerRadiusX,
+							     G4double&     containerRadiusY)
 {
   // this function will make a longer normal rectangular beampipe and chop it off
   // to make angled faces as required
@@ -210,11 +211,11 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
 					  beamPipeSolidLong,
 					  angledFaceSolid);
   
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
+  containerRadiusX = aper1In + extraWidth + lengthSafety;
+  containerRadiusY = aper2In + extraWidth + lengthSafety;
   containerSolidLong = new G4EllipticalTube(nameIn  + "_container_solid_long",// name
-					    containerXHalfWidth,              // x half width
-					    containerYHalfWidth,              // y half width
+					    containerRadiusX,                 // x half width
+					    containerRadiusY,                 // y half width
 					    lengthIn);                        // full length for unambiguous intersection
   angledFaceSolidContainer = new G4CutTubs(nameIn + "_angled_face_container",// name
 					   0,                                // inner radius

@@ -82,7 +82,8 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
 			     containerYHalfWidth,           // y half width
 			     lengthIn*0.5);                 // half length
 					
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, containerHalfWidthX, containerHalfWidthY);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String      nameIn,
@@ -103,11 +104,13 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String      nameIn,
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
 
+  G4double containerHalfWidthX = 0;
+  G4double containerHalfWidthY = 0;
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn,
-			    inputFaceNormal, outputFaceNormal);
+			    inputFaceNormal, outputFaceNormal, containerHalfWidthX, containerHalfWidthY);
   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
-				 lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+				 lengthIn, containerHalfWidthX, containerHalfWidthY);
 }
 
 
@@ -115,27 +118,23 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
 								    G4Material* vacuumMaterialIn,
 								    G4Material* beamPipeMaterialIn,
 								    G4double    lengthIn,
-								    G4double    aper1In,
-								    G4double    aper2In,
-								    G4double    beamPipeThicknessIn)
+								    G4double    containerHalfWidthX,
+								    G4double    containerHalfWidthY)
 {
-  // prepare a longer container subtraction solid
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
   // doesn't have to be angled as it's only used for transverse subtraction
   containerSubtractionSolid = new G4Box(nameIn  + "_container_solid", // name
-					containerXHalfWidth,          // x half width
-					containerYHalfWidth,          // y half width
+					containerHalfWidthX,          // x half width
+					containerHalfWidthY,          // y half width
 					4*lengthIn);                  // full length for unambiguous subtraction
 
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
 					     beamPipeMaterialIn, lengthIn);
   
   // record extents
-  BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
+  BDSExtent ext = BDSExtent(containerHalfWidthX, containerHalfWidthY, lengthIn*0.5);
   
   // calculate radius if a tube were to be place around it
-  G4double containerRadius = std::hypot(containerXHalfWidth,containerYHalfWidth);
+  G4double containerRadius = std::hypot(containerHalfWidthX, containerHalfWidthY);
 
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext, containerRadius);
 
@@ -148,7 +147,9 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 							      G4double      aper2In,
 							      G4double      beamPipeThicknessIn,
 							      G4ThreeVector inputfaceIn,
-							      G4ThreeVector outputfaceIn)
+							      G4ThreeVector outputfaceIn,
+							      G4double&     containerHalfWidthX,
+							      G4double&     containerHalfWidthY)
 {
   // this function will make a longer normal rectangular beampipe and chop it off
   // to make angled faces as required
