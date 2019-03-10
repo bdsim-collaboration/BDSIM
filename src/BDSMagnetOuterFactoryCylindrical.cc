@@ -48,6 +48,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
 {;}
 
+void BDSMagnetOuterFactoryCylindrical::CleanUp()
+{
+  BDSMagnetOuterFactoryBase::CleanUp();
+  magnetContainerRadius = 0;
+}
+
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     name,
 								   G4double     length,
 								   const BDSBeamPipe* beamPipe,
@@ -68,7 +74,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   if (!BDS::IsFinite(angleIn) && !BDS::IsFinite(angleOut))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, horizontalWidth);
-      G4double magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafety;
       BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
     }
   else
@@ -78,10 +83,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
       outputFaceNormal = faces.second;
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, horizontalWidth);
-    
-      // build the container for the whole magnet object - this horizontal width should be
-      // larger than the magnet outer piece width which is just 'horizontalWidth' wide.
-      G4double magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafety;
       BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius);
     }
   return CommonFinalConstructor(name, length, recipe);
@@ -243,7 +244,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 {
   // build the container for the whole magnet object - this horizontal width should be
   // larger than the magnet outer piece width which is just 'horizontalWidth' wide.
-  G4double magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafety;
+  magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafetyLarge;
   BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius);
   
   if (beamPipe->ContainerIsCircular())
@@ -301,7 +302,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
 { 
   // build the container for the whole magnet object - this horizontal width should be
   // larger than the magnet outer piece width which is just 'horizontalWidth' wide.
-  G4double magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafety;
+  magnetContainerRadius = (0.5 * horizontalWidth) + lengthSafety;
   BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius);
   
   if (beamPipe->ContainerIsCircular())
@@ -386,7 +387,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
 									 G4double    length,
 									 const BDSMagnetOuterInfo* recipe)
 {
-  G4double horizontalWidth = recipe->horizontalWidth;
   G4Material* outerMaterial = recipe->outerMaterial;
   if (!outerMaterial)
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
@@ -410,8 +410,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
 
   // record extents
   // container radius is the same for all methods as all cylindrical
-  G4double containerRadius = horizontalWidth + lengthSafety;
-  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
+  BDSExtent ext = BDSExtent(magnetContainerRadius, magnetContainerRadius, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
