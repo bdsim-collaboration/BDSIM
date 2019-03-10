@@ -1612,8 +1612,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 	  else
 	    {displacement = coilDisps[i];} // with no intersection we have to displace it
 	  G4String theName = name + "_coil_" + std::to_string(i) + "_pv";
-	  G4RotationMatrix* rot = new G4RotationMatrix();
-	  allRotationMatrices.insert(rot);
 	  if (buildVertically)
 	    {
 	      G4RotationMatrix* rotVert = new G4RotationMatrix();
@@ -1621,7 +1619,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 	      displacement.transform(*rotVert);
 	      delete rotVert;
 	    }
-	  aCoilPV = new G4PVPlacement(rot,             // no rotation
+	  aCoilPV = new G4PVPlacement(nullptr,             // no rotation
 				      displacement,    // position
 				      volToPlace,      // lv to be placed
 				      theName,         // name
