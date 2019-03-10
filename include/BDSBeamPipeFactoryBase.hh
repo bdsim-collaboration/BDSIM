@@ -105,7 +105,8 @@ protected:
 
   /// build beampipe and register logical volumes
   BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
-					       G4double  containerRadius);
+					       G4double  containerRadius,
+					       G4bool    containerIsCircular = false);
   
   // methods called by CommonConstruction, can be implmented by derived classes
   

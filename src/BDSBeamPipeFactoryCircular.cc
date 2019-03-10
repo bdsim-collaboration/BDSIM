@@ -123,7 +123,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   // record extents
   BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
 
-  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, containerRadiusIn);
+  // true for containerIsCircular - true for this factory
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, containerRadiusIn, true);
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
