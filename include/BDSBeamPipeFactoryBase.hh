@@ -85,7 +85,7 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr) = 0;
 
   /// Virtual base destructor
-  virtual ~BDSBeamPipeFactoryBase() {}
+  virtual ~BDSBeamPipeFactoryBase(){;}
 
 protected:
   /// base constructor
