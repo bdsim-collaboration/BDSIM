@@ -87,6 +87,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
       else
         {
 	  result = factory.GetReferencePhysList(geant4PhysicsList);
+	  result->ConstructParticle(); // force construction of the particles
 	  if (BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMRangeCuts())
 	    {BDS::SetRangeCuts(result);}
 	  if (BDSGlobalConstants::Instance()->MinimumKineticEnergy() > 0 ||
