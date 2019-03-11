@@ -82,12 +82,11 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
           G4cout << "Available Geant4 EM physics lists:" << G4endl;
           for (const auto &name : factory.AvailablePhysListsEM())
             {G4cout << "\"" << name << "\"" << G4endl;}
-          exit(1);
+          throw BDSException(__METHOD_NAME__, "Unknown Geant4 physics list \"" + geant4PhysicsList + "\"");
         }
       else
         {
 	  result = factory.GetReferencePhysList(geant4PhysicsList);
-	  result->ConstructParticle(); // force construction of the particles
 	  if (BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMRangeCuts())
 	    {BDS::SetRangeCuts(result);}
 	  if (BDSGlobalConstants::Instance()->MinimumKineticEnergy() > 0 ||
@@ -110,15 +109,11 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	  // range cuts being set for a complete physics list that we wouldn't use
 	  return BDS::ChannellingPhysicsComplete(useEMD);
 #else
-	  G4cerr << "Channel physics is not supported with Geant4 versions less than 10.4" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "Channel physics is not supported with Geant4 versions less than 10.4");
 #endif
 	}
       else
-	{
-	  G4cerr << "Unknown 'complete' physics list \"" << physicsList << "\"" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException(__METHOD_NAME__, "Unknown 'complete' physics list \"" + physicsList + "\"");}
     }
   else
     {
@@ -126,6 +121,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
       BDS::SetRangeCuts(result); // always set our range cuts for our physics list
     }
   BDS::CheckAndSetEnergyValidityRange();
+  result->ConstructParticle(); // force construction of the particles
   return result;
 }
 
@@ -283,10 +279,7 @@ G4GenericBiasingPhysics* BDS::BuildAndAttachBiasWrapper(const GMAD::FastList<GMA
       if (particlesToBias.find(name) != particlesToBias.end())
 	{particlesToBias[name] = true;}
       else
-	{
-	  G4cerr << __METHOD_NAME__ << "Not possible to bias \"" << name << "\"" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException(__METHOD_NAME__, "Not possible to bias \"" + name + "\"");}
     }
 
   // check whether we need to construct or attach biasing at all
