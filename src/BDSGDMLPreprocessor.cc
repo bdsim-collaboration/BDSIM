@@ -270,21 +270,24 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
         {continue;} // ignore this attribute
 
       if (XMLString::compareIString(attr->getNodeName(),
-                                    XMLString::transcode("name")) == 0) {
-        std::string newName = prefix + "_" + name;
-        attr->setNodeValue(XMLString::transcode(newName.c_str()));
-      } else {
-        std::string expression = XMLString::transcode(attr->getNodeValue());
-        // Iterate over all the names that have been defined.
-        for (auto defined_name : names) {
-	  // Check if whole name is found (don't match substrings).
-          // \\b = word boundary.  $& = the matched string.
-          std::regex whole_name(std::string("\\b") + defined_name + "\\b");
-          expression =
-              std::regex_replace(expression, whole_name, prefix + "_$&");
-        }
-        attr->setNodeValue(XMLString::transcode((expression).c_str()));
-      }
-  }
+                                    XMLString::transcode("name")) == 0)
+	{
+	  std::string newName = prefix + "_" + name;
+	  attr->setNodeValue(XMLString::transcode(newName.c_str()));
+	}
+      else
+	{
+	  std::string expression = XMLString::transcode(attr->getNodeValue());
+	  // Iterate over all the names that have been defined.
+	  for (auto defined_name : names)
+	    {
+	      // Check if whole name is found (don't match substrings).
+	      // \\b = word boundary.  $& = the matched string.
+	      std::regex whole_name(std::string("\\b") + defined_name + "\\b");
+	      expression = std::regex_replace(expression, whole_name, prefix + "_$&");
+	    }
+	  attr->setNodeValue(XMLString::transcode((expression).c_str()));
+	}
+    }
 }
 #endif
