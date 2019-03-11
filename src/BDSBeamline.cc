@@ -774,7 +774,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   if (!IndexOK(index))
     {return nullptr;}
   
-  const G4double pl = BDSGlobalConstants::Instance()->LengthSafetyLarge(); // shortcut
+  const G4double pl = BDSGlobalConstants::Instance()->LengthSafetyLarge(); // shortcut - 'padding length'
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetRotationMiddle();
@@ -793,7 +793,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      new G4RotationMatrix(*elRotStart),
 						      new G4RotationMatrix(*elRotStart),
 						      new G4RotationMatrix(*elRotStart),
-						      positionStart,// for now the same
+						      positionStart,// for now the same - ie no tilt offset
 						      positionMiddle,
 						      elPosStart,
 						      new G4RotationMatrix(*elRotStart),
