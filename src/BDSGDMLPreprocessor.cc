@@ -81,7 +81,8 @@ G4String BDS::PreprocessGDMLSchemaOnly(const G4String& file)
 	    {
 	      std::regex schema("xsi:noNamespaceSchemaLocation=\"(\\S+)\"");
 	      std::string newLine;
-	      std::regex_replace(std::back_inserter(newLine), line.begin(), line.end(), schema, localSchema+"$2");
+	      std::string prefix = "xsi:noNamespaceSchemaLocation=\"";
+	      std::regex_replace(std::back_inserter(newLine), line.begin(), line.end(), schema, prefix+localSchema+"\"$2");
 	      outFile << newLine;
 	    }
 	  else
@@ -89,6 +90,7 @@ G4String BDS::PreprocessGDMLSchemaOnly(const G4String& file)
 	}
       else
 	{outFile << line;}
+      outFile << "\n";
       i++;
     }
   outFile.close();
