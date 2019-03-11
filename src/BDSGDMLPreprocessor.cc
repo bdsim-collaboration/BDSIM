@@ -61,7 +61,7 @@ G4String BDS::PreprocessGDMLSchemaOnly(const G4String& file)
   if (!inputFile.is_open())
     {throw BDSException(__METHOD_NAME__, "Invalid file \"" + file + "\"");}
   else
-    {G4cout << __METHOD_NAME__ << "updating GDML Schema to local copy for file: \"" << file << "\"" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "updating GDML Schema to local copy for file:\n \"" << file << "\"" << G4endl;}
 
   // create new temporary file that modified gdml can be written to.
   G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file);
