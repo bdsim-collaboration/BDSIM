@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSIonDefinition.hh"
@@ -44,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4NeutrinoE.hh"
 #include "G4Neutron.hh"
 #include "G4ParticleTable.hh"
+#include "G4ParticleTableIterator.hh"
 #include "G4PionMinus.hh"
 #include "G4PionPlus.hh"
 #include "G4Positron.hh"
@@ -179,8 +181,12 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
       auto particleDef = particleTable->FindParticle(particleName);
       if (!particleDef)
 	{
-	  G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
-	  exit(1);
+	  G4cout << "Available particles are:" << G4endl;
+	  auto pt = G4ParticleTable::GetParticleTable();
+	  auto it = pt->GetIterator();
+	  while ((*it)()) // iterate over all particles defined and print out names
+	    {G4cout << it->value()->GetParticleName() << G4endl;}
+	  throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found.");
 	}
       particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
     }
@@ -210,7 +216,10 @@ void BDS::ConstructBeamParticleG4(G4String name)
   else if (name == "mu+")
     {G4MuonPlus::MuonPlusDefinition();}
   else
-    {G4cerr << "Unknown particle type \"" << name << "\"" << G4endl;}
+    {
+      G4cout << "Unknown common particle type \"" << name << "\"" << G4endl;
+      G4cout << "Attempting to search physics list particles." << G4endl;
+    }
 }
 
 void BDS::ConstructMinimumParticleSet()
