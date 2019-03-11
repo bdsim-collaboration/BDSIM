@@ -780,7 +780,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4RotationMatrix* elRotStart = element->GetRotationMiddle();
   G4ThreeVector     elPosStart = element->GetPositionStart() - G4ThreeVector(0,0,pl).transform(*elRotStart);
   G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
-  G4ThreeVector  positionStart = elPosStart.transform(*elRotStart);
+  G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSTiltOffset*   forEndPiece = nullptr;
