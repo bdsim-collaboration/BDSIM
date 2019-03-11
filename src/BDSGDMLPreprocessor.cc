@@ -130,7 +130,7 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
   DOMElement* docRootNode    = doc->getDocumentElement();
-  DOMNodeIterator *docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
+  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
   // map structure and all names used
   ReadDoc(docWalker);
 
