@@ -34,7 +34,7 @@ TRKSampler::TRKSampler(std::string nameIn,
 
 void TRKSampler::Track(TRKBunch* bunch, TRKStrategy* /*strategy*/)
 {
-  //output->WriteTrackerSampler(index, bunch);
+  output->FillSamplerHitsTracker(index, bunch);
 }
 
 void TRKSampler::Print(std::ostream &out) const
