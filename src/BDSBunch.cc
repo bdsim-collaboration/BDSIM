@@ -46,7 +46,6 @@ BDSBunch::BDSBunch():
   finiteSigmaT(true),
   generatePrimariesOnly(false),
   beamlineTransform(G4Transform3D()),
-  nonZeroTransform(false),
   mass2(0.0),
   beamline(nullptr)
 {;}
@@ -64,7 +63,6 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 {
   particleDefinition = beamParticle;
   beamlineTransform  = beamlineTransformIn;
-  nonZeroTransform   = beamlineTransform != G4Transform3D::Identity;
   beamlineS          = beamlineSIn;
 
   X0     = beam.X0 * CLHEP::m;

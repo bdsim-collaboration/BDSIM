@@ -154,9 +154,6 @@ private:
 
   /// Beamline initial S position
   G4double beamlineS;
-
-  /// Whether the transform is finite and should be used.
-  G4bool        nonZeroTransform;
   
   G4double mass2; ///< Cache of mass squared as required to convert from p to E.
   
