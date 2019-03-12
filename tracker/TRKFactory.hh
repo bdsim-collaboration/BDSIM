@@ -87,8 +87,6 @@ private:
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
   BDSOutput* output;
-
-  int samplerCount;
   
   /// particle properties
   int charge;

@@ -19,26 +19,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <iostream>
 
-#include "TRKFactory.hh"
-
-//debug
 #include "BDSDebug.hh"
-
-//for momentum
 #include "BDSParticleDefinition.hh"
+#include "BDSSamplerRegistry.hh"
 
-//individual beam elements
-#include "TRKLine.hh"
-//#include "TRKDrift.hh"
+#include "TRKAperture.hh"
+#include "TRKApertureCircular.hh"
+#include "TRKApertureRectangular.hh"
+#include "TRKApertureEllipsoidal.hh"
+#include "TRKFactory.hh"
 #include "TRKDipole.hh"
+#include "TRKElement.hh"
 #include "TRKDecapole.hh"
-#include "TRKQuadrupole.hh"
+#include "TRKLine.hh"
 #include "TRKOctupole.hh"
+#include "TRKQuadrupole.hh"
+#include "TRKRBend.hh"
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
 #include "TRKSBend.hh"
-#include "TRKRBend.hh"
 
 //tracking strategies / routines
 #include "TRKStrategy.hh"
@@ -54,18 +54,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/elementtype.h"
 #include "parser/options.h"
 
-#include "TRKAperture.hh"
-#include "TRKApertureCircular.hh"
-#include "TRKApertureRectangular.hh"
-#include "TRKApertureEllipsoidal.hh"
-
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(const GMAD::Options&   options,
 		       BDSParticleDefinition* particle,
 		       BDSOutput*             outputIn):
-  output(outputIn),
-  samplerCount(0)
+  output(outputIn)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -405,7 +399,7 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
 {
   std::string name = element.name;
-  TRKElement* result = new TRKSampler(name, samplerCount, output);
-  samplerCount++;
+  int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
+  TRKElement* result = new TRKSampler(name, samplerIndex, output);
   return result;
 }
