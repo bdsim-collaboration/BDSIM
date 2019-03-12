@@ -6,6 +6,7 @@ simple_testing(bunch-circle                   "--file=circle.gmad"              
 simple_testing(bunch-composite                "--file=composite.gmad"               "")
 simple_testing(bunch-composite-w-gauss        "--file=composite-w-gauss.gmad"       "")
 simple_testing(bunch-different-beam-particle  "--file=different-beam-particle.gmad" "")
+simple_testing(bunch-exotic-particle          "--file=exotic-particle.gmad"         "")
 simple_testing(bunch-eshell                   "--file=eshell.gmad"                  "")
 simple_testing(bunch-eshell-width             "--file=eshell-width.gmad"            "")
 simple_testing(bunch-gauss                    "--file=gauss.gmad"                   "")
