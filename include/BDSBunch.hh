@@ -90,6 +90,13 @@ public:
   G4double GetCentralMomentum() {return P0;}
   G4bool GetUseCurvilinear() {return useCurvilinear;}
 
+  /// When recreating events, it's possible that setting the seed state may not
+  /// be sufficient for the bunch to get the right distribution. This is true when
+  /// the bunch coordinates are based on an external source of data i.e. user bunch
+  /// file. This default method allows such a distribution to advance to the correct
+  /// event number.
+  virtual void RecreateAdvanceToEvent(G4int /*eventOffset*/){;}
+
 protected:
   /// Apply either the curivilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
