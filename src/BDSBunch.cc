@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSParticleCoords.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
@@ -159,10 +160,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
     {// initialise cache of beam line pointer
       beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
       if (!beamline)
-	{
-	  G4cout << __METHOD_NAME__ << "ERROR no beamline constructed! " << G4endl;
-	  exit(1);
-	}
+	{throw BDSException(__METHOD_NAME__, "ERROR no beamline constructed!");}
     }
   
   // 'c' for curvilinear
