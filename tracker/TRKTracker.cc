@@ -96,9 +96,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 		  delete lostParticles;
 		}
 	    }
-
-	  if ((*elIter)->Sample())
-	    {output->WriteTrackerBunch((*elIter)->GetName(), bunch);}
 	  
 	  //confirm coordinates for particles that didn't 'hit' aperture
 	  (*elIter)->ConfirmCoordinates(bunch);

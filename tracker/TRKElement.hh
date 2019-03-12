@@ -52,7 +52,6 @@ public:
   inline double       GetLength()   const {return length;}
   inline double       GetStrength() const {return strength;}
   inline TRKAperture* GetAperture() const {return aperture;}
-  inline bool         Sample()      const {return sample;}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
@@ -72,7 +71,6 @@ protected :
   TRKPlacement*  placement;         ///< location of element
   TRKTiltOffset* offsetIn;          ///< tilt and offset entrance of element
   TRKTiltOffset* offsetOut;         ///< tilt and offset exit of element
-  bool           sample;            ///< whether to sample afterwards or not
 
   /// virtual print method for overloading operator<<. Virtual Friend Function Idiom
   virtual void Print(std::ostream& out) const;

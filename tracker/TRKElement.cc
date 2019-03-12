@@ -32,8 +32,7 @@ TRKElement::TRKElement(std::string  nameIn,
   length(lengthIn),
   strength(strengthIn),
   aperture(apertureIn),
-  placement(placementIn),
-  sample(false)
+  placement(placementIn)
 {
   offsetIn  = nullptr;
   offsetOut = nullptr;
