@@ -32,8 +32,7 @@ TRKElement::TRKElement(std::string  nameIn,
   length(lengthIn),
   strength(strengthIn),
   aperture(apertureIn),
-  placement(placementIn),
-  sample(false)
+  placement(placementIn)
 {
   offsetIn  = nullptr;
   offsetOut = nullptr;
@@ -55,11 +54,13 @@ void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
   std::cout << *bunch;
 #endif
 
-  if (offsetIn && offsetOut) strategy->Track(offsetIn,bunch);
+  if (offsetIn && offsetOut)
+    {strategy->Track(offsetIn,bunch);}
 
   strategy->Track(this,bunch);
 
-  if (offsetIn && offsetOut) strategy->Track(offsetOut,bunch);
+  if (offsetIn && offsetOut)
+    {strategy->Track(offsetOut,bunch);}
 
 #ifdef TRKDEBUG
   std::cout << "after tracking" << std::endl;

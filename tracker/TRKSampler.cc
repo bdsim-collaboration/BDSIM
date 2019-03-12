@@ -22,16 +22,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKSampler.hh"
 #include "TRKStrategy.hh"
 
-TRKSampler::TRKSampler(std::string nameIn):
-  TRKElement(nameIn+"_sampler",0,nullptr,nullptr)
+#include "BDSOutput.hh"
+
+TRKSampler::TRKSampler(std::string nameIn,
+		       int         indexIn,
+		       BDSOutput*  outputIn):
+  TRKElement(nameIn+"_sampler",0,nullptr,nullptr),
+  index(indexIn),
+  output(outputIn)
 {;}
 
-TRKSampler::~TRKSampler() 
-{;}
-
-void TRKSampler::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKSampler::Track(TRKBunch* bunch, TRKStrategy* /*strategy*/)
 {
-  strategy->Track(this,bunch);
+  output->FillSamplerHitsTracker(index, bunch);
 }
 
 void TRKSampler::Print(std::ostream &out) const

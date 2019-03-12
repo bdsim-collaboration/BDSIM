@@ -29,6 +29,7 @@ class BDSOutputROOTGeant4Data;
 #include "tracker/TRKBunch.hh"
 class BDSParticleCoordsFull;
 class BDSHitSampler;
+class TRKBunch;
 #endif
 
 #include "TObject.h"
@@ -102,6 +103,8 @@ public:
 	    const G4int beamlineIndex);
   void Fill(const TRKBunch& bunch);
   void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
+
+  void Fill(TRKBunch* /*bunch*/){;}
 #endif
 
   /// @{ Calculate and fill calculated variables.

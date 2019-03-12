@@ -19,26 +19,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <iostream>
 
-#include "TRKFactory.hh"
-
-//debug
 #include "BDSDebug.hh"
-
-//for momentum
 #include "BDSParticleDefinition.hh"
+#include "BDSSamplerRegistry.hh"
 
-//individual beam elements
-#include "TRKLine.hh"
-//#include "TRKDrift.hh"
+#include "TRKAperture.hh"
+#include "TRKApertureCircular.hh"
+#include "TRKApertureRectangular.hh"
+#include "TRKApertureEllipsoidal.hh"
+#include "TRKFactory.hh"
 #include "TRKDipole.hh"
+#include "TRKElement.hh"
 #include "TRKDecapole.hh"
-#include "TRKQuadrupole.hh"
+#include "TRKLine.hh"
 #include "TRKOctupole.hh"
+#include "TRKQuadrupole.hh"
+#include "TRKRBend.hh"
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
 #include "TRKSBend.hh"
-#include "TRKRBend.hh"
 
 //tracking strategies / routines
 #include "TRKStrategy.hh"
@@ -54,15 +54,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/elementtype.h"
 #include "parser/options.h"
 
-#include "TRKAperture.hh"
-#include "TRKApertureCircular.hh"
-#include "TRKApertureRectangular.hh"
-#include "TRKApertureEllipsoidal.hh"
-
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKFactory::TRKFactory(const GMAD::Options& options,
-		       BDSParticleDefinition* particle)
+TRKFactory::TRKFactory(const GMAD::Options&   options,
+		       BDSParticleDefinition* particle,
+		       BDSOutput*             outputIn):
+  output(outputIn)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -189,16 +186,19 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 {
   TRKLine* line = new TRKLine("beamline",circular);
   
-  for(auto it : beamline_list)
+  for (auto it : beamline_list)
     {
       TRKElement* element = CreateElement(it);
       if (element)
 	{
 	  line->AddElement(element);
-#ifdef TRKDEBUG
-	  std::cout << " Element created: " << *element << std::endl;
-#endif
-	  // update placement
+	  // if the element is flagged as a sampler, we create
+	  // a sampler element and put it in the beam line
+	  if (it.samplerType != "none")
+	    {
+	      TRKElement* sampler = CreateSampler(it);
+	      line->AddElement(sampler);
+	    }
 	}
     }
   return line;
@@ -282,18 +282,11 @@ void TRKFactory::AddCommonProperties(TRKElement* trkelement, GMAD::Element& elem
 
 TRKElement* TRKFactory::CreateLine(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
-#endif
-  // method not needed?
-  return NULL;
+  return nullptr;
 }
 
 TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   TRKAperture* aperture = CreateAperture(element);
   return new TRKDrift(element.name,
 		      element.l,
@@ -303,9 +296,6 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
   //TRKAperture* aperture = CreateAperture(element);
@@ -314,9 +304,6 @@ TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   TRKAperture* aperture = CreateAperture(element);
   return new TRKQuadrupole(element.k1,
 			   element.name,
@@ -327,9 +314,6 @@ TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
   TRKAperture* aperture = CreateAperture(element);
   return new TRKSextupole(bPrime,
@@ -341,9 +325,6 @@ TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
   TRKAperture* aperture = CreateAperture(element);
   return new TRKOctupole(bPrime,
@@ -355,18 +336,12 @@ TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateDecapole(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   //TRKAperture* aperture = CreateAperture(element);
   return NULL;
 }
 
 TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   //
   // magnetic field
   //
@@ -392,10 +367,6 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
-  #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-  #endif
-  
   double angle;
   // B Field used to define bend: theta = qBl / p 
   if(element.B != 0)
@@ -417,10 +388,6 @@ TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
-  #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-  #endif
-  
   TRKAperture* aperture = CreateAperture(element);
   return new TRKRBend(element.angle,
       element.name,
@@ -431,8 +398,8 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
-  return new TRKSampler(element.name);
+  std::string name = element.name;
+  int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
+  TRKElement* result = new TRKSampler(name, samplerIndex, output);
+  return result;
 }

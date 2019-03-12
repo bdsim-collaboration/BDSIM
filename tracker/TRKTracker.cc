@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
-#include <chrono>
+#include <map>
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -32,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKParticle.hh"
 #include "TRKStrategy.hh"
 #include "TRKTracker.hh"
+
+class BDSTrajectory;
 
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds milliseconds;
@@ -58,8 +61,10 @@ void TRKTracker::Track(TRKBunch* bunch)
   
   Clock::time_point tStart = Clock::now(); 
   
-  if (!bunch) return; //can't track nothing
-  if (bunch->empty()) return; //even if bunch exists, there must be particles in it
+  if (!bunch)
+    {return;} //can't track nothing
+  if (bunch->empty())
+    {return;} //even if bunch exists, there must be particles in it
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " bunch before any tracking " << std::endl;
   std::cout << *bunch << std::endl;
@@ -96,9 +101,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 		  delete lostParticles;
 		}
 	    }
-
-	  if ((*elIter)->Sample())
-	    {output->WriteTrackerBunch((*elIter)->GetName(), bunch);}
 	  
 	  //confirm coordinates for particles that didn't 'hit' aperture
 	  (*elIter)->ConfirmCoordinates(bunch);
@@ -110,6 +112,12 @@ void TRKTracker::Track(TRKBunch* bunch)
 	  std::cout << "No further particles to track" << std::endl;
 	  break;
 	}
+
+      // finish an event in the output which is a turn here
+      std::map<BDSTrajectory*, bool> trajectorymap;
+      output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+			nullptr, trajectorymap, nullptr, i);
     }// end of turns iteration
     
     
