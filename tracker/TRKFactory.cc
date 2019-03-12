@@ -405,7 +405,7 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
 {
   std::string name = element.name;
-  TRKElement* result = new TRKSampler(name, samplerCount + 1, output);
+  TRKElement* result = new TRKSampler(name, samplerCount, output);
   samplerCount++;
   return result;
 }
