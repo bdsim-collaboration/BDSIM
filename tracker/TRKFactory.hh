@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/fastlist.h"
 
+class BDSOutput;
 class BDSParticleDefinition;
 
 namespace GMAD
@@ -49,8 +50,9 @@ class TRKStrategy;
 class TRKFactory
 {
  public:
-  TRKFactory(const GMAD::Options& options,
-	     BDSParticleDefinition* particle);
+  TRKFactory(const GMAD::Options&   options,
+	     BDSParticleDefinition* particle,
+	     BDSOutput*             outputIn);
 
   TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
@@ -82,6 +84,12 @@ private:
   /// set common properties
   void AddCommonProperties(TRKElement* trkel, GMAD::Element& el);
 
+  /// Cache of main output so samplers can be constructed with this
+  /// output instance.
+  BDSOutput* output;
+
+  int samplerCount;
+  
   /// particle properties
   int charge;
   /// beam momentum in GeV

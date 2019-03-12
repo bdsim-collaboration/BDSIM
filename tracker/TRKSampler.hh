@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKStrategy.hh"
 #include "TRKBunch.hh"
 
+class BDSOutput;
+
 /**
  * @brief sampler class - output from tracker
  */
@@ -30,10 +32,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKSampler: public TRKElement
 {
 public:
-  TRKSampler(std::string nameIn);
-  virtual ~TRKSampler();
+  TRKSampler(std::string nameIn,
+	     int         indexIn,
+	     BDSOutput*  outputIn);
+  virtual ~TRKSampler(){;}
 
-  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  virtual void Track(TRKBunch* bunch, TRKStrategy* /*strategy*/);
 
 protected:
   /// output stream
@@ -41,6 +45,9 @@ protected:
   
 private:
   TRKSampler(); ///< not implemented
+
+  int        index;
+  BDSOutput* output;
 };
 
 #endif

@@ -61,8 +61,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKFactory::TRKFactory(const GMAD::Options& options,
-		       BDSParticleDefinition* particle)
+TRKFactory::TRKFactory(const GMAD::Options&   options,
+		       BDSParticleDefinition* particle,
+		       BDSOutput*             outputIn):
+  output(outputIn),
+  samplerCount(0)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -195,10 +198,13 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
       if (element)
 	{
 	  line->AddElement(element);
-#ifdef TRKDEBUG
-	  std::cout << " Element created: " << *element << std::endl;
-#endif
-	  // update placement
+	  // if the element is flagged as a sampler, we create
+	  // a sampler element and put it in the beam line
+	  if (it.samplerType != "none")
+	    {
+	      TRKElement* sampler = CreateSampler(it);
+	      line->AddElement(sampler);
+	    }
 	}
     }
   return line;
@@ -398,8 +404,8 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
-  return new TRKSampler(element.name);
+  std::string name = element.name;
+  TRKElement* result = new TRKSampler(name, samplerCount + 1, output);
+  samplerCount++;
+  return result;
 }
