@@ -39,7 +39,7 @@ public:
 	     double        length,
 	     TRKAperture*  aperture,
 	     TRKPlacement* placement,
-	     double        strenght = 0);
+	     double        strength = 0);
   virtual ~TRKElement();
 
   /// track method, visitor pattern

@@ -189,7 +189,7 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 {
   TRKLine* line = new TRKLine("beamline",circular);
   
-  for(auto it : beamline_list)
+  for (auto it : beamline_list)
     {
       TRKElement* element = CreateElement(it);
       if (element)
@@ -282,18 +282,11 @@ void TRKFactory::AddCommonProperties(TRKElement* trkelement, GMAD::Element& elem
 
 TRKElement* TRKFactory::CreateLine(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
-#endif
-  // method not needed?
-  return NULL;
+  return nullptr;
 }
 
 TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   TRKAperture* aperture = CreateAperture(element);
   return new TRKDrift(element.name,
 		      element.l,
@@ -303,9 +296,6 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
   //TRKAperture* aperture = CreateAperture(element);
@@ -314,9 +304,6 @@ TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   TRKAperture* aperture = CreateAperture(element);
   return new TRKQuadrupole(element.k1,
 			   element.name,
@@ -327,9 +314,6 @@ TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
   TRKAperture* aperture = CreateAperture(element);
   return new TRKSextupole(bPrime,
@@ -341,9 +325,6 @@ TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
   TRKAperture* aperture = CreateAperture(element);
   return new TRKOctupole(bPrime,
@@ -355,18 +336,12 @@ TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateDecapole(GMAD::Element& /*element*/)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   //TRKAperture* aperture = CreateAperture(element);
   return NULL;
 }
 
 TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-#endif
   //
   // magnetic field
   //
@@ -392,10 +367,6 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
-  #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-  #endif
-  
   double angle;
   // B Field used to define bend: theta = qBl / p 
   if(element.B != 0)
@@ -417,10 +388,6 @@ TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
-  #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__;
-  #endif
-  
   TRKAperture* aperture = CreateAperture(element);
   return new TRKRBend(element.angle,
       element.name,

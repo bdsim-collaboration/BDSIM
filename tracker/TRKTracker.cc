@@ -58,8 +58,10 @@ void TRKTracker::Track(TRKBunch* bunch)
   
   Clock::time_point tStart = Clock::now(); 
   
-  if (!bunch) return; //can't track nothing
-  if (bunch->empty()) return; //even if bunch exists, there must be particles in it
+  if (!bunch)
+    {return;} //can't track nothing
+  if (bunch->empty())
+    {return;} //even if bunch exists, there must be particles in it
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " bunch before any tracking " << std::endl;
   std::cout << *bunch << std::endl;
