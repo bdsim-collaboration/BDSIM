@@ -24,8 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSOutputROOTGeant4Data;
 
-#ifndef __ROOTBUILD__ 
+#ifndef __ROOTBUILD__
 #include "globals.hh"
+#include "tracker/TRKBunch.hh"
 class BDSParticleCoordsFull;
 class BDSHitSampler;
 #endif
@@ -99,6 +100,7 @@ public:
 	    const G4int pdgID,
 	    const G4int turnsTaken,
 	    const G4int beamlineIndex);
+  void Fill(const TRKBunch& bunch);
   void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
 #endif
 

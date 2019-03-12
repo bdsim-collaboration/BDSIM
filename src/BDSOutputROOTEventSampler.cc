@@ -26,6 +26,7 @@ class BDSOutputROOTGeant4Data;
 #ifndef __ROOTBUILD__
 #include "BDSParticleCoordsFull.hh"
 #include "BDSHitSampler.hh"
+#include "tracker/TRKBunch.hh"
 
 #include "globals.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -115,6 +116,21 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   S = (U) (coords.s / CLHEP::GeV);
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
   FillPolarCoords(coords);
+}
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch &bunch) {
+  for (auto pItr = bunch.cbegin();
+       pItr != bunch.cend();
+       ++pItr) {
+    n++;
+    x.push_back(pItr->X() / CLHEP::m);
+    xp.push_back(pItr->Xp() / CLHEP::m);
+    y.push_back(pItr->Y() / CLHEP::m);
+    yp.push_back(pItr->Yp() / CLHEP::m);
+    z = pItr->Z() / CLHEP::m;
+    zp.push_back(pItr->Zp() / CLHEP::m);
+  }
 }
 
 template <class U>

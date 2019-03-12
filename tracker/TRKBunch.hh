@@ -34,35 +34,42 @@ namespace GMAD
 #include "TRKParticle.hh"
 
 typedef std::vector<TRKParticle>::iterator TRKBunchIter;
+typedef std::vector<TRKParticle>::const_iterator TRKBunchConstIter;
 
 /**
  * @brief Vector of particles
  */
 
 class TRKBunch
-{ 
+{
 public:
   TRKBunch(const GMAD::Beam& beam,
 	   BDSParticleDefinition* particle,
 	   long int nGenerate = 1);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
-  
+
   TRKBunchIter begin() {return bunch.begin();}
   TRKBunchIter end()   {return bunch.end();}
-  
+  TRKBunchConstIter cbegin() const {return bunch.cbegin();}
+  TRKBunchConstIter cend() const {return bunch.cend();}
+
+  // TRKBunchIter begin() {return bunch.begin();}
+  // TRKBunchIter end()   {return bunch.end();}
+
+
   int  size()  const {return bunch.size();}
   bool empty() const {return bunch.empty();}
 
   /// erase method, returns iterator to element
   TRKBunchIter Erase(TRKBunchIter iter) {return bunch.erase(iter);}
   TRKBunchIter Erase(TRKBunchIter start, TRKBunchIter finish) {return bunch.erase(start,finish);}
-  
+
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);
 
 private:
-  TRKBunch(); /// bunch must be instantiated with a number of particles  
+  TRKBunch(); /// bunch must be instantiated with a number of particles
 
   long int population;
   std::vector <TRKParticle> bunch;
