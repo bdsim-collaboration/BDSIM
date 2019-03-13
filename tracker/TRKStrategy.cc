@@ -51,8 +51,8 @@ void TRKStrategy::Track(TRKTiltOffset* el, TRKBunch* bunch)
 {
   std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
     double offsetX = el->GetOffsetX();

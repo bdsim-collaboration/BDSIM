@@ -38,8 +38,8 @@ std::ostream& operator<<(std::ostream& out, const TRKAperture& aperture)
 TRKBunch* TRKAperture::CheckAperture(TRKBunch* bunch)
 {
   //loop over bunch and check aperture
-  TRKBunchIter iter       = bunch->begin();
-  TRKBunchIter backactive = --(bunch->end()); //used to denote the last useful particle
+  TRKBunch::iterator iter       = bunch->begin();
+  TRKBunch::iterator backactive = --(bunch->end()); //used to denote the last useful particle
   //don't use 'back' as that returns a direct reference and not an iterator
 
   //make an output vector of particles

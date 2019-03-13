@@ -48,7 +48,7 @@ public:
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
   /// move a particle to bdsim tracking queue and delete from bunch, 
-  void Shift(TRKBunch* bunch, TRKBunchIter& iter);
+  void Shift(TRKBunch* bunch, TRKBunch::iterator& iter);
 
 private:
   TRKLine*  line;

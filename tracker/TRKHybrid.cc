@@ -43,18 +43,19 @@ TRKHybrid::TRKHybrid(int trackingStepsIn):
   TRKStrategy(trackingStepsIn)
 {;}
 
-TRKHybrid::~TRKHybrid() {
-}
+TRKHybrid::~TRKHybrid()
+{;}
 
-void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch)
+{
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Drift" << std::endl;
 #endif
 
   // this drift method can be done in one go, trackingsteps not needed;
   const double h = el->GetLength()*1e6; //convet from m to um
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end  = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end  = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -66,7 +67,8 @@ void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
   }
 }
 
-void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch)
+{
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Dipole" << std::endl;
 #endif
@@ -78,8 +80,8 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
 
   const double h = el->GetLength()*1e6/trackingSteps; //convert form m to um
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -259,8 +261,8 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
 #endif
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   for (;iter!=end;++iter) 
   {
@@ -331,8 +333,8 @@ void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
   #endif
   
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   for (;iter!=end;++iter) 
   {
@@ -392,8 +394,8 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " step length per tracking step: " << h << " um" << std::endl;
   std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
 #endif
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -467,7 +469,8 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch)
+{
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Sextupole" << std::endl;
 #endif
@@ -475,7 +478,8 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
   Track((TRKDrift*)el,bunch);
 }
 
-void TRKHybrid::Track(TRKOctupole* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKOctupole* el, TRKBunch* bunch)
+{
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Octupole" << std::endl;
 #endif
@@ -483,7 +487,8 @@ void TRKHybrid::Track(TRKOctupole* el, TRKBunch* bunch) {
   Track((TRKDrift*)el,bunch);
 }
 
-void TRKHybrid::Track(TRKSolenoid* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKSolenoid* el, TRKBunch* bunch)
+{
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Solenoid " << std::endl;
 #endif

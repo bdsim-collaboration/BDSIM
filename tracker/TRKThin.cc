@@ -48,8 +48,8 @@ TRKThin::~TRKThin() {
 void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) { 
   // this drift method can be done in one go, trackingsteps not needed;
   const double h = el->GetLength(); 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end  = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end  = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -75,8 +75,8 @@ void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) {
   //  const double h = el->GetLength()/trackingSteps;
   // for (int i=0; i<trackingSteps; i++) {
     
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   // half drift
   Track((TRKDrift*)el,bunch);
@@ -109,8 +109,8 @@ void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 
   const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   // initialise kick // only needed once
   const double Kn = strength;
@@ -168,8 +168,8 @@ void TRKThin::Track(TRKSextupole* el, TRKBunch* bunch) {
 
   const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   // initialise kick // only needed once
   double Kn = strength * 0.5;
@@ -228,8 +228,8 @@ void TRKThin::Track(TRKOctupole* el, TRKBunch* bunch) {
 
   const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   // initialise kick // only needed once
   double Kn = strength / 6;

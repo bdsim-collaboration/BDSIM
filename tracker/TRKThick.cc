@@ -27,18 +27,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKSextupole.hh"
 #include "TRKOctupole.hh"
 
-TRKThick::TRKThick(int trackingStepsIn) : 
-  TRKStrategy(trackingStepsIn) {
-}
+TRKThick::TRKThick(int trackingStepsIn): 
+  TRKStrategy(trackingStepsIn)
+{;}
 
-TRKThick::~TRKThick() { 
-}
+TRKThick::~TRKThick()
+{;}
 
-void TRKThick::Track(TRKDrift* el, TRKBunch* bunch) { 
+void TRKThick::Track(TRKDrift* el, TRKBunch* bunch)
+{ 
   // this drift method can be done in one go, trackingsteps not needed;
   const double h = el->GetLength(); 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end  = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end  = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -73,8 +74,8 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 
   const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -118,11 +119,12 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKSextupole* /*el*/, TRKBunch* bunch) { 
+void TRKThick::Track(TRKSextupole* /*el*/, TRKBunch* bunch)
+{ 
   //  const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end  = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end  = bunch->end();
 
   //TBC - justs copies coordinates on just now
   for (;iter!=end;++iter) {
@@ -133,11 +135,12 @@ void TRKThick::Track(TRKSextupole* /*el*/, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* bunch) {
+void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* bunch)
+{
   //  const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end  = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end  = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -147,6 +150,7 @@ void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKSolenoid* el, TRKBunch* bunch) { 
+void TRKThick::Track(TRKSolenoid* el, TRKBunch* bunch)
+{ 
   Track((TRKDrift*)el,bunch);
 }
