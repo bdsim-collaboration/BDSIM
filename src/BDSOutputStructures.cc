@@ -171,6 +171,8 @@ void BDSOutputStructures::PrepareCollimatorInformation()
 {
   const G4String collimatorPrefix = "COLL_";
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  if (!flatBeamline)
+    {return;} // in some cases there may not be a beam line... e.g. in the tracker
   collimatorIndices = flatBeamline->GetIndicesOfCollimators();
   nCollimators = (G4int)collimatorIndices.size();
   
