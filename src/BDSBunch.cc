@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSParticleCoords.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
@@ -46,7 +47,6 @@ BDSBunch::BDSBunch():
   finiteSigmaT(true),
   generatePrimariesOnly(false),
   beamlineTransform(G4Transform3D()),
-  nonZeroTransform(false),
   mass2(0.0),
   beamline(nullptr)
 {;}
@@ -63,8 +63,12 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  G4double beamlineSIn)
 {
   particleDefinition = beamParticle;
-  beamlineTransform  = beamlineTransformIn;
-  nonZeroTransform   = beamlineTransform != G4Transform3D::Identity;
+
+  // back the starting point up by length safety to avoid starting on a boundary
+  G4ThreeVector unitZBeamline = G4ThreeVector(0,0,-1).transform(beamlineTransformIn.getRotation());
+  G4ThreeVector translation   = BDSGlobalConstants::Instance()->LengthSafety() * unitZBeamline;
+  beamlineTransform = G4Transform3D(beamlineTransformIn.getRotation(), beamlineTransformIn.getTranslation()+translation);
+
   beamlineS          = beamlineSIn;
 
   X0     = beam.X0 * CLHEP::m;
