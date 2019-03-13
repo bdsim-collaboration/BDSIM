@@ -80,7 +80,7 @@ int main (int argc, char** argv)
   output->WriteTrackerBunch("primaries",bunch,true);
 
   /// Build beamline
-  TRKFactory* factory   = new TRKFactory(options, designParticle);
+  TRKFactory* factory   = new TRKFactory(options, designParticle, output);
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
