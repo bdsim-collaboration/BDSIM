@@ -62,6 +62,7 @@ int main (int argc, char** argv)
   BDSOutput* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
 						     globalConstants->OutputFileName());
 
+  output->NewFile();
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
