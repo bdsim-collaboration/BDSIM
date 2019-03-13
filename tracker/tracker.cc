@@ -69,13 +69,14 @@ int main (int argc, char** argv)
   /// Build bunch
   BDSParticleDefinition* designParticle = nullptr;
   BDSParticleDefinition* beamParticle   = nullptr;
-  G4bool beamDifferentFromDesignParticle = false;
+  bool beamDifferentFromDesignParticle = false;
+  long int nGenerate = globalConstants->NGenerate();
   TRK::ConstructDesignAndBeamParticle(beam,
 				      globalConstants->FFact(),
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
-  TRKBunch* bunch = new TRKBunch(beam, beamParticle);
+  TRKBunch* bunch = new TRKBunch(beam, beamParticle, nGenerate);
 
   /// Build beamline
   TRKFactory* factory   = new TRKFactory(options, designParticle, output);
