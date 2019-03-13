@@ -62,7 +62,6 @@ int main (int argc, char** argv)
   BDSOutput* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
 						     globalConstants->OutputFileName());
 
-  output->NewFile();
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
@@ -77,19 +76,24 @@ int main (int argc, char** argv)
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
   TRKBunch* bunch = new TRKBunch(beam, beamParticle);
-  /// Write primaries to output file
-  output->WriteTrackerBunch("primaries",bunch,true);
 
   /// Build beamline
   TRKFactory* factory   = new TRKFactory(options, designParticle, output);
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
+  /// Write primaries to output file
+  output->InitialiseGeometryDependent();
+  output->NewFile();
+  output->WriteTrackerBunch("primaries",bunch,true);
+
   /// Build tracker
   TRKTracker tracker(beamline,strategy,options,output);
 
   //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);
+
+  output->CloseFile();
 
   // free memory (good code test)
   delete designParticle;
