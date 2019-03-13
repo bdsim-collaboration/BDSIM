@@ -33,8 +33,6 @@ namespace GMAD
 
 #include "TRKParticle.hh"
 
-typedef std::vector<TRKParticle>::iterator TRKBunchIter;
-typedef std::vector<TRKParticle>::const_iterator TRKBunchConstIter;
 
 /**
  * @brief Vector of particles
@@ -49,21 +47,18 @@ public:
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
 
-  TRKBunchIter begin() {return bunch.begin();}
-  TRKBunchIter end()   {return bunch.end();}
-  TRKBunchConstIter cbegin() const {return bunch.cbegin();}
-  TRKBunchConstIter cend() const {return bunch.cend();}
-
-  // TRKBunchIter begin() {return bunch.begin();}
-  // TRKBunchIter end()   {return bunch.end();}
-
-
-  int  size()  const {return bunch.size();}
-  bool empty() const {return bunch.empty();}
+  typedef std::vector<TRKParticle>::iterator iterator;
+  typedef std::vector<TRKParticle>::const_iterator const_iterator;
+  iterator       begin()        {return bunch.begin();}
+  iterator       end()          {return bunch.end();}
+  const_iterator begin()  const {return bunch.begin();}
+  const_iterator end()    const {return bunch.end();}
+  int            size()   const {return bunch.size();}
+  bool           empty()  const {return bunch.empty();}
 
   /// erase method, returns iterator to element
-  TRKBunchIter Erase(TRKBunchIter iter) {return bunch.erase(iter);}
-  TRKBunchIter Erase(TRKBunchIter start, TRKBunchIter finish) {return bunch.erase(start,finish);}
+  iterator Erase(iterator iter) {return bunch.erase(iter);}
+  iterator Erase(iterator start, iterator finish) {return bunch.erase(start,finish);}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);

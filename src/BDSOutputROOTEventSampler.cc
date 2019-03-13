@@ -119,18 +119,18 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 }
 
 template <class U>
-void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch &bunch) {
-  for (auto pItr = bunch.cbegin();
-       pItr != bunch.cend();
-       ++pItr) {
-    n++;
-    x.push_back(pItr->X() / CLHEP::m);
-    xp.push_back(pItr->Xp() / CLHEP::m);
-    y.push_back(pItr->Y() / CLHEP::m);
-    yp.push_back(pItr->Yp() / CLHEP::m);
-    z = pItr->Z() / CLHEP::m;
-    zp.push_back(pItr->Zp() / CLHEP::m);
-  }
+void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch)
+{
+  for (const auto& particle : bunch)
+    {
+      n++;
+      x.push_back((U &&) (particle.X() / CLHEP::m));
+      xp.push_back((U &&) (particle.Xp() / CLHEP::m));
+      y.push_back((U &&) (particle.Y() / CLHEP::m));
+      yp.push_back((U &&) (particle.Yp() / CLHEP::m));
+      z = (U) (particle.Z() / CLHEP::m);
+      zp.push_back((U &&) (particle.Zp() / CLHEP::m));
+    }
 }
 
 template <class U>

@@ -24,19 +24,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 //#include "TRKDrift.hh"
 #include "TRKParticle.hh"
 
-TRKThinSymplectic::TRKThinSymplectic(int trackingStepsIn) : 
-  TRKThin(trackingStepsIn) {
-}
+TRKThinSymplectic::TRKThinSymplectic(int trackingStepsIn):
+  TRKThin(trackingStepsIn)
+{;}
 
-TRKThinSymplectic::~TRKThinSymplectic() { 
-}
+TRKThinSymplectic::~TRKThinSymplectic()
+{;}
 
-void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) { 
+void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch)
+{ 
 
   const double h = el->GetLength()/trackingSteps;
 
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
@@ -66,7 +67,8 @@ void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch) { 
+void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch)
+{ 
   /// from Sixtrack Physics Manual 3.2.2 Thin Dipole exact Hamiltonian
 
   // in order to represent a dipole of length L the map is combined with two surrounding drift spaces.
@@ -80,8 +82,8 @@ void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch) {
 
   //  for (int i=0; i<trackingSteps; i++) {
       
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunch::iterator iter = bunch->begin();
+  TRKBunch::iterator end = bunch->end();
   
   // TODO how to use half? add option?
   // half drift

@@ -80,57 +80,65 @@ TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
 void TRKElement::ConfirmCoordinates(TRKBunch* bunch)
 {
   //in case we don't use aperture, we still have to confirm coordinates
-  TRKBunchIter iter = bunch->begin();
-  TRKBunchIter iend = bunch->end();
-  for (;iter != iend; ++iter) {
-    iter->ConfirmNewCoordinates();
-  }
+  for (auto& particle : *bunch)
+    {particle.ConfirmNewCoordinates();}
 }
 
 void TRKElement::SetOffset(double x, double y)
 {
-  if (!offsetIn) {
-    offsetIn  = TRKTiltOffset::TRKOffset(x,y);
-    offsetOut = TRKTiltOffset::TRKOffset(-x,-y);
-  } else {
-    offsetIn->SetOffset(x,y);
-    offsetIn->SetOffset(-x,-y);
-  }
+  if (!offsetIn)
+    {
+      offsetIn  = TRKTiltOffset::TRKOffset(x,y);
+      offsetOut = TRKTiltOffset::TRKOffset(-x,-y);
+    }
+  else
+    {
+      offsetIn->SetOffset(x,y);
+      offsetIn->SetOffset(-x,-y);
+    }
 }
 
 void TRKElement::SetTilt(double phi, double theta, double psi)
 {
-  if (!offsetIn) {
-    offsetIn  = TRKTiltOffset::TRKTilt(phi,theta,psi);
-    offsetOut = TRKTiltOffset::TRKTilt(-phi,-theta,-psi);
-  } else {
-    offsetIn->SetTilt(phi,theta,psi);
-    offsetOut->SetTilt(-phi,-theta,-psi);
-  }
+  if (!offsetIn)
+    {
+      offsetIn  = TRKTiltOffset::TRKTilt(phi,theta,psi);
+      offsetOut = TRKTiltOffset::TRKTilt(-phi,-theta,-psi);
+    }
+  else
+    {
+      offsetIn->SetTilt(phi,theta,psi);
+      offsetOut->SetTilt(-phi,-theta,-psi);
+    }
 }
 
 void TRKElement::AddOffset(double x, double y)
 {
-  if (offsetIn) {
-    offsetIn->AddOffset(x,y);
-    offsetOut->AddOffset(-x,-y);
-  } else {
-    SetOffset(x,y);
-  }
+  if (offsetIn)
+    {
+      offsetIn->AddOffset(x,y);
+      offsetOut->AddOffset(-x,-y);
+    }
+  else
+    {SetOffset(x,y);}
 }
 
 void TRKElement::AddTilt(double phi, double theta, double psi)
 {
-  if (offsetIn) {
-    offsetIn->AddTilt(phi,theta,psi);
-    offsetOut->AddTilt(-phi,-theta,-psi);
-  } else {
-    SetTilt(phi,theta,psi);
-  }
+  if (offsetIn)
+    {
+      offsetIn->AddTilt(phi,theta,psi);
+      offsetOut->AddTilt(-phi,-theta,-psi);
+    }
+  else
+    {SetTilt(phi,theta,psi);}
 }
 
-void TRKElement::Print(std::ostream &out)const {
+void TRKElement::Print(std::ostream& out) const
+{
   out << name << "; L= " << length << "m";
-  if (aperture)  {out << "; Aperture: " << *(aperture);}
-  if (placement) {out << "; Placement: " << *(placement);}
+  if (aperture)
+    {out << "; Aperture: " << *(aperture);}
+  if (placement)
+    {out << "; Placement: " << *(placement);}
 }

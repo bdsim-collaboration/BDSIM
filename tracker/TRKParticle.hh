@@ -33,7 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * output time / when information is passed to bdsim.
 */
 
-class TRKParticle { 
+class TRKParticle
+{ 
 public:
   //constructors
   //  TRKParticle();
