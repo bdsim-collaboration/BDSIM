@@ -104,7 +104,6 @@ public:
   void Fill(const TRKBunch& bunch);
   void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
 
-  void Fill(TRKBunch* /*bunch*/){;}
 #endif
 
   /// @{ Calculate and fill calculated variables.
