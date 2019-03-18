@@ -6,7 +6,7 @@ beam,  particle="kaon+",
        energy=23.0 * GeV,
        distrType="reference";
 
-include options.gmad
+include options.gmad;
 include fodo.gmad;
 
 option, ngenerate=10;
