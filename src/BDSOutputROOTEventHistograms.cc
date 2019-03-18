@@ -27,24 +27,29 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
   TH3D::AddDirectory(kFALSE);
 }
 
-BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms &rhs):
+BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms& rhs):
   TObject(rhs)
 {
-  // loop over 1d histograms
-  for(auto h : rhs.histograms1D)
-    {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}
-
-  // loop over 2d histograms
-  for(auto h : rhs.histograms2D)
-    {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
-
-  // loop over 3d histograms
-  for (auto h : rhs.histograms3D)
-    {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
+  Fill(&rhs);
 }
 
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 {;}
+
+void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
+{
+  // loop over 1d histograms
+  for(auto h : rhs->histograms1D)
+    {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}
+
+  // loop over 2d histograms
+  for(auto h : rhs->histograms2D)
+    {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
+
+  // loop over 3d histograms
+  for (auto h : rhs->histograms3D)
+    {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
+}
 
 #ifndef __ROOTBUILD__
 
@@ -156,6 +161,8 @@ void BDSOutputROOTEventHistograms::Fill3DHistogram(G4int    histoId,
   histograms3D[histoId]->Fill(xValue,yValue,zValue,weight);
 }
 
+#endif
+
 void BDSOutputROOTEventHistograms::Flush()
 {
   for (auto h : histograms1D)
@@ -165,8 +172,6 @@ void BDSOutputROOTEventHistograms::Flush()
   for (auto h : histograms3D)
     {h->Reset();}
 }
-
-#endif
 
 void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms * /*rhs*/)
 {;}

@@ -66,8 +66,9 @@ public:
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
   void Fill3DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zValue, G4double weight = 1.0);
-  void Flush();
 #endif
+  void Flush();
+  void Fill(const BDSOutputROOTEventHistograms* rhs);
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
@@ -85,7 +86,7 @@ private:
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
 
-  ClassDef(BDSOutputROOTEventHistograms,2);
+  ClassDef(BDSOutputROOTEventHistograms,3);
 };
 
 #endif
