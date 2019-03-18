@@ -80,6 +80,7 @@ public:
   void Fill(const BDSTrajectoryPoint* hit);
   void Fill(const BDSHitEnergyDeposition* hit);
 #endif
+  void Fill(const BDSOutputROOTEventLoss* other);
   virtual void Flush();
 
   bool storeTurn       = false; ///< Store turn number.
