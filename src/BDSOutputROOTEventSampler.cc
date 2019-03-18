@@ -158,7 +158,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSOutputROOTEventSampler<U>* othe
   n      = other->n;
   energy = other->energy;
   x      = other->x;
-  y      = other->x;
+  y      = other->y;
   z      = other->z;
   xp     = other->xp;
   yp     = other->yp;
