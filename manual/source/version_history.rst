@@ -7,6 +7,9 @@ Bug Fixes
 * Fix strong recreation when using user supplied bunch distribution. The file was
   always read from the beginning in the past. Now the correct coordinates will be
   read and the event is correctly reproduced.
+* Fix userinterface example given chanages to sensitive detector manager - simple edit.
+* Fix calculated phase offset for rfcavity in the beam line. This was peak at the
+  end of the element rather at the middle.
 
 
 V1.3.1 - 2019 / 03 / 05
