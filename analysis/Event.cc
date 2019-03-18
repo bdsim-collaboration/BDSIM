@@ -314,3 +314,14 @@ void Event::SetBranchAddressCollimatorSingle(TTree* t,
   if (debug)
     {std::cout << "Event::SetBranchAddress> " << name << " " << col << std::endl;}
 }
+
+void Event::Fill(Event* other)
+{
+  Primary->Fill(other->Primary);
+  PrimaryFirstHit->Fill(other->PrimaryFirstHit);
+  PrimaryLastHit->Fill(other->PrimaryLastHit);
+  Histos->Fill(other->Histos);
+
+  for (unsigned long i = 0; i < Samplers.size(); i++)
+    {Samplers[i]->Fill(other->Samplers[i]);}
+}

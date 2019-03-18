@@ -89,6 +89,8 @@ public:
   const std::vector<std::string>&    GetCollimatorNames() const {return collimatorNames;}
   /// @}
 
+  void Fill(Event* other);
+
   /// Whether there is primary data in the output file.
   inline bool UsePrimaries() const {return usePrimaries;}
 
