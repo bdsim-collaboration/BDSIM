@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RebdsimTypes.hh"
 
+class BDSOutputROOTEventAperture;
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCoords;
 class BDSOutputROOTEventHistograms;
@@ -82,6 +83,7 @@ public:
 #else
   BDSOutputROOTEventSampler<float>*  GetSampler(int index);
 #endif
+  BDSOutputROOTEventAperture*        GetAperture() {return Aperture;}
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
   BDSOutputROOTEventCollimator*      GetCollimator(int index);
   int                                DataVersion() const {return dataVersion;}
@@ -133,6 +135,8 @@ public:
   std::vector<BDSOutputROOTEventCollimator*> collimators;
   /// @}
   BDSOutputROOTEventInfo*       Info;    ///< For backwards compatibility
+
+  BDSOutputROOTEventAperture*   Aperture;
 
   std::vector<std::string> samplerNames;
 #ifdef __ROOTDOUBLE__

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Event.hh"
 #include "RebdsimTypes.hh"
 
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHistograms.hh"
@@ -69,6 +70,7 @@ Event::~Event()
   delete Histos;
   delete Summary;
   delete Info;
+  delete Aperture;
   for (auto s : Samplers)
     {delete s;}
   for (auto c : collimators)
@@ -96,6 +98,7 @@ void Event::CommonCtor()
   Histos             = new BDSOutputROOTEventHistograms();
   Summary            = new BDSOutputROOTEventInfo();
   Info               = new BDSOutputROOTEventInfo();
+  Aperture           = new BDSOutputROOTEventAperture();
 }
 
 #ifdef __ROOTDOUBLE__
@@ -321,6 +324,7 @@ void Event::Fill(Event* other)
   PrimaryFirstHit->Fill(other->PrimaryFirstHit);
   PrimaryLastHit->Fill(other->PrimaryLastHit);
   Histos->Fill(other->Histos);
+  Aperture->Fill(other->Aperture);
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
     {Samplers[i]->Fill(other->Samplers[i]);}
