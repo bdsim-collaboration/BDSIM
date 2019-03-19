@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
@@ -409,10 +410,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 	      G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
 	      if (!particleDef)
-		{
-		  G4cerr << "Particle \"" << type << "\"not found: quitting!" << G4endl;
-		  exit(1);
-		}
+		{throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
 	      
 	      // Wrap in our class that calculates momentum and kinetic energy.
 	      // Requires that total energy 'E' already be set.
