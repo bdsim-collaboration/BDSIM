@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
@@ -366,6 +367,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
+
+  // we only update the particle definition at the end so we continue to read
+  // the rest of the line bit by bit - could be improved and read the whole line
+  // at once for safety and robustness of moving on to the next event.
+  G4bool updateParticleDefinition = false;
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
@@ -403,22 +409,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  if (!particleCanBeDifferent)
 	    {particleCanBeDifferent = true;}
 	  ReadValue(type);
-	  // type is an int so FindParticle(int) is used here
-	  if (InputBunchFile.good())
-	    {
-	      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-	      G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
-	      if (!particleDef)
-		{
-		  G4cerr << "Particle \"" << type << "\"not found: quitting!" << G4endl;
-		  exit(1);
-		}
-	      
-	      // Wrap in our class that calculates momentum and kinetic energy.
-	      // Requires that total energy 'E' already be set.
-	      delete particleDefinition;
-	      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
-	    }
+	  updateParticleDefinition = true; // update particle definition after reading line
 	}
       else if(it->name=="weight")
 	{ReadValue(weight);}
@@ -436,6 +427,21 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       // compute t from z if it hasn't been read from file
       if (!tdef)
 	{t=0;}
+    }
+
+  if (updateParticleDefinition)
+    {
+      // type is an int so FindParticle(int) is used here
+      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+      G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
+      if (!particleDef)
+	{throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
+	      
+      // Wrap in our class that calculates momentum and kinetic energy.
+      // Requires that total energy 'E' already be set.
+      delete particleDefinition;
+      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
+      updateParticleDefinition = false; // reset it back to false
     }
 
   return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);

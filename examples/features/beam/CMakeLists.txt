@@ -32,6 +32,7 @@ simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle
 simple_testing(bunch-userfile-one-column      "--file=userfile_one_column.gmad"     "")
 simple_testing(bunch-userfile-placet          "--file=userfile-placet.gmad"         "")
 simple_testing(bunch-userfile-recreate        "--file=userfile-recreate.gmad"       "")
+simple_testing(bunch-userfile-unknown-particle "--file=userfile-unknown-particle.gmad" "")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")

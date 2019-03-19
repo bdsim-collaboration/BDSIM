@@ -4984,7 +4984,7 @@ The `userFile` distribution allows the user to supply an ASCII text file with pa
 coordinates that are tab-delimited. The column names and the units are specified in an
 input string.
 
-The file may also be compressed using tar and gz. Any file with the extension `.tar.gz`
+The file may also be compressed using gzip. Any file with the extension `.gz`
 will be automatically decompressed during the run without any temporary files. This is
 recommended, as compressed ASCII is significantly smaller in size.
 
@@ -4994,10 +4994,12 @@ particle coordinates from the beginning.
 
 This distribution reads lines at the start of each event to be memory efficient. However,
 this prevents reading a whole file by the number of lines in the file unlike the :code:`ptc`
-distribution that loads all lines and can use the :code:`matchDistrFileLength`.
+distribution that loads all lines and can use the beam option :code:`matchDistrFileLength`.
 
-.. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
-	  on by default.
+.. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
+	  from Geant4 and is on by default.
+
+.. note:: tar + gz will not work. The file must be a single file compressed through gzip only.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -5010,6 +5012,10 @@ distribution that loads all lines and can use the :code:`matchDistrFileLength`.
 +----------------------------------+-------------------------------------------------------+
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
++----------------------------------+-------------------------------------------------------+
+| `matchDistrFileLength`           | Option for certain distributions to simulate the same |
+|                                  | number of events as are in the file. Currently only   |
+|                                  | for the `ptc` distribution.                           |
 +----------------------------------+-------------------------------------------------------+
 
 Acceptable tokens for the columns are:
