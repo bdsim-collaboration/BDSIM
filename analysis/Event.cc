@@ -292,6 +292,14 @@ void Event::SetBranchAddress(TTree* t,
     }
 }
 
+void Event::RegisterCollimator(std::string collimatorName)
+{
+  BDSOutputROOTEventCollimator* collimator = new BDSOutputROOTEventCollimator();
+  collimatorNames.push_back(collimatorName);
+  collimators.push_back(collimator);
+  collimatorMap[collimatorName] = collimator;
+}
+
 void Event::SetBranchAddressCollimators(TTree* t,
 					const RBDS::VectorString* collimatorNamesIn)
 {

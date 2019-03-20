@@ -148,6 +148,9 @@ public:
   std::vector<std::string> collimatorNames;
   std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
 
+  /// Utility method for interface building events.
+  void RegisterCollimator(std::string collimatorName);
+
 private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,
