@@ -150,7 +150,8 @@ public:
 
   /// Utility method for interface building events.
   void RegisterCollimator(std::string collimatorName);
-
+  void FlushSamplers();
+  void FlushCollimators();
 private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,

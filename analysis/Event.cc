@@ -336,4 +336,20 @@ void Event::Fill(Event* other)
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
     {Samplers[i]->Fill(other->Samplers[i]);}
+
+  for (unsigned long i = 0; i < collimators.size(); i++)
+    {collimators[i]->Fill(other->collimators[i]);}
+}
+
+void Event::FlushSamplers()
+{
+  for (auto s : Samplers)
+    {s->Flush();}
+}
+
+void Event::FlushCollimators()
+{
+  for (auto c : collimators)
+    {c->Flush();}
+
 }
