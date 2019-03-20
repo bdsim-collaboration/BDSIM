@@ -98,6 +98,7 @@ public:
   inline void SetPrimaryStopped(G4bool primaryStoppedIn) {primaryStopped = primaryStoppedIn;}
   
 #endif
+  void Fill(const BDSOutputROOTEventCollimator* other);
   virtual void Flush();
 
   static BDSOutputROOTGeant4Data* particleTable;
