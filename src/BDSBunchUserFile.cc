@@ -368,7 +368,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   bool zpdef = false; //keeps record whether zp has been read from file
   bool tdef = false; //keeps record whether t has been read from file
   
-  G4int type;
+  G4int type = 0;
 
   // we only update the particle definition at the end so we continue to read
   // the rest of the line bit by bit - could be improved and read the whole line
