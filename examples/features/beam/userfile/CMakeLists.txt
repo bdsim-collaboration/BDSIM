@@ -2,7 +2,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 
 simple_testing(bunch-userfile                  "--file=userfile.gmad"                  "")
 simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle.gmad" "")
-simple_testing(bunch-userfile-blank-lines      "--file=userfile-blank-lines.gmad       "")
+simple_testing(bunch-userfile-blank-lines      "--file=userfile-blank-lines.gmad"      "")
 simple_testing(bunch-userfile-comment-line     "--file=userfile-comment.gmad"          "")
 simple_testing(bunch-userfile-one-column       "--file=userfile_one_column.gmad"       "")
 simple_testing(bunch-userfile-placet           "--file=userfile-placet.gmad"           "")
