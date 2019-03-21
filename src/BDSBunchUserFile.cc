@@ -223,9 +223,11 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 }
 
 template<class T>
-void BDSBunchUserFile<T>::skip(G4int nvalues){
+void BDSBunchUserFile<T>::skip(G4int nvalues)
+{
   G4double dummy_val;
-  for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
+  for (G4int i=0; i < nvalues; i++)
+    {ReadValue(dummy_val);}
 }
 
 template<class T>
