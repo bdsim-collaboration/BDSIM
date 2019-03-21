@@ -5001,6 +5001,8 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 
 .. note:: tar + gz will not work. The file must be a single file compressed through gzip only.
 
+.. warning:: Empty lines or comment lines are not supported (yet).
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+

@@ -454,7 +454,9 @@ template <class T>
 template <typename Type>
 G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
 {
-  InputBunchFile>>value;
+  InputBunchFile >> value;
+  if (InputBunchFile.eof())
+    {EndOfFileAction();}
   return !InputBunchFile.eof();
 }
 

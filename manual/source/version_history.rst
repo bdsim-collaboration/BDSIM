@@ -11,6 +11,10 @@ Bug Fixes
 * Fix calculated phase offset for rfcavity in the beam line. This was peak at the
   end of the element rather at the middle.
 * Fix possible segfault if event aborted due to extra collimator hit information.
+* Fix user file beam loader for anomalous particle coordinates generated once at the end
+  of a file if the end of the file was a blank line. It would result in all zero coordinates
+  and beam energy x1000 for the first particle generated after the end of the file was reached.
+* Fix abort of event if unknown particle ID specified in user file beam loader.
 
 
 V1.3.1 - 2019 / 03 / 05
