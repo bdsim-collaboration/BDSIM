@@ -418,19 +418,20 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       
       else if(it->name=="skip")
 	{double dummy; ReadValue(dummy);}
-
-      // If energy isn't specified, use the central beam energy (kinetic for Geant4)
-      if (!BDS::IsFinite(E))
-	{E = E0;}
-      
-      // compute zp from xp and yp if it hasn't been read from file
-      if (!zpdef)
-	{zp = CalculateZp(xp,yp,1);}
-      // compute t from z if it hasn't been read from file
-      if (!tdef)
-	{t=0;}
     }
 
+  // coordinate checks
+  // If energy isn't specified, use the central beam energy (kinetic for Geant4)
+  if (!BDS::IsFinite(E))
+    {E = E0;}
+  
+  // compute zp from xp and yp if it hasn't been read from file
+  if (!zpdef)
+    {zp = CalculateZp(xp,yp,1);}
+  // compute t from z if it hasn't been read from file
+  if (!tdef)
+    {t=0;}
+  
   if (updateParticleDefinition)
     {
       // type is an int so FindParticle(int) is used here
