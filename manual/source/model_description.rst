@@ -4990,7 +4990,7 @@ recommended, as compressed ASCII is significantly smaller in size.
 
 If the number of particles to be generated with ngenerate is greater than the number of
 particles defined in the file, the bunch generation will reload the file and read the
-particle coordinates from the beginning.
+particle coordinates from the beginning. A warning will be printed out in this case.
 
 This distribution reads lines at the start of each event to be memory efficient. However,
 this prevents reading a whole file by the number of lines in the file unlike the :code:`ptc`
@@ -4999,7 +4999,11 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
-.. note:: tar + gz will not work. The file must be a single file compressed through gzip only.
+* tar + gz will not work. The file must be a single file compressed through gzip only.
+* Lines starting with `#` will be ignored.
+* Empty lines will also be ignored.
+* A warning will be printed if the line is shorter than the number of variables specified
+  in `distrFileFormat` and the event aborted - the simulation safely proceeds to the next event.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
