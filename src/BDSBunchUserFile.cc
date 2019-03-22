@@ -77,6 +77,7 @@ void BDSBunchUserFile<T>::OpenBunchFile()
 template<class T>
 void BDSBunchUserFile<T>::CloseBunchFile()
 {
+  InputBunchFile.clear(); // igzstream doesn't reset eof flags when closing - do manually
   InputBunchFile.close();
 }
 
