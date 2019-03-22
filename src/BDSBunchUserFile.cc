@@ -33,8 +33,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+#include <fstream>
 #include <regex>
 #include <string>
+#include <sstream>
 #include <vector>
 
 template <class T>
@@ -43,7 +45,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   distrFilePath(""),
   bunchFormat(""),
   nlinesIgnore(0),
-  particleMass(0)
+  particleMass(0),
+  lineCounter(0)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -65,12 +68,10 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
+  lineCounter = 0;
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
-    { 
-      G4cerr << "Cannot open bunch file " << distrFilePath <<G4endl; 
-      exit(1); 
-    }
+    {throw BDSException(__METHOD_NAME__, "Cannot open bunch file " + distrFilePath);}
 }
 
 template<class T>
@@ -223,18 +224,11 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 }
 
 template<class T>
-void BDSBunchUserFile<T>::skip(G4int nvalues)
+void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 {
-  G4double dummy_val;
-  for (G4int i=0; i < nvalues; i++)
-    {ReadValue(dummy_val);}
-}
-
-template<class T>
-void BDSBunchUserFile<T>::SetDistrFile(G4String filename)
-{
-  distrFile     = filename;
-  distrFilePath = BDS::GetFullPath(filename);
+  G4double dummyValue;
+  for (G4int i = 0; i < nValues; i++)
+    {ReadValue(ss, dummyValue);}
 }
 
 template<class T>
@@ -242,9 +236,13 @@ void BDSBunchUserFile<T>::SkipLines()
 {
   if (BDS::IsFinite(nlinesIgnore))
     {
-      //Skip the a number of lines defined by the user option.
       G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
-      skip((G4int) (nlinesIgnore * fields.size()));
+      std::string line;
+      for (G4int i = 0; i < nlinesIgnore; i++)
+	{
+	  std::getline(InputBunchFile, line);
+	  lineCounter++;
+	}
     }
 }
 
@@ -257,11 +255,10 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
-  SetDistrFile((G4String)beam.distrFile); 
-  SetBunchFormat((G4String)beam.distrFileFormat);
-  // Note this will be automatically advanced to the right nlinesIgnore
-  // if we're recreating.
-  SetNLinesIgnore(beam.nlinesIgnore);
+  distrFile     = beam.distrFile;
+  distrFilePath = BDS::GetFullPath(beam.distrFile);
+  bunchFormat   = beam.distrFileFormat;
+  nlinesIgnore  = beam.nlinesIgnore;
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();
@@ -335,7 +332,7 @@ void BDSBunchUserFile<T>::EndOfFileAction()
 {
   // If the end of the file is reached go back to the beginning of the file.
   // this re reads the same file again - must always print warning
-  G4cout << "BDSBunchUserFile::ReadValue> End of file reached. Returning to beginning of file for next event." << G4endl;
+  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file for next event." << G4endl;
   CloseBunchFile();
   OpenBunchFile();
   SkipLines();
@@ -351,6 +348,7 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
   for (G4int i = 0; i < eventOffset; i++)
     {
       std::getline(InputBunchFile, line);
+      lineCounter++;
       if (InputBunchFile.eof())
 	{EndOfFileAction();}
     }
@@ -364,60 +362,105 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 
   G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
   G4double weight = 1;
-  
-  bool zpdef = false; //keeps record whether zp has been read from file
-  bool tdef = false; //keeps record whether t has been read from file
-  
   G4int type = 0;
+  
+  G4bool zpdef = false; //keeps record whether zp has been read from file
+  G4bool tdef  = false; //keeps record whether t has been read from file
 
   // we only update the particle definition at the end so we continue to read
   // the rest of the line bit by bit - could be improved and read the whole line
   // at once for safety and robustness of moving on to the next event.
   G4bool updateParticleDefinition = false;
+  std::string line;
+  std::getline(InputBunchFile, line);
+  lineCounter++;
+
+  // skip empty lines and comment lines
+  std::regex comment("^\\#.*");
+  G4bool lineIsBad = true;
+  while (lineIsBad)
+    {
+      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+	{
+	  if (InputBunchFile.eof())
+	    {EndOfFileAction();}
+	  else
+	    {
+	      std::getline(InputBunchFile, line);
+	      lineCounter++;
+	      continue;
+	    }
+	}
+      else
+	{lineIsBad = false;}
+    }
+  
+  // no check the line has the right number of 'words' in it ->
+  // split line on white space - doesn't inspect words themselves
+  // checks number of words, ie number of columns is correct
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitepsace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  
+  if (results.size() < fields.size())
+    {// ensure enough columns
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
+	+ " - invalid number of columns";
+      throw BDSException(__METHOD_NAME__, errString);
+    } 
+
+  std::stringstream ss(line);
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
 	{ 
-	  ReadValue(E);
+	  ReadValue(ss, E);
 	  E *= (CLHEP::GeV * it->unit);
 	  E += particleMass;
 	}
       else if(it->name=="E")
 	{
-	  ReadValue(E);
+	  ReadValue(ss, E);
 	  E *= (CLHEP::GeV * it->unit);
 	}
       else if(it->name=="P")
 	{ 
 	  G4double P=0;
-	  ReadValue(P); P *= (CLHEP::GeV * it->unit); //Paticle momentum
+	  ReadValue(ss, P); P *= (CLHEP::GeV * it->unit); //Paticle momentum
 	  G4double totalEnergy = std::hypot(P,particleMass);
 	  E = totalEnergy - particleMass;
 	}
       else if(it->name=="t")
-	{ReadValue(t); t *= (CLHEP::s * it->unit); tdef = true;}
+	{ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
-	{ReadValue(x); x *= (CLHEP::m * it->unit);}
+	{ReadValue(ss, x); x *= (CLHEP::m * it->unit);}
       else if(it->name=="y")
-	{ReadValue(y); y *= (CLHEP::m * it->unit);}
+	{ReadValue(ss, y); y *= (CLHEP::m * it->unit);}
       else if(it->name=="z")
-	{ReadValue(z); z *= (CLHEP::m * it->unit);}
-      else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
+	{ReadValue(ss, z); z *= (CLHEP::m * it->unit);}
+      else if(it->name=="xp") { ReadValue(ss, xp); xp *= ( CLHEP::radian * it->unit ); }
+      else if(it->name=="yp") { ReadValue(ss, yp); yp *= ( CLHEP::radian * it->unit ); }
+      else if(it->name=="zp") { ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
       else if(it->name=="pt")
 	{// particle type
 	  // update base class flag - user file can specify different particles
 	  if (!particleCanBeDifferent)
 	    {particleCanBeDifferent = true;}
-	  ReadValue(type);
+	  ReadValue(ss, type);
 	  updateParticleDefinition = true; // update particle definition after reading line
 	}
       else if(it->name=="weight")
-	{ReadValue(weight);}
+	{ReadValue(ss, weight);}
       
       else if(it->name=="skip")
-	{double dummy; ReadValue(dummy);}
+	{double dummy; ReadValue(ss, dummy);}
     }
 
   // coordinate checks
@@ -452,12 +495,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 
 template <class T>
 template <typename Type>
-G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
+void BDSBunchUserFile<T>::ReadValue(std::stringstream& stream, Type& value)
 {
-  InputBunchFile >> value;
-  if (InputBunchFile.eof())
-    {EndOfFileAction();}
-  return !InputBunchFile.eof();
+  stream >> value;
 }
 
 template class BDSBunchUserFile<std::ifstream>;
