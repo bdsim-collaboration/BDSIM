@@ -4,7 +4,7 @@ V1.3.2 - 2019 / 03 / ??
 Bug Fixes
 ---------
 
-* Fix strong recreation when using user supplied bunch distribution. The file was
+* Fix strong recreation when using user file supplied bunch distribution. The file was
   always read from the beginning in the past. Now the correct coordinates will be
   read and the event is correctly reproduced.
 * Fix userinterface example given chanages to sensitive detector manager - simple edit.
@@ -15,6 +15,8 @@ Bug Fixes
   of a file if the end of the file was a blank line. It would result in all zero coordinates
   and beam energy x1000 for the first particle generated after the end of the file was reached.
 * Fix abort of event if unknown particle ID specified in user file beam loader.
+* Fix user file distribution file loading for comment lines, incomplete lines and empty
+  (white space) lines.
 
 
 V1.3.1 - 2019 / 03 / 05
