@@ -268,7 +268,7 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 }
 
 template<class T>
-G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
+G4double BDSBunchUserFile<T>::ParseEnergyUnit(const G4String& fmt)
 {
   G4double unit=1.;
   if (fmt=="TeV") unit=1.e3;
@@ -284,7 +284,7 @@ G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
 }
 
 template<class T>
-G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
+G4double BDSBunchUserFile<T>::ParseLengthUnit(const G4String& fmt)
 {
   G4double unit=1.;
   if(fmt=="m") unit=1;
@@ -300,7 +300,7 @@ G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
 }
 
 template<class T>
-G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
+G4double BDSBunchUserFile<T>::ParseAngleUnit(const G4String& fmt)
 {
   G4double unit=1.;
   if(fmt=="rad") unit=1;
@@ -314,7 +314,7 @@ G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
   return unit;
 }
 template<class T>
-G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
+G4double BDSBunchUserFile<T>::ParseTimeUnit(const G4String& fmt)
 {
   G4double unit=1.;
   if(fmt=="s") unit=1;

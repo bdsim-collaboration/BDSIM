@@ -74,15 +74,17 @@ private:
     G4String name;
     G4double unit; ///< relative to SI units, i.e. mm=0.001 etc.
   };
-  std::list<Doublet> fields;
-  void SetDistrFile(G4String filename);
-  void SetBunchFormat(G4String val) {bunchFormat=val;}
-  void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}
-  G4double ParseEnergyUnit(G4String &fmt);
-  G4double ParseLengthUnit(G4String &fmt);
-  G4double ParseAngleUnit(G4String &fmt);
-  G4double ParseTimeUnit(G4String &fmt);
 
+  /// List of variables to parse on each line.
+  std::list<Doublet> fields;
+
+  /// @{ Utility function to parse variable and unit string.
+  G4double ParseEnergyUnit(const G4String& fmt);
+  G4double ParseLengthUnit(const G4String& fmt);
+  G4double ParseAngleUnit(const G4String& fmt);
+  G4double ParseTimeUnit(const G4String& fmt);
+  /// @}
+  
   /// Print out warning we're looping and reopen file from beginning. Includes skipping
   /// lines. Put in a function as used in multiple places.
   void EndOfFileAction();
