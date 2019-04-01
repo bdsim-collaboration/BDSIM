@@ -22,6 +22,8 @@ Bug Fixes
 * Fix ambiguity in manual for rf cavities. Time is generally in seconds in BDSIM, however the
   rf cavity took nanoseconds. A time offset of `1*ns` in the input gmad would result in double
   units.
+* Fix warning when loading an output file with data loader class when the file was created
+  without storing primary coordinates. The warning was related to the PrimaryGlobal branch.
 
 
 V1.3.1 - 2019 / 03 / 05
