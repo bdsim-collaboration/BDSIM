@@ -87,7 +87,7 @@ namespace GMAD
   void ScorerMesh::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "placement> Setting value " << std::setw(25) << std::left
+      std::cout << "scorermesh> Setting value " << std::setw(25) << std::left
 		<< property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully

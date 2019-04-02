@@ -30,7 +30,7 @@ void Scorer::clear()
 {
   name                 = "";
   type                 = "";
-  particle             = "";
+  particleName         = "";
   minimumEnergy        = 0;
   maximumEnergy        = 0;
   conversionFactorFile = "";
@@ -40,7 +40,7 @@ void Scorer::PublishMembers()
 {
   publish("name",                 &Scorer::name);
   publish("type",                 &Scorer::type);
-  publish("particle",             &Scorer::particle);
+  publish("particleName",         &Scorer::particleName);
   publish("minimumEnergy",        &Scorer::minimumEnergy);
   publish("maximumEnergy",        &Scorer::maximumEnergy);
   publish("conversionFactorFile",&Scorer::conversionFactorFile);
@@ -49,10 +49,10 @@ void Scorer::PublishMembers()
 void Scorer::print()const
 {
   std::cout << "field: "
-	    << "name "                  << name                  << std::endl
-	    << "type "                  << type                  << std::endl
-	    << "particle "              << particle              << std::endl
-	    << "minimumEnergy "         << minimumEnergy         << std::endl
-	    << "maximumEnergy "         << maximumEnergy         << std::endl
+	    << "name "                  << name                << std::endl
+	    << "type "                  << type                << std::endl
+	    << "particleName "          << particleName        << std::endl
+	    << "minimumEnergy "         << minimumEnergy       << std::endl
+	    << "maximumEnergy "         << maximumEnergy       << std::endl
 	    << "conversionFactorFile " << conversionFactorFile << std::endl;
 }

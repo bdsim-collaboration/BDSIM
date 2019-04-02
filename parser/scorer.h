@@ -38,7 +38,7 @@ namespace GMAD
   public:
     std::string name;                 ///< Name.
     std::string type;
-    std::string particle;
+    std::string particleName;
     double      minimumEnergy;
     double      maximumEnergy;
     std::string conversionFactorFile;
