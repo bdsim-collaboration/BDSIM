@@ -1,0 +1,1 @@
+protonsh10: scorer, type="h10", particle="proton", minimumEnergy=40*MeV, maximumEnergy=10*GeV, conversionFactorFile="lalala.dat";

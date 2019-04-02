@@ -137,6 +137,8 @@ field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }
 samplerplacement { return SAMPLERPLACEMENT; }
+scorer { return SCORER; }
+scorermesh { return SCORERMESH; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }

@@ -276,6 +276,10 @@ namespace GMAD
     CavityModel cavitymodel;
     /// Sampler placement instance
     SamplerPlacement samplerplacement;
+    /// Scorer instance.
+    Scorer scorer;
+    /// ScorerMesh instance.
+    ScorerMesh scorermesh;
     /// Aperture instance.
     Aperture aperture;
     
