@@ -41,6 +41,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "placement.h"
 #include "query.h"
 #include "region.h"
+#include "scorer.h"
+#include "scorermesh.h"
 #include "samplerplacement.h"
 #include "symbolmap.h"
 #include "tunnel.h"
@@ -231,6 +233,8 @@ namespace GMAD
     std::vector<CavityModel> cavitymodel_list;
     /// List of parser defined sampler placements.
     std::vector<SamplerPlacement> samplerplacement_list;
+    std::vector<Scorer> scorer_list;
+    std::vector<ScorerMesh> scorermesh_list;
     /// List of parser defined apertures.
     std::vector<Aperture> aperture_list;
 

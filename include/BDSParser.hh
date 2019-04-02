@@ -107,6 +107,10 @@ public:
   /// Return sampler placement list.
   inline const std::vector<GMAD::SamplerPlacement>& GetSamplerPlacements() const {return samplerplacement_list;}
 
+  inline const std::vector<GMAD::Scorer>& GetScorers() const {return scorer_list;}
+
+  inline const std::vector<GMAD::ScorerMesh>& GetScorerMesh() const {return scorermesh_list;}
+
   /// Return aperture list.
   inline const std::vector<GMAD::Aperture>& GetApertures() const {return aperture_list;}
   
