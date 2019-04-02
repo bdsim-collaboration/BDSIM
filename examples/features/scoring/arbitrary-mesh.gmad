@@ -1,4 +1,4 @@
-c1: rcol, l=0.2*m;
+c1: rcol, l=0.2*m, material="Cu";
 
 protonh10: scorer, type="h10",
 	    	   particle="proton",
@@ -26,7 +26,6 @@ meshSide: scorerMesh, nx=5, ny=5, nz=1, scoreQuantity="protonh10",
 
 beam, particle="proton",
       energy=5*GeV;
-
 
 option, physicsList="g4FTFP_BERT",
 	defaultRangeCut=1*cm;
