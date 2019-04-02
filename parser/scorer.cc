@@ -31,6 +31,7 @@ void Scorer::clear()
   name                 = "";
   type                 = "";
   particleName         = "";
+  particlePDGID        = 0;
   minimumEnergy        = 0;
   maximumEnergy        = 0;
   conversionFactorFile = "";
@@ -41,6 +42,7 @@ void Scorer::PublishMembers()
   publish("name",                 &Scorer::name);
   publish("type",                 &Scorer::type);
   publish("particleName",         &Scorer::particleName);
+  publish("particlePDGID",        &Scorer::particlePDGID);
   publish("minimumEnergy",        &Scorer::minimumEnergy);
   publish("maximumEnergy",        &Scorer::maximumEnergy);
   publish("conversionFactorFile",&Scorer::conversionFactorFile);
@@ -52,6 +54,7 @@ void Scorer::print()const
 	    << "name "                  << name                << std::endl
 	    << "type "                  << type                << std::endl
 	    << "particleName "          << particleName        << std::endl
+	    << "particlePDGID "         << particlePDGID       << std::endl
 	    << "minimumEnergy "         << minimumEnergy       << std::endl
 	    << "maximumEnergy "         << maximumEnergy       << std::endl
 	    << "conversionFactorFile " << conversionFactorFile << std::endl;
