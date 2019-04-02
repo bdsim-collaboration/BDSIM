@@ -1,5 +1,5 @@
-mesh: scorerMesh, nx=100, ny=20, nz=30, scoreQuantity="redprotons",
-      xsize,10*cm, ysize=30*cm, zsize=15*cm,
+mesh: scorermesh, nx=100, ny=20, nz=30, scoreQuantity="redprotons",
+      xsize=10*cm, ysize=30*cm, zsize=15*cm,
       sequence="one",
       referenceElement="d1",
       referenceElementNumber=2,
