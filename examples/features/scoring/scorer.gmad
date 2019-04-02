@@ -1,0 +1,28 @@
+d1: drift, l=1*m;
+name: type, parameter=value;
+
+redprotons: scorer, formula="h10", particle="proton", minimumEnergy=20*MeV, maximumEnergy=1*GeV, conversionFactorFile="protonsh10.dat";
+
+dullneutrons: scorer, formula="h10", particle="neutron", minimumEnergy=20*MeV, maximumEnergy=1*GeV, conversionFactorFile="neuh10.dat";
+
+! option 1 - per volume in mass world
+option, scorerMassWorld="redprotons dullneutrons";
+
+! option 2 - per volume in user world
+d1: drift, l=1*m, scoreQuantity="redprotons";
+
+! option 3 - per volume for all beam line
+option, scorerBeamLine="redprotons";
+
+! option 4 - per volume for user gdml file
+option, worldGeometryFile="gdml:shielding.gdml";
+option, scorerWorldGeometryFile="redprotons";
+
+! option 5 - arbitrary mesh
+mesh: scorerMesh, nx=100, ny=20, nz=30, scoreQuantity="redprotons",
+      xsize,10*cm, ysize=30*cm, zsize=15*cm,
+      S,X,Y,Z,phi,theta,psi,axisangle,axisX,axisY,axisZ;
+
+! option 6 - user defined gdml mesh
+option, scorerGeometryFile="gdml:wall3.gdml"; redprotons dullneutrons
+option, .....
