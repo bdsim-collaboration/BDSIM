@@ -37,8 +37,9 @@ namespace GMAD
   {
   public:
     std::string name;                 ///< Name.
-    std::string type;
-    std::string particle;
+    std::string type;                 ///< Type of the scorer, ie forumula.
+    std::string particleName;         ///< Particle name as a string.
+    int         particlePDGID;        ///< PDG ID code for particle.
     double      minimumEnergy;
     double      maximumEnergy;
     std::string conversionFactorFile;
