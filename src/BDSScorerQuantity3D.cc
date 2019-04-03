@@ -37,30 +37,38 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name, const G4String filename,
-        G4int ni, G4int nj, G4int nk,
-        G4int depi, G4int depj, G4int depk):G4VPrimitiveScorer(scorer_name),
-        HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk)
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
+					 const G4String filename,
+					 G4int ni,
+					 G4int nj,
+					 G4int nk,
+					 G4int depi,
+					 G4int depj,
+					 G4int depk):
+  G4VPrimitiveScorer(scorer_name),
+  HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk)
 {
-    fNi=ni;
-    fNj=nj;
-    fNk=nk;
+  fNi=ni;
+  fNj=nj;
+  fNk=nk;
+  
+  if (filename.empty())
+    {throw BDSException(__METHOD_NAME__, "no conversion coefficient file provided - required");}
 
-
-    G4String filePath = BDS::GetFullPath(filename);
-    if (filePath.rfind("gz") != std::string::npos)
+  G4String filePath = BDS::GetFullPath(filename);
+  if (filePath.rfind("gz") != std::string::npos)
     {
 #ifdef USE_GZSTREAM
-        BDSScorerConversionLoader<igzstream> loader;
-        conversionFactor = loader.Load(filePath);
+      BDSScorerConversionLoader<igzstream> loader;
+      conversionFactor = loader.Load(filePath);
 #else
-        G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
 #endif
     }
-    else
+  else
     {
-        BDSScorerConversionLoader<std::ifstream> loader;
-        conversionFactor = loader.Load(filePath);
+      BDSScorerConversionLoader<std::ifstream> loader;
+      conversionFactor = loader.Load(filePath);
     }
 }
 
@@ -84,7 +92,9 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     CellFlux *= aStep->GetPreStepPoint()->GetWeight();
 
     G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy()) / MeV;
-    G4double factor = conversionFactor->Value(energy);
+    G4double factor = 1;
+    if (useConversion)
+        {factor = conversionFactor->Value(energy);}
     radiation_quantity = CellFlux*factor;
     G4int index = GetIndex(aStep);
 
