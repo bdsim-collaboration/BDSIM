@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BDSRadiationQuantity3D.hh"
+#include "BDSScorerQuantity3D.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
 #include "G4VSolid.hh"
@@ -37,9 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 
-
-
-BDSRadiationQuantity3D::BDSRadiationQuantity3D(const G4String scorer_name, const G4String filename,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name, const G4String filename,
         G4int ni, G4int nj, G4int nk,
         G4int depi, G4int depj, G4int depk):G4VPrimitiveScorer(scorer_name),
         HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk)
@@ -66,11 +64,11 @@ BDSRadiationQuantity3D::BDSRadiationQuantity3D(const G4String scorer_name, const
     }
 }
 
-BDSRadiationQuantity3D::~BDSRadiationQuantity3D()
+BDSScorerQuantity3D::~BDSScorerQuantity3D()
 {
 }
 
-G4bool BDSRadiationQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
+G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
     G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
     G4double radiation_quantity;
@@ -95,7 +93,7 @@ G4bool BDSRadiationQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
 }
 
-void BDSRadiationQuantity3D::Initialize(G4HCofThisEvent* HCE)
+void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
 {
     EvtMap3D = new G4THitsMap<G4double>(detector->GetName(),
                                         GetName());
@@ -103,16 +101,16 @@ void BDSRadiationQuantity3D::Initialize(G4HCofThisEvent* HCE)
     HCE->AddHitsCollection(HCID3D,EvtMap3D);
 }
 
-void BDSRadiationQuantity3D::EndOfEvent(G4HCofThisEvent*)
+void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent*)
 {;}
 
-void BDSRadiationQuantity3D::clear()
+void BDSScorerQuantity3D::clear()
 {
 
     EvtMap3D->clear();
 }
 
-G4int BDSRadiationQuantity3D::GetIndex(G4Step* aStep)
+G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)
 {
     const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
     G4int i = touchable->GetReplicaNumber(fDepthi);

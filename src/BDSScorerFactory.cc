@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ScoringManager.hh"
 #include "G4ScoringBox.hh"
 #include "G4PSDoseDeposit3D.hh"
-#include "BDSRadiationQuantity3D.hh"
+#include "BDSScorerQuantity3D.hh"
 
 
 BDSScorerFactory* BDSScorerFactory::instance = nullptr;
@@ -75,7 +75,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
     case BDSScorerType::deposited_dose:
       {return new G4PSDoseDeposit3D(name); break;}
     case BDSScorerType::ambient_dose:
-      {return new BDSRadiationQuantity3D(name,filename); break;}
+      {return new BDSScorerQuantity3D(name,filename); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");

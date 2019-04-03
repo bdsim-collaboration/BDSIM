@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 #include "G4DataVector.hh"
+#include "G4PhysicsVector.hh"
 
 
 #ifdef USE_GZSTREAM
@@ -32,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * This loads a file with expected two columns of energy and a numerical
  * value.
- * 
+ *
  * @author Laurie Nevay
  */
 
@@ -44,8 +45,7 @@ public:
   ~BDSScorerConversionLoader();
 
   /// Load the file.
-  void Load(G4String fileName, G4DataVector& energy, G4DataVector& factor);
-
+  G4PhysicsVector* Load(G4String fileName);
 private:
 
   /// Templated iostream for std::ifstream and gzstream as well
