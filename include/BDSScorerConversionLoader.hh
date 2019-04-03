@@ -35,11 +35,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 template <class T>
-class BDSFieldLoaderBDSIM
+class BDSScorerConversionLoader
 {
 public:
-  BDSFieldLoaderBDSIM();
-  ~BDSFieldLoaderBDSIM();
+  BDSScorerConversionLoader();
+  ~BDSScorerConversionLoader();
 
   /// Load the file.
   void Load(G4String fileName);

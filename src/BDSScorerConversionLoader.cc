@@ -38,15 +38,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 template <class T>
-BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM()
+BDSScorerConversionLoader<T>::BDSScorerConversionLoader()
 {;}
 
 template <class T>
-BDSFieldLoaderBDSIM<T>::~BDSFieldLoaderBDSIM()
+BDSScorerConversionLoader<T>::~BDSScorerConversionLoader()
 {;}
 
 template <class T>
-void BDSFieldLoaderBDSIM<T>::Load(G4String fileName)
+void BDSScorerConversionLoader<T>::Load(G4String fileName)
 {
   file.open(fileName);
 
@@ -96,8 +96,8 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName)
 }
 
 
-template class BDSFieldLoaderBDSIM<std::ifstream>;
+template class BDSScorerConversionLoader<std::ifstream>;
 
 #ifdef USE_GZSTREAM
-template class BDSFieldLoaderBDSIM<igzstream>;
+template class BDSScorerConversionLoader<igzstream>;
 #endif
