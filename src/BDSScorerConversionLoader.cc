@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerConversionLoader.hh"
+#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsLogVector.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
@@ -46,7 +48,7 @@ BDSScorerConversionLoader<T>::~BDSScorerConversionLoader()
 {;}
 
 template <class T>
-void BDSScorerConversionLoader<T>::Load(G4String fileName)
+G4PhysicsVector* BDSScorerConversionLoader<T>::Load(G4String fileName)
 {
   file.open(fileName);
 
@@ -63,12 +65,16 @@ void BDSScorerConversionLoader<T>::Load(G4String fileName)
 
   G4int lineNumber = 1;
   std::string line;
+
+  std::vector<G4double > energy;
+  std::vector<G4double > conversionFactor;
+
   while (std::getline(file, line))
     {// read a line only if it's not a blank one
 
       // match a line starting with #
       std::regex comment("^\\#.*");
-      
+
       // Skip a line if it's only whitespace
       if (std::all_of(line.begin(), line.end(), isspace))
 	{continue;}
@@ -79,7 +85,9 @@ void BDSScorerConversionLoader<T>::Load(G4String fileName)
       std::vector<G4double> numbers;
       G4double number;
       while (liness >> number)
-	{numbers.push_back(number);}
+	{
+          numbers.push_back(number);
+	}
 
       if (numbers.size() != 2)
 	{
@@ -87,14 +95,16 @@ void BDSScorerConversionLoader<T>::Load(G4String fileName)
 	  throw BDSException(__METHOD_NAME__, "Incomplete line " + std::to_string(lineNumber));
 	}
 
-      // RT -> do something with numbers here
+      energy.push_back(numbers[0]);
+      conversionFactor.push_back(numbers[1]);
 
       lineNumber++;
     }
-  
-  file.close();
-}
 
+  file.close();
+  G4PhysicsOrderedFreeVector* results = new G4PhysicsOrderedFreeVector(&energy[0], &conversionFactor[0], energy.size());
+  return results;
+}
 
 template class BDSScorerConversionLoader<std::ifstream>;
 

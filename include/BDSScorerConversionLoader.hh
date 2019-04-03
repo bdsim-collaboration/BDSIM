@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSSCORERCONVERSIONLOADER_H
 
 #include "G4String.hh"
+#include "G4DataVector.hh"
+
 
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
@@ -42,7 +44,7 @@ public:
   ~BDSScorerConversionLoader();
 
   /// Load the file.
-  void Load(G4String fileName);
+  void Load(G4String fileName, G4DataVector& energy, G4DataVector& factor);
 
 private:
 

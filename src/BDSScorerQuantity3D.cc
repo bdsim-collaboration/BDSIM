@@ -1,6 +1,21 @@
-//
-// Created by rtesse on 28/03/19.
-//
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2019.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "BDSRadiationQuantity3D.hh"
 #include "G4SystemOfUnits.hh"
@@ -10,7 +25,21 @@
 #include "G4VPVParameterisation.hh"
 #include "G4UnitsTable.hh"
 
-BDSRadiationQuantity3D::BDSRadiationQuantity3D(G4String scorer_name, G4String filename,
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSUtilities.hh"
+#include "BDSScorerConversionLoader.hh"
+
+#include <fstream>
+
+#ifdef USE_GZSTREAM
+#include "src-external/gzstream/gzstream.h"
+#endif
+
+
+
+
+BDSRadiationQuantity3D::BDSRadiationQuantity3D(const G4String scorer_name, const G4String filename,
         G4int ni, G4int nj, G4int nk,
         G4int depi, G4int depj, G4int depk):G4VPrimitiveScorer(scorer_name),
         HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk)
@@ -19,24 +48,26 @@ BDSRadiationQuantity3D::BDSRadiationQuantity3D(G4String scorer_name, G4String fi
     fNj=nj;
     fNk=nk;
 
-    G4cout << "-------------------------------------------------" << G4endl;
-    G4cout << "PSAmbientDose3D::LoadTable()" << G4endl;
-    /// Load tables for each particle
-    if(filename == "")
-    {
-        G4ExceptionDescription ED;
-        ED << "ERROR: no file provided" << G4endl;
-        G4Exception("PSRadiationQuantity3D::PSRadiationQuantity3D","DetPS0006",FatalException,ED);
-    }
-    //TODO Load the data conversion_factor = Data::Instance()->LoadTable(filename);
-    ///
-    G4cout << "-------------------------------------------------" << G4endl;
 
+    G4String filePath = BDS::GetFullPath(filename);
+    if (filePath.rfind("gz") != std::string::npos)
+    {
+#ifdef USE_GZSTREAM
+        BDSScorerConversionLoader<igzstream> loader;
+        conversionFactor = loader.Load(filePath);
+#else
+        G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+    else
+    {
+        BDSScorerConversionLoader<std::ifstream> loader;
+        conversionFactor = loader.Load(filePath);
+    }
 }
 
 BDSRadiationQuantity3D::~BDSRadiationQuantity3D()
 {
-    conversion_factor.clear();
 }
 
 G4bool BDSRadiationQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
@@ -48,15 +79,15 @@ G4bool BDSRadiationQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     if ( stepLength == 0. ) return FALSE;
 
     const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-    auto solid = touchable->GetSolid();
-    auto cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
+    G4VSolid* solid = touchable->GetSolid();
+    G4double cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
 
     G4double CellFlux = (stepLength / cubicVolume);
     CellFlux *= aStep->GetPreStepPoint()->GetWeight();
 
-    auto energy = (aStep->GetPreStepPoint()->GetKineticEnergy()) / MeV;
-
-    radiation_quantity = (GetInterpFactor(energy, conversion_factor))*CellFlux;
+    G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy()) / MeV;
+    G4double factor = conversionFactor->Value(energy);
+    radiation_quantity = CellFlux*factor;
     G4int index = GetIndex(aStep);
 
     EvtMap3D->add(index,radiation_quantity);
@@ -102,33 +133,3 @@ G4int BDSRadiationQuantity3D::GetIndex(G4Step* aStep)
 
     return i*fNj*fNk+j*fNk+k;
 }
-
-inline G4double BDSRadiationQuantity3D::GetInterpFactor(G4double E_x, vector<vector<G4double> > conversion_factor)
-{
-    // TODO with geant4
-    /// Linear interpolation, maybe not the best way
-
-    if(E_x < conversion_factor[0][0] || E_x > conversion_factor.back()[0])
-    {
-        return 0;
-    }
-
-    int flag = 0;
-    while(conversion_factor[flag][0] < E_x)
-    {
-        flag ++;
-    }
-
-    double E_a = conversion_factor[flag-1][0];
-    double E_b = conversion_factor[flag][0];
-    double y_a = conversion_factor[flag-1][1];
-    double y_b = conversion_factor[flag][1];
-
-    double y;
-
-    double slope = (y_b-y_a)/(E_b-E_a);
-    y = slope*(E_x-E_a)+y_a;
-
-    return y;
-}
-
