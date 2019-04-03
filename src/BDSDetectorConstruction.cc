@@ -941,11 +941,16 @@ G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Elem
 
 void BDSDetectorConstruction::ConstructMeshes()
 {
+  std::vector<GMAD::ScorerMesh> scoring_meshes = BDSParser::Instance()->GetScorerMesh();
+  std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
+
+  if (scoring_meshes.empty())
+    {return;}
+
     G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
     scManager->SetVerboseLevel(1);
 
-    std::vector<GMAD::ScorerMesh> scoring_meshes = BDSParser::Instance()->GetScorerMesh();
-    std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
+
 
     for (const auto& mesh : scoring_meshes)
     {
