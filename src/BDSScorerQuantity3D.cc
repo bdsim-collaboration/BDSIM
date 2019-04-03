@@ -53,7 +53,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
   fNk=nk;
   
   if (filename.empty())
-    {throw BDSException(__METHOD_NAME__, "no conversion coefficient file provided - required");}
+    {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorer_name + "\" - required");}
 
   G4String filePath = BDS::GetFullPath(filename);
   if (filePath.rfind("gz") != std::string::npos)
