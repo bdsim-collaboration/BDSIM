@@ -91,7 +91,7 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     G4double CellFlux = (stepLength / cubicVolume);
     CellFlux *= aStep->GetPreStepPoint()->GetWeight();
 
-    G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy()) / MeV;
+    G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy());
     G4double factor = conversionFactor->Value(energy);
     radiation_quantity = CellFlux*factor;
     G4int index = GetIndex(aStep);
