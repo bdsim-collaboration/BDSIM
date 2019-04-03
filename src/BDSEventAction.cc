@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PrimaryParticle.hh"
 #include "G4Run.hh"
 #include "G4SDManager.hh"
+#include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
 
@@ -164,6 +165,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       eCounterWorldContentsID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorldContents()->GetName());
       worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
+      std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
+      for (const auto& name : scorerNames)
+        {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
     }
   FireLaserCompton=true;
 
