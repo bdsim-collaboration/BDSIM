@@ -950,8 +950,6 @@ void BDSDetectorConstruction::ConstructMeshes()
     G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
     scManager->SetVerboseLevel(1);
 
-
-
     for (const auto& mesh : scoring_meshes)
     {
         // Create a scoring box
