@@ -227,6 +227,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
   ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
 
+  std::vector<G4THitsMap<G4double>*> scorerHits;
+  for (const auto& nameIndex : scorerCollectionIDs)
+    {scorerHits.push_back(dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second)));}
+
+  for (const auto& hits : scorerHits)
+    {G4cout << hits->size() << G4endl;}
+
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
   // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
