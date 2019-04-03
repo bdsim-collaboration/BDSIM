@@ -947,7 +947,7 @@ void BDSDetectorConstruction::ConstructMeshes()
   if (scoring_meshes.empty())
     {return;}
 
-    G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
+    G4ScoringManager* scManager = G4ScoringManager::GetScoringManager();
     scManager->SetVerboseLevel(1);
 
     for (const auto& mesh : scoring_meshes)
@@ -991,6 +991,8 @@ void BDSDetectorConstruction::ConstructMeshes()
             meshPrimitiveScorerNames.push_back(meshName + "/" + ps->GetName());
             Scorer_box->SetPrimitiveScorer(ps);
         }
+
+        scManager->RegisterScoringMesh(Scorer_box);
 
         // register it with the sd manager as this is where we get all collection IDs from
         // in the end of event action. This must come from the mesh as it creates the
