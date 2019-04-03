@@ -151,7 +151,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
   // cache hit collection IDs for quicker access
-  if(samplerCollID_plane < 0)
+  if (samplerCollID_plane < 0)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();

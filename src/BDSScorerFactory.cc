@@ -61,9 +61,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
 
     scorer_filter->add(particleName);
     primitiveScorer->SetFilter(scorer_filter);
-
     return primitiveScorer;
-
  }
 
 G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
