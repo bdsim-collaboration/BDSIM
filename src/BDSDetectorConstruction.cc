@@ -47,6 +47,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSSamplerType.hh"
+#include "BDSScorerFactory.hh"
+#include "BDSScorerInfo.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
@@ -59,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 #include "parser/placement.h"
+#include "parser/scorermesh.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -67,7 +70,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Navigator.hh"
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
+#include "G4VPrimitiveScorer.hh"
 #include "G4Region.hh"
+#include "G4ScoringBox.hh"
+#include "G4ScoringManager.hh"
 #include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
@@ -914,7 +920,10 @@ void BDSDetectorConstruction::ConstructSDandField()
 {
   auto flds = BDSFieldBuilder::Instance()->CreateAndAttachAll(); // avoid shadowing 'fields'
   acceleratorModel->RegisterFields(flds);
+
+  ConstructMeshes();
 }
+
 
 G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element)
 {
@@ -928,4 +937,50 @@ G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Elem
     {return true;}  // unsuitable
   else
     {return false;} // suitable
+}
+
+void BDSDetectorConstruction::ConstructMeshes()
+{
+    G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
+    scManager->SetVerboseLevel(1);
+
+    std::vector<GMAD::ScorerMesh> scoring_meshes = BDSParser::Instance()->GetScorerMesh();
+    std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
+
+    for (const auto& mesh : scoring_meshes)
+    {
+        // Create a scoring box
+        G4ScoringBox* Scorer_box = new G4ScoringBox(mesh.name);
+
+        // size of the scoring mesh
+        G4double scorersize[3];
+        scorersize[0] = 0.5*mesh.xsize*CLHEP::m;
+        scorersize[1] = 0.5*mesh.ysize*CLHEP::m;
+        scorersize[2] = 0.5*mesh.zsize*CLHEP::m;
+        Scorer_box->SetSize(scorersize);
+
+        // Divisions of the scoring mesh
+        G4int nSegment[3];
+        nSegment[0] = mesh.nx;
+        nSegment[1] = mesh.ny;
+        nSegment[2] = mesh.nz;
+
+        Scorer_box->SetNumberOfSegments(nSegment);
+
+        // Position of the scoring mesh
+        G4double centerPosition[3];
+        centerPosition[0] = mesh.x*CLHEP::m;
+        centerPosition[1] = mesh.y*CLHEP::m;
+        centerPosition[2] = mesh.z*CLHEP::m;
+        Scorer_box->SetCenterPosition(centerPosition);
+
+        // add the scorer to the scoring mesh
+        for (const auto& scorer : scorers)
+        {
+            BDSScorerInfo *sc = new BDSScorerInfo(scorer);
+            G4VPrimitiveScorer *ps = BDSScorerFactory::Instance()->CreateScorer(sc);
+            Scorer_box->SetPrimitiveScorer(ps);
+
+        }
+    }
 }

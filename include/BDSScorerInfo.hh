@@ -26,17 +26,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "G4ParticleDefinition.hh"
 
+namespace GMAD
+{
+    class Scorer;
+}
 
 class BDSScorerInfo
 {
 public:
     /// Constructor
-    BDSScorerInfo(BDSScorerType scorerTypeIn,
-                  G4String      nameIn,
-                  G4ParticleDefinition*   particleIn,
-                  G4double      minimumEnergyIn = 0*CLHEP::GeV,
-                  G4double      maximumEnergyIn = 100*CLHEP::TeV,
-                  G4String filenameIn="");
+
+    BDSScorerInfo(const GMAD::Scorer& scorer);
 
     BDSScorerType scorerType; ///< Scorer type.
     G4String name;     ///< Scorer name.

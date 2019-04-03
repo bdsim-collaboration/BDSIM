@@ -48,7 +48,7 @@ public:
     ~BDSScorerFactory();
 
     /// Main function to create a piece of cavity geometry.
-    G4VPrimitiveScorer* CreateScorer(G4String name, const BDSScorerInfo* info);
+    G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo* info);
 
 private:
     BDSScorerFactory(); ///< Private constructor as singleton pattern.
