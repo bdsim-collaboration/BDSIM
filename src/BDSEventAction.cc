@@ -232,7 +232,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {scorerHits.push_back(dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second)));}
 
   for (const auto& hits : scorerHits)
-    {G4cout << hits->size() << G4endl;}
+    {G4cout << hits->GetSize() << G4endl;}
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
