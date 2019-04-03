@@ -291,15 +291,15 @@ void BDSExecOptions::Parse(int argc, char **argv)
   // there should be no remaining options
   if (OptionNumber < argc - 1)
     {
-      G4cout << "ERROR there are remaining options: " << G4endl;
+      G4cout << __METHOD_NAME__ << "there are remaining unknown options: " << G4endl;
       for (int i=1; i<argc; i++)
 	{
 	  // options with '-' are ignored by getopt_long, other unknown options are covered
 	  if (strncmp(argv[i], "-", 1))
-	    {G4cout << argv[i] << G4endl;}
+	    {G4cout << "\"" << argv[i] << "\"" << G4endl;}
 	}
       
-      G4cout << "Please check your input" << G4endl;
+      G4cout << "Please check your command line arguments" << G4endl;
       exit(1);
     }
   }

@@ -953,7 +953,8 @@ void BDSDetectorConstruction::ConstructMeshes()
     for (const auto& mesh : scoring_meshes)
     {
         // Create a scoring box
-        G4ScoringBox* Scorer_box = new G4ScoringBox(mesh.name);
+        G4String meshName = G4String(mesh.name);
+        G4ScoringBox* Scorer_box = new G4ScoringBox(meshName);
 
         // size of the scoring mesh
         G4double scorersize[3];
@@ -978,12 +979,22 @@ void BDSDetectorConstruction::ConstructMeshes()
         Scorer_box->SetCenterPosition(centerPosition);
 
         // add the scorer to the scoring mesh
+        std::vector<G4String> meshPrimitiveScorerNames;
         for (const auto& scorer : scorers)
         {
-            BDSScorerInfo *sc = new BDSScorerInfo(scorer);
-            G4VPrimitiveScorer *ps = BDSScorerFactory::Instance()->CreateScorer(sc);
+            BDSScorerInfo* sc = new BDSScorerInfo(scorer);
+            G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(sc);
+            // The mesh internally creates a multifunctional detector which is an SD and has
+            // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
+            // the hits map we need the full name of the unique primitive scorer so we build that
+            // name here and store it.
+            meshPrimitiveScorerNames.push_back(meshName + "/" + ps->GetName());
             Scorer_box->SetPrimitiveScorer(ps);
-
         }
+
+        // register it with the sd manager as this is where we get all collection IDs from
+        // in the end of event action. This must come from the mesh as it creates the
+        // multifunctionaldetector and therefore has the complete name of the scorer collection
+        BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames);
     }
 }

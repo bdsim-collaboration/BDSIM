@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PrimaryParticle.hh"
 #include "G4Run.hh"
 #include "G4SDManager.hh"
+#include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
 
@@ -150,7 +151,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
   // cache hit collection IDs for quicker access
-  if(samplerCollID_plane < 0)
+  if (samplerCollID_plane < 0)
     { // if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
@@ -164,6 +165,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       eCounterWorldContentsID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorldContents()->GetName());
       worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
+      std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
+      for (const auto& name : scorerNames)
+        {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
     }
   FireLaserCompton=true;
 
@@ -222,6 +226,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   ecghc* eCounterWorldHits          = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
   ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
   ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
+
+  std::vector<G4THitsMap<G4double>*> scorerHits;
+  for (const auto& nameIndex : scorerCollectionIDs)
+    {scorerHits.push_back(dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second)));}
+
+  for (const auto& hits : scorerHits)
+    {G4cout << hits->size() << G4endl;}
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
