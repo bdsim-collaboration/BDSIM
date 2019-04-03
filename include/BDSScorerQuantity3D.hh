@@ -52,8 +52,6 @@ public:
     void clear() override;
 
 private:
-
-  G4bool useConversion;
   G4int HCID3D;
   G4THitsMap<G4double>* EvtMap3D;
   G4int fDepthi, fDepthj, fDepthk;
