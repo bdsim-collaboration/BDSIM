@@ -49,6 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerType.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
+#include "BDSScorerMeshInfo.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
@@ -951,23 +952,25 @@ void BDSDetectorConstruction::ConstructMeshes()
     scManager->SetVerboseLevel(1);
 
     for (const auto& mesh : scoring_meshes)
-    {
-        // Create a scoring box
-        G4String meshName = G4String(mesh.name);
-        G4ScoringBox* Scorer_box = new G4ScoringBox(meshName);
+      {
+	// convert to recipe class as this checks parameters
+	BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
+
+	// create a scoring box
+        G4ScoringBox* Scorer_box = new G4ScoringBox(meshRecipe.name);
 
         // size of the scoring mesh
         G4double scorersize[3];
-        scorersize[0] = 0.5*mesh.xsize*CLHEP::m;
-        scorersize[1] = 0.5*mesh.ysize*CLHEP::m;
-        scorersize[2] = 0.5*mesh.zsize*CLHEP::m;
+        scorersize[0] = meshRecipe.ScoringBoxX();
+        scorersize[1] = meshRecipe.ScoringBoxY();
+        scorersize[2] = meshRecipe.ScoringBoxZ();
         Scorer_box->SetSize(scorersize);
 
         // Divisions of the scoring mesh
         G4int nSegment[3];
-        nSegment[0] = mesh.nx;
-        nSegment[1] = mesh.ny;
-        nSegment[2] = mesh.nz;
+        nSegment[0] = meshRecipe.nBinsZ;
+        nSegment[1] = meshRecipe.nBinsY;
+        nSegment[2] = meshRecipe.nBinsX;
 
         Scorer_box->SetNumberOfSegments(nSegment);
 
