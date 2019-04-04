@@ -226,13 +226,17 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   ecghc* eCounterWorldHits          = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
   ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
   ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
-
-  std::vector<G4THitsMap<G4double>*> scorerHits;
+  
+  std::map<G4String, G4THitsMap<G4double>*> scorerHits;
   for (const auto& nameIndex : scorerCollectionIDs)
-    {scorerHits.push_back(dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second)));}
+    {scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
 
   for (const auto& hits : scorerHits)
-    {G4cout << hits->GetSize() << G4endl;}
+    {
+      G4cout << hits.second->GetSize() << G4endl;
+      for (auto hit : *hits.second)
+        {G4cout << hit.first << hit.second << G4endl;}
+    }
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
@@ -450,6 +454,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    primaryLoss,
 		    interestingTraj,
 		    collimatorHits,
+		    scorerHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end

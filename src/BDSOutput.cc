@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHitSampler.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
@@ -42,7 +43,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
-#include "BDSHitSampler.hh"
+#include "BDSScorerHistogramDef.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -50,12 +51,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
+#include "G4THitsMap.hh"
 
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 
 #include <algorithm>
 #include <cmath>
+#include <map>
 #include <ostream>
 #include <set>
 #include <vector>
@@ -243,6 +246,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSTrajectoryPoint*                      primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&           trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
+			  const std::map<G4String, G4THitsMap<G4double>*>& scorerHits,
 			  const G4int                                    turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
@@ -282,6 +286,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillTrajectories(trajectories);
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
+  if (!scorerHits.empty())
+    {FillScorerHits(scorerHits);}
 
   // we do this after energy loss and collimator hits as the energy loss
   // is integrated for putting in event info and the number of colliamtors
@@ -316,7 +322,7 @@ void BDSOutput::PrintProtectedNames(std::ostream& out)
 {
   out << "Protected names for output " << G4endl;
   for (auto key : protectedNames)
-    {out << "\"" << key << "\"" << G4endl; }
+    {out << "\"" << key << "\"" << G4endl;}
 }
  
 G4String BDSOutput::GetNextFileName()
@@ -465,6 +471,20 @@ void BDSOutput::CreateHistograms()
 						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
       histIndices3D["ScoringMap"] = scInd;
+    }
+
+  const std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefs = BDSAcceleratorModel::Instance()->ScorerHistogramDefinitionsMap();
+  if (!scorerHistogramDefs.empty())
+    {
+      for (const auto& nameDef : scorerHistogramDefs)
+	{
+	  const auto def = nameDef.second;
+	  G4int histID = evtHistos->Create3DHistogram(def.name, def.name,
+						      def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+						      def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+						      def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
+	  histIndices3D[def.name] = histID;
+	}
     }
 }
 
@@ -781,6 +801,31 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
     {
       if (collimator->primaryInteracted)
 	{nCollimatorsInteracted += 1;}
+    }
+}
+
+void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap)
+{
+  G4int i = 0;
+  for (const auto& nameHitsMap : scorerHitsMap)
+    {
+      FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
+      i++;
+    }
+}
+
+void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
+					 const G4THitsMap<G4double>* hitMap)
+{
+  G4int histIndex = histIndices3D[histogramDefName];
+  const BDSScorerHistogramDef* def = BDSAcceleratorModel::Instance()->ScorerHistogramDef(histogramDefName);
+  for (const auto& hit : *hitMap)
+    {
+      /*
+      G4ThreeVector xyz = 
+      evtHistos->Fill3DHistogram(histIndex, 
+      hist->SetBin(hit.first, *hit.second);
+      */
     }
 }
 

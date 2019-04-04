@@ -43,6 +43,8 @@ class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
+template <class T> class G4THitsMap;
+
 
 class G4PrimaryVertex;
 
@@ -119,6 +121,7 @@ public:
 		 const BDSTrajectoryPoint*                      primaryLoss,
 		 const std::map<BDSTrajectory*, bool>&          trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap,
 		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
@@ -217,6 +220,10 @@ private:
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
+  
+  void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
+  void FillScorerHitsIndividual(const G4String hsitogramDefName,
+				const G4THitsMap<G4double>* hitMap);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
