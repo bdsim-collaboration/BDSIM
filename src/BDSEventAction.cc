@@ -234,8 +234,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   for (const auto& hits : scorerHits)
     {
       G4cout << hits.second->GetSize() << G4endl;
-      for (auto hit : *hits.second)
-        {G4cout << hit.first << hit.second << G4endl;}
+      //for (auto hit : *hits.second)
+      //  {G4cout << hit.first << " " <<  *(hit.second) << G4endl;}
     }
 
   // primary hit something?

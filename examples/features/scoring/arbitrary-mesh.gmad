@@ -30,4 +30,6 @@ beam, particle="proton",
       energy=50*GeV;
 
 option, physicsList="g4FTFP_BERT",
-	defaultRangeCut=1*cm;
+	defaultRangeCut=1*cm,
+	elossHistoBinWidth=5*mm;
+	
