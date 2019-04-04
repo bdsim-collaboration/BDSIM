@@ -1,3 +1,13 @@
+V1.4 - 2019 / 05 / ??
+=====================
+
+Bug Fixes
+---------
+
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from run histograms.
+
+
 V1.3.2 - 2019 / 03 / ??
 =======================
 

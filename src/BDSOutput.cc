@@ -465,10 +465,10 @@ void BDSOutput::CreateHistograms()
   if (useScoringMap && storeELossHistograms)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
-      G4int scInd = evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
-						 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
-						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
-						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
+      G4int scInd = Create3DHistogram("ScoringMap", "Energy Deposition",
+				      g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+				      g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+				      g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
       histIndices3D["ScoringMap"] = scInd;
     }
 
@@ -708,6 +708,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 	  G4double x = hit->Getx()/CLHEP::m;
 	  G4double y = hit->Gety()/CLHEP::m;
 	  evtHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
+	  runHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
 	}
     }
 
