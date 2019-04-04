@@ -67,6 +67,13 @@ public:
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
   void Fill3DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zValue, G4double weight = 1.0);
   void Flush();
+
+  void Set3DHistogramBinContent(G4int histoId,
+				G4int globalBinID,
+				G4double value);
+
+  void AccumulateHistogram3D(G4int histoId,
+			     TH3D* otherHistogram);
 #endif
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}

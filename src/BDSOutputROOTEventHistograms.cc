@@ -166,6 +166,20 @@ void BDSOutputROOTEventHistograms::Flush()
     {h->Reset();}
 }
 
+void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
+							    G4int globalBinID,
+							    G4double value)
+{
+  // + 1 as 0 is underflow bin
+  histograms3D[histoId]->SetBinContent(globalBinID + 1, value);
+}
+
+void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
+							 TH3D* otherHistogram)
+{
+  histograms3D[histoId]->Add(otherHistogram);
+}
+
 #endif
 
 void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms * /*rhs*/)
