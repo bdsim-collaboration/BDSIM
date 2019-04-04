@@ -286,8 +286,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillTrajectories(trajectories);
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
-  if (!scorerHits.empty())
-    {FillScorerHits(scorerHits);}
+  FillScorerHits(scorerHits); // map always exists
 
   // we do this after energy loss and collimator hits as the energy loss
   // is integrated for putting in event info and the number of colliamtors
@@ -809,6 +808,8 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
   G4int i = 0;
   for (const auto& nameHitsMap : scorerHitsMap)
     {
+      if (nameHitsMap.second->size() == 0)
+        {continue;}
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
       i++;
     }
