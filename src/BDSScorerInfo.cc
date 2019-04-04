@@ -24,7 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTable.hh"
 #include "globals.hh"
 
-BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer)
+BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer):
+particle(nullptr)
 {
     scorerType = BDS::DetermineScorerType(scorer.type);
     name = scorer.name;
@@ -32,20 +33,20 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer)
     maximumEnergy = scorer.maximumEnergy;
     filename = scorer.conversionFactorFile;
 
-    if(scorer.particlePDGID == 0 and scorer.particleName.empty())
-    {
-        throw BDSException(__METHOD_NAME__,"No particle ID or name defined");
-    }
-    else if(scorer.particlePDGID == 0)
-    {
-        G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-        particle = particleTable->FindParticle(scorer.particleName);
-    }
-    else
+    G4bool error = false;
+
+    if(scorer.particlePDGID != 0)
     {
         G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
         particle = particleTable->FindParticle(scorer.particlePDGID);
+        error = !particle;
     }
-    if (!particle)
+    else if(!(scorer.particleName.empty()))
+    {
+        G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+        particle = particleTable->FindParticle(scorer.particleName);
+        error = !particle;
+    }
+    if (error)
     {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
 }

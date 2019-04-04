@@ -53,7 +53,10 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
 {
     /// Here create the scorer with the informations inside BDSScorerInfo.
     G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name, info->scorerType, info->filename);
-
+    if(! info->particle)
+    {
+        return primitiveScorer;
+    }
     G4String particleName = info->particle->GetParticleName();
     G4SDParticleWithEnergyFilter* scorer_filter= new G4SDParticleWithEnergyFilter("particle_filter",
             info->minimumEnergy,
