@@ -22,11 +22,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"         // geant4 types / globals
 
+namespace GMAD
+{
+  class ScorerMesh;
+}
+
 class BDSScorerMeshInfo
 {
 public:
-  /// Constructor.
   BDSScorerMeshInfo(const GMAD::ScorerMesh& scorer);
+
+  virtual ~BDSScorerMeshInfo(){;}
 
   G4String name;
   G4int    nBinsX;
@@ -44,7 +50,6 @@ public:
   inline G4double ScoringBoxZ() const {return 0.5*(zHigh-zLow);}
 
 private:
-  /// Private default constructor as unused.
   BDSScorerMeshInfo() = delete;
 };
 

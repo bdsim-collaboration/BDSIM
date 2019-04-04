@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -25,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/scorermesh.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
+
 
 BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 {
