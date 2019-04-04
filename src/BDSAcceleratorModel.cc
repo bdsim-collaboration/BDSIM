@@ -234,7 +234,7 @@ void BDSAcceleratorModel::RegisterScorerHistogramDefinition(const BDSScorerHisto
   scorerHistogramDefs.push_back(def);
   // we use emplace instead of map[key] = value as that method requires a
   // default constructor which we've deleted for this class
-  scorerHistogramDefsMap.emplace(def.name, def);
+  scorerHistogramDefsMap.emplace(def.uniqueName, def);
 }
 
 const BDSScorerHistogramDef* BDSAcceleratorModel::ScorerHistogramDef(const G4String& name)
