@@ -39,7 +39,7 @@ public: // with description
     G4int ni=1,G4int nj=1, G4int nk=1,
     G4int depi=2, G4int depj=1, G4int depk=0);
 
-    ~BDSScorerQuantity3D() override;
+    virtual ~BDSScorerQuantity3D() override;
 
 
 protected: // with description
