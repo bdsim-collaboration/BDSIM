@@ -478,11 +478,11 @@ void BDSOutput::CreateHistograms()
       for (const auto& nameDef : scorerHistogramDefs)
 	{
 	  const auto def = nameDef.second;
-	  G4int histID = evtHistos->Create3DHistogram(def.name, def.name,
-						      def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-						      def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-						      def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
-	  histIndices3D[def.name] = histID;
+	  G4int histID = Create3DHistogram(def.uniqueName, def.name,
+					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
+	  histIndices3D[def.uniqueName] = histID;
 	}
     }
 }
@@ -819,13 +819,8 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 {
   G4int histIndex = histIndices3D[histogramDefName];
   for (const auto& hit : *hitMap)
-    {
-      /*
-      G4ThreeVector xyz = 
-      evtHistos->Fill3DHistogram(histIndex, 
-      hist->SetBin(hit.first, *hit.second);
-      */
-    }
+    {evtHistos->Set3DHistogramBinContent(histIndex, hit.first, *hit.second);}
+  runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info)
