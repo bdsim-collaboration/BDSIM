@@ -805,13 +805,11 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 
 void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap)
 {
-  G4int i = 0;
   for (const auto& nameHitsMap : scorerHitsMap)
     {
       if (nameHitsMap.second->size() == 0)
         {continue;}
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
-      i++;
     }
 }
 
@@ -819,7 +817,6 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
   G4int histIndex = histIndices3D[histogramDefName];
-  const BDSScorerHistogramDef* def = BDSAcceleratorModel::Instance()->ScorerHistogramDef(histogramDefName);
   for (const auto& hit : *hitMap)
     {
       /*
