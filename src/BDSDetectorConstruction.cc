@@ -50,6 +50,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerMeshInfo.hh"
+#include "BDSScoringBox.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
@@ -663,14 +664,6 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-								const BDSBeamline*            beamline)
-{
-  // convert a sampler placement to a general placement for generation of the transform.
-  GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamline);
-}
-
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine)
 {
@@ -748,6 +741,22 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
     }
   
   return result;
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
+								const BDSBeamline* beamLine)
+{
+  // convert a scorermesh to a general placement for generation of the transform only.
+  GMAD::Placement convertedPlacement(scorerMesh);
+  return CreatePlacementTransform(convertedPlacement, beamLine);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+								const BDSBeamline*            beamLine)
+{
+  // convert a sampler placement to a general placement for generation of the transform only.
+  GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamLine);
 }
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
@@ -958,30 +967,27 @@ void BDSDetectorConstruction::ConstructMeshes()
 
 	// create a scoring box
 	G4String meshName = meshRecipe.name;
-        G4ScoringBox* Scorer_box = new G4ScoringBox(meshName);
 
+        // TBC - could be any beam line in future - just w.r.t. main beam line just now
+        const BDSBeamline* mbl = BDSAcceleratorModel::Instance()->BeamlineMain();
+        G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
+        BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, placement);
+	
         // size of the scoring mesh
         G4double scorersize[3];
         scorersize[0] = meshRecipe.ScoringBoxX();
         scorersize[1] = meshRecipe.ScoringBoxY();
         scorersize[2] = meshRecipe.ScoringBoxZ();
         Scorer_box->SetSize(scorersize);
-
-        // Divisions of the scoring mesh
+	
+        // divisions of the scoring mesh
         G4int nSegment[3];
         nSegment[0] = meshRecipe.nBinsZ;
         nSegment[1] = meshRecipe.nBinsY;
         nSegment[2] = meshRecipe.nBinsX;
-
+	
         Scorer_box->SetNumberOfSegments(nSegment);
-
-        // Position of the scoring mesh
-        G4double centerPosition[3];
-        centerPosition[0] = mesh.x*CLHEP::m;
-        centerPosition[1] = mesh.y*CLHEP::m;
-        centerPosition[2] = mesh.z*CLHEP::m;
-        Scorer_box->SetCenterPosition(centerPosition);
-
+	
         // add the scorer to the scoring mesh
         std::vector<G4String> meshPrimitiveScorerNames;
         for (const auto& scorer : scorers)
