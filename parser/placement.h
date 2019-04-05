@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace GMAD
 {
   class SamplerPlacement;
+  class ScorerMesh;
   
   /**
    * @brief Placement class for parser
@@ -70,8 +71,10 @@ namespace GMAD
     template <typename T>
     void set_value(std::string property, T value);
 
-    /// Conversion constructor.
+    /// @{ Conversion constructor.
     Placement(const SamplerPlacement& samplerPlacement);
+    Placement(const ScorerMesh& scorerMesh);
+    /// @}
 
   private:
     /// publish members
