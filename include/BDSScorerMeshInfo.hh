@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSSCORERMESHINFO_H
 #define BDSSCORERMESHINFO_H
+
+#include "BDSExtent.hh"
 
 #include "globals.hh"         // geant4 types / globals
 
@@ -49,8 +50,12 @@ public:
   inline G4double ScoringBoxY() const {return 0.5*(yHigh-yLow);}
   inline G4double ScoringBoxZ() const {return 0.5*(zHigh-zLow);}
 
+  BDSExtent Extent() const {return extent;}
+
 private:
   BDSScorerMeshInfo() = delete;
+
+  BDSExtent extent;
 };
 
 #endif

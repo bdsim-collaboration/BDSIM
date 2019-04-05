@@ -467,6 +467,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   // inspect any sampler placements and calculate their extent without constructing them
   extents.push_back(CalculateExtentOfSamplerPlacements(blMain.massWorld));
 
+  // inspect any scoring meshes and calculate their extent without constructing them
+  extents.push_back(CalculateExtentOfScorerMeshes(blMain.massWorld));
+
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
   // loop over all extents from all beam lines
@@ -795,6 +798,26 @@ BDSExtentGlobal BDSDetectorConstruction::CalculateExtentOfSamplerPlacements(cons
       G4Transform3D placementTransform = CreatePlacementTransform(samplerPlacement, beamLine);
       BDSExtentGlobal samplerExtentG = BDSExtentGlobal(samplerExtent, placementTransform);
       result = result.ExpandToEncompass(samplerExtentG);
+    }
+  return result;
+}
+
+BDSExtent BDSDetectorConstruction::CalculateExtentOfScorerMesh(const GMAD::ScorerMesh& sm) const
+{
+  BDSScorerMeshInfo recipe(sm);
+  return recipe.Extent();
+}
+
+BDSExtentGlobal BDSDetectorConstruction::CalculateExtentOfScorerMeshes(const BDSBeamline* beamLine) const
+{
+  BDSExtentGlobal result;
+  std::vector<GMAD::ScorerMesh> scorerMeshes = BDSParser::Instance()->GetScorerMesh();
+  for (const auto& mesh : scorerMeshes)
+    {
+      BDSExtent meshExtent = CalculateExtentOfScorerMesh(mesh);
+      G4Transform3D placementTransform = CreatePlacementTransform(mesh, beamLine);
+      BDSExtentGlobal meshExtentG = BDSExtentGlobal(meshExtent, placementTransform);
+      result = result.ExpandToEncompass(meshExtentG);
     }
   return result;
 }

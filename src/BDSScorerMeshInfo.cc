@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
 #include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -55,4 +56,8 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
     {throw BDSException(__METHOD_NAME__, "ny must be finite in mesh \"" + mesh.name + "\"");}
   if (!BDS::IsFinite(nBinsZ))
     {throw BDSException(__METHOD_NAME__, "nz must be finite in mesh \"" + mesh.name + "\"");}
+
+  extent = BDSExtent(xLow, xHigh,
+		     yLow, yHigh,
+		     zLow, zHigh);
 }

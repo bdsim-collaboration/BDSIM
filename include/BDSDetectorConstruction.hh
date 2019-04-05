@@ -163,6 +163,13 @@ private:
   /// supplied to calculate placements in some cases.
   BDSExtentGlobal CalculateExtentOfSamplerPlacements(const BDSBeamline* beamLine) const;
 
+  /// Calculate local extent of scorer mesh in 3D.
+  BDSExtent CalculateExtentOfScorerMesh(const GMAD::ScorerMesh& sm) const;
+
+  /// Calculate the maximum global extent of all scoerer meshes from the parser.  Beam line
+  /// supplied to calculate placements in some cases.
+  BDSExtentGlobal CalculateExtentOfScorerMeshes(const BDSBeamline* bl) const;
+
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
