@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef USE_GDML
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGDMLPreprocessor.hh"
 #include "BDSTemporaryFiles.hh"
 #include "BDSUtilities.hh"
@@ -33,7 +34,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include <algorithm>
+#include <fstream>
+#include <istream>
 #include <map>
+#include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <regex>
@@ -46,6 +51,50 @@ G4String BDS::PreprocessGDML(const G4String& file,
   BDSGDMLPreprocessor processor;
   G4String processedFile = processor.PreprocessFile(file, prefix);
   return processedFile;
+}
+
+G4String BDS::PreprocessGDMLSchemaOnly(const G4String& file)
+{
+  // open file
+  std::ifstream inputFile;
+  inputFile.open(file.c_str());
+  if (!inputFile.is_open())
+    {throw BDSException(__METHOD_NAME__, "Invalid file \"" + file + "\"");}
+  else
+    {G4cout << __METHOD_NAME__ << "updating GDML Schema to local copy for file:\n \"" << file << "\"" << G4endl;}
+
+  // create new temporary file that modified gdml can be written to.
+  G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file);
+
+  std::ofstream outFile;
+  outFile.open(newFile);
+
+  G4String localSchema = BDS::GDMLSchemaLocation();
+  int i = 0;
+  std::regex gdmlTag("\\<gdml");
+  std::string line;
+  while (std::getline(inputFile, line))
+    {
+      if (i < 10)
+	{ // expect schema in first 10 lines of file - efficiency
+	  if (std::regex_search(line, gdmlTag))
+	    {
+	      std::regex schema("xsi:noNamespaceSchemaLocation=\"(\\S+)\"");
+	      std::string newLine;
+	      std::string prefix = "xsi:noNamespaceSchemaLocation=\"";
+	      std::regex_replace(std::back_inserter(newLine), line.begin(), line.end(), schema, prefix+localSchema+"\"$2");
+	      outFile << newLine;
+	    }
+	  else
+	    {outFile << line;}
+	}
+      else
+	{outFile << line;}
+      outFile << "\n";
+      i++;
+    }
+  outFile.close();
+  return newFile;
 }
 
 G4String BDS::GDMLSchemaLocation()
@@ -65,10 +114,7 @@ G4String BDS::GDMLSchemaLocation()
       return installPath;
     }
   else
-   {
-     G4cout << "ERROR: local GDML schema could not be found!" << G4endl;
-     exit(1);
-   }
+   {throw BDSException(__METHOD_NAME__, "ERROR: local GDML schema could not be found!");}
 }
 
 BDSGDMLPreprocessor::BDSGDMLPreprocessor()
@@ -90,9 +136,10 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   catch (const XMLException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.getMessage());
-      G4cout << "Error during initialization! :\n" << message << "\n";
+      std::stringstream messageSS;
+      messageSS << "Error during initialization! :\n" << message << "\n";
       XMLString::release(&message);
-      exit(1);
+      throw BDSException(__METHOD_NAME__, messageSS.str());
     }
 
   /// Update folder containing gdml file.
@@ -111,27 +158,26 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   catch (const XMLException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.getMessage());
-      G4cout << "Exception message is: \n" << message << "\n";
+      std::stringstream messageSS;
+      messageSS << "Exception message is: \n" << message << "\n";
       XMLString::release(&message);
-      exit(1);
+      throw BDSException(__METHOD_NAME__, messageSS.str());
     }
   catch (const DOMException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.msg);
-      G4cout << "Exception message is: \n" << message << "\n";
+      std::stringstream messageSS;
+      messageSS << "Exception message is: \n" << message << "\n";
       XMLString::release(&message);
-      exit(1);
+      throw BDSException(__METHOD_NAME__, messageSS.str());
     }
   catch (...)
-    {
-      G4cout << "Unexpected Exception \n" ;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Unexpected Exception");}
   
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
   DOMElement* docRootNode    = doc->getDocumentElement();
-  DOMNodeIterator *docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
+  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
   // map structure and all names used
   ReadDoc(docWalker);
 
@@ -271,21 +317,24 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
         {continue;} // ignore this attribute
 
       if (XMLString::compareIString(attr->getNodeName(),
-                                    XMLString::transcode("name")) == 0) {
-        std::string newName = prefix + "_" + name;
-        attr->setNodeValue(XMLString::transcode(newName.c_str()));
-      } else {
-        std::string expression = XMLString::transcode(attr->getNodeValue());
-        // Iterate over all the names that have been defined.
-        for (auto defined_name : names) {
-	  // Check if whole name is found (don't match substrings).
-          // \\b = word boundary.  $& = the matched string.
-          std::regex whole_name(std::string("\\b") + defined_name + "\\b");
-          expression =
-              std::regex_replace(expression, whole_name, prefix + "_$&");
-        }
-        attr->setNodeValue(XMLString::transcode((expression).c_str()));
-      }
-  }
+                                    XMLString::transcode("name")) == 0)
+	{
+	  std::string newName = prefix + "_" + name;
+	  attr->setNodeValue(XMLString::transcode(newName.c_str()));
+	}
+      else
+	{
+	  std::string expression = XMLString::transcode(attr->getNodeValue());
+	  // Iterate over all the names that have been defined.
+	  for (auto defined_name : names)
+	    {
+	      // Check if whole name is found (don't match substrings).
+	      // \\b = word boundary.  $& = the matched string.
+	      std::regex whole_name(std::string("\\b") + defined_name + "\\b");
+	      expression = std::regex_replace(expression, whole_name, prefix + "_$&");
+	    }
+	  attr->setNodeValue(XMLString::transcode((expression).c_str()));
+	}
+    }
 }
 #endif

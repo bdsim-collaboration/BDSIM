@@ -146,6 +146,25 @@ Examples: ::
    mat = "copper";
 
 
+Common Pitfalls
+^^^^^^^^^^^^^^^
+
+The following is an example of a common mistake that's not easy to spot: ::
+
+  beam, particle="e-",
+        energy=3*TeV;
+	E0=1*TeV;
+
+With this syntax we expect to create a design beam of 3 TeV electrons but the central energy of 1 TeV for the bunch. 3 TeV
+is used to calculate the magnet strengths and it's expected to fire a 1 TeV electron. However, the E0 parameter here just
+defines a variable called E0 that isn't used. The indentation (whitespace) is ignored. The error is the semi-colon at the
+end of the second line. This is the correct version: ::
+
+  beam, particle="e-",
+        energy=3*TeV,
+	E0=1*TeV;
+
+   
 .. _coordinates-and-units:
    
 Coordinates & Units
@@ -321,8 +340,9 @@ potential fields. Any element in BDSIM is described with the following pattern :
 
   name: type, parameter=value, parameter="string";
 
-.. note:: Notice the ':', the inverted commas for a string parameter and that each
-	  functional line must end with a semi-colon. Spaces will be ignored.
+.. note:: Note the colon ':' between name and type. The double (not single) inverted commas
+	  for a string parameter and that each functional line must end with a semi-colon.
+	  Spaces will be ignored.
 
 The following elements may be defined
 
@@ -440,8 +460,8 @@ drift
 ^^^^^
 
 .. figure:: figures/drift.png
-	    :width: 30%
-	    :align: right
+	    :width: 50%
+	    :align: center
 
 `drift` defines a straight beam pipe with no field.
 
@@ -453,6 +473,7 @@ Parameter         Description          Default     Required
 		  defined
 ================  ===================  ==========  =========
 
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 
@@ -466,7 +487,7 @@ rbend
 
 .. figure:: figures/rbend.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 .. |angleFieldComment| replace:: Either the total bending angle, `angle`, or the magnetic field, `B`, (in Tesla)
 				 for the nominal beam energy can be specified.
@@ -542,6 +563,8 @@ tracking still includes the pole face effects.
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
+Notes:
+
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
@@ -589,7 +612,7 @@ sbend
 
 .. figure:: figures/sbend.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 
 `sbend` defines a sector bend magnet. |angleFieldComment|
@@ -667,6 +690,8 @@ that the maximum tangential error in the aperture is 1 mm.
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
+Notes:
+
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
@@ -711,6 +736,7 @@ quadrupole
 
 .. figure:: figures/quadrupole.png
 	    :width: 30%
+	    :align: center
 
 `quadrupole` defines a quadrupole magnet. The strength parameter :math:`k_1` is defined as
 
@@ -724,6 +750,8 @@ Parameter         Description                  Default     Required
 `k1`              Quadrupole coefficient       0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -742,6 +770,7 @@ sextupole
 
 .. figure:: figures/sextupole.png
 	    :width: 30%
+	    :align: center
 
 `sextupole` defines a sextupole magnet. The strength parameter :math:`k_2` is defined as
 
@@ -755,6 +784,8 @@ Parameter         Description                  Default     Required
 `k2`              Sextupole coefficient        0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -773,6 +804,7 @@ octupole
 
 .. figure:: figures/octupole.png
 	    :width: 30%
+	    :align: center
 
 `octupole` defines an octupole magnet. The strength parameter :math:`k_3` is defined as
 
@@ -786,6 +818,8 @@ Parameter         Description                  Default     Required
 `k3`              Octupole coefficient         0           Yes
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -803,6 +837,7 @@ decapole
 
 .. figure:: figures/decapole.png
 	    :width: 30%
+	    :align: center
 
 `decapole` defines a decapole magnet. The strength parameter :math:`k_4` is defined as
 
@@ -848,6 +883,8 @@ Parameter         Description                  Default     Required
 `ksl`             List of skew coefficients    0           No
 `material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
+
+Notes:
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -1018,7 +1055,7 @@ rf
 
 .. figure:: figures/rfcavity.png
 	    :width: 50%
-	    :align: right
+	    :align: center
 
 `rf` or `rfcavity` defines an RF cavity with a time varying electric or electromagnetic field.
 There are several geometry and field options as well as ways to specify the strength.
@@ -1041,7 +1078,7 @@ numerical integrator is used to calculate the motion of particles in both cases.
 +----------------+-------------------------------+--------------+---------------------+
 | `phase`        | Phase offset (rad)            | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
-| `tOffset`      | Offset in time (ns)           | 0            | No                  |
+| `tOffset`      | Offset in time (s)            | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 | `material`     | Outer material                | ""           | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -1066,9 +1103,13 @@ numerical integrator is used to calculate the motion of particles in both cases.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
 
-If `tOffset` is specified, a phase offset is calculated from this time for the speed
-of light in a vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
+If `tOffset` is specified, a phase offset is calculated from this time for the **speed
+of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
 element is used to find the phase offset.
+
+.. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
+	  only correct for already relativisitic beams. Development is underway to improve
+	  this calculation for sub-relativisitic beams.
 
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
@@ -1098,8 +1139,8 @@ rcol
 ^^^^
 
 .. figure:: figures/rcol.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
@@ -1113,16 +1154,19 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
+| `material`         | Outer material               | None         | Yes           |
++--------------------+------------------------------+--------------+---------------+
+| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
++--------------------+------------------------------+--------------+---------------+
 | `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | G4_Cu        | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
 
+Notes: 
 
+* `horizontalWidth` should be big enough to encompass the xsize and ysize.
+* If no `xsize` or `ysize` are provided, they are assumed to be 0 and a solid block is made.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
@@ -1130,7 +1174,7 @@ volume is square.
 * The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
   `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
 * All collimators can be made infinite absorbers with the general option
-  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
+  :code:`collimatorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
 
 
 Examples: ::
@@ -1148,20 +1192,22 @@ ecol
 ^^^^
 
 .. figure:: figures/ecol.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
 half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
 axes of the entrance aperture must be the same ratio for the exit aperture.
 
+* All the same conditions for `rcol` apply for `ecol`.
+
 jcol
 ^^^^
 
 .. figure:: figures/jcol.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
@@ -1179,14 +1225,15 @@ apertures which are the distances from the center of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `ysize`            | Half height of jaws [m]      | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
+| `material`         | Outer material               | None         | Yes           |
++--------------------+------------------------------+--------------+---------------+
 | `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | G4_Cu        | No            |
-+--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
+
 
 Notes: 
 
@@ -1206,7 +1253,8 @@ Notes:
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
   user should specify an energy greater than the total beam energy.
 * All collimators can be made infinite absorbers with the general option
-  :code:`colliamtorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
+  :code:`collimatorsAreInfiniteAbsorbers` (see :ref:`options-tracking`).
+
 
 Examples: ::
 
@@ -1216,14 +1264,19 @@ Examples: ::
    ! with kinetic energy limit
    TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
 
+
 degrader
 ^^^^^^^^
 
 .. figure:: figures/degrader.png
-        :width: 70%
-        :align: right
+	    :width: 60%
+	    :align: center
 
-`degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
+
+`degrader` defines interleaved pyramidal pieces of material. Depending on the physics list
+used, this is capable of reducing the beam energy. This happens only through interaction
+and the use of a physics list. Note, the default physics list in BDSIM is no physics and
+only magnetic tracking, in which case this component will have no effect.
 
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
@@ -1239,13 +1292,13 @@ Parameter              Description                              Default     Requ
 `horizontalWidth`      Outer full width [m]                     global      No
 ===================    =======================================  ==========  ===========
 
-.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
-          position, and consequently the total material thickness the beam can propagate through. If both are
-          specified, `degraderOffset` will be ignored.
+.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
+	  lateral wedge position, and consequently the total material thickness the beam can propagate
+	  through. If both are specified, `degraderOffset` will be ignored. When numberWedges is specified
+	  to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges. When viewed from
+	  above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a
+	  right-angled triangle.
 
-          When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
-          When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
-          triangle.
 
 Examples: ::
 
@@ -1257,8 +1310,8 @@ muspoiler
 ^^^^^^^^^
 
 .. figure:: figures/muspoiler.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `muspoiler` defines a muon spoiler, which is a rotationally magnetised iron cylinder with
 a beam pipe in the middle. There is no magnetic field in the beam pipe.
@@ -1275,8 +1328,8 @@ shield
 ^^^^^^
 
 .. figure:: figures/shield.png
-	    :width: 30%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `shield` defines a square block of material with a square aperture. The user may choose
 the outer width and inner horizontal and vertical apertures of the block. A beam pipe
@@ -1292,14 +1345,16 @@ Parameter          Description                         Default     Required
 `ysize`            Vertical inner half aperture [m]    0           No
 =================  ==================================  ==========  ===========
 
+Notes:
+
 * The `aperture parameters`_ may also be specified.
 
 dump
 ^^^^
 
 .. figure:: figures/dump.png
-	    :width: 50%
-	    :align: right
+	    :width: 40%
+	    :align: center
 
 `dump` defines a square or circular block of material that is an infinite absorber. All
 particles impacting the dump will be absorbed irrespective of the particle and physics
@@ -1338,7 +1393,7 @@ solenoid
 
 .. figure:: figures/solenoid.png
 	    :width: 40%
-	    :align: right
+	    :align: center
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
 hard edge field profile. Fringes for the edge effects are provided by default and
@@ -1366,8 +1421,9 @@ wirescanner
 ^^^^^^^^^^^
 
 .. figure:: figures/wirescanner.png
-        :width: 20%
-        :align: right
+            :width: 40%
+	    :align: center
+
 
 `wirescanner` defines a cylindrical object within a beam pipe to represent a wire
 scanner typically use in an accelerator.
@@ -1383,6 +1439,8 @@ parameter              description                                      default 
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
 `wireMaterial`         material of wire                                 carbon      no
 =====================  ===============================================  ==========  ==========
+
+Notes:
 
 * The angle is the rotation from vertical in the clock-wise direction looing in the
   positive S direction (the usualy direction of the beam).
@@ -1446,8 +1504,8 @@ crystalcol
 ^^^^^^^^^^
 
 .. figure:: figures/crystalcol.png
-	   :width: 40%
-	   :align: right
+	    :width: 30%
+	    :align: center
 
 
 `crystalcol` defines a crystal collimator that uses crystals to channel particles. It is
@@ -1473,6 +1531,8 @@ Parameter                   Description                                         
 `crystalAngleYAxisLeft`     Rotation angle of left crystal [rad]                    0            No
 `crystalAngleYAxisRight`    Rotation angle of right crystal [rad]                   0            No
 ==========================  ======================================================  ===========  =========
+
+Notes:
 
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
@@ -1515,7 +1575,8 @@ undulator
 ^^^^^^^^^
 
 .. figure:: figures/undulator.png
-    :width: 60%
+	    :width: 60%
+	    :align: center
 
 `undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
 field components:
@@ -1537,6 +1598,8 @@ Parameter                Description                    Default     Required
 `undulatorMagnetHeight`  Undulator magnet height [m]    0           No
 `material`               Magnet outer material          Iron        No
 =======================  =============================  ==========  ===========
+
+Notes:
 
 * The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
 * The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
@@ -3580,8 +3643,12 @@ Common Options
 |                                  | by default air.                                       |
 +----------------------------------+-------------------------------------------------------+
 
+.. _options-general-run:
+
 General Run Options
 ^^^^^^^^^^^^^^^^^^^
+
+For a description of recreating events, see :ref:`running-recreation`.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -3603,11 +3670,20 @@ General Run Options
 |                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
 |                                  | Will only print out in an event that also prints out. |
 +----------------------------------+-------------------------------------------------------+
+| recreate                         | Whether to use recreation mode or not (default 0). If |
+|                                  | used as an executable option, this should be a string |
+|                                  | with a path to the :code:`recreateFileName`.          |
++----------------------------------+-------------------------------------------------------+
+| recreateFileName                 | Path to BDSIM output file to use for recreation.      |
++----------------------------------+-------------------------------------------------------+
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
 | seed                             | The integer seed value for the random number          |
 |                                  | generator                                             |
++----------------------------------+-------------------------------------------------------+
+| startFromEvent                   | Number of event to start from when recreating. 0      |
+|                                  | counting.                                             |
 +----------------------------------+-------------------------------------------------------+
 | writeSeedState                   | Writes the seed state of the last event start in      |
 |                                  | ASCII                                                 |
@@ -3645,7 +3721,7 @@ described in `Tunnel Geometry`_.
 | buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
 |                                  | just in a straight line (default = 0).                |
 +----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | Whether to add a floor to the tunnel                  |
+| buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
 | checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
 |                                  | during geometry construction (slower)                 |
@@ -4912,20 +4988,26 @@ The `userFile` distribution allows the user to supply an ASCII text file with pa
 coordinates that are tab-delimited. The column names and the units are specified in an
 input string.
 
-The file may also be compressed using tar and gz. Any file with the extension `.tar.gz`
+The file may also be compressed using gzip. Any file with the extension `.gz`
 will be automatically decompressed during the run without any temporary files. This is
 recommended, as compressed ASCII is significantly smaller in size.
 
 If the number of particles to be generated with ngenerate is greater than the number of
 particles defined in the file, the bunch generation will reload the file and read the
-particle coordinates from the beginning.
+particle coordinates from the beginning. A warning will be printed out in this case.
 
 This distribution reads lines at the start of each event to be memory efficient. However,
 this prevents reading a whole file by the number of lines in the file unlike the :code:`ptc`
-distribution that loads all lines and can use the :code:`matchDistrFileLength`.
+distribution that loads all lines and can use the beam option :code:`matchDistrFileLength`.
 
-.. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
-	  on by default.
+.. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
+	  from Geant4 and is on by default.
+
+* tar + gz will not work. The file must be a single file compressed through gzip only.
+* Lines starting with `#` will be ignored.
+* Empty lines will also be ignored.
+* A warning will be printed if the line is shorter than the number of variables specified
+  in `distrFileFormat` and the event aborted - the simulation safely proceeds to the next event.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -4938,6 +5020,10 @@ distribution that loads all lines and can use the :code:`matchDistrFileLength`.
 +----------------------------------+-------------------------------------------------------+
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
++----------------------------------+-------------------------------------------------------+
+| `matchDistrFileLength`           | Option for certain distributions to simulate the same |
+|                                  | number of events as are in the file. Currently only   |
+|                                  | for the `ptc` distribution.                           |
 +----------------------------------+-------------------------------------------------------+
 
 Acceptable tokens for the columns are:
