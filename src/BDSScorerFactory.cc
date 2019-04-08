@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ScoringManager.hh"
 #include "G4ScoringBox.hh"
 #include "G4PSDoseDeposit3D.hh"
+#include "G4PSEnergyDeposit3D.hh"
+#include "G4PSPopulation3D.hh"
 #include "BDSScorerQuantity3D.hh"
 
 
@@ -75,6 +77,10 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
     {
     case BDSScorerType::deposited_dose:
       {return new G4PSDoseDeposit3D(name); break;}
+    case BDSScorerType::deposited_energy:
+      {return  new G4PSEnergyDeposit3D(name); break;}
+    case BDSScorerType::population:
+      {return  new G4PSPopulation3D(name); break;}
     case BDSScorerType::ambient_dose:
       {return new BDSScorerQuantity3D(name,filename); break;}
     default:

@@ -27,6 +27,8 @@ template<>
 std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
         new std::map<BDSScorerType, std::string> ({
             {BDSScorerType::deposited_dose,  "deposited_dose"},
+            {BDSScorerType::deposited_energy, "deposited_energy"},
+            {BDSScorerType::population, "population"},
             {BDSScorerType::ambient_dose,  "ambient_dose"}
         });
 
@@ -35,6 +37,8 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
 {
     std::map<G4String, BDSScorerType> types;
     types["deposited_dose"]  = BDSScorerType::deposited_dose;
+    types["deposited_energy"]  = BDSScorerType::deposited_energy;
+    types["population"]  = BDSScorerType::population;
     types["ambient_dose"]  = BDSScorerType::ambient_dose;
 
     scorerType.toLower();
