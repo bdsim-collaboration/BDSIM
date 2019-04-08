@@ -1,6 +1,13 @@
 V1.3.2 - 2019 / 03 / ??
 =======================
 
+General
+-------
+
+* Geometry navigators are reset at the beginning of a run now in a similar way to the start of
+  an event to ensure independence between runs - future proofing.
+* For Geant4.10.5, we now use the 'low' looping particle thresholds for tracking.
+
 Bug Fixes
 ---------
 
@@ -24,6 +31,8 @@ Bug Fixes
   units.
 * Fix warning when loading an output file with data loader class when the file was created
   without storing primary coordinates. The warning was related to the PrimaryGlobal branch.
+* Fix warnings and artificial killing of particles by high looping particle thresholds for
+  Geant4.10.5, which are default. Use the 'low' looping thresholds by default.
 
 
 V1.3.1 - 2019 / 03 / 05
