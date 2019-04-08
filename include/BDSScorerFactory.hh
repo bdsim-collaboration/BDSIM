@@ -61,14 +61,6 @@ private:
     ///@}
     G4VPrimitiveScorer* GetAppropriateScorer(G4String name, const BDSScorerType scorerType, G4String filename);
 
-
-    /*
-    /// @{ Point to factory this main interface owns.
-    BDSCavityFactoryElliptical*  elliptical;
-    BDSCavityFactoryRectangular* rectangular;
-    BDSCavityFactoryPillBox*     pillBox;
-    /// @}
-     */
 };
 
 #endif

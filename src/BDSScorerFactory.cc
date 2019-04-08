@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include "G4SDParticleWithEnergyFilter.hh"
+#include "BDSScorerTimeFilter.hh"
 
 #include "G4ScoringManager.hh"
 #include "G4ScoringBox.hh"
@@ -66,6 +67,13 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
 
     scorer_filter->add(particleName);
     primitiveScorer->SetFilter(scorer_filter);
+
+    if(info->maximumTime != info->minimumTime)
+    {
+        BDSScorerTimeFilter *time_filter = new BDSScorerTimeFilter("time_filter", info->minimumTime, info->maximumTime);
+        primitiveScorer->SetFilter(time_filter);
+    }
+
     return primitiveScorer;
  }
 

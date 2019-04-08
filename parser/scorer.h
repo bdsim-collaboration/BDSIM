@@ -42,6 +42,8 @@ namespace GMAD
     int         particlePDGID;        ///< PDG ID code for particle.
     double      minimumEnergy;
     double      maximumEnergy;
+    double      minimumTime;
+    double      maximumTime;
     std::string conversionFactorFile;
     
     /// Constructor

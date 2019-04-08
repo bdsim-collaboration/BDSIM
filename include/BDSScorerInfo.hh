@@ -43,6 +43,8 @@ public:
     G4ParticleDefinition*   particle;      ///< Particle filter
     G4double minimumEnergy;       ///< Minimal energy
     G4double maximumEnergy;       ///< Maximal energy
+    G4double minimumTime;         ///< Minimum time
+    G4double maximumTime;         ///< Maximum time
     G4String filename;            ///< Name of the conversion factor file
 
 

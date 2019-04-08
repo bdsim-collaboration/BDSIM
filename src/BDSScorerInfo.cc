@@ -32,6 +32,8 @@ particle(nullptr)
     minimumEnergy = scorer.minimumEnergy;
     maximumEnergy = scorer.maximumEnergy;
     filename = scorer.conversionFactorFile;
+    minimumTime = scorer.minimumTime;
+    maximumTime = scorer.maximumTime;
 
     G4bool error = false;
 

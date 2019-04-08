@@ -34,6 +34,8 @@ void Scorer::clear()
   particlePDGID        = 0;
   minimumEnergy        = 0;
   maximumEnergy        = 0;
+  minimumTime          = 0;
+  maximumTime          = 0;
   conversionFactorFile = "";
 }
 
@@ -45,6 +47,8 @@ void Scorer::PublishMembers()
   publish("particlePDGID",        &Scorer::particlePDGID);
   publish("minimumEnergy",        &Scorer::minimumEnergy);
   publish("maximumEnergy",        &Scorer::maximumEnergy);
+  publish("minimumTime",          &Scorer::minimumTime);
+  publish("maximumTime",          &Scorer::maximumTime);
   publish("conversionFactorFile",&Scorer::conversionFactorFile);
 }
 
@@ -57,5 +61,7 @@ void Scorer::print()const
 	    << "particlePDGID "         << particlePDGID       << std::endl
 	    << "minimumEnergy "         << minimumEnergy       << std::endl
 	    << "maximumEnergy "         << maximumEnergy       << std::endl
+	    << "minimumTime "           << minimumTime       << std::endl
+        << "maximumTime "           << maximumTime       << std::endl
 	    << "conversionFactorFile " << conversionFactorFile << std::endl;
 }
