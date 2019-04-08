@@ -6,6 +6,8 @@ protonAmbient: scorer, type="ambient_dose",
 	    	   particleName="proton",
 		   minimumEnergy=20*MeV,
 		   maximumEnergy=1*GeV,
+			 minimumTime=0*s,
+			 maximumTime=1*s,
 		   conversionFactorFile="h10protons.txt";
 
 ! option 5 - arbitrary mesh
@@ -32,4 +34,3 @@ beam, particle="proton",
 option, physicsList="g4FTFP_BERT",
 	defaultRangeCut=1*cm,
 	elossHistoBinWidth=5*mm;
-	
