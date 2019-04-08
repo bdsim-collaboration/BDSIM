@@ -7,6 +7,11 @@ General
 * Geometry navigators are reset at the beginning of a run now in a similar way to the start of
   an event to ensure independence between runs - future proofing.
 * For Geant4.10.5, we now use the 'low' looping particle thresholds for tracking.
+* The 'vacuum' field is now not applied to the container volume of a beam pipe. However, it is
+  still applied to the vacuum and beam pipe volumes. This makes the tracking more robust against
+  stuck particles in the extermely small gap between volumes.
+* The yoke magnetic field now uses a wrapped G4ClassicalRK4 integrator. This wrapper acts as
+  a drift for short (< 1um) steps. This makes tracking more robust for
 
 Bug Fixes
 ---------
@@ -33,6 +38,9 @@ Bug Fixes
   without storing primary coordinates. The warning was related to the PrimaryGlobal branch.
 * Fix warnings and artificial killing of particles by high looping particle thresholds for
   Geant4.10.5, which are default. Use the 'low' looping thresholds by default.
+* Fix stuck particles by attaching the vacuum field in a beam pipe to every volume in the
+  beam pipe apart from the container volume to avoid navigation problems in very thin gaps.
+* Remove half-implemented integrator types in internal dictionaries.
 
 
 V1.3.1 - 2019 / 03 / 05
