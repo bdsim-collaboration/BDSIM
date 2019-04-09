@@ -63,7 +63,7 @@ void BDSBOptrChangeCrossSection::StartRun()
   // Setup stage:
   // Start by collecting processes under biasing, create needed biasing
   // operations and associate these operations to the processes:
-  if(fSetup)
+  if (fSetup)
     {
       const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
       const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
@@ -92,8 +92,7 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << processName << " " << bias << " " << iPrimary << G4endl;
-#endif
-  
+#endif  
   const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
   const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
 
@@ -110,7 +109,7 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
-      if(allProcesses || processName == currentProcess)
+      if (allProcesses || processName == currentProcess)
 	{ 
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
@@ -122,10 +121,8 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
     }
   if (!processFound)
     {
-      G4cout << __METHOD_NAME__ << "Error: Process \"" << processName
-	     << "\" not found registered to particle \""
-	     << particleName << "\"" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Process \"" + processName +
+			 "\" not found registered to particle \"" + particleName + "\"");
     }
 #ifdef BDSDEBUG
   else
