@@ -898,18 +898,15 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       
       // Build vacuum bias object based on vacuum bias list in the component
       auto vacuumBiasList = accCom->GetBiasVacuumList();
-      if (!vacuumBiasList.empty())
+      if (!vacuumBiasList.empty() && vacuumLV)
         {
           auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
-	  if (vacuumLV)
-	    {
 	      if (debug)
 		{
 		  G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
 			 << " " << vacuumLV->GetName() << G4endl;
 		}
 	      egVacuum->AttachTo(vacuumLV);
-	    }
 	}
       
       // Build material bias object based on material bias list in the component
