@@ -2515,8 +2515,11 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 External World Geometry
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-External geometry can be supplied as the world volume with the option `worldGeometryFile`. The BDSIM
-beamline will be placed inside this world volume. Unlike the standard BDSIM world volume whose size is
+External geometry can be supplied as the world volume with the option `worldGeometryFile`
+(see :ref:`options-geometry`). The BDSIM beamline will be placed inside this world volume
+provided in the file.
+
+Unlike the standard BDSIM world volume whose size is
 set dynamically, the external world volume will have fixed dimensions, therefore the user should supply
 a world volume of sufficient size so as to fully encompass the BDSIM beamline. Should the extents of the
 BDSIM beamline be larger than the world extents, the beamline will not be constructed and BDSIM will exit.
@@ -2524,6 +2527,8 @@ BDSIM beamline be larger than the world extents, the beamline will not be constr
 `worldGeometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
 file. See :ref:`externally-provided-geometry` for more details.
+
+* See also :ref:`physics-bias-importance-sampling` for usage of this.
 
 .. _placements:
 
