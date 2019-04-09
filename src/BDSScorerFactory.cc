@@ -39,9 +39,9 @@ BDSScorerFactory* BDSScorerFactory::instance = nullptr;
 
 BDSScorerFactory* BDSScorerFactory::Instance()
 {
-    if (!instance)
+  if (!instance)
     {instance = new BDSScorerFactory();}
-    return instance;
+  return instance;
 }
 
 BDSScorerFactory::BDSScorerFactory()
@@ -49,33 +49,33 @@ BDSScorerFactory::BDSScorerFactory()
 
 BDSScorerFactory::~BDSScorerFactory()
 {
-    instance = nullptr;
+  instance = nullptr;
 }
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
 {
-    /// Here create the scorer with the informations inside BDSScorerInfo.
-    G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name, info->scorerType, info->filename);
-    if(! info->particle)
+  /// Here create the scorer with the informations inside BDSScorerInfo.
+  G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name, info->scorerType, info->filename);
+
+  if(!info->particle) // no specific particle, i.e. all
+    {return primitiveScorer;}
+  
+  G4String particleName = info->particle->GetParticleName();
+  G4SDParticleWithEnergyFilter* scorer_filter= new G4SDParticleWithEnergyFilter("particle_filter",
+										info->minimumEnergy,
+										info->maximumEnergy);
+  
+  scorer_filter->add(particleName);
+  primitiveScorer->SetFilter(scorer_filter);
+  
+  if(info->maximumTime != info->minimumTime)
     {
-        return primitiveScorer;
+      BDSScorerTimeFilter *time_filter = new BDSScorerTimeFilter("time_filter", info->minimumTime, info->maximumTime);
+      primitiveScorer->SetFilter(time_filter);
     }
-    G4String particleName = info->particle->GetParticleName();
-    G4SDParticleWithEnergyFilter* scorer_filter= new G4SDParticleWithEnergyFilter("particle_filter",
-            info->minimumEnergy,
-            info->maximumEnergy);
-
-    scorer_filter->add(particleName);
-    primitiveScorer->SetFilter(scorer_filter);
-
-    if(info->maximumTime != info->minimumTime)
-    {
-        BDSScorerTimeFilter *time_filter = new BDSScorerTimeFilter("time_filter", info->minimumTime, info->maximumTime);
-        primitiveScorer->SetFilter(time_filter);
-    }
-
-    return primitiveScorer;
- }
+  
+  return primitiveScorer;
+}
 
 G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
 							   const BDSScorerType scorerType,
