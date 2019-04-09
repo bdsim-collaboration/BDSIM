@@ -5,6 +5,7 @@ New Features
 ------------
 
 * Can now use any particle available through the physics list for a beam particle.
+* Generic cross-section biasing can now be used for any particle, including ions.
 
 General
 -------
