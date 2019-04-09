@@ -108,6 +108,14 @@ void BDSBOptrMultiParticleChangeCrossSection::StartTracking(const G4Track* track
   if(it != fBOptrForParticle.end())
     {fCurrentOperator = (*it).second;}
 
+  // try again for ions as they have a generic and specific definition
+  // processes are attached to the generic one
+  if (G4IonTable::IsIon(definition))
+    {
+      auto search = fBOptrForParticle.find(G4GenericIon::Definition());
+      if (search != fBOptrForParticle.end())
+	{fCurrentOperator = search->second;}
+    }
   // -- reset count for number of biased interactions:
   fnInteractions = 0;
 }
