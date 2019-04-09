@@ -33,7 +33,7 @@ BDSScorerTimeFilter::~BDSScorerTimeFilter()
 
 G4bool BDSScorerTimeFilter::Accept(const G4Step* aStep) const
 {
-  G4double time = aStep->GetTrack()->GetGlobalTime()/CLHEP::second;
+  G4double time = aStep->GetTrack()->GetGlobalTime();
   if ( time < fLowTime  ) return FALSE;
   if ( time >= fHighTime ) return FALSE;
   return TRUE;
