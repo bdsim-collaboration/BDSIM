@@ -43,10 +43,13 @@ provided in order of requirement.
   - :ref:`sampler-visualisation`
   - :ref:`user-sampler-placement`
     
-* Physics Processes
-  
-  - :ref:`physics-processes`
-  - :ref:`physics-biasing`
+* :ref:`physics-processes`
+
+  - :ref:`physics-modular-physics-lists`
+  - :ref:`physics-geant4-lists`
+  - :ref:`physics-complete-lists`
+
+* :ref:`physics-biasing`
     
 * :ref:`bdsim-options`
 * :ref:`beam-parameters`
@@ -3445,7 +3448,26 @@ These cannot be used in combination with any other physics processes.
 Physics Biasing
 ---------------
 
-A physics biasing process can be defined with the keyword **xsecbias**.
+BDSIM currently provides two ways to artifically interfere with the physics processes
+to make the desired outcome happen more often. In both cases the goal is more efficiently
+simulate the correct physical outcome - variance reduction.
+
+The two cases are :ref:`physics-bias-cross-section-biasing` and
+:ref:`physics-bias-importance-sampling`, each described below.
+
+.. _physics-bias-cross-section-biasing:
+
+Cross-Section Biasing
+^^^^^^^^^^^^^^^^^^^^^
+
+The cross-section for a physics process for a specific particle can be artifically altered
+by a numerical scaling factor using cross-section biasing. The biasing is defined with the
+keyword **xsecbias**, to define a bias 'object'. This can then be attached to various bits
+of the geometry or all of it. This is provided with the Geant4 generic biasing feature.
+
+Geant4 automatically includes the reciprocal of the factor as a weighting, which is
+recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
+used should be multiplied by the weight to achieve the correct physical result.
 
 .. note:: This only works with Geant4 version 10.1 or higher.
 
@@ -3458,11 +3480,20 @@ A physics biasing process can be defined with the keyword **xsecbias**.
 +------------------+------------------------------------------------------+
 | proc             | Process(es) to be biased                             |
 +------------------+------------------------------------------------------+
+| xsecfact         | Biasing factor(s) for the process(es)                |
++------------------+------------------------------------------------------+
 | flag             | Flag which particles are biased for the process(es)  |
 |                  | (1=all, 2=primaries, 3=secondaries)                  |
 +------------------+------------------------------------------------------+
-| xsecfact         | Biasing factor(s) for the process(es)                |
-+------------------+------------------------------------------------------+
+
+* Particle names should be exactly as they are in Geant4 (case-sensitive). The
+  best way to find these out is to the run a single event with the desired physics
+  list. The physics list print out will name particles used.
+* The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
+  the best way to find these names is to run a single event with the desired physics
+  list.
+* A special particle name "all" will bias all defined particles. (case-sensitive).
+* Examples can be found in :code:`bdsim/examples/features/processes/5_biasing`.
 
 Example::
 
@@ -3478,8 +3509,9 @@ vacuum respectively::
 
 .. _physics-bias-importance-sampling:
   
-Importance Sampling
-^^^^^^^^^^^^^^^^^^^
+Geometric Importance Sampling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 To enable importance sampling, the user must provide both a mass world and a separate importance
 sampling world as external geometry files. The mass world file should contain the appropriate
 volumes as if you were conducting a standard simulation without importance sampling. The
