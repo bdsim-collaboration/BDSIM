@@ -478,7 +478,8 @@ void BDSOutput::CreateHistograms()
       for (const auto& nameDef : scorerHistogramDefs)
 	{
 	  const auto def = nameDef.second;
-	  G4int histID = Create3DHistogram(def.uniqueName, def.name,
+      // use safe output name without any slashes in the name
+	  G4int histID = Create3DHistogram(def.outputName, def.name,
 					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
 					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
 					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);

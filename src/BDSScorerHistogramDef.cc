@@ -20,8 +20,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <algorithm>
+#include <string>
+
 BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo& mesh,
 					     const G4String& uniqueNameIn):
   BDSScorerMeshInfo(mesh),
   uniqueName(uniqueNameIn)
-{;}
+{
+  outputName = uniqueNameIn;
+  std::replace(outputName.begin(), outputName.end(), '/', '-');
+}
