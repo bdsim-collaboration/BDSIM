@@ -3498,6 +3498,10 @@ used should be multiplied by the weight to achieve the correct physical result.
   the best way to find these names is to run a single event with the desired physics
   list.
 * A special particle name "all" will bias all defined particles. (case-sensitive).
+* In the case of an **ion** beam, the particle name should be "GenericIon". The
+  biasing will apply to all ions, so the flag should be used to select primary
+  or secondary or all particles. This is because Geant4 uses the concept of a
+  generic ion as there are so many possible ions.
 * Examples can be found in :code:`bdsim/examples/features/processes/5_biasing`.
 
 Example::
