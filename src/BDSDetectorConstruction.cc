@@ -984,29 +984,16 @@ void BDSDetectorConstruction::ConstructMeshes()
       {
 	// convert to recipe class as this checks parameters
 	BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
-
-	// create a scoring box
+	
+	// name we'll use for the mesh
 	G4String meshName = meshRecipe.name;
 
-        // TBC - could be any beam line in future - just w.r.t. main beam line just now
-        const BDSBeamline* mbl = BDSAcceleratorModel::Instance()->BeamlineMain();
-        G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
-        BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, placement);
-	
-        // size of the scoring mesh
-        G4double scorersize[3];
-        scorersize[0] = meshRecipe.ScoringBoxX();
-        scorersize[1] = meshRecipe.ScoringBoxY();
-        scorersize[2] = meshRecipe.ScoringBoxZ();
-        Scorer_box->SetSize(scorersize);
-	
-        // divisions of the scoring mesh
-        G4int nSegment[3];
-        nSegment[0] = meshRecipe.nBinsX;
-        nSegment[1] = meshRecipe.nBinsY;
-        nSegment[2] = meshRecipe.nBinsZ;
-	
-        Scorer_box->SetNumberOfSegments(nSegment);
+	// TBC - could be any beam line in future - just w.r.t. main beam line just now
+	const BDSBeamline* mbl = BDSAcceleratorModel::Instance()->BeamlineMain();
+	G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
+
+	// create a scoring box
+        BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
 	
         // add the scorer to the scoring mesh
         std::vector<G4String> meshPrimitiveScorerNames;

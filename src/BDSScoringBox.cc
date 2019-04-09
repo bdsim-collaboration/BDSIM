@@ -17,8 +17,29 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSScoringBox.hh"
+#include "BDSScorerMeshInfo.hh"
 
 #include "G4RotationMatrix.hh"
+
+BDSScoringBox::BDSScoringBox(const G4String&          name,
+			     const BDSScorerMeshInfo& recipe,
+			     const G4Transform3D&     placementTransform):
+  BDSScoringBox(name, placementTransform.getTranslation(), placementTransform.getRotation())
+{
+  // size of the scoring mesh
+  G4double scorerSize[3];
+  scorerSize[0] = recipe.ScoringBoxX();
+  scorerSize[1] = recipe.ScoringBoxY();
+  scorerSize[2] = recipe.ScoringBoxZ();
+  SetSize(scorerSize);
+
+  // divisions of the scoring mesh
+  G4int nSegment[3];
+  nSegment[0] = recipe.nBinsX;
+  nSegment[1] = recipe.nBinsY;
+  nSegment[2] = recipe.nBinsZ;
+  SetNumberOfSegments(nSegment);
+}
 
 BDSScoringBox::BDSScoringBox(const G4String& name,
 			     const G4Transform3D& placementTransform):
