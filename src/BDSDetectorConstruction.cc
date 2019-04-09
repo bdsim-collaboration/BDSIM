@@ -1002,9 +1002,9 @@ void BDSDetectorConstruction::ConstructMeshes()
 	
         // divisions of the scoring mesh
         G4int nSegment[3];
-        nSegment[0] = meshRecipe.nBinsZ;
+        nSegment[0] = meshRecipe.nBinsX;
         nSegment[1] = meshRecipe.nBinsY;
-        nSegment[2] = meshRecipe.nBinsX;
+        nSegment[2] = meshRecipe.nBinsZ;
 	
         Scorer_box->SetNumberOfSegments(nSegment);
 	
