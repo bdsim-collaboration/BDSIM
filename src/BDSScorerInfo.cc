@@ -16,39 +16,41 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "parser/scorer.h"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerType.hh"
-#include "G4ParticleTable.hh"
+
+#include "parser/scorer.h"
+
 #include "globals.hh"
+#include "G4ParticleTable.hh"
 
 BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer):
-particle(nullptr)
+  particle(nullptr)
 {
-    scorerType = BDS::DetermineScorerType(scorer.type);
-    name = scorer.name;
-    minimumEnergy = scorer.minimumEnergy;
-    maximumEnergy = scorer.maximumEnergy;
-    filename = scorer.conversionFactorFile;
-    minimumTime = scorer.minimumTime;
-    maximumTime = scorer.maximumTime;
-
-    G4bool error = false;
-
-    if(scorer.particlePDGID != 0)
+  scorerType    = BDS::DetermineScorerType(scorer.type);
+  name          = scorer.name;
+  minimumEnergy = scorer.minimumEnergy;
+  maximumEnergy = scorer.maximumEnergy;
+  filename      = scorer.conversionFactorFile;
+  minimumTime   = scorer.minimumTime;
+  maximumTime   = scorer.maximumTime;
+  
+  G4bool error = false;
+  
+  if (scorer.particlePDGID != 0)
     {
-        G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-        particle = particleTable->FindParticle(scorer.particlePDGID);
-        error = !particle;
+      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+      particle = particleTable->FindParticle(scorer.particlePDGID);
+      error = !particle;
     }
-    else if(!(scorer.particleName.empty()))
+  else if (!(scorer.particleName.empty()))
     {
-        G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-        particle = particleTable->FindParticle(scorer.particleName);
-        error = !particle;
+      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+      particle = particleTable->FindParticle(scorer.particleName);
+      error = !particle;
     }
-    if (error)
+  if (error)
     {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
 }
