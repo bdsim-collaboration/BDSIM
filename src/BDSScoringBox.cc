@@ -63,7 +63,7 @@ BDSScoringBox::BDSScoringBox(const G4String& name,
 
 const BDSHistBinMapper3D* BDSScoringBox::Mapper() const
 {
-  if (!fConstructed)
+  if (!sizeIsSet)
     {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
   if (!mapper)
     {mapper = new BDSHistBinMapper3D(fNSegment[0], fNSegment[1], fNSegment[2]);}
