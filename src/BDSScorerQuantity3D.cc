@@ -122,22 +122,25 @@ void BDSScorerQuantity3D::clear()
 
 G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)
 {
-    const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-    G4int i = touchable->GetReplicaNumber(fDepthi);
-    G4int j = touchable->GetReplicaNumber(fDepthj);
-    G4int k = touchable->GetReplicaNumber(fDepthk);
-
-    if(i<0||j<0||k<0)
+  const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
+  G4int i = touchable->GetReplicaNumber(fDepthi);
+  G4int j = touchable->GetReplicaNumber(fDepthj);
+  G4int k = touchable->GetReplicaNumber(fDepthk);
+  
+  if (i<0 || j<0 || k<0)
     {
-        G4ExceptionDescription ED;
-        ED << "GetReplicaNumber is negative" << G4endl
-           << "touchable->GetReplicaNumber(fDepthi) returns i,j,k = "
-           << i << "," << j << "," << k << " for volume "
-           << touchable->GetVolume(fDepthi)->GetName() << ","
-           << touchable->GetVolume(fDepthj)->GetName() << ","
-           << touchable->GetVolume(fDepthk)->GetName() << G4endl;
-        G4Exception("PSRadiationQuantity3D::GetIndex","DetPS0006",JustWarning,ED);
+      G4ExceptionDescription ED;
+      ED << "GetReplicaNumber is negative" << G4endl
+	 << "touchable->GetReplicaNumber(fDepthi) returns i,j,k = "
+	 << i << "," << j << "," << k << " for volume "
+	 << touchable->GetVolume(fDepthi)->GetName() << ","
+	 << touchable->GetVolume(fDepthj)->GetName() << ","
+	 << touchable->GetVolume(fDepthk)->GetName() << G4endl;
+      G4Exception("PSRadiationQuantity3D::GetIndex","DetPS0006",JustWarning,ED);
     }
 
-    return i*fNj*fNk+j*fNk+k;
+  G4int alIndex = mapper->GlobalFromIJKIndex(k,j,i); // x,y,z
+
+  G4int oldResult = i*fNj*fNk+j*fNk+k;
+  return oldResult;
 }
