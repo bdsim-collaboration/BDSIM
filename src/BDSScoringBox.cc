@@ -16,6 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSHistBinMapper3D.hh"
 #include "BDSScoringBox.hh"
 #include "BDSScorerMeshInfo.hh"
 
@@ -39,6 +42,8 @@ BDSScoringBox::BDSScoringBox(const G4String&          name,
   nSegment[1] = recipe.nBinsY;
   nSegment[2] = recipe.nBinsZ;
   SetNumberOfSegments(nSegment);
+
+  mapper = new BDSHistBinMapper3D(fNSegment[0], fNSegment[1], fNSegment[2]);
 }
 
 BDSScoringBox::BDSScoringBox(const G4String& name,
@@ -49,8 +54,23 @@ BDSScoringBox::BDSScoringBox(const G4String& name,
 BDSScoringBox::BDSScoringBox(const G4String& name,
 			     const G4ThreeVector& translation,
 			     const G4RotationMatrix& rotation):
-  G4ScoringBox(name)
+  G4ScoringBox(name),
+  mapper(nullptr)
 {
   fRotationMatrix = new G4RotationMatrix(rotation);
   fCenterPosition = translation;
+}
+
+const BDSHistBinMapper3D* BDSScoringBox::Mapper() const
+{
+  if (!fConstructed)
+    {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
+  if (!mapper)
+    {mapper = new BDSHistBinMapper3D(fNSegment[0], fNSegment[1], fNSegment[2]);}
+  return mapper;
+}
+
+BDSScoringBox::~BDSScoringBox()
+{
+  delete mapper;
 }

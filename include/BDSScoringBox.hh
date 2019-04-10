@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
+class HistBinMapper3D;
 class BDSScorerMeshInfo;
 
 /**
@@ -32,6 +33,9 @@ class BDSScorerMeshInfo;
  * The G4ScoringBox class provides an incomplete interface to the
  * underlying translation 3 vector and rotation matrix. Here, we
  * wrap the class to assign these protected members directly.
+ * 
+ * We have several constructors to retain compatibility with Geant4's
+ * delayed construction model for use interactively.
  * 
  * @author Laurie Nevay
  */
@@ -55,8 +59,13 @@ public:
   BDSScoringBox(const G4String&         name,
 		const G4ThreeVector&    translation,
 		const G4RotationMatrix& rotation);
+  
+  const BDSHistBinMapper3D* Mapper() const;
 
-  virtual ~BDSScoringBox(){;}
+  virtual ~BDSScoringBox();
+
+protected:
+  mutable BDSHistBinMapper3D* mapper;
 };
 
 #endif
