@@ -52,10 +52,14 @@ BDSScorerFactory::~BDSScorerFactory()
   instance = nullptr;
 }
 
-G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
+G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      info,
+						   const BDSHistBinMapper3D* mapper)
 {
   /// Here create the scorer with the informations inside BDSScorerInfo.
-  G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name, info->scorerType, info->filename);
+  G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name,
+							     info->scorerType,
+							     info->filename,
+							     mapper);
 
   if(!info->particle) // no specific particle, i.e. all
     {return primitiveScorer;}
@@ -79,7 +83,8 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo* info)
 
 G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
 							   const BDSScorerType scorerType,
-							   G4String filename)
+							   G4String filename,
+							   const BDSHistBinMapper3D* mapper)
 {
   switch (scorerType.underlying())
     {
@@ -90,7 +95,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
     case BDSScorerType::population:
       {return  new G4PSPopulation3D(name); break;}
     case BDSScorerType::ambient_dose:
-      {return new BDSScorerQuantity3D(name,filename); break;}
+      {return new BDSScorerQuantity3D(name,mapper,filename); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");

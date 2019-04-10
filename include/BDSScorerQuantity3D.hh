@@ -26,23 +26,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VDataSetAlgorithm.hh"
 #include <vector>
 
+class BDSHistBinMapper3D;
 
-using namespace std;
-
-
-
-class BDSScorerQuantity3D : public G4VPrimitiveScorer
+class BDSScorerQuantity3D: public G4VPrimitiveScorer
 {
-public: // with description
+public:
+  BDSScorerQuantity3D(const G4String scorer_name,
+		      const BDSHistBinMapper3D* mapperIn,
+		      const G4String filename="",
+		      G4int ni=1,G4int nj=1, G4int nk=1,
+		      G4int depi=2, G4int depj=1, G4int depk=0);
+  
+  virtual ~BDSScorerQuantity3D() override;
 
-    BDSScorerQuantity3D(const G4String scorer_name ="scorer", const G4String filename="",
-    G4int ni=1,G4int nj=1, G4int nk=1,
-    G4int depi=2, G4int depj=1, G4int depk=0);
 
-    virtual ~BDSScorerQuantity3D() override;
-
-
-protected: // with description
+protected:
     G4bool ProcessHits(G4Step*,G4TouchableHistory*) override;
     G4int GetIndex(G4Step* aStep) override;
 
@@ -56,6 +54,7 @@ private:
   G4THitsMap<G4double>* EvtMap3D;
   G4int fDepthi, fDepthj, fDepthk;
   G4PhysicsVector* conversionFactor;
+  const BDSHistBinMapper3D* mapper; ///< We don't own this.
 };
 
 

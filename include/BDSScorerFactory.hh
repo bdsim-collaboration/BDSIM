@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERFACTORY_H
 #define BDSSCORERFACTORY_H
 
+class BDSHistBinMapper3D;
 class BDSScorer;
 class BDSScorerInfo;
 
@@ -40,27 +41,31 @@ class G4Material;
 class BDSScorerFactory
 {
 public:
-    static BDSScorerFactory* Instance(); ///< Singleton accessor.
-
-    /// Reset static singleton instance to nullptr and delete the singleton
-    /// factories for different beam pipe styles. Delete them here as they
-    /// should only be accessed through this class.
-    ~BDSScorerFactory();
-
-    /// Main function to create a piece of cavity geometry.
-    G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo* info);
-
+  static BDSScorerFactory* Instance(); ///< Singleton accessor.
+  
+  /// Reset static singleton instance to nullptr and delete the singleton
+  /// factories for different beam pipe styles. Delete them here as they
+  /// should only be accessed through this class.
+  ~BDSScorerFactory();
+  
+  /// Main function to create a piece of cavity geometry.
+  G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo*      info,
+				   const BDSHistBinMapper3D* mapper);
+  
 private:
-    BDSScorerFactory(); ///< Private constructor as singleton pattern.
+  BDSScorerFactory(); ///< Private constructor as singleton pattern.
+  
+  static BDSScorerFactory* instance; ///< Singleton instance.
+  
+  ///@{ Unused default constructors
+  BDSScorerFactory(const BDSScorerFactory&) = delete;
+  BDSScorerFactory& operator=(const BDSScorerFactory&) = delete;
+  ///@}
 
-    static BDSScorerFactory* instance; ///< Singleton instance.
-
-    ///@{ Unused default constructors
-    BDSScorerFactory(const BDSScorerFactory&) = delete;
-    BDSScorerFactory& operator=(const BDSScorerFactory&) = delete;
-    ///@}
-    G4VPrimitiveScorer* GetAppropriateScorer(G4String name, const BDSScorerType scorerType, G4String filename);
-
+  G4VPrimitiveScorer* GetAppropriateScorer(G4String                  name,
+					   const BDSScorerType       scorerType,
+					   G4String                  filename,
+					   const BDSHistBinMapper3D* mapper);
 };
 
 #endif

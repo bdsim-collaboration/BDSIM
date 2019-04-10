@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistBinMapper3D.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
@@ -994,13 +995,14 @@ void BDSDetectorConstruction::ConstructMeshes()
 
 	// create a scoring box
         BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
+	const BDSHistBinMapper3D* mapper = Scorer_box->Mapper();
 	
         // add the scorer to the scoring mesh
         std::vector<G4String> meshPrimitiveScorerNames;
         for (const auto& scorer : scorers)
 	  {
             BDSScorerInfo* sc = new BDSScorerInfo(scorer);
-            G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(sc);
+            G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(sc, mapper);
             // The mesh internally creates a multifunctional detector which is an SD and has
             // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
             // the hits map we need the full name of the unique primitive scorer so we build that

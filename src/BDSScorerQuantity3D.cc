@@ -16,19 +16,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSHistBinMapper3D.hh"
+#include "BDSScorerConversionLoader.hh"
 #include "BDSScorerQuantity3D.hh"
+#include "BDSUtilities.hh"
+
+#include "globals.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Track.hh"
 #include "G4VSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VPVParameterisation.hh"
 #include "G4UnitsTable.hh"
-
-#include "BDSDebug.hh"
-#include "BDSException.hh"
-#include "BDSUtilities.hh"
-#include "BDSScorerConversionLoader.hh"
 
 #include <fstream>
 
@@ -38,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
+					 const BDSHistBinMapper3D* mapperIn,
 					 const G4String filename,
 					 G4int ni,
 					 G4int nj,
@@ -46,7 +48,8 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
 					 G4int depj,
 					 G4int depk):
   G4VPrimitiveScorer(scorer_name),
-  HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk)
+  HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk),
+  mapper(mapperIn)
 {
   fNi=ni;
   fNj=nj;
