@@ -61,7 +61,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     info->filename,
 							     mapper);
 
-  if(!info->particle) // no specific particle, i.e. all
+  if (!info->particle) // no specific particle, i.e. all
     {return primitiveScorer;}
   
   G4String particleName = info->particle->GetParticleName();

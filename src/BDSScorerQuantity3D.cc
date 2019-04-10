@@ -76,39 +76,40 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
 }
 
 BDSScorerQuantity3D::~BDSScorerQuantity3D()
-{
-}
+{;}
 
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
-    G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
-    G4double radiation_quantity;
+  G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
+  G4double radiation_quantity;
 
-    /// Fluence computation
-    if ( stepLength == 0. ) return FALSE;
-
-    const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-    G4VSolid* solid = touchable->GetSolid();
-    G4double cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
-
-    G4double CellFlux = (stepLength / cubicVolume);
-    CellFlux *= aStep->GetPreStepPoint()->GetWeight();
-
-    G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy());
-    G4double factor = conversionFactor->Value(energy);
-    radiation_quantity = CellFlux*factor;
-    G4int index = GetIndex(aStep);
-
-    EvtMap3D->add(index,radiation_quantity);
-    return true;
+  /// Fluence computation
+  if (!BDS::IsFinite(stepLength))
+    {return false;}
+  
+  const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
+  G4VSolid* solid = touchable->GetSolid();
+  G4double cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
+  
+  G4double CellFlux = (stepLength / cubicVolume);
+  CellFlux *= aStep->GetPreStepPoint()->GetWeight();
+  
+  G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy());
+  G4double factor = conversionFactor->Value(energy);
+  radiation_quantity = CellFlux*factor;
+  G4int index = GetIndex(aStep);
+  
+  EvtMap3D->add(index,radiation_quantity);
+  return true;
 }
 
 void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
 {
-    EvtMap3D = new G4THitsMap<G4double>(detector->GetName(),
-                                        GetName());
-    if ( HCID3D < 0 ) HCID3D = GetCollectionID(0);
-    HCE->AddHitsCollection(HCID3D,EvtMap3D);
+  EvtMap3D = new G4THitsMap<G4double>(detector->GetName(),
+				      GetName());
+  if (HCID3D < 0)
+    {HCID3D = GetCollectionID(0);}
+  HCE->AddHitsCollection(HCID3D,EvtMap3D);
 }
 
 void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent*)
@@ -116,8 +117,7 @@ void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent*)
 
 void BDSScorerQuantity3D::clear()
 {
-
-    EvtMap3D->clear();
+  EvtMap3D->clear();
 }
 
 G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)
