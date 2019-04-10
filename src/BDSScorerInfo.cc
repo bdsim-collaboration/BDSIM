@@ -31,11 +31,11 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer):
 {
   scorerType    = BDS::DetermineScorerType(scorer.type);
   name          = scorer.name;
-  minimumEnergy = scorer.minimumEnergy;
-  maximumEnergy = scorer.maximumEnergy;
+  minimumEnergy = scorer.minimumEnergy*CLHEP::GeV;
+  maximumEnergy = scorer.maximumEnergy*CLHEP::GeV;
   filename      = scorer.conversionFactorFile;
-  minimumTime   = scorer.minimumTime;
-  maximumTime   = scorer.maximumTime;
+  minimumTime   = scorer.minimumTime*CLHEP::second;
+  maximumTime   = scorer.maximumTime*CLHEP::second;
   
   G4bool error = false;
   
