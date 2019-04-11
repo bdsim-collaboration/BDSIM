@@ -1324,8 +1324,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                                                    st,
                                                    true,
                                                    fieldTrans);
-  BDSFieldInfo* outerFieldInfo = PrepareMagnetOuterFieldInfo(st, undField, bpInfo, 0, fieldTrans);
-
+  //BDSFieldInfo* outerFieldInfo = PrepareMagnetOuterFieldInfo(st, undField, bpInfo, 0, fieldTrans);
+  BDSFieldInfo* outerFieldInfo = nullptr;
   // limit step length in field - crucial to this component
   // to get the motion correct this has to be less than one oscillation
   auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
@@ -1749,8 +1749,6 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
-    case BDSFieldType::undulator:
-      {outerType = BDSFieldType::undulator; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
