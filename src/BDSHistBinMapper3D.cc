@@ -41,7 +41,7 @@ void BDSHistBinMapper3D::IJKFromGlobal(G4int  globalBin,
 				       G4int& jIndex,
 				       G4int& kIndex) const
 {
-  iIndex = globalBin % nBinsK;
-  jIndex = (globalBin / nBinsK ) % nBinsJ;
-  kIndex = globalBin / (nBinsK * nBinsJ);
+  iIndex = globalBin / (nBinsK*nBinsJ);
+  jIndex = (globalBin - iIndex*nBinsK*nBinsJ) / nBinsK;
+  kIndex = globalBin - jIndex*nBinsK - iIndex*nBinsK*nBinsJ;
 }

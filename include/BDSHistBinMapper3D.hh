@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSHISTBINMAPPER3D_H
 
 #include "globals.hh"
+#include "G4ThreeVector.hh"
 
 /**
  * @brief Class to map 3D histogram bin indices to a 1d vector index.
@@ -44,6 +45,11 @@ public:
 			     G4int& iIndex,
 			     G4int& jIndex,
 			     G4int& kIndex) const;
+
+  inline G4double NBinsI() const {return nBinsI;}
+  inline G4double NBinsJ() const {return nBinsJ;}
+  inline G4double NBinsK() const {return nBinsK;}
+  inline G4ThreeVector NBins() const {return G4ThreeVector(nBinsI, nBinsJ, nBinsK);}
   
 private:
   G4int nBinsI;
