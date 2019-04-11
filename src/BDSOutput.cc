@@ -461,7 +461,8 @@ void BDSOutput::CreateHistograms()
 							      nCollimators, 0, nCollimators);
 	}
     }
-  
+
+  // one unique 'scorer' - single 3d histogram 3d
   if (useScoringMap && storeELossHistograms)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -472,13 +473,14 @@ void BDSOutput::CreateHistograms()
       histIndices3D["ScoringMap"] = scInd;
     }
 
+  // scoring maps
   const std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefs = BDSAcceleratorModel::Instance()->ScorerHistogramDefinitionsMap();
   if (!scorerHistogramDefs.empty())
     {
       for (const auto& nameDef : scorerHistogramDefs)
 	{
 	  const auto def = nameDef.second;
-      // use safe output name without any slashes in the name
+	  // use safe output name without any slashes in the name
 	  G4int histID = Create3DHistogram(def.outputName, def.name,
 					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
 					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
