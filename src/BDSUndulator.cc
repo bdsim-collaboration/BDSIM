@@ -223,7 +223,7 @@ void BDSUndulator::Build()
   RegisterPhysicalVolume(bpPV);
 
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-                                                            pipe->GetContainerLogicalVolume(),
+                                                            pipe->GetVacuumLogicalVolume(),
                                                             true);
 
   if (outerFieldInfo)
