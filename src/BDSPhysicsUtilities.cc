@@ -58,6 +58,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "FTFP_BERT.hh"
 
 #include <map>
+#include <set>
 
 G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 {
