@@ -62,6 +62,9 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
     }
   else
     {material = materialIn;}
+
+  if (vacuumFieldInfo)
+    {vacuumFieldInfo->SetBeamPipeRadius(beamPipeInfoIn->IndicativeRadius());}
 }
 
 BDSUndulator::~BDSUndulator()
