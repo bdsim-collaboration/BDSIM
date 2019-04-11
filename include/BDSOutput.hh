@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUT_H
 #define BDSOUTPUT_H 
 
+#include "BDSHistBinMapper3D.hh"
 #include "BDSOutputStructures.hh"
 
 #include "globals.hh"
@@ -44,7 +45,6 @@ class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 template <class T> class G4THitsMap;
-
 
 class G4PrimaryVertex;
 
@@ -298,6 +298,7 @@ private:
   /// @{ Map of histogram name (short) to index of histogram in output.
   std::map<G4String, G4int> histIndices1D;
   std::map<G4String, G4int> histIndices3D;
+  std::map<G4String, BDSHistBinMapper3D> scorerCoordinateMaps;
   /// @}
 };
 

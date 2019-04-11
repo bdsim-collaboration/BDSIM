@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistBinMapper3D.hh"
 #include "BDSHitSampler.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
@@ -61,6 +62,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <ostream>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -486,6 +488,8 @@ void BDSOutput::CreateHistograms()
 					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
 					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
 	  histIndices3D[def.uniqueName] = histID;
+	  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
+	  scorerCoordinateMaps.insert(std::make_pair(def.uniqueName, def.coordinateMapper));
 	}
     }
 }
@@ -821,8 +825,19 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
   G4int histIndex = histIndices3D[histogramDefName];
+  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
+  const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
+  TH3D* hist = evtHistos->Get3DHistogram(histIndex);
+  G4int x,y,z;
+  //const BDSHistBinMapper3D* mapper = hist3DMapper[histIndex];
   for (const auto& hit : *hitMap)
-    {evtHistos->Set3DHistogramBinContent(histIndex, hit.first, *hit.second);}
+    {
+      // convert from scorer global index to 3d i,j,k index of 3d scorer
+      mapper.IJKFromGlobal(hit.first, x,y,z);
+      G4int rootGlobalIndex = 0;
+      hist->GetBinXYZ(rootGlobalIndex, x, y, z); // convert to root system
+      evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
+    }
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
 
