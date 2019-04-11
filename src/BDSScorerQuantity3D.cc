@@ -139,8 +139,7 @@ G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)
       G4Exception("PSRadiationQuantity3D::GetIndex","DetPS0006",JustWarning,ED);
     }
 
-  G4int alIndex = mapper->GlobalFromIJKIndex(k,j,i); // x,y,z
-
-  G4int oldResult = i*fNj*fNk+j*fNk+k;
-  return oldResult;
+  G4int globalIndex = mapper->GlobalFromIJKIndex(i,j,k); // x,y,z
+  //G4int oldResult = i*fNj*fNk+j*fNk+k;
+  return globalIndex;
 }
