@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERHISTOGRAMDEF_H
 #define BDSSCORERHISTOGRAMDEF_H
 
+#include "BDSHistBinMapper3D.hh"
 #include "BDSScorerMeshInfo.hh"
 
 #include "globals.hh"         // geant4 types / globals
@@ -27,13 +28,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSScorerHistogramDef: public BDSScorerMeshInfo
 {
 public:
-  BDSScorerHistogramDef(const BDSScorerMeshInfo& meshInfo,
-			const G4String& uniqueNameIn);
+  BDSScorerHistogramDef(const BDSScorerMeshInfo&  meshInfo,
+			const G4String&           uniqueNameIn,
+			const BDSHistBinMapper3D& coordinateMapperIn);
+
 
   virtual ~BDSScorerHistogramDef(){;}
 
   G4String uniqueName; ///< Unique name of mesh/scorer -> slash required by Geant4.
   G4String outputName; ///< Copy of unique name that's safe for output.
+  BDSHistBinMapper3D coordinateMapper; ///< Coordinate mapper - this class owns it.
 
 private:
   BDSScorerHistogramDef() = delete;

@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSHistBinMapper3D.hh"
 #include "BDSScorerHistogramDef.hh"
 
 #include "globals.hh"
@@ -23,10 +24,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <string>
 
-BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo& mesh,
-					     const G4String& uniqueNameIn):
+BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo&  mesh,
+					     const G4String&           uniqueNameIn,
+					     const BDSHistBinMapper3D& coordinateMapperIn):
   BDSScorerMeshInfo(mesh),
-  uniqueName(uniqueNameIn)
+  uniqueName(uniqueNameIn),
+  coordinateMapper(coordinateMapperIn)
 {
   outputName = uniqueNameIn;
   std::replace(outputName.begin(), outputName.end(), '/', '-');

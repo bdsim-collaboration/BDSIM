@@ -1010,7 +1010,7 @@ void BDSDetectorConstruction::ConstructMeshes()
 	    G4String uniqueName = meshName + "/" + ps->GetName();
 	    meshPrimitiveScorerNames.push_back(uniqueName);
 	    Scorer_box->SetPrimitiveScorer(ps);
-	    BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName);
+	    BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
 	    BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
 	  }
 	
