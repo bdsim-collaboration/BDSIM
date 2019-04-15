@@ -877,11 +877,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {
       // fringe effect applied in integrator so nothing more to do.
       return new BDSMagnet(t,
-                 baseName,
-                 chordLength,
-                 bpInf,
-                 magOutInf,
-                 vacuumField);
+			   baseName,
+			   chordLength,
+			   bpInf,
+			   magOutInf,
+			   vacuumField);
     }
   else
     {
@@ -898,14 +898,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           G4String entrFringeName = baseName + "_e1_fringe";
           BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, 0, 0,
                                                           entrFringeName,
-                                                          fringeStIn, brho,
-                                                          integratorSet, fieldType);
+                                                          fringeStIn,
+							  brho,
+                                                          integratorSet,
+							  fieldType);
           kickerLine->AddComponent(startfringe);
         }
       
       G4String kickerName = baseName + "_centre";
-      BDSMagnet* kicker = new BDSMagnet(t, kickerName, kickerChordLength,
-					bpInf, magOutInf, vacuumField);
+      BDSMagnet* kicker = new BDSMagnet(t,
+					kickerName,
+					kickerChordLength,
+					bpInf,
+					magOutInf,
+					vacuumField);
       kickerLine->AddComponent(kicker);
       
       if (buildEntranceFringe)
