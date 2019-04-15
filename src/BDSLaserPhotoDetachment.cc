@@ -56,9 +56,10 @@ BDSLaserPhotoDetachment::~BDSLaserPhotoDetachment()
   delete photoDetachmentEngine;
 }
 
+/*
 G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
-                                                  G4double /*previousStepSize*/,
-						  G4ForceCondition* /*forceCondition*/)
+                                                  G4double previousStepSize,
+						  G4ForceCondition* forceCondition)
 {
   G4LogicalVolume* lv = track.GetVolume()->GetLogicalVolume();
   if (!lv->IsExtended())
@@ -141,6 +142,67 @@ G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
       return DBL_MAX;
     }
 }
+*/
+
+G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
+                                                  G4double /*previousStepSize*/,
+                                                  G4ForceCondition* /*forceCondition*/)
+{
+  G4LogicalVolume* lv = track.GetVolume()->GetLogicalVolume();
+  if (!lv->IsExtended())
+  {// not extended so can't be a laser logical volume
+    return DBL_MAX;
+  }
+  BDSLogicalVolumeLaser* lvv = dynamic_cast<BDSLogicalVolumeLaser*>(lv);
+  if (!lvv)
+  {// it's an extended volume but not ours (could be a crystal)
+    return DBL_MAX;
+  }
+
+  // else proceed
+  const BDSLaser* laser = lvv->Laser();
+
+  aParticleChange.Initialize(track);
+  const G4DynamicParticle* ion = track.GetDynamicParticle();
+
+  if (ion->GetCharge()==-1)
+  {
+    //get particle coordinates for global and local
+    G4ThreeVector particlePositionGlobal = track.GetPosition();
+    G4ThreeVector particleDirectionMomentumGlobal = track.GetMomentumDirection();
+    const G4RotationMatrix* rot = track.GetTouchable()->GetRotation();
+    const G4AffineTransform transform = track.GetTouchable()->GetHistory()->GetTopTransform();
+    G4ThreeVector particlePositionLocal = transform.TransformPoint(particlePositionGlobal);
+    G4ThreeVector particleDirectionMomentumLocal = transform.TransformPoint(particleDirectionMomentumGlobal).unit();
+
+    // create photon
+    G4ThreeVector photonUnit(0,0,1);
+    photonUnit.transform(*rot);
+    G4double photonE = (CLHEP::h_Planck*CLHEP::c_light)/laser->Wavelength();
+    G4ThreeVector photonVector = photonUnit*photonE;
+    G4LorentzVector photonLorentz = G4LorentzVector(photonVector,photonE);
+
+    // ion information to boost photon energy to the right frame
+    G4double ionEnergy = ion->GetTotalEnergy();
+    G4ThreeVector ionMomentum = ion->GetMomentum();
+    G4double ionMass = ion->GetMass();
+    G4ThreeVector ionBeta = ionMomentum/ionEnergy;
+    photonLorentz.boost(ionBeta);
+    G4double photonEnergy = photonLorentz.e();
+
+    G4double crossSection = photoDetachmentEngine->CrossSection(photonEnergy)*CLHEP::m2;
+    G4double photonDensity = laser->Intensity(particlePositionLocal,0)/photonEnergy;
+    G4double safety = BDSGlobalConstants::Instance()->LengthSafety();
+
+    G4double mfp = 1.0/(crossSection*photonDensity)*CLHEP::c_light;
+    return mfp;
+  }
+  else
+  {
+    return DBL_MAX;
+  }
+
+}
 
 G4VParticleChange* BDSLaserPhotoDetachment::PostStepDoIt(const G4Track& track,
 							 const G4Step&  step)
@@ -150,34 +212,15 @@ G4VParticleChange* BDSLaserPhotoDetachment::PostStepDoIt(const G4Track& track,
   aParticleChange.SetNumberOfSecondaries(1);
 
   const G4DynamicParticle* ion = track.GetDynamicParticle();
-  //G4double ionEnergy = ion->GetTotalEnergy();
   G4double ionKe = ion->GetKineticEnergy();
   G4ThreeVector ionMomentum = ion->GetMomentum();
   G4double ionMass = ion->GetMass();
-  //G4double ionBetaZ = ionMomentum[2]/ionEnergy;
-  //G4double ionGamma = ionEnergy/ionMass;
 
-  //copied from mfp to access laser instance is clearly incorrect!
-
-  G4LogicalVolume* lv = track.GetVolume()->GetLogicalVolume();
-  if (!lv->IsExtended())
-    {// not extended so can't be a laser logical volume
-      return pParticleChange;
-    }
-  BDSLogicalVolumeLaser* lvv = dynamic_cast<BDSLogicalVolumeLaser*>(lv);
-  if (!lvv)
-    {// it's an extended volume but not ours (could be a crystal)
-      return pParticleChange;
-    }
-  // else proceed
-  // const BDSLaser* laser = lvv->Laser();
   
   G4double hydrogenMass = (CLHEP::electron_mass_c2+CLHEP::proton_mass_c2);
   aParticleChange.ProposeMass(hydrogenMass);
   G4ThreeVector hydrogenMomentum = (ionMomentum / ionMass) * hydrogenMass;
-  //aParticleChange.ProposeEnergy(hydrogenMomentum*hydrogenMomentum+hydrogenMass*hydrogenMass);
   aParticleChange.ProposeMomentumDirection(hydrogenMomentum.unit());
-
 
   G4ThreeVector electronMomentum = (ionMomentum / ionMass)*CLHEP::electron_mass_c2;  
   G4double electronKe = ionKe*(CLHEP::electron_mass_c2/ionMass);

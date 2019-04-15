@@ -127,11 +127,11 @@ void BDSLaserWireNew::BuildContainerLogicalVolume()
   SetInputFaceNormal(pipe->InputFaceNormal());
   SetOutputFaceNormal(pipe->OutputFaceNormal());
 }
-
+/*
 void BDSLaserWireNew::Build()
 {
   BDSAcceleratorComponent::Build();
-  
+
   G4VSolid* wire = BuildHyperbolicWireSolid();
   G4LogicalVolume* wireLV = BuildWireLV(wire);
   
@@ -144,10 +144,10 @@ void BDSLaserWireNew::Build()
   // placement
 
   G4RotationMatrix* placementWireRot = new G4RotationMatrix();
-  placementWireRot->rotateX(0);
+  placementWireRot->rotateX(wireLongitudinalAngle);
   // want to rotate about unit Z but this has now changed
   placementWireRot->rotateY(wireAngle);
-  placementWireRot->rotateZ(wireLongitudinalAngle);
+  placementWireRot->rotateZ(0);
 
   G4PVPlacement* wirePV = new G4PVPlacement(placementWireRot,           // rotation
 					    wireOffset,        // position
@@ -157,11 +157,11 @@ void BDSLaserWireNew::Build()
 					    false,                  // no boolean operation
 					    0,                      // copy number
 					    checkOverlaps);
-  
+
   
   RegisterPhysicalVolume(wirePV);  
 }
-
+*/
 G4VSolid* BDSLaserWireNew::BuildHyperbolicWireSolid()
 {
   G4Hype* laserwire;
@@ -180,9 +180,9 @@ G4VSolid* BDSLaserWireNew::BuildHyperbolicWireSolid()
   // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
   // want to rotate about unit Z but this has now changed
-  wireRot->rotateX(0);
+  wireRot->rotateX(wireLongitudinalAngle);
   wireRot->rotateY(wireAngle);
-  wireRot->rotateZ(wireLongitudinalAngle);
+  wireRot->rotateZ(0);
   wireRot->invert();
   RegisterRotationMatrix(wireRot);
   wireColour->SetAlpha(0.5);
@@ -214,4 +214,115 @@ G4LogicalVolume* BDSLaserWireNew::BuildWireLV(G4VSolid* solid)
   return wireLV;
 }
 
+void BDSLaserWireNew::Build(){
 
+    BDSAcceleratorComponent::Build();
+
+    G4Tubs* laserMaster;
+    laserMaster = new G4Tubs(name+"_laserwire_solid_Master", //name
+                           0,                       //inner radius
+                           wireDiameter*0.5,
+                           wireLength*0.5,
+                           0,            //closing angle
+                           CLHEP::twopi);           //wire half length
+
+    RegisterSolid(laserMaster);
+
+    G4LogicalVolume* laserMasterLV = BuildWireLV(laserMaster);
+    RegisterLogicalVolume(laserMasterLV);
+    G4LogicalVolume* currentLV = laserMasterLV;
+    wireColour->SetAlpha(0.05);
+
+    G4VisAttributes* wireVisAttr = new G4VisAttributes(*wireColour);
+    laserMasterLV->SetVisAttributes(wireVisAttr);
+    RegisterVisAttributes(wireVisAttr);
+    // placement
+
+
+    G4int nVol = 50;
+    G4double stepSize = wireDiameter/(nVol*2); //is twice step size
+    G4double lengthReduction = wireLength/(nVol*4);
+
+    G4ThreeVector place;
+    place.set(0,0,0);
+
+    for(G4int i = 1; i <= nVol-1; i++)
+    {
+        G4double length = (wireLength*0.5)-i*lengthReduction;
+        G4double val = -nVol*stepSize;
+        G4double rad = (wireDiameter*0.5)-i*stepSize;
+        G4Tubs* laserLayer;
+        laserLayer = new G4Tubs(name+"_laserwire_solid_"+std::to_string(i),
+                                0,
+                                (wireDiameter*0.5)-i*stepSize,
+                                (wireLength*0.5)-i*lengthReduction,
+                                0,
+                                CLHEP::twopi);
+
+        RegisterSolid(laserLayer);
+
+        G4LogicalVolume* laserLayerLV = BuildWireLV(laserLayer);
+        RegisterLogicalVolume(laserLayerLV);
+        wireColour->SetAlpha(0.05);
+
+        laserLayerLV->SetVisAttributes(wireVisAttr);
+        RegisterVisAttributes(wireVisAttr);
+
+        G4PVPlacement* laserLayerPV = new G4PVPlacement(0,
+                                                        place,
+                                                        laserLayerLV,
+                                                        name + "_wire_pv_"+std::to_string(i),
+                                                        currentLV,
+                                                        false,
+                                                        i,
+                                                        checkOverlaps);
+        RegisterPhysicalVolume(laserLayerPV);
+
+
+        currentLV = laserLayerLV;
+    }
+
+    G4RotationMatrix* placementWireRot = new G4RotationMatrix();
+    placementWireRot->rotateX(wireLongitudinalAngle);
+    // want to rotate about unit Z but this has now changed
+    placementWireRot->rotateY(wireAngle);
+    placementWireRot->rotateZ(0);
+
+    G4PVPlacement* laserMasterPV = new G4PVPlacement(placementWireRot,           // rotation
+                                              wireOffset,        // position
+                                              laserMasterLV,            // its logical volume
+                                              name + "_wire_pv", // its name
+                                              GetAcceleratorVacuumLogicalVolume(),
+                                              false,                  // no boolean operation
+                                              0,                      // copy number
+                                              checkOverlaps);
+
+
+    RegisterPhysicalVolume(laserMasterPV);
+
+
+}
+
+/*
+{
+  G4LogicalVolume* masterBox = new G4LogicalVolume();
+  G4LogicalVolume* currentVolume = masterBox;
+
+  for (G4int i =  0 : n)
+{
+    new G4Box();
+    G4LogicalVolume* lv = new G4LogicalVolume(box);
+    G4PVPlacement(name, lv, currentVolume);
+    currentVolume = lv;
+
+}
+
+}G4PVPlacement* wirePV = new G4PVPlacement(placementWireRot,           // rotation
+                                           wireOffset,        // position
+                                           wireLV,            // its logical volume
+                                           name + "_wire_pv", // its name
+                                           GetAcceleratorVacuumLogicalVolume(),
+                                           false,                  // no boolean operation
+                                           0,                      // copy number
+                                           checkOverlaps);
+*/
