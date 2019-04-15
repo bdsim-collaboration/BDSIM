@@ -57,6 +57,9 @@ Bug Fixes
   gap to avoid possible navigation issues with large sized models.
 * Fix for exotic particle beams. Can now use any particle available in the physics list.
   Particle definitions now constructed earlier than in the regular physics list call.
+* Fix bad tracking in undulators caused by nan values in field caused by querying the field
+  at arbitrarily large positions. Limited the range of validity of the field to the beam pipe. The
+  field is now no longer attached to the magnets outside the beam pipe.
 
 
 V1.3.1 - 2019 / 03 / 05
