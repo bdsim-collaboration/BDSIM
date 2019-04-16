@@ -248,9 +248,7 @@ void BDSLaserWireNew::Build(){
 
     for(G4int i = 1; i <= nVol-1; i++)
     {
-        G4double length = (wireLength*0.5)-i*lengthReduction;
-        G4double val = -nVol*stepSize;
-        G4double rad = (wireDiameter*0.5)-i*stepSize;
+
         G4Tubs* laserLayer;
         laserLayer = new G4Tubs(name+"_laserwire_solid_"+std::to_string(i),
                                 0,

@@ -63,9 +63,6 @@ G4double BDSLaser::W(G4double z) const
   return W0()*std::sqrt(1.0+std::pow(z/rayleighRange,2.0));
 }
 
-// this will not work because of the position needed
-// need to call the particle position in coordinates relative to the laser vector to establish laser width and intensity
-
 G4double BDSLaser::Intensity(G4double x, G4double y, G4double z, G4double /*t*/) const
 {
   return (2.0*peakPower)/(CLHEP::pi*W(z)*W(z)) * std::exp(-(2.0*(x*x+y*y))/(W(z)*W(z)));
@@ -96,7 +93,10 @@ G4double BDSLaser::HyperbolicAngle() const
   return (m2*wavelength)/(CLHEP::pi*W0());
 }
 
-/*
-G4double BDSLaser::WavelengthShift(G4double laserAngleIn)
-{;}
-*/
+G4double BDSLaser::LaserIntensities(G4int layer) const
+{
+  G4double stepSize = 10*sigma0/50;
+  G4double radius = 10*sigma0 - (layer+1)*stepSize;
+  G4double Intensity = this->Intensity(radius,0,0,0);
+  return Intensity;
+}

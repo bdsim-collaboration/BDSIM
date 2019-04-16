@@ -52,6 +52,7 @@ public:
 			G4double particleBeta) const;
   
   G4double HyperbolicAngle() const;
+  G4double LaserIntensities(G4int layer) const;
   //G4double WavelengthShift(G4double laserAngleIn);
   /// @{ Accessor.
   inline G4double Wavelength()    const {return wavelength;}

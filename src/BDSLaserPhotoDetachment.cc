@@ -167,6 +167,7 @@ G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
 
   if (ion->GetCharge()==-1)
   {
+
     //get particle coordinates for global and local
     G4ThreeVector particlePositionGlobal = track.GetPosition();
     G4ThreeVector particleDirectionMomentumGlobal = track.GetMomentumDirection();
@@ -185,15 +186,18 @@ G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
     // ion information to boost photon energy to the right frame
     G4double ionEnergy = ion->GetTotalEnergy();
     G4ThreeVector ionMomentum = ion->GetMomentum();
-    G4double ionMass = ion->GetMass();
     G4ThreeVector ionBeta = ionMomentum/ionEnergy;
     photonLorentz.boost(ionBeta);
     G4double photonEnergy = photonLorentz.e();
 
-    G4double crossSection = photoDetachmentEngine->CrossSection(photonEnergy)*CLHEP::m2;
-    G4double photonDensity = laser->Intensity(particlePositionLocal,0)/photonEnergy;
-    G4double safety = BDSGlobalConstants::Instance()->LengthSafety();
+    G4int copyNo = track.GetTouchable()->GetCopyNumber();
 
+    G4double crossSection = photoDetachmentEngine->CrossSection(photonEnergy)*CLHEP::m2;
+    G4double photonDensity = laser->LaserIntensities(copyNo)/photonEnergy;// units per mm^2 per ns
+
+    //G4double ionVelocity = ionMomentum.mag()/(ion->GetMass()*(1.0/std::sqrt(1.0-ionBeta*ionBeta)));
+
+    //G4double mft = 1.0/(crossSection*photonDensity);
     G4double mfp = 1.0/(crossSection*photonDensity)*CLHEP::c_light;
     return mfp;
   }
