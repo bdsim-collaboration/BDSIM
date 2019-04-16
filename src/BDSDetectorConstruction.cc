@@ -982,7 +982,7 @@ void BDSDetectorConstruction::ConstructMeshes()
     scManager->SetVerboseLevel(1);
 
     for (const auto& mesh : scoring_meshes)
-      {
+    {
 	// convert to recipe class as this checks parameters
 	BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
 	
@@ -997,21 +997,23 @@ void BDSDetectorConstruction::ConstructMeshes()
         BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
 	const BDSHistBinMapper3D* mapper = Scorer_box->Mapper();
 	
-        // add the scorer to the scoring mesh
-        std::vector<G4String> meshPrimitiveScorerNames;
-        for (const auto& scorer : scorers)
-	  {
-            BDSScorerInfo* sc = new BDSScorerInfo(scorer);
-            G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(sc, mapper);
+	// add the scorer to the scoring mesh
+    std::vector<G4String> meshPrimitiveScorerNames;
+    for (const auto& scorer : scorers)
+	{
+        if(scorer.name == mesh.scoreQuantity) { // Check that the filter name corresponds to the stored quantity.
+            BDSScorerInfo *sc = new BDSScorerInfo(scorer);
+            G4VPrimitiveScorer *ps = BDSScorerFactory::Instance()->CreateScorer(sc, mapper);
             // The mesh internally creates a multifunctional detector which is an SD and has
             // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
             // the hits map we need the full name of the unique primitive scorer so we build that
             // name here and store it.
-	    G4String uniqueName = meshName + "/" + ps->GetName();
-	    meshPrimitiveScorerNames.push_back(uniqueName);
-	    Scorer_box->SetPrimitiveScorer(ps);
-	    BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
-	    BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+            G4String uniqueName = meshName + "/" + ps->GetName();
+            meshPrimitiveScorerNames.push_back(uniqueName);
+            Scorer_box->SetPrimitiveScorer(ps);
+            BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
+            BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+        }
 	  }
 	
         scManager->RegisterScoringMesh(Scorer_box);
