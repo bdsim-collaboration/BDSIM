@@ -231,13 +231,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   for (const auto& nameIndex : scorerCollectionIDs)
     {scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
 
-  for (const auto& hits : scorerHits)
-    {
-      G4cout << hits.second->GetSize() << G4endl;
-      //for (auto hit : *hits.second)
-      //  {G4cout << hit.first << " " <<  *(hit.second) << G4endl;}
-    }
-
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
   // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
