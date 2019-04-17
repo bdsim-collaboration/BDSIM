@@ -96,6 +96,8 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
       {return  new G4PSPopulation3D(name); break;}
     case BDSScorerType::ambient_dose:
       {return new BDSScorerQuantity3D(name,mapper,filename); break;}
+     case BDSScorerType::activation:
+      {return new BDSScorerQuantity3D(name,mapper,filename); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");
