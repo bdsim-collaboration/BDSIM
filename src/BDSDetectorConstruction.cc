@@ -889,7 +889,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     {return;} // no biasing used -> dont attach as just overhead for no reason
   
   // apply per element biases
-  for (auto const & item : *registry)
+  std::map<G4String, BDSAcceleratorComponent*> allAcceleratorComponents = registry->AllComponentsIncludingUnique();
+  for (auto const & item : allAcceleratorComponents)
     {
       if (debug)
         {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
