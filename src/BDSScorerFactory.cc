@@ -16,23 +16,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
+#include "BDSScorerQuantity3D.hh"
+#include "BDSScorerTimeFilter.hh"
 #include "BDSScorerType.hh"
-#include "BDSDebug.hh"
 
 #include "globals.hh"
-
-#include "G4SDParticleWithEnergyFilter.hh"
-#include "BDSScorerTimeFilter.hh"
-
-#include "G4ScoringManager.hh"
-#include "G4ScoringBox.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSPopulation3D.hh"
-#include "BDSScorerQuantity3D.hh"
+#include "G4ScoringBox.hh"
+#include "G4ScoringManager.hh"
+#include "G4SDParticleWithEnergyFilter.hh"
+#include "G4VPrimitiveScorer.hh"
 
 BDSScorerFactory::BDSScorerFactory()
 {;}
@@ -50,25 +49,27 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
     {return primitiveScorer;}
   
   G4String particleName = info->particle->GetParticleName();
-  G4SDParticleWithEnergyFilter* scorer_filter= new G4SDParticleWithEnergyFilter("particle_filter",
-										info->minimumEnergy,
-										info->maximumEnergy);
+  G4SDParticleWithEnergyFilter* scorerFilter= new G4SDParticleWithEnergyFilter("particle_filter",
+									       info->minimumEnergy,
+									       info->maximumEnergy);
   
-  scorer_filter->add(particleName);
-  primitiveScorer->SetFilter(scorer_filter);
+  scorerFilter->add(particleName);
+  primitiveScorer->SetFilter(scorerFilter);
   
-  if(info->maximumTime != info->minimumTime)
+  if (info->maximumTime != info->minimumTime)
     {
-      BDSScorerTimeFilter *time_filter = new BDSScorerTimeFilter("time_filter", info->minimumTime, info->maximumTime);
-      primitiveScorer->SetFilter(time_filter);
+      BDSScorerTimeFilter* timeFilter = new BDSScorerTimeFilter("time_filter",
+								info->minimumTime,
+								info->maximumTime);
+      primitiveScorer->SetFilter(timeFilter);
     }
   
   return primitiveScorer;
 }
 
-G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
+G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String            name,
 							   const BDSScorerType scorerType,
-							   G4String filename,
+							   G4String            filename,
 							   const BDSHistBinMapper3D* mapper)
 {
   G4VPrimitiveScorer* result = nullptr;
