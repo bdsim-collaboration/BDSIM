@@ -18,6 +18,7 @@ What BDSIM is suitable for
 
 * Single particle Monte-Carlo simulations of particle accelerators
 * Simulating beam loss in a particle accelerator
+* Simulating particle transport in an accelerator where matter interaction is expected, such as transport in air.
 * Simulating detector backgrounds from halo and machine background sources
 
 What BDSIM is not intended for
@@ -35,6 +36,8 @@ Example Applications
 * Beam transport in air
 * Beam interaction with vacuum gas
 * Losses in beam extraction
+* Collimation system efficiency and secondary radiation
+* Transport of products from target through accelerator
 * LHC beam loss and energy deposition
 * CLIC muon background from the accelerator
 * Laserwire detector signal to background ratio

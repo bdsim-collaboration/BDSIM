@@ -1,4 +1,4 @@
-V1.3.2 - 2019 / 03 / ??
+V1.3.2 - 2019 / 04 / 19
 =======================
 
 New Features
@@ -10,6 +10,7 @@ New Features
 General
 -------
 
+* Tested with Geant4.10.5.p01
 * Geometry navigators are reset at the beginning of a run now in a similar way to the start of
   an event to ensure independence between runs - future proofing.
 * For Geant4.10.5, we now use the 'low' looping particle thresholds for tracking.
@@ -48,9 +49,9 @@ Bug Fixes
 * Fix warning when loading an output file with data loader class when the file was created
   without storing primary coordinates. The warning was related to the PrimaryGlobal branch.
 * Fix warnings and artificial killing of particles by high looping particle thresholds for
-  Geant4.10.5, which are default. Use the 'low' looping thresholds by default.
+  Geant4.10.5, which are default. Use the 'low' looping thresholds by default. Issue #268.
 * Fix stuck particles by attaching the vacuum field in a beam pipe to every volume in the
-  beam pipe apart from the container volume to avoid navigation problems in very thin gaps.
+  beam pipe apart from the container volume to avoid navigation problems in very thin gaps. Issue #268.
 * Remove half-implemented integrator types in internal dictionaries.
 * Fixed model-model example conversion Python scripts as these were specific to the developer's computer.
 * Fix coil end-piece placement with respect to main magnet body - now includes required length safety

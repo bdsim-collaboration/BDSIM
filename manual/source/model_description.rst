@@ -3474,7 +3474,7 @@ Geant4 automatically includes the reciprocal of the factor as a weighting, which
 recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
 used should be multiplied by the weight to achieve the correct physical result.
 
-.. note:: This only works with Geant4 version 10.1 or higher.
+.. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
