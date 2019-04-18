@@ -93,7 +93,12 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
     case BDSScorerType::deposited_energy:
       {return  new G4PSEnergyDeposit3D(name); break;}
     case BDSScorerType::population:
-      {return  new G4PSPopulation3D(name); break;}
+      {
+          G4PSPopulation3D* scorer = new G4PSPopulation3D(name);
+          scorer->Weighted(TRUE);
+          return  scorer;
+          break;
+      }
     case BDSScorerType::ambient_dose:
       {return new BDSScorerQuantity3D(name,mapper,filename); break;}
      case BDSScorerType::activation:
