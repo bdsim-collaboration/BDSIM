@@ -547,7 +547,7 @@ Bug Fixes
   save the whole trajectory for the primary. This fixes the behaviour of linearly growing
   unbounded memory usage when tracking for a long time in a ring. Issue #246, #242.
 * Optical calculation now works for sub-relativistic positrons.
-* ATF2 MADX output was not included in worked example as advertised - now included.
+* ATF2 MAD-X output was not included in worked example as advertised - now included.
 * Fixed scaling variable used when scaling a field map to a decapole magnet strength.
 * Survey units for magnetic fields are now fixed from kT to T.
 * Fixed issue where C-shaped vkickers and hkickers would ignore :code:`yokeOnInside`. Issue #251.
