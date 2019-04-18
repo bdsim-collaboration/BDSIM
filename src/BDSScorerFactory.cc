@@ -34,28 +34,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PSPopulation3D.hh"
 #include "BDSScorerQuantity3D.hh"
 
-
-BDSScorerFactory* BDSScorerFactory::instance = nullptr;
-
-BDSScorerFactory* BDSScorerFactory::Instance()
-{
-  if (!instance)
-    {instance = new BDSScorerFactory();}
-  return instance;
-}
-
 BDSScorerFactory::BDSScorerFactory()
 {;}
-
-BDSScorerFactory::~BDSScorerFactory()
-{
-  instance = nullptr;
-}
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      info,
 						   const BDSHistBinMapper3D* mapper)
 {
-  /// Here create the scorer with the informations inside BDSScorerInfo.
+  // here we create the scorer with the informations inside BDSScorerInfo.
   G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name,
 							     info->scorerType,
 							     info->filename,

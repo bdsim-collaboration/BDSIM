@@ -16,52 +16,44 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef BDSSCORERFACTORY_H
+#define BDSSCORERFACTORY_H
 
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4VPrimitiveScorer.hh"
-
-#ifndef BDSSCORERFACTORY_H
-#define BDSSCORERFACTORY_H
 
 class BDSHistBinMapper3D;
 class BDSScorer;
 class BDSScorerInfo;
+class G4VPrimitiveScorer;
 
 class G4Material;
 
 /**
- * @brief Interface to create any RF cavity geometry.
+ * @brief Create primitive scorers on demand.
  *
- * @author Laurie Nevay
+ * @author Robin Tesse
  */
 
 class BDSScorerFactory
 {
 public:
-  static BDSScorerFactory* Instance(); ///< Singleton accessor.
+  BDSScorerFactory();
+  ~BDSScorerFactory(){;}
   
-  /// Reset static singleton instance to nullptr and delete the singleton
-  /// factories for different beam pipe styles. Delete them here as they
-  /// should only be accessed through this class.
-  ~BDSScorerFactory();
-  
-  /// Main function to create a piece of cavity geometry.
+  /// Main function to create a scorer.
   G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo*      info,
 				   const BDSHistBinMapper3D* mapper);
   
-private:
-  BDSScorerFactory(); ///< Private constructor as singleton pattern.
-  
-  static BDSScorerFactory* instance; ///< Singleton instance.
-  
+private:  
   ///@{ Unused default constructors
   BDSScorerFactory(const BDSScorerFactory&) = delete;
   BDSScorerFactory& operator=(const BDSScorerFactory&) = delete;
   ///@}
 
+  /// Construct the primitive scorer required.
   G4VPrimitiveScorer* GetAppropriateScorer(G4String                  name,
 					   const BDSScorerType       scorerType,
 					   G4String                  filename,

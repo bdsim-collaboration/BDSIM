@@ -992,6 +992,7 @@ void BDSDetectorConstruction::ConstructMeshes()
     }
 
   // construct meshes
+  BDSScorerFactory scorerFactory;
   for (const auto& mesh : scoring_meshes)
     {
       // convert to recipe class as this checks parameters
@@ -1019,7 +1020,7 @@ void BDSDetectorConstruction::ConstructMeshes()
 	  if (search == scorerRecipes.end())
 	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-	  G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(&(search->second), mapper);
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper);
 	  // The mesh internally creates a multifunctional detector which is an SD and has
 	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
 	  // the hits map we need the full name of the unique primitive scorer so we build that
