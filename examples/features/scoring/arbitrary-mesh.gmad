@@ -3,12 +3,15 @@ l1: line=(c1);
 use, l1;
 
 protonAmbient: scorer, type="ambient_dose",
-	    	   particleName="proton",
-		   minimumEnergy=20*MeV,
-		   maximumEnergy=1*GeV,
-			 minimumTime=0*s,
-			 maximumTime=1*s,
-		   conversionFactorFile="h10protons.txt";
+	    	       particleName="proton",
+		       minimumEnergy=20*MeV,
+		       maximumEnergy=1*GeV,
+		       minimumTime=0*s,
+		       maximumTime=1*s,
+		       conversionFactorFile="h10protons.txt";
+
+neutronFlux: scorer, type="population",
+	     	     particleName="neutron";
 
 ! option 5 - arbitrary mesh
 ! mesh just after collimator in air
@@ -18,7 +21,7 @@ meshAir: scorermesh, nx=40, ny=30, nz=10, scoreQuantity="protonAmbient",
 
 
 ! mesh in collimator
-meshCol: scorermesh, nx=10, ny=10, nz=5, scoreQuantity="protonAmbient",
+meshCol: scorermesh, nx=10, ny=10, nz=5, scoreQuantity="protonAmbient neutronFlux",
 	 xsize=40*cm, ysize=40*cm, zsize=10*cm,
 	 z=10*cm;
 

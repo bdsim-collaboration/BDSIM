@@ -92,6 +92,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <list>
 #include <map>
+#include <sstream>
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
@@ -979,49 +980,62 @@ void BDSDetectorConstruction::ConstructMeshes()
   if (scoring_meshes.empty())
     {return;}
 
-    G4ScoringManager* scManager = G4ScoringManager::GetScoringManager();
-    scManager->SetVerboseLevel(1);
+  G4ScoringManager* scManager = G4ScoringManager::GetScoringManager();
+  scManager->SetVerboseLevel(1);
 
-    for (const auto& mesh : scoring_meshes)
+  // convert all the parser scorer definitions into recipes (including parameter checking)
+  std::map<G4String, BDSScorerInfo> scorerRecipes;
+  for (const auto& scorer : scorers)
     {
-	// convert to recipe class as this checks parameters
-	BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
-	
-	// name we'll use for the mesh
-	G4String meshName = meshRecipe.name;
+      BDSScorerInfo si = BDSScorerInfo(scorer);
+      scorerRecipes.insert(std::make_pair(si.name, si));
+    }
 
-	// TBC - could be any beam line in future - just w.r.t. main beam line just now
-	const BDSBeamline* mbl = BDSAcceleratorModel::Instance()->BeamlineMain();
-	G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
-
-	// create a scoring box
-        BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
-	const BDSHistBinMapper3D* mapper = Scorer_box->Mapper();
-	
-	// add the scorer to the scoring mesh
-    std::vector<G4String> meshPrimitiveScorerNames;
-    for (const auto& scorer : scorers)
+  // construct meshes
+  for (const auto& mesh : scoring_meshes)
+    {
+      // convert to recipe class as this checks parameters
+      BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
+      
+      // name we'll use for the mesh
+      G4String meshName = meshRecipe.name;
+      
+      // TBC - could be any beam line in future - just w.r.t. main beam line just now
+      const BDSBeamline* mbl = BDSAcceleratorModel::Instance()->BeamlineMain();
+      G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
+      
+      // create a scoring box
+      BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
+      const BDSHistBinMapper3D* mapper = Scorer_box->Mapper();
+      
+      // add the scorer(s) to the scoring mesh
+      std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
+      std::vector<G4String> scorerNames;
+      std::stringstream sqss(mesh.scoreQuantity);
+      G4String word;
+      while (sqss >> word) // split by white space - process word at a time
 	{
-        if(scorer.name == mesh.scoreQuantity) { // Check that the filter name corresponds to the stored quantity.
-            BDSScorerInfo *sc = new BDSScorerInfo(scorer);
-            G4VPrimitiveScorer *ps = BDSScorerFactory::Instance()->CreateScorer(sc, mapper);
-            // The mesh internally creates a multifunctional detector which is an SD and has
-            // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
-            // the hits map we need the full name of the unique primitive scorer so we build that
-            // name here and store it.
-            G4String uniqueName = meshName + "/" + ps->GetName();
-            meshPrimitiveScorerNames.push_back(uniqueName);
-            Scorer_box->SetPrimitiveScorer(ps);
-            BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
-            BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
-        }
-	  }
-	
-        scManager->RegisterScoringMesh(Scorer_box);
+	  auto search = scorerRecipes.find(word);
+	  if (search == scorerRecipes.end())
+	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-        // register it with the sd manager as this is where we get all collection IDs from
-        // in the end of event action. This must come from the mesh as it creates the
-        // multifunctionaldetector and therefore has the complete name of the scorer collection
-        BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames);
+	  G4VPrimitiveScorer* ps = BDSScorerFactory::Instance()->CreateScorer(&(search->second), mapper);
+	  // The mesh internally creates a multifunctional detector which is an SD and has
+	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
+	  // the hits map we need the full name of the unique primitive scorer so we build that
+	  // name here and store it.
+	  G4String uniqueName = meshName + "/" + ps->GetName();
+	  meshPrimitiveScorerNames.push_back(uniqueName);
+	  Scorer_box->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
+	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
+	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+	}
+
+      scManager->RegisterScoringMesh(Scorer_box);
+
+      // register it with the sd manager as this is where we get all collection IDs from
+      // in the end of event action. This must come from the mesh as it creates the
+      // multifunctionaldetector and therefore has the complete name of the scorer collection
+      BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames); 
     }
 }

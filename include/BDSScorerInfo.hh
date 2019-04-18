@@ -47,7 +47,6 @@ public:
     G4double maximumTime;         ///< Maximum time
     G4String filename;            ///< Name of the conversion factor file
 
-
 private:
     /// private default constructor as unused
     BDSScorerInfo();
