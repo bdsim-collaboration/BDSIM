@@ -71,27 +71,29 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String name,
 							   G4String filename,
 							   const BDSHistBinMapper3D* mapper)
 {
+  G4VPrimitiveScorer* result = nullptr;
   switch (scorerType.underlying())
     {
     case BDSScorerType::deposited_dose:
-      {return new G4PSDoseDeposit3D(name); break;}
+      {result = new G4PSDoseDeposit3D(name); break;}
     case BDSScorerType::deposited_energy:
-      {return  new G4PSEnergyDeposit3D(name); break;}
+      {result = new G4PSEnergyDeposit3D(name); break;}
     case BDSScorerType::population:
       {
-          G4PSPopulation3D* scorer = new G4PSPopulation3D(name);
-          scorer->Weighted(TRUE);
-          return  scorer;
-          break;
+	G4PSPopulation3D* scorer = new G4PSPopulation3D(name);
+	scorer->Weighted(TRUE);
+	result = scorer;
+	break;
       }
     case BDSScorerType::ambient_dose:
-      {return new BDSScorerQuantity3D(name,mapper,filename); break;}
+      {result = new BDSScorerQuantity3D(name,mapper,filename); break;}
      case BDSScorerType::activation:
-      {return new BDSScorerQuantity3D(name,mapper,filename); break;}
+      {result = new BDSScorerQuantity3D(name,mapper,filename); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");
 	break;
       }
     }
+  return result;
 }
