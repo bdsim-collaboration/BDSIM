@@ -483,7 +483,7 @@ void BDSOutput::CreateHistograms()
 	{
 	  const auto def = nameDef.second;
 	  // use safe output name without any slashes in the name
-	  G4int histID = Create3DHistogram(def.outputName, def.name,
+	  G4int histID = Create3DHistogram(def.outputName, def.outputName,
 					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
 					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
 					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
