@@ -34,7 +34,7 @@ void Scorer::clear()
   particleName         = "";
   particlePDGID        = 0;
   minimumEnergy        = 0;
-  maximumEnergy        = 100*CLHEP::TeV;
+  maximumEnergy        = 100000;
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
