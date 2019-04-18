@@ -93,8 +93,8 @@ GMAD Syntax
 -----------
 
 GMAD is a language specifically for BDSIM that is made to be human readable.
-The name comes from the design intention of MADX syntax and extensions for Geant4.
-While GMAD is very similar to MADX, not all MADX commands are supported.
+The name comes from the design intention of MAD-X syntax and extensions for Geant4.
+While GMAD is very similar to MAD-X, not all MAD-X commands are supported.
 
 * S.I. units are used except where explicitly specified
 * Variables can be defined using :code:`name = value;` syntax
@@ -315,7 +315,7 @@ reference momentum.  The one turn map is also not applied on the first
 turn where there the beam is offset in S, but applied on following
 turns, still accounting for the exceptions mentioned above.
 
-The map must be of the format as written by MADX-PTC's ``PTC_NORMAL``
+The map must be of the format as written by MAD-X-PTC's ``PTC_NORMAL``
 command.  A one turn map (in this case, 12th order) can be generated
 in MAD-X with the following ::
 
@@ -408,17 +408,17 @@ Element `d2` is a drift with the properties of `d1` and a length of 2 metres. No
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note:: BDSIM strictly follows the MADX definition of magnet strength parameter
+.. note:: BDSIM strictly follows the MAD-X definition of magnet strength parameter
 	  `k` - a **positive** `k` corresponds to **horizontal focussing** for a
 	  **positively** charged particle. This therefore indicates a positive `k`
 	  corresponds to horizontal defocussing for a negatively charged particle.
-	  However, MADX treats all particles as positively charged for tracking purposes.
+	  However, MAD-X treats all particles as positively charged for tracking purposes.
 
-.. warning:: BDSIM currently treats k absolutely, so to convert a MADX lattice for
-	     negatively particles, the MADX k values must be multiplied by -1. The
+.. warning:: BDSIM currently treats k absolutely, so to convert a MAD-X lattice for
+	     negatively particles, the MAD-X k values must be multiplied by -1. The
 	     pybdsim converter provides an option called `flipmagnets` for this
 	     purpose. This may be revised in future releases depending on changes
-	     to MADX.
+	     to MAD-X.
 
 
 Component Strength Scaling
@@ -1044,8 +1044,8 @@ Example::
 tkicker
 ^^^^^^^
 
-BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
-however MADX differentiates the two on the basis of fitting parameters. BDSIM does
+BDSIM, like MAD-X, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
+however MAD-X differentiates the two on the basis of fitting parameters. BDSIM does
 not make this distinction. See `kicker`_ for more details.
 
 In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
@@ -1749,14 +1749,14 @@ is controlled through the following parameters:
 * `beampipeMaterial`
 
 
-For each aperture model, a different number of parameters are required. Here, we follow the MADX
+For each aperture model, a different number of parameters are required. Here, we follow the MAD-X
 convention and have four parameters. The user must specify them as required for that model.
 BDSIM will check to see if the combination of parameters is valid. `beampipeRadius` and `aper1`
 are degenerate.
 
 Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
-These are used differently for each aperture model and match the MADX aperture definitions.
+These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
@@ -2041,7 +2041,7 @@ and rotations. Every component can be displaced transversely and rotated along t
 .. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y-
 	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
 	  tilt will become a vertical bend without flipping x and y in the sampler or subsequent components. This
-	  matches the behaviour of MAD8 and MADX.
+	  matches the behaviour of MAD8 and MAD-X.
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
 
@@ -2825,7 +2825,7 @@ e.g. ::
 
 .. note:: If a sampler is placed at the very beginning of the lattice, it may appear
 	  that only approximately half of the primary particles seem to pass through it. This
-	  is the correct behaviour, as unlike an optics program such as MADX, the sampler
+	  is the correct behaviour, as unlike an optics program such as MAD-X, the sampler
 	  represents a thin plane in 3D space in BDSIM. If the beam distribution has some
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
@@ -3474,7 +3474,7 @@ Geant4 automatically includes the reciprocal of the factor as a weighting, which
 recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
 used should be multiplied by the weight to achieve the correct physical result.
 
-.. note:: This only works with Geant4 version 10.1 or higher.
+.. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
@@ -5623,7 +5623,7 @@ rotation, there is still a small fringe field effect.
 
 If `fint` is specified but `fintx` is not, `fintx` will default to the same value as `fint`. If,
 however, `fintx` is set to 0, it will in fact be 0 and will not take the value of `fint`. This is
-the same default behaviour as MADX. MADX will write out a value of `fintx` as -1 in this case in
+the same default behaviour as MAD-X. MAD-X will write out a value of `fintx` as -1 in this case in
 any output. BDSIM will write out the value used, even if it's equal to 0.
 
 Pole Face Rotations
@@ -5636,8 +5636,8 @@ The field therefore also has a hard edge with exactly no field immediately outsi
 
 The tracking routine for dipoles in the `bdsimtwo` integrator set (see :ref:`bdsim-dipole-rodrigues2`)
 tracks the particle using the analytical helical solution in a pure magnetic field in Cartesian
-coordinates. This however does not agree with the tracking provided by MADX. We therefore provide
-an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provided
+coordinates. This however does not agree with the tracking provided by MAD-X. We therefore provide
+an equivalent to MAD-X in `bdsimmatrix` integrator set (the default). The vertical focussing provided
 by the fringe field is the same in both cases.
 
 The difference between the two is negligible for small pole face angles - for example, the LHC lattice
@@ -5648,13 +5648,13 @@ difference is non-negligible.
 The integrator for dipoles in `bdsimtwo` is computationally faster and should be used for lattices
 like the LHC, where speed matters and the pole faces are not a strong feature.
 
-.. note:: To provide equivalent tracking to MADX with the `bdsimmatrix` integrator set, the
+.. note:: To provide equivalent tracking to MAD-X with the `bdsimmatrix` integrator set, the
 	  magnet geometry is constructed with flat ends (i.e. always an sbend). Rbends are constructed
 	  as sbends with additional poleface rotation angles equal to half the bend angle. Instead of
 	  constructing the poleface geometry, the effect of a poleface rotation is applied in a thin
 	  fringefield magnet (1 micron thick by default) at the beginning (for non-zero e1) or at the
 	  end (for non-zero e2) of the dipole. In future, this will be decoupled to allow both the
-	  physical angled faces in the model as well as accurate tracking, using the MADX style matrix
+	  physical angled faces in the model as well as accurate tracking, using the MAD-X style matrix
 	  integrators.
 
 Large Angle Bends
