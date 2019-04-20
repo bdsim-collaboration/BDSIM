@@ -13,7 +13,6 @@ Currently maintained and developed by:
 Laurie Nevay          <laurie.nevay@rhul.ac.uk> (main contact)
 Andrey Abramov        <andrey.abramov.2012@live.rhul.ac.uk>
 Stewart Boogert       <stewart.boogert@rhul.ac.uk>
-Hector Garcia Morales <hector.garciamorales@rhul.ac.uk>
 Stephen Gibson        <stephen.gibson@rhul.ac.uk>
 Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
@@ -24,7 +23,7 @@ Originally started by G.A. Blair. See manual for full authorship.
 History
 =======
 
-v1.3.2: ??.03.19
+v1.3.2: 20.04.19
 v1.3.1: 05.03.19
 v1.3:   27.02.19
 v1.2:   26.08.18
@@ -66,9 +65,9 @@ tested on:
    
 mandatory:
    - BISON
-   - CLHEP (recommended version 2.1.3.1 or greater)
+   - CLHEP (recommended version 2.3.3.0 - check with Geant4 version)
    - FLEX
-   - Geant4 versions Geant4.10 or greater (10.4.p02 recommended)
+   - Geant4 versions Geant4.10 or greater (10.4.p03 recommended)
      Latest patch version recommended of any 10.X version. 
    - ROOT 6
 
