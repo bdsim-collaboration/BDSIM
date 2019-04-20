@@ -24,23 +24,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4PhysicsVector.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4Track.hh"
 #include "G4VSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VPVParameterisation.hh"
 #include "G4UnitsTable.hh"
 
 #include <fstream>
+#include <string>
 
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
 #endif
 
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
 					 const BDSHistBinMapper3D* mapperIn,
-					 const G4String filename,
+					 const G4String            filename,
 					 G4int ni,
 					 G4int nj,
 					 G4int nk,
@@ -48,12 +49,14 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
 					 G4int depj,
 					 G4int depk):
   G4VPrimitiveScorer(scorer_name),
-  HCID3D(-1),EvtMap3D(nullptr), fDepthi(depi),fDepthj(depj),fDepthk(depk),
+  HCID3D(-1),
+  EvtMap3D(nullptr),
+  fDepthi(depi),fDepthj(depj),fDepthk(depk),
   mapper(mapperIn)
 {
-  fNi=ni;
-  fNj=nj;
-  fNk=nk;
+  fNi = ni;
+  fNj = nj;
+  fNk = nk;
   
   if (filename.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorer_name + "\" - required");}
@@ -78,12 +81,12 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String scorer_name,
 BDSScorerQuantity3D::~BDSScorerQuantity3D()
 {;}
 
-G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
+G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
-  G4double radiation_quantity;
+  G4double radiation_quantity = 0;
 
-  /// Fluence computation
+  // fluence computation
   if (!BDS::IsFinite(stepLength))
     {return false;}
   
@@ -91,10 +94,10 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   G4VSolid* solid = touchable->GetSolid();
   G4double cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
   
-  G4double CellFlux = (stepLength / cubicVolume);
+  G4double CellFlux = stepLength / cubicVolume;
   CellFlux *= aStep->GetPreStepPoint()->GetWeight();
   
-  G4double energy = (aStep->GetPreStepPoint()->GetKineticEnergy());
+  G4double energy = aStep->GetPreStepPoint()->GetKineticEnergy();
   G4double factor = conversionFactor->Value(energy);
   radiation_quantity = CellFlux*factor;
   G4int index = GetIndex(aStep);
@@ -112,7 +115,7 @@ void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(HCID3D,EvtMap3D);
 }
 
-void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent*)
+void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
 {;}
 
 void BDSScorerQuantity3D::clear()

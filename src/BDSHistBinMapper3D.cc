@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-
 BDSHistBinMapper3D::BDSHistBinMapper3D(G4int nBinsIIn,
 				       G4int nBinsJIn,
 				       G4int nBinsKIn):

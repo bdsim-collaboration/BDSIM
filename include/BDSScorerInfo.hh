@@ -16,40 +16,46 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSSCORERINFO_H
 #define BDSSCORERINFO_H
 
 #include "BDSScorerType.hh"
-#include "globals.hh"         // geant4 types / globals
 
-#include "CLHEP/Units/SystemOfUnits.h"
-#include "G4ParticleDefinition.hh"
+#include "globals.hh"         // geant4 types / globals
 
 namespace GMAD
 {
-    class Scorer;
+  class Scorer;
 }
+class G4ParticleDefinition;
+
+/**
+ * @brief Recipe class for scorer. Checks values.
+ *
+ * Convert a parser scorer instance to one using Geant4 types
+ * and units. Check values and find particle definition.
+ *
+ * @author Robin Tesse
+ */
 
 class BDSScorerInfo
 {
 public:
-    /// Constructor
-
-    BDSScorerInfo(const GMAD::Scorer& scorer);
-
-    BDSScorerType scorerType; ///< Scorer type.
-    G4String name;     ///< Scorer name.
-    G4ParticleDefinition*   particle;      ///< Particle filter
-    G4double minimumEnergy;       ///< Minimal energy
-    G4double maximumEnergy;       ///< Maximal energy
-    G4double minimumTime;         ///< Minimum time
-    G4double maximumTime;         ///< Maximum time
-    G4String filename;            ///< Name of the conversion factor file
-
+  /// Constructor.
+  BDSScorerInfo(const GMAD::Scorer& scorer);
+  
+  BDSScorerType scorerType;          ///< Scorer type.
+  G4String      name;                ///< Scorer name.
+  G4ParticleDefinition* particle;    ///< Particle filter
+  G4double      minimumEnergy;       ///< Minimal energy
+  G4double      maximumEnergy;       ///< Maximal energy
+  G4double      minimumTime;         ///< Minimum time
+  G4double      maximumTime;         ///< Maximum time
+  G4String      filename;            ///< Name of the conversion factor file
+  
 private:
-    /// private default constructor as unused
-    BDSScorerInfo();
+  /// Pivate default constructor as unused.
+  BDSScorerInfo();
 };
 
 #endif

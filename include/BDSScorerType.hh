@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSSCORERTYPE_H
 #define BDSSCORERTYPE_H
 
@@ -24,25 +23,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSTypeSafeEnum.hh"
 
-#include <map>
-
 /**
- * @brief Type definition for RF cavities
+ * @brief Type definition for scorers
  *
- * @author Laurie Nevay
+ * @author Robin Tesse
  */
 
 struct scorertype_def
 {
-    enum type {deposited_dose, deposited_energy, population, ambient_dose, activation};
+  enum type {deposited_dose, deposited_energy, population, ambient_dose, activation};
 };
 
 typedef BDSTypeSafeEnum<scorertype_def,int> BDSScorerType;
 
 namespace BDS
 {
-    /// function to determine the enum type of the cavity geometry (case-insensitive)
-    BDSScorerType DetermineScorerType(G4String scorerType);
+  /// function to determine the enum type of the cavity geometry (case-insensitive)
+  BDSScorerType DetermineScorerType(G4String scorerType);
 }
 
 #endif

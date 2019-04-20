@@ -28,6 +28,15 @@ namespace GMAD
   class ScorerMesh;
 }
 
+/**
+ * @brief Recipe class for a scoring mesh.
+ * 
+ * Convert a parser scorermesh instance to one using Geant4
+ * types and units. Check values are set correctly.
+ *
+ * @author Robin Tesse
+ */
+
 class BDSScorerMeshInfo
 {
 public:

@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4ParticleTable.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer):
   particle(nullptr)
 {

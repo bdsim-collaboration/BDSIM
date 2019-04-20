@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4DataVector.hh"
 #include "G4PhysicsVector.hh"
 
-
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
 #endif

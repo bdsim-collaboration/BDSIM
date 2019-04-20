@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScoringBox.hh"
 #include "BDSScorerMeshInfo.hh"
 
+#include "globals.hh"
 #include "G4RotationMatrix.hh"
 
 BDSScoringBox::BDSScoringBox(const G4String&          name,

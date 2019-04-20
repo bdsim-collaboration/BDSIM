@@ -16,44 +16,50 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef BDSRADIATIONQUANTITY3D_H
+#define BDSRADIATIONQUANTITY3D_H
 
-#ifndef BDSRadiationQuantity3D_H
-#define BDSRadiationQuantity3D_H
-
-#include "G4VPrimitiveScorer.hh"
+#include "globals.hh"
 #include "G4THitsMap.hh"
-#include "G4Physics2DVector.hh"
-#include "G4VDataSetAlgorithm.hh"
-#include <vector>
+#include "G4VPrimitiveScorer.hh"
 
 class BDSHistBinMapper3D;
+class G4PhysicsVector;
 
 class BDSScorerQuantity3D: public G4VPrimitiveScorer
 {
 public:
-  BDSScorerQuantity3D(const G4String scorer_name,
+  BDSScorerQuantity3D(const G4String            scorer_name,
 		      const BDSHistBinMapper3D* mapperIn,
-		      const G4String filename="",
+		      const G4String           filename,
 		      G4int ni=1,G4int nj=1, G4int nk=1,
 		      G4int depi=2, G4int depj=1, G4int depk=0);
   
   virtual ~BDSScorerQuantity3D() override;
-
-
-protected:
-    G4bool ProcessHits(G4Step*,G4TouchableHistory*) override;
-    G4int GetIndex(G4Step* aStep) override;
-
+  
 public:
-    void Initialize(G4HCofThisEvent*) override;
-    void EndOfEvent(G4HCofThisEvent*) override;
-    void clear() override;
+  void Initialize(G4HCofThisEvent* HCE) override;
+  void EndOfEvent(G4HCofThisEvent* HCE) override;
+  void clear() override;
+  
+protected:
+  G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
+  G4int  GetIndex(G4Step* aStep) override;
 
 private:
-  G4int HCID3D;
-  G4THitsMap<G4double>* EvtMap3D;
-  G4int fDepthi, fDepthj, fDepthk;
+  G4int                 HCID3D;   ///< Collection ID.
+  G4THitsMap<G4double>* EvtMap3D; ///< Hits map.
+
+  /// @{ Depth in replica to look for each dimension.
+  G4int fDepthi;
+  G4int fDepthj;
+  G4int fDepthk;
+  /// @}
+
+  /// Conversion factor interpolator object.
   G4PhysicsVector* conversionFactor;
+
+  /// Mapping from coordinate systems in mesh to global replica number.
   const BDSHistBinMapper3D* mapper; ///< We don't own this.
 };
 

@@ -188,6 +188,7 @@ private:
 
   std::map<G4String, std::set<G4LogicalVolume*>* > volumeRegistries; ///< All volume registries.
 
+  /// Scorer histogram definitions cached from construction here to be used in output creation.
   std::vector<BDSScorerHistogramDef> scorerHistogramDefs;
   std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefsMap;
 };

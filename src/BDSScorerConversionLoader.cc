@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerConversionLoader.hh"
-#include "G4PhysicsOrderedFreeVector.hh"
-#include "G4PhysicsLogVector.hh"
 
 #include "globals.hh"
+#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsVector.hh"
 #include "G4String.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -66,8 +66,8 @@ G4PhysicsVector* BDSScorerConversionLoader<T>::Load(G4String fileName)
   G4int lineNumber = 1;
   std::string line;
 
-  std::vector<G4double > energy;
-  std::vector<G4double > conversionFactor;
+  std::vector<G4double> energy;
+  std::vector<G4double> conversionFactor;
 
   while (std::getline(file, line))
     {// read a line only if it's not a blank one

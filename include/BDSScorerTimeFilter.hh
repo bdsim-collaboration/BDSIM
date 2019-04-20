@@ -16,31 +16,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSSCORERTIMEFILTER_H
 #define BDSSCORERTIMEFILTER_H 1
 
 #include "globals.hh"
 #include "G4VSDFilter.hh"
 
-class BDSScorerTimeFilter : public G4VSDFilter
+#include "CLHEP/Units/SystemOfUnits.h"
+
+/**
+ * @brief Filter for time value for a sensitive detector.
+ *
+ * @author Robin Tesse
+ */
+
+class BDSScorerTimeFilter: public G4VSDFilter
 {
+public:
+  /// Constructor with default values.
+  BDSScorerTimeFilter(G4String name,
+		      G4double lowerLimit = 0.0,
+		      G4double upperLimit = 1*CLHEP::s); 
+  
+  virtual ~BDSScorerTimeFilter(){;}
 
-//-------
-  public: // with description
-      BDSScorerTimeFilter(G4String name,
-			      G4double tlow=0.0,
-			      G4double thigh=1e8);
-
-
-     virtual ~BDSScorerTimeFilter();
-
-  public: // with description
-     virtual G4bool Accept(const G4Step*) const;
-
-  private:
-     G4double fLowTime;
-     G4double fHighTime;
+  /// Whether a step will be accepted or rejected.
+  virtual G4bool Accept(const G4Step*) const;
+  
+private:
+  BDSScorerTimeFilter() = delete;
+  G4double lowerLimit;
+  G4double upperLimit;
 };
 
 #endif

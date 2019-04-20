@@ -205,6 +205,7 @@ private:
   void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
 		      const LossType type);
 
+  /// Fill a collection of energy hits in global coordinates into the appropriate output structure.
   void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
@@ -220,8 +221,11 @@ private:
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
-  
+
+  /// Fill a map of scorer hits into the output.
   void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
+
+  /// Fill an individual scorer hits map into a particular output histogram.
   void FillScorerHitsIndividual(const G4String hsitogramDefName,
 				const G4THitsMap<G4double>* hitMap);
 
