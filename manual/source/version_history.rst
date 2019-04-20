@@ -1,4 +1,4 @@
-V1.3.2 - 2019 / 04 / 19
+V1.3.2 - 2019 / 04 / 20
 =======================
 
 New Features
@@ -16,7 +16,7 @@ General
 * For Geant4.10.5, we now use the 'low' looping particle thresholds for tracking.
 * The 'vacuum' field is now not applied to the container volume of a beam pipe. However, it is
   still applied to the vacuum and beam pipe volumes. This makes the tracking more robust against
-  stuck particles in the extermely small gap between volumes.
+  stuck particles in the extremely small gap between volumes.
 * The yoke magnetic field now uses a wrapped G4ClassicalRK4 integrator. This wrapper acts as
   a drift for short (< 1um) steps. This makes tracking more robust for secondaries in the yoke.
 * Improve testing for user bunch distribution for robustness.
@@ -31,7 +31,7 @@ Bug Fixes
 * Fix strong recreation when using user file supplied bunch distribution. The file was
   always read from the beginning in the past. Now the correct coordinates will be
   read and the event is correctly reproduced.
-* Fix userinterface example given chanages to sensitive detector manager - simple edit.
+* Fix userinterface example given changes to sensitive detector manager - simple edit.
 * Fix calculated phase offset for rfcavity in the beam line. This was peak at the
   end of the element rather at the middle.
 * Fix possible segfault if event aborted due to extra collimator hit information.
@@ -42,7 +42,7 @@ Bug Fixes
 * Fix user file distribution file loading for comment lines, incomplete lines and empty
   (white space) lines.
 * Fix phase offset calculation for rf cavities with respect to nominal value. Phase would have
-  been smaller than intended. It was scalled to :math:`1/2\pi` instead of :math:`2\pi`.
+  been smaller than intended. It was scaled to :math:`1/2\pi` instead of :math:`2\pi`.
 * Fix ambiguity in manual for rf cavities. Time is generally in seconds in BDSIM, however the
   rf cavity took nanoseconds. A time offset of `1*ns` in the input gmad would result in double
   units.
