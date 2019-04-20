@@ -75,6 +75,14 @@ Bug Fixes
   rbend back-to-back with another rbend will not have fringe fields in the middle at the join, so
   is considered a unique construction. This would result in these not having biasing attached.
 
+Utilities
+---------
+
+* pybdsim v2.1.0
+* pymadx v1.7.1
+* pymad8 v1.5.0
+* pytransport v1.3.0
+
 
 V1.3.1 - 2019 / 03 / 05
 =======================
