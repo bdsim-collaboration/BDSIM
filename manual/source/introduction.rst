@@ -179,7 +179,8 @@ Energy
 
 The user must understand the validity of the Geant4 models used and the applicability of the
 physics processes / models at their energy regime. Most Geant4 high-energy processes will not
-work above (and including) 50 TeV for a single particle.
+work above (and including) 50 TeV for a single particle. In Geant4.10.4, limits have been raised
+to 100 TeV.
 
 Model Physical Size
 -------------------

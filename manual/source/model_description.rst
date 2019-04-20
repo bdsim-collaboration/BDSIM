@@ -160,7 +160,7 @@ The following is an example of a common mistake that's not easy to spot: ::
 
 With this syntax we expect to create a design beam of 3 TeV electrons but the central energy of 1 TeV for the bunch. 3 TeV
 is used to calculate the magnet strengths and it's expected to fire a 1 TeV electron. However, the E0 parameter here just
-defines a variable called E0 that isn't used. The indentation (whitespace) is ignored. The error is the semi-colon at the
+defines a variable called E0 that isn't used. The indentation (white-space) is ignored. The error is the semi-colon at the
 end of the second line. This is the correct version: ::
 
   beam, particle="e-",
@@ -1111,8 +1111,8 @@ of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of
 element is used to find the phase offset.
 
 .. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
-	  only correct for already relativisitic beams. Development is underway to improve
-	  this calculation for sub-relativisitic beams.
+	  only correct for already relativistic beams. Development is underway to improve
+	  this calculation for sub-relativistic beams.
 
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
@@ -1216,7 +1216,7 @@ jcol
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by :math:`\pi/2`.
 The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
-apertures which are the distances from the center of element to the left and right jaws respectively.
+apertures which are the distances from the centre of element to the left and right jaws respectively.
 
 
 +--------------------+------------------------------+--------------+---------------+
@@ -1445,8 +1445,8 @@ parameter              description                                      default 
 
 Notes:
 
-* The angle is the rotation from vertical in the clock-wise direction looing in the
-  positive S direction (the usualy direction of the beam).
+* The angle is the rotation from vertical in the clock-wise direction looping in the
+  positive S direction (the usually direction of the beam).
 
 The offsets are with respect to the centre of the beam pipe section the wire is placed inside.
 This should therefore be less than half the element length `l`. The usual beam pipe parameters
@@ -2127,7 +2127,7 @@ Example::
 	   :width: 40%
 	   :align: center
 
-The parametrisation used to define elliptical cavities in BDSIM.
+The parameterisation used to define elliptical cavities in BDSIM.
 The symbols used in the figure map to the cavity options according to the table below.
 
 +-----------------------+-----------------------------+
@@ -2885,7 +2885,7 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 			aper1=10*cm;
 
 This defines a circular (by default) sampler with radius 10 cm positioned with respect to
-the 2nd instnace of the d1 element (zero counting) in the main beam line with a rotation
+the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
 Placement
@@ -3018,7 +3018,7 @@ Physics Processes
 -----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
-define **only** the processess required so that the simulation covers the desired outcome
+define **only** the processes required so that the simulation covers the desired outcome
 want but is also efficient. Geant4 says, "There is no one model that covers all physics
 at all energy ranges."
 
@@ -3411,7 +3411,7 @@ Examples: ::
   option, physicsList="g4FTFP_BERT_PEN",
           g4PhysicsUSeBDSIMCutsAndLimits=0;
 
-This last example turns off the minimum kinetic energy and also the the maximum step length
+This last example turns off the minimum kinetic energy and also the maximum step length
 limit which is by default 110% the length of the element. If bad tracking behaviour
 is experienced (stuck particles etc.) this should be considered. ::
 	  
@@ -3423,7 +3423,7 @@ This following example will enforce a minimum kinetic energy but also limit the 
   option, physicsList="g4FTFP_BERT",
           minimumKineticEnergy=20*GeV;
 
-.. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
+.. note:: "g4" is not case sensitive but the remainder of the string is. The remainder is passed
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
 	  case sensitive.
 
@@ -3453,9 +3453,10 @@ These cannot be used in combination with any other physics processes.
 Physics Biasing
 ---------------
 
-BDSIM currently provides two ways to artifically interfere with the physics processes
-to make the desired outcome happen more often. In both cases the goal is more efficiently
-simulate the correct physical outcome - variance reduction.
+BDSIM currently provides two ways to artificially interfere with the physics processes
+to make the desired outcome happen more often. In both cases, the goal is to simulate
+the correct physical outcome, but more efficiently in the parameters of interest,
+i.e. variance reduction.
 
 The two cases are :ref:`physics-bias-cross-section-biasing` and
 :ref:`physics-bias-importance-sampling`, each described below.
@@ -3465,8 +3466,9 @@ The two cases are :ref:`physics-bias-cross-section-biasing` and
 Cross-Section Biasing
 ^^^^^^^^^^^^^^^^^^^^^
 
-The cross-section for a physics process for a specific particle can be artifically altered
-by a numerical scaling factor using cross-section biasing. The biasing is defined with the
+The cross-section for a physics process for a specific particle can be artificially altered
+by a numerical scaling factor using cross-section biasing. This is done on a per-particle
+and per-physics-process basis.  The biasing is defined with the
 keyword **xsecbias**, to define a bias 'object'. This can then be attached to various bits
 of the geometry or all of it. This is provided with the Geant4 generic biasing feature.
 
@@ -5233,7 +5235,7 @@ certain elements in the beamline, but for now such situations must be avoided.
 .. note:: Surrounding the beam line with a tunnel completely means that every particle simulated
 	  will have to eventually hit something and not escape. This means that every single particle
 	  will likely create a shower of particles down to 0 energy. This can increase simulation time.
-	  To avoid this, or at least contorl this behaviour, it is recommended to use the options
+	  To avoid this, or at least control this behaviour, it is recommended to use the options
 	  :code:`minimumKineticEnergyTunnel` or :code:`tunnelIsInfiniteAbsorber`.
 
 .. _materials-and-atoms:
