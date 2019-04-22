@@ -109,7 +109,7 @@ OptionsBase::OptionsBase()
   ignoreLocalMagnetGeometry  = 0;
 
   preprocessGDML       = true;
-  preprocessGDMLSchema = false;
+  preprocessGDMLSchema = true;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
