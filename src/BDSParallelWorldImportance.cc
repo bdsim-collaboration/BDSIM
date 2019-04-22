@@ -147,70 +147,62 @@ void BDSParallelWorldImportance::AddIStore()
   // set world volume importance to 1
   aIstore->AddImportanceGeometryCell(1, gWorldVolumeCell);
 
-  // set importance values and create scorers
-  G4int numCells = (G4int) imVolumesAndValues.size();
-
-  for (G4int cell = 0; cell < numCells; cell++)
+  // set importance values
+  for (const auto& cell : imVolumeStore)
     {
-      G4GeometryCell gCell  = GetGeometryCell(cell);
-      G4String cellName     = gCell.GetPhysicalVolume().GetName();
+      G4String cellName        = cell.GetPhysicalVolume().GetName();
       G4double importanceValue = GetCellImportanceValue(cellName);
-      
-      //only add to store if it hasn't already been added. 0 is replica index.
-      if (!aIstore->IsKnown(gCell))
-	{aIstore->AddImportanceGeometryCell(importanceValue, gCell.GetPhysicalVolume(), 0);}
+
+      if (!aIstore->IsKnown(cell))
+        {aIstore->AddImportanceGeometryCell(importanceValue, cell.GetPhysicalVolume(), 0);}
       else
-	{
-	  G4String message = "Geometry cell \"" + cellName + "\" already exists and has been previously\n";
-	  message += "added to the IStore.";
-	  throw BDSException(__METHOD_NAME__, message);
-	}
+        {
+          G4String message = "Geometry cell \"" + cellName + "\" already exists and has been previously\n";
+          message += "added to the IStore.";
+          throw BDSException(__METHOD_NAME__, message);
+        }
     }
 }
 
-G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
+G4double BDSParallelWorldImportance::GetCellImportanceValue(const G4String& cellName)
 {
-  // prepare the user cellname for error message output.
-  G4String finalCellName = cellName;
-  // prependage and appendage added in pyg4ometry
-  G4String preString1 = "importanceWorld_PREPEND";
-  G4String preString2 = "importanceWorld_";
-  G4String postString = "_pv";
-
-  // if the cellname only contains the second prepend string, it frustratingly has to be replaced with the
-  // first prepend as the first prepend string is automatically added to the map cell names when reading. This
-  // was done to match the cell pv names written by pyg4ometry which previously included PREPEND when writing.
-  // Have to check for PREPEND later anyway to maintain backwards compatibility.
-  G4String newName = cellName;
-  if (!cellName.contains(preString1) && cellName.contains(preString2))
-    {newName = cellName.replace(0,preString2.size(),preString1);}
-
-  // if the cellname is unmodified (e.g some other written geometry) then do nothing - up to
-  // user to match names in map file
-
-  auto result = imVolumesAndValues.find(newName);
-
-  // only modify name if it contains one of the prestrings - we modify in pyg4ometry ("PREPEND"/"")
-  // and this class (importanceWorld_), whereas the user will only know the name they defined.
-  // can't check for poststring as G4 PV naming convention includes it.
-  if (cellName.contains(preString1))
+  // strip off the prepended componentName that we introduce in the geometry factory
+  // this is controlled by the member variable of this class above
+  G4String pureCellName = cellName;
+  if (pureCellName.contains(componentName))
     {
-      cellName = cellName.erase(0, preString1.size());
-      finalCellName = cellName.erase(cellName.size() - postString.size(), postString.size());
+      // +1 for "_" that's added in the geometry factory
+      pureCellName = pureCellName.erase(0, componentName.size()+1);
     }
 
+  // strip off possible stupid PREPEND default from pyg4ometry
+  const G4String prepend = "PREPEND";
+  if (pureCellName.contains(prepend))
+    {
+      std::size_t found = pureCellName.find(prepend); // should be found as contains() found it
+      pureCellName.erase(found, found + prepend.size());
+    }
+
+  // replace stupid double pv suffix from pyg4ometry perpetual bug
+  if (pureCellName.contains("_pv_pv")) // would only be pv pv from pyg4ometry - can't tell otherwise
+    {
+      std::size_t found = pureCellName.find("_pv_pv");
+      pureCellName.erase(found+3, found+6);
+    }
+
+  auto result = imVolumesAndValues.find(pureCellName);
   if (result != imVolumesAndValues.end())
     {
       G4double importanceValue = (*result).second;
       // importance value must be finite and positive.
       if (importanceValue < 0)
         {
-          G4String message = "Importance value is negative for cell \"" + finalCellName + "\".";
+          G4String message = "Importance value is negative for cell \"" + pureCellName + "\".";
           throw BDSException(__METHOD_NAME__, message);
         }
       else if (!BDS::IsFinite(importanceValue))
         {
-          G4String message = "Importance value is zero for cell \"" + finalCellName + "\".";
+          G4String message = "Importance value is zero for cell \"" + pureCellName + "\".";
           throw BDSException(__METHOD_NAME__, message);
         }
       return importanceValue;
@@ -218,7 +210,7 @@ G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
   else
     {
       // exit if trying to get the importance value for a PV that isnt provided by the user.
-      G4String message = "An importance value was not found for the cell \"" + finalCellName + "\" in \n";
+      G4String message = "An importance value was not found for the cell \"" + pureCellName + "\" in \n";
       message += "the importance world geometry.";
       throw BDSException(__METHOD_NAME__, message);
     }

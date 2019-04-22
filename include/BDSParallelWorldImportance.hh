@@ -103,8 +103,7 @@ private:
   ///@}
 
   /// Get importance value of a given physical volume name.
-  G4double GetCellImportanceValue(G4String cellName);
-
+  G4double GetCellImportanceValue(const G4String& cellName);
 };
 
 #endif
