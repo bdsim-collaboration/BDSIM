@@ -61,6 +61,9 @@ public:
   const_iterator end()   const {return geometryCells.end();}
   G4bool         empty() const {return geometryCells.empty();}
   /// @}
+
+  /// Output stream.
+  friend std::ostream& operator<< (std::ostream& out, BDSImportanceVolumeStore const& ivs);
   
 private:
   /// std::set<G4GeometryCell, G4GeometryCellComp> from typedef above.

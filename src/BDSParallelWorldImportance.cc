@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+#include <iomanip>
 #include <map>
 #include <string>
 #include <fstream>
@@ -162,6 +163,12 @@ void BDSParallelWorldImportance::AddIStore()
           throw BDSException(__METHOD_NAME__, message);
         }
     }
+
+#ifdef BDSDEBUG
+  G4cout << imVolumeStore;
+  for (const auto& cellAndImportance : imVolumesAndValues)
+    {G4cout << std::left << std::setw(25) << cellAndImportance.first << " " << cellAndImportance.second << G4endl;}
+#endif
 }
 
 G4double BDSParallelWorldImportance::GetCellImportanceValue(const G4String& cellName)
