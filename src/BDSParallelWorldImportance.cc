@@ -23,20 +23,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSImportanceFileLoader.hh"
 #include "BDSParallelWorldImportance.hh"
-#include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4GeometryCell.hh"
 #include "G4IStore.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MultiFunctionalDetector.hh"
 #include "G4PVPlacement.hh"
-#include "G4SDManager.hh"
-#include "G4SDParticleFilter.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VSensitiveDetector.hh"
 
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
@@ -225,6 +220,7 @@ G4double BDSParallelWorldImportance::GetCellImportanceValue(G4String cellName)
 
 void BDSParallelWorldImportance::ConstructSD()
 {
+  /*
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
   // Sensitive Detector Name
@@ -237,6 +233,5 @@ void BDSParallelWorldImportance::ConstructSD()
   // Neutron filter
   G4SDParticleFilter* neutronFilter = new G4SDParticleFilter("neutronFilter", "neutron");
   MFDet->SetFilter(neutronFilter);
-
-  //TODO: Add scorers here if necessary. Follow recipe in G4 example B03ImportanceDetectorConstruction.
+  */
 }
