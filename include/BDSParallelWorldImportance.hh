@@ -20,25 +20,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSPARALLELWORLDIMPORTANCE_H
 
 #include "BDSExtent.hh"
-#include "BDSGeometryExternal.hh"
 #include "BDSImportanceVolumeStore.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4IStore.hh"
-#include "G4Transform3D.hh"
-#include "G4Version.hh"
-#include "G4VUserDetectorConstruction.hh"
-#include "G4VUserParallelWorld.hh"
 #include "G4GeometryCell.hh"
-#include "G4GeometryCellComp.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4VUserParallelWorld.hh"
 
-#include <list>
-#include <string>
-#include <vector>
+#include <map>
 
-class G4LogicalVolume;
-class G4Region;
+class G4UserLimits;
+class G4VisAttributes;
 class G4VPhysicalVolume;
 
 namespace GMAD {
@@ -47,15 +38,8 @@ namespace GMAD {
   class Placement;
 }
 
-class BDSShowerModel;
-
-#if G4VERSION_NUMBER > 1009
-class BDSBOptrMultiParticleChangeCrossSection;
-#endif
-
 /**
  * @brief Class that constructs a parallel importance world
- *
  *
  * @author Will Shields
  */
@@ -94,28 +78,9 @@ private:
   BDSParallelWorldImportance& operator=(const BDSParallelWorldImportance&);
   BDSParallelWorldImportance(BDSParallelWorldImportance&);
 
-  /// Create and set parameters for various G4Regions
-  void InitialiseRegions();
-
   /// Build the world volume using the extent of the BDSBeamline instance created
   /// in BuildBeamline()
   void BuildWorld();
-
-#if G4VERSION_NUMBER > 1009
-  /// Function that creates physics biasing cross section
-  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
-								 G4String defaultBias,
-								 G4String elementName);
-
-  /// List of bias objects - for memory management
-  std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
-#endif
-
-#ifdef BDSDEBUG
-  bool debug = true;
-#else
-  bool debug = false;
-#endif
 
   /// Importance sampling world volume
   G4VPhysicalVolume* imWorldPV;
