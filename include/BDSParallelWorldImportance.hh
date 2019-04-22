@@ -63,7 +63,9 @@ class BDSBOptrMultiParticleChangeCrossSection;
 class BDSParallelWorldImportance: public G4VUserParallelWorld
 {
 public:
-  explicit  BDSParallelWorldImportance(G4String name);
+  BDSParallelWorldImportance(G4String name,
+			     G4String importanceWorldGeometryFile,
+			     G4String importanceValuesFile);
   virtual ~BDSParallelWorldImportance();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry

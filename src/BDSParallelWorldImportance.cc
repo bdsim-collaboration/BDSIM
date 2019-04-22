@@ -40,13 +40,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <fstream>
 
-BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name):
+BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name,
+                                                       G4String importanceWorldGeometryFile,
+                                                       G4String importanceValuesFile):
   G4VUserParallelWorld("importanceWorld_" + name),
-  imWorldPV(nullptr)
+  imWorldPV(nullptr),
+  imGeomFile(importanceWorldGeometryFile),
+  imVolMap(importanceValuesFile),
+  componentName("importanceWorld")
 {
   userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
-  imVolMap   = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();
-  imGeomFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
   visAttr    = BDSGlobalConstants::Instance()->VisibleDebugVisAttr();
 }
 
