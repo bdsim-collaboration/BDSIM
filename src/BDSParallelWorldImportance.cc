@@ -97,9 +97,9 @@ void BDSParallelWorldImportance::BuildWorld()
   G4LogicalVolume* worldLV = imWorldPV->GetLogicalVolume();
 
   // set parallel world vis attributes
-  G4VisAttributes* samplerWorldVis = new G4VisAttributes(*(visAttr));
-  samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  worldLV->SetVisAttributes(samplerWorldVis);
+  G4VisAttributes* importanceWorldVis = new G4VisAttributes(*(visAttr));
+  importanceWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  worldLV->SetVisAttributes(importanceWorldVis);
 
   // set limits
   worldLV->SetUserLimits(userLimits);
@@ -125,11 +125,7 @@ void BDSParallelWorldImportance::BuildWorld()
     }
 }
 
-G4VPhysicalVolume* BDSParallelWorldImportance::GetWorldVolume()
-  {return imWorldPV;}
-
-
-G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i)
+G4GeometryCell BDSParallelWorldImportance::GetGeometryCell(G4int i) const
 {
   const G4VPhysicalVolume* p = imVolumeStore.GetPVolume(i);
   if (p)

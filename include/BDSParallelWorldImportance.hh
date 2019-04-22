@@ -52,8 +52,8 @@ public:
 			     G4String importanceValuesFile);
   virtual ~BDSParallelWorldImportance();
 
-  /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
-  /// and returns the finished world physical volume.
+  /// Overridden Geant4 method that must be implemented. Constructs
+  /// the Geant4 geometry and returns the finished world physical volume.
   void Construct();
 
   /// Create biasing operations.
@@ -63,7 +63,7 @@ public:
   BDSExtent WorldExtent() const {return worldExtent;}
 
   /// Get geometry cell from store.
-  G4GeometryCell GetGeometryCell(G4int i);
+  G4GeometryCell GetGeometryCell(G4int i) const;
 
   /// Create IStore for all importance sampling geometry cells.
   void AddIStore();
@@ -71,7 +71,7 @@ public:
   virtual void ConstructSD();
 
   /// World volume getter required in parallel world utilities.
-  G4VPhysicalVolume* GetWorldVolume();
+  inline G4VPhysicalVolume* GetWorldVolume() {return imWorldPV;}
 
 private:
   /// assignment and copy constructor not implemented nor used
