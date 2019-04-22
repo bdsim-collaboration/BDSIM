@@ -30,19 +30,19 @@ BDSImportanceVolumeStore::~BDSImportanceVolumeStore(){;}
 
 void BDSImportanceVolumeStore::AddPVolume(const G4GeometryCell& cell)
 {
-  BDSSetGeometryCell::iterator it = fSetGeometryCell.find(cell);
-  if (it != fSetGeometryCell.end())
+  BDSSetGeometryCell::iterator it = geometryCells.find(cell);
+  if (it != geometryCells.end())
     {
       G4cout << "BDSImportanceVolumeStore::AddPVolume: cell already stored" << G4endl;
       return;
     }
-  fSetGeometryCell.insert(cell);
+  geometryCells.insert(cell);
 }
 
 
 const G4VPhysicalVolume *BDSImportanceVolumeStore::GetPVolume(G4int index) const
 {
-  const G4GeometryCell& cell = *std::next(fSetGeometryCell.begin(), index);
+  const G4GeometryCell& cell = *std::next(geometryCells.begin(), index);
   const G4VPhysicalVolume* pvol = &cell.GetPhysicalVolume();
   if (!pvol)
     {G4cout << "BDSImportanceVolumeStore::GetPVolume: no physical volume for cell: " << index << ", found" << G4endl;}
