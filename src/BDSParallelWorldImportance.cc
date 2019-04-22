@@ -82,8 +82,14 @@ BDSParallelWorldImportance::~BDSParallelWorldImportance()
 
 void BDSParallelWorldImportance::BuildWorld()
 {
-  // load the importance world geometry
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry("importanceWorld", imGeomFile, nullptr, 0, 0);
+  // load the importance world geometry - we give a 'component' name that *may* be
+  // prepended to the loaded volume names to ensure it's unique - for example with
+  // GDML preprocessing turned on.
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(componentName,
+                                                                            imGeomFile,
+                                                                            nullptr,   // colour ampping
+                                                                            0, 0,      // suggested dimensions
+                                                                            false);    // sensitive
 
   // clone mass world for parallel world PV
   imWorldPV = GetWorld();

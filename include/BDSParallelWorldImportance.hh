@@ -93,10 +93,12 @@ private:
   /// Container for all user placed physical volumes and corresponding importance values.
   std::map<G4String, G4double> imVolumesAndValues;
 
+  G4String imGeomFile;
+  G4String imVolMap;
+  const G4String componentName; ///< String preprended to geometry with preprocessGDML
+
   ///@{ Cached global constants values.
   G4UserLimits* userLimits;
-  G4String imVolMap;
-  G4String imGeomFile;
   G4VisAttributes* visAttr;
   ///@}
 
