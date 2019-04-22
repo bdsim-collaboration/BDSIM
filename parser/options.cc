@@ -165,6 +165,7 @@ void Options::PublishMembers()
   publish("batch",                 &Options::batch);
   publish("verboseRunLevel",       &Options::verboseRunLevel);
   publish("verbose_G4Run",         &Options::verboseRunLevel); // to be compatible with exec options
+  publish("verbose_G4run",         &Options::verboseRunLevel); // to just generally be consistent!
   publish("verboseEventLevel",     &Options::verboseEventLevel);
   publish("verbose_G4event",       &Options::verboseEventLevel); // to be compatible with exec options
   publish("verboseTrackingLevel",  &Options::verboseTrackingLevel);
