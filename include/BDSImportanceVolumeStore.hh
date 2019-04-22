@@ -51,6 +51,16 @@ public:
 
   /// Length of this store. Useful for debugging.
   inline G4int size() const {return (G4int)geometryCells.size();}
+
+  /// @{ Iterator mechanics.
+  typedef BDSSetGeometryCell::iterator       iterator;
+  typedef BDSSetGeometryCell::const_iterator const_iterator;
+  iterator       begin()       {return geometryCells.begin();}
+  iterator       end()         {return geometryCells.end();}
+  const_iterator begin() const {return geometryCells.begin();}
+  const_iterator end()   const {return geometryCells.end();}
+  G4bool         empty() const {return geometryCells.empty();}
+  /// @}
   
 private:
   /// std::set<G4GeometryCell, G4GeometryCellComp> from typedef above.
