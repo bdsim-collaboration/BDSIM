@@ -47,6 +47,7 @@ OptionsBase::OptionsBase()
   verboseEventLevel     = 0;
   verboseTrackingLevel  = 0;
   verboseSteppingLevel  = 0;
+  verboseImportanceSampling = 0;
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;

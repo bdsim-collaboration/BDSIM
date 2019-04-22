@@ -53,6 +53,10 @@ BDSParallelWorldImportance::BDSParallelWorldImportance(G4String name,
 {
   userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   visAttr    = BDSGlobalConstants::Instance()->VisibleDebugVisAttr();
+  verbosity  = BDSGlobalConstants::Instance()->VerboseImportanceSampling();
+#ifdef BDSDEBUG
+  verbosity  = 10;
+#endif
 }
 
 void BDSParallelWorldImportance::Construct()
@@ -164,11 +168,13 @@ void BDSParallelWorldImportance::AddIStore()
         }
     }
 
-#ifdef BDSDEBUG
-  G4cout << imVolumeStore;
-  for (const auto& cellAndImportance : imVolumesAndValues)
-    {G4cout << std::left << std::setw(25) << cellAndImportance.first << " " << cellAndImportance.second << G4endl;}
-#endif
+  // feedback - user controllable
+  if (verbosity > 0)
+    {
+      G4cout << imVolumeStore;
+      for (const auto& cellAndImportance : imVolumesAndValues)
+	{G4cout << std::left << std::setw(25) << cellAndImportance.first << " " << cellAndImportance.second << G4endl;}
+    }
 }
 
 G4double BDSParallelWorldImportance::GetCellImportanceValue(const G4String& cellName)

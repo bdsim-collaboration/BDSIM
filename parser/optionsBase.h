@@ -63,6 +63,7 @@ namespace GMAD
     int  verboseEventLevel;
     int  verboseTrackingLevel;
     int  verboseSteppingLevel;
+    int  verboseImportanceSampling;
     ///@}
   
     bool circular;                 ///< Flag for circular machine
@@ -164,6 +165,7 @@ namespace GMAD
     std::string worldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
+    // see verboseImportance
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 

@@ -171,6 +171,7 @@ void Options::PublishMembers()
   publish("verbose_G4tracking",    &Options::verboseTrackingLevel); // to be compatible with exec options
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("verbose_G4stepping",    &Options::verboseSteppingLevel); // to be compatible with exec options
+  publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("recreate",              &Options::recreate);

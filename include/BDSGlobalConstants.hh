@@ -112,6 +112,7 @@ public:
   inline G4int    VerboseEventLevel()      const {return G4int   (options.verboseEventLevel);}
   inline G4int    VerboseTrackingLevel()   const {return G4int   (options.verboseTrackingLevel);}
   inline G4int    VerboseSteppingLevel()   const {return G4int   (options.verboseSteppingLevel);}
+  inline G4int    VerboseImportanceSampling() const {return G4int(options.verboseImportanceSampling);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}

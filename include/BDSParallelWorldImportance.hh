@@ -98,7 +98,8 @@ private:
   const G4String componentName; ///< String preprended to geometry with preprocessGDML
 
   ///@{ Cached global constants values.
-  G4UserLimits* userLimits;
+  G4int            verbosity;
+  G4UserLimits*    userLimits;
   G4VisAttributes* visAttr;
   ///@}
 
