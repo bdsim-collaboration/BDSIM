@@ -92,7 +92,16 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
   G4VSolid* solid = touchable->GetSolid();
-  G4double cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
+  G4double cubicVolume = 1;
+  auto search = volumeCache.find(solid);
+  if (search == volumeCache.end())
+    {// cache the volume of the volume to avoid repeated calculation
+      // this is simple for a cube, but expensive for a cuttubs
+      cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
+      volumeCache[solid] = cubicVolume;
+    }
+  else
+    {cubicVolume = search->second;}
   
   G4double CellFlux = stepLength / cubicVolume;
   CellFlux *= aStep->GetPreStepPoint()->GetWeight();

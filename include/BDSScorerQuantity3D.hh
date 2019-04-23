@@ -61,6 +61,8 @@ private:
 
   /// Mapping from coordinate systems in mesh to global replica number.
   const BDSHistBinMapper3D* mapper; ///< We don't own this.
+
+  std::map<G4VSolid*, G4double> volumeCache;
 };
 
 
