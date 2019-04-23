@@ -16,14 +16,14 @@ Bug Fixes
 ---------
 
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
-being missing from run histograms.
+  being missing from run histograms.
 
 Utilities
 ---------
 
 
 V1.3.2 - 2019 / 04 / 20
-
+=======================
 
 New Features
 ------------
