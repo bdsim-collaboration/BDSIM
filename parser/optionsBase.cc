@@ -47,6 +47,7 @@ OptionsBase::OptionsBase()
   verboseEventLevel     = 0;
   verboseTrackingLevel  = 0;
   verboseSteppingLevel  = 0;
+  verboseImportanceSampling = 0;
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;
@@ -109,7 +110,7 @@ OptionsBase::OptionsBase()
   ignoreLocalMagnetGeometry  = 0;
 
   preprocessGDML       = true;
-  preprocessGDMLSchema = false;
+  preprocessGDMLSchema = true;
 
   // geometry debugging
   // always split sbends into smaller chunks by default

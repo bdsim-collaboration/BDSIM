@@ -1,11 +1,25 @@
-V1.4 - 2019 / 05 / ??
+V1.4 - 2019 / 05 / 20
 =====================
 
+New Features
+------------
+
+* Improved event level verbosity.
+* All verbosity options now documented, including corresponding executable options.
+
+General
+-------
+
+* Executable verbosity options, now accepted in input gmad.
+  
 Bug Fixes
 ---------
 
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
-  being missing from run histograms.
+being missing from run histograms.
+
+Utilities
+---------
 
 
 V1.3.2 - 2019 / 04 / 20
