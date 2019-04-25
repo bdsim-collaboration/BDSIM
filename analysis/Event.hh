@@ -150,6 +150,7 @@ public:
 
   /// Utility method for interface building events.
   void RegisterCollimator(std::string collimatorName);
+  void RegisterSampler(std::string samplerName);
   void FlushSamplers();
   void FlushCollimators();
 private:

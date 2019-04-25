@@ -302,6 +302,14 @@ void Event::RegisterCollimator(std::string collimatorName)
   collimatorMap[collimatorName] = collimator;
 }
 
+void Event::RegisterSampler(std::string samplerName)
+{
+  BDSOutputROOTEventSampler<float>* sampler = new BDSOutputROOTEventSampler<float>();
+  samplerNames.push_back(samplerName);
+  Samplers.push_back(sampler);
+  samplerMap[samplerName] = sampler;
+}
+
 void Event::SetBranchAddressCollimators(TTree* t,
 					const RBDS::VectorString* collimatorNamesIn)
 {
