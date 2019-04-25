@@ -3613,6 +3613,7 @@ are described in the following sub-sections:
 * `Visualisation`_
 * `Output Options`_
 * `One Turn Map`_
+* :ref:`bdsim-options-verbosity`
 * `Offset for Main Beam Line`_
 * `Scoring Map`_
 * `Developer Options`_
@@ -4279,6 +4280,65 @@ with the following options.
 | trajCutLTR                        | Only stores trajectories whose *global* radius is from the start   |
 |                                   | position (sqrt(x^2, y^2)).                                         |
 +-----------------------------------+--------------------------------------------------------------------+
+
+.. _bdsim-options-verbosity:
+
+Print Out Options
+^^^^^^^^^^^^^^^^^
+
+The following options control the level of print out both from BDSIM and from Geant4. Note, excessive
+amounts of output will cause a simulation to run slowly and should only be used for understanding a
+particular physics outcome if really desired or not understood. It is recommended to print out as little
+as possible and then work 'up' to more print out as required.
+
+BDSIM prints out the most minimal information for its purpose. The physics tables printed out can be
+length, but are an important set of information for a given simulation.
+
+Some of the following options are available through executable options (with different names). See
+:ref:`executable-options` for more details.
+
+Recommendations:
+
+* `-\\-verbose_G4stepping=2` to see one line per entry / exit of a volume to see where a particle is going.
+* "Tracking" refers to a particle track which is essentiall one particle being put through the simulation.
+* Stepping is the incremental step of each particle trajectory through the simulation.
+* Event is the minimal unit of simulation.
+* Run is a group of events where the physics and geometry remained the same.
+
++----------------------------------+----------+-----------------------------------------------------------+
+| **Option**                       | **Type** | **Description**                                           |
++==================================+==========+===========================================================+
+| verbose                          | Boolean  | Whether general verbosity is on - some extra print out.   |
+|                                  |          | This highlights general construction steps of the         |
+|                                  |          | geometry; print out any field definitions defined in the  |
+|                                  |          | parser; a summary of all modular physics lists activated  |
+|                                  |          | or not.                                                   |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEvent                     | Boolean  | Extra print out identifying the start and end of event    |
+|                                  |          | action as well as the allocator pool sizes. Print out     |
+|                                  |          | the size of each hits collection if it exists at all. The |
+|                                  |          | same as `-\\-verbose_event` executable option.            |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumber               | integer  | Extra print out as in `verboseEvent`, but only for the    |
+|                                  |          | event number specified - zero counting. The same as       |
+|                                  |          | `-\\-verbose_event_num=X` executable option.              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out.              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseImportanceSampling        | integer  | (0-5) level of importance sampling related print out.     |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseRunLevel                  | integer  | (0-5) level of Geant4 run level print out. The same as    |
+|                                  |          | `-\\-verbose_G4run=X` executable option.                  |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseStep                      | Boolean  | Whether to use the verbose stepping action for every      |
+|                                  |          | step. Note, this is a lot of output.                      |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseSteppingLevel             | integer  | (0-5) level of Geant4 stepping level print out. The same  |
+|                                  |          | as `-\\-verbose_G4stepping=X` executable option.          |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same  |
+|                                  |          | as `-\\-verbose_G4tracking=X` executable option.          |
++----------------------------------+----------+-----------------------------------------------------------+
 
 
 .. _beamline-offset:

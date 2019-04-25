@@ -1,3 +1,24 @@
+V1.4 - 2019 / 05 / 20
+=====================
+
+New Features
+------------
+
+* Improved event level verbosity.
+* All verbosity options now documented, including corresponding executable options.
+
+General
+-------
+
+* Executable verbosity options, now accepted in input gmad.
+  
+Bug Fixes
+---------
+
+Utilities
+---------
+
+
 V1.3.2 - 2019 / 04 / 20
 =======================
 
