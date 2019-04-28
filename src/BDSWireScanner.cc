@@ -118,6 +118,7 @@ void BDSWireScanner::Build()
 						wireMaterial,        // material
 						name + "_wire_lv");  // name
   RegisterLogicalVolume(wireLV);
+  RegisterSensitiveVolume(wireLV, BDSSDType::energydep);
   
   // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
