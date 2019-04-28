@@ -6,14 +6,22 @@ New Features
 
 * Improved event level verbosity.
 * All verbosity options now documented, including corresponding executable options.
+* BDSIM will now exit if invalid ranges and bins are specified for the single 3D
+  energy deposition ('scoring') histogram that can be specified via options.
 
 General
 -------
 
 * Executable verbosity options, now accepted in input gmad.
+* Valid default ranges for general single 3D energy deposition 'scoring' histogram
+  available through options. Now 1m in x,y,z with 1 bin.
   
 Bug Fixes
 ---------
+
+* Fixed warnings about exiting when Geant4 geometry in closed state in the event
+  of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
+  the exception.
 
 Utilities
 ---------

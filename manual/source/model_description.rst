@@ -4413,6 +4413,8 @@ The histogram is independent of the geometry.
 * BDSIM will exit with a warning if zero range is found in any dimension as this means
   nothing will be histogrammed and there is no point in continuing.
 
+An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scoringmap.gmad`.
+
 .. note:: This is called a scoring map for historical reasons but it does not limit the step
 	  length in the way a typical Geant4 scoring map would. This only histograms energy
 	  deposition data.
