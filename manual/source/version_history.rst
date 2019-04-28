@@ -1,6 +1,12 @@
 V1.4 - 2019 / 05 / 20
 =====================
 
+Expected Changes To Results
+---------------------------
+
+* Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
+  their rotation angle. Not doing this will result in different angles and therefore results.
+
 New Features
 ------------
 
@@ -15,6 +21,7 @@ General
 * Executable verbosity options, now accepted in input gmad.
 * Valid default ranges for general single 3D energy deposition 'scoring' histogram
   available through options. Now 1m in x,y,z with 1 bin.
+* wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
   
 Bug Fixes
 ---------
@@ -22,6 +29,12 @@ Bug Fixes
 * Fixed warnings about exiting when Geant4 geometry in closed state in the event
   of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
   the exception.
+* Fix a bug where setting a rotation angle for a wire scanner would result in energy deposition
+  S coordinates all being -1. This was because the :code:`angle` parameter is assumed to only
+  ever be for bends and BDSIM reduces the sampler and curvilinear world (used for coordinate
+  transforms) diameter given the maximum bending angle of bends in the whole lattice. This is
+  required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
+  instead.
 
 Utilities
 ---------

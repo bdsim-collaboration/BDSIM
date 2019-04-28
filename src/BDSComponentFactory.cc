@@ -1305,7 +1305,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
 			     PrepareMaterial(element, "carbon"),
 			     element->wireDiameter*CLHEP::m,
 			     element->wireLength*CLHEP::m,
-			     element->angle*CLHEP::rad,
+			     element->wireAngle*CLHEP::rad,
 			     wireOffset));
 }
 

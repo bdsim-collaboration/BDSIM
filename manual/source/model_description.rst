@@ -1436,7 +1436,7 @@ parameter              description                                      default 
 `l`                    length of drift section around wire              0           yes
 `wireDiameter`         diameter of wire [m]                             0           yes
 `wireLength`           length of wirescanner [m]                        0           yes
-`angle`                angle of the wire w.r.t. vertical                0           no
+`wireAngle`            angle of the wire w.r.t. vertical                0           no
 `wireOffsetX`          x offset of the wire from the center [m]         0           no
 `wireOffsetY`          y offset of the wire from the center [m]         0           no
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
@@ -1447,6 +1447,10 @@ Notes:
 
 * The angle is the rotation from vertical in the clock-wise direction looping in the
   positive S direction (the usually direction of the beam).
+
+.. warning:: After BDSIM V1.3.2 :code:`wireAngle` is used for the angle instead of
+	     :code:`angle` as :code:`angle` is used specifically for angles of bends
+	     and this could result in the curvilinear world being made very small.
 
 The offsets are with respect to the centre of the beam pipe section the wire is placed inside.
 This should therefore be less than half the element length `l`. The usual beam pipe parameters
