@@ -22,6 +22,8 @@ General
 * Valid default ranges for general single 3D energy deposition 'scoring' histogram
   available through options. Now 1m in x,y,z with 1 bin.
 * wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
+* wirescanner element now requires a material to be specified as this makes a large difference
+  to the expected result. This should be specified.
   
 Bug Fixes
 ---------

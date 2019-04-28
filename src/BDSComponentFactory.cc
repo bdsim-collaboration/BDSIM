@@ -1302,7 +1302,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
   return (new BDSWireScanner(elementName,
 			     element->l*CLHEP::m,
 			     PrepareBeamPipeInfo(element),
-			     PrepareMaterial(element, "carbon"),
+			     PrepareMaterial(element),
 			     element->wireDiameter*CLHEP::m,
 			     element->wireLength*CLHEP::m,
 			     element->wireAngle*CLHEP::rad,

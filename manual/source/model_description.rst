@@ -1436,11 +1436,11 @@ parameter              description                                      default 
 `l`                    length of drift section around wire              0           yes
 `wireDiameter`         diameter of wire [m]                             0           yes
 `wireLength`           length of wirescanner [m]                        0           yes
+`material`             material of wire                                 none        yes
 `wireAngle`            angle of the wire w.r.t. vertical                0           no
 `wireOffsetX`          x offset of the wire from the center [m]         0           no
 `wireOffsetY`          y offset of the wire from the center [m]         0           no
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
-`wireMaterial`         material of wire                                 carbon      no
 =====================  ===============================================  ==========  ==========
 
 Notes:
