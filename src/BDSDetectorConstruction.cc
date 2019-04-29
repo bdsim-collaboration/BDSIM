@@ -196,10 +196,19 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
 void BDSDetectorConstruction::InitialiseRegions()
 {
+  BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  // global defaults
+  G4double gDefaultRangeCut  = g->DefaultRangeCut();
+  G4double gProdCutPhotons   = g->ProdCutPhotons();
+  G4double gProdCutElectrons = g->ProdCutElectrons();
+  G4double gProdCutPositrons = g->ProdCutPositrons();
+  G4double gProdCutProtons   = g->ProdCutProtons();
+  
   for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
     {
       G4Region* region = new G4Region(G4String(r.name));
       G4ProductionCuts* cuts = new G4ProductionCuts();
+      G4double rPhotons = BDS::IsFinite(r.prodCut
       cuts->SetProductionCut(r.prodCutPhotons*CLHEP::m,   "gamma");
       cuts->SetProductionCut(r.prodCutElectrons*CLHEP::m, "e-");
       cuts->SetProductionCut(r.prodCutPositrons*CLHEP::m, "e+");
