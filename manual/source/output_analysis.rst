@@ -707,7 +707,7 @@ One may manually loop over the events in a macro::
     for (int i = 0; i < nentries; ++i)
       {
         evtTree->GetEntry(i)
-	std::cout << evt->Eloss.n >> std::endl;
+        std::cout << evt->Eloss.n << std::endl;
       }
   }
 
