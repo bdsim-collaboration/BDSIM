@@ -1296,7 +1296,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
     {return nullptr;}
 
   if (BDS::IsFinite(element->angle))
-    {throw BDSException(__METHOD_NAME__, "\"angle\" parameter set for wirescanner \"" + elementName + "\" but this should not be set. Please unset and use \"wireAngle\"");}
+    {throw BDSException(__METHOD_NAME__, "\"angle\" parameter set for wirescanner \"" + elementName + "\" but this should not be set. Please unset and use \"wireAngle\".");}
 
   G4ThreeVector wireOffset = G4ThreeVector(element->wireOffsetX * CLHEP::m,
 					   element->wireOffsetY * CLHEP::m,
