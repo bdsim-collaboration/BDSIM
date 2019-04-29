@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerQuantity3D.hh"
-#include "BDSScorerTimeFilter.hh"
+#include "BDSScorerFilter.hh"
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
@@ -45,25 +45,9 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     info->filename,
 							     mapper);
 
-  if (!info->particle) // no specific particle, i.e. all
-    {return primitiveScorer;}
-  
-  G4String particleName = info->particle->GetParticleName();
-  G4SDParticleWithEnergyFilter* scorerFilter= new G4SDParticleWithEnergyFilter("particle_filter",
-									       info->minimumEnergy,
-									       info->maximumEnergy);
-  
-  scorerFilter->add(particleName);
-  primitiveScorer->SetFilter(scorerFilter);
-  
-  if (info->maximumTime != info->minimumTime)
-    {
-      BDSScorerTimeFilter* timeFilter = new BDSScorerTimeFilter("time_filter",
-								info->minimumTime,
-								info->maximumTime);
-      primitiveScorer->SetFilter(timeFilter);
-    }
-  
+  BDSScorerFilter* filter = new BDSScorerFilter("filter", info);
+  primitiveScorer->SetFilter(filter);
+
   return primitiveScorer;
 }
 
