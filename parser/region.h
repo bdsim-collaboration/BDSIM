@@ -36,6 +36,7 @@ namespace GMAD
   public:
     std::string name; ///< name
 
+    double   defaultRangleCut;
     double   prodCutPhotons;
     double   prodCutElectrons;
     double   prodCutPositrons;
