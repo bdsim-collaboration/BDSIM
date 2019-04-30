@@ -1368,16 +1368,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
   if (apertureType == "circular")
     {circular = true;}
   else if (apertureType != "rectangular" && !apertureType.empty())
-    {
-      G4cout << __METHOD_NAME__ << "unknown shape for dump: \"" << apertureType << "\"" << G4endl;
-      exit(1);
-    }
-
-  G4double defaultHorizontalWidth = 40*CLHEP::cm;
-  G4double horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
+    {throw BDSException(__METHOD_NAME__, "unknown shape for dump: \"" + apertureType + "\"");}
+  
   BDSDump* result = new BDSDump(elementName,
 				element->l*CLHEP::m,
-				horizontalWidth,
+				PrepareHorizontalWidth(element),
 				circular);
   return result;
 }
