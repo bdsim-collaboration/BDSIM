@@ -702,12 +702,12 @@ One may manually loop over the events in a macro::
     gSystem->Load("librebdsim");
     DataLoader* dl = new DataLoader("output.root");
     Event* evt = dl->GetEvent();
-    TTree* evtTree = dl->GetEventTree()
+    TTree* evtTree = dl->GetEventTree();
     int nentries = (int)evtTree->GetEntries();
     for (int i = 0; i < nentries; ++i)
       {
-        evtTree->GetEntry(i)
-	std::cout << evt->Eloss.n >> std::endl;
+        evtTree->GetEntry(i);
+        std::cout << evt->Eloss.n << std::endl;
       }
   }
 

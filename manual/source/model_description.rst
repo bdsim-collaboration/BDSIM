@@ -1436,17 +1436,21 @@ parameter              description                                      default 
 `l`                    length of drift section around wire              0           yes
 `wireDiameter`         diameter of wire [m]                             0           yes
 `wireLength`           length of wirescanner [m]                        0           yes
-`angle`                angle of the wire w.r.t. vertical                0           no
+`material`             material of wire                                 none        yes
+`wireAngle`            angle of the wire w.r.t. vertical                0           no
 `wireOffsetX`          x offset of the wire from the center [m]         0           no
 `wireOffsetY`          y offset of the wire from the center [m]         0           no
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
-`wireMaterial`         material of wire                                 carbon      no
 =====================  ===============================================  ==========  ==========
 
 Notes:
 
 * The angle is the rotation from vertical in the clock-wise direction looping in the
   positive S direction (the usually direction of the beam).
+
+.. warning:: After BDSIM V1.3.2 :code:`wireAngle` is used for the angle instead of
+	     :code:`angle` as :code:`angle` is used specifically for angles of bends
+	     and this could result in the curvilinear world being made very small.
 
 The offsets are with respect to the centre of the beam pipe section the wire is placed inside.
 This should therefore be less than half the element length `l`. The usual beam pipe parameters
@@ -4408,29 +4412,42 @@ BDSIM provides the capability to create one 3D histogram of energy deposition hi
 of the geometry. The hits are only created where the geometry exists and are sensitive.
 The histogram is independent of the geometry.
 
+* The user should ideally set all parameters to specify the desire ranges, otherwise be
+  aware of the default values.
+* BDSIM will exit with a warning if zero range is found in any dimension as this means
+  nothing will be histogrammed and there is no point in continuing.
+
+An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scoringmap.gmad`.
+
+.. note:: This is called a scoring map for historical reasons but it does not limit the step
+	  length in the way a typical Geant4 scoring map would. This only histograms energy
+	  deposition data.
+
+
 +----------------------------------+-------------------------------------------------------+
-| **Option**                       | **Function**                                          |
+| **Option**     | **Default**     | **Function**                                          |
 +==================================+=======================================================+
-| useScoringMap                    | Whether to create a scoring map                       |
-+----------------------------------+-------------------------------------------------------+
-| nbinsx                           | Number of bins in global X                            |
-+----------------------------------+-------------------------------------------------------+
-| nbinsy                           | Number of bins in global Y                            |
-+----------------------------------+-------------------------------------------------------+
-| nbinsz                           | Number of bins in global Z                            |
-+----------------------------------+-------------------------------------------------------+
-| xmin                             | Lower global X limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| xmax                             | Upper global X limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| ymin                             | Lower global Y limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| ymax                             | Upper global Y limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| zmin                             | Lower global Z limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| zmax                             | Upper global Z limit                                  |
-+----------------------------------+-------------------------------------------------------+
+| useScoringMap  | 0               | Whether to create a scoring map                       |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsx         | 1               | Number of bins in global X                            |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsy         | 1               | Number of bins in global Y                            |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsz         | 1               | Number of bins in global Z                            |
++----------------+-----------------+-------------------------------------------------------+
+| xmin           | -0.5            | Lower global X limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| xmax           | 0.5             | Upper global X limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| ymin           | -0.5            | Lower global Y limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| ymax           | 0.5             | Upper global Y limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| zmin           | 0               | Lower global Z limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| zmax           | 1               | Upper global Z limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+
 
 .. _developer-options:
 
