@@ -1387,8 +1387,8 @@ the shape of the dump. By default it is rectangular.
 Examples: ::
 
   d1: dump, l=0.2*m, horizontalWidth=20*cm;
-  d2: dump, l=0.4*m, apertureType="circular";
-  d3: dump, l=0.3*m, apertureType="rectangular";
+  d2: dump, l=0.4*m, horizontalWidth=30*cm, apertureType="circular";
+  d3: dump, l=0.3*m, horizontalWidth=40*cm, apertureType="rectangular";
 
 
 solenoid
