@@ -144,6 +144,8 @@ void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
 
 void BDSOutputROOTEventLoss::Fill(const BDSOutputROOTEventLoss* other)
 {
+  if (!other)
+    {return;}
   n        = other->n;
   energy   = other->energy;
   S        = other->S;

@@ -210,6 +210,8 @@ void BDSOutputROOTEventCollimator::FillExtras(G4bool fillIonInfo,
 
 void BDSOutputROOTEventCollimator::Fill(const BDSOutputROOTEventCollimator* other)
 {
+  if (!other)
+    {return;}
   primaryInteracted = other->primaryInteracted;
   primaryStopped    = other->primaryStopped;
   n                 = other->n;

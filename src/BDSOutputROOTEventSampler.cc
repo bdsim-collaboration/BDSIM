@@ -155,6 +155,8 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSOutputROOTEventSampler<U>* other)
 {
+  if (!other)
+    {return;}
   n      = other->n;
   energy = other->energy;
   x      = other->x;

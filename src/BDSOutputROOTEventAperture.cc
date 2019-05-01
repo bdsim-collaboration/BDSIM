@@ -36,6 +36,8 @@ BDSOutputROOTEventAperture::~BDSOutputROOTEventAperture()
 
 void BDSOutputROOTEventAperture::Fill(const BDSOutputROOTEventAperture* other)
 {
+  if (!other)
+    {return;}
   n        = other->n;
   energy   = other->energy;
   S        = other->S;
