@@ -339,9 +339,20 @@ void Event::SetBranchAddressCollimatorSingle(TTree* t,
 void Event::Fill(Event* other)
 {
   Primary->Fill(other->Primary);
+  PrimaryGlobal->Fill(other->PrimaryGlobal);
+  Eloss->Fill(other->Eloss);
+  ElossVacuum->Fill(other->ElossVacuum);
+  ElossTunnel->Fill(other->ElossTunnel);
+  ElossWorld->Fill(other->ElossWorld);
+  ElossWorldContents->Fill(other->ElossWorldContents);
+  ElossWorldExit->Fill(other->ElossWorldExit);
   PrimaryFirstHit->Fill(other->PrimaryFirstHit);
   PrimaryLastHit->Fill(other->PrimaryLastHit);
-  Histos->Fill(other->Histos);
+  TunnelHit->Fill(other->TunnelHit);
+  Trajectory->Fill(other->Trajectory);
+  Histos->FillSimple(other->Histos);
+  Summary->Fill(other->Summary);
+  Info->Fill(other->Info);
   Aperture->Fill(other->Aperture);
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
