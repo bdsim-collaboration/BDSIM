@@ -44,6 +44,9 @@ public:
   BDSOutputROOTEventHistograms& operator=(const BDSOutputROOTEventHistograms&) = delete;
   virtual ~BDSOutputROOTEventHistograms();
 
+  int Create1DHistogramSTD(std::string name, std::string title,
+			   int nbins, double xmin, double xmax);
+
 #ifndef __ROOTBUILD__
   G4int Create1DHistogram(G4String name, G4String title,
                           G4int nbins, G4double xmin, G4double xmax);
