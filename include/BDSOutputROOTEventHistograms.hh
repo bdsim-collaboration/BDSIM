@@ -69,6 +69,7 @@ public:
 #endif
   void Flush();
   void Fill(const BDSOutputROOTEventHistograms* rhs);
+  void FillSimple(const BDSOutputROOTEventHistograms* rhs);
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}

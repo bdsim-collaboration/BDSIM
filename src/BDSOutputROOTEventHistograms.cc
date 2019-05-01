@@ -38,6 +38,8 @@ BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 
 void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
 {
+  if (!rhs)
+    {return;}
   // loop over 1d histograms
   for(auto h : rhs->histograms1D)
     {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}

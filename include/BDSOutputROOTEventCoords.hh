@@ -40,6 +40,8 @@ public:
   virtual ~BDSOutputROOTEventCoords();
   void Flush();
 
+  void Fill(const BDSOutputROOTEventCoords* other);
+
   double x;
   double y;
   double z;

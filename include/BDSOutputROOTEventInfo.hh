@@ -56,6 +56,8 @@ public:
 
   virtual ~BDSOutputROOTEventInfo();
   void Flush();
+
+  void Fill(const BDSOutputROOTEventInfo* other);
   
   ClassDef(BDSOutputROOTEventInfo, 4);
 };
