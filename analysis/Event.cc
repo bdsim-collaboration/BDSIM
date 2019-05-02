@@ -362,6 +362,27 @@ void Event::Fill(Event* other)
     {collimators[i]->Fill(other->collimators[i]);}
 }
 
+void Event::Flush()
+{
+  Primary->Flush();
+  PrimaryGlobal->Flush();
+  Eloss->Flush();
+  ElossVacuum->Flush();
+  ElossTunnel->Flush();
+  ElossWorld->Flush();
+  ElossWorldContents->Flush();
+  ElossWorldExit->Flush();
+  PrimaryFirstHit->Flush();
+  PrimaryLastHit->Flush();
+  TunnelHit->Flush();
+  Trajectory->Flush();
+  Histos->Flush();
+  Summary->Flush();
+  Info->Flush();
+  FlushCollimators();
+  FlushSamplers();
+}
+
 void Event::FlushSamplers()
 {
   for (auto s : Samplers)
