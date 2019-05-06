@@ -209,7 +209,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  eleFormat = BDS::DetermineFieldFormat(ef.first);
 	  eleFile   = BDS::GetFullPath(ef.second);
 	}
-
+      
       BDSInterpolatorType magIntType = BDSInterpolatorType::nearest3d;
       if (magFileSpecified) // will warn if no interpolator specified (default "")
 	{magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));}

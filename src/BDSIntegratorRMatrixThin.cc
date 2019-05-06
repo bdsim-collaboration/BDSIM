@@ -1,14 +1,14 @@
 /* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but
+BDSIM is distributed in the hope that it will be useful, but 
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -112,7 +112,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       yErr[i]   = 0;
       yErr[i+3] = 0;
     }
-
+  
   // check if beam particle, if so step as drift
   const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
