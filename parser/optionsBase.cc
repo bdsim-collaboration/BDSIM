@@ -42,7 +42,10 @@ OptionsBase::OptionsBase()
   verbose               = false;
   verboseEvent          = false;
   verboseStep           = false;
-  verboseEventNumber    = -1;
+  verboseEventNumber            = -1;
+  verboseEventNumberContinueFor = 1;
+  verboseEventNumberLevel       = 0;
+  verboseEventNumberPrimaryOnly = true;
   verboseRunLevel       = 0;
   verboseEventLevel     = 0;
   verboseTrackingLevel  = 0;
@@ -286,12 +289,12 @@ OptionsBase::OptionsBase()
   nbinsx = 1;
   nbinsy = 1;
   nbinsz = 1;
-  xmin   = 0;
-  xmax   = 0;
-  ymin   = 0;
-  ymax   = 0;
+  xmin   = -0.5;
+  xmax   = 0.5;
+  ymin   = -0.5;
+  ymax   = 0.5;
   zmin   = 0;
-  zmax   = 0;
+  zmax   = 1;
   useScoringMap = false;
 }
 

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -76,11 +77,7 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   tipBot += offsetXY;
   G4double innerRadius = beamPipeInfo->IndicativeRadiusInner();
   if (tipTop.mag() > innerRadius || tipBot.mag() > innerRadius)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name
-	     << "\" is too big to fit in beam pipe give offsets." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "wire for \"" + name + "\" is too big to fit in beam pipe give offsets.");}
 }
 
 void BDSWireScanner::BuildContainerLogicalVolume()
@@ -121,6 +118,7 @@ void BDSWireScanner::Build()
 						wireMaterial,        // material
 						name + "_wire_lv");  // name
   RegisterLogicalVolume(wireLV);
+  RegisterSensitiveVolume(wireLV, BDSSDType::energydep);
   
   // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
