@@ -14,6 +14,7 @@ New Features
 * All verbosity options now documented, including corresponding executable options.
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
+* New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
 
 General
 -------

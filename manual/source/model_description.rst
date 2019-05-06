@@ -4327,7 +4327,20 @@ Recommendations:
 |                                  |          | event number specified - zero counting. The same as       |
 |                                  |          | `-\\-verbose_event_num=X` executable option.              |
 +----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out.              |
+| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out for all       |
+|                                  |          | events.                                                   |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberLevel          | integer  | (0-5) Like `verboseEventNumber` but only for the specific |
+|                                  |          | event specified by `verboseEventNumber`. Turns on verbose |
+|                                  |          | stepping information at the specified level.              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberContinueFor    | integer  | (1-inf) number of events to continue printing out the     |
+|                                  |          | verbose event information stepping information for.       |
+|                                  |          | default is 1.                                             |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberPrimaryOnly    | Boolean  | Whether to only print out the verbose stepping            |
+|                                  |          | as chosen by `verboseEventNumberLevel` for primary tracks |
+|                                  |          | and the default is true (1).                              |
 +----------------------------------+----------+-----------------------------------------------------------+
 | verboseImportanceSampling        | integer  | (0-5) level of importance sampling related print out.     |
 +----------------------------------+----------+-----------------------------------------------------------+
@@ -4344,6 +4357,14 @@ Recommendations:
 |                                  |          | as `-\\-verbose_G4tracking=X` executable option.          |
 +----------------------------------+----------+-----------------------------------------------------------+
 
+Examples: ::
+
+  option, verboseEventNumber=3,
+          verboseEventNumberLevel=2;
+
+This will print out verbose stepping information for the primary particle (default is only the primary)
+for the 4th event (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`.
 
 .. _beamline-offset:
 
