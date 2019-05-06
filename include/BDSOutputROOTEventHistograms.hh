@@ -44,6 +44,7 @@ public:
   BDSOutputROOTEventHistograms& operator=(const BDSOutputROOTEventHistograms&) = delete;
   virtual ~BDSOutputROOTEventHistograms();
 
+  /// Interface function to create a 1D histogram using only standard types.
   int Create1DHistogramSTD(std::string name, std::string title,
 			   int nbins, double xmin, double xmax);
 
@@ -71,7 +72,10 @@ public:
   void Fill3DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zValue, G4double weight = 1.0);
 #endif
   void Flush();
+  /// Copy (using the TH->Clone) method from another instance.
   void Fill(const BDSOutputROOTEventHistograms* rhs);
+
+  /// Copy (without using the TH->Clone) method from another instance. (Quicker).
   void FillSimple(const BDSOutputROOTEventHistograms* rhs);
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}

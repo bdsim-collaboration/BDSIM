@@ -91,6 +91,7 @@ public:
   const std::vector<std::string>&    GetCollimatorNames() const {return collimatorNames;}
   /// @}
 
+  /// Copy data from another event into this event.
   void Fill(Event* other);
 
   /// Whether there is primary data in the output file.
@@ -148,12 +149,16 @@ public:
   std::vector<std::string> collimatorNames;
   std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
 
-  /// Utility method for interface building events.
+  /// @{ Utility method for interface building events.
   void RegisterCollimator(std::string collimatorName);
   void RegisterSampler(std::string samplerName);
+  /// @}
+
+  /// @{ Flushing functions.
   void Flush();
   void FlushSamplers();
   void FlushCollimators();
+  /// @}
 private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,

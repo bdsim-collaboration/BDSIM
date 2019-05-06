@@ -80,6 +80,7 @@ public:
   void Fill(const BDSTrajectoryPoint* hit);
   void Fill(const BDSHitEnergyDeposition* hit);
 #endif
+  /// Fill from another instance.
   void Fill(const BDSOutputROOTEventLoss* other);
   virtual void Flush();
 
