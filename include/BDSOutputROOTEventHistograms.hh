@@ -44,6 +44,10 @@ public:
   BDSOutputROOTEventHistograms& operator=(const BDSOutputROOTEventHistograms&) = delete;
   virtual ~BDSOutputROOTEventHistograms();
 
+  /// Interface function to create a 1D histogram using only standard types.
+  int Create1DHistogramSTD(std::string name, std::string title,
+			   int nbins, double xmin, double xmax);
+
 #ifndef __ROOTBUILD__
   G4int Create1DHistogram(G4String name, G4String title,
                           G4int nbins, G4double xmin, G4double xmax);
@@ -66,8 +70,7 @@ public:
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
   void Fill3DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zValue, G4double weight = 1.0);
-  void Flush();
-
+  
   /// Set the value of a bin by (ROOT!!) global bin index. Note the TH3 function should
   /// be used to get ROOT's idea of a global bin index.
   void Set3DHistogramBinContent(G4int    histoId,
@@ -78,6 +81,14 @@ public:
   void AccumulateHistogram3D(G4int histoId,
 			     TH3D* otherHistogram);
 #endif
+  /// Flush the contents.
+  virtual void Flush();
+  
+  /// Copy (using the TH->Clone) method from another instance.
+  void Fill(const BDSOutputROOTEventHistograms* rhs);
+
+  /// Copy (without using the TH->Clone) method from another instance. (Quicker).
+  void FillSimple(const BDSOutputROOTEventHistograms* rhs);
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
@@ -95,7 +106,7 @@ private:
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
 
-  ClassDef(BDSOutputROOTEventHistograms,2);
+  ClassDef(BDSOutputROOTEventHistograms,3);
 };
 
 #endif
