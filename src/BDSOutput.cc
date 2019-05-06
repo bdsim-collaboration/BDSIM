@@ -53,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4THitsMap.hh"
+#include "G4Version.hh"
 
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
@@ -815,7 +816,11 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 {
   for (const auto& nameHitsMap : scorerHitsMap)
     {
+#if G4VERSION < 1039
+      if (nameHitsMap.second->GetSize() == 0)
+#else
       if (nameHitsMap.second->size() == 0)
+#endif
         {continue;}
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
     }
@@ -830,7 +835,11 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
   TH3D* hist = evtHistos->Get3DHistogram(histIndex);
   G4int x,y,z;
   //const BDSHistBinMapper3D* mapper = hist3DMapper[histIndex];
+#if G4VERSION < 1039
+  for (const auto& hit : *hitMap->GetMap())
+#else
   for (const auto& hit : *hitMap)
+#endif
     {
       // convert from scorer global index to 3d i,j,k index of 3d scorer
       mapper.IJKFromGlobal(hit.first, x,y,z);
