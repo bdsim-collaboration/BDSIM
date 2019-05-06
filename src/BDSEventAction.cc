@@ -49,6 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SDManager.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
+#include "G4TransportationManager.hh"
 
 #include <algorithm>
 #include <chrono>
@@ -56,6 +57,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+
+#include "G4EventManager.hh"
+#include "G4PropagatorInField.hh"
+#include "G4StackManager.hh"
 
 using namespace std::chrono;
 
@@ -138,6 +143,19 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
+  G4Navigator* trackingNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+  trackingNavigator->ResetStackAndState();
+
+  G4TransportationManager* tm = G4TransportationManager::GetTransportationManager();
+  int i = 0;
+  for (auto it = tm->GetActiveNavigatorsIterator(); i < (int)tm->GetNoActiveNavigators(); it++)
+						      {
+							(*it)->ResetStackAndState();
+							i++;
+						      }
+  tm->GetPropagatorInField()->ClearPropagatorState();
+  tm->GetNavigator("SamplerWorld_main")->ResetStackAndState();
+  fpEventManager->GetStackManager()->clear();
   
   // update reference to event info
   eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
