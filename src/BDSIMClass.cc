@@ -400,7 +400,8 @@ void BDSIM::BeamOn(int nGenerate)
     }
   catch (const BDSException& exception)
     {
-      G4GeometryManager::GetInstance()->OpenGeometry();
+      G4cout << "some exception was here" << G4endl;
+      //G4GeometryManager::GetInstance()->OpenGeometry();
       throw exception;
     } 
 }
