@@ -164,6 +164,7 @@ Parameters::Parameters()
   setMap["wireOffsetX"]       = false;
   setMap["wireOffsetY"]       = false;
   setMap["wireOffsetZ"]       = false;
+  setMap["wireAngle"]         = false;
   setMap["undulatorPeriod"]       = false;
   setMap["undulatorGap"]          = false;
   setMap["undulatorMagnetHeight"] = false;
