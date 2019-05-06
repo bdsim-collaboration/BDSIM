@@ -38,7 +38,7 @@ public:
 		    BDSEventAction* eventActionIn,
 		    G4int  verboseEventNumberLevelIn,
 		    G4int  verboseEventNumberIn,
-		    G4bool verboseEventNumberContinueForIn,
+		    G4int  verboseEventNumberContinueForIn,
 		    G4bool verboseEventNumberPrimaryOnlyIn);
   
   virtual ~BDSTrackingAction(){;}
@@ -69,7 +69,7 @@ private:
 
   G4int  verboseEventNumberLevel;
   G4int  verboseEventNumber;
-  G4bool verboseEventNumberStop;
+  G4int  verboseEventNumberStop;
   G4bool verboseEventNumberPrimaryOnly;
 };
 

@@ -39,7 +39,7 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     BDSEventAction* eventActionIn,
 				     G4int  verboseEventNumberLevelIn,
 				     G4int  verboseEventNumberIn,
-				     G4bool verboseEventNumberContinueForIn,
+				     G4int  verboseEventNumberContinueForIn,
 				     G4bool verboseEventNumberPrimaryOnlyIn):
   interactive(!batchMode),
   storeTrajectory(storeTrajectoryIn),
