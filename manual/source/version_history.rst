@@ -14,6 +14,7 @@ New Features
 * All verbosity options now documented, including corresponding executable options.
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
+* New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
 
 General
 -------
@@ -37,9 +38,16 @@ Bug Fixes
   transforms) diameter given the maximum bending angle of bends in the whole lattice. This is
   required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
   instead.
+* Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
+  and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 
 Utilities
 ---------
+
+* pybdsim v2.1.0
+* pymadx v1.7.1
+* pymad8 v1.5.0
+* pytransport v1.3.0
 
 
 V1.3.2 - 2019 / 04 / 20

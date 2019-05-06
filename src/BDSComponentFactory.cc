@@ -1296,7 +1296,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
     {return nullptr;}
 
   if (BDS::IsFinite(element->angle))
-    {throw BDSException(__METHOD_NAME__, "\"angle\" parameter set for wirescanner \"" + elementName + "\" but this should not be set. Please unset and use \"wireAngle\"");}
+    {throw BDSException(__METHOD_NAME__, "\"angle\" parameter set for wirescanner \"" + elementName + "\" but this should not be set. Please unset and use \"wireAngle\".");}
 
   G4ThreeVector wireOffset = G4ThreeVector(element->wireOffsetX * CLHEP::m,
 					   element->wireOffsetY * CLHEP::m,
@@ -1368,16 +1368,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
   if (apertureType == "circular")
     {circular = true;}
   else if (apertureType != "rectangular" && !apertureType.empty())
-    {
-      G4cout << __METHOD_NAME__ << "unknown shape for dump: \"" << apertureType << "\"" << G4endl;
-      exit(1);
-    }
-
-  G4double defaultHorizontalWidth = 40*CLHEP::cm;
-  G4double horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
+    {throw BDSException(__METHOD_NAME__, "unknown shape for dump: \"" + apertureType + "\"");}
+  
   BDSDump* result = new BDSDump(elementName,
 				element->l*CLHEP::m,
-				horizontalWidth,
+				PrepareHorizontalWidth(element),
 				circular);
   return result;
 }

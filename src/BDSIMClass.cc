@@ -305,7 +305,11 @@ int BDSIM::Initialise()
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
 						  globalConstants->TrajNoTransportation(),
-						  eventAction));
+						  eventAction,
+						  globalConstants->VerboseEventNumberLevel(),
+						  globalConstants->VerboseEventNumber(),
+						  globalConstants->VerboseEventNumberContinueFor(),
+						  globalConstants->VerboseEventNumberPrimaryOnly()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
