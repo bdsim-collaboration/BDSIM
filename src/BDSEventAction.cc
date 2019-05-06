@@ -93,6 +93,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   starts(0),
   stops(0),
   seedStateAtStart(""),
+  currentEventIndex(0),
   eventInfo(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
@@ -129,6 +130,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
+  currentEventIndex = evt->GetEventID();
   
   // set samplers for trajectory (cannot be done in contructor)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();

@@ -162,6 +162,9 @@ void Options::PublishMembers()
   publish("verboseStep",           &Options::verboseStep);
   publish("verboseEventNumber",    &Options::verboseEventNumber);
   publish("verbose_event_num",     &Options::verboseEventNumber); // to be compatible with exec options
+  publish("verboseEventNumberContinueFor", &Options::verboseEventNumberContinueFor);
+  publish("verboseEventNumberLevel",       &Options::verboseEventNumberLevel);
+  publish("verboseEventNumberPrimaryOnly", &Options::verboseEventNumberPrimaryOnly);
   publish("batch",                 &Options::batch);
   publish("verboseRunLevel",       &Options::verboseRunLevel);
   publish("verbose_G4Run",         &Options::verboseRunLevel); // to be compatible with exec options

@@ -42,7 +42,10 @@ OptionsBase::OptionsBase()
   verbose               = false;
   verboseEvent          = false;
   verboseStep           = false;
-  verboseEventNumber    = -1;
+  verboseEventNumber            = -1;
+  verboseEventNumberContinueFor = 1;
+  verboseEventNumberLevel       = 0;
+  verboseEventNumberPrimaryOnly = true;
   verboseRunLevel       = 0;
   verboseEventLevel     = 0;
   verboseTrackingLevel  = 0;

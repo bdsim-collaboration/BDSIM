@@ -108,6 +108,9 @@ public:
   inline G4bool   VerboseEvent()           const {return G4bool  (options.verboseEvent);}
   inline G4bool   VerboseStep()            const {return G4bool  (options.verboseStep);}
   inline G4int    VerboseEventNumber()     const {return G4int   (options.verboseEventNumber);}
+  inline G4int    VerboseEventNumberContinueFor() const {return G4int   (options.verboseEventNumberContinueFor);}
+  inline G4int    VerboseEventNumberLevel()       const {return G4int   (options.verboseEventNumberLevel);}
+  inline G4bool   VerboseEventNumberPrimaryOnly() const {return G4bool  (options.verboseEventNumberPrimaryOnly);}
   inline G4int    VerboseRunLevel()        const {return G4int   (options.verboseRunLevel);}
   inline G4int    VerboseEventLevel()      const {return G4int   (options.verboseEventLevel);}
   inline G4int    VerboseTrackingLevel()   const {return G4int   (options.verboseTrackingLevel);}
