@@ -393,6 +393,10 @@ void BDS::FixGeant105ThreshholdsForBeamParticle(const BDSParticleDefinition* par
 
 void BDS::FixGeant105ThreshholdsForParticle(const G4ParticleDefinition* particleDef)
 {
+  // in the case of ions the particle definition isn't available early on so protect
+  // against this
+  if (!particleDef)
+    {return;}
   // taken from the Geant4.10.5 field01 example
   // used to compensate for agressive killing in Geant4.10.5
   G4double warningEnergy   =   1.0 * CLHEP::kiloelectronvolt;  // Arbitrary
