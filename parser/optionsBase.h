@@ -58,6 +58,9 @@ namespace GMAD
     bool verboseEvent;
     bool verboseStep;
     int  verboseEventNumber;
+    int  verboseEventNumberContinueFor;
+    int  verboseEventNumberLevel;
+    bool verboseEventNumberPrimaryOnly;
     
     int  verboseRunLevel;
     int  verboseEventLevel;
