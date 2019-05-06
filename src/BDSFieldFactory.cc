@@ -1,14 +1,14 @@
 /* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but
+BDSIM is distributed in the hope that it will be useful, but 
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -187,7 +187,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	    }
 	  // else rm is default rotation matrix
 	}
-
+      
       G4Transform3D transform = G4Transform3D(rm, offset);
 
       BDSFieldFormat magFormat = BDSFieldFormat::none;
@@ -199,7 +199,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  magFormat = BDS::DetermineFieldFormat(bf.first);
 	  magFile   = BDS::GetFullPath(bf.second);
 	}
-
+      
       BDSFieldFormat eleFormat = BDSFieldFormat::none;
       G4String       eleFile   = "";
       G4bool  eleFileSpecified = !definition.electricFile.empty();
@@ -285,7 +285,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-
+  
   if (info.FieldType() == BDSFieldType::none)
     {return field;} // as nullptr
 
@@ -305,7 +305,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
     }
   return field;
 }
-
+      
 BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 						 const BDSMagnetStrength* scalingStrength,
 						 const G4String           scalingKey)
@@ -438,7 +438,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 	break;
       }
     }
-
+  
 
   BDSFieldMag* resultantField = field;
   // Set transform for local geometry offset
@@ -634,7 +634,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     default:
       break; // returns nullptr;
     }
-
+  
   return integrator;
 }
 
@@ -758,7 +758,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
 					   (*info.MagnetStrength())["length"],
 					   otm);
-
+						       
   BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
 						       bEqOfMotion, integrator);
   return completeField;
