@@ -42,11 +42,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
+#include "G4EventManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "G4PropagatorInField.hh"
 #include "G4Run.hh"
 #include "G4SDManager.hh"
+#include "G4StackManager.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
 #include "G4TransportationManager.hh"
@@ -57,10 +60,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
-
-#include "G4EventManager.hh"
-#include "G4PropagatorInField.hh"
-#include "G4StackManager.hh"
 
 using namespace std::chrono;
 
