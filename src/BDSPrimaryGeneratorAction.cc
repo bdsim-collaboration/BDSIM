@@ -123,8 +123,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // continue generating particles until positive finite kinetic energy.
   G4int n = 0;
   BDSParticleCoordsFullGlobal coords;
-  /*  try
-      {*/
+  try
+    {
       while (n < 100) // prevent infinite loops
 	{
 	  ++n;
@@ -132,7 +132,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  
 	  if ((coords.local.totalEnergy - mass) > 0)
 	    {break;}
-	}/*
+	}
     }
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
@@ -141,7 +141,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4cout << exception.what() << G4endl;
       G4cout << "Aborting this event (#" << anEvent->GetEventID() << ")" << G4endl;
       return;
-      }*/
+    }
   
   if (oneTurnMap)
     {
