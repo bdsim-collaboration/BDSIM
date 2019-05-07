@@ -21,11 +21,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Step.hh"
 
 BDSScorerTimeFilter::BDSScorerTimeFilter(G4String name,
-					 G4double lowerLimit,
-					 G4double upperLimit):
+					 G4double lowerLimitIn,
+					 G4double upperLimitIn):
   G4VSDFilter(name),
-  lowerLimit(lowerLimit),
-  upperLimit(upperLimit)
+  lowerLimit(lowerLimitIn),
+  upperLimit(upperLimitIn)
 {;}
 
 G4bool BDSScorerTimeFilter::Accept(const G4Step* aStep) const

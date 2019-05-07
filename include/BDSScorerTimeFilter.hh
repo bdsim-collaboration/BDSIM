@@ -35,8 +35,8 @@ class BDSScorerTimeFilter: public G4VSDFilter
 public:
   /// Constructor with default values.
   BDSScorerTimeFilter(G4String name,
-		      G4double lowerLimit = 0.0,
-		      G4double upperLimit = 1*CLHEP::s); 
+		      G4double lowerLimitIn = 0.0,
+		      G4double upperLimitIn = 1*CLHEP::s);
   
   virtual ~BDSScorerTimeFilter(){;}
 
