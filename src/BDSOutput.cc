@@ -857,7 +857,7 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
     {
       // convert from scorer global index to 3d i,j,k index of 3d scorer
       mapper.IJKFromGlobal(hit.first, x,y,z);
-      G4int rootGlobalIndex = hist->GetBin(x, y, z); // convert to root system
+      G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
       evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
     }
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
