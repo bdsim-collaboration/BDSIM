@@ -168,6 +168,7 @@ namespace GMAD
     double wireOffsetX;
     double wireOffsetY;
     double wireOffsetZ;
+    double wireAngle;
     ///@}
     
     ///@{ for undulator
