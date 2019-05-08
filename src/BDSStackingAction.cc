@@ -107,7 +107,16 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 		    {
 		      if (auto ecSD2 = dynamic_cast<BDSSDEnergyDeposition*>(mSD->GetSD(i)))
 			{ecSD2->ProcessHitsTrack(aTrack, nullptr);}
-		      // else another SD -> don't use
+		      else if (auto mSDO = dynamic_cast<BDSMultiSensitiveDetectorOrdered*>(sd))
+			{
+			  for (G4int i=0; i < (G4int)mSDO->GetSize(); ++i)
+			    {
+			      if (auto ecSD2 = dynamic_cast<BDSSDEnergyDeposition*>(mSDO->GetSD(i)))
+				{ecSD2->ProcessHitsTrack(aTrack, nullptr);}
+			      // else another SD -> don't use
+			    }
+			  // else another SD -> don't use
+			}
 		    }
 		}
 #endif
