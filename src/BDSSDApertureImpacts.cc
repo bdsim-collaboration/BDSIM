@@ -72,7 +72,7 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
 					 G4TouchableHistory* /*th*/)
 {
   // check if pre step point is on geometry boundary - ie first step into a volume
-  G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
+  G4StepPoint* preStepPoint  = aStep->GetPreStepPoint();
   G4StepStatus preStepStatus = preStepPoint->GetStepStatus();
   if (preStepStatus != G4StepStatus::fGeomBoundary)
     {return false;} // wasn't on a boundary - don't generate a hit
@@ -80,30 +80,30 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   // check if momentum is away from accelerator axis - ie leaving vacuum and entering
   // beam pip, not coming in from outside
   // get local coordinates
-  BDSStep localPosMom = auxNavigator->ConvertToLocal(preStepPoint->GetPosition(),
-  preStepPoint->GetMomentum(),
+  G4ThreeVector globalPos = preStepPoint->GetPosition();
+  G4ThreeVector globalMom = preStepPoint->GetMomentum();
+  BDSStep localPosMom = auxNavigator->ConvertToLocal(globalPos,
+  globalMom,
   0.1*CLHEP::mm);
 
-  G4ThreeVector momLocal = localPosMom.PostStepPoint();
-  G4ThreeVector localUnitZ(0,0,1);
-  G4ThreeVector perpPart = localUnitZ.perpPart(momLocal);
-  G4cout << "perpPart " << perpPart << G4endl;
-
   G4VSolid* preStepSolid = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetSolid();
-  G4ThreeVector surfaceNormal = preStepSolid->SurfaceNormal(preStepPoint->GetPosition());
+  G4ThreeVector posLocal = preStepPoint->GetPosition();
+  G4ThreeVector surfaceNormal = preStepSolid->SurfaceNormal(posLocal);
+
   G4double dotProduct = surfaceNormal.dot(localPosMom.PreStepPoint());
-  G4bool leavingBeamPipe = true;
+  G4bool leavingBeamPipe = dotProduct >= 0; // +ve means it's leaving beam pipe - ie in direction of unit normal out
   if (!leavingBeamPipe)
     {return false;}
 
+  G4ThreeVector momLocal     = localPosMom.PostStepPoint();
   G4ThreeVector momLocalUnit = momLocal.unit();
-  G4double S = 0;
-  G4double x = 0;
-  G4double y = 0;
+  G4double x             = posLocal.x();
+  G4double y             = posLocal.y();
   G4int    turnsTaken    = BDSGlobalConstants::Instance()->TurnsTaken();
   G4int    beamlineIndex = -1;
 
-  G4Track* track = aStep->GetTrack();
+  // get the (global) S coordinate of the hit in the beam line
+  G4double S = -1;
 
   // volume is from curvilinear coordinate parallel geometry
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosMom.VolumeForTransform());
@@ -118,42 +118,17 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   if (theInfo)
     {UpdateParams(theInfo);}
   else
-    {
-      // Try again but with the pre step point only
-      G4ThreeVector unitDirection = (posafter - posbefore).unit();
-      BDSStep stepLocal2 = auxNavigator->ConvertToLocal(posbefore, unitDirection);
+    {// Try again but with the pre step point shifted marginally
+      G4ThreeVector unitDir = globalMom.unit();
+      G4ThreeVector newPos  = globalPos + 1e-3*unitDir;
+      BDSStep stepLocal2 = auxNavigator->ConvertToLocal(newPos, unitDir);
       theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
       if (theInfo)
 	{UpdateParams(theInfo);}
-      else
-	{
-	  // Try yet again with just a slight shift (100um is bigger than any padding space).
-	  G4ThreeVector shiftedPos = posbefore + 0.1*CLHEP::mm*unitDirection;
-	  stepLocal2 = auxNavigator->ConvertToLocal(shiftedPos, unitDirection);
-	  theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
-	  if (theInfo)
-	    {UpdateParams(theInfo);}
-	  else
-	    {
-#ifdef BDSDEBUG
-	      G4cerr << "No volume info for ";
-	      auto vol = stepLocal.VolumeForTransform();
-	      if (vol)
-		{G4cerr << vol->GetName() << G4endl;}
-	      else
-		{G4cerr << "Unknown" << G4endl;}
-#endif
-	      // unphysical default value to allow easy identification in output
-	      sAfter        = -1000;
-	      sBefore       = -1000;
-	      beamlineIndex = -2;
-	    }
-	}
     }
-
-  turnsTaken  =
   
   //create hits and put in hits collection of the event
+  G4Track* track = aStep->GetTrack();
   BDSHitApertureImpact* hit = new BDSHitApertureImpact(preStepPoint->GetTotalEnergy(),
                                                        preStepPoint->GetKineticEnergy(),
                                                        S,
@@ -168,8 +143,7 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
                                                        track->GetParentID(),
                                                        turnsTaken,
                                                        beamlineIndex);
-  
-  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+
   hits->insert(hit);
    
   return true;
