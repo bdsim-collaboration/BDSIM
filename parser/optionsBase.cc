@@ -228,7 +228,8 @@ OptionsBase::OptionsBase()
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  
+
+  storeApertureImpacts       = true;
   storeCollimatorInfo        = false;
   storeCollimatorLinks       = false;
   storeCollimatorHitsIons    = false;

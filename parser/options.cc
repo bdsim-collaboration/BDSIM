@@ -355,6 +355,7 @@ void Options::PublishMembers()
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
 
+  publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorLinks",           &Options::storeCollimatorLinks);
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
