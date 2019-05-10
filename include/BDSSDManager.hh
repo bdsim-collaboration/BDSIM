@@ -156,6 +156,8 @@ private:
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;
   G4bool generateApertureImpacts;
+  G4bool storeApertureImpactsAll;
+  G4bool storeApertureImpactsIons;
   G4bool generateELossHits;
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;

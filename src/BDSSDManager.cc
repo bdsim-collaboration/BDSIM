@@ -62,13 +62,15 @@ BDSSDManager::BDSSDManager()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
-  BDSGlobalConstants* g   = BDSGlobalConstants::Instance();
-  storeCollimatorHitsAll  = g->StoreCollimatorHitsAll();
-  storeCollimatorHitsIons = g->StoreCollimatorHitsIons();
-  generateApertureImpacts = g->StoreApertureImpacts();
-  generateELossHits       = g->StoreELoss() || g->StoreELossHistograms();
-  generateELossVacuumHits = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
-  generateELossTunnelHits = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
+  BDSGlobalConstants* g    = BDSGlobalConstants::Instance();
+  storeCollimatorHitsAll   = g->StoreCollimatorHitsAll();
+  storeCollimatorHitsIons  = g->StoreCollimatorHitsIons();
+  generateApertureImpacts  = g->StoreApertureImpacts();
+  storeApertureImpactsAll  = g->StoreApertureImpactsAll();
+  storeApertureImpactsIons = g->StoreApertureImpactsIons();
+  generateELossHits        = g->StoreELoss() || g->StoreELossHistograms();
+  generateELossVacuumHits  = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
+  generateELossTunnelHits  = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
 
   generateELossWorldContents = g->UseImportanceSampling() || g->StoreELossWorldContents();
   
@@ -130,7 +132,15 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(worldExit);
 
   apertureImpacts = new BDSSDApertureImpacts("aperture");
-  apertureImpacts->SetFilter(filters["primary"]);
+    // set up a filter for the collimator sensitive detector - always store primary hits
+  G4VSDFilter* filterA = nullptr;
+  if (storeApertureImpactsAll)
+    {filterA = nullptr;} // no filter -> store all
+  else if (storeApertureImpactsIons) // primaries plus ion fragments
+    {filterA = filters["primaryorion"];}
+  else
+    {filterA = filters["primary"];} // just primaries
+  apertureImpacts->SetFilter(filterA);
   SDMan->AddNewDetector(apertureImpacts);
 
 #if G4VERSION_NUMBER > 1029
