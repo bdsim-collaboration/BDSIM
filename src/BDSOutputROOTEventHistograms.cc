@@ -36,33 +36,6 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 {;}
 
-void BDSOutputROOTEventHistograms::FillSimple(const BDSOutputROOTEventHistograms* rhs)
-{
-  if (!rhs)
-    {return;}
-
-  histograms1D = rhs->histograms1D;
-  histograms2D = rhs->histograms2D;
-  histograms3D = rhs->histograms3D;
-}
-
-void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
-{
-  if (!rhs)
-    {return;}
-  // loop over 1d histograms
-  for(auto h : rhs->histograms1D)
-    {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}
-
-  // loop over 2d histograms
-  for(auto h : rhs->histograms2D)
-    {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
-
-  // loop over 3d histograms
-  for (auto h : rhs->histograms3D)
-    {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
-}
-
 int BDSOutputROOTEventHistograms::Create1DHistogramSTD(std::string name, std::string title,
 						       int nbins, double xmin, double xmax)
 {
@@ -180,6 +153,20 @@ void BDSOutputROOTEventHistograms::Fill3DHistogram(G4int    histoId,
   histograms3D[histoId]->Fill(xValue,yValue,zValue,weight);
 }
 
+
+void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
+							    G4int globalBinID,
+							    G4double value)
+{
+  histograms3D[histoId]->SetBinContent(globalBinID, value);
+}
+
+void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
+							 TH3D* otherHistogram)
+{
+  histograms3D[histoId]->Add(otherHistogram);
+}
+
 #endif
 
 void BDSOutputROOTEventHistograms::Flush()
@@ -190,6 +177,33 @@ void BDSOutputROOTEventHistograms::Flush()
     {h->Reset();}
   for (auto h : histograms3D)
     {h->Reset();}
+}
+
+void BDSOutputROOTEventHistograms::FillSimple(const BDSOutputROOTEventHistograms* rhs)
+{
+  if (!rhs)
+    {return;}
+
+  histograms1D = rhs->histograms1D;
+  histograms2D = rhs->histograms2D;
+  histograms3D = rhs->histograms3D;
+}
+
+void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
+{
+  if (!rhs)
+    {return;}
+  // loop over 1d histograms
+  for(auto h : rhs->histograms1D)
+    {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}
+
+  // loop over 2d histograms
+  for(auto h : rhs->histograms2D)
+    {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
+
+  // loop over 3d histograms
+  for (auto h : rhs->histograms3D)
+    {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
 }
 
 void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms * /*rhs*/)

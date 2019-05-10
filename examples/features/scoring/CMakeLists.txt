@@ -1,0 +1,1 @@
+simple_testing(scorer-arbitrary-mesh  "--file=arbitrary-mesh.gmad"   "")

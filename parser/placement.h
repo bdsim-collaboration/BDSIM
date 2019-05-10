@@ -29,6 +29,7 @@ namespace GMAD
 {
   class BLMPlacement;
   class SamplerPlacement;
+  class ScorerMesh;
   
   /**
    * @brief Placement class for parser
@@ -73,7 +74,8 @@ namespace GMAD
 
     /// @{ Conversion constructor.
     Placement(const SamplerPlacement& samplerPlacement);
-    Placement(const BLMPlacement&   blmPlacement);
+    Placement(const ScorerMesh&       scorerMesh);
+    Placement(const BLMPlacement&     blmPlacement);
     /// @}
 
   private:

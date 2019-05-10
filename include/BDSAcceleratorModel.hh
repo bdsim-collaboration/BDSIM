@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSACCELERATORMODEL_H
 
 #include "BDSBeamlineSet.hh"
+#include "BDSScorerHistogramDef.hh"
 
 #include "globals.hh"         // geant4 globals / types
 
@@ -147,6 +148,18 @@ public:
   void MassWorldBeamlineAndIndex(BDSBeamline*& bl,
 				 G4int&        index) const;
 
+  /// Register a scorer histogram definition so it can be used in the output. The definition
+  /// is stored both in a vector and a map. Note, repeated entries will exist in the vector
+  /// but be overwritten in the map.
+  void RegisterScorerHistogramDefinition(const BDSScorerHistogramDef& def);
+
+  /// @{ Access all scorer histogram definitions.
+  const std::vector<BDSScorerHistogramDef>& ScorerHistogramDefinitions() const {return scorerHistogramDefs;}
+  const std::map<G4String, BDSScorerHistogramDef>& ScorerHistogramDefinitionsMap() const {return scorerHistogramDefsMap;}
+  /// @}
+
+  const BDSScorerHistogramDef* ScorerHistogramDef(const G4String& name);
+  
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -181,6 +194,10 @@ private:
   std::map<G4String, G4ProductionCuts*> cuts;      ///< Cuts corresponding to the regions.
 
   std::map<G4String, std::set<G4LogicalVolume*>* > volumeRegistries; ///< All volume registries.
+
+  /// Scorer histogram definitions cached from construction here to be used in output creation.
+  std::vector<BDSScorerHistogramDef> scorerHistogramDefs;
+  std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefsMap;
 };
 
 #endif

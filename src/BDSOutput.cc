@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistBinMapper3D.hh"
+#include "BDSHitSampler.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
@@ -44,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
-#include "BDSHitSampler.hh"
+#include "BDSScorerHistogramDef.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -52,14 +54,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
+#include "G4THitsMap.hh"
+#include "G4Version.hh"
 
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 
 #include <algorithm>
 #include <cmath>
+#include <map>
 #include <ostream>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -245,6 +251,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSTrajectoryPoint*                      primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&           trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
+			  const std::map<G4String, G4THitsMap<G4double>*>& scorerHits,
 			  const G4int                                    turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
@@ -284,6 +291,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillTrajectories(trajectories);
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
+  FillScorerHits(scorerHits); // map always exists
 
   // we do this after energy loss and collimator hits as the energy loss
   // is integrated for putting in event info and the number of colliamtors
@@ -318,7 +326,7 @@ void BDSOutput::PrintProtectedNames(std::ostream& out)
 {
   out << "Protected names for output " << G4endl;
   for (auto key : protectedNames)
-    {out << "\"" << key << "\"" << G4endl; }
+    {out << "\"" << key << "\"" << G4endl;}
 }
  
 G4String BDSOutput::GetNextFileName()
@@ -458,7 +466,8 @@ void BDSOutput::CreateHistograms()
 							      nCollimators, 0, nCollimators);
 	}
     }
-  
+
+  // one unique 'scorer' - single 3d histogram 3d
   if (useScoringMap && storeELossHistograms)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -475,11 +484,29 @@ void BDSOutput::CreateHistograms()
       if (g->NBinsZ() <= 0)
 	{throw BDSException(__METHOD_NAME__, "invalid number of bins in z dimension of 3D scoring histogram - check option, nbinsx");}
 
-      G4int scInd = evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
+      G4int scInd = Create3DHistogram("ScoringMap", "Energy Deposition",
 						 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
 						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
       histIndices3D["ScoringMap"] = scInd;
+    }
+
+  // scoring maps
+  const std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefs = BDSAcceleratorModel::Instance()->ScorerHistogramDefinitionsMap();
+  if (!scorerHistogramDefs.empty())
+    {
+      for (const auto& nameDef : scorerHistogramDefs)
+	{
+	  const auto def = nameDef.second;
+	  // use safe output name without any slashes in the name
+	  G4int histID = Create3DHistogram(def.outputName, def.outputName,
+					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
+	  histIndices3D[def.uniqueName] = histID;
+	  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
+	  scorerCoordinateMaps.insert(std::make_pair(def.uniqueName, def.coordinateMapper));
+	}
     }
 
   G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
@@ -716,6 +743,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 	  G4double x = hit->Getx()/CLHEP::m;
 	  G4double y = hit->Gety()/CLHEP::m;
 	  evtHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
+	  runHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
 	}
     }
 
@@ -809,6 +837,43 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
       if (collimator->primaryInteracted)
 	{nCollimatorsInteracted += 1;}
     }
+}
+
+void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap)
+{
+  for (const auto& nameHitsMap : scorerHitsMap)
+    {
+#if G4VERSION < 1039
+      if (nameHitsMap.second->GetSize() == 0)
+#else
+      if (nameHitsMap.second->size() == 0)
+#endif
+        {continue;}
+      FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
+    }
+}
+
+void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
+					 const G4THitsMap<G4double>* hitMap)
+{
+  G4int histIndex = histIndices3D[histogramDefName];
+  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
+  const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
+  TH3D* hist = evtHistos->Get3DHistogram(histIndex);
+  G4int x,y,z;
+  //const BDSHistBinMapper3D* mapper = hist3DMapper[histIndex];
+#if G4VERSION < 1039
+  for (const auto& hit : *hitMap->GetMap())
+#else
+  for (const auto& hit : *hitMap)
+#endif
+    {
+      // convert from scorer global index to 3d i,j,k index of 3d scorer
+      mapper.IJKFromGlobal(hit.first, x,y,z);
+      G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
+      evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
+    }
+  runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info)

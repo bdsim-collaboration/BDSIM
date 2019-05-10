@@ -631,7 +631,7 @@ void Parser::Overwrite(const std::string& objectName)
 
   // possible object types are:
   // element, atom, colour, crystal, field, material, physicsbiasing, placement,
-  // query, region, tunnel, cavitymodel, samplerplacement, aperture, blm
+  // query, region, tunnel, cavitymodel, samplerplacement, aperture, scorer, scorermesh, blm
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end())
@@ -661,6 +661,8 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<Tunnel>     (objectName)) ) {}
     else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
     else if ( (extended = FindAndExtend<SamplerPlacement>(objectName)) ) {}
+    else if ( (extended = FindAndExtend<Scorer>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<ScorerMesh> (objectName)) ) {}
     else if ( (extended = FindAndExtend<Aperture>   (objectName)) ) {}
     else if ( (extended = FindAndExtend<BLMPlacement> (objectName)) ) {}
   }
@@ -794,10 +796,22 @@ namespace GMAD {
   std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
 
   template<>
+  Scorer& Parser::GetGlobal(){return scorer;}
+
+  template<>
+  std::vector<Scorer>& Parser::GetList<Scorer>() {return scorer_list;}
+
+  template<>
+  ScorerMesh& Parser::GetGlobal(){return scorermesh;}
+
+  template<>
+  std::vector<ScorerMesh>& Parser::GetList<ScorerMesh>() {return scorermesh_list;}
+  
+  template<>
   Placement& Parser::GetGlobal(){return placement;}
 
   template<>
-  std::vector<Placement>& Parser::GetList<Placement>() {return placement_list;}
+  std::vector<Placement>& Parser::GetList<Placement>(){return placement_list;}
   
   template<>
   PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}

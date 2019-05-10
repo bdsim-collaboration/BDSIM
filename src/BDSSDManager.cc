@@ -38,6 +38,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MultiSensitiveDetector.hh"
 #endif
 
+#include <map>
+#include <string>
+#include <vector>
+
 BDSSDManager* BDSSDManager::instance = nullptr;
 
 BDSSDManager* BDSSDManager::Instance()
@@ -238,4 +242,21 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
       {result = nullptr; break;}
     }
   return result;
+}
+
+void BDSSDManager::RegisterPrimitiveScorerName(const G4String& nameIn)
+{
+  primitiveScorerNamesComplete.emplace_back(nameIn);
+
+  G4String primitivePartOnly = nameIn; // copy of full name
+  auto search = nameIn.rfind("/");
+  if (search != std::string::npos)
+    {primitivePartOnly = nameIn.substr(search+1);}
+  primitiveScorerNames.push_back(primitivePartOnly);
+}
+
+void BDSSDManager::RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn)
+{
+  for (const auto& name : namesIn)
+    {RegisterPrimitiveScorerName(name);}
 }

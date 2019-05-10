@@ -21,9 +21,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSSDType.hh"
 
+#include "G4String.hh"
+#include "G4Types.hh"
 #include "G4Version.hh"
 
 #include <map>
+#include <vector>
 
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
@@ -115,6 +118,19 @@ public:
   /// SD for collimator impacts + energy deposition at the same time in order.
   inline BDSMultiSensitiveDetectorOrdered* CollimatorComplete() const {return collimatorCompleteSD;}
 
+  /// Make a record of a primitive scorer name. If it has a '/' in it, we take the last
+  /// bit of the name as the just primitive scorer name. We store both versions in member vectors.
+  void RegisterPrimitiveScorerName(const G4String& nameIn);
+
+  /// Loop over a vector and apply above single name function.
+  void RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn);
+  
+  /// Access a vector the full primitive scorere names as registered.
+  inline const std::vector<G4String>& PrimitiveScorerNamesComplete() const {return primitiveScorerNamesComplete;}
+
+  /// Access a vector of the just primitive scorere part of the names.
+  inline const std::vector<G4String>& PrimitiveScorerNames() const {return primitiveScorerNames;}
+
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -144,6 +160,13 @@ private:
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
+
+  /// Vector of complete (including mesh name) primitive scorer names.
+  std::vector<G4String> primitiveScorerNamesComplete;
+
+  /// Just the primitive scorer part of the name.
+  std::vector<G4String> primitiveScorerNames;
+
 
   /// @{ Cache of global constant option.
   G4bool storeCollimatorHitsAll;

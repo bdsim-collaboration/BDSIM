@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "blmplacement.h"
 #include "placement.h"
 #include "samplerplacement.h"
+#include "scorermesh.h"
 
 using namespace GMAD;
 
@@ -115,6 +116,28 @@ Placement::Placement(const SamplerPlacement& sp):
   axisZ     = sp.axisZ;
   angle     = sp.angle;
   axisAngle = sp.axisAngle;
+}
+
+Placement::Placement(const ScorerMesh& sm):
+  geometryFile(""),
+  sensitive(false)
+{
+  name      = sm.name;
+  sequence  = sm.sequence;
+  referenceElement       = sm.referenceElement;
+  referenceElementNumber = sm.referenceElementNumber;
+  s         = sm.s;
+  x         = sm.x;
+  y         = sm.y;
+  z         = sm.z;
+  phi       = sm.phi;
+  theta     = sm.theta;
+  psi       = sm.psi;
+  axisX     = sm.axisX;
+  axisY     = sm.axisY;
+  axisZ     = sm.axisZ;
+  angle     = sm.angle;
+  axisAngle = sm.axisAngle;
 }
 
 Placement::Placement(const BLMPlacement& bp):

@@ -41,6 +41,7 @@ namespace GMAD {
   template<typename T> class FastList;
   class Placement;
   class SamplerPlacement;
+  class ScorerMesh;
 }
 
 class BDSAcceleratorModel;
@@ -114,16 +115,21 @@ public:
 						const BDSBeamline*     beamLine,
 						G4double*              S = nullptr);
 
-  /// Create a sampler placement. Turns the sampler placement into a placement and uses
-  /// the above function.
+  /// Create a sampler placement transform. Turns the sampler placement into a
+  /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            bemaline,
+						const BDSBeamline*            bemaLine,
 						G4double*                     S = nullptr);
 
   /// Create a sampler placement from a blm plcement.
   static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-						const BDSBeamline*        bemaline,
+						const BDSBeamline*        bemaLine,
 						G4double*                 S = nullptr);
+    
+  // Create a scorermesh placement transform. Turns the scorermesh into a
+  /// placement and uses the above function.
+  static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
+                                                const BDSBeamline*      beamLine);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -169,11 +175,21 @@ private:
   /// supplied to calculate placements in some cases.
   BDSExtentGlobal CalculateExtentOfSamplerPlacements(const BDSBeamline* beamLine) const;
 
+  /// Calculate local extent of scorer mesh in 3D.
+  BDSExtent CalculateExtentOfScorerMesh(const GMAD::ScorerMesh& sm) const;
+
+  /// Calculate the maximum global extent of all scoerer meshes from the parser.  Beam line
+  /// supplied to calculate placements in some cases.
+  BDSExtentGlobal CalculateExtentOfScorerMeshes(const BDSBeamline* bl) const;
+
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
 								 G4String defaultBias,
 								 G4String elementName);
+
+  /// Construct meshes
+  void ConstructMeshes();
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;

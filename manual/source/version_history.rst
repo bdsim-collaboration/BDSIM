@@ -40,6 +40,8 @@ Bug Fixes
   instead.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from the run histograms.
 
 Utilities
 ---------

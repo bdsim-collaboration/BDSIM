@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUT_H
 #define BDSOUTPUT_H 
 
+#include "BDSHistBinMapper3D.hh"
 #include "BDSOutputStructures.hh"
 
 #include "globals.hh"
@@ -43,6 +44,7 @@ class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
+template <class T> class G4THitsMap;
 
 class G4PrimaryVertex;
 
@@ -119,6 +121,7 @@ public:
 		 const BDSTrajectoryPoint*                      primaryLoss,
 		 const std::map<BDSTrajectory*, bool>&          trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap,
 		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
@@ -202,6 +205,7 @@ private:
   void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
 		      const LossType type);
 
+  /// Fill a collection of energy hits in global coordinates into the appropriate output structure.
   void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
@@ -217,6 +221,13 @@ private:
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
+
+  /// Fill a map of scorer hits into the output.
+  void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
+
+  /// Fill an individual scorer hits map into a particular output histogram.
+  void FillScorerHitsIndividual(const G4String hsitogramDefName,
+				const G4THitsMap<G4double>* hitMap);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
@@ -291,6 +302,7 @@ private:
   /// @{ Map of histogram name (short) to index of histogram in output.
   std::map<G4String, G4int> histIndices1D;
   std::map<G4String, G4int> histIndices3D;
+  std::map<G4String, BDSHistBinMapper3D> scorerCoordinateMaps;
   /// @}
 };
 
