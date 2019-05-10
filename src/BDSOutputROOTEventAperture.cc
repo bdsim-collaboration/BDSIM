@@ -40,6 +40,7 @@ BDSOutputROOTEventAperture::~BDSOutputROOTEventAperture()
 void BDSOutputROOTEventAperture::Fill(const BDSHitApertureImpact* hit,
 				      G4bool isPrimaryFirstImpact)
 {
+  n++;
   energy.push_back((float)hit->totalEnergy / CLHEP::GeV);
   S.push_back(hit->S / CLHEP::m);
   weight.push_back(hit->weight);
