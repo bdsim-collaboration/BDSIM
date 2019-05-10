@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
+class BDSHitApertureImpact;
+typedef G4THitsCollection<BDSHitApertureImpact> BDSHitsCollectionApertureImpacts;
 class BDSHitCollimator;
 typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
 class BDSHitEnergyDeposition;
@@ -119,6 +121,7 @@ public:
 		 const BDSTrajectoryPoint*                      primaryLoss,
 		 const std::map<BDSTrajectory*, bool>&          trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
@@ -218,6 +221,9 @@ private:
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
 
+  /// Fill aperture impact hits.
+  void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
+
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
 
@@ -250,6 +256,7 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
+  G4bool storeApertureImpacts;
   G4bool storeCollimatorLinks;
   G4bool storeCollimatorHitsIons;
   G4bool storeCollimatorInfo;

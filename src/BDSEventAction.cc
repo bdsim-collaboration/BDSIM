@@ -497,6 +497,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    primaryLoss,
 		    interestingTraj,
 		    collimatorHits,
+		    apertureImpactHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end
