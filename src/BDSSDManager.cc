@@ -130,6 +130,7 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(worldExit);
 
   apertureImpacts = new BDSSDApertureImpacts("aperture");
+  apertureImpacts->SetFilter(filters["primary"]);
   SDMan->AddNewDetector(apertureImpacts);
 
 #if G4VERSION_NUMBER > 1029
