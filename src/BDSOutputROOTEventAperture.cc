@@ -59,7 +59,7 @@ void BDSOutputROOTEventAperture::Fill(const BDSHitApertureImpact* hit,
   G4bool ii = false;
   if (particleTable)
     {ii = particleTable->IsIon(pid);}
-  if (particleTable && ii)
+  if (particleTable && ii) // avoid nested ifs with duplicated setting of variables by doing it this way
     {
       auto& ionInfo = particleTable->GetIonInfo(pid);
       isIon.push_back(true);
