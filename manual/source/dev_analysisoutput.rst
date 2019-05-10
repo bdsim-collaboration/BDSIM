@@ -111,6 +111,8 @@ the curvilinear axis to the current point. If the dot product of the momentum ve
 with the outwards pointing surface normal is negative, the particle is identified as
 leaving the beam pipe.
 
+.. note:: This technique may not work with a non-convex beam pipe shape.
+
 Output
 ======
 
