@@ -73,6 +73,7 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
     {return result;}
 
   // sensitivity
+  // setup scoring
   // register with output
 
   return result;
