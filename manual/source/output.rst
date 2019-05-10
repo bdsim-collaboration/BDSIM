@@ -619,7 +619,7 @@ different value per-event run in BDSIM.
 |                           |                                  | from the beam line where there was no            |
 |                           |                                  | curvilinear coordinate system present.           |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| ApertureImpacts           | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
+| ApertureImpacts (\*\*\*)  | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
 |                           |                                  | particles (primry only by default) exit the      |
 |                           |                                  | aperture of the machine. Note, the same particle |
 |                           |                                  | can pass through the aperture multiple times.    |
@@ -647,6 +647,8 @@ different value per-event run in BDSIM.
 * (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
   option :code:`storeElossWorld`.
 * (\*\*) COLL_xxxx is only added per collimator when the option :code:`storeCollimatorInfo` is used.
+* (\*\*\*) ApertureImpacts is an optional branch that only exists in the output when the `storeApertureImpacts`
+  option is turned on.
 
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.

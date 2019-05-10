@@ -16,6 +16,27 @@ New Features
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
 
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++-----------------------------------+--------------------------------------------------------------------+
+| **Option**                        | **Description**                                                    |
++===================================+====================================================================+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
+
+
 General
 -------
 
