@@ -58,7 +58,7 @@ BDSSDApertureImpacts::~BDSSDApertureImpacts()
 
 void BDSSDApertureImpacts::Initialize(G4HCofThisEvent* HCE)
 {
-  hits = new BDSHitsCollectionApertureImpact(GetName(),colName);
+  hits = new BDSHitsCollectionApertureImpacts(GetName(),colName);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(hits);}
   HCE->AddHitsCollection(HCIDe,hits);

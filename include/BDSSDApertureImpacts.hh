@@ -61,7 +61,7 @@ private:
   BDSSDApertureImpacts() = delete;
   
   G4String colName;                       ///< Collection name.
-  BDSHitsCollectionApertureImpact* hits;  ///< Hits.
+  BDSHitsCollectionApertureImpacts* hits;  ///< Hits.
   G4int    HCIDe;                         ///< Hits collection ID of the event.
 
   /// Navigator for checking points in read out geometry
