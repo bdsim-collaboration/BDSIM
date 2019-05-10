@@ -670,23 +670,26 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-								const BDSBeamline*            beamline)
+								const BDSBeamline*            beamline,
+								G4double*                     S)
 {
   // convert a sampler placement to a general placement for generation of the transform.
   GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamline);
+  return CreatePlacementTransform(convertedPlacement, beamline, S);
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-								const BDSBeamline*        beamline)
+								const BDSBeamline*        beamline,
+								G4double*                 S)
 {
   // convert a sampler placement to a general placement for generation of the transform.
   GMAD::Placement convertedPlacement(blmPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamline);
+  return CreatePlacementTransform(convertedPlacement, beamline, S);
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
-								const BDSBeamline*     beamLine)
+								const BDSBeamline*     beamLine,
+								G4double*              S)
 {
   G4Transform3D result;
 
@@ -736,7 +739,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
-
+      if (S)
+	{*S = sCoordinate;}
       G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
 									 placement.x*CLHEP::m,
 									 placement.y*CLHEP::m);
@@ -750,6 +754,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 									  placement.y*CLHEP::m);
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
+      if (S)
+	{*S = placement.s*CLHEP::m;}
     }
   else
     {// scenario 1
@@ -759,6 +765,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       
       
       result = G4Transform3D(rm, translation);
+      if (S)
+	{*S = -1000;} // default
     }
   
   return result;

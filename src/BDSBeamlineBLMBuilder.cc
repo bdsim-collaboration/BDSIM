@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineBLMBuilder.hh"
 #include "BDSBLM.hh"
 #include "BDSBLMFactory.hh"
+#include "BDSBLMRegistry.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
@@ -62,7 +63,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 							blm,
 							length);
 
-      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine);
+      G4double S = -1000;
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine, &S);
+      BDSBLMRegistry::Instance()->RegisterBLM(bp.name, blm, S);
       
       /// Here we're assuming the length is along z which may not be true, but
       /// close enough for this purpose as we rely only on the centre position.
