@@ -64,8 +64,8 @@ public:
   G4double S;
   G4double x;
   G4double y;
-  G4double px;
-  G4double py;
+  G4double xp;
+  G4double yp;
   G4double weight;
   G4double globalTime;
   G4int    partID;
@@ -75,19 +75,19 @@ public:
   G4int    beamlineIndex;
 };
 
-typedef G4THitsCollection<BDSHitApertureImpact> BDSHitsCollectionApertureImpact;
-extern G4Allocator<BDSHitApertureImpact> BDSAllocatorApertureImpact;
+typedef G4THitsCollection<BDSHitApertureImpact> BDSHitsCollectionApertureImpacts;
+extern G4Allocator<BDSHitApertureImpact> BDSAllocatorApertureImpacts;
 
 inline void* BDSHitApertureImpact::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSAllocatorApertureImpact.MallocSingle();
+  aHit=(void*) BDSAllocatorApertureImpacts.MallocSingle();
   return aHit;
 }
 
 inline void BDSHitApertureImpact::operator delete(void *aHit)
 {
-  BDSAllocatorApertureImpact.FreeSingle((BDSHitApertureImpact*) aHit);
+  BDSAllocatorApertureImpacts.FreeSingle((BDSHitApertureImpact*) aHit);
 }
 
 #endif

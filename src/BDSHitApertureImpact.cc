@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 #include "G4Allocator.hh"
 
-G4Allocator<BDSHitApertureImpact> BDSAllocatorApertureImpact;
+G4Allocator<BDSHitApertureImpact> BDSAllocatorApertureImpacts;
 
 BDSHitApertureImpact::BDSHitApertureImpact():
   totalEnergy(0),
@@ -29,8 +29,8 @@ BDSHitApertureImpact::BDSHitApertureImpact():
   S(0),
   x(0),
   y(0),
-  px(0),
-  py(0),
+  xp(0),
+  yp(0),
   weight(0),
   globalTime(0),
   partID(0),
@@ -45,8 +45,8 @@ BDSHitApertureImpact::BDSHitApertureImpact(G4double totalEnergyIn,
 					   G4double SIn,
 					   G4double xIn,
 					   G4double yIn,
-					   G4double pxIn,
-					   G4double pyIn,
+					   G4double xpIn,
+					   G4double ypIn,
 					   G4double weightIn,
 					   G4double globalTimeIn,
 					   G4int    partIDIn,
@@ -59,8 +59,8 @@ BDSHitApertureImpact::BDSHitApertureImpact(G4double totalEnergyIn,
   S(SIn),
   x(xIn),
   y(yIn),
-  px(pxIn),
-  py(pyIn),
+  xp(xpIn),
+  yp(ypIn),
   weight(weightIn),
   globalTime(globalTimeIn),
   partID(partIDIn),
