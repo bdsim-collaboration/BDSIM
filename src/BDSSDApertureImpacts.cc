@@ -90,6 +90,16 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   G4ThreeVector posLocal = preStepPoint->GetPosition();
   G4ThreeVector surfaceNormal = preStepSolid->SurfaceNormal(posLocal);
 
+  // check if we have a surface normal pointing into the beam pipe (ie inside
+  // of the beam pipe). do this by projecting the surface normal onto a vector
+  // from the central curvilinear axis to the local point (radial vector). If
+  // +ve, then it's pointing out, else flip it along its direction.
+  G4ThreeVector radius(posLocal.x(), posLocal.y(), 0);
+  if (radius.dot(surfaceNormal) < 0)
+    {surfaceNormal *= -1;}
+
+  // test if leaving or entering by projecting the momentum onto the outwards
+  // pointing surface normal
   G4double dotProduct = surfaceNormal.dot(localPosMom.PreStepPoint());
   G4bool leavingBeamPipe = dotProduct >= 0; // +ve means it's leaving beam pipe - ie in direction of unit normal out
   if (!leavingBeamPipe)
