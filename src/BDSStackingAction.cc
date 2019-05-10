@@ -111,8 +111,8 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 			{
 			  for (G4int j=0; j < (G4int)mSDO->GetSize(); ++j)
 			    {
-			      if (auto ecSD2 = dynamic_cast<BDSSDEnergyDeposition*>(mSDO->GetSD(j)))
-				{ecSD2->ProcessHitsTrack(aTrack, nullptr);}
+			      if (auto ecSD3 = dynamic_cast<BDSSDEnergyDeposition*>(mSDO->GetSD(j)))
+				{ecSD3->ProcessHitsTrack(aTrack, nullptr);}
 			      // else another SD -> don't use
 			    }
 			  // else another SD -> don't use
