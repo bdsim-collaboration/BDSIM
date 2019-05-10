@@ -19,12 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlineBLMBuilder.hh"
+#include "BDSBLM.hh"
+#include "BDSBLMFactory.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSExtent.hh"
-#include "BDSGeometryExternal.hh"
-#include "BDSGeometryFactory.hh"
 #include "BDSSimpleComponent.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/blmplacement.h"
 
@@ -33,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <vector>
 
@@ -45,26 +45,24 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   
   BDSBeamline* blms = new BDSBeamline();
 
-  for (const auto& blmPacement : blmPlacements)
+  for (const auto& bp : blmPlacements)
     {
-      /*
-      // if a sequence is specified, it's a beam line and will be constructed
-      // elsewhere - skip it!
-      if (!placement.sequence.empty())
-	{continue;}
-	
-      auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
-								placement.geometryFile,
-								nullptr,
-								0, 0,
-								placement.sensitive);
-
-      G4double length = geom->GetExtent().DZ();
-      BDSSimpleComponent* comp = new BDSSimpleComponent(geom->GetName(),
-							geom,
+      BDSBLMFactory factory;
+      BDSBLM* blm = factory.BuildBLM(bp.name,
+				     bp.geometryFile,
+				     bp.geometryType,
+				     bp.blmMaterial,
+				     bp.blm1,
+				     bp.blm2,
+				     bp.blm3,
+				     bp.blm4);
+      
+      G4double length = blm->GetExtent().DZ();
+      BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
+							blm,
 							length);
 
-      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(placement, parentBeamLine);
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine);
       
       /// Here we're assuming the length is along z which may not be true, but
       /// close enough for this purpose as we rely only on the centre position.
@@ -90,8 +88,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 						      new G4RotationMatrix(*rm),
 						      -1,-1,-1);
 
-      placementBL->AddBeamlineElement(el);
-      */
+      blms->AddBeamlineElement(el);
     }
 
   return blms;

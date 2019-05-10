@@ -36,6 +36,7 @@ class G4Region;
 class G4VPhysicalVolume;
 
 namespace GMAD {
+  class BLMPlacement;
   struct Element;
   template<typename T> class FastList;
   class Placement;
@@ -114,6 +115,10 @@ public:
   /// the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
 						const BDSBeamline*            bemaline);
+
+  /// Create a sampler placement from a blm plcement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+						const BDSBeamline*        bemaline);
   
 private:
   /// assignment and copy constructor not implemented nor used

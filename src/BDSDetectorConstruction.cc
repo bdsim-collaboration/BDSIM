@@ -55,11 +55,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 
+#include "parser/blmplacement.h"
 #include "parser/element.h"
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 #include "parser/placement.h"
+#include "parser/samplerplacement.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -596,6 +598,11 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // during construction time
   PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
+  // Place BLMs. Similarly no sensitivity set here - done at construction time.
+  PlaceBeamlineInWorld(BDSAcceleratorModel::Instance()->BLMsBeamline(),
+		       worldPV,
+		       checkOverlaps);
+
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
     {// extras is map so iterator has first and second for key and value
@@ -667,6 +674,14 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Samp
 {
   // convert a sampler placement to a general placement for generation of the transform.
   GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamline);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+								const BDSBeamline*        beamline)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(blmPlacement); 
   return CreatePlacementTransform(convertedPlacement, beamline);
 }
 
