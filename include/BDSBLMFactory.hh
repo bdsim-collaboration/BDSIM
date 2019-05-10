@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"           // geant4 globals / types
 
 class BDSBLM;
+class BDSExtent;
 
 /**
  * @brief Factory for building BLMs. 
@@ -43,6 +44,28 @@ public:
 		   G4double blm2,
 		   G4double blm3,
 		   G4double blm4);
+
+private:
+
+  BDSBLM* BuildBLMCylinder(G4String name,
+			   G4String material,
+			   G4double halfLength,
+			   G4double radius);
+
+  BDSBLM* BuildBLMCube(G4String name,
+		       G4String material,
+		       G4double halfLengthX,
+		       G4double halfLengthY,
+		       G4double halfLengthZ);
+
+  BDSBLM* BuildBLMSphere(G4String name,
+			 G4String material,
+			 G4double radius);
+
+  BDSBLM* CommonConstruction(G4String  name,
+			     G4String  material,
+			     G4VSolid* shape,
+			     BDSExtent extent);
 };
 
 

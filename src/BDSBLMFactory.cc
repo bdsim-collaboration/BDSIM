@@ -18,10 +18,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBLM.hh"
 #include "BDSBLMFactory.hh"
+#include "BDSBLMType.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSMaterials.hh"
 
 #include "globals.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Orb.hh"
+#include "G4Tubs.hh"
 
 BDSBLMFactory::BDSBLMFactory()
 {;}
@@ -36,7 +43,7 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
 				G4double blm1,
 				G4double blm2,
 				G4double blm3,
-				G4double blm4)
+				G4double /*blm4*/)
 {
   // if geometry file is specified then we load the external file.
   BDSBLM* result = nullptr;
@@ -49,12 +56,71 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
     }
   else
     {
-
-
+      BDSBLMType shape = BDS::DetermineBLMType(geometryType);
+      switch (shape.underlying())
+	{
+	case BDSBLMType::cylinder:
+	  {result = BuildBLMCylinder(name, material, blm1, blm2); break;}
+	case BDSBLMType::cube:
+	  {result = BuildBLMCube(name, material, blm1, blm2, blm3); break;}
+	case BDSBLMType::sphere:
+	  {result = BuildBLMSphere(name, material, blm1); break;}
+	default:
+	  {break;}
+	}
     }
+  if (!result)
+    {return result;}
 
   // sensitivity
   // register with output
 
+  return result;
+}
+
+BDSBLM* BDSBLMFactory::BuildBLMCylinder(G4String name,
+					G4String material,
+					G4double halfLength,
+					G4double radius)
+{
+  G4Tubs* shape = new G4Tubs(name + "_solid",
+			     0,
+			     radius,
+			     halfLength,
+			     0,
+			     CLHEP::twopi);
+  BDSExtent ext = BDSExtent(radius, radius, halfLength);
+  return CommonConstruction(name, material, shape, ext);
+}
+
+BDSBLM* BDSBLMFactory::BuildBLMCube(G4String name,
+				    G4String material,
+				    G4double halfLengthX,
+				    G4double halfLengthY,
+				    G4double halfLengthZ)
+{
+  G4Box* shape = new G4Box(name + "_solid", halfLengthX, halfLengthY, halfLengthZ);
+  BDSExtent ext = BDSExtent(halfLengthX, halfLengthY, halfLengthZ);
+  return CommonConstruction(name, material, shape, ext);
+}
+
+BDSBLM* BDSBLMFactory::BuildBLMSphere(G4String name,
+				      G4String material,
+				      G4double radius)
+{
+  G4Orb* shape = new G4Orb(name + "_solid", radius);
+  BDSExtent ext = BDSExtent(radius, radius, radius);
+  return CommonConstruction(name, material, shape, ext);
+}
+
+BDSBLM* BDSBLMFactory::CommonConstruction(G4String  name,
+					  G4String  material,
+					  G4VSolid* shape,
+					  BDSExtent extent)
+{
+  G4Material* mat = BDSMaterials::Instance()->GetMaterial(material);
+  G4LogicalVolume* lv = new G4LogicalVolume(shape, mat, name + "_lv");
+  
+  BDSBLM* result = new BDSBLM(shape, lv, extent);
   return result;
 }

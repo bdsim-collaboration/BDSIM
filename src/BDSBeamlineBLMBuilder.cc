@@ -52,10 +52,10 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.geometryFile,
 				     bp.geometryType,
 				     bp.blmMaterial,
-				     bp.blm1,
-				     bp.blm2,
-				     bp.blm3,
-				     bp.blm4);
+				     bp.blm1 * CLHEP::m,
+				     bp.blm2 * CLHEP::m,
+				     bp.blm3 * CLHEP::m,
+				     bp.blm4 * CLHEP::m);
       
       G4double length = blm->GetExtent().DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
