@@ -44,7 +44,8 @@ public:
 		    BDSBLM*  blm,
 		    G4double SIn = -1000);
   
-  inline size_t size() const {return (size_t)numberOfEntries;}
+  inline size_t size()  const {return (size_t)numberOfEntries;}
+  inline G4int  NBLMs() const {return numberOfEntries;}
   
 private:
   /// Private constructor to enforce singleton pattern
