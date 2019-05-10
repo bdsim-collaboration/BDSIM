@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineBLMBuilder.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
@@ -163,6 +164,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
 					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
+
+  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
+				     mainBeamLine);
+  if (blms)
+    {BDSAcceleratorModel::Instance()->RegisterBLMs(blms);} // Acc model owns it
   
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
