@@ -129,7 +129,8 @@ public:
   // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-                                                const BDSBeamline*      beamLine);
+                                                const BDSBeamline*      beamLine,
+						G4double*               S = nullptr);
   
 private:
   /// assignment and copy constructor not implemented nor used
