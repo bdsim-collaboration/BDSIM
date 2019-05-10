@@ -601,7 +601,11 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // Place BLMs. Similarly no sensitivity set here - done at construction time.
   PlaceBeamlineInWorld(BDSAcceleratorModel::Instance()->BLMsBeamline(),
 		       worldPV,
-		       checkOverlaps);
+		       checkOverlaps,
+		       false,
+		       false,
+		       false,
+		       true); // use incremental copy nubmers 
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
@@ -617,11 +621,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 						   G4bool                checkOverlaps,
 						   G4bool                setRegions,
 						   G4bool                registerInfo,
-						   G4bool                useCLPlacementTransform)
+						   G4bool                useCLPlacementTransform,
+						   G4bool                useIncrementalCopyNumbers)
 {
   if (!beamline)
     {return;}
-  
+
+  G4int i = 0;
   for (auto element : *beamline)
     {
       // Do nothing for gap element
@@ -648,12 +654,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       if (useCLPlacementTransform)
 	{placementTransform = element->GetPlacementTransformCL();}
+      G4int copyNumber = useIncrementalCopyNumbers ? i : element->GetCopyNo();
       auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
 				  placementName,                        // placement name
 				  element->GetContainerLogicalVolume(), // volume to be placed
 				  containerPV,                          // volume to place it in
 				  false,                                // no boolean operation
-				  element->GetCopyNo(),                 // copy number
+				  copyNumber,                           // copy number
 				  checkOverlaps);                       // overlap checking
 
       if (registerInfo)
@@ -666,6 +673,7 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
+      i++; // for increuemental copy numbers
     }
 }
 
