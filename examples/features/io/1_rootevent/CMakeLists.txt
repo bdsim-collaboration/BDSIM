@@ -11,6 +11,8 @@ simple_testing(io-load-ascii-seed-state "--file=sc.gmad --seedStateFileName=../.
 
 # write optional aperture impacts
 simple_testing(io-aperture-impacts        "--file=sc_apertureimpacts.gmad"        "")
+simple_testing(io-aperture-impacts-ions   "--file=sc_apertureimpacts_ions.gmad"   "")
+simple_testing(io-aperture-impacts-all    "--file=sc_apertureimpacts_all.gamd"    "")
 
 # write optional sampler data
 simple_testing(io-sampler-extras          "--file=sc_samplerextras.gmad"          "")
