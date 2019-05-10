@@ -148,6 +148,7 @@ protected:
 
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
+  G4bool storeApertureImpacts;
   /// @}
 
 private:
@@ -256,7 +257,6 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
-  G4bool storeApertureImpacts;
   G4bool storeCollimatorLinks;
   G4bool storeCollimatorHitsIons;
   G4bool storeCollimatorInfo;
