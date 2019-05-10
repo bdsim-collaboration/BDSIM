@@ -213,9 +213,12 @@ void Event::SetBranchAddress(TTree* t,
 	  if (((*t).GetListOfBranches()->FindObject("ElossWorldContents.")) != nullptr)
 	    {t->SetBranchAddress("ElossWorldContents", &ElossWorldContents);}
 	  t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);
+	  SetBranchAddressCollimators(t, collimatorNamesIn);
+	}
+      if (dataVersion > 4)
+	{
 	  if (((*t).GetListOfBranches()->FindObject("ApertureImpacts.")) != nullptr)
 	    {t->SetBranchAddress("ApertureImpacts.",  &ApertureImpacts);}
-	  SetBranchAddressCollimators(t, collimatorNamesIn);
 	}
     }
   else if (branchesToTurnOn)
