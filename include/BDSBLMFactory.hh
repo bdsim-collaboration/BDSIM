@@ -43,7 +43,8 @@ public:
 		   G4double blm1,
 		   G4double blm2,
 		   G4double blm3,
-		   G4double blm4);
+		   G4double blm4,
+		   G4String scoreQuantity);
 
 private:
 

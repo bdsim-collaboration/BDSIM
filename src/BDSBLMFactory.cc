@@ -43,7 +43,8 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
 				G4double blm1,
 				G4double blm2,
 				G4double blm3,
-				G4double /*blm4*/)
+				G4double /*blm4*/,
+				G4String scoreQuantity)
 {
   // if geometry file is specified then we load the external file.
   BDSBLM* result = nullptr;
@@ -73,6 +74,17 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
     {return result;}
 
   // sensitivity
+  // for now this is a repeat of a bit of ConstructMeshes in BDSDetectorConstruction.
+  std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
+  // convert all the parser scorer definitions into recipes (including parameter checking)
+  std::map<G4String, BDSScorerInfo> scorerRecipes;
+  for (const auto& scorer : scorers)
+    {
+      BDSScorerInfo si = BDSScorerInfo(scorer);
+      scorerRecipes.insert(std::make_pair(si.name, si));
+    }
+
+  
   // setup scoring
   // register with output
 

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBLMFactory.hh"
 #include "BDSBLMRegistry.hh"
 #include "BDSDetectorConstruction.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
 
@@ -35,14 +36,52 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
 #include <vector>
-
 
 BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements,
 			    const BDSBeamline* parentBeamLine)
 {
   if (blmPlacements.empty())
     {return nullptr;} // don't do anything - no placements
+
+  // we need to loop over all the blm definitions to work out the unique combinations of
+  // scorers that need to created. multiple scorers for a single blm ultimately have to be
+  // in one G4MultiFunctionalSD sensitive detector.
+  std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
+  // convert all the parser scorer definitions into recipes (including parameter checking)
+  std::map<G4String, BDSScorerInfo> scorerRecipes;
+  for (const auto& scorer : scorers)
+    {
+      BDSScorerInfo si = BDSScorerInfo(scorer);
+      scorerRecipes.insert(std::make_pair(si.name, si));
+    }
+  
+  std::set<std::set<G4String> > scorersToMake;
+  for (const auto& bp : blmPlacements)
+    {
+      std::set<G4String> requiredScorers;
+      std::stringstream sqss(bp.scoreQuantity);
+      G4String word;
+      while (sqss >> word) // split by white space - process word at a time
+	{
+	  auto search = scorerRecipes.find(word);
+	  if (search == scorerRecipes.end())
+	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for blm \"" + bp.name + "\" not found.");}
+	  requiredScorers.insert(word);
+	}
+      if (requiredScorers.empty())
+	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
+      scorersToMake.insert(requiredScorers);
+    }
+  
+  if (scorersToMake.empty())
+    {G4cout << "Warning - all BLMs have no scoreQuantity specified so are only passive material." << G4endl;}
+
+  // construct SDs
   
   BDSBeamline* blms = new BDSBeamline();
 
@@ -56,7 +95,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.blm1 * CLHEP::m,
 				     bp.blm2 * CLHEP::m,
 				     bp.blm3 * CLHEP::m,
-				     bp.blm4 * CLHEP::m);
+				     bp.blm4 * CLHEP::m); // TBC - SD as last item
       
       G4double length = blm->GetExtent().DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),

@@ -65,6 +65,7 @@ namespace GMAD
     double blm2;
     double blm3;
     double blm4;
+    std::string scoreQuantity;
         
     /// constructor
     BLMPlacement();
