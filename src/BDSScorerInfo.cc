@@ -28,10 +28,29 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer):
+#include <map>
+#include <string>
+
+
+BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
+			     G4bool upgradeTo3D):
   particle(nullptr)
 {
-  scorerType    = BDS::DetermineScorerType(scorer.type);
+  const std::map<std::string, std::string> replacements = {
+							   {"depositeddose",   "depositeddose3d"},
+							   {"depositedenergy", "depositedenergy3d"}
+  };
+  
+  std::string scorerTypeNameOriginal = scorer.type;
+  std::string scorerTypeName         = scorerTypeNameOriginal; // default copy
+  if (upgradeTo3D)
+    {
+      auto search = replacements.find(scorerTypeNameOriginal);
+      if (search != replacements.end())
+	{scorerTypeName = search->second;}
+    }
+  
+  scorerType    = BDS::DetermineScorerType(G4String(scorerTypeName));
   name          = scorer.name;
   minimumEnergy = scorer.minimumEnergy*CLHEP::GeV;
   maximumEnergy = scorer.maximumEnergy*CLHEP::GeV;

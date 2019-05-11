@@ -41,8 +41,10 @@ class G4ParticleDefinition;
 class BDSScorerInfo
 {
 public:
-  /// Constructor.
-  BDSScorerInfo(const GMAD::Scorer& scorer);
+  /// Constructor. If upgradeTo3D is true, some scorer types will
+  /// be upgraded to 3d as required for use in a mesh.
+  explicit BDSScorerInfo(const GMAD::Scorer& scorer,
+			 G4bool upgradeTo3D = false);
   
   BDSScorerType scorerType;          ///< Scorer type.
   G4String      name;                ///< Scorer name.

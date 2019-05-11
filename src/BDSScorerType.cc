@@ -27,22 +27,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
         new std::map<BDSScorerType, std::string> ({
-            {BDSScorerType::deposited_dose,   "deposited_dose"},
-            {BDSScorerType::deposited_energy, "deposited_energy"},
-            {BDSScorerType::population,       "population"},
-            {BDSScorerType::ambient_dose,     "ambient_dose"},
-            {BDSScorerType::ambient_dose,     "activation"}
+            {BDSScorerType::depositeddose,   "depositeddose"},
+	    {BDSScorerType::depositeddose3d, "depositeddose3d"},
+            {BDSScorerType::depositedenergy, "depositedenergy"},
+	    {BDSScorerType::depositedenergy, "depositedenergy3d"},
+            {BDSScorerType::population,      "population"},
+            {BDSScorerType::ambientdose,     "ambientdose"},
+            {BDSScorerType::ambientdose,     "activation"}
         });
-
 
 BDSScorerType BDS::DetermineScorerType(G4String scorerType)
 {
   std::map<G4String, BDSScorerType> types;
-  types["deposited_dose"]   = BDSScorerType::deposited_dose;
-  types["deposited_energy"] = BDSScorerType::deposited_energy;
-  types["population"]       = BDSScorerType::population;
-  types["ambient_dose"]     = BDSScorerType::ambient_dose;
-  types["activation"]       = BDSScorerType::activation;
+  types["depositeddose"]     = BDSScorerType::depositeddose;
+  types["depositeddose3d"]   = BDSScorerType::depositeddose3d;
+  types["depositedenergy"]   = BDSScorerType::depositedenergy;
+  types["depositedenergy3d"] = BDSScorerType::depositedenergy3d;
+  types["population"]        = BDSScorerType::population;
+  types["ambientdose"]       = BDSScorerType::ambientdose;
+  types["activation"]        = BDSScorerType::activation;
   
   scorerType.toLower();
   
