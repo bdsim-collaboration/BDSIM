@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
+#include "BDSSDManager.hh"
 #include "BDSSimpleComponent.hh"
 
 #include "parser/blmplacement.h"
@@ -39,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4MultiFunctionalDetector.hh"
 #include "G4RotationMatrix.hh"
+#include "G4SDManager.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4VSensitiveDetector.hh"
@@ -84,20 +86,23 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
     }
-  
+  G4cout << "Unqiue combinations of scorers: " << scorerSetsToMake.size() << G4endl;
   if (scorerSetsToMake.empty())
     {G4cout << "Warning - all BLMs have no scoreQuantity specified so are only passive material." << G4endl;}
 
   // construct SDs
   BDSScorerFactory scorerFactory;
   std::map<G4String, G4MultiFunctionalDetector*> sensitiveDetectors;
+  std::vector<G4String> uniquePrimitiveScorerNames;
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   for (const auto& ss : scorerSetsToMake)
     {
       G4String combinedName = "";
       for (const auto& name : ss) // merge into one name
 	{combinedName += name;}
 
-      G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector(combinedName);
+	  G4cout << "Making unique SD " << combinedName << G4endl;
+      G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector("blm_"+combinedName);
       for (const auto& name : ss)
 	{
 	  auto search = scorerRecipes.find(name);
@@ -106,9 +111,12 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 
 	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr);
 	  sd->RegisterPrimitive(ps);
+	  uniquePrimitiveScorerNames.push_back("blm_"+combinedName+"/"+name);
 	}
       sensitiveDetectors[combinedName] = sd;
+      SDMan->AddNewDetector(sd);
     }
+  BDSSDManager::Instance()->RegisterPrimitiveScorerNames(uniquePrimitiveScorerNames);
   
   BDSBeamline* blms = new BDSBeamline();
   BDSBLMFactory factory;

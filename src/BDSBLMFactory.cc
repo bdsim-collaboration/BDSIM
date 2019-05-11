@@ -84,6 +84,7 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
   // attach sensitivity
   for (auto lv : result->GetAllLogicalVolumes())
     {lv->SetSensitiveDetector(sd);}
+  result->GetContainerLogicalVolume()->SetSensitiveDetector(sd); // attach separately to the container
 
   return result;
 }
