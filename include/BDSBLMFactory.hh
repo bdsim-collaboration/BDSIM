@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSBLM;
 class BDSExtent;
+class G4VSensitiveDetector;
 
 /**
  * @brief Factory for building BLMs. 
@@ -44,7 +45,7 @@ public:
 		   G4double blm2,
 		   G4double blm3,
 		   G4double blm4,
-		   G4String scoreQuantity);
+		   G4VSensitiveDetector* sd);
 
 private:
 

@@ -22,12 +22,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBLM.hh"
 #include "BDSBLMFactory.hh"
 #include "BDSBLMRegistry.hh"
+#include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
+#include "BDSParser.hh"
+#include "BDSScorerInfo.hh"
 #include "BDSSimpleComponent.hh"
 
 #include "parser/blmplacement.h"
+#include "parser/scorer.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -35,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4VSensitiveDetector.hh"
 
 #include <map>
 #include <set>
@@ -82,6 +87,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
     {G4cout << "Warning - all BLMs have no scoreQuantity specified so are only passive material." << G4endl;}
 
   // construct SDs
+  G4VSensitiveDetector* sd = nullptr;
   
   BDSBeamline* blms = new BDSBeamline();
 
@@ -95,7 +101,8 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.blm1 * CLHEP::m,
 				     bp.blm2 * CLHEP::m,
 				     bp.blm3 * CLHEP::m,
-				     bp.blm4 * CLHEP::m); // TBC - SD as last item
+				     bp.blm4 * CLHEP::m,
+				     sd);
       
       G4double length = blm->GetExtent().DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
