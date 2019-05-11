@@ -229,6 +229,9 @@ private:
   void FillScorerHitsIndividual(const G4String hsitogramDefName,
 				const G4THitsMap<G4double>* hitMap);
 
+  void FillScorerHitsIndividualBLM(G4String histogramDefName,
+                                   const G4THitsMap<G4double>* hitMap);
+
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
 

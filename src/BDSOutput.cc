@@ -856,6 +856,9 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
+  if (histogramDefName.contains("blm"))
+    {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
+
   G4int histIndex = histIndices3D[histogramDefName];
   // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
   const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
@@ -875,6 +878,10 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
     }
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
+
+void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
+                                            const G4THitsMap<G4double>* hitMap)
+{;}
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info)
 {
