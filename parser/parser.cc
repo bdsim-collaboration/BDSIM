@@ -684,12 +684,14 @@ template <class C>
 bool Parser::FindAndExtend(const std::string& objectName)
 {
   auto vec = GetList<C>();
-  for (auto it = vec.begin(); it!=vec.end(); ++it) {
-    if ((*it).name == objectName) {
-      ExtendObject(*it);
-      return true;
+  for (auto it = vec.begin(); it!=vec.end(); ++it)
+    {
+      if ((*it).name == objectName)
+	{
+	  ExtendObject(*it);
+	  return true;
+	}
     }
-  }
   return false;
 }
 

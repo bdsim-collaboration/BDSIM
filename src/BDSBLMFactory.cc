@@ -81,17 +81,6 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
   if (!result)
     {return result;}
 
-  // sensitivity
-  // for now this is a repeat of a bit of ConstructMeshes in BDSDetectorConstruction.
-  std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
-  // convert all the parser scorer definitions into recipes (including parameter checking)
-  std::map<G4String, BDSScorerInfo> scorerRecipes;
-  for (const auto& scorer : scorers)
-    {
-      BDSScorerInfo si = BDSScorerInfo(scorer);
-      scorerRecipes.insert(std::make_pair(si.name, si));
-    }
-  
   // attach sensitivity
   for (auto lv : result->GetAllLogicalVolumes())
     {lv->SetSensitiveDetector(sd);}
