@@ -111,6 +111,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 
 	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr);
 	  sd->RegisterPrimitive(ps);
+	  // We rely on the prefix "blm_" here to intercept scorer hits in BDSOutput so if
+	  // this changes, that matching must be done there too. It's to distinguish them
+	  // from 3D mesh hits and put them in the BLM output.
 	  uniquePrimitiveScorerNames.push_back("blm_"+combinedName+"/"+name);
 	}
       sensitiveDetectors[combinedName] = sd;

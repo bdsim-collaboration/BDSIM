@@ -856,7 +856,7 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
-  if (histogramDefName.contains("blm"))
+  if (histogramDefName.contains("blm_"))
     {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
 
   G4int histIndex = histIndices3D[histogramDefName];

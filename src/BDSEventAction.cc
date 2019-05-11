@@ -236,7 +236,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-
+  for (G4int i = 0; i < HCE->GetNumberOfCollections(); i++)
+	  {G4cout << "collection " << i << " " << HCE->GetHC(i)->GetSize() << G4endl;}
   // samplers
   typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane));
