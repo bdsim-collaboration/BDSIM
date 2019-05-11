@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSParser.hh"
+#include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSSimpleComponent.hh"
 
@@ -36,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include "globals.hh"
+#include "G4MultiFunctionalDetector.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -65,7 +67,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       scorerRecipes.insert(std::make_pair(si.name, si));
     }
   
-  std::set<std::set<G4String> > scorersToMake;
+  std::set<std::set<G4String> > scorerSetsToMake;
   for (const auto& bp : blmPlacements)
     {
       std::set<G4String> requiredScorers;
@@ -80,20 +82,53 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	}
       if (requiredScorers.empty())
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
-      scorersToMake.insert(requiredScorers);
+      scorerSetsToMake.insert(requiredScorers);
     }
   
-  if (scorersToMake.empty())
+  if (scorerSetsToMake.empty())
     {G4cout << "Warning - all BLMs have no scoreQuantity specified so are only passive material." << G4endl;}
 
   // construct SDs
-  G4VSensitiveDetector* sd = nullptr;
+  BDSScorerFactory scorerFactory;
+  std::map<G4String, G4MultiFunctionalDetector*> sensitiveDetectors;
+  for (const auto& ss : scorerSetsToMake)
+    {
+      G4String combinedName = "";
+      for (const auto& name : ss) // merge into one name
+	{combinedName += name;}
+
+      G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector(combinedName);
+      for (const auto& name : ss)
+	{
+	  auto search = scorerRecipes.find(name);
+	  if (search == scorerRecipes.end())
+	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" not found.");}
+
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr);
+	  sd->RegisterPrimitive(ps);
+	}
+      sensitiveDetectors[combinedName] = sd;
+    }
   
   BDSBeamline* blms = new BDSBeamline();
-
+  BDSBLMFactory factory;
   for (const auto& bp : blmPlacements)
     {
-      BDSBLMFactory factory;
+      // form a set of score quantities again
+      std::set<G4String> requiredScorers;
+      std::stringstream sqss(bp.scoreQuantity);
+      G4String word;
+      while (sqss >> word)
+	{requiredScorers.insert(word);}
+      G4String combinedName = "";
+      for (const auto& name : requiredScorers)
+	{combinedName += name;}
+
+      auto sdSearch = sensitiveDetectors.find(combinedName);
+      if (sdSearch == sensitiveDetectors.end())
+	{throw BDSException(__METHOD_NAME__, "unknown set of scorers");}
+      G4MultiFunctionalDetector* sd = sdSearch->second;      
+
       BDSBLM* blm = factory.BuildBLM(bp.name,
 				     bp.geometryFile,
 				     bp.geometryType,
