@@ -1,10 +1,30 @@
 include collimation.gmad;
 
+neutronFlux: scorer, type="population",
+	     	     particleName="neutron";
 
-minidetector: blm, x=0.4*m, y=0.25*m,
-	      	   geometryType="cylidnrical",
+blmDose: scorer, type="depositeddose";
+blmEDep: scorer, type="depositedenergy";
+
+minidetector: blm, s=1*m, x=0.4*m, y=0.25*m,
+	      	   geometryType="cylinder",
 		   blmMaterial="N",
 		   blm1=20*cm,
-		   blm2=5*cm;
+		   blm2=5*cm,
+		   scoreQuantity="blmDose blmEDep";
+
+secondaryDetector: blm, s=8*m, y=0.2*m,
+	      	   geometryType="cylinder",
+		   blmMaterial="N",
+		   blm1=20*cm,
+		   blm2=5*cm,
+		   scoreQuantity="blmEDep blmDose neutronFlux";
+
+tertiaryDetector: blm, s=5.12*m, x=0.4*m, y=0.25*m,
+	      	   geometryType="cylinder",
+		   blmMaterial="N",
+		   blm1=20*cm,
+		   blm2=5*cm,
+		   scoreQuantity="blmEDep blmDose";
 
 
