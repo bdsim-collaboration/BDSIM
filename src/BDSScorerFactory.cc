@@ -25,7 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
+#include "G4PSDoseDeposit.hh"
 #include "G4PSDoseDeposit3D.hh"
+#include "G4PSEnergyDeposit.hh"
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSPopulation3D.hh"
 #include "G4ScoringBox.hh"
@@ -59,9 +61,13 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String            n
   G4VPrimitiveScorer* result = nullptr;
   switch (scorerType.underlying())
     {
-    case BDSScorerType::deposited_dose:
+    case BDSScorerType::depositeddose:
+      {result = new G4PSDoseDeposit(name); break;}
+    case BDSScorerType::depositeddose3d:
       {result = new G4PSDoseDeposit3D(name); break;}
-    case BDSScorerType::deposited_energy:
+    case BDSScorerType::depositedenergy:
+      {result = new G4PSEnergyDeposit(name); break;}
+    case BDSScorerType::depositedenergy3d:
       {result = new G4PSEnergyDeposit3D(name); break;}
     case BDSScorerType::population:
       {
@@ -70,7 +76,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String            n
 	result = scorer;
 	break;
       }
-    case BDSScorerType::ambient_dose:
+    case BDSScorerType::ambientdose:
       {result = new BDSScorerQuantity3D(name,mapper,filename); break;}
      case BDSScorerType::activation:
       {result = new BDSScorerQuantity3D(name,mapper,filename); break;}

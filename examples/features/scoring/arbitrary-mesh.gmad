@@ -2,7 +2,7 @@ c1: rcol, l=0.2*m, material="W";
 l1: line=(c1);
 use, l1;
 
-protonAmbient: scorer, type="ambient_dose",
+protonAmbient: scorer, type="ambientdose",
 	    	       particleName="proton",
 		       minimumEnergy=20*MeV,
 		       maximumEnergy=1*GeV,

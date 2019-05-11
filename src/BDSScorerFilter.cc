@@ -23,33 +23,36 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSScorerFilter.hh"
 
-BDSScorerFilter::BDSScorerFilter(G4String name, const BDSScorerInfo* info)
-        :G4VSDFilter(name),fParticleWithKineticEnergyFilter(nullptr),fTimeFilter(nullptr),fVolumeFilter(nullptr)
+BDSScorerFilter::BDSScorerFilter(G4String             name,
+				 const BDSScorerInfo* info):
+  G4VSDFilter(name),
+  fParticleWithKineticEnergyFilter(nullptr),
+  fTimeFilter(nullptr),
+  fVolumeFilter(nullptr)
 {
-
-    // Define the different scorers depending info.
-
-    // Particle with kinetic energy filter
-    if (info->particle)
+  // Define the different scorers depending info.
+  
+  // Particle with kinetic energy filter
+  if (info->particle)
     {
-        G4String particleName = info->particle->GetParticleName();
-        fParticleWithKineticEnergyFilter= new G4SDParticleWithEnergyFilter("particle_filter",
-                                                                           info->minimumEnergy,
-                                                                           info->maximumEnergy);
-        fParticleWithKineticEnergyFilter->add(particleName);
+      G4String particleName = info->particle->GetParticleName();
+      fParticleWithKineticEnergyFilter= new G4SDParticleWithEnergyFilter("particle_filter",
+									 info->minimumEnergy,
+									 info->maximumEnergy);
+      fParticleWithKineticEnergyFilter->add(particleName);
     }
-
-    // Time filter
-    if (info->maximumTime != info->minimumTime) {
-        fTimeFilter = new BDSScorerTimeFilter("time_filter",
-                                                                  info->minimumTime,
-                                                                  info->maximumTime);
+  
+  // Time filter
+  if (info->maximumTime != info->minimumTime)
+    {
+      fTimeFilter = new BDSScorerTimeFilter("time_filter",
+					    info->minimumTime,
+					    info->maximumTime);
     }
-
-    // For the ambient dose, make a filter to only have the world volume
-    if((info->scorerType.underlying()) == BDSScorerType::ambient_dose) {
-        fVolumeFilter = new BDSScorerVolumeFilter("volume_filter");
-    }
+  
+  // For the ambient dose, make a filter to only have the world volume
+  if((info->scorerType.underlying()) == BDSScorerType::ambientdose)
+    {fVolumeFilter = new BDSScorerVolumeFilter("volume_filter");}
 }
 
 BDSScorerFilter::~BDSScorerFilter()
@@ -57,15 +60,20 @@ BDSScorerFilter::~BDSScorerFilter()
 
 G4bool BDSScorerFilter::Accept(const G4Step* aStep) const
 {
-    if(fParticleWithKineticEnergyFilter){
-        if(!fParticleWithKineticEnergyFilter->Accept(aStep)) return FALSE;
+  if (fParticleWithKineticEnergyFilter)
+    {
+      if (!fParticleWithKineticEnergyFilter->Accept(aStep))
+	{return false;}
     }
-    if(fTimeFilter) {
-        if(!fTimeFilter->Accept(aStep)) return FALSE;
+  if (fTimeFilter)
+    {
+      if (!fTimeFilter->Accept(aStep))
+	{return false;}
     }
-    if(fVolumeFilter){
-        if(!fVolumeFilter->Accept(aStep)) return FALSE;
+  if (fVolumeFilter)
+    {
+      if (!fVolumeFilter->Accept(aStep))
+	{return false;}
     }
-    return TRUE;
-
+  return true;
 }

@@ -31,7 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct scorertype_def
 {
-  enum type {deposited_dose, deposited_energy, population, ambient_dose, activation};
+  enum type {depositeddose, depositeddose3d, depositedenergy, depositedenergy3d,
+	     population, ambientdose, activation};
 };
 
 typedef BDSTypeSafeEnum<scorertype_def,int> BDSScorerType;

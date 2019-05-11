@@ -1025,7 +1025,7 @@ void BDSDetectorConstruction::ConstructMeshes()
   std::map<G4String, BDSScorerInfo> scorerRecipes;
   for (const auto& scorer : scorers)
     {
-      BDSScorerInfo si = BDSScorerInfo(scorer);
+      BDSScorerInfo si = BDSScorerInfo(scorer, true); // true = upgrade to 3d as required for 3d mesh here
       scorerRecipes.insert(std::make_pair(si.name, si));
     }
 
