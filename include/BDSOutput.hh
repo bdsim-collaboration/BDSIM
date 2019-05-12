@@ -150,6 +150,12 @@ protected:
   G4bool storeELossWorldContents;
   /// @}
 
+  /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
+  /// because the same primitive scorer information may appear for BLMs in multiple SDs that
+  /// each represent a unique combination of PSs. Ultimately though, there's one histogram
+  /// per BLM scorer (for all BLMs).
+  std::map<G4String, G4int> blmCollectionNameToHistogramID;
+
 private:
   /// Enum for different types of sampler hits that can be written out.
   enum class HitsType {plane, cylinder};
