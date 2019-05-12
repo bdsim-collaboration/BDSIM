@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerInfo.hh"
 #include "BDSSDManager.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/blmplacement.h"
 #include "parser/scorer.h"
@@ -86,7 +87,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
     }
+#ifdef BDSDEBUG
   G4cout << "Unqiue combinations of scorers: " << scorerSetsToMake.size() << G4endl;
+#endif
   if (scorerSetsToMake.empty())
     {G4cout << "Warning - all BLMs have no scoreQuantity specified so are only passive material." << G4endl;}
 
@@ -101,7 +104,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       for (const auto& name : ss) // merge into one name
 	{combinedName += name;}
 
-	  G4cout << "Making unique SD " << combinedName << G4endl;
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Making unique SD " << combinedName << G4endl;
+#endif
       G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector("blm_"+combinedName);
       for (const auto& name : ss)
 	{
@@ -157,6 +162,10 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 
       G4double S = -1000;
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine, &S);
+      // do a little checking here as transform code in CreatePlacement can't know who's calling it to warn
+      if (BDS::IsFinite(bp.s) && transform == G4Transform3D::Identity)
+	{throw BDSException(__METHOD_NAME__, "the S coordinate (" + std::to_string(bp.s) + " m) for blm \"" + bp.name + "\" was not found in the beam line - please check");}
+      
       BDSBLMRegistry::Instance()->RegisterBLM(bp.name, blm, S);
       
       /// Here we're assuming the length is along z which may not be true, but
