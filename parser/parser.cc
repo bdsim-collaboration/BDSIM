@@ -267,7 +267,7 @@ void Parser::expand_line(FastList<Element>& target,
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
-    std::cerr << "'ERROR" << name << "' is not a line" << std::endl;
+    std::cerr << "'ERROR " << name << "' is not a line" << std::endl;
     exit(1);
   }
 
