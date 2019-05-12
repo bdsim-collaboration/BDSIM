@@ -258,7 +258,10 @@ namespace GMAD
     
     // output related options
     int         numberOfEventsPerNtuple;
-    
+
+    bool        storeApertureImpacts;
+    bool        storeApertureImpactsIons;
+    bool        storeApertureImpactsAll;
     bool        storeCollimatorInfo;
     bool        storeCollimatorLinks;
     bool        storeCollimatorHitsIons;

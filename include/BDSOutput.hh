@@ -32,6 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
+class BDSHitApertureImpact;
+typedef G4THitsCollection<BDSHitApertureImpact> BDSHitsCollectionApertureImpacts;
 class BDSHitCollimator;
 typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
 class BDSHitEnergyDeposition;
@@ -121,6 +123,7 @@ public:
 		 const BDSTrajectoryPoint*                      primaryLoss,
 		 const std::map<BDSTrajectory*, bool>&          trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 		 const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap,
 		 const G4int                                    turnsTaken);
 
@@ -148,6 +151,7 @@ protected:
 
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
+  G4bool storeApertureImpacts;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
@@ -228,15 +232,8 @@ private:
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
 
-  /// Fill a map of scorer hits into the output.
-  void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
-
-  /// Fill an individual scorer hits map into a particular output histogram.
-  void FillScorerHitsIndividual(const G4String hsitogramDefName,
-				const G4THitsMap<G4double>* hitMap);
-
-  void FillScorerHitsIndividualBLM(G4String histogramDefName,
-                                   const G4THitsMap<G4double>* hitMap);
+  /// Fill aperture impact hits.
+  void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
