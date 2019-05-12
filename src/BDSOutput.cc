@@ -880,7 +880,11 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 #else
       if (nameHitsMap.second->size() == 0)
 #endif
-        {continue;}
+#ifdef BDSDEBUG
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#else
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#endif
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
     }
 }
@@ -921,9 +925,11 @@ void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
   for (const auto& hit : *hitMap)
 #endif
     {
-      // fill blm index (bin number) + 1 for root th1 offset
-      evtHistos->Fill1DHistogram(histIndex,hit.first+1, *hit.second);
-      runHistos->Fill1DHistogram(histIndex,hit.first+1, *hit.second);
+#ifdef BDSDEBUG
+      G4cout << "Filling hist " << histIndex << ", bin: " << hit.first+1 << " value: " << *hit.second << G4endl;
+#endif
+      evtHistos->Fill1DHistogram(histIndex,hit.first, *hit.second);
+      runHistos->Fill1DHistogram(histIndex,hit.first, *hit.second);
     }
 }
 
