@@ -127,7 +127,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       sensitiveDetectors[combinedName] = sd;
       SDMan->AddNewDetector(sd);
     }
-  BDSSDManager::Instance()->RegisterPrimitiveScorerNames(uniquePrimitiveScorerNames);
+  BDSSDManager::Instance()->RegisterPrimitiveScorerNames(uniquePrimitiveScorerNames, &scorerUnits);
   
   BDSBeamline* blms = new BDSBeamline();
   BDSBLMFactory factory;
