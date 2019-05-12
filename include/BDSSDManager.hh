@@ -120,10 +120,11 @@ public:
 
   /// Make a record of a primitive scorer name. If it has a '/' in it, we take the last
   /// bit of the name as the just primitive scorer name. We store both versions in member vectors.
-  void RegisterPrimitiveScorerName(const G4String& nameIn);
+  void RegisterPrimitiveScorerName(const G4String& nameIn, G4double unit = 1.0);
 
   /// Loop over a vector and apply above single name function.
-  void RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn);
+  void RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn,
+				    const std::vector<G4double>* units = nullptr);
   
   /// Access a vector the full primitive scorere names as registered.
   inline const std::vector<G4String>& PrimitiveScorerNamesComplete() const {return primitiveScorerNamesComplete;}
@@ -131,6 +132,9 @@ public:
   /// Access a vector of the just primitive scorere part of the names.
   inline const std::vector<G4String>& PrimitiveScorerNames() const {return primitiveScorerNames;}
 
+  /// Access the map of units for primitive scorers.
+  inline const std::map<G4String, G4double>& PrimitiveScorerUnits() const {return primitiveScorerNameToUnit;}
+  
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -167,6 +171,8 @@ private:
   /// Just the primitive scorer part of the name.
   std::vector<G4String> primitiveScorerNames;
 
+  /// Map of primitive scorer names to units.
+  std::map<G4String, G4double> primitiveScorerNameToUnit;
 
   /// @{ Cache of global constant option.
   G4bool storeCollimatorHitsAll;

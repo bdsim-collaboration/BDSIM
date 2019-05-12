@@ -97,6 +97,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   BDSScorerFactory scorerFactory;
   std::map<G4String, G4MultiFunctionalDetector*> sensitiveDetectors;
   std::vector<G4String> uniquePrimitiveScorerNames;
+  std::vector<G4double> scorerUnits;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   for (const auto& ss : scorerSetsToMake)
     {
@@ -114,12 +115,14 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	  if (search == scorerRecipes.end())
 	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" not found.");}
 
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr);
+	  G4double unit = 1.0;
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr, &unit);
 	  sd->RegisterPrimitive(ps);
 	  // We rely on the prefix "blm_" here to intercept scorer hits in BDSOutput so if
 	  // this changes, that matching must be done there too. It's to distinguish them
 	  // from 3D mesh hits and put them in the BLM output.
 	  uniquePrimitiveScorerNames.push_back("blm_"+combinedName+"/"+name);
+	  scorerUnits.push_back(unit);
 	}
       sensitiveDetectors[combinedName] = sd;
       SDMan->AddNewDetector(sd);

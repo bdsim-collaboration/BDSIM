@@ -520,7 +520,8 @@ void BDSOutput::CreateHistograms()
       // set of primitive scorers use for BLMs.
       // note there may be scorers from genral 3d meshes and not just blms
       std::vector<G4String> psnamesc = BDSSDManager::Instance()->PrimitiveScorerNamesComplete();
-      std::vector<G4String> psnames = BDSSDManager::Instance()->PrimitiveScorerNames();
+      std::vector<G4String> psnames  = BDSSDManager::Instance()->PrimitiveScorerNames();
+      std::map<G4String, G4double> scorerUnits = BDSSDManager::Instance()->PrimitiveScorerUnits();
       std::set<G4String> blmHistoNames;
       std::map<G4String, G4String> psFullNameToPS;
       for (const auto& scorerNameComplete : psnamesc)
@@ -540,11 +541,13 @@ void BDSOutput::CreateHistograms()
 
       // make BLM histograms and map the full collection name to that histogram ID for easy filling
       // at the end of event. Note, multiple collections may feed into the same histogram.
+      histNameToUnits1D = scorerUnits; // copy directly
       for (const auto &hn : blmHistoNames)
         {
           G4String blmHistName = "BLM_" + hn;
           G4int hind = Create1DHistogram(blmHistName, blmHistName, nBLMs, 0, nBLMs);
           histIndices1D[blmHistName] = hind;
+	      histIndexToUnits1D[hind]   = scorerUnits[hn];
           for (const auto& kv : psFullNameToPS)
             {
               if (hn == kv.second)
@@ -928,8 +931,9 @@ void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
 #ifdef BDSDEBUG
       G4cout << "Filling hist " << histIndex << ", bin: " << hit.first+1 << " value: " << *hit.second << G4endl;
 #endif
-      evtHistos->Fill1DHistogram(histIndex,hit.first, *hit.second);
-      runHistos->Fill1DHistogram(histIndex,hit.first, *hit.second);
+      G4double unit = BDS::MapGetWithDefault(histIndexToUnits1D, histIndex, 1.0);
+      evtHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
+      runHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
     }
 }
 
