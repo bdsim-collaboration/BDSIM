@@ -32,6 +32,7 @@ std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
             {BDSScorerType::depositedenergy, "depositedenergy"},
 	    {BDSScorerType::depositedenergy, "depositedenergy3d"},
             {BDSScorerType::population,      "population"},
+	    {BDSScorerType::population3d,    "population3d"},
             {BDSScorerType::ambientdose,     "ambientdose"},
             {BDSScorerType::ambientdose,     "activation"}
         });
@@ -44,6 +45,7 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["depositedenergy"]   = BDSScorerType::depositedenergy;
   types["depositedenergy3d"] = BDSScorerType::depositedenergy3d;
   types["population"]        = BDSScorerType::population;
+  types["population3d"]      = BDSScorerType::population3d;
   types["ambientdose"]       = BDSScorerType::ambientdose;
   types["activation"]        = BDSScorerType::activation;
   
