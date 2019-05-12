@@ -25,6 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
+#include "G4PSCellCharge.hh"
+#include "G4PSCellCharge3D.hh"
 #include "G4PSDoseDeposit.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSEnergyDeposit.hh"

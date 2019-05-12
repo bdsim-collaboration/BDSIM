@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
         new std::map<BDSScorerType, std::string> ({
+	    {BDSScorerType::cellcharge,      "cellcharge"},
+	    {BDSScorerType::cellcharge3d,    "cellcharge3d"},
             {BDSScorerType::depositeddose,   "depositeddose"},
 	    {BDSScorerType::depositeddose3d, "depositeddose3d"},
             {BDSScorerType::depositedenergy, "depositedenergy"},
@@ -40,6 +42,8 @@ std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
 BDSScorerType BDS::DetermineScorerType(G4String scorerType)
 {
   std::map<G4String, BDSScorerType> types;
+  types["cellcharge"]        = BDSScorerType::cellcharge;
+  types["cellcharge3d"]      = BDSScorerType::cellcharge3d;
   types["depositeddose"]     = BDSScorerType::depositeddose;
   types["depositeddose3d"]   = BDSScorerType::depositeddose3d;
   types["depositedenergy"]   = BDSScorerType::depositedenergy;
