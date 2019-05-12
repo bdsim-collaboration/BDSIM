@@ -235,6 +235,16 @@ private:
   /// Fill aperture impact hits.
   void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
 
+  /// Fill a map of scorer hits into the output.
+  void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
+
+  /// Fill an individual scorer hits map into a particular output histogram.
+  void FillScorerHitsIndividual(const G4String hsitogramDefName,
+				const G4THitsMap<G4double>* hitMap);
+
+  void FillScorerHitsIndividualBLM(G4String histogramDefName,
+                                   const G4THitsMap<G4double>* hitMap);
+
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
 

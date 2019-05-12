@@ -300,6 +300,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
     {FillCollimatorHits(collimatorHits, primaryLoss);}
   if (apertureImpacts)
     {FillApertureImpacts(apertureImpactHits);}
+  FillScorerHits(scorerHits); // map always exists
 
   // we do this after energy loss and collimator hits as the energy loss
   // is integrated for putting in event info and the number of colliamtors
@@ -897,6 +898,69 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
       // through the model, so the first one in the collection
       // for the primary is the first one in S.
       apertureImpacts->Fill(hit, nPrimaryImpacts==1);
+    }
+}
+
+void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap)
+{
+  for (const auto& nameHitsMap : scorerHitsMap)
+    {
+#if G4VERSION < 1039
+      if (nameHitsMap.second->GetSize() == 0)
+#else
+      if (nameHitsMap.second->size() == 0)
+#endif
+#ifdef BDSDEBUG
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#else
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#endif
+      FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
+    }
+}
+
+void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
+					 const G4THitsMap<G4double>* hitMap)
+{
+  if (histogramDefName.contains("blm_"))
+    {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
+
+  G4int histIndex = histIndices3D[histogramDefName];
+  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
+  const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
+  TH3D* hist = evtHistos->Get3DHistogram(histIndex);
+  G4int x,y,z;
+  //const BDSHistBinMapper3D* mapper = hist3DMapper[histIndex];
+#if G4VERSION < 1039
+  for (const auto& hit : *hitMap->GetMap())
+#else
+  for (const auto& hit : *hitMap)
+#endif
+    {
+      // convert from scorer global index to 3d i,j,k index of 3d scorer
+      mapper.IJKFromGlobal(hit.first, x,y,z);
+      G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
+      evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
+    }
+  runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
+}
+
+void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
+                                            const G4THitsMap<G4double>* hitMap)
+{
+  G4int histIndex = blmCollectionNameToHistogramID[histogramDefName];
+#if G4VERSION < 1039
+  for (const auto& hit : *hitMap->GetMap())
+#else
+  for (const auto& hit : *hitMap)
+#endif
+    {
+#ifdef BDSDEBUG
+      G4cout << "Filling hist " << histIndex << ", bin: " << hit.first+1 << " value: " << *hit.second << G4endl;
+#endif
+      G4double unit = BDS::MapGetWithDefault(histIndexToUnits1D, histIndex, 1.0);
+      evtHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
+      runHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
     }
 }
 
