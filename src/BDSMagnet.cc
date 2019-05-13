@@ -81,6 +81,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
   // No beam pipe geometry for really short 'magnets'
   if (lengthIn < 1e-6*CLHEP::m)
     {GetBeamPipeInfo()->beamPipeType = BDSBeamPipeType::circularvacuum;}
+
+  thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 }
 
 G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
@@ -167,9 +169,19 @@ void BDSMagnet::BuildVacuumField()
     {
       G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
       vacuumFieldInfo->SetTransform(newFieldTransform);
-      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-								beampipe->GetVolumesForField(),
-								true);
+      // can use containerLV for field as we don't construct any geometry with thin elements.
+      if (chordLength == thinElementLength)
+        {
+          BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                    beampipe->GetContainerLogicalVolume(),
+                                                                    true);
+        }
+      else
+        {
+          BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                    beampipe->GetVolumesForField(),
+                                                                    true);
+        }
     }
 }
 
