@@ -54,7 +54,8 @@ public:
 	    BDSMagnetOuterInfo* magnetOuterInfo,
 	    BDSFieldInfo*       vacuumFieldInfoIn,
 	    G4double            angle            = 0,
-	    BDSFieldInfo*       outerFieldInfoIn = nullptr);
+	    BDSFieldInfo*       outerFieldInfoIn = nullptr,
+        G4bool              isThin           = false);
   
   virtual ~BDSMagnet();
   
@@ -155,8 +156,8 @@ protected:
   /// local coordinates of the solid appropriately.
   G4Transform3D beamPipePlacementTransform;
 
-  /// Length of thin elements
-  G4double thinElementLength;
+  /// Boolean to store if the element is thin - will have no geometry constructed.
+  G4bool isThin;
 };
 
 #endif
