@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBLM.hh"
 #include "BDSBLMFactory.hh"
 #include "BDSBLMType.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -83,6 +86,10 @@ BDSBLM* BDSBLMFactory::BuildBLMCylinder(G4String name,
 					G4double halfLength,
 					G4double radius)
 {
+  if (!BDS::IsFinite(halfLength) || halfLength < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm1\" (half length) must be +ve finite for blm named \"" + name + "\"");}
+  if (!BDS::IsFinite(radius) || radius < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm2\" (radius) must be +ve finite for blm named \"" + name + "\"");}
   G4Tubs* shape = new G4Tubs(name + "_solid",
 			     0,
 			     radius,
@@ -99,6 +106,12 @@ BDSBLM* BDSBLMFactory::BuildBLMCube(G4String name,
 				    G4double halfLengthY,
 				    G4double halfLengthZ)
 {
+  if (!BDS::IsFinite(halfLengthX) || halfLengthX < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm1\" (half length in x) must be +ve finite for blm named \"" + name + "\"");}
+  if (!BDS::IsFinite(halfLengthY) || halfLengthY < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm2\" (half length in y) must be +ve finite for blm named \"" + name + "\"");}
+  if (!BDS::IsFinite(halfLengthZ) || halfLengthZ < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm3\" (half length in z) must be +ve finite for blm named \"" + name + "\"");}
   G4Box* shape = new G4Box(name + "_solid", halfLengthX, halfLengthY, halfLengthZ);
   BDSExtent ext = BDSExtent(halfLengthX, halfLengthY, halfLengthZ);
   return CommonConstruction(name, material, shape, ext);
@@ -108,6 +121,8 @@ BDSBLM* BDSBLMFactory::BuildBLMSphere(G4String name,
 				      G4String material,
 				      G4double radius)
 {
+  if (!BDS::IsFinite(radius) || radius < 0)
+    {throw BDSException(__METHOD_NAME__, "\"blm1\" (radius) must be +ve finite for blm named \"" + name + "\"");}
   G4Orb* shape = new G4Orb(name + "_solid", radius);
   BDSExtent ext = BDSExtent(radius, radius, radius);
   return CommonConstruction(name, material, shape, ext);
