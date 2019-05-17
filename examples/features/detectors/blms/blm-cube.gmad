@@ -9,3 +9,6 @@ minidetector: blm, x=0.4*m, y=0.25*m,
 		   blm3=4*cm;
 
 
+option, ngenerate=5;
+
+
