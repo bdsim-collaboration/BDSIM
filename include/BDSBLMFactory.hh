@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBLMFACTORY_H
 #define BDSBLMFACTORY_H
 
-#include "globals.hh"           // geant4 globals / types
+#include "globals.hh"
 
 class BDSBLM;
 class BDSExtent;
@@ -36,6 +36,8 @@ public:
   BDSBLMFactory();
   ~BDSBLMFactory();
 
+  /// Main public interface to the factory. Each of the 1,2,3,4 blm parameters
+  /// has a different meaning depending on the geometry chosen in geometryType.
   BDSBLM* BuildBLM(G4String name,
 		   G4String geometryFile,
 		   G4String geometryType,
@@ -46,28 +48,30 @@ public:
 		   G4double blm4);
 
 private:
-
+  /// Build the geometry for a cylinder.
   BDSBLM* BuildBLMCylinder(G4String name,
 			   G4String material,
 			   G4double halfLength,
 			   G4double radius);
 
+  /// Build the geometry for a cube.
   BDSBLM* BuildBLMCube(G4String name,
 		       G4String material,
 		       G4double halfLengthX,
 		       G4double halfLengthY,
 		       G4double halfLengthZ);
 
+  /// Build the geometry for a sphere.
   BDSBLM* BuildBLMSphere(G4String name,
 			 G4String material,
 			 G4double radius);
 
+  /// Construct the logical volume and final BDSBLM object from a shape
+  /// and extent.
   BDSBLM* CommonConstruction(G4String  name,
 			     G4String  material,
 			     G4VSolid* shape,
 			     BDSExtent extent);
 };
-
-
 
 #endif
