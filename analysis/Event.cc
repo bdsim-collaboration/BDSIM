@@ -70,7 +70,7 @@ Event::~Event()
   delete Histos;
   delete Summary;
   delete Info;
-  delete Aperture;
+  delete ApertureImpacts;
   for (auto s : Samplers)
     {delete s;}
   for (auto c : collimators)
@@ -98,7 +98,7 @@ void Event::CommonCtor()
   Histos             = new BDSOutputROOTEventHistograms();
   Summary            = new BDSOutputROOTEventInfo();
   Info               = new BDSOutputROOTEventInfo();
-  Aperture           = new BDSOutputROOTEventAperture();
+  ApertureImpacts    = new BDSOutputROOTEventAperture();
 }
 
 #ifdef __ROOTDOUBLE__
@@ -215,6 +215,11 @@ void Event::SetBranchAddress(TTree* t,
 	  t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);
 	  SetBranchAddressCollimators(t, collimatorNamesIn);
 	}
+      if (dataVersion > 4)
+	{
+	  if (((*t).GetListOfBranches()->FindObject("ApertureImpacts.")) != nullptr)
+	    {t->SetBranchAddress("ApertureImpacts.",  &ApertureImpacts);}
+	}
     }
   else if (branchesToTurnOn)
     {
@@ -304,10 +309,17 @@ void Event::RegisterCollimator(std::string collimatorName)
 
 void Event::RegisterSampler(std::string samplerName)
 {
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* sampler = new BDSOutputROOTEventSampler<double>();
+  samplerNames.push_back(samplerName);
+  Samplers.push_back(sampler);
+  samplerMap[samplerName] = sampler;
+#else
   BDSOutputROOTEventSampler<float>* sampler = new BDSOutputROOTEventSampler<float>();
   samplerNames.push_back(samplerName);
   Samplers.push_back(sampler);
   samplerMap[samplerName] = sampler;
+#endif
 }
 
 void Event::SetBranchAddressCollimators(TTree* t,
@@ -353,7 +365,7 @@ void Event::Fill(Event* other)
   Histos->FillSimple(other->Histos);
   Summary->Fill(other->Summary);
   Info->Fill(other->Info);
-  Aperture->Fill(other->Aperture);
+  ApertureImpacts->Fill(other->ApertureImpacts);
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
     {Samplers[i]->Fill(other->Samplers[i]);}
@@ -379,6 +391,7 @@ void Event::Flush()
   Histos->Flush();
   Summary->Flush();
   Info->Flush();
+  ApertureImpacts->Flush();
   FlushCollimators();
   FlushSamplers();
 }
