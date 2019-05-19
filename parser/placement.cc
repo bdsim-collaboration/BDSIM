@@ -118,28 +118,6 @@ Placement::Placement(const SamplerPlacement& sp):
   axisAngle = sp.axisAngle;
 }
 
-Placement::Placement(const BLMPlacement& bp):
-  geometryFile(""),
-  sequence(""),
-  sensitive(false)
-{
-  name      = bp.name;
-  referenceElement       = bp.referenceElement;
-  referenceElementNumber = bp.referenceElementNumber;
-  s         = bp.s;
-  x         = bp.x;
-  y         = bp.y;
-  z         = bp.z;
-  phi       = bp.phi;
-  theta     = bp.theta;
-  psi       = bp.psi;
-  axisX     = bp.axisX;
-  axisY     = bp.axisY;
-  axisZ     = bp.axisZ;
-  angle     = bp.angle;
-  axisAngle = bp.axisAngle;
-}
-
 Placement::Placement(const ScorerMesh& sm):
   geometryFile(""),
   sensitive(false)
@@ -160,4 +138,26 @@ Placement::Placement(const ScorerMesh& sm):
   axisZ     = sm.axisZ;
   angle     = sm.angle;
   axisAngle = sm.axisAngle;
+}
+
+Placement::Placement(const BLMPlacement& bp):
+  geometryFile(""),
+  sequence(""),
+  sensitive(false)
+{
+  name      = bp.name;
+  referenceElement       = bp.referenceElement;
+  referenceElementNumber = bp.referenceElementNumber;
+  s         = bp.s;
+  x         = bp.x;
+  y         = bp.y;
+  z         = bp.z;
+  phi       = bp.phi;
+  theta     = bp.theta;
+  psi       = bp.psi;
+  axisX     = bp.axisX;
+  axisY     = bp.axisY;
+  axisZ     = bp.axisZ;
+  angle     = bp.angle;
+  axisAngle = bp.axisAngle;
 }

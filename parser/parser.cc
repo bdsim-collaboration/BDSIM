@@ -267,7 +267,7 @@ void Parser::expand_line(FastList<Element>& target,
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
-    std::cerr << "'ERROR" << name << "' is not a line" << std::endl;
+    std::cerr << "'ERROR " << name << "' is not a line" << std::endl;
     exit(1);
   }
 
@@ -631,7 +631,7 @@ void Parser::Overwrite(const std::string& objectName)
 
   // possible object types are:
   // element, atom, colour, crystal, field, material, physicsbiasing, placement,
-    // query, region, tunnel, cavitymodel, samplerplacement, aperture, blm, scorer, scorermesh
+  // query, region, tunnel, cavitymodel, samplerplacement, aperture, scorer, scorermesh, blm
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end())
@@ -684,12 +684,14 @@ template <class C>
 bool Parser::FindAndExtend(const std::string& objectName)
 {
   auto vec = GetList<C>();
-  for (auto it = vec.begin(); it!=vec.end(); ++it) {
-    if ((*it).name == objectName) {
-      ExtendObject(*it);
-      return true;
+  for (auto it = vec.begin(); it!=vec.end(); ++it)
+    {
+      if ((*it).name == objectName)
+	{
+	  ExtendObject(*it);
+	  return true;
+	}
     }
-  }
   return false;
 }
 

@@ -38,7 +38,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 {
   const std::map<std::string, std::string> replacements = {
 							   {"depositeddose",   "depositeddose3d"},
-							   {"depositedenergy", "depositedenergy3d"}
+							   {"depositedenergy", "depositedenergy3d"},
+							   {"population",      "population3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;

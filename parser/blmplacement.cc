@@ -51,6 +51,7 @@ void BLMPlacement::clear()
   blm2 = 0;
   blm3 = 0;
   blm4 = 0;
+  scoreQuantity = "";
 }
 
 void BLMPlacement::PublishMembers()
@@ -78,6 +79,7 @@ void BLMPlacement::PublishMembers()
   publish("blm2",          &BLMPlacement::blm2);
   publish("blm3",          &BLMPlacement::blm3);
   publish("blm4",          &BLMPlacement::blm4);
+  publish("scoreQuantity", &BLMPlacement::scoreQuantity);
 }
 
 void BLMPlacement::print()const
@@ -104,5 +106,6 @@ void BLMPlacement::print()const
 	    << "blm1 "          << blm1          << std::endl
     	    << "blm2 "          << blm2          << std::endl
     	    << "blm3 "          << blm3          << std::endl
-    	    << "blm4 "          << blm4          << std::endl;
+    	    << "blm4 "          << blm4          << std::endl
+	    << "scoreQuantity " << scoreQuantity << std::endl;
 }

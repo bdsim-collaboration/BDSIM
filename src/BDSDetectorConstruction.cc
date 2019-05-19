@@ -690,33 +690,6 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-								const BDSBeamline*            beamLine,
-								G4double*                     S)
-{
-  // convert a sampler placement to a general placement for generation of the transform.
-  GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
-}
-
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-                                                                const BDSBeamline* beamLine,
-                                                                G4double* S)
-{
-    // convert a scorermesh to a general placement for generation of the transform only.
-    GMAD::Placement convertedPlacement(scorerMesh);
-    return CreatePlacementTransform(convertedPlacement, beamLine, S);
-}
-
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-								const BDSBeamline*        beamLine,
-								G4double*                 S)
-{
-  // convert a sampler placement to a general placement for generation of the transform.
-  GMAD::Placement convertedPlacement(blmPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
-}
-
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine,
 								G4double*              S)
@@ -800,6 +773,33 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
     }
   
   return result;
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
+								const BDSBeamline*      beamLine,
+								G4double*               S)
+{
+  // convert a scorermesh to a general placement for generation of the transform only.
+  GMAD::Placement convertedPlacement(scorerMesh);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+								const BDSBeamline*            beamLine,
+								G4double*                     S)
+{
+  // convert a sampler placement to a general placement for generation of the transform only.
+  GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+								const BDSBeamline*        beamLine,
+								G4double*                 S)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(blmPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
 }
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const

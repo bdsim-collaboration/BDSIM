@@ -118,18 +118,18 @@ public:
   /// Create a sampler placement transform. Turns the sampler placement into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            beamLine,
+						const BDSBeamline*            bemaLine,
 						G4double*                     S = nullptr);
 
   /// Create a sampler placement from a blm plcement.
   static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-						const BDSBeamline*        beamLine,
+						const BDSBeamline*        bemaLine,
 						G4double*                 S = nullptr);
-
-  /// Create a scorermesh placement transform. Turns the scorermesh into a
+    
+  // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-						const BDSBeamline*      beamLine,
+                                                const BDSBeamline*      beamLine,
 						G4double*               S = nullptr);
   
 private:

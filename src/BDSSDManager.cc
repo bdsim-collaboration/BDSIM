@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
 #include "BDSSDCollimator.hh"
@@ -244,7 +245,8 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
   return result;
 }
 
-void BDSSDManager::RegisterPrimitiveScorerName(const G4String& nameIn)
+void BDSSDManager::RegisterPrimitiveScorerName(const G4String& nameIn,
+					       G4double unit)
 {
   primitiveScorerNamesComplete.emplace_back(nameIn);
 
@@ -253,10 +255,22 @@ void BDSSDManager::RegisterPrimitiveScorerName(const G4String& nameIn)
   if (search != std::string::npos)
     {primitivePartOnly = nameIn.substr(search+1);}
   primitiveScorerNames.push_back(primitivePartOnly);
+  primitiveScorerNameToUnit[primitivePartOnly] = unit;
 }
 
-void BDSSDManager::RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn)
+void BDSSDManager::RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn,
+						const std::vector<G4double>* units)
 {
-  for (const auto& name : namesIn)
-    {RegisterPrimitiveScorerName(name);}
+  if (units)
+    {
+      if (units->size() != namesIn.size())
+	{throw BDSException(__METHOD_NAME__, "mismatching size of names and units.");}
+      for (G4int i = 0; i < (G4int)namesIn.size(); i++)
+	{RegisterPrimitiveScorerName(namesIn[i], (*units)[i]);}
+    }
+  else
+    {
+      for (const auto& name : namesIn)
+	{RegisterPrimitiveScorerName(name);}
+    }
 }

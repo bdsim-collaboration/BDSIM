@@ -25,13 +25,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSMaterials.hh"
+#include "BDSParser.hh"
+#include "BDSScorerInfo.hh"
 #include "BDSUtilities.hh"
+
+#include "parser/scorer.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Orb.hh"
 #include "G4Tubs.hh"
+
+#include <map>
+#include <utility>
+#include <vector>
 
 BDSBLMFactory::BDSBLMFactory()
 {;}
@@ -46,7 +54,8 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
 				G4double blm1,
 				G4double blm2,
 				G4double blm3,
-				G4double /*blm4*/)
+				G4double /*blm4*/,
+				G4VSensitiveDetector* sd)
 {
   // if geometry file is specified then we load the external file.
   BDSBLM* result = nullptr;
@@ -75,8 +84,10 @@ BDSBLM* BDSBLMFactory::BuildBLM(G4String name,
   if (!result)
     {return result;}
 
-  // sensitivity
-  // register with output
+  // attach sensitivity
+  for (auto lv : result->GetAllLogicalVolumes())
+    {lv->SetSensitiveDetector(sd);}
+  result->GetContainerLogicalVolume()->SetSensitiveDetector(sd); // attach separately to the container
 
   return result;
 }

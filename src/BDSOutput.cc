@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSScorerHistogramDef.hh"
+#include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -491,18 +492,6 @@ void BDSOutput::CreateHistograms()
       histIndices3D["ScoringMap"] = scInd;
     }
 
-  G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
-  if (nBLMs > 0)
-    {
-      G4int nBLMScorers = 1; // number of hits maps / quantities scored for the blms - TBC
-      for (G4int i = 0; i < nBLMScorers; i++)
-	{
-	  G4String scorerName = "scorer"; // TBC
-	  G4String blmHistName = "BLM_" + scorerName;
-	  histIndices1D[blmHistName] = Create1DHistogram(blmHistName, blmHistName,nBLMs, 0, nBLMs);
-	}
-    }
-
   // scoring maps
   const std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefs = BDSAcceleratorModel::Instance()->ScorerHistogramDefinitionsMap();
   if (!scorerHistogramDefs.empty())
@@ -519,6 +508,52 @@ void BDSOutput::CreateHistograms()
 	  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
 	  scorerCoordinateMaps.insert(std::make_pair(def.uniqueName, def.coordinateMapper));
 	}
+    }
+
+  G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
+  if (nBLMs > 0)
+    {     
+      // the same primitive scorers for BLMs may be used in multiple SDs (each representing
+      // a unique combination of primtivie scorers. However, we want 1 histogram per primitive
+      // scorer for all BLMs. We want to fill the same scoring quantity into the one histogram
+      // even from different collections ("SD/PS"). Determine 'set' of histogram names, which is
+      // set of primitive scorers use for BLMs.
+      // note there may be scorers from genral 3d meshes and not just blms
+      std::vector<G4String> psnamesc = BDSSDManager::Instance()->PrimitiveScorerNamesComplete();
+      std::vector<G4String> psnames  = BDSSDManager::Instance()->PrimitiveScorerNames();
+      std::map<G4String, G4double> scorerUnits = BDSSDManager::Instance()->PrimitiveScorerUnits();
+      std::set<G4String> blmHistoNames;
+      std::map<G4String, G4String> psFullNameToPS;
+      for (const auto& scorerNameComplete : psnamesc)
+        {	  
+          if (scorerNameComplete.contains("blm_"))
+            {
+              for (const auto& scorerName : psnames)
+                {
+                  if (scorerNameComplete.contains("/"+scorerName)) // only match end of full name with '/'
+                    {
+		      blmHistoNames.insert(scorerName);
+		      psFullNameToPS[scorerNameComplete] = scorerName;
+		    }
+                }
+            }
+        }
+
+      // make BLM histograms and map the full collection name to that histogram ID for easy filling
+      // at the end of event. Note, multiple collections may feed into the same histogram.
+      histNameToUnits1D = scorerUnits; // copy directly
+      for (const auto &hn : blmHistoNames)
+        {
+          G4String blmHistName = "BLM_" + hn;
+          G4int hind = Create1DHistogram(blmHistName, blmHistName, nBLMs, 0, nBLMs);
+          histIndices1D[blmHistName] = hind;
+	      histIndexToUnits1D[hind]   = scorerUnits[hn];
+          for (const auto& kv : psFullNameToPS)
+            {
+              if (hn == kv.second)
+                {blmCollectionNameToHistogramID[kv.first] = hind;}
+            }
+        }
     }
 }
 
@@ -848,7 +883,11 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 #else
       if (nameHitsMap.second->size() == 0)
 #endif
-        {continue;}
+#ifdef BDSDEBUG
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#else
+        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+#endif
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
     }
 }
@@ -856,6 +895,9 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
+  if (histogramDefName.contains("blm_"))
+    {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
+
   G4int histIndex = histIndices3D[histogramDefName];
   // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
   const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
@@ -874,6 +916,25 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
       evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
     }
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
+}
+
+void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
+                                            const G4THitsMap<G4double>* hitMap)
+{
+  G4int histIndex = blmCollectionNameToHistogramID[histogramDefName];
+#if G4VERSION < 1039
+  for (const auto& hit : *hitMap->GetMap())
+#else
+  for (const auto& hit : *hitMap)
+#endif
+    {
+#ifdef BDSDEBUG
+      G4cout << "Filling hist " << histIndex << ", bin: " << hit.first+1 << " value: " << *hit.second << G4endl;
+#endif
+      G4double unit = BDS::MapGetWithDefault(histIndexToUnits1D, histIndex, 1.0);
+      evtHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
+      runHistos->Fill1DHistogram(histIndex,hit.first, *hit.second / unit);
+    }
 }
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info)

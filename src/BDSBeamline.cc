@@ -599,8 +599,9 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   if (s-previousSPositionEnd > totalArcLength) // need to offset start S position 
     {
       G4cout << __METHOD_NAME__
-	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;
-      G4cout << "Returning 0 transform" << G4endl;
+	     << "s position " << s/CLHEP::m << " m is beyond length of accelerator ("
+	     << totalArcLength/CLHEP::m << " m)" << G4endl;
+      G4cout << "Returning identify transform" << G4endl;
       return G4Transform3D();
     }
 
