@@ -913,7 +913,7 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 #ifdef BDSDEBUG
         {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
 #else
-        {G4cout << nameHitsMap.first << " empty" << G4endl; continue;}
+        {continue;}
 #endif
       FillScorerHitsIndividual(nameHitsMap.first, nameHitsMap.second);
     }
