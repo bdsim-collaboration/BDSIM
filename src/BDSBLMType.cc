@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-// dictionary for BDSBeamPipeType
+// dictionary for BDSBLMType
 template<>
 std::map<BDSBLMType, std::string>* BDSBLMType::dictionary =
   new std::map<BDSBLMType, std::string> ({
