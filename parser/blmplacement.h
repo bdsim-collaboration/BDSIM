@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PLACEMENT_H
-#define PLACEMENT_H
+#ifndef BLMPLACEMENT_H
+#define BLMPLACEMENT_H
 
 #include <iomanip>
 #include <iostream>
@@ -27,21 +27,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace GMAD
 {
-  class BLMPlacement;
-  class SamplerPlacement;
-  class ScorerMesh;
-  
   /**
-   * @brief Placement class for parser
+   * @brief blm for parser.
+   *
+   * This has to be called something other than "BLM" because the parser
+   * can't distinguish between the class name and the token "BLM".
    * 
    * @author Laurie Nevay
    */
-  class Placement : public Published<Placement>
+  class BLMPlacement : public Published<BLMPlacement>
   {
   public:
-    std::string name;         ///< Name of this placement.
-    std::string geometryFile; ///< Geometry to load in format:path.
-    std::string sequence;     ///< Name of sequence to place.
+    std::string name;         ///< Name of this samplerplacement.
     std::string referenceElement; ///< Name of reference element w.r.t. to place to.
     int         referenceElementNumber; ///< Index of repetition of element if there are multiple uses.
     double s; ///< Curvilinear s position to place w.r.t..
@@ -59,24 +56,25 @@ namespace GMAD
     double axisZ;
     double angle;
     /// @}
-    bool   sensitive;     ///< Whether to record hits or not.
     bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
-    
+
+    std::string geometryFile;
+    std::string geometryType;
+    std::string blmMaterial;
+    double blm1;
+    double blm2;
+    double blm3;
+    double blm4;
+        
     /// constructor
-    Placement();
+    BLMPlacement();
     /// reset
     void clear();
     /// print some properties
     void print()const;
     /// set methods by property name and value
     template <typename T>
-    void set_value(std::string property, T value);
-
-    /// @{ Conversion constructor.
-    Placement(const SamplerPlacement& samplerPlacement);
-    Placement(const BLMPlacement&     blmPlacement);
-    Placement(const ScorerMesh&       scorerMesh);
-    /// @}
+      void set_value(std::string property, T value);
 
   private:
     /// publish members
@@ -84,10 +82,10 @@ namespace GMAD
   };
   
   template <typename T>
-  void Placement::set_value(std::string property, T value)
+  void BLMPlacement::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "placement> Setting value " << std::setw(25) << std::left
+      std::cout << "blmplacement> Setting value " << std::setw(25) << std::left
 		<< property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
@@ -95,7 +93,7 @@ namespace GMAD
 	{set(this,property,value);}
       catch (const std::runtime_error&)
 	{
-	  std::cerr << "Error: placement> unknown option \"" << property
+	  std::cerr << "Error: blmplacement> unknown option \"" << property
 		    << "\" with value " << value  << std::endl;
 	  exit(1);
 	}

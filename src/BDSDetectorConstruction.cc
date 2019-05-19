@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineBLMBuilder.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
@@ -59,11 +60,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 
+#include "parser/blmplacement.h"
 #include "parser/element.h"
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 #include "parser/placement.h"
+#include "parser/samplerplacement.h"
 #include "parser/scorermesh.h"
 
 #include "globals.hh"
@@ -173,6 +176,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
 					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
+
+  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
+				     mainBeamLine);
+  if (blms)
+    {BDSAcceleratorModel::Instance()->RegisterBLMs(blms);} // Acc model owns it
   
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -603,6 +611,15 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // during construction time
   PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
+  // Place BLMs. Similarly no sensitivity set here - done at construction time.
+  PlaceBeamlineInWorld(BDSAcceleratorModel::Instance()->BLMsBeamline(),
+		       worldPV,
+		       checkOverlaps,
+		       false,
+		       false,
+		       false,
+		       true); // use incremental copy nubmers 
+
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
     {// extras is map so iterator has first and second for key and value
@@ -617,11 +634,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 						   G4bool                checkOverlaps,
 						   G4bool                setRegions,
 						   G4bool                registerInfo,
-						   G4bool                useCLPlacementTransform)
+						   G4bool                useCLPlacementTransform,
+						   G4bool                useIncrementalCopyNumbers)
 {
   if (!beamline)
     {return;}
-  
+
+  G4int i = 0;
   for (auto element : *beamline)
     {
       // Do nothing for gap element
@@ -648,12 +667,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       if (useCLPlacementTransform)
 	{placementTransform = element->GetPlacementTransformCL();}
+      G4int copyNumber = useIncrementalCopyNumbers ? i : element->GetCopyNo();
       auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
 				  placementName,                        // placement name
 				  element->GetContainerLogicalVolume(), // volume to be placed
 				  containerPV,                          // volume to place it in
 				  false,                                // no boolean operation
-				  element->GetCopyNo(),                 // copy number
+				  copyNumber,                           // copy number
 				  checkOverlaps);                       // overlap checking
 
       if (registerInfo)
@@ -666,11 +686,40 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
+      i++; // for increuemental copy numbers
     }
 }
 
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+								const BDSBeamline*            beamLine,
+								G4double*                     S)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(samplerPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
+                                                                const BDSBeamline* beamLine,
+                                                                G4double* S)
+{
+    // convert a scorermesh to a general placement for generation of the transform only.
+    GMAD::Placement convertedPlacement(scorerMesh);
+    return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+								const BDSBeamline*        beamLine,
+								G4double*                 S)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(blmPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
+
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
-								const BDSBeamline*     beamLine)
+								const BDSBeamline*     beamLine,
+								G4double*              S)
 {
   G4Transform3D result;
 
@@ -720,7 +769,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
-
+      if (S)
+	{*S = sCoordinate;}
       G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
 									 placement.x*CLHEP::m,
 									 placement.y*CLHEP::m);
@@ -734,6 +784,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 									  placement.y*CLHEP::m);
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
+      if (S)
+	{*S = placement.s*CLHEP::m;}
     }
   else
     {// scenario 1
@@ -743,25 +795,11 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       
       
       result = G4Transform3D(rm, translation);
+      if (S)
+	{*S = -1000;} // default
     }
   
   return result;
-}
-
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-								const BDSBeamline* beamLine)
-{
-  // convert a scorermesh to a general placement for generation of the transform only.
-  GMAD::Placement convertedPlacement(scorerMesh);
-  return CreatePlacementTransform(convertedPlacement, beamLine);
-}
-
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-								const BDSBeamline*            beamLine)
-{
-  // convert a sampler placement to a general placement for generation of the transform only.
-  GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine);
 }
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
