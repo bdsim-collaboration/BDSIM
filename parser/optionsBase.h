@@ -196,11 +196,6 @@ namespace GMAD
     // sampler options
     double   samplerDiameter;
 
-    ///BLM geometry
-    double   blmRad;
-    double   blmLength;
-    bool     sensitiveBLMs;
-
     ///@{ Physics processes
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;
@@ -263,7 +258,10 @@ namespace GMAD
     
     // output related options
     int         numberOfEventsPerNtuple;
-    
+
+    bool        storeApertureImpacts;
+    bool        storeApertureImpactsIons;
+    bool        storeApertureImpactsAll;
     bool        storeCollimatorInfo;
     bool        storeCollimatorLinks;
     bool        storeCollimatorHitsIons;

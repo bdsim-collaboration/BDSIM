@@ -222,9 +222,6 @@ void Element::PublishMembers()
   publish("samplerRadius",       &Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
   
-  publish("blmLocZ",    &Element::blmLocZ);
-  publish("blmLocTheta",&Element::blmLocTheta);
-
   publish("colour", &Element::colour);
 
   publish("crystalLeft",            &Element::crystalLeft);
@@ -503,9 +500,6 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
-  
-  blmLocZ.clear();
-  blmLocTheta.clear();
 
   bias = ""; biasMaterial=""; biasVacuum="";
   biasMaterialList.clear();
