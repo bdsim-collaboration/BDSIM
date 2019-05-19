@@ -196,11 +196,6 @@ namespace GMAD
     // sampler options
     double   samplerDiameter;
 
-    ///BLM geometry
-    double   blmRad;
-    double   blmLength;
-    bool     sensitiveBLMs;
-
     ///@{ Physics processes
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;

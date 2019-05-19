@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBLMRegistry.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSHitApertureImpact.hh"
@@ -487,6 +488,18 @@ void BDSOutput::CreateHistograms()
 						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
       histIndices3D["ScoringMap"] = scInd;
+    }
+
+  G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
+  if (nBLMs > 0)
+    {
+      G4int nBLMScorers = 1; // number of hits maps / quantities scored for the blms - TBC
+      for (G4int i = 0; i < nBLMScorers; i++)
+	{
+	  G4String scorerName = "scorer"; // TBC
+	  G4String blmHistName = "BLM_" + scorerName;
+	  histIndices1D[blmHistName] = Create1DHistogram(blmHistName, blmHistName,nBLMs, 0, nBLMs);
+	}
     }
 }
 

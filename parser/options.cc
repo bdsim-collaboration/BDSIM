@@ -285,10 +285,6 @@ void Options::PublishMembers()
 
   publish("samplerDiameter",&Options::samplerDiameter);
   
-  // options for beam loss monitor geometry
-  publish("blmRad",    &Options::blmRad);
-  publish("blmLength", &Options::blmLength);
-
   // physics processes
   publish("turnOnOpticalAbsorption",     &Options::turnOnOpticalAbsorption);
   publish("turnOnMieScattering",         &Options::turnOnMieScattering);
@@ -350,7 +346,6 @@ void Options::PublishMembers()
   publish("sensitiveBeampipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveTunnel",             &Options::storeElossTunnel);
   publish("tunnelSensitive",             &Options::storeElossTunnel);// backwards compatibility
-  publish("sensitiveBLMs",               &Options::sensitiveBLMs);
   
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);

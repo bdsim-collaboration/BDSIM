@@ -94,7 +94,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER
 %token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
-%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
+%token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE BLM
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -249,6 +249,14 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<SamplerPlacement>();
          }
      }
+     | VARIABLE ':' blm
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : blm" << std::endl;
+             Parser::Instance()->SetValue<BLMPlacement>("name",*($1));
+             Parser::Instance()->Add<BLMPlacement>();
+         }
+     }
      | VARIABLE ':' query
      {
          if(execute) {
@@ -382,6 +390,7 @@ tunnel      : TUNNEL      ',' tunnel_options
 xsecbias    : XSECBIAS    ',' xsecbias_options
 samplerplacement : SAMPLERPLACEMENT ',' samplerplacement_options
 aperture    : APERTURE    ',' aperture_options
+blm         : BLM         ',' blm_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -397,6 +406,7 @@ object_noparams : MATERIAL
                 | XSECBIAS
                 | SAMPLERPLACEMENT
                 | APERTURE
+                | BLM
 
 newinstance : VARIABLE ',' parameters
             {
@@ -821,6 +831,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<SamplerPlacement>();
             }
         }
+        | SAMPLERPLACEMENT ',' blm_options // blm
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> BLM" << std::endl;
+              Parser::Instance()->Add<BLMPlacement>();
+            }
+        }
         | NEWCOLOUR ',' colour_options // colour
         {
           if(execute)
@@ -1005,6 +1023,14 @@ samplerplacement_options : paramassign '=' aexpr samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>((*$1),$3);}
                   | paramassign '=' string samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*$1,*$3);}
+
+blm_options_extend : /* nothing */
+                         | ',' blm_options
+
+blm_options : paramassign '=' aexpr blm_options_extend
+                    { if(execute) Parser::Instance()->SetValue<BLMPlacement>((*$1),$3);}
+                  | paramassign '=' string blm_options_extend
+                    { if(execute) Parser::Instance()->SetValue<BLMPlacement>(*$1,*$3);}
 
 query_options_extend : /* nothing */
                      | ',' query_options
