@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBLM;
 
 /**
- * @brief Associated information for the placement of a sampler.
+ * @brief Registry of all BLMs so we know each one uniquely.
  * 
  * @author Laurie Nevay
  */
