@@ -4249,6 +4249,18 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
