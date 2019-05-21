@@ -831,7 +831,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<SamplerPlacement>();
             }
         }
-        | SAMPLERPLACEMENT ',' blm_options // blm
+        | BLM ',' blm_options // blm
         {
           if(execute)
             {
