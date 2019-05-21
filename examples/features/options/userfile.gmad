@@ -5,7 +5,12 @@ beam,  particle="e-",
        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[GeV]",
        nlinesIgnore = 1;
 
-include options.gmad;
-include fodo.gmad;
+d1: drift, l=0.25;
+q1: quadrupole, l=0.5, k1=2.0;
+q2: quadrupole, l=0.5, k1=-2.0;
+lat : line = (d1,q1,d1,d1,q2,d1);
+use, period=lat;
+sample, all;
 
 option, ngenerate=10;
+option, stopSecondaries=1;
