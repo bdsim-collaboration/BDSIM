@@ -16,6 +16,8 @@ New Features
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
+  a distribution file.
 
 * New options:
 
