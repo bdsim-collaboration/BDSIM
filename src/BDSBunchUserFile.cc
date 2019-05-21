@@ -235,11 +235,12 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 template<class T>
 void BDSBunchUserFile<T>::SkipLines()
 {
-  if (BDS::IsFinite(nlinesIgnore))
+  if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
-      G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
+      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;
+      G4cout << "BDSBunchUserFile> skipping " << nlinesSkip   << " lines" << G4endl;
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore; i++)
+      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
 	{
 	  std::getline(InputBunchFile, line);
 	  lineCounter++;
@@ -260,6 +261,7 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   distrFilePath = BDS::GetFullPath(beam.distrFile);
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
+  nlinesSkip    = beam.nlinesSkip;
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();

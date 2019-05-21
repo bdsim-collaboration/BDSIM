@@ -62,7 +62,8 @@ private:
   G4String distrFile;     ///< Bunch file.
   G4String distrFilePath; ///< Bunch file including absolute path.
   G4String bunchFormat;   ///< Format of the file.
-  G4int    nlinesIgnore;  ///< Number of lines that will be ignored after each particle (default 0).
+  G4int    nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
+  G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
 
