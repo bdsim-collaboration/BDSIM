@@ -6,6 +6,12 @@ simple_testing(option-executable-help "--help" "")
 # print list of materials
 simple_testing(option-executable-materials "--materials" "")
 
+set(TESTING_ARGS --distrFile="../beam/userfile/userbeamdata-comment.dat")
+simple_testing(option-executable-distrFile "--file=userfile.gmad" "")
+
+set(TESTING_ARGS --distrFileNLinesSkip=3)
+simple_testing(option-executable-distrFileNLinesSkip "--file=userfile.gmad" "")
+
 # primaries only
 set(TESTING_ARGS --generatePrimariesOnly)
 simple_testing(option-executable-generatePrimariesOnly "--file=sm.gmad" "")
