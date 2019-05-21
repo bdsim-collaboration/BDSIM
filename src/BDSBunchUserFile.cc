@@ -46,7 +46,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   bunchFormat(""),
   nlinesIgnore(0),
   particleMass(0),
-  lineCounter(0)
+  lineCounter(0),
+  printedOutFirstTime(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -68,6 +69,11 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
+  if (!printedOutFirstTime)
+    {
+      G4cout << "BDSBunchUserFile::OpenBunchFile> opening " << distrFilePath << G4endl;
+      printedOutFirstTime = true;
+    }
   lineCounter = 0;
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
@@ -237,8 +243,8 @@ void BDSBunchUserFile<T>::SkipLines()
 {
   if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
-      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;
-      G4cout << "BDSBunchUserFile> skipping " << nlinesSkip   << " lines" << G4endl;
+      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
+	     << nlinesSkip << " lines" << G4endl;
       std::string line;
       for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
 	{
