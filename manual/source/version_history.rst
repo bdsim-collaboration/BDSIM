@@ -74,6 +74,18 @@ Utilities
 * pytransport v1.3.0
 
 
+V1.3.3 - 2019 / 05 / 21
+=======================
+
+Bug Fixes
+---------
+
+* Hot fix for fields not attached to thin elements such as dipole fringes or thin multipoles. This bug
+  crept in through a modification to avoid Geant4 getting stuck with strong fields in very narrow gaps
+  between layers of geometry in beam pipes, resulting in subsequent bad tracking due to the bad state of
+  Geant4 navigators internally. Regression testing has subsequently been introduced to protect against
+  this kind of bugging going unnoticed in future.
+
 V1.3.2 - 2019 / 04 / 20
 =======================
 

@@ -882,8 +882,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 			   bpInf,
 			   magOutInf,
 			   vacuumField,
-               0, nullptr,  // default values for optional args (angle, outerFieldInfo)
-               true);       // isThin
+			   0, nullptr,  // default values for optional args (angle, outerFieldInfo)
+			   true);       // isThin
     }
   else
     {
@@ -1012,8 +1012,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					    beamPipeInfo,
 					    magnetOuterInfo,
 					    vacuumField,
-                        0, nullptr,  // default values for optional args (angle, outerFieldInfo)
-                        true);       // isThin
+					    0, nullptr,  // default values for optional args (angle, outerFieldInfo)
+					    true);       // isThin
 
   thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,
 				     beamPipeInfo->aper1,
