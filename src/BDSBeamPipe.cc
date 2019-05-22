@@ -48,14 +48,13 @@ BDSBeamPipe::~BDSBeamPipe()
 std::set<G4LogicalVolume*> BDSBeamPipe::GetVolumesForField() const
 {
   std::set<G4LogicalVolume*> result = GetAllLogicalVolumes(); // from base class
-  // a magnet can defined without geometry but the field may still be desired which requires an LV.
-  // only remove the containerLV if there's at least one other LV in the set that the field can be
-  // attached to.
-  // only if empty of daughter LVs should the set then contain the container LV.
+  // We avoid setting the field on a tight fitting container volume to avoid strong
+  // field in small gaps. However, in the case of only a container volume, we should
+  // return that - for when there's no beam pipe geometry.
    if (result.size() > 1)
     {result.erase(GetContainerLogicalVolume());}
    else if (!BDS::IsFinite(result.size()))
-    {result = {GetContainerLogicalVolume()};}
+     {result = {GetContainerLogicalVolume()};}
 
   return result;
 }
