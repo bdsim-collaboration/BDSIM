@@ -77,7 +77,7 @@ void BDSBunchUserFile<T>::OpenBunchFile()
   lineCounter = 0;
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
-    {throw BDSException(__METHOD_NAME__, "Cannot open bunch file " + distrFilePath);}
+    {throw BDSException("BDSBunchUserFile::OpenBunchFile>", "Cannot open bunch file " + distrFilePath);}
 }
 
 template<class T>
