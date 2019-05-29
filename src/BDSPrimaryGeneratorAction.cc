@@ -220,7 +220,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge));
+  G4int nElectrons = 0;
+  if (const BDSIonDefinition* ionDef = beamParticle->IonDefinition())
+    {nElectrons = ionDef->NElectrons();}
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge, nElectrons));
 
 #ifdef BDSDEBUG
   vertex->Print();

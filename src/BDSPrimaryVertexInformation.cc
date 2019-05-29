@@ -22,9 +22,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
-							  const G4double chargeIn):
+							  const G4double chargeIn,
+							  const G4int    nElectronsIn):
   primaryVertex(primaryVertexIn),
-  charge(chargeIn)
+  charge(chargeIn),
+  nElectrons(nElectronsIn)
 {;}
 
 void BDSPrimaryVertexInformation::Print() const

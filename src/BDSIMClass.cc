@@ -51,6 +51,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -243,6 +244,9 @@ int BDSIM::Initialise()
     {
       const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
       const G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      G4int nElectrons = 0;
+      if (const BDSIonDefinition* ionDef = beamParticle->IonDefinition())
+        {nElectrons = ionDef->NElectrons();}
       
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
@@ -254,7 +258,7 @@ int BDSIM::Initialise()
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
 	  auto coords = bdsBunch->GetNextParticle();
-	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID);
+	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons);
 	}
       // Write options now file open.
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();

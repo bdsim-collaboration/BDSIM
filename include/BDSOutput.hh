@@ -103,7 +103,8 @@ public:
   /// should not be used in conjunction with FillEvent().
   void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 			    const G4double charge,
-			    const G4int pdgID);
+			    const G4int pdgID,
+			    const G4int nElectrons);
   
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                            info,

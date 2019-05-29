@@ -59,7 +59,8 @@ template
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 					G4bool storeCharge,
-					G4bool storePolarCoords)
+					G4bool storePolarCoords,
+					G4bool storeElectrons)
 {
   // get single values
   n++;
@@ -88,6 +89,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 
   if (storePolarCoords)
     {FillPolarCoords(hit->coords);}
+
+  if (storeElectrons)
+    {nElectrons.push_back((int)hit->nElectrons);}
 }
 
 template <class U>
@@ -95,7 +99,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4double chargeIn,
 					const G4int pdgID,
 					const G4int turnsTaken,
-					const G4int beamlineIndex)
+					const G4int beamlineIndex,
+					const G4int nElectronsIn)
 {
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
@@ -115,6 +120,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   S = (U) (coords.s / CLHEP::GeV);
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
   FillPolarCoords(coords);
+  FillIon();
+  nElectrons.push_back((int)nElectronsIn);
 }
 
 template <class U>
@@ -188,6 +195,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSOutputROOTEventSampler<U>* othe
   isIon = other->isIon;
   ionA  = other->ionA;
   ionZ  = other->ionZ;
+  nElectrons = other->nElectrons;
 }
 
 template <class U> void BDSOutputROOTEventSampler<U>::SetBranchAddress(TTree *)
@@ -225,6 +233,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   isIon.clear();
   ionA.clear();
   ionZ.clear();
+  nElectrons.clear();
 }
 
 template <class U>

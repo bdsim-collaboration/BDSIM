@@ -76,6 +76,7 @@ public:
   std::vector<bool>    isIon;
   std::vector<int>     ionA;
   std::vector<int>     ionZ;
+  std::vector<int>     nElectrons;
   /// @}
 
   /// @{ Function to calculate on the fly the parameters.
@@ -92,13 +93,16 @@ public:
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
   void Fill(const BDSHitSampler* hit,
-	    G4bool storeCharge = false,
-	    G4bool storePolarCoords = false);
+	    G4bool storeCharge      = false,
+	    G4bool storePolarCoords = false,
+	    G4bool storeElectrons   = false);
+  /// Used for filling primary coordinates only.
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,
 	    const G4int pdgID,
 	    const G4int turnsTaken,
-	    const G4int beamlineIndex);
+	    const G4int beamlineIndex,
+	    const G4int nElectronsIn);
   void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
 #endif
   void Fill(const BDSOutputROOTEventSampler<U>* other);
