@@ -229,9 +229,11 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 				     const G4double charge,
 				     const G4int pdgID,
-				     const G4int nElectrons)
+				     const G4int nElectrons,
+				     const G4double mass,
+				     const G4double rigidity)
 {
-  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons);
+  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();

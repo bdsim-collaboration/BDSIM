@@ -100,7 +100,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4int pdgID,
 					const G4int turnsTaken,
 					const G4int beamlineIndex,
-					const G4int nElectronsIn)
+					const G4int nElectronsIn,
+					const G4double massIn,
+                                        const G4double rigidityIn)
 {
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
@@ -119,6 +121,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
+  mass.push_back((double)(massIn / CLHEP::GeV));
+  rigidity.push_back((double)rigidityIn);
   FillPolarCoords(coords);
   FillIon();
   nElectrons.push_back((int)nElectronsIn);

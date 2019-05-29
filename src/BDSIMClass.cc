@@ -242,11 +242,13 @@ int BDSIM::Initialise()
   /// until after the physics list has been constructed and attached a run manager.
   if (globalConstants->GeneratePrimariesOnly())
     {
-      const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
-      const G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
+      G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
       G4int nElectrons = 0;
       if (const BDSIonDefinition* ionDef = beamParticle->IonDefinition())
         {nElectrons = ionDef->NElectrons();}
+      G4double mass = beamParticle->Mass();
+      G4double rigidity = beamParticle->BRho();
       
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
@@ -258,6 +260,18 @@ int BDSIM::Initialise()
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
 	  auto coords = bdsBunch->GetNextParticle();
+	  // check if the bunch is different dynamically (ie user file with varied particle type)
+      // and update various quantities.
+	  if (bdsBunch->ParticleCanBeDifferentFromBeam())
+        {
+          const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
+          pdgID    = pDef->ParticleDefinition()->GetPDGEncoding();
+          charge   = pDef->Charge();
+          mass     = pDef->Mass();
+          rigidity = pDef->BRho();
+          if (const BDSIonDefinition* iondDef = pDef->IonDefinition())
+            {nElectrons = iondDef->NElectrons();}
+        }
 	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons);
 	}
       // Write options now file open.

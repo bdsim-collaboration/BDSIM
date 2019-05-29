@@ -102,7 +102,9 @@ public:
 	    const G4int pdgID,
 	    const G4int turnsTaken,
 	    const G4int beamlineIndex,
-	    const G4int nElectronsIn);
+	    const G4int nElectronsIn,
+	    const G4double massIn,
+	    const G4double rigidityIn);
   void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
 #endif
   void Fill(const BDSOutputROOTEventSampler<U>* other);
