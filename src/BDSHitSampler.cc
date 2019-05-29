@@ -31,7 +31,8 @@ BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
 			     G4int    parentIDIn,
 			     G4int    trackIDIn,
 			     G4int    turnsTakenIn,
-			     G4int    beamlineIndexIn):
+			     G4int    beamlineIndexIn,
+			     G4int    nElectronsIn):
   samplerID(samplerIDIn),
   coords(coordsIn),
   charge(chargeIn),
@@ -39,7 +40,8 @@ BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
   parentID(parentIDIn),
   trackID(trackIDIn),
   turnsTaken(turnsTakenIn),
-  beamlineIndex(beamlineIndexIn)
+  beamlineIndex(beamlineIndexIn),
+  nElectrons(nElectronsIn)
 {;}
 
 BDSHitSampler::~BDSHitSampler()

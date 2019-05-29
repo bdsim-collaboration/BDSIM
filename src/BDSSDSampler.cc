@@ -88,6 +88,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
+  G4int nElectrons  = track->GetDynamicParticle()->GetTotalOccupancy();
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
@@ -151,7 +152,8 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 					    ParentID,
 					    TrackID,
 					    turnstaken,
-					    beamlineIndex);
+					    beamlineIndex,
+					    nElectrons);
   
   SamplerCollection->insert(smpHit);
   return true; // the hit was stored

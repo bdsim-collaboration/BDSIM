@@ -42,7 +42,8 @@ public:
 		G4int    parentIDIn,
 		G4int    trackIDIn,
 		G4int    turnsTakenIn,
-		G4int    beamlineIndexIn);
+		G4int    beamlineIndexIn,
+		G4int    nElectronsIn = 0);
 
   /// Note this should not be inline when we use a G4Allocator.
   virtual ~BDSHitSampler();
@@ -58,6 +59,7 @@ public:
   G4int                 trackID;
   G4int                 turnsTaken;
   G4int                 beamlineIndex;
+  G4int                 nElectrons; ///< Can only get this at inspection time so include here.
   
 private:
   BDSHitSampler() = delete; ///< No default constructor.
