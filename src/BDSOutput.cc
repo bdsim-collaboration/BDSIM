@@ -121,30 +121,16 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
-
-  // polar coords don't require a look up of any other PDG info so it
-  // doesn't need to involved in the following optimisation groupings
-  // of various options
-
-  // charge is required for rigidity calculation so force storage from sampler hits
-  if (storeSamplerRigidity && !storeSamplerCharge)
-    {storeSamplerCharge = true;}
-
-  // charge + mass + rigidity - particle stuff
-  storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
-  // charge + mass + rigidity + kinetic energy - particle stuff
-  storeOption2 = storeOption1 && storeSamplerKineticEnergy;
-  // everything except ion properties
-  storeOption3 = storeOption1 && storeSamplerIon;
-  // everything
-  storeOption4 = storeOption2 && storeSamplerIon;
-
+  
   // easy option for everything - overwrite bools we've just set individually
   if (g->StoreSamplerAll())
     {
-      storeOption4       = true;
-      storeSamplerCharge = true;
-      storeSamplerPolarCoords = true;
+      storeSamplerPolarCoords   = true;
+      storeSamplerCharge        = true;
+      storeSamplerKineticEnergy = true;
+      storeSamplerMass          = true;
+      storeSamplerRigidity      = true;
+      storeSamplerIon           = true;
     }
 }
 
