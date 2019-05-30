@@ -222,7 +222,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    turnsTaken,
 		    vertexInfoBDS->primaryVertex.beamlineIndex,
 		    vertexInfoBDS->nElectrons,
-		    vertex->GetPrimary()->GetMass(),
+		    vertexInfoBDS->mass,
 		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
     }

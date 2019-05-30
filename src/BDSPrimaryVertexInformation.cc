@@ -24,10 +24,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 							  const G4double chargeIn,
 							  const G4double rigidityIn,
+							  const G4double massIn,
 							  const G4int    nElectronsIn):
   primaryVertex(primaryVertexIn),
   charge(chargeIn),
   rigidity(rigidityIn),
+  mass(massIn),
   nElectrons(nElectronsIn)
 {;}
 
