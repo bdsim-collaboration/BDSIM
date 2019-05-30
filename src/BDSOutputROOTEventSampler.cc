@@ -59,10 +59,12 @@ template
 #ifndef __ROOTBUILD__
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
+					G4bool storeMass,
 					G4bool storeCharge,
 					G4bool storePolarCoords,
 					G4bool storeElectrons,
-					G4bool storeRigidity)
+					G4bool storeRigidity,
+					G4bool storeKineticEnergy)
 {
   // get single values
   n++;
@@ -86,8 +88,15 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   trackID.push_back(hit->trackID);
   turnNumber.push_back(hit->turnsTaken);
 
+  // require mass to calculate kinetic energ
+  if (storeMass)
+    {mass.push_back((double)(hit->mass / CLHEP::GeV));}
+
   if (storeCharge)
     {charge.push_back((int)(hit->charge / (G4double)CLHEP::eplus));}
+
+  if (storeKineticEnergy)
+    {kineticEnergy.push_back((double)(hit->coords.totalEnergy - hit->mass) / CLHEP::GeV);}
 
   if (storeRigidity)
     {rigidity.push_back((double)hit->rigidity/(CLHEP::tesla*CLHEP::m));}
@@ -102,10 +111,10 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4double chargeIn,
-					const G4int pdgID,
-					const G4int turnsTaken,
-					const G4int beamlineIndex,
-					const G4int nElectronsIn,
+					const G4int    pdgID,
+					const G4int    turnsTaken,
+					const G4int    beamlineIndex,
+					const G4int    nElectronsIn,
 					const G4double massIn,
                                         const G4double rigidityIn)
 {
@@ -125,12 +134,15 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   modelID = beamlineIndex;
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
+
+  // always store optional bits for primary
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
   mass.push_back((double)(massIn / CLHEP::GeV));
   rigidity.push_back((double)rigidityIn /(CLHEP::tesla*CLHEP::m));
+  nElectrons.push_back((int)nElectronsIn);
+  kineticEnergy.push_back((double)(coords.totalEnergy - massIn) / CLHEP::GeV);
   FillPolarCoords(coords);
   FillIon();
-  nElectrons.push_back((int)nElectronsIn);
 }
 
 template <class U>
@@ -320,7 +332,7 @@ void BDSOutputROOTEventSampler<U>::FillMR()
     {// loop over all existing entires in the branch vectors
       auto& pid = partID[i];
       auto& pInfo = particleTable->GetParticleInfo(pid);
-      mass.push_back(pInfo.mass);
+      //mass.push_back(pInfo.mass);
       //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
     }
 }
@@ -334,7 +346,7 @@ void BDSOutputROOTEventSampler<U>::FillMRK()
     {// loop over all existing entires in the branch vectors
       auto& pid = partID[i];
       auto& pInfo = particleTable->GetParticleInfo(pid);
-      mass.push_back(pInfo.mass);
+      //mass.push_back(pInfo.mass);
       //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
       kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
     }
@@ -351,7 +363,7 @@ void BDSOutputROOTEventSampler<U>::FillMRIK()
       if (particleTable->IsIon(pid))
         {
           auto& ionInfo = particleTable->GetIonInfo(pid);
-          mass.push_back(ionInfo.mass);
+          //mass.push_back(ionInfo.mass);
           //rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
           isIon.push_back(true);
           ionA.push_back(ionInfo.a);
@@ -361,7 +373,7 @@ void BDSOutputROOTEventSampler<U>::FillMRIK()
       else
         {// particle
           auto& pInfo = particleTable->GetParticleInfo(pid);
-          mass.push_back(pInfo.mass);
+          //mass.push_back(pInfo.mass);
           //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
           isIon.push_back(false);
           ionA.push_back(0);
@@ -382,7 +394,7 @@ void BDSOutputROOTEventSampler<U>::FillMRI()
       if (particleTable->IsIon(pid))
 	{
 	  auto& ionInfo = particleTable->GetIonInfo(pid);
-	  mass.push_back(ionInfo.mass);
+	  //mass.push_back(ionInfo.mass);
 	  //rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
 	  isIon.push_back(true);
 	  ionA.push_back(ionInfo.a);
@@ -391,7 +403,7 @@ void BDSOutputROOTEventSampler<U>::FillMRI()
       else
 	{// particle
 	  auto& pInfo = particleTable->GetParticleInfo(pid);
-	  mass.push_back(pInfo.mass);
+	  //mass.push_back(pInfo.mass);
 	  //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
 	  isIon.push_back(false);
 	  ionA.push_back(0);

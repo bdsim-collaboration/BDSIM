@@ -551,46 +551,27 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity);
+      samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
     }
 
   // extra information
-  // choose by a few strategies for optimisation (reduced PDGid searching)
-  // some options partially degenerate with lower numbered options - check first
-  if (storeOption4) // everything
-    {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMRIK();}
-    }
-  else if (storeOption3) // option1 + ion
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRI();}
-    }
-  else if (storeOption2) // option1 + kinetic energy
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRK();}
-    }
-  else if (storeOption1) // also applies for 2 and 3
-    {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMR();}
-    }
-  else
-    {// treat individually
+  G4bool firstSampler = true;
       for (auto& sampler : samplerTrees)
         {
-          if (storeSamplerKineticEnergy)
-	    {sampler->FillKineticEnergy();}
-          if (storeSamplerMass)
-	    {sampler->FillMass();}
+          if (firstSampler)
+            {
+              firstSampler = false;
+              continue; // skip primaries as it always has extras filled in
+            }
+          //if (storeSamplerKineticEnergy)
+	    //{sampler->FillKineticEnergy();}
+          //if (storeSamplerMass)
+	    //{sampler->FillMass();}
           //if (storeSamplerRigidity)
 	    //{sampler->FillRigidity();}
           if (storeSamplerIon)
 	    {sampler->FillIon();}
         }
-    }
 }
 
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,
