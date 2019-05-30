@@ -37,6 +37,7 @@ class BDSHitSampler: public G4VHit
 public:
   BDSHitSampler(G4int samplerIDIn,
 		const BDSParticleCoordsFull& coordsIn,
+		G4double massIn,
 		G4double chargeIn,
 		G4double rigidityIn,
 		G4int    pdgIDIn,
@@ -54,6 +55,7 @@ public:
 
   G4int                 samplerID;
   BDSParticleCoordsFull coords;
+  G4double              mass;
   G4double              charge; ///< Double as g4 uses charge as a double.
   G4double              rigidity;
   G4int                 pdgID;
