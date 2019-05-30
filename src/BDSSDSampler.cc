@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSHitSampler.hh"
 #include "BDSParticleCoordsFull.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
 #include "BDSUtilities.hh"
