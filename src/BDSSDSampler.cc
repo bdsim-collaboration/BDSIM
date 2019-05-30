@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -89,6 +90,12 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = track->GetDynamicParticle()->GetTotalOccupancy();
+  G4double rigidity = 0;
+  if (BDS::IsFinite(charge))
+    {
+      rigidity = mom.mag() / CLHEP::GeV / BDS::cOverGeV / charge;
+      rigidity *= CLHEP::tesla*CLHEP::m;
+    }
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
@@ -148,6 +155,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
 					    charge,
+					    rigidity,
 					    PDGtype,
 					    ParentID,
 					    TrackID,

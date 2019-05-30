@@ -38,6 +38,7 @@ public:
   BDSHitSampler(G4int samplerIDIn,
 		const BDSParticleCoordsFull& coordsIn,
 		G4double chargeIn,
+		G4double rigidityIn,
 		G4int    pdgIDIn,
 		G4int    parentIDIn,
 		G4int    trackIDIn,
@@ -54,6 +55,7 @@ public:
   G4int                 samplerID;
   BDSParticleCoordsFull coords;
   G4double              charge; ///< Double as g4 uses charge as a double.
+  G4double              rigidity;
   G4int                 pdgID;
   G4int                 parentID;
   G4int                 trackID;
