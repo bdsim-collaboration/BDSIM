@@ -179,9 +179,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // always update the charge - ok for normal particles; fixes purposively specified ions.
   particleGun->SetParticleCharge(particleCharge);
-
   // check that kinetic energy is positive and finite anyway and abort if not.
-  G4double EK = coords.local.totalEnergy - particleDef->GetPDGMass();
+  // get the mass from the beamParticle as this takes into account any electrons
+  G4double EK = coords.local.totalEnergy - beamParticle->Mass();
   if(EK <= 0)
     {
       G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! "
