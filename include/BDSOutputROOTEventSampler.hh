@@ -113,17 +113,18 @@ public:
   void Fill(const BDSOutputROOTEventSampler<U>* other);
 
   /// @{ Calculate and fill calculated variables.
-  inline void FillMass()     {mass     = getMass();}
-  inline void FillRigidity() {rigidity = getRigidity();}
+  //inline void FillMass()     {mass     = getMass();}
+  //inline void FillRigidity() {rigidity = getRigidity();}
   inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
-  inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
+  //inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
   /// @}
 
+  /*
   void FillMR();  ///< Calculate and fill mass and rigidity.
   void FillMRK(); ///< Calculate and fill mass, rigidity, and kinetic energy.
   void FillMRI(); ///< Calculate and fill mass, rigidity and ion properties.
   void FillMRIK();///< Calculate and fill mass, rigidity, kinetic energy, and ion properties.
-
+*/
   void SetBranchAddress(TTree *);
   virtual void Flush();  ///< Clean Sampler
 

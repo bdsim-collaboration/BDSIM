@@ -328,6 +328,7 @@ std::vector<int> BDSOutputROOTEventSampler<U>::getIonZ()
   return result;
 }
 
+/*
 template <class U>
 void BDSOutputROOTEventSampler<U>::FillMR()
 {
@@ -341,7 +342,9 @@ void BDSOutputROOTEventSampler<U>::FillMR()
       //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
     }
 }
+ */
 
+/*
 template <class U>
 void BDSOutputROOTEventSampler<U>::FillMRK()
 {
@@ -356,7 +359,9 @@ void BDSOutputROOTEventSampler<U>::FillMRK()
       kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
     }
 }
+ */
 
+/*
 template <class U>
 void BDSOutputROOTEventSampler<U>::FillMRIK()
 {
@@ -387,7 +392,9 @@ void BDSOutputROOTEventSampler<U>::FillMRIK()
         }
     }
 }
+ */
 
+/*
 template <class U>
 void BDSOutputROOTEventSampler<U>::FillMRI()
 {
@@ -416,6 +423,7 @@ void BDSOutputROOTEventSampler<U>::FillMRI()
 	}
     }
 }
+ */
 
 template class BDSOutputROOTEventSampler<float>;
 template class BDSOutputROOTEventSampler<double>;
