@@ -95,7 +95,8 @@ public:
   void Fill(const BDSHitSampler* hit,
 	    G4bool storeCharge      = false,
 	    G4bool storePolarCoords = false,
-	    G4bool storeElectrons   = false);
+	    G4bool storeElectrons   = false,
+	    G4bool storeRigidity    = false);
   /// Used for filling primary coordinates only.
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,

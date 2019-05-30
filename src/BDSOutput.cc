@@ -221,7 +221,9 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    vertex->GetPrimary()->GetPDGcode(),
 		    turnsTaken,
 		    vertexInfoBDS->primaryVertex.beamlineIndex,
-		    vertexInfoBDS->nElectrons);
+		    vertexInfoBDS->nElectrons,
+		    vertex->GetPrimary()->GetMass(),
+		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
     }
 }
@@ -549,7 +551,7 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon);
+      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity);
     }
 
   // extra information
@@ -583,8 +585,8 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
 	    {sampler->FillKineticEnergy();}
           if (storeSamplerMass)
 	    {sampler->FillMass();}
-          if (storeSamplerRigidity)
-	    {sampler->FillRigidity();}
+          //if (storeSamplerRigidity)
+	    //{sampler->FillRigidity();}
           if (storeSamplerIon)
 	    {sampler->FillIon();}
         }

@@ -272,7 +272,7 @@ int BDSIM::Initialise()
           if (const BDSIonDefinition* iondDef = pDef->IonDefinition())
             {nElectrons = iondDef->NElectrons();}
         }
-	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons);
+	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons, mass, rigidity);
 	}
       // Write options now file open.
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();

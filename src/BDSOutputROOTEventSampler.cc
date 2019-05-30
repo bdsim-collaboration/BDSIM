@@ -24,8 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__
-#include "BDSParticleCoordsFull.hh"
 #include "BDSHitSampler.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSPhysicalConstants.hh"
 
 #include "globals.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -60,7 +61,8 @@ template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 					G4bool storeCharge,
 					G4bool storePolarCoords,
-					G4bool storeElectrons)
+					G4bool storeElectrons,
+					G4bool storeRigidity)
 {
   // get single values
   n++;
@@ -86,6 +88,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 
   if (storeCharge)
     {charge.push_back((int)(hit->charge / (G4double)CLHEP::eplus));}
+
+  if (storeRigidity)
+    {rigidity.push_back((double)hit->rigidity/(CLHEP::tesla*CLHEP::m));}
 
   if (storePolarCoords)
     {FillPolarCoords(hit->coords);}
@@ -122,7 +127,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   S = (U) (coords.s / CLHEP::GeV);
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
   mass.push_back((double)(massIn / CLHEP::GeV));
-  rigidity.push_back((double)rigidityIn);
+  rigidity.push_back((double)rigidityIn /(CLHEP::tesla*CLHEP::m));
   FillPolarCoords(coords);
   FillIon();
   nElectrons.push_back((int)nElectronsIn);
@@ -316,7 +321,7 @@ void BDSOutputROOTEventSampler<U>::FillMR()
       auto& pid = partID[i];
       auto& pInfo = particleTable->GetParticleInfo(pid);
       mass.push_back(pInfo.mass);
-      rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
+      //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
     }
 }
 
@@ -330,7 +335,7 @@ void BDSOutputROOTEventSampler<U>::FillMRK()
       auto& pid = partID[i];
       auto& pInfo = particleTable->GetParticleInfo(pid);
       mass.push_back(pInfo.mass);
-      rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
+      //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
       kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
     }
 }
@@ -347,7 +352,7 @@ void BDSOutputROOTEventSampler<U>::FillMRIK()
         {
           auto& ionInfo = particleTable->GetIonInfo(pid);
           mass.push_back(ionInfo.mass);
-          rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
+          //rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
           isIon.push_back(true);
           ionA.push_back(ionInfo.a);
           ionZ.push_back(ionInfo.z);
@@ -357,7 +362,7 @@ void BDSOutputROOTEventSampler<U>::FillMRIK()
         {// particle
           auto& pInfo = particleTable->GetParticleInfo(pid);
           mass.push_back(pInfo.mass);
-          rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
+          //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
           isIon.push_back(false);
           ionA.push_back(0);
           ionZ.push_back(0);
@@ -378,7 +383,7 @@ void BDSOutputROOTEventSampler<U>::FillMRI()
 	{
 	  auto& ionInfo = particleTable->GetIonInfo(pid);
 	  mass.push_back(ionInfo.mass);
-	  rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
+	  //rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
 	  isIon.push_back(true);
 	  ionA.push_back(ionInfo.a);
 	  ionZ.push_back(ionInfo.z);
@@ -387,7 +392,7 @@ void BDSOutputROOTEventSampler<U>::FillMRI()
 	{// particle
 	  auto& pInfo = particleTable->GetParticleInfo(pid);
 	  mass.push_back(pInfo.mass);
-	  rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
+	  //rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
 	  isIon.push_back(false);
 	  ionA.push_back(0);
 	  ionZ.push_back(0);
