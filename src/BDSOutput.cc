@@ -542,22 +542,12 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
 
   // extra information
   G4bool firstSampler = true;
-      for (auto& sampler : samplerTrees)
-        {
-          if (firstSampler)
-            {
-              firstSampler = false;
-              continue; // skip primaries as it always has extras filled in
-            }
-          //if (storeSamplerKineticEnergy)
-	    //{sampler->FillKineticEnergy();}
-          //if (storeSamplerMass)
-	    //{sampler->FillMass();}
-          //if (storeSamplerRigidity)
-	    //{sampler->FillRigidity();}
-          if (storeSamplerIon)
-	    {sampler->FillIon();}
-        }
+  for (auto& sampler : samplerTrees)
+    {
+      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
+	{firstSampler = false; continue;}
+      sampler->FillIon();
+    }
 }
 
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,
