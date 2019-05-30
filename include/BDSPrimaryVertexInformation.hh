@@ -39,6 +39,7 @@ class BDSPrimaryVertexInformation: public G4VUserPrimaryVertexInformation
 public:
   BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 			      const G4double chargeIn,
+			      const G4double rigidityIn,
 			      const G4int    nElectronsIn = 0);
   virtual ~BDSPrimaryVertexInformation(){;}
 
@@ -46,7 +47,8 @@ public:
   virtual void Print() const;
 
   BDSParticleCoordsFullGlobal primaryVertex; ///< Full set of coordinates.
-  G4double charge; ///< Effective charge of primary.
+  G4double charge;     ///< Effective charge of primary.
+  G4double rigidity;   ///< Rigidity of particle at construction.
   G4int    nElectrons; ///< Number of electrons if partially stripped ion or atom.
 
 private:

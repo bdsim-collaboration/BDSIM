@@ -223,7 +223,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4int nElectrons = 0;
   if (const BDSIonDefinition* ionDef = beamParticle->IonDefinition())
     {nElectrons = ionDef->NElectrons();}
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge, nElectrons));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge, beamParticle->BRho(), nElectrons));
 
 #ifdef BDSDEBUG
   vertex->Print();
