@@ -116,7 +116,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4int    beamlineIndex,
 					const G4int    nElectronsIn,
 					const G4double massIn,
-                                        const G4double rigidityIn)
+					const G4double rigidityIn)
 {
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
