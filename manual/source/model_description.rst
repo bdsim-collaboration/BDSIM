@@ -4372,7 +4372,8 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not         |
+| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not as well |
+|                                   | as the `nElectrons` variable for possible number of electrons.     |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
 |                                   | stored. This must be turned on to store any trajectories at all.   |

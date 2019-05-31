@@ -18,6 +18,7 @@ New Features
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
+* Support for partially stripped ions in output samplers.
 
 * New options:
 
@@ -64,6 +65,25 @@ Bug Fixes
   instead.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* The rigidity was correcte for partially stripped ions in the sampler output.
+* The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
+  the nuclear mass not including the mass of the electrons. The magnetic fields were however
+  calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
+* Fix a bug where if a userfile with different particle types was used and `-\\-generatePrimariesOnly`
+  was used the phase space coordinates would be correct but the mass, charge, rigidity would be
+  written wrongly to the output. The particle definition is now updated correctly in the special
+  case of generating primaries only where the Geant4 kernel isn't used.
+
+Output Changes
+--------------
+
+* Samplers now have a new variable called `nElectrons` that is the number of electrons on a
+  partially stripped ion (if it is one) passing through the sampler. This is filled alongside
+  the other ion information.
+* `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
+  passes through a sampler.
+* All extra coordinates are now recorded in the Primary sampler structure no matter if these
+  are turned on or not for the samplers.
 
 Utilities
 ---------
