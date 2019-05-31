@@ -1,4 +1,116 @@
-V1.3.2 - 2019 / 03 / ??
+V1.4 - 2019 / 05 / 20
+=====================
+
+Expected Changes To Results
+---------------------------
+
+* Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
+  their rotation angle. Not doing this will result in different angles and therefore results.
+
+New Features
+------------
+
+* Improved event level verbosity.
+* All verbosity options now documented, including corresponding executable options.
+* BDSIM will now exit if invalid ranges and bins are specified for the single 3D
+  energy deposition ('scoring') histogram that can be specified via options.
+* New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
+* New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
+  a distribution file.
+* Support for partially stripped ions in output samplers.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++-----------------------------------+--------------------------------------------------------------------+
+| **Option**                        | **Description**                                                    |
++===================================+====================================================================+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
+
+
+General
+-------
+
+* Executable verbosity options, now accepted in input gmad.
+* Valid default ranges for general single 3D energy deposition 'scoring' histogram
+  available through options. Now 1m in x,y,z with 1 bin.
+* wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
+* wirescanner element now requires a material to be specified as this makes a large difference
+  to the expected result. This should be specified.
+* Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
+  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
+  
+Bug Fixes
+---------
+
+* Fixed warnings about exiting when Geant4 geometry in closed state in the event
+  of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
+  the exception.
+* Fix a bug where setting a rotation angle for a wire scanner would result in energy deposition
+  S coordinates all being -1. This was because the :code:`angle` parameter is assumed to only
+  ever be for bends and BDSIM reduces the sampler and curvilinear world (used for coordinate
+  transforms) diameter given the maximum bending angle of bends in the whole lattice. This is
+  required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
+  instead.
+* Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
+  and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* The rigidity was correcte for partially stripped ions in the sampler output.
+* The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
+  the nuclear mass not including the mass of the electrons. The magnetic fields were however
+  calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
+* Fix a bug where if a userfile with different particle types was used and `-\\-generatePrimariesOnly`
+  was used the phase space coordinates would be correct but the mass, charge, rigidity would be
+  written wrongly to the output. The particle definition is now updated correctly in the special
+  case of generating primaries only where the Geant4 kernel isn't used.
+
+Output Changes
+--------------
+
+* Samplers now have a new variable called `nElectrons` that is the number of electrons on a
+  partially stripped ion (if it is one) passing through the sampler. This is filled alongside
+  the other ion information.
+* `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
+  passes through a sampler.
+* All extra coordinates are now recorded in the Primary sampler structure no matter if these
+  are turned on or not for the samplers.
+
+Utilities
+---------
+
+* pybdsim v2.1.0
+* pymadx v1.7.1
+* pymad8 v1.5.0
+* pytransport v1.3.0
+
+
+V1.3.3 - 2019 / 05 / 21
+=======================
+
+Bug Fixes
+---------
+
+* Hot fix for fields not attached to thin elements such as dipole fringes or thin multipoles. This bug
+  crept in through a modification to avoid Geant4 getting stuck with strong fields in very narrow gaps
+  between layers of geometry in beam pipes, resulting in subsequent bad tracking due to the bad state of
+  Geant4 navigators internally. Regression testing has subsequently been introduced to protect against
+  this kind of bugging going unnoticed in future.
+
+V1.3.2 - 2019 / 04 / 20
 =======================
 
 New Features
@@ -10,12 +122,13 @@ New Features
 General
 -------
 
+* Tested with Geant4.10.5.p01
 * Geometry navigators are reset at the beginning of a run now in a similar way to the start of
   an event to ensure independence between runs - future proofing.
 * For Geant4.10.5, we now use the 'low' looping particle thresholds for tracking.
 * The 'vacuum' field is now not applied to the container volume of a beam pipe. However, it is
   still applied to the vacuum and beam pipe volumes. This makes the tracking more robust against
-  stuck particles in the extermely small gap between volumes.
+  stuck particles in the extremely small gap between volumes.
 * The yoke magnetic field now uses a wrapped G4ClassicalRK4 integrator. This wrapper acts as
   a drift for short (< 1um) steps. This makes tracking more robust for secondaries in the yoke.
 * Improve testing for user bunch distribution for robustness.
@@ -30,7 +143,7 @@ Bug Fixes
 * Fix strong recreation when using user file supplied bunch distribution. The file was
   always read from the beginning in the past. Now the correct coordinates will be
   read and the event is correctly reproduced.
-* Fix userinterface example given chanages to sensitive detector manager - simple edit.
+* Fix userinterface example given changes to sensitive detector manager - simple edit.
 * Fix calculated phase offset for rfcavity in the beam line. This was peak at the
   end of the element rather at the middle.
 * Fix possible segfault if event aborted due to extra collimator hit information.
@@ -41,16 +154,16 @@ Bug Fixes
 * Fix user file distribution file loading for comment lines, incomplete lines and empty
   (white space) lines.
 * Fix phase offset calculation for rf cavities with respect to nominal value. Phase would have
-  been smaller than intended. It was scalled to :math:`1/2\pi` instead of :math:`2\pi`.
+  been smaller than intended. It was scaled to :math:`1/2\pi` instead of :math:`2\pi`.
 * Fix ambiguity in manual for rf cavities. Time is generally in seconds in BDSIM, however the
   rf cavity took nanoseconds. A time offset of `1*ns` in the input gmad would result in double
   units.
 * Fix warning when loading an output file with data loader class when the file was created
   without storing primary coordinates. The warning was related to the PrimaryGlobal branch.
 * Fix warnings and artificial killing of particles by high looping particle thresholds for
-  Geant4.10.5, which are default. Use the 'low' looping thresholds by default.
+  Geant4.10.5, which are default. Use the 'low' looping thresholds by default. Issue #268.
 * Fix stuck particles by attaching the vacuum field in a beam pipe to every volume in the
-  beam pipe apart from the container volume to avoid navigation problems in very thin gaps.
+  beam pipe apart from the container volume to avoid navigation problems in very thin gaps. Issue #268.
 * Remove half-implemented integrator types in internal dictionaries.
 * Fixed model-model example conversion Python scripts as these were specific to the developer's computer.
 * Fix coil end-piece placement with respect to main magnet body - now includes required length safety
@@ -63,6 +176,14 @@ Bug Fixes
 * Biasing was not attached to components that were found to be unique in construction - i.e. an
   rbend back-to-back with another rbend will not have fringe fields in the middle at the join, so
   is considered a unique construction. This would result in these not having biasing attached.
+
+Utilities
+---------
+
+* pybdsim v2.1.0
+* pymadx v1.7.1
+* pymad8 v1.5.0
+* pytransport v1.3.0
 
 
 V1.3.1 - 2019 / 03 / 05
@@ -547,7 +668,7 @@ Bug Fixes
   save the whole trajectory for the primary. This fixes the behaviour of linearly growing
   unbounded memory usage when tracking for a long time in a ring. Issue #246, #242.
 * Optical calculation now works for sub-relativistic positrons.
-* ATF2 MADX output was not included in worked example as advertised - now included.
+* ATF2 MAD-X output was not included in worked example as advertised - now included.
 * Fixed scaling variable used when scaling a field map to a decapole magnet strength.
 * Survey units for magnetic fields are now fixed from kT to T.
 * Fixed issue where C-shaped vkickers and hkickers would ignore :code:`yokeOnInside`. Issue #251.

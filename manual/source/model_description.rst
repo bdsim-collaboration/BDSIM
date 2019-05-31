@@ -93,8 +93,8 @@ GMAD Syntax
 -----------
 
 GMAD is a language specifically for BDSIM that is made to be human readable.
-The name comes from the design intention of MADX syntax and extensions for Geant4.
-While GMAD is very similar to MADX, not all MADX commands are supported.
+The name comes from the design intention of MAD-X syntax and extensions for Geant4.
+While GMAD is very similar to MAD-X, not all MAD-X commands are supported.
 
 * S.I. units are used except where explicitly specified
 * Variables can be defined using :code:`name = value;` syntax
@@ -160,7 +160,7 @@ The following is an example of a common mistake that's not easy to spot: ::
 
 With this syntax we expect to create a design beam of 3 TeV electrons but the central energy of 1 TeV for the bunch. 3 TeV
 is used to calculate the magnet strengths and it's expected to fire a 1 TeV electron. However, the E0 parameter here just
-defines a variable called E0 that isn't used. The indentation (whitespace) is ignored. The error is the semi-colon at the
+defines a variable called E0 that isn't used. The indentation (white-space) is ignored. The error is the semi-colon at the
 end of the second line. This is the correct version: ::
 
   beam, particle="e-",
@@ -326,7 +326,7 @@ reference momentum.  The one turn map is also not applied on the first
 turn where there the beam is offset in S, but applied on following
 turns, still accounting for the exceptions mentioned above.
 
-The map must be of the format as written by MADX-PTC's ``PTC_NORMAL``
+The map must be of the format as written by MAD-X-PTC's ``PTC_NORMAL``
 command.  A one turn map (in this case, 12th order) can be generated
 in MAD-X with the following ::
 
@@ -419,17 +419,17 @@ Element `d2` is a drift with the properties of `d1` and a length of 2 metres. No
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note:: BDSIM strictly follows the MADX definition of magnet strength parameter
+.. note:: BDSIM strictly follows the MAD-X definition of magnet strength parameter
 	  `k` - a **positive** `k` corresponds to **horizontal focussing** for a
 	  **positively** charged particle. This therefore indicates a positive `k`
 	  corresponds to horizontal defocussing for a negatively charged particle.
-	  However, MADX treats all particles as positively charged for tracking purposes.
+	  However, MAD-X treats all particles as positively charged for tracking purposes.
 
-.. warning:: BDSIM currently treats k absolutely, so to convert a MADX lattice for
-	     negatively particles, the MADX k values must be multiplied by -1. The
+.. warning:: BDSIM currently treats k absolutely, so to convert a MAD-X lattice for
+	     negatively particles, the MAD-X k values must be multiplied by -1. The
 	     pybdsim converter provides an option called `flipmagnets` for this
 	     purpose. This may be revised in future releases depending on changes
-	     to MADX.
+	     to MAD-X.
 
 
 Component Strength Scaling
@@ -1055,8 +1055,8 @@ Example::
 tkicker
 ^^^^^^^
 
-BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
-however MADX differentiates the two on the basis of fitting parameters. BDSIM does
+BDSIM, like MAD-X, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
+however MAD-X differentiates the two on the basis of fitting parameters. BDSIM does
 not make this distinction. See `kicker`_ for more details.
 
 In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
@@ -1122,8 +1122,8 @@ of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of
 element is used to find the phase offset.
 
 .. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
-	  only correct for already relativisitic beams. Development is underway to improve
-	  this calculation for sub-relativisitic beams.
+	  only correct for already relativistic beams. Development is underway to improve
+	  this calculation for sub-relativistic beams.
 
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
@@ -1227,7 +1227,7 @@ jcol
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by :math:`\pi/2`.
 The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
-apertures which are the distances from the center of element to the left and right jaws respectively.
+apertures which are the distances from the centre of element to the left and right jaws respectively.
 
 
 +--------------------+------------------------------+--------------+---------------+
@@ -1398,8 +1398,8 @@ the shape of the dump. By default it is rectangular.
 Examples: ::
 
   d1: dump, l=0.2*m, horizontalWidth=20*cm;
-  d2: dump, l=0.4*m, apertureType="circular";
-  d3: dump, l=0.3*m, apertureType="rectangular";
+  d2: dump, l=0.4*m, horizontalWidth=30*cm, apertureType="circular";
+  d3: dump, l=0.3*m, horizontalWidth=40*cm, apertureType="rectangular";
 
 
 solenoid
@@ -1447,17 +1447,21 @@ parameter              description                                      default 
 `l`                    length of drift section around wire              0           yes
 `wireDiameter`         diameter of wire [m]                             0           yes
 `wireLength`           length of wirescanner [m]                        0           yes
-`angle`                angle of the wire w.r.t. vertical                0           no
+`material`             material of wire                                 none        yes
+`wireAngle`            angle of the wire w.r.t. vertical                0           no
 `wireOffsetX`          x offset of the wire from the center [m]         0           no
 `wireOffsetY`          y offset of the wire from the center [m]         0           no
 `wireOffsetZ`          z offset of the wire from the center [m]         0           no
-`wireMaterial`         material of wire                                 carbon      no
 =====================  ===============================================  ==========  ==========
 
 Notes:
 
-* The angle is the rotation from vertical in the clock-wise direction looing in the
-  positive S direction (the usualy direction of the beam).
+* The angle is the rotation from vertical in the clock-wise direction looping in the
+  positive S direction (the usually direction of the beam).
+
+.. warning:: After BDSIM V1.3.2 :code:`wireAngle` is used for the angle instead of
+	     :code:`angle` as :code:`angle` is used specifically for angles of bends
+	     and this could result in the curvilinear world being made very small.
 
 The offsets are with respect to the centre of the beam pipe section the wire is placed inside.
 This should therefore be less than half the element length `l`. The usual beam pipe parameters
@@ -1760,14 +1764,14 @@ is controlled through the following parameters:
 * `beampipeMaterial`
 
 
-For each aperture model, a different number of parameters are required. Here, we follow the MADX
+For each aperture model, a different number of parameters are required. Here, we follow the MAD-X
 convention and have four parameters. The user must specify them as required for that model.
 BDSIM will check to see if the combination of parameters is valid. `beampipeRadius` and `aper1`
 are degenerate.
 
 Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
-These are used differently for each aperture model and match the MADX aperture definitions.
+These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
@@ -2052,7 +2056,7 @@ and rotations. Every component can be displaced transversely and rotated along t
 .. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y-
 	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
 	  tilt will become a vertical bend without flipping x and y in the sampler or subsequent components. This
-	  matches the behaviour of MAD8 and MADX.
+	  matches the behaviour of MAD8 and MAD-X.
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
 
@@ -2138,7 +2142,7 @@ Example::
 	   :width: 40%
 	   :align: center
 
-The parametrisation used to define elliptical cavities in BDSIM.
+The parameterisation used to define elliptical cavities in BDSIM.
 The symbols used in the figure map to the cavity options according to the table below.
 
 +-----------------------+-----------------------------+
@@ -2836,7 +2840,7 @@ e.g. ::
 
 .. note:: If a sampler is placed at the very beginning of the lattice, it may appear
 	  that only approximately half of the primary particles seem to pass through it. This
-	  is the correct behaviour, as unlike an optics program such as MADX, the sampler
+	  is the correct behaviour, as unlike an optics program such as MAD-X, the sampler
 	  represents a thin plane in 3D space in BDSIM. If the beam distribution has some
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
@@ -2896,7 +2900,7 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 			aper1=10*cm;
 
 This defines a circular (by default) sampler with radius 10 cm positioned with respect to
-the 2nd instnace of the d1 element (zero counting) in the main beam line with a rotation
+the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
 Placement
@@ -3023,13 +3027,140 @@ worlds) and other samplers. It is recommended to tick and un-tick the desired el
 it appear and disappear repeatedly.
 
 
+.. _detectors:
+
+Detectors
+---------
+
+BDSIM allows the definition of detectors in the simulation. These are objects to represent
+real detectors or measure a quantity at some place in the model including the effect of the
+mass of (and therefore interaction with) the detector. Currently, there is one type of detector
+that is a beam loss monitor.
+
+.. _detectors-blms:
+
+Beam Loss Monitors
+^^^^^^^^^^^^^^^^^^
+
+Beam loss monitors (BLMs) are simple detectors that give one integrated value per event. The
+quantity to be generated can be chosen and the shape and location of the BLM can also be chosen.
+Below are the available parameters. A BLM is created using the `blm` command.::
+
+  detectorname, blm, parameter=value...
+
+Either a simple geometric shape can be used, which is a single volume of one material, or a
+user supplied geometry file can be used.
+
+The placement parameters are the same as the general placements (see :ref:`placements`). So the
+BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
+in global Cartesian coordinates.
+  
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x                                                 |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y                                                 |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z                                                 |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters)  |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation                                     |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle, angle to rotate about unit vector                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true)      |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string)         |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+|                         | is used more than once in the sequence. Zero counting.             |
++-------------------------+--------------------------------------------------------------------+
+| geometryFile            | Optional file to use for geometry of BLM including format          |
++-------------------------+--------------------------------------------------------------------+
+| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
++-------------------------+--------------------------------------------------------------------+
+| blmMaterial             | Name of material to use for simple geometry                        |
++-------------------------+--------------------------------------------------------------------+
+| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
++-------------------------+--------------------------------------------------------------------+
+| blm2                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm3                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm4                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+
+BLM Shapes
+**********
+
+For each shape, the shape parameters ("blm1", "blm2", "blm3", "blm4") have different meanings. These
+are described below. NA means non-applicable to this shape.
+
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| **Shape**       | **blm1**                 | **blm2**              | **blm3**              | **blm4**      |
++=================+==========================+=======================+=======================+===============+
+| cylinder        | half length along axis   | radius                | NA                    | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| cube            | half length in x         | half length in y      | half length in z      | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| sphere          | radius                   | NA                    | NA                    | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+
+Examples
+********
+
+1) A simple sphere made of nitrogen. It's placed at 2.3 metres along the beam line with a transverse offset
+   (in curvilinear coordinates) of 40 cm horizontally and 25 cm vertically. The sphere radius is 20 cm.
+
+   ::
+
+      minidetector: blm, s=2.3*m, x=0.4*m, y=0.25*m,
+	      	    geometryType="sphere",
+		    blmMaterial="N",
+		    blm1=20*cm;
+
+2) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
+
+   ::
+
+      minidetector: blm, x=3.2*m, y=0.25*m,
+	      	    geometryType="cylinder",
+		    blmMaterial="Si",
+		    blm1=20*cm,
+		    blm2=5*cm;
+
+3) User defined geometry in a GDML file.
+
+   ::
+
+      minidetector: blm, x=0.4*m, y=0.25*m,
+                    geometryFile="gdml:simpleshape.gdml",
+		    blmMaterial="N",
+		    blm1=20*cm,
+		    blm2=5*cm;
+
+
 .. _physics-processes:
 
 Physics Processes
 -----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
-define **only** the processess required so that the simulation covers the desired outcome
+define **only** the processes required so that the simulation covers the desired outcome
 want but is also efficient. Geant4 says, "There is no one model that covers all physics
 at all energy ranges."
 
@@ -3422,7 +3553,7 @@ Examples: ::
   option, physicsList="g4FTFP_BERT_PEN",
           g4PhysicsUSeBDSIMCutsAndLimits=0;
 
-This last example turns off the minimum kinetic energy and also the the maximum step length
+This last example turns off the minimum kinetic energy and also the maximum step length
 limit which is by default 110% the length of the element. If bad tracking behaviour
 is experienced (stuck particles etc.) this should be considered. ::
 	  
@@ -3434,7 +3565,7 @@ This following example will enforce a minimum kinetic energy but also limit the 
   option, physicsList="g4FTFP_BERT",
           minimumKineticEnergy=20*GeV;
 
-.. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
+.. note:: "g4" is not case sensitive but the remainder of the string is. The remainder is passed
 	  to the Geant4 physics list that constructs the appropriate physics list and this is
 	  case sensitive.
 
@@ -3464,9 +3595,10 @@ These cannot be used in combination with any other physics processes.
 Physics Biasing
 ---------------
 
-BDSIM currently provides two ways to artifically interfere with the physics processes
-to make the desired outcome happen more often. In both cases the goal is more efficiently
-simulate the correct physical outcome - variance reduction.
+BDSIM currently provides two ways to artificially interfere with the physics processes
+to make the desired outcome happen more often. In both cases, the goal is to simulate
+the correct physical outcome, but more efficiently in the parameters of interest,
+i.e. variance reduction.
 
 The two cases are :ref:`physics-bias-cross-section-biasing` and
 :ref:`physics-bias-importance-sampling`, each described below.
@@ -3476,8 +3608,9 @@ The two cases are :ref:`physics-bias-cross-section-biasing` and
 Cross-Section Biasing
 ^^^^^^^^^^^^^^^^^^^^^
 
-The cross-section for a physics process for a specific particle can be artifically altered
-by a numerical scaling factor using cross-section biasing. The biasing is defined with the
+The cross-section for a physics process for a specific particle can be artificially altered
+by a numerical scaling factor using cross-section biasing. This is done on a per-particle
+and per-physics-process basis.  The biasing is defined with the
 keyword **xsecbias**, to define a bias 'object'. This can then be attached to various bits
 of the geometry or all of it. This is provided with the Geant4 generic biasing feature.
 
@@ -3485,7 +3618,7 @@ Geant4 automatically includes the reciprocal of the factor as a weighting, which
 recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
 used should be multiplied by the weight to achieve the correct physical result.
 
-.. note:: This only works with Geant4 version 10.1 or higher.
+.. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
@@ -3622,6 +3755,7 @@ are described in the following sub-sections:
 * `Visualisation`_
 * `Output Options`_
 * `One Turn Map`_
+* :ref:`bdsim-options-verbosity`
 * `Offset for Main Beam Line`_
 * `Scoring Map`_
 * `Developer Options`_
@@ -4126,6 +4260,18 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -4237,7 +4383,8 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not         |
+| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not as well |
+|                                   | as the `nElectrons` variable for possible number of electrons.     |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
 |                                   | stored. This must be turned on to store any trajectories at all.   |
@@ -4289,6 +4436,86 @@ with the following options.
 |                                   | position (sqrt(x^2, y^2)).                                         |
 +-----------------------------------+--------------------------------------------------------------------+
 
+.. _bdsim-options-verbosity:
+
+Print Out Options
+^^^^^^^^^^^^^^^^^
+
+The following options control the level of print out both from BDSIM and from Geant4. Note, excessive
+amounts of output will cause a simulation to run slowly and should only be used for understanding a
+particular physics outcome if really desired or not understood. It is recommended to print out as little
+as possible and then work 'up' to more print out as required.
+
+BDSIM prints out the most minimal information for its purpose. The physics tables printed out can be
+length, but are an important set of information for a given simulation.
+
+Some of the following options are available through executable options (with different names). See
+:ref:`executable-options` for more details.
+
+Recommendations:
+
+* `-\\-verbose_G4stepping=2` to see one line per entry / exit of a volume to see where a particle is going.
+* "Tracking" refers to a particle track which is essentiall one particle being put through the simulation.
+* Stepping is the incremental step of each particle trajectory through the simulation.
+* Event is the minimal unit of simulation.
+* Run is a group of events where the physics and geometry remained the same.
+
++----------------------------------+----------+-----------------------------------------------------------+
+| **Option**                       | **Type** | **Description**                                           |
++==================================+==========+===========================================================+
+| verbose                          | Boolean  | Whether general verbosity is on - some extra print out.   |
+|                                  |          | This highlights general construction steps of the         |
+|                                  |          | geometry; print out any field definitions defined in the  |
+|                                  |          | parser; a summary of all modular physics lists activated  |
+|                                  |          | or not.                                                   |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEvent                     | Boolean  | Extra print out identifying the start and end of event    |
+|                                  |          | action as well as the allocator pool sizes. Print out     |
+|                                  |          | the size of each hits collection if it exists at all. The |
+|                                  |          | same as `-\\-verbose_event` executable option.            |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumber               | integer  | Extra print out as in `verboseEvent`, but only for the    |
+|                                  |          | event number specified - zero counting. The same as       |
+|                                  |          | `-\\-verbose_event_num=X` executable option.              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out for all       |
+|                                  |          | events.                                                   |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberLevel          | integer  | (0-5) Like `verboseEventNumber` but only for the specific |
+|                                  |          | event specified by `verboseEventNumber`. Turns on verbose |
+|                                  |          | stepping information at the specified level.              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberContinueFor    | integer  | (1-inf) number of events to continue printing out the     |
+|                                  |          | verbose event information stepping information for.       |
+|                                  |          | default is 1.                                             |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberPrimaryOnly    | Boolean  | Whether to only print out the verbose stepping            |
+|                                  |          | as chosen by `verboseEventNumberLevel` for primary tracks |
+|                                  |          | and the default is true (1).                              |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseImportanceSampling        | integer  | (0-5) level of importance sampling related print out.     |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseRunLevel                  | integer  | (0-5) level of Geant4 run level print out. The same as    |
+|                                  |          | `-\\-verbose_G4run=X` executable option.                  |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseStep                      | Boolean  | Whether to use the verbose stepping action for every      |
+|                                  |          | step. Note, this is a lot of output.                      |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseSteppingLevel             | integer  | (0-5) level of Geant4 stepping level print out. The same  |
+|                                  |          | as `-\\-verbose_G4stepping=X` executable option.          |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same  |
+|                                  |          | as `-\\-verbose_G4tracking=X` executable option.          |
++----------------------------------+----------+-----------------------------------------------------------+
+
+Examples: ::
+
+  option, verboseEventNumber=3,
+          verboseEventNumberLevel=2;
+
+This will print out verbose stepping information for the primary particle (default is only the primary)
+for the 4th event (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`.
 
 .. _beamline-offset:
 
@@ -4357,29 +4584,42 @@ BDSIM provides the capability to create one 3D histogram of energy deposition hi
 of the geometry. The hits are only created where the geometry exists and are sensitive.
 The histogram is independent of the geometry.
 
+* The user should ideally set all parameters to specify the desire ranges, otherwise be
+  aware of the default values.
+* BDSIM will exit with a warning if zero range is found in any dimension as this means
+  nothing will be histogrammed and there is no point in continuing.
+
+An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scoringmap.gmad`.
+
+.. note:: This is called a scoring map for historical reasons but it does not limit the step
+	  length in the way a typical Geant4 scoring map would. This only histograms energy
+	  deposition data.
+
+
 +----------------------------------+-------------------------------------------------------+
-| **Option**                       | **Function**                                          |
+| **Option**     | **Default**     | **Function**                                          |
 +==================================+=======================================================+
-| useScoringMap                    | Whether to create a scoring map                       |
-+----------------------------------+-------------------------------------------------------+
-| nbinsx                           | Number of bins in global X                            |
-+----------------------------------+-------------------------------------------------------+
-| nbinsy                           | Number of bins in global Y                            |
-+----------------------------------+-------------------------------------------------------+
-| nbinsz                           | Number of bins in global Z                            |
-+----------------------------------+-------------------------------------------------------+
-| xmin                             | Lower global X limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| xmax                             | Upper global X limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| ymin                             | Lower global Y limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| ymax                             | Upper global Y limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| zmin                             | Lower global Z limit                                  |
-+----------------------------------+-------------------------------------------------------+
-| zmax                             | Upper global Z limit                                  |
-+----------------------------------+-------------------------------------------------------+
+| useScoringMap  | 0               | Whether to create a scoring map                       |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsx         | 1               | Number of bins in global X                            |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsy         | 1               | Number of bins in global Y                            |
++----------------+-----------------+-------------------------------------------------------+
+| nbinsz         | 1               | Number of bins in global Z                            |
++----------------+-----------------+-------------------------------------------------------+
+| xmin           | -0.5            | Lower global X limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| xmax           | 0.5             | Upper global X limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| ymin           | -0.5            | Lower global Y limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| ymax           | 0.5             | Upper global Y limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| zmin           | 0               | Lower global Z limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| zmax           | 1               | Upper global Z limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+
 
 .. _developer-options:
 
@@ -5073,10 +5313,31 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
+| `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
+|                                  | number of coordinate lines to skip. This also counts  |
+|                                  | comment lines.                                        |
++----------------------------------+-------------------------------------------------------+
 | `matchDistrFileLength`           | Option for certain distributions to simulate the same |
 |                                  | number of events as are in the file. Currently only   |
 |                                  | for the `ptc` distribution.                           |
 +----------------------------------+-------------------------------------------------------+
+
+Skipping and Ignoring Lines:
+
+* `nlinesIgnore` is intended for header lines to ignore at the start of the file.
+* `nlinesSkip` is intended for the number of particle coordinate lines to skip after `nlinesIgnore`.
+* `nlinesSkip` is available as the executable option :code:`--distrFileNLinesSkip`.
+* The number of lines skipped from a file is `nlinesIgnore` + `nlinesSkip`. The user could use
+  only one of these, but only `nlinesSkip` is available through the executable option described above.
+* If more events are generated than are lines in the file, the file is read again including the skipped
+  lines.
+
+Examples:
+
+1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
+2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
+   The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
+   for another instance of BDSIM on a compure farm.
 
 Acceptable tokens for the columns are:
 
@@ -5244,7 +5505,7 @@ certain elements in the beamline, but for now such situations must be avoided.
 .. note:: Surrounding the beam line with a tunnel completely means that every particle simulated
 	  will have to eventually hit something and not escape. This means that every single particle
 	  will likely create a shower of particles down to 0 energy. This can increase simulation time.
-	  To avoid this, or at least contorl this behaviour, it is recommended to use the options
+	  To avoid this, or at least control this behaviour, it is recommended to use the options
 	  :code:`minimumKineticEnergyTunnel` or :code:`tunnelIsInfiniteAbsorber`.
 
 .. _materials-and-atoms:
@@ -5634,7 +5895,7 @@ rotation, there is still a small fringe field effect.
 
 If `fint` is specified but `fintx` is not, `fintx` will default to the same value as `fint`. If,
 however, `fintx` is set to 0, it will in fact be 0 and will not take the value of `fint`. This is
-the same default behaviour as MADX. MADX will write out a value of `fintx` as -1 in this case in
+the same default behaviour as MAD-X. MAD-X will write out a value of `fintx` as -1 in this case in
 any output. BDSIM will write out the value used, even if it's equal to 0.
 
 Pole Face Rotations
@@ -5647,8 +5908,8 @@ The field therefore also has a hard edge with exactly no field immediately outsi
 
 The tracking routine for dipoles in the `bdsimtwo` integrator set (see :ref:`bdsim-dipole-rodrigues2`)
 tracks the particle using the analytical helical solution in a pure magnetic field in Cartesian
-coordinates. This however does not agree with the tracking provided by MADX. We therefore provide
-an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provided
+coordinates. This however does not agree with the tracking provided by MAD-X. We therefore provide
+an equivalent to MAD-X in `bdsimmatrix` integrator set (the default). The vertical focussing provided
 by the fringe field is the same in both cases.
 
 The difference between the two is negligible for small pole face angles - for example, the LHC lattice
@@ -5659,13 +5920,13 @@ difference is non-negligible.
 The integrator for dipoles in `bdsimtwo` is computationally faster and should be used for lattices
 like the LHC, where speed matters and the pole faces are not a strong feature.
 
-.. note:: To provide equivalent tracking to MADX with the `bdsimmatrix` integrator set, the
+.. note:: To provide equivalent tracking to MAD-X with the `bdsimmatrix` integrator set, the
 	  magnet geometry is constructed with flat ends (i.e. always an sbend). Rbends are constructed
 	  as sbends with additional poleface rotation angles equal to half the bend angle. Instead of
 	  constructing the poleface geometry, the effect of a poleface rotation is applied in a thin
 	  fringefield magnet (1 micron thick by default) at the beginning (for non-zero e1) or at the
 	  end (for non-zero e2) of the dipole. In future, this will be decoupled to allow both the
-	  physical angled faces in the model as well as accurate tracking, using the MADX style matrix
+	  physical angled faces in the model as well as accurate tracking, using the MAD-X style matrix
 	  integrators.
 
 Large Angle Bends

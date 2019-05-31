@@ -745,7 +745,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           if (buildEntranceFringe || buildExitFringe)
             {
               G4cerr << __METHOD_NAME__ << " Poleface and fringe field effects are unavailable "
-                     << "for thin the (t)kicker element ""\"" << elementName << "\"." << G4endl;
+                     << "for the thin (t)kicker element ""\"" << elementName << "\"." << G4endl;
             }
         }
       // Good to apply fringe effects.
@@ -888,7 +888,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 			   chordLength,
 			   bpInf,
 			   magOutInf,
-			   vacuumField);
+			   vacuumField,
+			   0, nullptr,  // default values for optional args (angle, outerFieldInfo)
+			   true);       // isThin
     }
   else
     {
@@ -1016,8 +1018,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					    thinElementLength,
 					    beamPipeInfo,
 					    magnetOuterInfo,
-					    vacuumField);
-  
+					    vacuumField,
+					    0, nullptr,  // default values for optional args (angle, outerFieldInfo)
+					    true);       // isThin
+
   thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,
 				     beamPipeInfo->aper1,
 				     thinElementLength*0.5));
@@ -1299,8 +1303,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
 {
-  if(!HasSufficientMinimumLength(element))
+  if (!HasSufficientMinimumLength(element))
     {return nullptr;}
+
+  if (BDS::IsFinite(element->angle))
+    {throw BDSException(__METHOD_NAME__, "\"angle\" parameter set for wirescanner \"" + elementName + "\" but this should not be set. Please unset and use \"wireAngle\".");}
 
   G4ThreeVector wireOffset = G4ThreeVector(element->wireOffsetX * CLHEP::m,
 					   element->wireOffsetY * CLHEP::m,
@@ -1309,10 +1316,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
   return (new BDSWireScanner(elementName,
 			     element->l*CLHEP::m,
 			     PrepareBeamPipeInfo(element),
-			     PrepareMaterial(element, "carbon"),
+			     PrepareMaterial(element),
 			     element->wireDiameter*CLHEP::m,
 			     element->wireLength*CLHEP::m,
-			     element->angle*CLHEP::rad,
+			     element->wireAngle*CLHEP::rad,
 			     wireOffset));
 }
 
@@ -1372,16 +1379,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
   if (apertureType == "circular")
     {circular = true;}
   else if (apertureType != "rectangular" && !apertureType.empty())
-    {
-      G4cout << __METHOD_NAME__ << "unknown shape for dump: \"" << apertureType << "\"" << G4endl;
-      exit(1);
-    }
-
-  G4double defaultHorizontalWidth = 40*CLHEP::cm;
-  G4double horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
+    {throw BDSException(__METHOD_NAME__, "unknown shape for dump: \"" + apertureType + "\"");}
+  
   BDSDump* result = new BDSDump(elementName,
 				element->l*CLHEP::m,
-				horizontalWidth,
+				PrepareHorizontalWidth(element),
 				circular);
   return result;
 }
@@ -1635,7 +1637,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
                                           thinElementLength,
                                           beamPipeInfo,
                                           magnetOuterInfo,
-                                          vacuumField);
+                                          vacuumField,
+                                          0, nullptr,  // default values for optional args (angle, outerFieldInfo)
+                                          true);       // isThin
 
   thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
                                    beamPipeInfo->aper1,

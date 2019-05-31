@@ -1,0 +1,40 @@
+d1 : drift,      l=0.5*m;
+fq1: quadrupole, l=0.1*m, k1=0.1; 
+d2 : drift,      l=1.0*m;
+dq1: quadrupole, l=0.1*m, k1=-0.1;
+d3 : drift,      l=0.5*m;
+
+fodoRaw: line = (d1,fq1, d2, dq1, d3);
+fodoCol: line = (d1,fq1, d2, dq1, d3);
+
+simpleCollimation: line = (fodoRaw,fodoCol);
+use,period=simpleCollimation;
+sample, all;
+
+! purposively set the range in each dimension to 0 to test complaining by BDSIM
+option, useScoringMap=1,
+	nbinsx=50,
+	nbinsy=50,
+	nbinsz=10,
+	xmin = 0,
+	xmax = 0,
+	ymin = 1,
+	ymax = 1,
+	zmin = 0,
+	zmax = 0;
+
+option, ngenerate=10,
+	physicsList="em",
+	defaultRangeCut=1*cm,
+    	buildTunnel=1;
+
+beam, particle="e-",
+      energy=1.0*GeV,
+      distrType="gausstwiss",
+      emitx=1e-10*m,
+      emity=1e-10*m,
+      betx=1e-6*m,
+      bety=1e-6*m,
+      alfx=0.0,
+      alfy=0.0;
+

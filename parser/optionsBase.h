@@ -58,11 +58,15 @@ namespace GMAD
     bool verboseEvent;
     bool verboseStep;
     int  verboseEventNumber;
+    int  verboseEventNumberContinueFor;
+    int  verboseEventNumberLevel;
+    bool verboseEventNumberPrimaryOnly;
     
     int  verboseRunLevel;
     int  verboseEventLevel;
     int  verboseTrackingLevel;
     int  verboseSteppingLevel;
+    int  verboseImportanceSampling;
     ///@}
   
     bool circular;                 ///< Flag for circular machine
@@ -164,6 +168,7 @@ namespace GMAD
     std::string worldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
+    // see verboseImportance
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
@@ -190,11 +195,6 @@ namespace GMAD
     
     // sampler options
     double   samplerDiameter;
-
-    ///BLM geometry
-    double   blmRad;
-    double   blmLength;
-    bool     sensitiveBLMs;
 
     ///@{ Physics processes
     bool     turnOnOpticalAbsorption;
@@ -229,6 +229,7 @@ namespace GMAD
     ///@}
 
     // biasing options
+    double    scaleFactorLaser;
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
 
@@ -258,7 +259,10 @@ namespace GMAD
     
     // output related options
     int         numberOfEventsPerNtuple;
-    
+
+    bool        storeApertureImpacts;
+    bool        storeApertureImpactsIons;
+    bool        storeApertureImpactsAll;
     bool        storeCollimatorInfo;
     bool        storeCollimatorLinks;
     bool        storeCollimatorHitsIons;

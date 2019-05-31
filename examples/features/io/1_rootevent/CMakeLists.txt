@@ -9,6 +9,11 @@ simple_testing(io-write-ascii-seed-state "--file=sc.gmad --writeSeedState" "")
 # use ascii seed state
 simple_testing(io-load-ascii-seed-state "--file=sc.gmad --seedStateFileName=../../data/output.seedstate.txt --ngenerate=1" "")
 
+# write optional aperture impacts
+simple_testing(io-aperture-impacts        "--file=sc_apertureimpacts.gmad"        "")
+simple_testing(io-aperture-impacts-ions   "--file=sc_apertureimpacts_ions.gmad"   "")
+simple_testing(io-aperture-impacts-all    "--file=sc_apertureimpacts_all.gmad"    "")
+
 # write optional sampler data
 simple_testing(io-sampler-extras          "--file=sc_samplerextras.gmad"          "")
 simple_testing(io-sampler-extras-all      "--file=sc_samplerextrasall.gmad"       "")
@@ -38,4 +43,5 @@ simple_testing(io-no-eloss        "--file=sc_no_eloss.gmad --ngenerate=1" "")
 simple_testing(io-no-eloss-histos "--file=sc_no_eloss_histograms.gmad --ngenerate=1" "")
 
 # scoring map
-simple_testing(io-scoring-map     "--file=sc_scoringmap.gmad" "")
+simple_testing(io-scoring-map               "--file=sc_scoringmap.gmad"          "")
+simple_fail(io-scoring-map-bad-range        "--file=sc_scoringmap_no_range.gmad" "")

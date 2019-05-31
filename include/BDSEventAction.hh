@@ -45,6 +45,7 @@ public:
   virtual void EndOfEventAction(const G4Event*);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
+  G4int CurrentEventIndex() const {return currentEventIndex;}
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
     
@@ -66,6 +67,7 @@ private:
   G4int eCounterWorldContentsID;  ///< Collection ID for the world energy deposition hits.
   G4int worldExitCollID;          ///< Collection ID for the world exit hits.
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
+  G4int apertureCollID;           ///< Collection ID for the aperture hits.
   
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
@@ -89,6 +91,7 @@ private:
   /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
+  G4int currentEventIndex;
 
   /// A copy of the pointer to event info instance that is registered to the event. Geant4
   /// deletes this as necessary.

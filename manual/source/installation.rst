@@ -9,10 +9,24 @@ BDSIM is developed and used on Mac OSX and Linux.
 
 Tested systems:
 
+* Mac OSX 10.14.4 (Mojave), XCode 10.2.1 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.5.p01, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.1
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
-* SLC6, GCC 4.9.3, Geant4.10.5.0, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
+* SLC6, GCC 4.9.3, Geant4.10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
 * SLC6 as above with Geant4.10.4.p02, Geant4.10.3.p03, Geant4.10.2.p03, Geant4.10.1.p03
+
+BDSIM on Windows
+----------------
+
+BDSIM is available on Windows 10 through installation on a Windows Subsystem for Linux which are downloadable from
+the Windows store. A number of Linux distributions are available, however BDSIM installation has only been tested
+on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
+Follow the guide on the Microsoft website for installing the subsystem.
+
+To install BDSIM on the subsystem, follow the standard installation guide below. An X server is required to view the
+BDSIM visualiser from the Linux subsystem. We recommend installing the XMing display server to your Windows 10 machine;
+to view windows with XMing you will need to run the command :code:`export DISPLAY=:0` in the Linux Bash environment.
+The command should be added to your ``.bashrc`` or profile so that it's loaded automatically every time.
 
 Obtaining  BDSIM
 ================
@@ -75,7 +89,7 @@ Requirements \& Environment
 1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher,
    or clang 6 or higher.
 2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
-3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_.
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended.
 4) *Optional* - Python 2.7 series for python utilities and easy data loading with ROOT.
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled with python 2.7 support (default is 3 series).
 6) *Optional* - Qt5 libraries for best Geant4 visualiser.
@@ -97,7 +111,7 @@ We have found some problems with certain versions of software and these should b
 avoided. Generally, we recommend the latest patch version of Geant4. These are the
 problems we have found:
 
-* Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs 40ms.
+* Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensivly in BDSIM.
 * Geant4.10.5.0  - the cashkarp integrator for fields will always crash.

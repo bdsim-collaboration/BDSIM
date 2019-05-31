@@ -40,6 +40,10 @@ be used literally.  The following command may be used to display all options::
 | -\\-distrFile=<file>         | Which file to use for the bunch                |
 |                              | distribution                                   |
 +------------------------------+------------------------------------------------+
+| -\\-distrFileNLinesSkip=N    | Number of lines to skip into a file. This is   |
+|                              | added to :code:`nlinesIgnore`. This is applied |
+|                              | again if the file loops.                       |
++------------------------------+------------------------------------------------+
 | -\\-exportGeometryTo=<file>  | Exports the geometry to a file                 |
 |                              | extension, which determines the format         |
 |                              | where possible extensions are ("gdml")         |
@@ -90,10 +94,14 @@ be used literally.  The following command may be used to display all options::
 +------------------------------+------------------------------------------------+
 | -\\-verbose                  | Displays general parameters before run         |
 +------------------------------+------------------------------------------------+
+| -\\-verbose_G4stepping       | (0-5) level of Geant4 stepping level print out |
++------------------------------+------------------------------------------------+
+| -\\-verbose_G4tracking       | (0-5) level of Geant4 tracking level print out |
++------------------------------+------------------------------------------------+
 | -\\-verbose\_event           | Displays information for every event           |
 +------------------------------+------------------------------------------------+
 | -\\-verbose\_step            | Displays tracking information after each       |
-|                              | step                                           |
+|                              | step - a lot of information                    |
 +------------------------------+------------------------------------------------+
 | -\\-verbose\_event\_num=<N>  | Displays tracking information for event 'N'    |
 +------------------------------+------------------------------------------------+
@@ -252,7 +260,7 @@ Notes:
   as normal. e.g. starting from event 80/100 and generating 30 events, will result in 10 new events.
 * Executable options override whatever options were used (and therefore stored in the output) in the
   initial run of BDSIM.
-* Chaning physics options in your input as compared to the original model will result in different
+* Changing physics options in your input as compared to the original model will result in different
   results. The primary particle coordinates will of course be the same. The random number generator
   is set at the beginning of each new event.
 * If a user supplied bunch distribution is used, the reading of the bunch file will start from

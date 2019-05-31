@@ -79,6 +79,8 @@ G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
   aParticleChange.Initialize(track);
   const G4DynamicParticle* ion = track.GetDynamicParticle();
 
+
+
   if (ion->GetCharge()==-1)
   {
     //get particle coordinates for global and local
@@ -202,29 +204,82 @@ G4double BDSLaserPhotoDetachment::GetMeanFreePath(const G4Track& track,
 }
 
 G4VParticleChange* BDSLaserPhotoDetachment::PostStepDoIt(const G4Track& track,
-                                                         const G4Step&  step)
+							 const G4Step& step)
 {
   // get coordinates for photon desity calculations
   aParticleChange.Initialize(track);
 
-  const G4DynamicParticle* ion = track.GetDynamicParticle();
-  G4double ionKe = ion->GetKineticEnergy();
+  G4LogicalVolume *lv = track.GetVolume()->GetLogicalVolume();
+  if (!lv->IsExtended()) {// not extended so can't be a laser logical volume
+      return pParticleChange;
+  }
+  BDSLogicalVolumeLaser *lvv = dynamic_cast<BDSLogicalVolumeLaser *>(lv);
+    if (!lvv) {// it's an extended volume but not ours (could be a crystal)
+      return pParticleChange;
+    }
+    // else proceed
+  const BDSLaser* laser = lvv->Laser();
+
+
+  G4double stepLength = step.GetStepLength();
+
+  const G4DynamicParticle *ion = track.GetDynamicParticle();
+
+  G4ThreeVector particlePositionGlobal = track.GetPosition();
+  G4ThreeVector particleDirectionMomentumGlobal = track.GetMomentumDirection();
+  const G4RotationMatrix* rot = track.GetTouchable()->GetRotation();
+  const G4AffineTransform transform = track.GetTouchable()->GetHistory()->GetTopTransform();
+  G4ThreeVector particlePositionLocal = transform.TransformPoint(particlePositionGlobal);
+  G4ThreeVector particleDirectionMomentumLocal = transform.TransformPoint(particleDirectionMomentumGlobal).unit();
+
+  // create photon
+  G4ThreeVector photonUnit(0,0,1);
+  photonUnit.transform(*rot);
+  G4double photonE = (CLHEP::h_Planck*CLHEP::c_light)/laser->Wavelength();
+  G4ThreeVector photonVector = photonUnit*photonE;
+  G4LorentzVector photonLorentz = G4LorentzVector(photonVector,photonE);
+
+  G4double ionEnergy = ion->GetTotalEnergy();
   G4ThreeVector ionMomentum = ion->GetMomentum();
   G4double ionMass = ion->GetMass();
+  G4ThreeVector ionBeta = ionMomentum/ionEnergy;
+  //G4double ionGamma = ionEnergy/ionMass;
+  G4double ionVelocity = ionBeta.mag()*CLHEP::c_light;
+  photonLorentz.boost(ionBeta);
+  G4double photonEnergy = photonLorentz.e();
+  G4double crossSection = photoDetachmentEngine->CrossSection(photonEnergy)*CLHEP::m2;
+
+  G4double photonFlux = laser->Intensity(particlePositionLocal,0)/photonEnergy;
 
 
-  G4double hydrogenMass = (CLHEP::electron_mass_c2+CLHEP::proton_mass_c2);
-  aParticleChange.ProposeMass(hydrogenMass);
-  G4ThreeVector hydrogenMomentum = (ionMomentum / ionMass) * hydrogenMass;
-  aParticleChange.ProposeMomentumDirection(hydrogenMomentum.unit());
+  G4double ionTime = (stepLength/ionVelocity);
+  G4double NeutralisationProbability = 1.0-std::exp(-crossSection*photonFlux*ionTime);
+  const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  G4double scaleFactor = g->ScaleFactorLaser();
+  G4double randomNumber = G4UniformRand();
 
-  G4ThreeVector electronMomentum = (ionMomentum / ionMass)*CLHEP::electron_mass_c2;
-  G4double electronKe = ionKe*(CLHEP::electron_mass_c2/ionMass);
-  G4DynamicParticle* electron = new G4DynamicParticle(G4Electron::ElectronDefinition(),electronMomentum.unit(),electronKe);
-  aParticleChange.AddSecondary(electron);
-  aParticleChange.ProposeCharge(0);
+  if((NeutralisationProbability*scaleFactor)>randomNumber)
+  {
+    aParticleChange.SetNumberOfSecondaries(1);
+    G4double ionKe = ion->GetKineticEnergy();
+    G4double hydrogenMass = (CLHEP::electron_mass_c2 + CLHEP::proton_mass_c2);
+    aParticleChange.ProposeMass(hydrogenMass);
+    G4ThreeVector hydrogenMomentum = (ionMomentum / ionMass) * hydrogenMass;
+    aParticleChange.ProposeMomentumDirection(hydrogenMomentum.unit());
 
-  return G4VDiscreteProcess::PostStepDoIt(track,step);
+    G4ThreeVector electronMomentum = (ionMomentum / ionMass) * CLHEP::electron_mass_c2;
+    G4double electronKe = ionKe * (CLHEP::electron_mass_c2 / ionMass);
+    G4DynamicParticle *electron = new G4DynamicParticle(G4Electron::ElectronDefinition(), electronMomentum.unit(),
+                                                        electronKe);
+    aParticleChange.AddSecondary(electron);
+    aParticleChange.ProposeCharge(0);
+    aParticleChange.ProposeWeight(scaleFactor);
+
+    return G4VDiscreteProcess::PostStepDoIt(track, step);
+  }
+  else{   return G4VDiscreteProcess::PostStepDoIt(track, step); }
+
+
 
 }
 

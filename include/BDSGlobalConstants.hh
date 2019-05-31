@@ -108,10 +108,14 @@ public:
   inline G4bool   VerboseEvent()           const {return G4bool  (options.verboseEvent);}
   inline G4bool   VerboseStep()            const {return G4bool  (options.verboseStep);}
   inline G4int    VerboseEventNumber()     const {return G4int   (options.verboseEventNumber);}
+  inline G4int    VerboseEventNumberContinueFor() const {return G4int   (options.verboseEventNumberContinueFor);}
+  inline G4int    VerboseEventNumberLevel()       const {return G4int   (options.verboseEventNumberLevel);}
+  inline G4bool   VerboseEventNumberPrimaryOnly() const {return G4bool  (options.verboseEventNumberPrimaryOnly);}
   inline G4int    VerboseRunLevel()        const {return G4int   (options.verboseRunLevel);}
   inline G4int    VerboseEventLevel()      const {return G4int   (options.verboseEventLevel);}
   inline G4int    VerboseTrackingLevel()   const {return G4int   (options.verboseTrackingLevel);}
   inline G4int    VerboseSteppingLevel()   const {return G4int   (options.verboseSteppingLevel);}
+  inline G4int    VerboseImportanceSampling() const {return G4int(options.verboseImportanceSampling);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
@@ -152,8 +156,6 @@ public:
   inline G4double TunnelOffsetX()            const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()            const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
   inline G4double ELossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
-  inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
-  inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}
   inline G4double ProdCutPhotons()           const {return G4double(options.prodCutPhotons)*CLHEP::m;}
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
@@ -187,7 +189,6 @@ public:
   inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveOuter()           const {return G4bool  (options.sensitiveOuter);}
-  inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
 #if G4VERSION_NUMBER != 1030
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
 #else
@@ -197,6 +198,9 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
+  inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
+  inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
   inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
   inline G4bool   StoreCollimatorLinks()     const {return G4bool  (options.storeCollimatorLinks);}
   inline G4bool   StoreCollimatorHitsIons()  const {return G4bool  (options.storeCollimatorHitsIons);}
@@ -284,6 +288,7 @@ public:
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
+  inline G4double ScaleFactorLaser()         const {return G4double (options.scaleFactorLaser);}
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}

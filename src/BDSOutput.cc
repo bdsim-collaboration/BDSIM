@@ -19,13 +19,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSHitCollimator.hh"
+#include "BDSBLMRegistry.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSHitApertureImpact.hh"
+#include "BDSHitCollimator.hh"
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCollimatorInfo.hh"
@@ -66,7 +70,7 @@ const std::set<G4String> BDSOutput::protectedNames = {
   "Event", "Histos", "Info", "Primary", "PrimaryGlobal",
   "Eloss", "ElossVacuum", "ElossTunnel", "ElossWorld", "ElossWorldExit",
   "ElossWorldContents",
-  "PrimaryFirstHit", "PrimaryLastHit", "Trajectory"
+  "PrimaryFirstHit", "PrimaryLastHit", "Trajectory", "ApertureImpacts"
 };
 
 BDSOutput::BDSOutput(G4String baseFileNameIn,
@@ -91,6 +95,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
+  storeApertureImpacts       = g->StoreApertureImpacts();
   storeCollimatorLinks       = g->StoreCollimatorLinks();
   // automatically store ion info if generating ion hits - this option
   // controls generation and storage of the ion hits
@@ -116,30 +121,16 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
-
-  // polar coords don't require a look up of any other PDG info so it
-  // doesn't need to involved in the following optimisation groupings
-  // of various options
-
-  // charge is required for rigidity calculation so force storage from sampler hits
-  if (storeSamplerRigidity && !storeSamplerCharge)
-    {storeSamplerCharge = true;}
-
-  // charge + mass + rigidity - particle stuff
-  storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
-  // charge + mass + rigidity + kinetic energy - particle stuff
-  storeOption2 = storeOption1 && storeSamplerKineticEnergy;
-  // everything except ion properties
-  storeOption3 = storeOption1 && storeSamplerIon;
-  // everything
-  storeOption4 = storeOption2 && storeSamplerIon;
-
+  
   // easy option for everything - overwrite bools we've just set individually
   if (g->StoreSamplerAll())
     {
-      storeOption4       = true;
-      storeSamplerCharge = true;
-      storeSamplerPolarCoords = true;
+      storeSamplerPolarCoords   = true;
+      storeSamplerCharge        = true;
+      storeSamplerKineticEnergy = true;
+      storeSamplerMass          = true;
+      storeSamplerRigidity      = true;
+      storeSamplerIon           = true;
     }
 }
 
@@ -161,18 +152,20 @@ void BDSOutput::FillHeader()
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
-  if (storeGeant4Data)
-    {
-      geant4DataOutput->Flush();
+  // always prepare geant4 data and link to other classes, but optionally fill it
+  geant4DataOutput->Flush();
       geant4DataOutput->Fill(writeIons);
-      WriteGeant4Data();
+
 #ifdef __ROOTDOUBLE__
       BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
 #else
       BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
 #endif
       BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
-    }
+      BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
+
+  if (storeGeant4Data)
+    {WriteGeant4Data();}
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)
@@ -213,16 +206,22 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    vertexInfoBDS->charge,
 		    vertex->GetPrimary()->GetPDGcode(),
 		    turnsTaken,
-		    vertexInfoBDS->primaryVertex.beamlineIndex);
+		    vertexInfoBDS->primaryVertex.beamlineIndex,
+		    vertexInfoBDS->nElectrons,
+		    vertexInfoBDS->mass,
+		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
     }
 }
 
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 				     const G4double charge,
-				     const G4int pdgID)
+				     const G4int pdgID,
+				     const G4int nElectrons,
+				     const G4double mass,
+				     const G4double rigidity)
 {
-  primary->Fill(coords.local, charge, pdgID, 0, 0);
+  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();
@@ -243,6 +242,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSTrajectoryPoint*                      primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&           trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
+			  const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 			  const G4int                                    turnsTaken)
 {
   // Clear integrals in this class -> here instead of BDSOutputStructures as
@@ -282,6 +282,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillTrajectories(trajectories);
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
+  if (apertureImpacts)
+    {FillApertureImpacts(apertureImpactHits);}
 
   // we do this after energy loss and collimator hits as the energy loss
   // is integrated for putting in event info and the number of colliamtors
@@ -460,11 +462,36 @@ void BDSOutput::CreateHistograms()
   if (useScoringMap && storeELossHistograms)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+      if (!BDS::IsFinite(g->XMax() - g->XMin()))
+	{throw BDSException(__METHOD_NAME__, "0 width in general 3D scoring histogram in x dimension - check options, xmin and xmax");}
+      if (!BDS::IsFinite(g->YMax() - g->YMin()))
+	{throw BDSException(__METHOD_NAME__, "0 width in general 3D scoring histogram in y dimension - check options, ymin and ymax");}
+      if (!BDS::IsFinite(g->ZMax() - g->ZMin()))
+	{throw BDSException(__METHOD_NAME__, "0 width in general 3D scoring histogram in z dimension - check options, zmin and zmax");}
+      if (g->NBinsX() <= 0)
+	{throw BDSException(__METHOD_NAME__, "invalid number of bins in x dimension of 3D scoring histogram - check option, nbinsx");}
+      if (g->NBinsY() <= 0)
+	{throw BDSException(__METHOD_NAME__, "invalid number of bins in y dimension of 3D scoring histogram - check option, nbinsx");}
+      if (g->NBinsZ() <= 0)
+	{throw BDSException(__METHOD_NAME__, "invalid number of bins in z dimension of 3D scoring histogram - check option, nbinsx");}
+
       G4int scInd = evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
 						 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
 						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
       histIndices3D["ScoringMap"] = scInd;
+    }
+
+  G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
+  if (nBLMs > 0)
+    {
+      G4int nBLMScorers = 1; // number of hits maps / quantities scored for the blms - TBC
+      for (G4int i = 0; i < nBLMScorers; i++)
+	{
+	  G4String scorerName = "scorer"; // TBC
+	  G4String blmHistName = "BLM_" + scorerName;
+	  histIndices1D[blmHistName] = Create1DHistogram(blmHistName, blmHistName,nBLMs, 0, nBLMs);
+	}
     }
 }
 
@@ -510,45 +537,17 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords);
+      samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
     }
 
   // extra information
-  // choose by a few strategies for optimisation (reduced PDGid searching)
-  // some options partially degenerate with lower numbered options - check first
-  if (storeOption4) // everything
+  G4bool firstSampler = true;
+  for (auto& sampler : samplerTrees)
     {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMRIK();}
-    }
-  else if (storeOption3) // option1 + ion
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRI();}
-    }
-  else if (storeOption2) // option1 + kinetic energy
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRK();}
-    }
-  else if (storeOption1) // also applies for 2 and 3
-    {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMR();}
-    }
-  else
-    {// treat individually
-      for (auto& sampler : samplerTrees)
-        {
-          if (storeSamplerKineticEnergy)
-	    {sampler->FillKineticEnergy();}
-          if (storeSamplerMass)
-	    {sampler->FillMass();}
-          if (storeSamplerRigidity)
-	    {sampler->FillRigidity();}
-          if (storeSamplerIon)
-	    {sampler->FillIon();}
-        }
+      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
+	{firstSampler = false; continue;}
+      if (storeSamplerIon)
+        {sampler->FillIon();}
     }
 }
 
@@ -781,6 +780,25 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
     {
       if (collimator->primaryInteracted)
 	{nCollimatorsInteracted += 1;}
+    }
+}
+
+void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
+{
+  if (!storeApertureImpacts)
+    {return;}
+
+  G4int nPrimaryImpacts = 0;
+  G4int nHits = hits->entries();
+  for (G4int i = 0; i < nHits; i++)
+    {
+      const BDSHitApertureImpact* hit = (*hits)[i];
+      if (hit->parentID == 0)
+	{nPrimaryImpacts += 1;}
+      // hits are generated in order as the particle progresses
+      // through the model, so the first one in the collection
+      // for the primary is the first one in S.
+      apertureImpacts->Fill(hit, nPrimaryImpacts==1);
     }
 }
 

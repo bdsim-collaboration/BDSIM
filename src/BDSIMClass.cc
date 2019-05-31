@@ -45,11 +45,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
+#include "BDSException.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -240,8 +242,13 @@ int BDSIM::Initialise()
   /// until after the physics list has been constructed and attached a run manager.
   if (globalConstants->GeneratePrimariesOnly())
     {
-      const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
-      const G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
+      G4double charge = beamParticle->Charge(); // note this may be different for PDG charge for an ion
+      G4int nElectrons = 0;
+      if (const BDSIonDefinition* ionDef = beamParticle->IonDefinition())
+        {nElectrons = ionDef->NElectrons();}
+      G4double mass = beamParticle->Mass();
+      G4double rigidity = beamParticle->BRho();
       
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
@@ -253,7 +260,19 @@ int BDSIM::Initialise()
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
 	  auto coords = bdsBunch->GetNextParticle();
-	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID);
+	  // check if the bunch is different dynamically (ie user file with varied particle type)
+      // and update various quantities.
+	  if (bdsBunch->ParticleCanBeDifferentFromBeam())
+        {
+          const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
+          pdgID    = pDef->ParticleDefinition()->GetPDGEncoding();
+          charge   = pDef->Charge();
+          mass     = pDef->Mass();
+          rigidity = pDef->BRho();
+          if (const BDSIonDefinition* iondDef = pDef->IonDefinition())
+            {nElectrons = iondDef->NElectrons();}
+        }
+	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons, mass, rigidity);
 	}
       // Write options now file open.
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
@@ -304,7 +323,11 @@ int BDSIM::Initialise()
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
 						  globalConstants->TrajNoTransportation(),
-						  eventAction));
+						  eventAction,
+						  globalConstants->VerboseEventNumberLevel(),
+						  globalConstants->VerboseEventNumber(),
+						  globalConstants->VerboseEventNumberContinueFor(),
+						  globalConstants->VerboseEventNumberPrimaryOnly()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
@@ -377,19 +400,28 @@ void BDSIM::BeamOn(int nGenerate)
   sigaction(SIGSEGV, &act, 0);
   
   /// Run in either interactive or batch mode
-  if(!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
+  try
     {
-      BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
-					       BDSGlobalConstants::Instance()->Geant4MacroFileName());
-      visManager.StartSession(argcCache, argvCache);
-    }
-  else
-    {// batch mode
-      if (nGenerate < 0)
-	{runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
+      if(!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
+	{
+	  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
+						   BDSGlobalConstants::Instance()->Geant4MacroFileName());
+	  visManager.StartSession(argcCache, argvCache);
+	}
       else
-	{runManager->BeamOn(nGenerate);}
+	{// batch mode
+	  if (nGenerate < 0)
+	    {runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
+	  else
+	    {runManager->BeamOn(nGenerate);}
+	}
     }
+  catch (const BDSException& exception)
+    {
+      // don't do this for now in case it's dangerous and we try tracking with open geometry
+      //G4GeometryManager::GetInstance()->OpenGeometry();
+      throw exception;
+    } 
 }
 
 BDSIM::~BDSIM()

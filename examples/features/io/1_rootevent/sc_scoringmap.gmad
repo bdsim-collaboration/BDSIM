@@ -24,13 +24,7 @@ option, useScoringMap=1,
 
 option, ngenerate=10,
 	physicsList="em",
-	beampipeRadius=5.0*cm,
-	beampipeThickness=0.1*cm,
-	outerDiameter=0.5*m,
-	defaultRangeCut=1*cm,	
-	prodCutPositrons=1*cm,
-	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm,
+	defaultRangeCut=1*cm,
     	buildTunnel=1;
 
 beam, particle="e-",
@@ -41,7 +35,5 @@ beam, particle="e-",
       betx=1e-6*m,
       bety=1e-6*m,
       alfx=0.0,
-      alfy=0.0,
-      X0=0.000,
-      Y0=0.000;
+      alfy=0.0;
 

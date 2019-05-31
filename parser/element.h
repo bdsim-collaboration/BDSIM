@@ -176,17 +176,13 @@ namespace GMAD
     double wireOffsetX;
     double wireOffsetY;
     double wireOffsetZ;
+    double wireAngle;
     ///@}
     
     ///@{ for undulator
     double undulatorPeriod;
     double undulatorGap;
     double undulatorMagnetHeight;
-    ///@}
-
-    ///@{List of beam loss monitor locations
-    std::list<double> blmLocZ;
-    std::list<double> blmLocTheta;
     ///@}
   
     ///@{ temporary string for bias setting

@@ -190,11 +190,12 @@ void Element::PublishMembers()
   publish("undulatorGap",          &Element::undulatorGap);
   publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
 
-  publish("wireDiameter" ,      &Element::wireDiameter);
-  publish("wireLength" ,        &Element::wireLength);
-  publish("wireOffsetX" ,       &Element::wireOffsetX);
-  publish("wireOffsetY" ,       &Element::wireOffsetY);
-  publish("wireOffsetZ" ,       &Element::wireOffsetZ);
+  publish("wireDiameter",      &Element::wireDiameter);
+  publish("wireLength",        &Element::wireLength);
+  publish("wireOffsetX",       &Element::wireOffsetX);
+  publish("wireOffsetY",       &Element::wireOffsetY);
+  publish("wireOffsetZ",       &Element::wireOffsetZ);
+  publish("wireAngle",         &Element::wireAngle);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
@@ -227,9 +228,6 @@ void Element::PublishMembers()
   publish("samplerRadius",       &Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
   
-  publish("blmLocZ",    &Element::blmLocZ);
-  publish("blmLocTheta",&Element::blmLocTheta);
-
   publish("colour", &Element::colour);
 
   publish("crystalLeft",            &Element::crystalLeft);
@@ -505,9 +503,6 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
-  
-  blmLocZ.clear();
-  blmLocTheta.clear();
 
   bias = ""; biasMaterial=""; biasVacuum="";
   biasMaterialList.clear();

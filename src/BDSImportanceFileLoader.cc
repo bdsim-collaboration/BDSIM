@@ -51,7 +51,7 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
   T file;
 
   file.open(fileName);
-
+  
   // test if file is valid
 #ifdef USE_GZSTREAM
   bool validFile = file.rdbuf()->is_open();
@@ -65,7 +65,7 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
       exit(1);
     }
   else
-    {G4cout << "BDSIM importance file - loading \"" << fileName << "\"" << G4endl;}
+    {G4cout << "BDSImportanceFileLoader::Load> loading \"" << fileName << "\"" << G4endl;}
 
   std::string line;
   std::map<G4String, G4double> importance;
@@ -108,16 +108,15 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
           message += " importance value must be numeric.";
           throw BDSException(message);
         }
-
-      // importance world should be GDML import created in pyg4ometry so modify PV name accordingly.
-      // dangerous to assume fixed behaviour of external package - susceptible to change.
-      G4String fullVolume = "importanceWorld_PREPEND" + volume + "_pv";
-      importance[fullVolume] = importanceValue;
+      
+      importance[volume] = importanceValue;
 
       linenum += 1;
     }
 
   file.close();
+
+  G4cout << "BDSImportanceFileLoader::Load> loaded " << importance.size() << " importance entries" << G4endl;
 
   return importance;
 }
