@@ -50,6 +50,10 @@ General
 * wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
 * wirescanner element now requires a material to be specified as this makes a large difference
   to the expected result. This should be specified.
+* Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
+  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
   
 Bug Fixes
 ---------
