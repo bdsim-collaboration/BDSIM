@@ -113,7 +113,7 @@ public:
   void Fill(const BDSOutputROOTEventSampler<U>* other);
 
   /// @{ Calculate and fill calculated variables.
-  inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
+  inline void FillIon() {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
   /// @}
   
   void SetBranchAddress(TTree *);

@@ -546,7 +546,8 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
     {
       if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
 	{firstSampler = false; continue;}
-      sampler->FillIon();
+      if (storeSamplerIon)
+        {sampler->FillIon();}
     }
 }
 
