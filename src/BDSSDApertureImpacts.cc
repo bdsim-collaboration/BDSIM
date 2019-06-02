@@ -121,7 +121,7 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   // declare lambda for updating parameters if info found (avoid duplication of code)
   auto UpdateParams = [&](BDSPhysicalVolumeInfo* info)
     {
-      S             = info->GetSPos();
+      S             = info->GetSPos() + posLocal.z();
       beamlineIndex = info->GetBeamlineIndex();
     };
   
