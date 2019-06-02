@@ -83,8 +83,8 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   G4ThreeVector globalPos = preStepPoint->GetPosition();
   G4ThreeVector globalMom = preStepPoint->GetMomentum();
   BDSStep localPosMom = auxNavigator->ConvertToLocal(globalPos,
-  globalMom,
-  0.1*CLHEP::mm);
+						     globalMom,
+						     0.1*CLHEP::mm);
 
   G4VSolid* preStepSolid = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetSolid();
   G4ThreeVector posLocal = localPosMom.PreStepPoint();
