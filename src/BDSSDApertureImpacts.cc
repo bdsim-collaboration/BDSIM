@@ -87,7 +87,7 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   0.1*CLHEP::mm);
 
   G4VSolid* preStepSolid = preStepPoint->GetPhysicalVolume()->GetLogicalVolume()->GetSolid();
-  G4ThreeVector posLocal = preStepPoint->GetPosition();
+  G4ThreeVector posLocal = localPosMom.PreStepPoint();
   G4ThreeVector surfaceNormal = preStepSolid->SurfaceNormal(posLocal);
 
   // check if we have a surface normal pointing into the beam pipe (ie inside
