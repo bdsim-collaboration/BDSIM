@@ -18,6 +18,7 @@ New Features
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
+* Support for partially stripped ions in output samplers.
 
 * New options:
 
@@ -49,6 +50,10 @@ General
 * wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
 * wirescanner element now requires a material to be specified as this makes a large difference
   to the expected result. This should be specified.
+* Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
+  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
   
 Bug Fixes
 ---------
@@ -66,6 +71,26 @@ Bug Fixes
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
   being missing from the run histograms.
+=======
+* The rigidity was correcte for partially stripped ions in the sampler output.
+* The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
+  the nuclear mass not including the mass of the electrons. The magnetic fields were however
+  calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
+* Fix a bug where if a userfile with different particle types was used and `-\\-generatePrimariesOnly`
+  was used the phase space coordinates would be correct but the mass, charge, rigidity would be
+  written wrongly to the output. The particle definition is now updated correctly in the special
+  case of generating primaries only where the Geant4 kernel isn't used.
+
+Output Changes
+--------------
+
+* Samplers now have a new variable called `nElectrons` that is the number of electrons on a
+  partially stripped ion (if it is one) passing through the sampler. This is filled alongside
+  the other ion information.
+* `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
+  passes through a sampler.
+* All extra coordinates are now recorded in the Primary sampler structure no matter if these
+  are turned on or not for the samplers.
 
 Utilities
 ---------
