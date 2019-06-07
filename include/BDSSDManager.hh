@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
+class BDSSDApertureImpacts;
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSSDEnergyDepositionGlobal;
@@ -103,13 +104,17 @@ public:
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
+  inline BDSSDApertureImpacts* ApertureImpacts() const {return apertureImpacts;}
+
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
-  inline G4VSensitiveDetector* WorldComplete() const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* WorldComplete()        const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* ApertureComplete()     const {return apertureCompleteSD;}
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
-  inline G4VSensitiveDetector* WorldComplete() const {return energyDepositionWorld;}
+  inline G4VSensitiveDetector* WorldComplete()        const {return energyDepositionWorld;}
+  inline G4VSensitiveDetector* ApertureComplete()     const {return energyDeposition;}
 #endif
 
   /// SD for collimator impact locations.
@@ -120,10 +125,11 @@ public:
 
   /// Make a record of a primitive scorer name. If it has a '/' in it, we take the last
   /// bit of the name as the just primitive scorer name. We store both versions in member vectors.
-  void RegisterPrimitiveScorerName(const G4String& nameIn);
+  void RegisterPrimitiveScorerName(const G4String& nameIn, G4double unit = 1.0);
 
   /// Loop over a vector and apply above single name function.
-  void RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn);
+  void RegisterPrimitiveScorerNames(const std::vector<G4String>& namesIn,
+				    const std::vector<G4double>* units = nullptr);
   
   /// Access a vector the full primitive scorere names as registered.
   inline const std::vector<G4String>& PrimitiveScorerNamesComplete() const {return primitiveScorerNamesComplete;}
@@ -131,6 +137,9 @@ public:
   /// Access a vector of the just primitive scorere part of the names.
   inline const std::vector<G4String>& PrimitiveScorerNames() const {return primitiveScorerNames;}
 
+  /// Access the map of units for primitive scorers.
+  inline const std::map<G4String, G4double>& PrimitiveScorerUnits() const {return primitiveScorerNameToUnit;}
+  
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -151,8 +160,10 @@ private:
   BDSSDEnergyDepositionGlobal* energyDepositionWorld;
   BDSSDEnergyDepositionGlobal* energyDepositionWorldContents;
   BDSSDVolumeExit*             worldExit;
+  BDSSDApertureImpacts*        apertureImpacts;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
+  G4VSensitiveDetector* apertureCompleteSD;
 #endif
   /// @}
   BDSSDCollimator* collimatorSD;
@@ -167,10 +178,15 @@ private:
   /// Just the primitive scorer part of the name.
   std::vector<G4String> primitiveScorerNames;
 
+  /// Map of primitive scorer names to units.
+  std::map<G4String, G4double> primitiveScorerNameToUnit;
 
   /// @{ Cache of global constant option.
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;
+  G4bool generateApertureImpacts;
+  G4bool storeApertureImpactsAll;
+  G4bool storeApertureImpactsIons;
   G4bool generateELossHits;
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;

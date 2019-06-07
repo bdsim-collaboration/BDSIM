@@ -36,6 +36,7 @@ class G4Region;
 class G4VPhysicalVolume;
 
 namespace GMAD {
+  class BLMPlacement;
   struct Element;
   template<typename T> class FastList;
   class Placement;
@@ -105,21 +106,31 @@ public:
 				   G4bool                checkOverlaps     = false,
 				   G4bool                setRegions        = false,
 				   G4bool                registerInfo      = false,
-				   G4bool                useCLPlacementTransform = false);
+				   G4bool                useCLPlacementTransform = false,
+				   G4bool                useIncrementalCopyNumbers = false);
 
-  /// Create a transform based on the information in the placement.
+  /// Create a transform based on the information in the placement. If S is supplied, it's
+  /// updated with the final S coordinate calculated.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
-						const BDSBeamline*     beamLine);
+						const BDSBeamline*     beamLine,
+						G4double*              S = nullptr);
 
   /// Create a sampler placement transform. Turns the sampler placement into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            beamLine);
+						const BDSBeamline*            bemaLine,
+						G4double*                     S = nullptr);
 
-  /// Create a scorermesh placement transform. Turns the scorermesh into a
+  /// Create a sampler placement from a blm plcement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+						const BDSBeamline*        bemaLine,
+						G4double*                 S = nullptr);
+    
+  // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-						const BDSBeamline*      beamLine);
+                                                const BDSBeamline*      beamLine,
+						G4double*               S = nullptr);
   
 private:
   /// assignment and copy constructor not implemented nor used

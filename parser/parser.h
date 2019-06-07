@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "aperture.h"
 #include "atom.h"
 #include "beam.h"
+#include "blmplacement.h"
 #include "cavitymodel.h"
 #include "newcolour.h"
 #include "crystal.h"
@@ -237,6 +238,8 @@ namespace GMAD
     std::vector<ScorerMesh> scorermesh_list;
     /// List of parser defined apertures.
     std::vector<Aperture> aperture_list;
+    /// List of parser defined blms.
+    std::vector<BLMPlacement> blm_list;
 
   private:
     // *****************
@@ -282,6 +285,8 @@ namespace GMAD
     ScorerMesh scorermesh;
     /// Aperture instance.
     Aperture aperture;
+    /// BLM instance.
+    BLMPlacement blm;
     
     /// Find object by name in list
     template <class C>

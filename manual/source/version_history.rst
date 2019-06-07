@@ -15,6 +15,30 @@ New Features
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
+* New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
+  a distribution file.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++-----------------------------------+--------------------------------------------------------------------+
+| **Option**                        | **Description**                                                    |
++===================================+====================================================================+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
+
 
 General
 -------
@@ -51,6 +75,18 @@ Utilities
 * pymad8 v1.5.0
 * pytransport v1.3.0
 
+
+V1.3.3 - 2019 / 05 / 21
+=======================
+
+Bug Fixes
+---------
+
+* Hot fix for fields not attached to thin elements such as dipole fringes or thin multipoles. This bug
+  crept in through a modification to avoid Geant4 getting stuck with strong fields in very narrow gaps
+  between layers of geometry in beam pipes, resulting in subsequent bad tracking due to the bad state of
+  Geant4 navigators internally. Regression testing has subsequently been introduced to protect against
+  this kind of bugging going unnoticed in future.
 
 V1.3.2 - 2019 / 04 / 20
 =======================

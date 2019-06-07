@@ -3016,6 +3016,133 @@ worlds) and other samplers. It is recommended to tick and un-tick the desired el
 it appear and disappear repeatedly.
 
 
+.. _detectors:
+
+Detectors
+---------
+
+BDSIM allows the definition of detectors in the simulation. These are objects to represent
+real detectors or measure a quantity at some place in the model including the effect of the
+mass of (and therefore interaction with) the detector. Currently, there is one type of detector
+that is a beam loss monitor.
+
+.. _detectors-blms:
+
+Beam Loss Monitors
+^^^^^^^^^^^^^^^^^^
+
+Beam loss monitors (BLMs) are simple detectors that give one integrated value per event. The
+quantity to be generated can be chosen and the shape and location of the BLM can also be chosen.
+Below are the available parameters. A BLM is created using the `blm` command.::
+
+  detectorname, blm, parameter=value...
+
+Either a simple geometric shape can be used, which is a single volume of one material, or a
+user supplied geometry file can be used.
+
+The placement parameters are the same as the general placements (see :ref:`placements`). So the
+BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
+in global Cartesian coordinates.
+  
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x                                                 |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y                                                 |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z                                                 |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters)  |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation                                     |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle, angle to rotate about unit vector                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true)      |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string)         |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+|                         | is used more than once in the sequence. Zero counting.             |
++-------------------------+--------------------------------------------------------------------+
+| geometryFile            | Optional file to use for geometry of BLM including format          |
++-------------------------+--------------------------------------------------------------------+
+| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
++-------------------------+--------------------------------------------------------------------+
+| blmMaterial             | Name of material to use for simple geometry                        |
++-------------------------+--------------------------------------------------------------------+
+| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
++-------------------------+--------------------------------------------------------------------+
+| blm2                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm3                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm4                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+
+BLM Shapes
+**********
+
+For each shape, the shape parameters ("blm1", "blm2", "blm3", "blm4") have different meanings. These
+are described below. NA means non-applicable to this shape.
+
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| **Shape**       | **blm1**                 | **blm2**              | **blm3**              | **blm4**      |
++=================+==========================+=======================+=======================+===============+
+| cylinder        | half length along axis   | radius                | NA                    | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| cube            | half length in x         | half length in y      | half length in z      | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+| sphere          | radius                   | NA                    | NA                    | NA            |
++-----------------+--------------------------+-----------------------+-----------------------+---------------+
+
+Examples
+********
+
+1) A simple sphere made of nitrogen. It's placed at 2.3 metres along the beam line with a transverse offset
+   (in curvilinear coordinates) of 40 cm horizontally and 25 cm vertically. The sphere radius is 20 cm.
+
+   ::
+
+      minidetector: blm, s=2.3*m, x=0.4*m, y=0.25*m,
+	      	    geometryType="sphere",
+		    blmMaterial="N",
+		    blm1=20*cm;
+
+2) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
+
+   ::
+
+      minidetector: blm, x=3.2*m, y=0.25*m,
+	      	    geometryType="cylinder",
+		    blmMaterial="Si",
+		    blm1=20*cm,
+		    blm2=5*cm;
+
+3) User defined geometry in a GDML file.
+
+   ::
+
+      minidetector: blm, x=0.4*m, y=0.25*m,
+                    geometryFile="gdml:simpleshape.gdml",
+		    blmMaterial="N",
+		    blm1=20*cm,
+		    blm2=5*cm;
+
+
 .. _physics-processes:
 
 Physics Processes
@@ -4122,6 +4249,18 @@ with the following options.
 |                                   | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                   | of the Event Tree in the output. Default on.                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                   | tree in the output that contains coordinates of where the primary  |
+|                                   | particle exists the beam pipe. Note this could be multiple times.  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | be generated for other particles.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
+|                                   | for all particles leaving the beam pipe when this option is turned |
+|                                   | on.                                                                |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -5162,10 +5301,31 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
+| `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
+|                                  | number of coordinate lines to skip. This also counts  |
+|                                  | comment lines.                                        |
++----------------------------------+-------------------------------------------------------+
 | `matchDistrFileLength`           | Option for certain distributions to simulate the same |
 |                                  | number of events as are in the file. Currently only   |
 |                                  | for the `ptc` distribution.                           |
 +----------------------------------+-------------------------------------------------------+
+
+Skipping and Ignoring Lines:
+
+* `nlinesIgnore` is intended for header lines to ignore at the start of the file.
+* `nlinesSkip` is intended for the number of particle coordinate lines to skip after `nlinesIgnore`.
+* `nlinesSkip` is available as the executable option :code:`--distrFileNLinesSkip`.
+* The number of lines skipped from a file is `nlinesIgnore` + `nlinesSkip`. The user could use
+  only one of these, but only `nlinesSkip` is available through the executable option described above.
+* If more events are generated than are lines in the file, the file is read again including the skipped
+  lines.
+
+Examples:
+
+1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
+2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
+   The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
+   for another instance of BDSIM on a compure farm.
 
 Acceptable tokens for the columns are:
 

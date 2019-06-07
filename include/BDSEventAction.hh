@@ -67,6 +67,7 @@ private:
   G4int eCounterWorldContentsID;  ///< Collection ID for the world energy deposition hits.
   G4int worldExitCollID;          ///< Collection ID for the world exit hits.
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
+  G4int apertureCollID;           ///< Collection ID for the aperture hits.
   std::map<G4String, G4int> scorerCollectionIDs; ///< Collection IDs for all scorers.
   
   time_t startTime; ///< Time at the start of the event.

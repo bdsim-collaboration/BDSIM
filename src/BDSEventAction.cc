@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
+#include "BDSSDApertureImpacts.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDEnergyDepositionGlobal.hh"
@@ -93,6 +94,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eCounterWorldContentsID(-1),
   worldExitCollID(-1),
   collimatorCollID(-1),
+  apertureCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -184,6 +186,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       eCounterWorldContentsID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorldContents()->GetName());
       worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
+      apertureCollID           = g4SDMan->GetCollectionID(bdsSDMan->ApertureImpacts()->GetName());
       std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
       for (const auto& name : scorerNames)
         {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
@@ -236,7 +239,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-
+  
   // samplers
   typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane));
@@ -254,6 +257,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   ecghc* eCounterWorldHits          = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
   ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
   ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
+
+  // aperture hits
+  typedef BDSHitsCollectionApertureImpacts aihc;
+  aihc* apertureImpactHits = dynamic_cast<aihc*>(HCE->GetHC(apertureCollID));
   
   std::map<G4String, G4THitsMap<G4double>*> scorerHits;
   for (const auto& nameIndex : scorerCollectionIDs)
@@ -498,6 +505,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    primaryLoss,
 		    interestingTraj,
 		    collimatorHits,
+		    apertureImpactHits,
 		    scorerHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   

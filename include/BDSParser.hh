@@ -113,6 +113,9 @@ public:
   /// Return scorermesh list.
   inline const std::vector<GMAD::ScorerMesh>& GetScorerMesh() const {return scorermesh_list;}
 
+  /// Return blm list.
+  inline const std::vector<GMAD::BLMPlacement>& GetBLMs() const {return blm_list;}
+
   /// Return aperture list.
   inline const std::vector<GMAD::Aperture>& GetApertures() const {return aperture_list;}
   
