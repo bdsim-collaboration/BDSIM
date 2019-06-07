@@ -48,7 +48,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
-  
+
   if (options.recreate)
     {
       G4cout << __METHOD_NAME__ << "Recreation mode. Loading options from recreate file:\n\""
@@ -104,7 +104,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ "ignoresigint", 0, 0, 0},
 					{ 0, 0, 0, 0 }};
-  
+
   int OptionIndex  = 0;
   int OptionNumber = 0;
   const char* optionName;
@@ -112,11 +112,11 @@ void BDSExecOptions::Parse(int argc, char **argv)
   bool conversion = true;
   for(;;) {
     OptionIndex = 0;
-  
+
     // see e.g. http://linux.die.net/man/3/getopt
     int c = getopt_long(argc, argv, "Vv",
 			LongOptions, &OptionIndex );
-    
+
     if ( c == -1 ) // end of options list
       break;
 
@@ -133,14 +133,14 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  Usage();
 	  exit(0);
-	}      
+	}
       else if( !strcmp(optionName , "batch") )
 	{options.set_value("batch",true);}
       else if( !strcmp(optionName , "verbose") )
 	{options.set_value("verbose", true);}
       else if( !strcmp(optionName , "verbose_step") )
 	{// we shouldn't have verbose steps without verbose events
-	  options.set_value("verboseStep", true); 
+	  options.set_value("verboseStep", true);
 	  options.set_value("verboseEvent", true);
 	}
       else if( !strcmp(optionName , "verbose_event") )
@@ -188,7 +188,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName, "distrFile") )
 	{// build absolute path
-          beam.set_value("distrFile", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          beam.set_value("distrFile", std::string(optarg));
         }
       else if( !strcmp(optionName, "distrFileNLinesSkip") )
 	{
@@ -199,9 +199,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{options.set_value("visMacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+	{options.set_value("visMacroFileName",  std::string(optarg));}
       else if( !strcmp(optionName , "geant4Macro") )
-	{options.set_value("geant4MacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+	{options.set_value("geant4MacroFileName", std::string(optarg));}
       else if( !strcmp(optionName, "colours") )
 	{
 	  BDSColours::Instance()->Print();
@@ -223,7 +223,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName, "recreate") )
 	{
           options.set_value("recreate", true);
-          options.set_value("recreateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          options.set_value("recreateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "startFromEvent") )
 	{
@@ -236,7 +236,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName, "seedState")  || !strcmp(optionName, "seedStateFileName"))
 	{
           options.set_value("useASCIISeedState", true);
-          options.set_value("seedStateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          options.set_value("seedStateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
@@ -279,7 +279,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("exportGeometry", true);
 	}
       // remember if you extend this to do it also in the usage print out
-	  
+
       if (conversion == false)
 	{
 	  // conversion from character string to number went wrong, exit
@@ -289,7 +289,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
 
       break;
-      
+
     default:
       G4cout << "Warning unknown returned character code " <<  c << G4endl;
       break;
@@ -305,7 +305,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  if (strncmp(argv[i], "-", 1))
 	    {G4cout << "\"" << argv[i] << "\"" << G4endl;}
 	}
-      
+
       G4cout << "Please check your command line arguments" << G4endl;
       exit(1);
     }
@@ -397,7 +397,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
 	  fullPath = curDir + "/" + inputFilepath;
 	}
     }
-  
+
   if (fullPath.back() != '/') // ensure ends in '/'
     {fullPath += "/";} // only add if needed
 #ifdef BDSDEBUG
