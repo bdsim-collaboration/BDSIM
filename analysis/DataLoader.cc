@@ -206,11 +206,6 @@ void DataLoader::BuildEventBranchNameList()
       std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
       exit(1);
     }
-
-  // We don't need to prepare a vector of samplers that will be set branch on
-  // if we're not going to process the samplers.
-  if (!processSamplers)
-    {return;}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
