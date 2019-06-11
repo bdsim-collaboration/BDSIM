@@ -343,7 +343,7 @@ void Event::SetBranchAddressCollimatorSingle(TTree* t,
   collimatorNames.push_back(name);
   collimatorMap[name] = col;
 
-  t->SetBranchAddress((name + ".").c_str(), &collimators.back());
+  t->SetBranchAddress(name.c_str(), &collimators.back());
   if (debug)
     {std::cout << "Event::SetBranchAddress> " << name << " " << col << std::endl;}
 }
