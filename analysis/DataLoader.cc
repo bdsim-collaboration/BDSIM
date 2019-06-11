@@ -211,10 +211,11 @@ void DataLoader::BuildEventBranchNameList()
   if (!mt)
     {return;}
 
-  Model* modTemporary = new Model();
+  Model* modTemporary = new Model(false, dataVersion);
   modTemporary->SetBranchAddress(mt);
   mt->GetEntry(0);
-  samplerNames    = modTemporary->SamplerNames(); // copy sampler names out
+  if (processSamplers)
+    {samplerNames = modTemporary->SamplerNames();} // copy sampler names out
   // collimator names was only added in data version 4 - can leave as empty vector
   if (dataVersion > 3)
     {collimatorNames = modTemporary->CollimatorNames();}
