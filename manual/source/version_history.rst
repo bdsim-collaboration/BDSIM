@@ -74,8 +74,7 @@ Bug Fixes
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
   being missing from the run histograms.
-=======
-* The rigidity was correcte for partially stripped ions in the sampler output.
+* The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
   calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
