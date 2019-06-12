@@ -70,7 +70,7 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
-# HEPMC
+# HEPMC3
 include(cmake/HepMC.cmake)
 
 # Field double precision (off by default)
