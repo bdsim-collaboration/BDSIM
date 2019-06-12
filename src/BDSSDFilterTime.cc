@@ -16,11 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSScorerTimeFilter.hh"
+#include "BDSSDFilterTime.hh"
 
 #include "G4Step.hh"
 
-BDSScorerTimeFilter::BDSScorerTimeFilter(G4String name,
+BDSSDFilterTime::BDSSDFilterTime(G4String name,
 					 G4double lowerLimitIn,
 					 G4double upperLimitIn):
   G4VSDFilter(name),
@@ -28,7 +28,7 @@ BDSScorerTimeFilter::BDSScorerTimeFilter(G4String name,
   upperLimit(upperLimitIn)
 {;}
 
-G4bool BDSScorerTimeFilter::Accept(const G4Step* aStep) const
+G4bool BDSSDFilterTime::Accept(const G4Step* aStep) const
 {
   G4double time = aStep->GetTrack()->GetGlobalTime();
   if (time < lowerLimit)

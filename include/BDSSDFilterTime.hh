@@ -30,22 +30,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Robin Tesse
  */
 
-class BDSScorerTimeFilter: public G4VSDFilter
+class BDSSDFilterTime: public G4VSDFilter
 {
 public:
   /// Constructor with default values.
-  BDSScorerTimeFilter(G4String name,
+  BDSSDFilterTime(G4String name,
 		      G4double lowerLimitIn = 0.0,
 		      G4double upperLimitIn = 1*CLHEP::s);
   
-  virtual ~BDSScorerTimeFilter(){;}
+  virtual ~BDSSDFilterTime(){;}
 
   /// Whether a step will be accepted or rejected.
   virtual G4bool Accept(const G4Step*) const;
   
 private:
   /// No default constructor required.
-  BDSScorerTimeFilter() = delete;
+  BDSSDFilterTime() = delete;
   G4double lowerLimit;
   G4double upperLimit;
 };

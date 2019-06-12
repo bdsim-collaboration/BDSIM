@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSScorerFilter.hh"
 #include "BDSScorerInfo.hh"
-#include "BDSScorerTimeFilter.hh"
+#include "BDSSDFilterTime.hh"
 #include "BDSSDFilterLogicalVolume.hh"
 
 #include "globals.hh"
@@ -53,16 +53,16 @@ BDSScorerFilter::BDSScorerFilter(G4String             name,
   // Time filter
   if (info->maximumTime != info->minimumTime)
     {
-      timeFilter = new BDSScorerTimeFilter("time_filter",
-                                           info->minimumTime,
-                                           info->maximumTime);
+      timeFilter = new BDSSDFilterTime("time_filter",
+				       info->minimumTime,
+				       info->maximumTime);
     }
 
   // For the ambient dose, make a filter to only have the world volume
   if ((info->scorerType.underlying()) == BDSScorerType::ambientdose)
     {
       volumeFilter = new BDSSDFilterLogicalVolume("volume_filter",
-                                               BDSAcceleratorModel::Instance()->WorldLV());
+						  BDSAcceleratorModel::Instance()->WorldLV());
     }
 }
 

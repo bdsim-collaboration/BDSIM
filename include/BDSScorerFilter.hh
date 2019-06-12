@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VSDFilter.hh"
 
 class BDSScorerInfo;
-class BDSScorerTimeFilter;
+class BDSSDFilterTime;
 class BDSSDFilterLogicalVolume;
 class G4SDParticleWithEnergyFilter;
 
@@ -49,8 +49,8 @@ private:
   BDSScorerFilter() = delete;
   
   G4SDParticleWithEnergyFilter* particleWithKineticEnergyFilter;
-  BDSScorerTimeFilter*          timeFilter;
-  BDSSDFilterLogicalVolume*        volumeFilter;
+  BDSSDFilterTime*              timeFilter;
+  BDSSDFilterLogicalVolume*     volumeFilter;
 };
 
 #endif
