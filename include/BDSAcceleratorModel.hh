@@ -66,9 +66,9 @@ public:
   inline void RegisterWorldLV(G4LogicalVolume*   worldIn) {worldLV = worldIn;}
   inline void RegisterWorldSolid(G4VSolid*       worldIn) {worldSolid = worldIn;}
   /// @}
-  
-  /// Access the physical volume of the world
-  inline G4VPhysicalVolume* WorldPV() const {return worldPV;}
+
+  inline G4VPhysicalVolume* WorldPV() const {return worldPV;} ///< Access the physical volume of the world.
+  inline G4LogicalVolume*   WorldLV() const {return worldLV;} ///< Access the logical volume of the world.
 
   /// Register the main beam line set.
   void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn);
