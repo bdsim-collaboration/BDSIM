@@ -16,23 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSScorerVolumeFilter.hh"
+#include "BDSSDFilterLogicalVolume.hh"
 
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSScorerVolumeFilter::BDSScorerVolumeFilter(G4String name,
+BDSSDFilterLogicalVolume::BDSSDFilterLogicalVolume(G4String name,
 					     G4LogicalVolume* referenceLVIn):
   G4VSDFilter(name),
   referenceLV(referenceLVIn)
 {;}
 
-BDSScorerVolumeFilter::~BDSScorerVolumeFilter()
+BDSSDFilterLogicalVolume::~BDSSDFilterLogicalVolume()
 {;}
 
-G4bool BDSScorerVolumeFilter::Accept(const G4Step* aStep) const
+G4bool BDSSDFilterLogicalVolume::Accept(const G4Step* aStep) const
 {
   // get the step in the mass world
   const G4Step* realWorldStep = aStep->GetTrack()->GetStep();
