@@ -4571,12 +4571,16 @@ Scoring Map
 
 BDSIM provides the capability to create one 3D histogram of energy deposition hits irrespective
 of the geometry. The hits are only created where the geometry exists and are sensitive.
-The histogram is independent of the geometry.
+The histogram is independent of the geometry and is just a histogram of data.
 
 * The user should ideally set all parameters to specify the desire ranges, otherwise be
   aware of the default values.
 * BDSIM will exit with a warning if zero range is found in any dimension as this means
   nothing will be histogrammed and there is no point in continuing.
+* This will only histogram energy deposition hits generated according to the options
+  supplied. i.e. if the user turns off the storage of energy deposition hits, these will
+  not be generated and will therefore not feature in this histogram. However, this allows
+  granularity over the energy deposition hits included.
 
 An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scoringmap.gmad`.
 
@@ -4587,7 +4591,7 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 
 +----------------------------------+-------------------------------------------------------+
 | **Option**     | **Default**     | **Function**                                          |
-+==================================+=======================================================+
++================+=================+=======================================================+
 | useScoringMap  | 0               | Whether to create a scoring map                       |
 +----------------+-----------------+-------------------------------------------------------+
 | nbinsx         | 1               | Number of bins in global X                            |
