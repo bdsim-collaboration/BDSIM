@@ -37,6 +37,7 @@ The following extra information can be **optionally** recorded from a BDSIM simu
 4) Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
 5) Detailed information from hits in a collimator - see :ref:`bdsim-options-output`.
 6) A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
+7) Scoring meshes that limit the step, can overlap geometry and record multiple quantities.
 
 These are described in more detail below.
 
@@ -106,6 +107,203 @@ in the usual Geant4 sense.
 
 See :ref:`scoring-map-description` for syntax.
 
+7) Scoring Meshes
+^^^^^^^^^^^^^^^^^
+
+A scoring mesh is a 3D grid (mesh) created in a parallel geometry that can safely overlap with other
+geometry in the model. Although in a parallel world, a particle step is limited by the boundary
+of the mesh. The mesh does not affect the physics of the simulation but is used to record or
+'score' one or more quantities.
+
+* Each mesh creates a 3D histogram for each quantity for each event.
+* Each mesh is a 3D mesh of cuboids where each has the same dimensions.
+* Two objects are defined in the input parser, a `scorermesh` and a `scorer`.
+
+A scorer mesh requires at least one scorer. A scorer is an object that defines a quantity to
+be calculated and recorded, such as the fluence or energy deposition. The scorer mesh defines
+the dimensions and location of the grid.
+
+* Examples can be found in :code:`bdsim/examples/features/scoring`.
+
+For `scorermesh`, the syntax is: ::
+
+  name, scorermesh, parameter=value, parameter2=value;
+
+Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
+example parameter and value pairs. The following parameters may be specified.
+
+
+.. tabularcolumns:: |p{5cm}|p{3cm}|[{8cm}|
+
++-------------------------+---------------+------------------------------------------------+
+| **Parameter**           | **Required**  | **Description**                                |
++=========================+===============+================================================+
+| scoreQuantity           | Yes           | The name of the scorer object(s) to be used    |
++-------------------------+---------------+------------------------------------------------+
+| nx                      | Yes           | Number of cells in local x dimension           |
++-------------------------+---------------+------------------------------------------------+
+| ny                      | Yes           | Number of cells in local y dimension           |
++-------------------------+---------------+------------------------------------------------+
+| nz                      | Yes           | Number of cells in local z dimension           |
++-------------------------+---------------+------------------------------------------------+
+| xsize                   | Yes           | Full width in local x dimension (m)            |
++-------------------------+---------------+------------------------------------------------+
+| ysize                   | Yes           | Full width in local y dimension (m)            |
++-------------------------+---------------+------------------------------------------------+
+| zsize                   | Yes           | Full width in local z dimension (m)            |
++-------------------------+---------------+------------------------------------------------+
+| referenceElement        | No            | Name of beam line element to place with        |
+|                         |               | respect to                                     |
++-------------------------+---------------+------------------------------------------------+
+| referenceElementNumber  | No            | Occurrence of `referenceElement` to place      |
+|                         |               | with respect to if it used more than once in   |
+|                         |               | sequence - zero counting                       |
++-------------------------+---------------+------------------------------------------------+
+| s                       | No            | Curvilinear s coordinate (global | local       |
+|                         |               | depending on parameters used                   |
++-------------------------+---------------+------------------------------------------------+
+| x                       | No            | Offset in (global | local) x                   |
++-------------------------+---------------+------------------------------------------------+
+| y                       | No            | Offset in (global | local) y                   |
++-------------------------+---------------+------------------------------------------------+
+| z                       | No            | Offset in global z                             |
++-------------------------+---------------+------------------------------------------------+
+| phi                     | No            | Euler angle phi for rotation                   |
++-------------------------+---------------+------------------------------------------------+
+| theta                   | No            | Euler angle theta for rotation                 |
++-------------------------+---------------+------------------------------------------------+
+| psi                     | No            | Euler angle psi for rotation                   |
++-------------------------+---------------+------------------------------------------------+
+| axisX                   | No            | Axis angle rotation x-component of unit vector |
++-------------------------+---------------+------------------------------------------------+
+| axisY                   | No            | Axis angle rotation y-component of unit vector |
++-------------------------+---------------+------------------------------------------------+
+| axisZ                   | No            | Axis angle rotation z-component of unit vector |
++-------------------------+---------------+------------------------------------------------+
+| angle                   | No            | Axis angle, angle to rotate about unit vector  |
++-------------------------+---------------+------------------------------------------------+
+| axisAngle               | No            | Boolean whether to use the axis angle rotation |
+|                         |               | scheme (default false)                         |
++-------------------------+---------------+------------------------------------------------+
+
+The placement parameters are the exact same as those used in general geometry placements -
+see :ref:`placements` for the 3 possible ways to make placements easily in BDSIM.
+
+* Multiple quantities may be specified in `scoreQuantity` if the names are separated by a space
+  inside the string.
+
+
+A `scorer` defines a quantity to be recorded. The syntax is: ::
+
+  name, scorer, parameter=value, parameter2=value;
+
+.. tabularcolumns:: |p{5cm}|p{3cm}|[{8cm}|
+  
++-------------------------+---------------+------------------------------------------------+
+| **Parameter**           | **Required**  | **Description**                                |
++=========================+===============+================================================+
+| type                    | Yes           | Which quantity to score - see below            |
++-------------------------+---------------+------------------------------------------------+
+| particleName            | No            | Name of particle in Geant4 to only apply       |
+|                         |               | scoring to (only one)                          |
++-------------------------+---------------+------------------------------------------------+
+| particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
+|                         |               | (only one)                                     |
++-------------------------+---------------+------------------------------------------------+
+| minimumEnergy           | No            | Minimum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| maximumEnergy           | No            | Maximum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| minimumTime             | No            | Minimum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| maximumTime             | No            | Maximum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| conversionFactorFile    | No            | File name of conversion factor file to be used |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
+
+The conversion factor file is a text file (optionally compressed with gzip, but not tar)
+that contains two columns separated by white space. The first is the kinetic energy point
+in MeV (currently no other possible units). The second is the numerical factor desired.
+Currently, linear interpolation is used between points using the Geant4
+`G4PhysicsOrderedFreeVector` class.
+
+Below is an example contents: ::
+
+  5.0e-02	2.97e-09
+  1.0e-01	1.52e-09
+  2.0e-01	9.99e-10
+  5.0e-01	7.86e-10
+  1.0e+00	6.41e-10
+  5.0e+00	7.65e-10
+  1.0e+01	8.39e-10
+  1.0e+02	8.22e-10
+  1.0e+03	9.96e-10
+  1.0e+04	1.20e-09
+
+Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
+of 0.05 MeV.
+
+.. tabularcolumns:: |p{5cm}|p{8cm}|[{3cm}|
+
++-------------------------+---------------------------------------------------+-------------+
+| **Scorer Type**         | **Description**                                   | **Units**   |
++=========================+===================================================+=============+
+| cellcharge              | The charge deposited in the cell                  | e-          |
++-------------------------+---------------------------------------------------+-------------+
+| depositeddose           | The dose (energy deposited per unit mass          | Gray (J/kg) |
++-------------------------+---------------------------------------------------+-------------+
+| depositedenergy         | The deposited energy in the cell                  | J           |
++-------------------------+---------------------------------------------------+-------------+
+| population              | The number of particles passing through the cell  | NA          |
++-------------------------+---------------------------------------------------+-------------+
+| ambientdose             | The cell flux (step length / cubic volume) x      |             |
+|                         | a kinetic energy factor from the                  | NA          |
+|                         | conversionFactorFile                              |             |
++-------------------------+---------------------------------------------------+-------------+
+
+
+.. note:: As the histogram is per-event, the quantity stored is per-event also. So, if there
+	  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
+
+* Examples can be found in :code:`bdsim/examples/features/scoring`.
+
+Example 1: ::
+
+  neutronPopulation: scorer, type="population", particleName="neutron";
+	  
+  meshAir: scorerMesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
+                       scoreQuantity="neutronPopulation", z=20.75*m;
+
+This defines a scoring mesh that counts the population of neutrons in a 40 x 20 x 20 cm mesh
+with 40 x 20 x 20 cells (so each cell is 1 x 1 x 1 cm) that is aligned to global Cartesian
+x, y, z and displaced in z by 20.75 m.
+
+Example 2: ::
+
+  neutronPopulation: scorer, type="population", particleName="neutron";
+
+  protonAmbient: scorer, type="ambientdose",
+	    	         particleName="proton",
+		         minimumEnergy=20*MeV,
+		         maximumEnergy=1*GeV,
+		         minimumTime=0*s,
+		         maximumTime=1*s,
+		         conversionFactorFile="h10protons.txt";
+	  
+  meshAir: scorerMesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
+                       scoreQuantity="neutronPopulation protonAmbient", z=20.75*m;
+
+In this example, a similar mesh as Example 1 is used, but two 3D histograms are made. One for
+the neutron population and one for the ambient dose (using the "h10protons.txt" conversion
+file) for protons between 20 MeV and 1 GeV in kinetic energy and that exist between 0 s
+(the start of the simulation) and 1 s in time of flight.
+		       
+  
 Particle Identification
 -----------------------
 
