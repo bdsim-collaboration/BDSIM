@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerQuantity3D.hh"
-#include "BDSScorerFilter.hh"
+#include "BDSSDFilterScorer3D.hh"
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
@@ -52,7 +52,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     mapper,
 							     unit);
 
-  BDSScorerFilter* filter = new BDSScorerFilter("filter", info);
+  BDSSDFilterScorer3D* filter = new BDSSDFilterScorer3D("filter", info);
   primitiveScorer->SetFilter(filter);
 
   return primitiveScorer;

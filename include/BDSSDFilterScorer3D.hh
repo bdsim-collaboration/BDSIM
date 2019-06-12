@@ -33,20 +33,20 @@ class G4SDParticleWithEnergyFilter;
  * @author Robin Tesse
  */
 
-class BDSScorerFilter: public G4VSDFilter
+class BDSSDFilterScorer3D: public G4VSDFilter
 {
 public:
-  BDSScorerFilter(G4String name,
+  BDSSDFilterScorer3D(G4String name,
 		  const BDSScorerInfo* info);
   
-  virtual ~BDSScorerFilter();
+  virtual ~BDSSDFilterScorer3D();
 
   /// Whether to accept or reject a step.
   virtual G4bool Accept(const G4Step* aStep) const;
   
 private:
   /// No default constructor required.
-  BDSScorerFilter() = delete;
+  BDSSDFilterScorer3D() = delete;
   
   G4SDParticleWithEnergyFilter* particleWithKineticEnergyFilter;
   BDSSDFilterTime*              timeFilter;

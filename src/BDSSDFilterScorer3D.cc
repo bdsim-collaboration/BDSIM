@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorModel.hh"
-#include "BDSScorerFilter.hh"
+#include "BDSSDFilterScorer3D.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSSDFilterTime.hh"
 #include "BDSSDFilterLogicalVolume.hh"
@@ -29,10 +29,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VSDFilter.hh"
 
-#include "BDSScorerFilter.hh"
+#include "BDSSDFilterScorer3D.hh"
 
-BDSScorerFilter::BDSScorerFilter(G4String             name,
-				 const BDSScorerInfo* info):
+BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
+					 const BDSScorerInfo* info):
   G4VSDFilter(name),
   particleWithKineticEnergyFilter(nullptr),
   timeFilter(nullptr),
@@ -66,10 +66,10 @@ BDSScorerFilter::BDSScorerFilter(G4String             name,
     }
 }
 
-BDSScorerFilter::~BDSScorerFilter()
+BDSSDFilterScorer3D::~BDSSDFilterScorer3D()
 {;}
 
-G4bool BDSScorerFilter::Accept(const G4Step* aStep) const
+G4bool BDSSDFilterScorer3D::Accept(const G4Step* aStep) const
 {
   if (particleWithKineticEnergyFilter)
     {
