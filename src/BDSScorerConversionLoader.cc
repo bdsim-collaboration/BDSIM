@@ -85,22 +85,20 @@ G4PhysicsVector* BDSScorerConversionLoader<T>::Load(G4String fileName)
       std::vector<G4double> numbers;
       G4double number;
       while (liness >> number)
-	{
-          numbers.push_back(number);
-	}
-
+	{numbers.push_back(number);}
+      
       if (numbers.size() != 2)
 	{
 	  file.close();
 	  throw BDSException(__METHOD_NAME__, "Incomplete line " + std::to_string(lineNumber));
 	}
-
+      
       energy.push_back(numbers[0]);
       conversionFactor.push_back(numbers[1]);
-
+      
       lineNumber++;
     }
-
+  
   file.close();
   G4PhysicsOrderedFreeVector* results = new G4PhysicsOrderedFreeVector(&energy[0], &conversionFactor[0], energy.size());
   return results;

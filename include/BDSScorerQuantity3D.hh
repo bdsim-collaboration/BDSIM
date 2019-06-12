@@ -47,8 +47,6 @@ public:
   void Initialize(G4HCofThisEvent* HCE) override;
   void EndOfEvent(G4HCofThisEvent* HCE) override;
   void clear() override;
-  
-protected:
   G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
   G4int  GetIndex(G4Step* aStep) override;
 
