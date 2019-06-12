@@ -16,35 +16,41 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef BDSIM_BDSSCORERFILTER_HH
-#define BDSIM_BDSSCORERFILTER_HH
+#ifndef BDSSCORERFILTER_H
+#define BDSSCORERFILTER_H
 
 #include "globals.hh"
 #include "G4VSDFilter.hh"
-#include "G4SDParticleWithEnergyFilter.hh"
-#include "BDSScorerInfo.hh"
-#include "BDSScorerTimeFilter.hh"
-#include "BDSScorerVolumeFilter.hh"
 
-class BDSScorerFilter  : public G4VSDFilter
+class BDSScorerInfo;
+class BDSScorerTimeFilter;
+class BDSScorerVolumeFilter;
+class G4SDParticleWithEnergyFilter;
+
+/**
+ * @brief SD filter for time coordinate, energy, particle type and volume.
+ * 
+ * @author Robin Tesse
+ */
+
+class BDSScorerFilter: public G4VSDFilter
 {
+public:
+  BDSScorerFilter(G4String name,
+		  const BDSScorerInfo* info);
+  
+  virtual ~BDSScorerFilter();
 
-    //-------
-public: // with description
-    BDSScorerFilter(G4String name, const BDSScorerInfo* info);
-
-
-        virtual ~BDSScorerFilter();
-
-    public: // with description
-        virtual G4bool Accept(const G4Step*) const;
-
-    private:
-    BDSScorerFilter() = delete;
-    G4SDParticleWithEnergyFilter* fParticleWithKineticEnergyFilter;
-    BDSScorerTimeFilter* fTimeFilter;
-    BDSScorerVolumeFilter* fVolumeFilter;
+  /// Whether to accept or reject a step.
+  virtual G4bool Accept(const G4Step* aStep) const;
+  
+private:
+  /// No default constructor required.
+  BDSScorerFilter() = delete;
+  
+  G4SDParticleWithEnergyFilter* particleWithKineticEnergyFilter;
+  BDSScorerTimeFilter*          timeFilter;
+  BDSScorerVolumeFilter*        volumeFilter;
 };
 
 #endif
