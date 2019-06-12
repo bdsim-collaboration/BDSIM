@@ -311,6 +311,7 @@ namespace GMAD
     // circular options
     int         nturns;
     std::string ptcOneTurnMapFileName;
+    std::string HepMCFileName;
 
     double   printFractionEvents;
     double   printFractionTurns;

@@ -27,6 +27,8 @@ BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoord
   charge(chargeIn)
 {;}
 
+
+
 void BDSPrimaryVertexInformation::Print() const
 {
   G4cout << primaryVertex << G4endl;

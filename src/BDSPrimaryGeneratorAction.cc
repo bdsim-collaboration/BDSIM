@@ -30,11 +30,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSRandom.hh"
+#include "BDSUtilities.hh"
 
 #include "CLHEP/Random/Random.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
+#include "G4HEPEvtInterface.hh"
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
@@ -50,7 +52,9 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   ionPrimary(beamParticleIn->IsAnIon()),
   ionCached(false),
   particleCharge(beamParticleIn->Charge()), // always right even if ion
-  oneTurnMap(nullptr)
+  oneTurnMap(nullptr),
+//  evgenHepMC(nullptr),
+  hepMCLoader(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -68,12 +72,25 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleTime(0);
+
+    G4bool useEventGenerator = true;
+    //G4String eventFile = "";
+    //eventFile.empty()
+    if (useEventGenerator)
+    {
+        //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
+        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/evgen_interface/orig.dat");
+        G4cout << filename << G4endl;
+        hepMCLoader = new G4HEPEvtInterface(filename.c_str(), 5);
+        // G4cout <<  filename << G4endl;
+    }
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
   delete recreateFile;
+  delete  hepMCLoader;
 }
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -101,6 +118,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
+  if (true)
+    {
+        hepMCLoader->GeneratePrimaryVertex(anEvent);
+        anEvent->GetPrimaryVertex(0)->Print();
+       return;
+   }
   G4double mass = beamParticle->Mass();
 
   // update particle definition if special case of an ion - can only be done here
@@ -148,6 +171,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
       oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
     }
+
 
   // set particle definition
   // either from input bunch file, an ion, or regular beam particle
@@ -225,4 +249,5 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #ifdef BDSDEBUG
   vertex->Print();
 #endif
+
 }

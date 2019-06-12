@@ -30,7 +30,11 @@ class BDSOutputLoader;
 class BDSParticleDefinition;
 class BDSPTCOneTurnMap;
 class G4Event;
+class G4HEPEvtInterface;
 class G4ParticleGun;
+
+class G4EvgenHepMC;
+//class BDSHepMC;
 
 /**
  * @brief Generates primary particle vertices using BDSBunch.
@@ -51,7 +55,6 @@ public:
   /// Register a PTC map instance used in the teleporter which this
   /// class will set initial (first turn) primary coordinates for.
   void RegisterPTCOneTurnMap(BDSPTCOneTurnMap* otmIn) {oneTurnMap = otmIn;}
-
 private:
   /// Beam particle.
   BDSParticleDefinition* beamParticle;
@@ -90,6 +93,10 @@ private:
 
   /// Cached OTM for setting first turn primary coords.
   BDSPTCOneTurnMap* oneTurnMap;
+
+  ///
+  G4HEPEvtInterface* hepMCLoader;
+  //BDSHepMC* evgenHepMC;
 };
 
 #endif
