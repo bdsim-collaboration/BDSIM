@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSSCORERTIMEFILTER_H
-#define BDSSCORERTIMEFILTER_H 1
+#define BDSSCORERTIMEFILTER_H
 
 #include "globals.hh"
 #include "G4VSDFilter.hh"
@@ -44,6 +44,7 @@ public:
   virtual G4bool Accept(const G4Step*) const;
   
 private:
+  /// No default constructor required.
   BDSScorerTimeFilter() = delete;
   G4double lowerLimit;
   G4double upperLimit;

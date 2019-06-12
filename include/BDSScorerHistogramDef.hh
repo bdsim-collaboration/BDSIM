@@ -24,13 +24,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"         // geant4 types / globals
 
+/**
+ * @brief Definition for a scorer histogram.
+ * 
+ * Information kept from when a scoring mesh is created
+ * for passing to the output.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSScorerHistogramDef: public BDSScorerMeshInfo
 {
 public:
   BDSScorerHistogramDef(const BDSScorerMeshInfo&  meshInfo,
 			const G4String&           uniqueNameIn,
 			const BDSHistBinMapper3D& coordinateMapperIn);
-
 
   virtual ~BDSScorerHistogramDef(){;}
 
@@ -39,6 +47,7 @@ public:
   BDSHistBinMapper3D coordinateMapper; ///< Coordinate mapper - this class owns it.
 
 private:
+  /// No default constructor required.
   BDSScorerHistogramDef() = delete;
 };
 

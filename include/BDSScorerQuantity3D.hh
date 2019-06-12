@@ -26,6 +26,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHistBinMapper3D;
 class G4PhysicsVector;
 
+/**
+ * @brief Primitive scorer for a 3D mesh with a conversion factor.
+ * 
+ * @author Robin Tesse
+ */
+
 class BDSScorerQuantity3D: public G4VPrimitiveScorer
 {
 public:
@@ -64,6 +70,5 @@ private:
 
   std::map<G4VSolid*, G4double> volumeCache;
 };
-
 
 #endif
