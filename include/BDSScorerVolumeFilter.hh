@@ -16,28 +16,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSSCORERVOLUMEFILTER_H
-#define BDSSCORERVOLUMEFILTER_H 1
+#define BDSSCORERVOLUMEFILTER_H
 
 #include "globals.hh"
-#include "G4LogicalVolume.hh"
 #include "G4VSDFilter.hh"
 
-class BDSScorerVolumeFilter : public G4VSDFilter
+class G4LogicalVolume;
+
+/**
+ * @brief SD filter for a particular volume.
+ * 
+ * @author Robin Tesse
+ */
+
+class BDSScorerVolumeFilter: public G4VSDFilter
 {
+public:
+  BDSScorerVolumeFilter(G4String name,
+			G4LogicalVolume* referenceLVIn);
+  
+  virtual ~BDSScorerVolumeFilter();
 
-//-------
-public: // with description
-    BDSScorerVolumeFilter(G4String name);
-
-    virtual ~BDSScorerVolumeFilter();
-
-public: // with description
-    virtual G4bool Accept(const G4Step*) const;
+  /// Whether the step will be accepted or rejected.
+  virtual G4bool Accept(const G4Step* aStep) const;
 
 private:
-    G4LogicalVolume* worldLV;
+  G4LogicalVolume const* referenceLV;
 };
 
 #endif

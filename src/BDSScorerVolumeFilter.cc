@@ -16,30 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include "BDSScorerVolumeFilter.hh"
-#include "BDSAcceleratorModel.hh"
+
 #include "G4Step.hh"
-#include "G4UnitsTable.hh"
+#include "G4StepPoint.hh"
+#include "G4Track.hh"
+#include "G4VPhysicalVolume.hh"
 
-
-BDSScorerVolumeFilter::BDSScorerVolumeFilter(G4String name)
-        :G4VSDFilter(name)
-{
-    worldLV = BDSAcceleratorModel::Instance()->WorldPV()->GetLogicalVolume();
-}
+BDSScorerVolumeFilter::BDSScorerVolumeFilter(G4String name,
+					     G4LogicalVolume* referenceLVIn):
+  G4VSDFilter(name),
+  referenceLV(referenceLVIn)
+{;}
 
 BDSScorerVolumeFilter::~BDSScorerVolumeFilter()
 {;}
 
 G4bool BDSScorerVolumeFilter::Accept(const G4Step* aStep) const
 {
-    const G4Step* realWorldStep = aStep->GetTrack()->GetStep(); // Get the step in the mass world
+  // get the step in the mass world
+  const G4Step* realWorldStep = aStep->GetTrack()->GetStep();
 
-    G4LogicalVolume* volumeLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
-
-    if(volumeLV == worldLV) {
-        return TRUE;
-    }
-    return FALSE;
+  // get the logical volume
+  G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+  
+  return stepLV == referenceLV;
 }

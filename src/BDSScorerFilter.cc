@@ -59,8 +59,11 @@ BDSScorerFilter::BDSScorerFilter(G4String             name,
     }
 
   // For the ambient dose, make a filter to only have the world volume
-  if((info->scorerType.underlying()) == BDSScorerType::ambientdose)
-    {fVolumeFilter = new BDSScorerVolumeFilter("volume_filter");}
+  if ((info->scorerType.underlying()) == BDSScorerType::ambientdose)
+    {
+      volumeFilter = new BDSScorerVolumeFilter("volume_filter",
+                                               BDSAcceleratorModel::Instance()->WorldLV());
+    }
 }
 
 BDSScorerFilter::~BDSScorerFilter()
