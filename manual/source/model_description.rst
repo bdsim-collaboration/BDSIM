@@ -4372,7 +4372,8 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not         |
+| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not as well |
+|                                   | as the `nElectrons` variable for possible number of electrons.     |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
 |                                   | stored. This must be turned on to store any trajectories at all.   |
@@ -5442,7 +5443,7 @@ The automatic tunnel building is controlled through the following options used w
 | buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
 |                                  | just in a straight line (default = 0)                 |
 +----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | Whether to add a floor to the tunnel                  |
+| buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
