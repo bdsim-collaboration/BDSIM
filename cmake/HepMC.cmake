@@ -1,6 +1,6 @@
 # quietly detect if we have HepMC library available - not required
 
-option( USE_HEPMC "Include HepMC3 library support." OFF)
+option( USE_HEPMC3 "Include HepMC3 library support." OFF)
 if (USE_HEPMC3)
   message(STATUS "Using HepMC3")
   find_package(HepMC3 REQUIRED COMPONENTS HepMC3 HepMC3fio)
