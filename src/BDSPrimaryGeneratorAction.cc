@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 
-#include "BDSHepMCG4AsciiReader2.hh"
+#include "BDSHepMCG4AsciiReader.hh"
 
 #include "CLHEP/Random/Random.h"
 

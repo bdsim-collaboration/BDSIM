@@ -40,6 +40,11 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
+#include "HepMC3/GenParticle.h"
+#include "HepMC3/GenVertex.h"
+
+#include "CLHEP/Units/SystemOfUnits.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 HepMCG4Interface::HepMCG4Interface()
   : hepmcEvent(0)
@@ -71,10 +76,33 @@ G4bool HepMCG4Interface::CheckVertexInsideWorld
 void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
                                 G4Event* g4event)
 {
-  for(HepMC3::GenEvent::vertex_const_iterator vitr= hepmcevt->vertices_begin();
-      vitr != hepmcevt->vertices_end(); ++vitr ) { // loop for vertex ...
+  for(const auto& vertexShrPtr : hepmcevt->vertices())
+  {
+      const HepMC3::GenVertex *v = vertexShrPtr.get();
+      HepMC3::FourVector pos = v->position();
+      G4LorentzVector xvtx(pos.x(), pos.y(), pos.z(), pos.t());
+      if (!CheckVertexInsideWorld(xvtx.vect() * CLHEP::mm)) { continue; }
 
-    // real vertex?
+      G4PrimaryVertex *g4vtx = new G4PrimaryVertex(xvtx.x() * CLHEP::mm, xvtx.y() * CLHEP::mm, xvtx.z() * CLHEP::mm,
+                                                   xvtx.t() * CLHEP::mm / CLHEP::c_light);
+
+      const auto particles = v->particles_out();
+
+      for (const auto particlePtr : particles)
+      {
+          const HepMC3::GenParticle *particle = particlePtr.get();
+          int pdgcode = particle->pdg_id();
+
+          pos = particle->momentum();
+          G4LorentzVector p(pos.px(), pos.py(), pos.pz(), pos.e());
+          G4PrimaryParticle *g4prim = new G4PrimaryParticle(pdgcode, p.x() * GeV, p.y() * GeV, p.z() * GeV);
+
+          g4vtx->SetPrimary(g4prim);
+      }
+      g4event-> AddPrimaryVertex(g4vtx);
+  }
+
+      /*
     G4bool qvtx=false;
     for (HepMC3::GenVertex::particle_iterator
            pitr= (*vitr)->particles_begin(HepMC3::children);
@@ -86,7 +114,8 @@ void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       }
     }
     if (!qvtx) continue;
-
+*/
+      /*
     // check world boundary
     HepMC3::FourVector pos= (*vitr)-> position();
     G4LorentzVector xvtx(pos.x(), pos.y(), pos.z(), pos.t());
@@ -96,7 +125,9 @@ void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
     G4PrimaryVertex* g4vtx=
       new G4PrimaryVertex(xvtx.x()*mm, xvtx.y()*mm, xvtx.z()*mm,
                           xvtx.t()*mm/c_light);
+                          */
 
+      /*
     for (HepMC3::GenVertex::particle_iterator
            vpitr= (*vitr)->particles_begin(HepMC3::children);
          vpitr != (*vitr)->particles_end(HepMC3::children); ++vpitr) {
@@ -113,6 +144,7 @@ void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
     }
     g4event-> AddPrimaryVertex(g4vtx);
   }
+       */
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
