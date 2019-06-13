@@ -79,8 +79,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
     if (useEventGenerator)
     {
         //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
-        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/evgen_interface/orig.dat");
-        G4cout << filename << G4endl;
+        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/evgen_interface/orig2.dat");
+        G4cout << "data file is: "<< filename << G4endl;
         hepMCLoader = new G4HEPEvtInterface(filename.c_str(), 5);
         // G4cout <<  filename << G4endl;
     }
@@ -118,12 +118,15 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
+//#ifdef USE_HEPMC
   if (true)
     {
         hepMCLoader->GeneratePrimaryVertex(anEvent);
         anEvent->GetPrimaryVertex(0)->Print();
        return;
    }
+//#endif
+
   G4double mass = beamParticle->Mass();
 
   // update particle definition if special case of an ion - can only be done here

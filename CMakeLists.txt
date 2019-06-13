@@ -182,7 +182,7 @@ get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
-set(bdsimRootEventSources ${root_dicts} ${root_files})
+set(bdsimRootEventSources ${root_dicts} ${root_files} include/BDSHepEvtInterface.hh)
 
 # Add parser options
 list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
