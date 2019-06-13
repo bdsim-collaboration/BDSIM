@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "G4HepEvtInterface.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticleDefinition.hh"
@@ -31,6 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
+
+
+#include "BDSHepMCG4AsciiReader2.hh"
 
 #include "CLHEP/Random/Random.h"
 
@@ -81,7 +85,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
         //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
         G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/evgen_interface/orig2.dat");
         G4cout << "data file is: "<< filename << G4endl;
-        hepMCLoader = new G4HEPEvtInterface(filename.c_str(), 5);
+        hepMCLoader = new HepMCG4AsciiReader(filename, 5);
         // G4cout <<  filename << G4endl;
     }
 }
@@ -118,14 +122,15 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-//#ifdef USE_HEPMC
+#ifdef USE_HEPMC3
   if (true)
     {
+        //hepMCLoader->GeneratePrimaryVertex(anEvent);
         hepMCLoader->GeneratePrimaryVertex(anEvent);
         anEvent->GetPrimaryVertex(0)->Print();
        return;
    }
-//#endif
+#endif
 
   G4double mass = beamParticle->Mass();
 

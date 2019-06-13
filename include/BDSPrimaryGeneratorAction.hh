@@ -34,6 +34,7 @@ class G4HEPEvtInterface;
 class G4ParticleGun;
 
 class G4EvgenHepMC;
+class HepMCG4AsciiReader;
 //class BDSHepMC;
 
 /**
@@ -95,7 +96,7 @@ private:
   BDSPTCOneTurnMap* oneTurnMap;
 
   ///
-  G4HEPEvtInterface* hepMCLoader;
+  HepMCG4AsciiReader* hepMCLoader;
   //BDSHepMC* evgenHepMC;
 };
 
