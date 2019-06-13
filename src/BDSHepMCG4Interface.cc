@@ -76,32 +76,22 @@ G4bool HepMCG4Interface::CheckVertexInsideWorld
 void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
                                 G4Event* g4event)
 {
-  for (const auto& vertexShrPtr : hepmcevt->vertices())
-  {
-      const HepMC3::GenVertex *v = vertexShrPtr.get();
-      HepMC3::FourVector pos = v->position();
-      G4LorentzVector xvtx(pos.x(), pos.y(), pos.z(), pos.t());
-      if (!CheckVertexInsideWorld(xvtx.vect() * CLHEP::mm)) { continue; }
+    G4PrimaryVertex* g4vtx = new G4PrimaryVertex(0, 0, 0, 0);
 
-      G4PrimaryVertex *g4vtx = new G4PrimaryVertex(xvtx.x() * CLHEP::mm, xvtx.y() * CLHEP::mm, xvtx.z() * CLHEP::mm,
-                                                   xvtx.t() * CLHEP::mm / CLHEP::c_light);
+    for (const auto &particlePtr : hepmcevt->particles())
+    {
+        const HepMC3::GenParticle* particle = particlePtr.get();
+        int pdgcode = particle->pdg_id();
 
-      const auto particles = v->particles_out();
+        HepMC3::FourVector fv = particle->momentum();
+        G4LorentzVector p(fv.px(), fv.py(), fv.pz(), fv.e());
+        G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, p.x() * CLHEP::GeV, p.y() * CLHEP::GeV, p.z() * CLHEP::GeV);
 
-      for (const auto particlePtr : particles)
-      {
-          const HepMC3::GenParticle *particle = particlePtr.get();
-          int pdgcode = particle->pdg_id();
+        g4vtx->SetPrimary(g4prim);
+    }
+    g4event->AddPrimaryVertex(g4vtx);
 
-          pos = particle->momentum();
-          G4LorentzVector p(pos.px(), pos.py(), pos.pz(), pos.e());
-          G4PrimaryParticle *g4prim = new G4PrimaryParticle(pdgcode, p.x() * GeV, p.y() * GeV, p.z() * GeV);
-
-          g4vtx->SetPrimary(g4prim);
-      }
-      g4event-> AddPrimaryVertex(g4vtx);
-  }
-
+}
       /*
     G4bool qvtx=false;
     for (HepMC3::GenVertex::particle_iterator
@@ -145,7 +135,7 @@ void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
     g4event-> AddPrimaryVertex(g4vtx);
   }
        */
-}
+//}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 HepMC3::GenEvent* HepMCG4Interface::GenerateHepMCEvent()
