@@ -70,8 +70,9 @@ HepMC3::GenEvent* HepMCG4AsciiReader::GenerateHepMCEvent()
 {
   HepMC3::GenEvent* evt = new HepMC3::GenEvent();
   //HepMC3::ReaderAsciiHepMC2* evt= asciiInput-> read_event();
-  asciiInput->read_event(*evt);
-    return evt;
+  bool readEvent = asciiInput->read_event(*evt);
+  return readEvent ? evt : nullptr;
+    {return evt;}
   //if(!evt) return 0; // no more event
 
   //if(verbose>0) evt-> print();

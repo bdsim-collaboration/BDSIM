@@ -76,7 +76,7 @@ G4bool HepMCG4Interface::CheckVertexInsideWorld
 void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
                                 G4Event* g4event)
 {
-  for(const auto& vertexShrPtr : hepmcevt->vertices())
+  for (const auto& vertexShrPtr : hepmcevt->vertices())
   {
       const HepMC3::GenVertex *v = vertexShrPtr.get();
       HepMC3::FourVector pos = v->position();
@@ -150,7 +150,7 @@ void HepMCG4Interface::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 HepMC3::GenEvent* HepMCG4Interface::GenerateHepMCEvent()
 {
-  HepMC3::GenEvent* aevent= new HepMC3::GenEvent();
+  HepMC3::GenEvent* aevent = new HepMC3::GenEvent();
   return aevent;
 }
 
@@ -161,7 +161,7 @@ void HepMCG4Interface::GeneratePrimaryVertex(G4Event* anEvent)
   delete hepmcEvent;
 
   // generate next event
-  hepmcEvent= GenerateHepMCEvent();
+  hepmcEvent = GenerateHepMCEvent();
   if(! hepmcEvent) {
     G4cout << "HepMCInterface: no generated particles. run terminated..."
            << G4endl;
