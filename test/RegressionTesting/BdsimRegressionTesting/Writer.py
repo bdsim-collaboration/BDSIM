@@ -25,6 +25,7 @@ class Writer:
         writer.Sequence.WriteInMain()
         writer.Samplers.WriteInMain()
         writer.Beam.WriteInMain()
+        writer.Objects.WriteInMain()
         _os.chdir(component)
 
         if test._beamFilename[:6] == 'Tests/':
@@ -666,15 +667,26 @@ class Writer:
         component = 'crystalcol'
         filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
 
+        dataFile = GlobalData.crystalDataDir + "Si220pl"
+
         for length in test['length']:
             lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
 
             machine = _General.Machine(test.Particle, test._testRobustness)
-            machine.AddDrift(name='dr1', length=length)
-            machine.AddCrystalCol(name='cc', length=length)
-            #TODO: rest of unvaried params
-            machine.AddDrift(name='dr2', length=length)
+            # variables copied from manual example.
+            machine.AddCrystal('cry1', material="G4_Si", data=dataFile, shape="box",
+                                lengthY=0.05, lengthX=0.5e-3, lengthZ=4e-3,
+                                sizeA=5.43e-10, sizeB=5.43e-10, sizeC=5.43e-10,
+                                alpha=1, beta=1, gamma=1,
+                                spaceGroup=227, bendingAngleYAxis=0.1, bendingAngleZAxis=0)
+
+            machine.AddDrift(name='dr1', length=0.1)
+            machine.AddCrystalCol(name='cc', length=length,
+                                  apertureType="rectangular", aper1=0.0025, aper2=(5,"cm"),
+                                  crystalBoth="cry1", crystalAngleYAxisLeft=(-0.1,"rad"),
+                                  crystalAngleYAxisRight=(-0.1,"rad"), xsize=0.002)
+            machine.AddDrift(name='dr2', length=0.1)
             machine.AddSampler('all')
             machine.AddBeam(_General.GetBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)

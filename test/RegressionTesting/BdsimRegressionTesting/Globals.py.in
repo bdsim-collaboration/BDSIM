@@ -133,6 +133,8 @@ class Globals:
         # bdsim source (for results feedback only)
         self._bdsimSource = "@CMAKE_SOURCE_DIR@"
 
+        self.crystalDataDir = self._bdsimSource + "/examples/features/components/data/"
+
         # components that can be varied
         self.components = ['drift',
                            'rbend',
