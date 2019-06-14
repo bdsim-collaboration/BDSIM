@@ -1,3 +1,3 @@
-add_subdirectory(Bdsim)
+add_subdirectory(BdsimRegressionTesting)
 
 
