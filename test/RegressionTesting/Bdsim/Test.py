@@ -121,6 +121,8 @@ class Test(dict):
         self._testRobustness = testRobustNess
         self.PhaseSpace = None
         self._beamFilename = 'trackingTestBeam.madx'  # default file name
+        self.Particle = None
+        self.Energy = 0
         
         # Initialise parameters for the component as empty lists (or defaults) and dynamically
         # create setter functions for those component parameters.
@@ -146,6 +148,15 @@ class Test(dict):
         self.SetEnergy(energy)
         self.SetBeamPhaseSpace(phaseSpace)
         self.SetParticleType(particle)
+
+    def __repr__(self):
+        s = 'BdsimRegressionTesting.Test instance.\r\n'
+        s += 'This is a test for a/an ' + self.Component + ' with ' + self.Particle
+        s += ' at an energy of ' + _np.str(self.Energy) + ' GeV.\r\n'
+        s += 'The component will be test all combinations of the following parameters:\r\n'
+        for param in self.keys():
+            s += '  '+param+' : ' + self[param].__repr__()+'\r\n'
+        return s
 
     def __createSetterFunction(self, name=''):
         """ Function to return function template for updating component parameters.
@@ -202,15 +213,6 @@ class Test(dict):
             numcomponentVariations /= len(GlobalData.paramValues['field'])
             numcomponentVariations *= 2  # angle or field
         self._numFiles = numcomponentVariations
-
-    def __repr__(self):
-        s = 'pybdsimTest.Test instance.\r\n'
-        s += 'This is a test for a/an ' + self.Component + ' with ' + self.Particle
-        s += ' at an energy of ' + _np.str(self.Energy) + ' GeV.\r\n'
-        s += 'The component will be test all combinations of the following parameters:\r\n'
-        for param in self.keys():
-            s += '  '+param+' : ' + self[param].__repr__()+'\r\n'
-        return s
 
     def SetComparisonFilename(self, fileName=''):
         """ Function to set the filename to which the generated BDSIM output will be compared.
