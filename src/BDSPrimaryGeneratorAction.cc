@@ -83,10 +83,10 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
     if (useEventGenerator)
     {
         //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
-        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/evgen_interface/orig2.dat");
+        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/faser-from-IP/datafiles/data1.dat");
         G4cout << "data file is: "<< filename << G4endl;
-        hepMCLoader = new HepMCG4AsciiReader(filename, 5);
-        // G4cout <<  filename << G4endl;
+        hepMCLoader = new HepMCG4AsciiReader(filename, 0);
+        G4cout <<  filename << G4endl;
     }
 }
 

@@ -44,9 +44,8 @@ HepMCG4AsciiReader::HepMCG4AsciiReader(const G4String& fileNameIn,
 G4int verbosityIn)
   :  filename(fileNameIn), verbose(verbosityIn)
 {
-  //asciiInput= new HepMC3::ReaderAsciiHepMC(filename.c_str(), std::ios::in);
-  asciiInput= new HepMC3::ReaderAsciiHepMC2(filename.c_str());
-
+    G4cout << "data file is  : "<< filename << G4endl;
+    asciiInput= new HepMC3::ReaderAsciiHepMC2(filename);
   //messenger= new HepMCG4AsciiReaderMessenger(this);
 }
 
@@ -63,6 +62,7 @@ void HepMCG4AsciiReader::Initialize()
   delete asciiInput;
 
   asciiInput= new HepMC3::ReaderAsciiHepMC2(filename.c_str());
+    G4cout << "data file is 2 : "<< asciiInput << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

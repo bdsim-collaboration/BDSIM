@@ -97,7 +97,8 @@ private:
 
   ///
   HepMCG4AsciiReader* hepMCLoader;
-  //BDSHepMC* evgenHepMC;
+
+    //BDSHepMC* evgenHepMC;
 };
 
 #endif
