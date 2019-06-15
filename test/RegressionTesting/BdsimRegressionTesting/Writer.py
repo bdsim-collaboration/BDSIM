@@ -25,6 +25,7 @@ class Writer:
         writer.Sequence.WriteInMain()
         writer.Samplers.WriteInMain()
         writer.Beam.WriteInMain()
+        writer.Objects.WriteInMain()
         _os.chdir(component)
 
         if test._beamFilename[:6] == 'Tests/':
@@ -94,9 +95,13 @@ class Writer:
         if component == 'sbend' or component == 'rbend':
             # self.WriteDipoleTests(test)
             self.WriteFullDipole(test)
-        elif component == 'hkick' or component == 'vkick':
+        elif component == 'hkicker':
+            self.WriteHKickerTests(test)
+        elif component == 'vkicker':
+            self.WriteVKickerTests(test)
+        elif component == 'kicker':
             self.WriteKickerTests(test)
-        elif component == 'rcol' or component == 'ecol':
+        elif component == 'rcol' or component == 'ecol' or component == 'jcol':
             self.WriteCollimatorTests(test)
         elif component == 'quadrupole':
             self.WriteQuadrupoleTests(test)
@@ -112,7 +117,7 @@ class Writer:
             self.WriteThinMultipoleTests(test)
         elif component == 'drift':
             self.WriteDriftTests(test)
-        elif component == 'rfcavity':
+        elif component == 'rfcavity' or component == 'rf':
             self.WriteRFCavityTests(test)
         elif component == 'degrader':
             self.WriteDegraderTests(test)
@@ -126,6 +131,18 @@ class Writer:
             self.WriteLaserTests(test)
         elif component == 'gap':
             self.WriteGapTests(test)
+        elif component == 'dump':
+            self.WriteDumpTests(test)
+        elif component == 'crystalcol':
+            self.WriteCrystalColTests(test)
+        elif component == 'undulator':
+            self.WriteUndulatorTests(test)
+        elif component == 'wirescanner':
+            self.WriteWireScannerTests(test)
+        elif component == 'thinrmatrix':
+            self.WriteThinRMatTests(test)
+        elif component == 'rmatrix':
+            self.WriteRMatTests(test)
 
     def WriteDriftTests(self, test):
         component = 'drift'
@@ -349,28 +366,55 @@ class Writer:
                 self._writeToDisk(component, k4FileName, machine, test)
 
     def WriteKickerTests(self, test):
-        component = test.Component
-        componentName = 'kick'
-        if component == 'hkick':
-            componentName = 'hk1'
-        elif component == 'vkick':
-            componentName = 'vk1'
+        component = 'kicker'
         filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
             lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
-            for kickangle in test['kickangle']:
-                kickAngleName = '__kickangle_'+_np.str(kickangle)
-                kickAngleFileName = lenFileName + kickAngleName
+            for hkick in test['hkick']:
+                hkickName = '__hkick_'+_np.str(hkick)
+                hkickFileName = lenFileName + hkickName
+                for vkick in test['vkick']:
+                    vkickName = '__vkick_' + _np.str(vkick)
+                    vkickFileName = hkickFileName + vkickName
+
+                    machine = _General.Machine(test.Particle, test._testRobustness)
+                    machine.AddKicker(name='ki', l=length, hkick=hkick, vkick=vkick)
+                    machine.AddSampler('all')
+                    machine.AddBeam(_General.GetBeam(test))
+                    self._writeToDisk(component, vkickFileName, machine, test)
+
+    def WriteHKickerTests(self, test):
+        component = 'hkicker'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+            for hkick in test['hkick']:
+                hkickName = '__hkick_'+_np.str(hkick)
+                hkickFileName = lenFileName + hkickName
 
                 machine = _General.Machine(test.Particle, test._testRobustness)
-                if component == 'hkick':
-                    machine.AddHKicker(name=componentName, l=length, angle=kickangle)
-                elif component == 'vkick':
-                    machine.AddVKicker(name=componentName, l=length, angle=kickangle)
+                machine.AddHKicker(name='hk', l=length, hkick=hkick)
                 machine.AddSampler('all')
                 machine.AddBeam(_General.GetBeam(test))
-                self._writeToDisk(component, kickAngleFileName, machine, test)
+                self._writeToDisk(component, hkickFileName, machine, test)
+
+    def WriteVKickerTests(self, test):
+        component = 'vkicker'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+            for vkick in test['vkick']:
+                vkickName = '__vkick_'+_np.str(vkick)
+                vkickFileName = lenFileName + vkickName
+
+                machine = _General.Machine(test.Particle, test._testRobustness)
+                machine.AddVKicker(name='vk', l=length, vkick=vkick)
+                machine.AddSampler('all')
+                machine.AddBeam(_General.GetBeam(test))
+                self._writeToDisk(component, vkickFileName, machine, test)
 
     def WriteThinMultipoleTests(self, test):
         component = 'thinmultipole'
@@ -486,6 +530,8 @@ class Writer:
                 machine.AddRCol(name='rc1', length=length, xsize=xsize, ysize=ysize)
             if component == 'ecol':
                 machine.AddECol(name='ec1', length=length, xsize=xsize, ysize=ysize)
+            if component == 'ecol':
+                machine.AddJCol(name='jc1', length=length, xsize=xsize, ysize=ysize)
             machine.AddSampler('all')
             machine.AddBeam(_General.GetBeam(test))
             self._writeToDisk(component, collFileName, machine, test)
@@ -600,6 +646,125 @@ class Writer:
             machine.AddSampler('all')
             machine.AddBeam(_General.GetBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
+
+    def WriteDumpTests(self, test):
+        component = 'dump'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+
+            machine = _General.Machine(test.Particle, test._testRobustness)
+            machine.AddDrift(name='dr1', length=length)
+            machine.AddDump(name='dm', length=length)
+            machine.AddDrift(name='dr2', length=length)
+            machine.AddSampler('all')
+            machine.AddBeam(_General.GetBeam(test))
+            self._writeToDisk(component, lenFileName, machine, test)
+
+    def WriteCrystalColTests(self, test):
+        component = 'crystalcol'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        dataFile = GlobalData.crystalDataDir + "Si220pl"
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+
+            machine = _General.Machine(test.Particle, test._testRobustness)
+            # variables copied from manual example.
+            machine.AddCrystal('cry1', material="G4_Si", data=dataFile, shape="box",
+                                lengthY=0.05, lengthX=0.5e-3, lengthZ=4e-3,
+                                sizeA=5.43e-10, sizeB=5.43e-10, sizeC=5.43e-10,
+                                alpha=1, beta=1, gamma=1,
+                                spaceGroup=227, bendingAngleYAxis=0.1, bendingAngleZAxis=0)
+
+            machine.AddDrift(name='dr1', length=0.1)
+            machine.AddCrystalCol(name='cc', length=length,
+                                  apertureType="rectangular", aper1=0.0025, aper2=(5,"cm"),
+                                  crystalBoth="cry1", crystalAngleYAxisLeft=(-0.1,"rad"),
+                                  crystalAngleYAxisRight=(-0.1,"rad"), xsize=0.002)
+            machine.AddDrift(name='dr2', length=0.1)
+            machine.AddSampler('all')
+            machine.AddBeam(_General.GetBeam(test))
+            self._writeToDisk(component, lenFileName, machine, test)
+
+    def WriteUndulatorTests(self, test):
+        component = 'undulator'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+            for field in test['field']:
+                fieldName = '__B_' + _np.str(field)
+                fieldFileName = lenFileName + fieldName
+                for undulatorPeriod in test['undulatorPeriod']:
+                    undulatorPeriodName = '__undulatorPeriod_' + _np.str(field)
+                    undulatorPeriodFileName = fieldFileName + undulatorPeriodName
+
+                    machine = _General.Machine(test.Particle, test._testRobustness)
+                    machine.AddDrift(name='dr1', length=length)
+                    machine.AddUndulator(name='un', length=length, b=field, undulatorPeriod=undulatorPeriod)
+                    # TODO: rest of unvaried params
+                    machine.AddDrift(name='dr2', length=length)
+                    machine.AddSampler('all')
+                    machine.AddBeam(_General.GetBeam(test))
+                    self._writeToDisk(component, undulatorPeriodFileName, machine, test)
+
+    def WriteWireScannerTests(self, test):
+        component = 'wirescanner'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+            for wireDiameter in test['wireDiameter']:
+                wireDiameterName = '__wireDiameter_' + _np.str(wireDiameter)
+                wireDiameterFileName = lenFileName + wireDiameterName
+                for wireLength in test['wireLength']:
+                    wireLengthName = '__wireLength_' + _np.str(wireLength)
+                    wireLengthFileName = wireDiameterFileName + wireLengthName
+
+                    machine = _General.Machine(test.Particle, test._testRobustness)
+                    machine.AddDrift(name='dr1', length=length)
+                    machine.AddWireScanner(name='ws', length=length, wireDiameter=wireDiameter, wireLength=wireLength)
+                    # TODO: rest of unvaried params
+                    machine.AddDrift(name='dr2', length=length)
+                    machine.AddSampler('all')
+                    machine.AddBeam(_General.GetBeam(test))
+                    self._writeToDisk(component, wireLengthFileName, machine, test)
+
+    def WriteRMatTests(self, test):
+        component = 'rmatrix'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+
+            machine = _General.Machine(test.Particle, test._testRobustness)
+            machine.AddDrift(name='dr1', length=length)
+            machine.AddRmat(name='rm', length=length)
+            # TODO: rest of unvaried params
+            machine.AddDrift(name='dr2', length=length)
+            machine.AddSampler('all')
+            machine.AddBeam(_General.GetBeam(test))
+            self._writeToDisk(component, lenFileName, machine, test)
+
+    def WriteThinRMatTests(self, test):
+        component = 'thinrmatrix'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        machine = _General.Machine(test.Particle, test._testRobustness)
+        machine.AddDrift(name='dr1', length=1.0)
+        machine.AddThinRmat(name='trm', r11=test["rmat11"][0], r22=test["rmat11"][0], r33=test["rmat11"][0], r44=test["rmat11"][0])
+        machine.AddDrift(name='dr2', length=1.0)
+        machine.AddSampler('all')
+        machine.AddBeam(_General.GetBeam(test))
+        self._writeToDisk(component, filename, machine, test)
 
 
 #    def _writeCMakeLists(self):

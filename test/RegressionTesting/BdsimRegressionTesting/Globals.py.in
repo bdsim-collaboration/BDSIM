@@ -104,7 +104,7 @@ class ReturnsAndErrors(dict):
         return codenumbers
 
 class Globals:
-    ''' Class containing global parameters for testing.
+    """ Class containing global parameters for testing.
         Includes:
         - Paths to the BDSIM and comparator executables.
         - Lists and dictionaries of testable variables:
@@ -121,7 +121,7 @@ class Globals:
                 - Full
                 - Extremeties for robustness testing
 
-        '''
+        """
 
     def __init__(self):
         # bdsim executable
@@ -133,32 +133,43 @@ class Globals:
         # bdsim source (for results feedback only)
         self._bdsimSource = "@CMAKE_SOURCE_DIR@"
 
+        self.crystalDataDir = self._bdsimSource + "/examples/features/components/data/"
+
         # components that can be varied
         self.components = ['drift',
                            'rbend',
                            'sbend',
-                           'vkick',
-                           'hkick',
                            'quadrupole',
                            'sextupole',
                            'octupole',
                            'decapole',
                            'multipole',
                            'thinmultipole',
+                           'vkicker',
+                           'hkicker',
+                           'kicker',
                            'rfcavity',
                            'rcol',
                            'ecol',
+                           'jcol',
                            'degrader',
                            'muspoiler',
                            'shield',
+                           'dump',
                            'solenoid',
                            'laser',
-                           'gap']
+                           'gap',
+                           'crystalcol',
+                           'undulator',
+                           'wirescanner',
+                           'thinrmatrix',
+                           'rmatrix']
 
         # parameters that can be varied (across all components)
         self.parameters = ['length',
                            'angle',
-                           'kickangle',
+                           'vkick',
+                           'hkick',
                            'field',
                            'e1',
                            'e2',
@@ -180,50 +191,64 @@ class Globals:
                            'h1',
                            'h2',
                            'fintK2',
-                           'fintxK2']
+                           'fintxK2',
+                           'wireDiameter',
+                           'wireLength',
+                           'rmat11',
+                           'rmat22',
+                           'rmat33',
+                           'rmat44',
+                           'undulatorPeriod']
 
-        #parameters that can be varied for each components type.
+        # parameters that can be varied for each components type.
         self.hasParams = {'drift'         : ['length'],
                           'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
                           'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
-                          'vkick'         : ['length', 'kickangle'],
-                          'hkick'         : ['length', 'kickangle'],
                           'quadrupole'    : ['length', 'k1'],
                           'sextupole'     : ['length', 'k2'],
                           'octupole'      : ['length', 'k3'],
                           'decapole'      : ['length', 'k4'],
                           'multipole'     : ['length', 'knl', 'ksl'],
                           'thinmultipole' : ['knl', 'ksl'],
+                          'vkicker'       : ['length', 'vkick', 'angle', 'field'],
+                          'hkicker'       : ['length', 'hkick', 'angle', 'field'],
+                          'kicker'        : ['length', 'hkick', 'vkick'],
                           'rfcavity'      : ['length', 'gradient'],
                           'rcol'          : ['length'],
                           'ecol'          : ['length'],
+                          'jcol'          : ['length'],
                           'degrader'      : ['length', 'numWedges', 'thickness'],
-                          'muspoiler'     : ['length', 'field', 'angle'],
+                          'muspoiler'     : ['length', 'field'],
                           'shield'        : ['length'],
+                          'dump'          : ['length'],
                           'solenoid'      : ['length', 'ks'],
                           'laser'         : ['length'],
-                          'gap'           : ['length']}
+                          'gap'           : ['length'],
+                          'crystalcol'    : ['length'],
+                          'undulator'     : ['length', 'field', 'undulatorPeriod'],
+                          'wirescanner'   : ['length', 'wireDiameter','wireLength'],
+                          'thinrmatrix'   : ['rmat11', 'rmat22', 'rmat33', 'rmat44'],
+                          'rmatrix'       : ['length', 'rmat11', 'rmat22', 'rmat33', 'rmat44']}
 
-        #use same magnet strengths for multipole and thinMultipole components
+        # use same magnet strengths for multipole and thinMultipole components
         self.magStrengths = {'k1': 0.025,
                              'k2': 5.0,
                              'k3': 1.5e3,
                              'k4': 6.0e5,
                              'k5': 3.0e8}
 
-        #lists for multipole and thinMultipole (all K components for given element)
+        # lists for multipole and thinMultipole (all K components for given element)
         self.k1l = [[-1.0 * self.magStrengths['k1']],             [0], [1.0 * self.magStrengths['k1']]]
         self.k2l = [[0, -1.0 * self.magStrengths['k2']],          [0], [0, 1.0 * self.magStrengths['k2']]]
         self.k3l = [[0, 0, -1.0 * self.magStrengths['k3']],       [0], [0, 0, 1.0 * self.magStrengths['k3']]]
         self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k4']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k4']]]
         self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k5']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k5']]]
 
-        #test values for the components parameters
-        #field is not set, it will be calculated upon writing based on length, angle, and energy.
-        #number of field values must equal the number of angle values.
+        # test values for the components parameters
+        # field is not set, it will be calculated upon writing based on length, angle, and energy.
+        # number of field values must equal the number of angle values.
         self.paramValues = {'length'    : [0.2, 2.0, 20.0],
                             'angle'     : [-0.3, -0.003, 0, 0.003, 0.3],
-                            'kickangle' : [-0.003, 0, 0.003],
                             'field'     : [0, 0, 0, 0, 0],
                             'e1'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
                             'e2'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
@@ -233,11 +258,13 @@ class Globals:
                             'k4'        : [-1.0 * self.magStrengths['k4'], 0, self.magStrengths['k4']],
                             'knl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
                             'ksl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
+                            'hkick'     : [-0.003, 0, 0.003],
+                            'vkick'     : [-0.003, 0, 0.003],
                             'gradient'  : [-20.0, -0.002, 0, 0.002, 20.0],
                             'xcol'      : [0.05],
                             'ycol'      : [0.05],
                             'numWedges' : [1, 5, 10],
-                            'thickness' : [0.01, 0.1, 1.0], #fraction of element length
+                            'thickness' : [0.01, 0.1, 1.0],  # fraction of element length
                             'ks'        : [-0.3, -0.003, 0, 0.003, 0.3],
                             'fint'      : [0, 1.0/6.0, 0.5],
                             'fintx'     : [0, 1.0/6.0, 0.5],
@@ -245,7 +272,15 @@ class Globals:
                             'h1'        : [-1.0, 0, 1.0],
                             'h2'        : [-1.0, 0, 1.0],
                             'fintK2'    : [0, 2.5, 5.0],
-                            'fintxK2'   : [0, 2.5, 5.0]}
+                            'fintxK2'   : [0, 2.5, 5.0],
+                            'wireDiameter': [1e-6, 1e-4, 1e-2],
+                            'wireLength': [1e-3, 1e-2],
+                            'rmat11'    : [1.0],
+                            'rmat22'    : [1.0],
+                            'rmat33'    : [1.0],
+                            'rmat44'    : [1.0],
+                            'undulatorPeriod' : [0.1, 1.0]
+                            }
 
         # test particles
         self.particles = ['e-', 'proton']
@@ -320,17 +355,19 @@ class Globals:
                               'linear1d' , 'linear2d' , 'linear3d' , 'linear4d',
                               'cubic1d'  , 'cubic2d'  , 'cubic3d'  , 'cubic4d']
 
+        # Geant4 tracking warnings
+        G4TrackingWarnings = ('G4MagInt_Driver::AccurateAdvance()',
+                              'G4MagIntegratorDriver::OneGoodStep:',
+                              'G4Navigator::GetLocalExitNormal()',
+                              'G4ParticleChange::CheckIt')
+
         self.ReturnsAndErrors = ReturnsAndErrors()
         self.ReturnsAndErrors.Add('SUCCESS',            0, 'b')
         self.ReturnsAndErrors.Add('FAILED',             1, (1, 1, 0))  # actual yellow
         self.ReturnsAndErrors.Add('FILE_NOT_FOUND',     2, (0.597, 0, 0))  # maroon
         self.ReturnsAndErrors.Add('OVERLAPS',           3, 'g', 'G4PVPlacement::CheckOverlaps()', True)
         self.ReturnsAndErrors.Add('STUCK_PARTICLE',     4, 'm', 'G4PropagatorInField::ComputeStep()', True)
-        self.ReturnsAndErrors.Add('TRACKING_WARNING',   5, 'c', ('G4MagInt_Driver::AccurateAdvance()',
-                                                                 'G4MagIntegratorDriver::OneGoodStep:',
-                                                                 'G4Navigator::GetLocalExitNormal()',
-                                                                 'G4ParticleChange::CheckIt'
-                                                                 ), True)
+        self.ReturnsAndErrors.Add('TRACKING_WARNING',   5, 'c', G4TrackingWarnings, True)
         self.ReturnsAndErrors.Add('TIMEOUT',            6, 'k')
         self.ReturnsAndErrors.Add('NO_DATA',            7, 'w')
         self.ReturnsAndErrors.Add('FATAL_EXCEPTION',    8, 'r', 'G4CutTubs::G4CutTubs()')
@@ -338,8 +375,11 @@ class Globals:
 
         self.timeout = 300  # timeout in seconds
 
+        self.seed = 2017 # seed used for all BDSIM runs
+
         self.multiEntryTypes = [tuple, list, _np.ndarray]
 
+        # list of servers to which a thread limit will be enforced (2/3rds all available threads).
         self.limitedServers = ["linappserv1.pp.rhul.ac.uk",
                                "linappserv2.pp.rhul.ac.uk",
                                "linappserv3.pp.rhul.ac.uk"]

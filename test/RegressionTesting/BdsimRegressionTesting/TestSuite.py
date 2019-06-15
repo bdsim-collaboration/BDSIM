@@ -31,7 +31,7 @@ def _runBDSIM(inputDict, timeout):
                     "--output=rootevent",
                     "--outfile="+inputDict['outputFile'],
                     "--batch",
-                    "--seed=2017"],
+                    "--seed="+_np.str(GlobalData.seed)],
                     stdout=open(inputDict['bdsimLogFile'], 'a'),
                     stderr=open(inputDict['bdsimLogFile'], 'a'))
 
@@ -295,6 +295,11 @@ class TestSuite(object):
 
         if fullTestSuite:
             self._FullTestSuite()
+
+    def __repr__(self):
+        s = 'BdsimRegressionTesting.TestSuite instance.\r\n'
+        s += 'This suite contains ' + _np.str(len(self._tests)) + '.\r\n'
+        return s
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.

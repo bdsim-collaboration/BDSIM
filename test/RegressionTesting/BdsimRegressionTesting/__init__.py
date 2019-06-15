@@ -1,6 +1,6 @@
-# pybdsim - python tools for bdsim
+# BDSIM Regression testing
 # Version 1.0
-# L. Nevay, S.T.Boogert
+# W. Shields
 
 
 """
@@ -12,10 +12,6 @@ pybdsim - python tools for bdsim
 | matplotlib  - 1.3.0
 
 | Modules:
-| Builder - create generic accelerators for bdsim
-| Convert - convert other formats into gmad
-| Data    - read the bdsim output formats
-| Fields  - write BDSIM field format
 
 
 """
