@@ -78,12 +78,11 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   particleGun->SetParticleTime(0);
 
     G4bool useEventGenerator = true;
-    //G4String eventFile = "";
-    //eventFile.empty()
+    const BDSGlobalConstants* glob = BDSGlobalConstants::Instance();
     if (useEventGenerator)
     {
         //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
-        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/faser-from-IP/datafiles/data1.dat");
+        G4String filename = glob->HepMCFileName();
         G4cout << "data file is: "<< filename << G4endl;
         hepMCLoader = new HepMCG4AsciiReader(filename, 0);
         G4cout <<  filename << G4endl;

@@ -276,6 +276,7 @@ OptionsBase::OptionsBase()
   // circular options
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
+  HepMCFileName            = "";
 
   printFractionEvents = 0.1;
   printFractionTurns  = 0.2;
