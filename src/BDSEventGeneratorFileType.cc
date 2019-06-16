@@ -32,11 +32,7 @@ std::map<BDSEventGeneratorFileType, std::string>* BDSEventGeneratorFileType::dic
       {BDSEventGeneratorFileType::hpe,          "hpe"},
       {BDSEventGeneratorFileType::root,         "root"},
       {BDSEventGeneratorFileType::treeroot,     "treeroot"},
-      {BDSEventGeneratorFileType::treerootopal, "treerootopal"},
-      {BDSEventGeneratorFileType::hpezeus,      "hpezeus"},
       {BDSEventGeneratorFileType::lhef,         "lhef"},
-      {BDSEventGeneratorFileType::dump,         "dump"},
-      {BDSEventGeneratorFileType::dot,          "dot"}
 });
 
 BDSEventGeneratorFileType BDS::DetermineEventGeneratorFileType(G4String distrType)
@@ -48,11 +44,7 @@ BDSEventGeneratorFileType BDS::DetermineEventGeneratorFileType(G4String distrTyp
   types["hpe"]          = BDSEventGeneratorFileType::hpe;
   types["root"]         = BDSEventGeneratorFileType::root;
   types["treeroot"]     = BDSEventGeneratorFileType::treeroot;
-  types["treerootopal"] = BDSEventGeneratorFileType::treerootopal;
-  types["hpezeus"]      = BDSEventGeneratorFileType::hpezeus;
   types["lhef"]         = BDSEventGeneratorFileType::lhef;
-  types["dump"]         = BDSEventGeneratorFileType::dump;
-  types["dot"]          = BDSEventGeneratorFileType::dot;
 
   distrType.toLower();
 

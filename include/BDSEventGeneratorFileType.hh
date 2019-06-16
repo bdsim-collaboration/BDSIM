@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct eventgeneratorfiletypes_def
 {
-  enum type {hepmc2, hepmc3, hpe, root, treeroot, treerootopal, hpezeus, lhef, dump, dot};
+  enum type {hepmc2, hepmc3, hpe, root, treeroot, lhef};
 };
 
 typedef BDSTypeSafeEnum<eventgeneratorfiletypes_def,int> BDSEventGeneratorFileType;
