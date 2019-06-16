@@ -132,7 +132,9 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 					       centralCoords.z,
 					       centralCoords.T);
 
-  double overallWeight = hepmcevt->weight();
+  double overallWeight = 1.0;
+  if (hepmcevt->weights().size() > 0)
+    {overallWeight = hepmcevt->weight();}
   std::vector<BDSPrimaryVertexInformation> vertexInfos;
   for (const auto& particlePtr : hepmcevt->particles())
     {
@@ -148,7 +150,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4double pz = p.z() * CLHEP::GeV;
       G4ThreeVector unitMomentum(px,py,pz);
       unitMomentum = unitMomentum.unit();
-      
+
       G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, px, py, pz);
 
       BDSParticleCoordsFull local(centralCoords.x,
@@ -174,7 +176,8 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       BDSPrimaryVertexInformation vertexInfo(fullCoords,
 					     g4prim->GetCharge(),
 					     brho,
-					     g4prim->GetMass());
+					     g4prim->GetMass(),
+					     pdgcode);
       vertexInfos.emplace_back(vertexInfo);
 
       // update momentum in case of a beam line transform
