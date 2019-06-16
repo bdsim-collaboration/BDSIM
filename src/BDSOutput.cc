@@ -198,8 +198,8 @@ void BDSOutput::FillModel()
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 			    const G4int            turnsTaken)
 {
-  auto vertexInfo    = vertex->GetUserInformation();
-  if (auto vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo);)
+  const G4VUserPrimaryVertexInformation* vertexInfo = vertex->GetUserInformation();
+  if (const BDSPrimaryVertexInformation* vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo))
     {
       primary->Fill(vertexInfoBDS->primaryVertex.local,
 		    vertexInfoBDS->charge,
