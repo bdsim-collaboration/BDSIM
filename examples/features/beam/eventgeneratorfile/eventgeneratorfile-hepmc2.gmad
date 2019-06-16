@@ -3,7 +3,16 @@ beam,  particle = "e-",
        distrType = "eventgeneratorfile:hepmc2",
        distrFile = "egf-hepmc2.dat";
 
-include options.gmad
-include fodo.gmad;
+
+d1: drift, l=0.25;
+q1: quadrupole, l=0.5, k1=2.0;
+q2: quadrupole, l=0.5, k1=-2.0;
+
+lat : line = (d1,q1,d1,d1,q2,d1);
+use, period=lat;
+
+sample, all;
+
+option, stopSecondaries=1;
 
 option, ngenerate=2;
