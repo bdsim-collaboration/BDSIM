@@ -151,10 +151,12 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 			       G4Event* g4event)
 {
   BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
-  G4PrimaryVertex* g4vtx = new G4PrimaryVertex(centralCoords.x,
-					       centralCoords.y,
-					       centralCoords.z,
-					       centralCoords.T);
+  // do the transform for the reference particle (if any transform) and use that
+  BDSParticleCoordsFullGlobal centralCoordsGlobal = bunch->ApplyTransform(centralCoords);
+  G4PrimaryVertex* g4vtx = new G4PrimaryVertex(centralCoordsGlobal.global.x,
+					       centralCoordsGlobal.global.y,
+					       centralCoordsGlobal.global.z,
+					       centralCoordsGlobal.global.T);
 
   double overallWeight = 1.0;
   if (hepmcevt->weights().size() > 0)
@@ -208,7 +210,6 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       g4prim->SetMomentumDirection(G4ThreeVector(fullCoords.global.xp,
 						 fullCoords.global.yp,
 						 fullCoords.global.zp));
-      
       g4vtx->SetPrimary(g4prim);
     }
 
