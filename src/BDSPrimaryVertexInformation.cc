@@ -33,8 +33,6 @@ BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoord
   nElectrons(nElectronsIn)
 {;}
 
-
-
 void BDSPrimaryVertexInformation::Print() const
 {
   G4cout << primaryVertex << G4endl;
