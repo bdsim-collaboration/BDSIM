@@ -23,16 +23,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventGeneratorFileType.hh"
 #include "BDSException.hh"
 #include "BDSHepMC3Reader.hh"
+#include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
+#include "BDSPhysicalConstants.hh"
+#include "BDSPrimaryVertexInformation.hh"
+#include "BDSPrimaryVertexInformationV.hh"
 #include "BDSUtilities.hh"
 
-#include "G4RunManager.hh"
-#include "G4LorentzVector.hh"
 #include "G4Event.hh"
+#include "G4LorentzVector.hh"
+#include "G4PhysicalConstants.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
-#include "G4TransportationManager.hh"
-#include "G4PhysicalConstants.hh"
+#include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4TransportationManager.hh"
 
 #include "HepMC3/Attribute.h"
 #include "HepMC3/GenParticle.h"
@@ -60,9 +66,10 @@ BDSHepMC3Reader::BDSHepMC3Reader():
 
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 				 const G4String& fileNameIn,
-				 const BDSBunch* bunchIn):
+				 BDSBunch*       bunchIn):
   hepmcEvent(nullptr),
-  reader(nullptr)
+  reader(nullptr),
+  bunch(bunchIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   BDSEventGeneratorFileType fileType = BDS::DetermineEventGeneratorFileType(ba.second);
@@ -117,24 +124,69 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
-                                G4Event* g4event)
+			       G4Event* g4event)
 {
-  G4PrimaryVertex* g4vtx = new G4PrimaryVertex(0, 0, 0, 0);
+  BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
+  G4PrimaryVertex* g4vtx = new G4PrimaryVertex(centralCoords.x,
+					       centralCoords.y,
+					       centralCoords.z,
+					       centralCoords.T);
 
-  for (const auto &particlePtr : hepmcevt->particles())
+  double overallWeight = hepmcevt->weight();
+  std::vector<BDSPrimaryVertexInformation> vertexInfos;
+  for (const auto& particlePtr : hepmcevt->particles())
     {
       const HepMC3::GenParticle* particle = particlePtr.get();
       if (!particle->children().empty())
-	{continue;}
+	{continue;} // this particle is not at the end of the tree - ignore
+      
       int pdgcode = particle->pdg_id();
       HepMC3::FourVector fv = particle->momentum();
       G4LorentzVector p(fv.px(), fv.py(), fv.pz(), fv.e());
-      G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode,
-							p.x() * CLHEP::GeV,
-							p.y() * CLHEP::GeV,
-							p.z() * CLHEP::GeV);
+      G4double px = p.x() * CLHEP::GeV;
+      G4double py = p.y() * CLHEP::GeV;
+      G4double pz = p.z() * CLHEP::GeV;
+      G4ThreeVector unitMomentum(px,py,pz);
+      unitMomentum = unitMomentum.unit();
+      
+      G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, px, py, pz);
+
+      BDSParticleCoordsFull local(centralCoords.x,
+				  centralCoords.y,
+				  centralCoords.z,
+				  unitMomentum.x(),
+				  unitMomentum.y(),
+				  unitMomentum.z(),
+				  centralCoords.T,
+				  centralCoords.s,
+				  g4prim->GetTotalEnergy(),
+				  overallWeight);
+      
+      BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
+      G4double brho     = 0;
+      G4double charge   = g4prim->GetCharge();
+      G4double momentum = g4prim->GetTotalMomentum();
+      if (BDS::IsFinite(charge)) // else leave as 0
+	{
+	  brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
+	  brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
+	}
+      BDSPrimaryVertexInformation vertexInfo(fullCoords,
+					     g4prim->GetCharge(),
+					     brho,
+					     g4prim->GetMass());
+      vertexInfos.emplace_back(vertexInfo);
+
+      // update momentum in case of a beam line transform
+      g4prim->SetMomentumDirection(G4ThreeVector(fullCoords.global.xp,
+						 fullCoords.global.yp,
+						 fullCoords.global.zp));
+      
       g4vtx->SetPrimary(g4prim);
     }
+
+  g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
+  
   g4event->AddPrimaryVertex(g4vtx);
 }
 

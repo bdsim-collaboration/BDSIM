@@ -40,7 +40,7 @@ public:
   BDSHepMC3Reader();
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
-		  const BDSBunch* bunchIn);
+		  BDSBunch*       bunchIn);
   virtual ~BDSHepMC3Reader();
 
   /// Accessor.
@@ -68,6 +68,7 @@ protected:
 private:
 
   HepMC3::Reader* reader;
+  BDSBunch* bunch;
 };
 
 #endif
