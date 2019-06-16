@@ -101,17 +101,16 @@ BDSHepMC3Reader::~BDSHepMC3Reader()
   delete reader;
 }
 
-G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
+void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 {
-  G4Navigator* navigator= G4TransportationManager::GetTransportationManager()
-                                                 -> GetNavigatorForTracking();
+  delete hepmcEvent;
+  hepmcEvent = new HepMC3::GenEvent();
 
-  G4VPhysicalVolume* world= navigator-> GetWorldVolume();
-  G4VSolid* solid= world-> GetLogicalVolume()-> GetSolid();
-  EInside qinside= solid-> Inside(pos);
-
-  if( qinside != kInside) return false;
-  else return true;
+  bool readEventOK = reader->read_event(*hepmcEvent);
+  if (!readEventOK)
+    {anEvent->SetEventAborted(); return;}
+  
+  HepMC2G4(hepmcEvent, anEvent);
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
@@ -136,26 +135,17 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   g4event->AddPrimaryVertex(g4vtx);
 }
 
-HepMC3::GenEvent* BDSHepMC3Reader::GenerateHepMCEvent()
+G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
 {
-  HepMC3::GenEvent* aevent = new HepMC3::GenEvent();
-  return aevent;
-}
+  G4Navigator* navigator= G4TransportationManager::GetTransportationManager()
+                                                 -> GetNavigatorForTracking();
 
-void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
-{
-  // delete previous event object
-  delete hepmcEvent;
+  G4VPhysicalVolume* world= navigator-> GetWorldVolume();
+  G4VSolid* solid= world-> GetLogicalVolume()-> GetSolid();
+  EInside qinside= solid-> Inside(pos);
 
-  // generate next event
-  hepmcEvent = GenerateHepMCEvent();
-  if(! hepmcEvent)
-    {
-      G4cout << "HepMCInterface: no generated particles. run terminated..." << G4endl;
-      G4RunManager::GetRunManager()-> AbortRun();
-      return;
-    }
-  HepMC2G4(hepmcEvent, anEvent);
+  if( qinside != kInside) return false;
+  else return true;
 }
 
 #endif

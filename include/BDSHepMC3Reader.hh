@@ -65,10 +65,6 @@ protected:
   // service method for conversion from HepMC::GenEvent to G4Event
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
 
-  // Implement this method in his/her own concrete class.
-  // An empty event will be created in default.
-  virtual HepMC3::GenEvent* GenerateHepMCEvent();
-
 private:
 
   HepMC3::Reader* reader;
