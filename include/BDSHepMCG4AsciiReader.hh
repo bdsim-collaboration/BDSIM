@@ -34,7 +34,7 @@
 #ifndef BDSHEPMCG4ASCIIREADER_H
 #define BDSHEPMCG4ASCIIREADER_H
 
-#include "BDSHepMCG4Interface.hh"
+#include "BDSHepMC3Reader.hh"
 #include "HepMC3/ReaderAsciiHepMC2.h"
 
 class HepMCG4AsciiReaderMessenger;
