@@ -28,11 +28,11 @@
 /// \file eventgenerator/HepMC/HepMCEx01/include/HepMCG4Interface.hh
 /// \brief Definition of the HepMCG4Interface class
 //
-// $Id: HepMCG4Interface.hh 77801 2013-11-28 13:33:20Z gcosmo $
+// $Id: BDSHepMC3Reader.hh 77801 2013-11-28 13:33:20Z gcosmo $
 //
 
-#ifndef BDSHEPMCG4INTERFACE_H
-#define BDSHEPMCG4INTERFACE_H
+#ifndef BDSHEPMC3READER_H
+#define BDSHEPMC3READER_H
 
 #include "G4VPrimaryGenerator.hh"
 #include "HepMC3/GenEvent.h"
@@ -42,7 +42,7 @@
 /// A base class for primary generation via HepMC object.
 /// This class is derived from G4VPrimaryGenerator.
 
-class HepMCG4Interface : public G4VPrimaryGenerator {
+class BDSHepMC3Reader: public G4VPrimaryGenerator {
 protected:
   // Note that the life of HepMC event object must be handled by users.
   // In the default implementation, a current HepMC event will be
@@ -63,8 +63,8 @@ protected:
   virtual HepMC3::GenEvent* GenerateHepMCEvent();
 
 public:
-  HepMCG4Interface();
-  virtual ~HepMCG4Interface();
+  BDSHepMC3Reader();
+  virtual ~BDSHepMC3Reader();
 
   // set/get methods
   HepMC3::GenEvent* GetHepMCGenEvent() const;
@@ -75,7 +75,7 @@ public:
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-inline HepMC3::GenEvent* HepMCG4Interface::GetHepMCGenEvent() const
+inline HepMC3::GenEvent* BDSHepMC3Reader::GetHepMCGenEvent() const
 {
   return hepmcEvent;
 }

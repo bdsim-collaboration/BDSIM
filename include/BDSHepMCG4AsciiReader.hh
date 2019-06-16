@@ -41,7 +41,7 @@ class HepMCG4AsciiReaderMessenger;
 class G4Event;
 
 
-class HepMCG4AsciiReader : public HepMCG4Interface {
+class HepMCG4AsciiReader : public BDSHepMC3Reader {
 protected:
     G4String filename;
     HepMC3::ReaderAsciiHepMC2* asciiInput;
