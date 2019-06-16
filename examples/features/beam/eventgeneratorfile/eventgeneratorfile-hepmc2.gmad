@@ -16,3 +16,5 @@ sample, all;
 option, stopSecondaries=1;
 
 option, ngenerate=2;
+
+option, physicsList="g4FTFP_BERT";
