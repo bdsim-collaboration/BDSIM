@@ -419,7 +419,6 @@ void Options::PublishMembers()
   // circular options
   publish("nturns",                   &Options::nturns);
   publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
-  publish("HepMCFileName",            &Options::HepMCFileName);
 
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
