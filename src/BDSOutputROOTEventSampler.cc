@@ -120,6 +120,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4double rigidityIn,
 					G4bool fillIon)
 {
+  trackID.push_back(n); // we assume multiple primaries are linearly increasing in track number
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
   x.push_back((U &&)  (coords.x  / CLHEP::m));
@@ -132,7 +133,6 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   weight.push_back((const U &) coords.weight);
   partID.push_back(pdgID);
   parentID.push_back(0);
-  trackID.push_back(0);
   modelID = beamlineIndex;
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
@@ -182,7 +182,6 @@ template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSPrimaryVertexInformationV* vertexInfos,
 					const G4int turnsTaken)
 {
-
   for (const auto& vertexInfo : vertexInfos->vertices)
     {
       Fill(vertexInfo.primaryVertex.local,
