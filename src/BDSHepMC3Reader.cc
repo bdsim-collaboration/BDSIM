@@ -103,6 +103,9 @@ BDSHepMC3Reader::~BDSHepMC3Reader()
 
 void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 {
+  if (!reader)
+    {throw BDSException(__METHOD_NAME__, "no file reader available");}
+  
   delete hepmcEvent;
   hepmcEvent = new HepMC3::GenEvent();
 
@@ -141,8 +144,8 @@ G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
                                                  -> GetNavigatorForTracking();
 
   G4VPhysicalVolume* world= navigator-> GetWorldVolume();
-  G4VSolid* solid= world-> GetLogicalVolume()-> GetSolid();
-  EInside qinside= solid-> Inside(pos);
+  G4VSolid* solid = world->GetLogicalVolume()->GetSolid();
+  EInside qinside = solid->Inside(pos);
 
   if( qinside != kInside) return false;
   else return true;

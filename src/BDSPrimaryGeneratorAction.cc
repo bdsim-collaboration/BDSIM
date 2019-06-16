@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSHepMCG4AsciiReader.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticleDefinition.hh"
@@ -32,6 +31,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
+
+#ifdef USE_HEPMC3
+#include "BDSHepMC3Reader.hh"
+#endif
 
 #include "parser/beam.h"
 
@@ -57,8 +60,11 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   particleCharge(beamParticleIn->Charge()), // always right even if ion
   useEventGeneratorFile(false),
   ionCached(false),
-  oneTurnMap(nullptr),
-  hepMCLoader(nullptr)
+  oneTurnMap(nullptr)
+#ifdef USE_HEPMC3
+  ,
+  hepMC3Reader(nullptr)
+#endif
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -83,7 +89,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
     {
 #ifdef USE_HEPMC3
       G4String filename = BDS::GetFullPath(beam.distrFile);
-      hepMCLoader = new HepMCG4AsciiReader(filename, 0);
+      hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, bunchIn);
 #else
       throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
 #endif
@@ -94,7 +100,9 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
   delete recreateFile;
-  delete hepMCLoader;
+#ifdef USE_HEPMC3
+  delete hepMC3Reader;
+#endif
 }
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -125,7 +133,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #ifdef USE_HEPMC3
   if (useEventGeneratorFile)
     {
-      hepMCLoader->GeneratePrimaryVertex(anEvent);
+      hepMC3Reader->GeneratePrimaryVertex(anEvent);
       return; // don't need any further steps
     }
 #endif

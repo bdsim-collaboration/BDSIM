@@ -30,14 +30,16 @@ class BDSOutputLoader;
 class BDSParticleDefinition;
 class BDSPTCOneTurnMap;
 class G4Event;
-class G4HEPEvtInterface;
 class G4ParticleGun;
-class HepMCG4AsciiReader;
 
 namespace GMAD
 {
   class Beam;
 }
+
+#ifdef USE_HEPMC3
+class BDSHepMC3Reader;
+#endif
 
 /**
  * @brief Generates primary particle vertices using BDSBunch.
@@ -93,8 +95,10 @@ private:
   /// Cached OTM for setting first turn primary coords.
   BDSPTCOneTurnMap* oneTurnMap;
 
+#ifdef USE_HEPMC3
   /// Event generator file loader.
-  HepMCG4AsciiReader* hepMCLoader;
+  BDSHepMC3Reader* hepMC3Reader;
+#endif
 };
 
 #endif
