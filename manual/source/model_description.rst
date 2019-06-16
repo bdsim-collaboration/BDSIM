@@ -4667,9 +4667,17 @@ should only be used with understanding.
 Beam Parameters
 ---------------
 
-BDSIM starts each event by simulating one particle from a beam distribution. A distribution is
-chosen by the user in the input GMAD and the particle coordinates are randomly generated according
-to this distribution. To specify the input particle distribution, the :code:`beam` command is
+BDSIM starts each event in one of two ways.
+
+1) Particles coordinates for one particle
+   are generated from a chosen beam distribution, which is specified in the input GMAD file.
+   In most cases, the particle coordinates are randomly generated according
+   to the distribution.
+
+2) A primary vertex is loaded from an event genertor file. This currently requires linking to
+   HepMC3 to load such files. In this case, each event may start with 1 or more particles.
+
+To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
 design total energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic rigidity that normalised magnetic
@@ -4777,6 +4785,12 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
+.. note:: This will not work when using an event generator file. Using an event generator
+	  file requires the particle table in Geant4 be loaded and this can only be done
+	  in a full run where we construct the model. By default, the generate primaries
+	  only, only generates coordinates and does not build a Geant4 model.
+
+
 Beam in Output
 ^^^^^^^^^^^^^^
 
@@ -4814,6 +4828,7 @@ The following beam distributions are available in BDSIM
 - `composite`_
 - `userfile`_
 - `ptc`_
+- `eventgeneratorfile`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -5408,6 +5423,12 @@ Output from MAD-X PTC used as input for BDSIM.
 +----------------------------------+-------------------------------------------------------+
 
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
+
+eventgeneratorfile
+^^^^^^^^^^^^^^^^^^
+
+To use a file from an event generator, the HepMC3 library must be used and BDSIM must be
+compiled with respect to it.  See :ref:`installation-bdsim-config-options` for more details.
 
 .. _tunnel-geometry:
 

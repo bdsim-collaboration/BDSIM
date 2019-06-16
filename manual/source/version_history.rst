@@ -19,6 +19,8 @@ New Features
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * Support for partially stripped ions in output samplers.
+* Optional linking to HepMC3 for event generator output file loading. Can load any format
+  HepMC3 can load.
 
 * New options:
 
@@ -91,6 +93,9 @@ Output Changes
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
+* BDSOutputROOTEventCoords member variables are now all vectors instead of single numbers. This
+  is to allow the possibility of more than one primary particle as is possible when loading a
+  file from an event generator.
 
 Utilities
 ---------
