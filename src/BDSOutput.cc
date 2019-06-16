@@ -203,7 +203,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
     {
       primary->Fill(vertexInfoBDS->primaryVertex.local,
 		    vertexInfoBDS->charge,
-		    vertex->GetPrimary()->GetPDGcode(),
+		    vertexInfoBDS->pdgID,
 		    turnsTaken,
 		    vertexInfoBDS->primaryVertex.beamlineIndex,
 		    vertexInfoBDS->nElectrons,

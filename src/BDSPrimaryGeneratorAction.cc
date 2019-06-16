@@ -274,6 +274,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 							     particleCharge,
 							     particleToUse->BRho(),
 							     particleToUse->Mass(),
+							     particleToUse->ParticleDefinition()->GetPDGEncoding(),
 							     nElectrons));
 
 #ifdef BDSDEBUG
