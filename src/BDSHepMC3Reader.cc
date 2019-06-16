@@ -69,24 +69,30 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 				 BDSBunch*       bunchIn):
   hepmcEvent(nullptr),
   reader(nullptr),
+  fileName(fileNameIn),
   bunch(bunchIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
-  BDSEventGeneratorFileType fileType = BDS::DetermineEventGeneratorFileType(ba.second);
+  fileType = BDS::DetermineEventGeneratorFileType(ba.second);
 
+  OpenFile();
+}
+
+void BDSHepMC3Reader::OpenFile()
+{
   switch (fileType.underlying())
     {
     case BDSEventGeneratorFileType::hepmc2:
-      {reader = new HepMC3::ReaderAsciiHepMC2(fileNameIn); break;}
+      {reader = new HepMC3::ReaderAsciiHepMC2(fileName); break;}
     case BDSEventGeneratorFileType::hepmc3:
-      {reader = new HepMC3::ReaderAscii(fileNameIn); break;}
+      {reader = new HepMC3::ReaderAscii(fileName); break;}
     case BDSEventGeneratorFileType::hpe:
-      {reader = new HepMC3::ReaderHEPEVT(fileNameIn); break;}
+      {reader = new HepMC3::ReaderHEPEVT(fileName); break;}
 #ifdef HEPMC3_ROOTIO
     case BDSEventGeneratorFileType::root:
-      {reader = new HepMC3::ReaderRoot(fileNameIn); break;}
+      {reader = new HepMC3::ReaderRoot(fileName); break;}
     case BDSEventGeneratorFileType::treeroot:
-      {reader = new HepMC3::ReaderRootTree(fileNameIn); break;}
+      {reader = new HepMC3::ReaderRootTree(fileName); break;}
 #else
     case BDSEventGeneratorFileType::root:
     case BDSEventGeneratorFileType::treeroot:
@@ -96,10 +102,17 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
       }
 #endif
     case BDSEventGeneratorFileType::lhef:
-      {reader = new HepMC3::ReaderLHEF(fileNameIn); break;}
+      {reader = new HepMC3::ReaderLHEF(fileName); break;}
     default:
       {break;}
     }
+}
+
+void BDSHepMC3Reader::CloseFile()
+{
+  if (reader)
+    {reader->close();}
+  delete reader;
 }
 
 BDSHepMC3Reader::~BDSHepMC3Reader()
@@ -118,7 +131,15 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
   bool readEventOK = reader->read_event(*hepmcEvent);
   if (!readEventOK)
-    {anEvent->SetEventAborted(); return;}
+    {
+      G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
+      CloseFile();
+      delete hepmcEvent;
+      hepmcEvent = new HepMC3::GenEvent();
+      readEventOK = reader->read_event(*hepmcEvent);
+      if (!readEventOK)
+	{throw BDSException(__METHOD_NAME__, "cannot read file \"" + fileName + "\".");}
+    }
   
   HepMC2G4(hepmcEvent, anEvent);
 }

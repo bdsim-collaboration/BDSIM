@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSHEPMC3READER_H
 #define BDSHEPMC3READER_H
 
+#include "BDSEventGeneratorFileType.hh"
+
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "G4VPrimaryGenerator.hh"
@@ -51,6 +53,13 @@ public:
   virtual void GeneratePrimaryVertex(G4Event* anEvent);
 
 protected:
+  /// Construct the member "reader" and open the file for reading.
+  void OpenFile();
+
+  /// Close and delete reader. Have to delete as HepMC3 readers have no iteration
+  /// or ability to loop back to the beginning.
+  void CloseFile();
+  
   // Note that the life of HepMC event object must be handled by users.
   // In the default implementation, a current HepMC event will be
   // deleted at GeneratePrimaryVertex() in the next event.
@@ -68,7 +77,9 @@ protected:
 private:
 
   HepMC3::Reader* reader;
-  BDSBunch* bunch;
+  G4String        fileName;
+  BDSBunch*       bunch;
+  BDSEventGeneratorFileType fileType;
 };
 
 #endif
