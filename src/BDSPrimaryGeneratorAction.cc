@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4HepEvtInterface.hh"
+#include "BDSHepMCG4AsciiReader.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticleDefinition.hh"
@@ -33,8 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
 
-
-#include "BDSHepMCG4AsciiReader.hh"
+#include "parser/beam.h"
 
 #include "CLHEP/Random/Random.h"
 
@@ -47,17 +46,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
-						     BDSParticleDefinition* beamParticleIn):
+						     BDSParticleDefinition* beamParticleIn,
+						     const GMAD::Beam&      beam):
   beamParticle(beamParticleIn),
   ionDefinition(beamParticleIn->IonDefinition()),
   bunch(bunchIn),
   recreateFile(nullptr),
   eventOffset(0),
   ionPrimary(beamParticleIn->IsAnIon()),
-  ionCached(false),
   particleCharge(beamParticleIn->Charge()), // always right even if ion
+  useEventGeneratorFile(false),
+  ionCached(false),
   oneTurnMap(nullptr),
-//  evgenHepMC(nullptr),
   hepMCLoader(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
@@ -77,16 +77,12 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleTime(0);
 
-    G4bool useEventGenerator = true;
-    //G4String eventFile = "";
-    //eventFile.empty()
-    if (useEventGenerator)
+  BDSBunchType egf = BDSBunchType::eventgeneratorfile;
+  useEventGeneratorFile = G4String(beam.distrType).contains(egf.ToString());
+  if (useEventGeneratorFile)
     {
-        //G4String filename = BDS::GetFullPath(bunchIn->evgenFile);
-        G4String filename = BDS::GetFullPath("/Users/pikharha/Work/FASER/faser-from-IP/datafiles/data1.dat");
-        G4cout << "data file is: "<< filename << G4endl;
-        hepMCLoader = new HepMCG4AsciiReader(filename, 0);
-        G4cout <<  filename << G4endl;
+      G4String filename = BDS::GetFullPath(beam.distrFile);
+      hepMCLoader = new HepMCG4AsciiReader(filename, 0);
     }
 }
 
@@ -94,7 +90,7 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
   delete recreateFile;
-  delete  hepMCLoader;
+  delete hepMCLoader;
 }
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -123,13 +119,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
 #ifdef USE_HEPMC3
-  if (true)
+  if (useEventGeneratorFile)
     {
-        //hepMCLoader->GeneratePrimaryVertex(anEvent);
-        hepMCLoader->GeneratePrimaryVertex(anEvent);
-        anEvent->GetPrimaryVertex(0)->Print();
-       return;
-   }
+      hepMCLoader->GeneratePrimaryVertex(anEvent);
+      anEvent->GetPrimaryVertex(0)->Print(); // TBC - check it's valid...
+      return;
+    }
 #endif
 
   G4double mass = beamParticle->Mass();

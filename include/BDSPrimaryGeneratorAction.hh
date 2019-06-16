@@ -32,10 +32,12 @@ class BDSPTCOneTurnMap;
 class G4Event;
 class G4HEPEvtInterface;
 class G4ParticleGun;
-
-class G4EvgenHepMC;
 class HepMCG4AsciiReader;
-//class BDSHepMC;
+
+namespace GMAD
+{
+  class Beam;
+}
 
 /**
  * @brief Generates primary particle vertices using BDSBunch.
@@ -46,7 +48,8 @@ class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
   BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
-			    BDSParticleDefinition* beamParticleIn);
+			    BDSParticleDefinition* beamParticleIn,
+			    const GMAD::Beam&      beam);
   virtual ~BDSPrimaryGeneratorAction();
   
   virtual void GeneratePrimaries(G4Event*);
@@ -63,6 +66,7 @@ private:
   
   /// Pointer a to G4 service class.
   G4ParticleGun*   particleGun;	  
+
   /// Pointer to the particle distribution generator.
   BDSBunch*        bunch;
 
@@ -71,34 +75,26 @@ private:
 
   /// Optional output handler for restoring seed state.
   BDSOutputLoader* recreateFile;
-
-  /// Whether to load seed state at start of event from rootevent file.
-  G4bool recreate;
-
-  /// The offset in the file to read events from when setting the seed.
-  G4int  eventOffset;
-
-  /// Whether to use the ascii seed state each time.
-  G4bool useASCIISeedState;
-
+  
+  G4bool   recreate;         ///< Whether to load seed state at start of event from rootevent file.
+  G4int    eventOffset;      ///< The offset in the file to read events from when setting the seed.
+  G4bool   useASCIISeedState;///< Whether to use the ascii seed state each time.
+  G4bool   ionPrimary;       ///< The primary particle will be an ion.
+  G4double particleCharge;   ///< Charge that will replace default ion charge.
+  G4bool   useEventGeneratorFile; ///< Whether to use event generator file.
+  
   /// World extent that particle coordinates are checked against to ensure they're inside it.
   BDSExtent worldExtent;
-
-  G4bool ionPrimary; ///< The primary particle will be an ion.
 
   /// Can only get a G4ParticleDefinition for an ion when primary generator is called
   /// so cache the first time. This is the flag of that cache.
   G4bool ionCached; 
-  
-  G4double particleCharge; ///< Charge that will replace default ion charge.
 
   /// Cached OTM for setting first turn primary coords.
   BDSPTCOneTurnMap* oneTurnMap;
 
-  ///
+  /// Event generator file loader.
   HepMCG4AsciiReader* hepMCLoader;
-
-    //BDSHepMC* evgenHepMC;
 };
 
 #endif
