@@ -41,7 +41,7 @@ std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
       {BDSBunchType::userfile,    "userfile"},
       {BDSBunchType::ptc,         "ptc"},
       {BDSBunchType::sixtrack,    "sixtrack"},
-      {BDSBunchType::evgenFile,   "evgenFile"},
+      {BDSBunchType::eventgeneratorfile, "eventgeneratorfile"}
 });
 
 BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
@@ -61,7 +61,7 @@ BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
   types["userfile"]       = BDSBunchType::userfile;
   types["ptc"]            = BDSBunchType::ptc;
   types["sixtrack"]       = BDSBunchType::sixtrack;
-  types["evgenFile"]      = BDSBunchType::evgenFile;
+  types["eventgeneratorfile"] = BDSBunchType::eventgeneratorfile;
 
   // distrType.toLower();
 
