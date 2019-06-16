@@ -81,8 +81,12 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   useEventGeneratorFile = G4String(beam.distrType).contains(egf.ToString());
   if (useEventGeneratorFile)
     {
+#ifdef USE_HEPMC3
       G4String filename = BDS::GetFullPath(beam.distrFile);
       hepMCLoader = new HepMCG4AsciiReader(filename, 0);
+#else
+      throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
+#endif
     }
 }
 
