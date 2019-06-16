@@ -122,8 +122,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (useEventGeneratorFile)
     {
       hepMCLoader->GeneratePrimaryVertex(anEvent);
-      anEvent->GetPrimaryVertex(0)->Print(); // TBC - check it's valid...
-      return;
+      return; // don't need any further steps
     }
 #endif
 
