@@ -63,7 +63,7 @@ BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
   types["sixtrack"]       = BDSBunchType::sixtrack;
   types["eventgeneratorfile"] = BDSBunchType::eventgeneratorfile;
 
-  // distrType.toLower();
+  distrType.toLower();
 
   auto result = types.find(distrType);
   if (result == types.end())
