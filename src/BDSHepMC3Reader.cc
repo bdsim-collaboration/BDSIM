@@ -131,9 +131,12 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
   bool readEventOK = reader->read_event(*hepmcEvent);
   if (!readEventOK)
+    {throw BDSException(__METHOD_NAME__, "problem with event generator file \"" + fileName + "\"");}
+  if (reader->failed()) // code for finished hte file
     {
       G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
       CloseFile();
+      OpenFile();
       delete hepmcEvent;
       hepmcEvent = new HepMC3::GenEvent();
       readEventOK = reader->read_event(*hepmcEvent);
