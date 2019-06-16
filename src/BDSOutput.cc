@@ -216,7 +216,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
     {// vector version - multiple primaries at primary vertex
       primary->Fill(vertexInfoBDSV,
 		    turnsTaken);
-      //primaryGlobal->Fill(vertexInfoBDSV);
+      primaryGlobal->Fill(vertexInfoBDSV);
     }
 }
 
