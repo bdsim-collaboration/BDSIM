@@ -1,0 +1,9 @@
+beam,  particle = "e-",
+       energy = 1.0*GeV,
+       distrType = "eventgeneratorfile:hepmc2",
+       distrFile = "egf-hepmc2.dat";
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=2;
