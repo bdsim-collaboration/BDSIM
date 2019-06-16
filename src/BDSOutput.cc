@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
+#include "BDSPrimaryVertexInformationV.hh"
 #include "BDSHitSampler.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -210,6 +211,12 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    vertexInfoBDS->mass,
 		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
+    }
+  else if (const BDSPrimaryVertexInformationV* vertexInfoBDSV = dynamic_cast<const BDSPrimaryVertexInformationV*>(vertexInfo))
+    {// vector version - multiple primaries at primary vertex
+      primary->Fill(vertexInfoBDSV,
+		    turnsTaken);
+      //primaryGlobal->Fill(vertexInfoBDSV);
     }
 }
 

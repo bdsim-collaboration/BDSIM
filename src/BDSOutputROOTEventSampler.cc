@@ -27,6 +27,7 @@ class BDSOutputROOTGeant4Data;
 #include "BDSHitSampler.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSPhysicalConstants.hh"
+#include "BDSPrimaryVertexInformationV.hh"
 
 #include "globals.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -116,7 +117,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4int    beamlineIndex,
 					const G4int    nElectronsIn,
 					const G4double massIn,
-					const G4double rigidityIn)
+					const G4double rigidityIn,
+					G4bool fillIon)
 {
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
@@ -142,7 +144,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   nElectrons.push_back((int)nElectronsIn);
   kineticEnergy.push_back((double)(coords.totalEnergy - massIn) / CLHEP::GeV);
   FillPolarCoords(coords);
-  FillIon();
+  if (fillIon)
+    {FillIon();}
 }
 
 template <class U>
@@ -173,6 +176,26 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
   if (!std::isnormal(phipValue))
     {phipValue = -1;}
   phip.push_back(static_cast<U>(phipValue));
+}
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(const BDSPrimaryVertexInformationV* vertexInfos,
+					const G4int turnsTaken)
+{
+
+  for (const auto& vertexInfo : vertexInfos->vertices)
+    {
+      Fill(vertexInfo.primaryVertex.local,
+	   vertexInfo.charge,
+	   vertexInfo.pdgID,
+	   turnsTaken,
+	   vertexInfo.primaryVertex.beamlineIndex,
+	   vertexInfo.nElectrons,
+	   vertexInfo.mass,
+	   vertexInfo.rigidity,
+	   false);
+    }
+  FillIon();
 }
 
 //#else
