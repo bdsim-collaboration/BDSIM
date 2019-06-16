@@ -44,7 +44,7 @@ std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
       {BDSBunchType::eventgeneratorfile, "eventgeneratorfile"}
 });
 
-BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
+BDSBunchType BDS::DetermineBunchType(G4String distrType)
 {
   std::map<G4String, BDSBunchType> types;
 

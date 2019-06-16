@@ -40,7 +40,7 @@ typedef BDSTypeSafeEnum<bunchtypes_def,int> BDSBunchType;
 namespace BDS
 {
   /// Function that gives corresponding enum value for string (case-insensitive).
-  BDSBunchType DetermineBunchType(const G4String& distrType);
+  BDSBunchType DetermineBunchType(G4String distrType);
 }
 
 #endif
