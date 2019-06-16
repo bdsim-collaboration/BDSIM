@@ -19,7 +19,8 @@
 
 BDSHepMC3Reader::BDSHepMC3Reader():
   hepmcEvent(nullptr)
-{;}
+{
+}
 
 BDSHepMC3Reader::~BDSHepMC3Reader()
 {
@@ -47,7 +48,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   for (const auto &particlePtr : hepmcevt->particles())
     {
       const HepMC3::GenParticle* particle = particlePtr.get();
-      if (!particle->children.empty())
+      if (!particle->children().empty())
 	{continue;}
       int pdgcode = particle->pdg_id();
       HepMC3::FourVector fv = particle->momentum();
