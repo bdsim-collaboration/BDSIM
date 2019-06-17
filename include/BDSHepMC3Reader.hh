@@ -39,7 +39,6 @@ namespace HepMC3
 class BDSHepMC3Reader: public G4VPrimaryGenerator
 {
 public:
-  BDSHepMC3Reader();
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
 		  BDSBunch*       bunchIn);
@@ -81,6 +80,8 @@ protected:
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
 
 private:
+  /// Do not require default constructor.
+  BDSHepMC3Reader() = delete;
 
   HepMC3::Reader* reader;
   G4String        fileName;

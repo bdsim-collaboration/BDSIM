@@ -59,10 +59,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utility>
 
-BDSHepMC3Reader::BDSHepMC3Reader():
-  hepmcEvent(nullptr),
-  reader(nullptr)
-{;}
 
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 				 const G4String& fileNameIn,
