@@ -5,3 +5,4 @@ simple_testing(bunch-eventgeneratorfile-hepmc2             "--file=eventgenerato
 simple_testing(bunch-eventgeneratorfile-hepmc2-loop        "--file=eventgeneratorfile-hepmc2-loop.gmad"         "")
 simple_testing(bunch-eventgeneratorfile-hepmc2-lowphysics  "--file=eventgeneratorfile-hepmc2-lowphysics.gmad"   "")
 simple_testing(bunch-eventgeneratorfile-hepmc2-offset      "--file=eventgeneratorfile-hepmc2-offset.gmad"       "")
+#simple_testing(bunch-eventgeneratorfile-hepmc2-recreate    "--file=eventgeneratorfile-hepmc2-recreate.gmad"     "")
