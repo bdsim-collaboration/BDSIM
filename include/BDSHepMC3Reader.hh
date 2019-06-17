@@ -36,9 +36,27 @@ namespace HepMC3
   class Reader;
 }
 
+/**
+ * @brief Loader to use any HepMC3 compatible file.
+ * 
+ * Interface to use HepMC3 library to load a variety of files.
+ * 
+ * This is largely based on Geant4's example
+ * examples/extended/eventgenerator/HepMC/HepMCEx01, however it
+ * has been rewritten to use HepMC3 library rather than HepMC2.
+ * Additionally, the interface has been written based on HepMC3
+ * example "convert_example" to use multiple reader classes.
+ * 
+ * @author Helena Pikhartova, Laurie Nevay
+ */
+
 class BDSHepMC3Reader: public G4VPrimaryGenerator
 {
 public:
+  /// Constructor takes full distrType string including semicolon and
+  /// eventgeneratorfile prefix. The filename is assumed to be correctly
+  /// prefixed if a relatie path already. The bunch definition is used
+  /// for the reference coordinates and offset of the beam point.
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
 		  BDSBunch*       bunchIn);
