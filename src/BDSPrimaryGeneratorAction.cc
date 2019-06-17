@@ -90,6 +90,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
 #ifdef USE_HEPMC3
       G4String filename = BDS::GetFullPath(beam.distrFile);
       hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, bunchIn);
+      if (recreate)
+        {hepMC3Reader->RecreateAdvanceToEvent(eventOffset);}
 #else
       throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
 #endif

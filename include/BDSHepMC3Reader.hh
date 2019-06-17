@@ -52,6 +52,9 @@ public:
   // GenerateHepMCEvent() will be converted to G4Event through HepMC2G4().
   virtual void GeneratePrimaryVertex(G4Event* anEvent);
 
+  /// Advance to the correct event number in the file for recreation.
+  virtual void RecreateAdvanceToEvent(G4int eventOffset);
+
 protected:
   /// Construct the member "reader" and open the file for reading.
   void OpenFile();
@@ -59,6 +62,9 @@ protected:
   /// Close and delete reader. Have to delete as HepMC3 readers have no iteration
   /// or ability to loop back to the beginning.
   void CloseFile();
+
+  /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
+  void ReadSingleEvent();
   
   // Note that the life of HepMC event object must be handled by users.
   // In the default implementation, a current HepMC event will be

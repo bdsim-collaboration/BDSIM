@@ -126,6 +126,13 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
   
+  ReadSingleEvent();
+  
+  HepMC2G4(hepmcEvent, anEvent);
+}
+
+void BDSHepMC3Reader::ReadSingleEvent()
+{
   delete hepmcEvent;
   hepmcEvent = new HepMC3::GenEvent();
 
@@ -141,10 +148,15 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
       hepmcEvent = new HepMC3::GenEvent();
       readEventOK = reader->read_event(*hepmcEvent);
       if (!readEventOK)
-	{throw BDSException(__METHOD_NAME__, "cannot read file \"" + fileName + "\".");}
+        {throw BDSException(__METHOD_NAME__, "cannot read file \"" + fileName + "\".");}
     }
-  
-  HepMC2G4(hepmcEvent, anEvent);
+}
+
+void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
+{
+  G4cout << "BDSHepMC3Reader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
+  for (G4int i = 0; i < eventOffset; i++)
+    {ReadSingleEvent();}
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
