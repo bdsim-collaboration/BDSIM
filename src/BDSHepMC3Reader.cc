@@ -162,6 +162,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   if (hepmcevt->weights().size() > 0)
     {overallWeight = hepmcevt->weight();}
   std::vector<BDSPrimaryVertexInformation> vertexInfos;
+  G4int nParticlesSkipped = 0;
   for (const auto& particlePtr : hepmcevt->particles())
     {
       const HepMC3::GenParticle* particle = particlePtr.get();
@@ -178,6 +179,18 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       unitMomentum = unitMomentum.unit();
 
       G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, px, py, pz);
+
+      // if the particle definition isn't found from the pdgcode in the construction
+      // of G4PrimaryParticle, it means the mass, charge, etc will be wrong - don't
+      // stack this particle into the vertex.
+      if (!g4prim->GetParticleDefinition())
+	{
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
+#endif
+	  nParticlesSkipped++;
+	  continue;
+	}
 
       BDSParticleCoordsFull local(centralCoords.x,
 				  centralCoords.y,
@@ -213,6 +226,8 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       g4vtx->SetPrimary(g4prim);
     }
 
+  if (nParticlesSkipped > 0)
+    {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles were not loaded because their definition is not available in the current physics list." << G4endl;}
   g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
   
   g4event->AddPrimaryVertex(g4vtx);
