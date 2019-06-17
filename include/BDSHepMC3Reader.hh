@@ -64,20 +64,21 @@ protected:
 
   /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
   void ReadSingleEvent();
-  
-  // Note that the life of HepMC event object must be handled by users.
-  // In the default implementation, a current HepMC event will be
-  // deleted at GeneratePrimaryVertex() in the next event.
-  HepMC3::GenEvent* hepmcEvent; // (care for single event case only)
 
+  /// Conversion from HepMC::GenEvent to G4Event.
+  void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
+
+  
   // We  have to take care for the position of primaries because
   // primary vertices outside the world voulme give rise to G4Execption.
   // If the default implementation is not adequate, an alternative
   // can be implemented in your own class.
   virtual G4bool CheckVertexInsideWorld(const G4ThreeVector& pos) const;
-
-  // service method for conversion from HepMC::GenEvent to G4Event
-  void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
+  
+  // Note that the life of HepMC event object must be handled by users.
+  // In the default implementation, a current HepMC event will be
+  // deleted at GeneratePrimaryVertex() in the next event.
+  HepMC3::GenEvent* hepmcEvent; // (care for single event case only)
 
 private:
   /// Do not require default constructor.

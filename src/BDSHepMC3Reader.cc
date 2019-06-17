@@ -74,6 +74,28 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   OpenFile();
 }
 
+BDSHepMC3Reader::~BDSHepMC3Reader()
+{
+  delete hepmcEvent;
+  delete reader;
+}
+
+void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
+{
+  if (!reader)
+    {throw BDSException(__METHOD_NAME__, "no file reader available");}
+  
+  ReadSingleEvent();  
+  HepMC2G4(hepmcEvent, anEvent);
+}
+
+void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
+{
+  G4cout << "BDSHepMC3Reader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
+  for (G4int i = 0; i < eventOffset; i++)
+    {ReadSingleEvent();}
+}
+
 void BDSHepMC3Reader::OpenFile()
 {
   switch (fileType.underlying())
@@ -111,22 +133,6 @@ void BDSHepMC3Reader::CloseFile()
   delete reader;
 }
 
-BDSHepMC3Reader::~BDSHepMC3Reader()
-{
-  delete hepmcEvent;
-  delete reader;
-}
-
-void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
-{
-  if (!reader)
-    {throw BDSException(__METHOD_NAME__, "no file reader available");}
-  
-  ReadSingleEvent();
-  
-  HepMC2G4(hepmcEvent, anEvent);
-}
-
 void BDSHepMC3Reader::ReadSingleEvent()
 {
   delete hepmcEvent;
@@ -146,13 +152,6 @@ void BDSHepMC3Reader::ReadSingleEvent()
       if (!readEventOK)
         {throw BDSException(__METHOD_NAME__, "cannot read file \"" + fileName + "\".");}
     }
-}
-
-void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
-{
-  G4cout << "BDSHepMC3Reader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  for (G4int i = 0; i < eventOffset; i++)
-    {ReadSingleEvent();}
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
