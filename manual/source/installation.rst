@@ -401,6 +401,8 @@ Examples: ::
 
   cmake ../bdsim -DUSE_HEPMC3=ON -DHepMC3_DIR=/opt/local/share/HepMC3/cmake
 
+* With HepMC 3.1.1 we find a compiler warning about an unused variable. This is harmless and on the
+  HepMC3 side that we can't change.
 
 .. _installation-environmental-variables:
   

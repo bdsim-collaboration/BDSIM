@@ -4675,7 +4675,8 @@ BDSIM starts each event in one of two ways.
    to the distribution.
 
 2) A primary vertex is loaded from an event genertor file. This currently requires linking to
-   HepMC3 to load such files. In this case, each event may start with 1 or more particles.
+   HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
+   `eventgeneratorfile`_).
 
 To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
@@ -5429,6 +5430,47 @@ eventgeneratorfile
 
 To use a file from an event generator, the HepMC3 library must be used and BDSIM must be
 compiled with respect to it.  See :ref:`installation-bdsim-config-options` for more details.
+
+When using an event generator file, the **design** particle and total energy must still be
+specified. These are used to calculate the magnetic field strengths.
+
+The following parameters are used to control the use of an event generator file.
+
+.. tabularcolumns:: |p{3cm}|p{14cm}|
+
++----------------+---------------------------------------------------------------------+
+| Option         | Description                                                         |
++================+=====================================================================+
+| distrType      | This should be "eventgeneratorfile:format" where format is one of   |
+|                | the acceptable formats listed below.                                |
++----------------+---------------------------------------------------------------------+
+| distrFile      | The path to the input file desired.                                 |
++----------------+---------------------------------------------------------------------+
+
+.. note:: Only particles available through the chosen physics list can be used otherwise they will
+	  not have the correct properties and will **not be** added to the primary vertex.
+
+The following formats are available:
+
+* `hepmc2` - HepMC2 data format
+* `hepmc3` - HepMC3 data format
+* `hpe` - HEP EVT format (fortran format)
+* `root` - HepMC ROOT format (not BDSIM's)
+* `treeroot` - HepMC ROOT tree format (not BDSIM's)
+* `lhef` - LHEF format files
+
+These are put together with "eventgeneratorfile" for the `distrType` parameter. e.g.
+:code:`distrType="eventgeneratorfile:hepmc2";`.
+
+Examples can be found in `bdsim/examples/features/beam/eventgeneratorfile`. Below are some
+examples: ::
+
+  beam, particle = "proton",
+        energy = 6.5*TeV,
+	distrType = "eventgeneratorfile:hepmc3",
+	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
+
+
 
 .. _tunnel-geometry:
 
