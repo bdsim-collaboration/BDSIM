@@ -5447,8 +5447,11 @@ The following parameters are used to control the use of an event generator file.
 | distrFile      | The path to the input file desired.                                 |
 +----------------+---------------------------------------------------------------------+
 
-.. note:: Only particles available through the chosen physics list can be used otherwise they will
-	  not have the correct properties and will **not be** added to the primary vertex.
+.. warning:: Only particles available through the chosen physics list can be used otherwise they will
+	     not have the correct properties and will **not be** added to the primary vertex and are
+	     simply skipped. The number (if any) that are skipped will be printed out for every event.
+
+* Compressed ASCII files (such as gzipped) cannot be used as HepMC3 does not support this.
 
 The following formats are available:
 
@@ -5465,6 +5468,7 @@ These are put together with "eventgeneratorfile" for the `distrType` parameter. 
 Examples can be found in `bdsim/examples/features/beam/eventgeneratorfile`. Below are some
 examples: ::
 
+  option, physicsList="g4FTFP_BERT";
   beam, particle = "proton",
         energy = 6.5*TeV,
 	distrType = "eventgeneratorfile:hepmc3",
