@@ -203,7 +203,7 @@ void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
     }
 }
  
-void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal)
+void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal) const
 {
   auto crystals    = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
   auto collimators = BDSAcceleratorModel::Instance()->VolumeSet("collimators");
@@ -211,6 +211,5 @@ void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal)
     {
       crystals->insert(lv);
       collimators->insert(lv);
-      RegisterSensitiveVolume(lv, BDSSDType::collimatorcomplete);
     }
 }
