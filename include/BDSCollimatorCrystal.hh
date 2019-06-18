@@ -68,7 +68,7 @@ private:
 			   const G4String& side) const;
 
   /// Register logical volumes in crystals and collimator sets in accelerator model.
-  void RegisterCrystalLVs(const BDSCrystal* crystal) const;
+  void RegisterCrystalLVs(const BDSCrystal* crystal);
 
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.

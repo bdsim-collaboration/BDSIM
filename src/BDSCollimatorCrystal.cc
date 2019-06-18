@@ -21,11 +21,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSException.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSGeometryComponent.hh"
+#include "BDSSDType.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -201,13 +203,14 @@ void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
     }
 }
  
-void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal) const
+void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal)
 {
-  auto crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
+  auto crystals    = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
   auto collimators = BDSAcceleratorModel::Instance()->VolumeSet("collimators");
   for (auto lv : crystal->GetAllLogicalVolumes())
     {
       crystals->insert(lv);
       collimators->insert(lv);
+      RegisterSensitiveVolume(lv, BDSSDType::collimatorcomplete);
     }
 }
