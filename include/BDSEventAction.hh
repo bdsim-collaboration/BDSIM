@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -40,7 +40,7 @@ class BDSEventAction: public G4UserEventAction
 public:
   explicit BDSEventAction(BDSOutput* outputIn);
   virtual ~BDSEventAction();
-  
+
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
 
@@ -48,7 +48,7 @@ public:
   G4int CurrentEventIndex() const {return currentEventIndex;}
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
-    
+
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
@@ -69,12 +69,17 @@ private:
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
   G4int apertureCollID;           ///< Collection ID for the aperture hits.
   std::map<G4String, G4int> scorerCollectionIDs; ///< Collection IDs for all scorers.
-  
+
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
 
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
+
+  // Note that individual calls to std::clock have no meaning, only
+  // the differences between them, and therefore this should not be
+  // written to the output.
+  std::clock_t cpuStartTime; ///< CPU time at the start of the event.
 
   G4bool primaryAbsorbedInCollimator; ///< Whether primary stopped in a collimator.
 
@@ -100,4 +105,3 @@ private:
 };
 
 #endif
-

@@ -54,6 +54,10 @@ General
   and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
   for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
   a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
+* Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
+  hit information in the output. The crystal channelling process is ignore as a step defining process
+  for generating unique hits in the crystal.
+* All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
   
 Bug Fixes
 ---------
@@ -93,6 +97,9 @@ Output Changes
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
+* New Event.Summary variable `cpuTime`, which is the duration of the
+  event in CPU time in seconds.
+
 
 Utilities
 ---------
