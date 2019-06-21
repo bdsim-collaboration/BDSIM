@@ -89,7 +89,10 @@ class Writer:
         for keys, values in test.iteritems():
             if values == []:
                 test[keys].append(0)
-        
+
+        if component == 'sbend' or component == 'rbend':
+            test._numFiles = 15
+
         # make directories and loop over components, particles, and energies.
         _General.MakeTestDirs(test)
         if component == 'sbend' or component == 'rbend':
@@ -161,32 +164,153 @@ class Writer:
     def WriteFullDipole(self, test):
         """ Write dipoles that only vary length, and angle or field. All remaining parameters
             are set to maximum values."""
-        def writeDipole(componentName, filename, component, length, angle=None, field=None):
-            k1 = test['k1'][-1]
-            e1 = test['e1'][-1]
-            e2 = test['e2'][-1]
-            fint = test['fint'][-1]
-            fintx = test['fintx'][-1]
-            fintK2 = test['fintK2'][-1]
-            fintxK2 = test['fintxK2'][-1]
-            hgap = test['hgap'][-1]
-            h1 = test['h1'][-1]
-            h2 = test['h2'][-1]
-            fileName = filename + '__MAXALLDIPOLEPARAMS_'
-            machine = _General.Machine(test.Particle, test._testRobustness)
-            machine.AddDrift(name='dr1', length=0.2)
+        def AddDipoles(machine, component, test, length, angle=None, field=None):
+            # k1 = test['k1'][-1]
+            # e1 = test['e1'][-1]
+            # e2 = test['e2'][-1]
+            # fint = test['fint'][-1]
+            # fintx = test['fintx'][-1]
+            # fintK2 = test['fintK2'][-1]
+            # fintxK2 = test['fintxK2'][-1]
+            # hgap = test['hgap'][-1]
+            # h1 = test['h1'][-1]
+            # h2 = test['h2'][-1]
+            # fileName = filename + '__MAXALLDIPOLEPARAMS_'
+            # machine = _General.Machine(test.Particle, test._testRobustness)
+            # machine.AddDrift(name='dr1', length=0.2)
+            #
+            # if angle is not None:
+            #     machine.AddDipole(name=componentName, category=component, length=length, angle=angle, k1=k1, e1=e1, e2=e2,
+            #                       fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+            # elif field is not None:
+            #     machine.AddDipole(name=componentName, category=component, length=length, b=field, k1=k1, e1=e1, e2=e2,
+            #                       fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+            def AddDipoleToMachine(vars, e1, e2, fint, fintx, fintK2, fintxK2, hgap, h1, h2, angle=None, field=None):
 
-            if angle is not None:
-                machine.AddDipole(name=componentName, category=component, length=length, angle=angle, k1=k1, e1=e1, e2=e2,
-                                  fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
-            elif field is not None:
-                machine.AddDipole(name=componentName, category=component, length=length, b=field, k1=k1, e1=e1, e2=e2,
-                                  fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+                machine, component, length, k1 = vars
+                dipNum = str(int(len(machine.elements) + 1)/2)
+                componentName = 'dip' + dipNum
+                if angle is not None:
+                    machine.AddDipole(name=componentName, category=component, length=length, angle=angle, k1=k1, e1=e1,
+                                      e2=e2,
+                                      fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+                elif field is not None:
+                    machine.AddDipole(name=componentName, category=component, length=length, b=field, k1=k1, e1=e1,
+                                      e2=e2,
+                                      fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
 
-            machine.AddDrift(name='dr2', length=0.2)
-            machine.AddSampler('dr2')
-            machine.AddBeam(_General.GetBeam(test))
-            self._writeToDisk(component, fileName, machine, test)
+                driftName = 'dr' + _np.str(dipNum)
+                machine.AddDrift(name=driftName, length=0.2)
+                machine.AddSampler(driftName)
+                return machine
+
+            def dotheting(vars, e1, e2, fint, fintx, fintK2, fintxK2, hgap, h1, h2, angle=None, field=None):
+                if angle is not None:
+                    machine = AddDipoleToMachine(vars,e1,e2,fint,fintx, fintK2, fintxK2, hgap, h1, h2, angle, None)
+                    vars = (machine, component, length, 0)
+                    machine = AddDipoleToMachine(vars,e1,e2,fint,fintx, fintK2, fintxK2, hgap, h1, h2, -angle, None)
+                elif field is not None:
+                    machine = AddDipoleToMachine(vars,e1,e2,fint,fintx, fintK2, fintxK2, hgap, h1, h2, None, field)
+                    vars = (machine, component, length, 0)
+                    machine = AddDipoleToMachine(vars,e1,e2,fint,fintx, fintK2, fintxK2, hgap, h1, h2, None, -field)
+                return machine
+
+            if (angle == 0 and field is None) or (angle is None and field == 0):
+                vars = (machine, component, length, 0)
+                machine = dotheting(vars,0,0,0,0,0,0,0,0,0,angle,field)
+                return machine
+
+            for k1 in test['k1']:
+                vars = (machine, component, length, k1)
+                for e1 in test['e1']:
+                    if e1 is not 0:
+                        for fint in test['fint']:
+                            if fint is not 0:
+                                for fintK2 in test['fintK2']:
+                                    for hgap in test['hgap']:
+                                        for h1 in test['h1']:
+                                            machine = dotheting(vars, e1, 0, fint, 0, fintK2, 0, hgap, h1, 0, angle,field)
+                            else:
+                                for h1 in test['h1']:
+                                    machine = dotheting(vars, e1, 0, 0, 0, 0, 0, 0, h1, 0, angle, field)
+                    else:
+                        machine = dotheting(vars, 0, 0, 0, 0, 0, 0, 0, 0, 0, angle, field)
+
+                for e2 in test['e2']:
+                    if e2 is not 0:
+                        for fintx in test['fintx']:
+                            if fintx is not 0:
+                                for fintxK2 in test['fintxK2']:
+                                    for hgap in test['hgap']:
+                                        for h2 in test['h2']:
+                                            machine = dotheting(vars, 0, e2, 0, fintx, 0, fintxK2, hgap, 0, h2, angle, field)
+                            else:
+                                for h2 in test['h2']:
+                                    machine = dotheting(vars, 0, e2, 0, 0, 0, 0, 0, 0, h2, angle, field)
+                    else:
+                        pass  # magnet already added when e1 = 0.
+
+
+            # for k1 in test['k1']:
+            #     vars = (machine, component, length, k1)
+            #     for e1 in test['e1']:
+            #         if e1 is not 0:
+            #             for e2 in test['e2']:
+            #                 if e2 is not 0:
+            #                     for fint in test['fint']:
+            #                         if fint is not 0:
+            #                             for fintx in test['fintx']:
+            #                                 if fintx is not 0:
+            #                                     for fintK2 in test['fintK2']:
+            #                                         for fintxK2 in test['fintxK2']:
+            #                                             for hgap in test['hgap']:
+            #                                                 for h1 in test['h1']:
+            #                                                     for h2 in test['h2']:
+            #                                                         machine = dotheting(vars, e1,e2,fint,fintx,fintK2,fintxK2,hgap,h1,h2,angle,field)
+            #                                 else:  # fintx is 0
+            #                                     for fintK2 in test['fintK2']:
+            #                                         for hgap in test['hgap']:
+            #                                             for h1 in test['h1']:
+            #                                                 for h2 in test['h2']:
+            #                                                     machine = dotheting(vars,e1,e2,fint,0,fintK2,0,hgap,h1,h2,angle,field)
+            #                         else:  # fint is 0
+            #                             for fintx in test['fintx']:
+            #                                 if fintx is not 0:
+            #                                     for fintxK2 in test['fintxK2']:
+            #                                         for hgap in test['hgap']:
+            #                                             for h1 in test['h1']:
+            #                                                 for h2 in test['h2']:
+            #                                                     machine = dotheting(vars,e1,e2,0,fintx,0,fintxK2,hgap,h1,h2,angle,field)
+            #                                 else:  # fintx is 0
+            #                                     for h1 in test['h1']:
+            #                                         for h2 in test['h2']:
+            #                                             machine = dotheting(vars,e1,e2,0,0,0,0,0,h1,h2,angle,field)
+            #                 else:  # e2 is 0
+            #                     for fint in test['fint']:
+            #                         if fint is not 0:
+            #                             for fintK2 in test['fintK2']:
+            #                                 for hgap in test['hgap']:
+            #                                     for h1 in test['h1']:
+            #                                         machine = dotheting(vars,e1,0,fint,0,fintK2,0,hgap,h1,0,angle,field)
+            #                         else:
+            #                             for h1 in test['h1']:
+            #                                 machine = dotheting(vars,e1,0,0,0,0,0,0,h1,0,angle,field)
+            #         else:  # e1 is 0
+            #             for e2 in test['e2']:
+            #                 if e2 is not 0:
+            #                     for fintx in test['fintx']:
+            #                         if fintx is not 0:
+            #                             for fintxK2 in test['fintxK2']:
+            #                                 for hgap in test['hgap']:
+            #                                     for h2 in test['h2']:
+            #                                         machine = dotheting(vars,0,e2,0,fintx,0,fintxK2,hgap,0,h2,angle,field)
+            #                         else:
+            #                             for h2 in test['h2']:
+            #                                 machine = dotheting(vars,0,e2,0,0,0,0,0,0,h2,angle,field)
+            #                 else:  # e2 is 0
+            #                     machine = dotheting(vars,0,0,0,0,0,0,0,0,0,angle,field)
+
+            return machine
 
         component = test.Component
         componentName = 'dip1'
@@ -197,26 +321,47 @@ class Writer:
 
         filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
 
+        angles = []
+        for angle in test['angle']:
+            if abs(angle) not in angles:
+                angles.append(abs(angle))
+
+        fields = []
+        for field in test['field']:
+            if abs(field) not in fields:
+                fields.append(abs(field))
+
         for length in test['length']:
             lenName = '__length_'+_np.str(length)
             lenFileName = filename + lenName
             if test['angle'][0] is not None:
-                for angle in test['angle']:
+                for angle in angles:
                     angleName = '__angle_' + _np.str(angle)
-                    angleFileName = lenFileName + angleName
-                    writeDipole(componentName, angleFileName, component, length, angle)
+                    fname = lenFileName + angleName
+                    machine = _General.Machine(test.Particle, test._testRobustness)
+                    machine.AddDrift(name='dr0', length=0.2)
+                    if angle is not 0:
+                        machine = AddDipoles(machine, component, test, length, angle=angle)
+                    else:
+                        machine = AddDipoles(machine, component, test, length, angle=angle)
 
-                    # if full test range wanted, calc field from angle
-                    if test._useDefaults:
-                        bfield = _General.CalcBField(length, angle, test.Energy, test.Particle)
-                        fieldName = '__field_' + _np.str(bfield)
-                        fieldFileName = lenFileName + fieldName
-                        writeDipole(componentName, fieldFileName, component, length, field=bfield)
+                    machine.AddBeam(_General.GetBeam(test))
+                    self._writeToDisk(component, fname, machine, test)
+
             elif test['field'] is not None:
-                for bfield in test['field']:
+                for bfield in fields:
                     fieldName = '__field_' + _np.str(bfield)
-                    fieldFileName = lenFileName + fieldName
-                    writeDipole(componentName, fieldFileName, component, length, field=bfield)
+                    fname = lenFileName + fieldName
+                    machine = _General.Machine(test.Particle, test._testRobustness)
+                    machine.AddDrift(name='dr0', length=0.2)
+                    if bfield is not 0:
+                        machine = AddDipoles(machine, component, test, length, field=bfield)
+                    else:
+                        machine = AddDipoles(machine, component, test, length, field=bfield)
+
+                    machine.AddBeam(_General.GetBeam(test))
+                    self._writeToDisk(component, fname, machine, test)
+
 
     def WriteDipoleTests(self, test):
         # function to loop over remaining params (kwargs) to save duplication.
