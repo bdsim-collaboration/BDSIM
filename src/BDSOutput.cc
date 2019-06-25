@@ -100,9 +100,9 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   // store primary hits if ion hits or links hits are turned on
-  storeCollimatorHits        = g->StoreCollimatorHits() || storeCollimatorHitsLinks || storeCollimatorHitsIons;
+  storeCollimatorHits        = g->StoreCollimatorHits() || storeCollimatorHitsLinks || storeCollimatorHitsIons || g->StoreCollimatorHitsAll();
 
-  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorHits || storeCollimatorHitsLinks || storeCollimatorHitsIons;
+  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorHits;
 
   storeELoss                 = g->StoreELoss();
   // store histograms if storing general energy deposition as negligible in size
@@ -740,7 +740,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
       collimators[collimatorIndex]->Fill(hit,
 					 collimatorInfo[collimatorIndex],
 					 collimatorDifferences[collimatorIndex],
-					 storeCollimatorHits);
+					 storeCollimatorHits);  // this includes the || storeCollimatorHitsLinks || storeCollimatorHitsIons);
     }
 
   // identify whether the primary loss point was in a collimator
