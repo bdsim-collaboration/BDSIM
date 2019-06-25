@@ -217,8 +217,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Calculate the elapsed CPU time for the event.
   auto cpuEndTime = std::clock();
-  auto cpuTime =
-      static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+  auto cpuTime = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
 
   eventInfo->SetCPUTime(cpuTime);
 
