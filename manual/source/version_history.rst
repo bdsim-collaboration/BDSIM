@@ -84,6 +84,9 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
+  v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
+  applied and therefore the rest of the physics processes acting as if the block was amorphous.
 
 Output Changes
 --------------
@@ -95,8 +98,7 @@ Output Changes
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
-* New Event.Summary variable `cpuTime`, which is the duration of the
-  event in CPU time in seconds.
+* New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
 
 
 Utilities
