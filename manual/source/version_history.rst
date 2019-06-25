@@ -39,6 +39,12 @@ New Features
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits               | Store colliamtor hits for primary particles. This is addition to   |
+|                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                   | compatible.                                                        |
++-----------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -58,6 +64,10 @@ General
   hit information in the output. The crystal channelling process is ignore as a step defining process
   for generating unique hits in the crystal.
 * All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
+* The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
+  the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
+  each per-collimator branch in Event. This allows greater control over the amount of information stored.
+  The primary hits can be turned on as well with the option `storeCollimatorHits`.
   
 Bug Fixes
 ---------
@@ -289,7 +299,7 @@ New Features
 |                                  | generated, `isIon`, `ionA` and `ionZ` variables are filled.      |
 |                                  | Collimator hits will now also be generated for all ions.         |
 +----------------------------------+------------------------------------------------------------------+
-| storeCollimatorLinks             | If `storeCollimatorInfo` is on and collimator hits are           |
+| storeCollimatorHitsLinks         | If `storeCollimatorInfo` is on and collimator hits are           |
 |                                  | generated, extra information is stored for each collimator hit.  |
 +----------------------------------+------------------------------------------------------------------+
 | storeEloss                       | Ability to completely turn off generation of energy deposition   |

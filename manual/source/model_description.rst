@@ -4261,6 +4261,10 @@ with the following options.
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits               | Store hits in per-collimator structures with hits for only primary |
+|                                   | particles. With only `storeCollimatorInfo` on, only the            |
+|                                   | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -4271,15 +4275,16 @@ with the following options.
 |                                   | collimators whether primary or secondary and whether ion or not.   |
 |                                   | Default off.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsLinks          | If `storeCollimatorHits` is on and collimator hits are generated,  |
+|                                   | `charge`, `mass`, `rigidity` and `kineticEnergy` variables are     |
+|                                   | also stored for each collimator hit.                               |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
 |                                   | only collimators is filled. Collimator structures are created in   |
 |                                   | the Event Tree of the output for each collimator and prefixed with |
 |                                   | "COLL\_" and contain hits from (only) primary particles.           |
 |                                   | Collimator summary histograms are also created and stored. Default |
 |                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | extra information is stored for each collimator hit.               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
