@@ -95,6 +95,9 @@ Output Changes
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
+* New Event.Summary variable `cpuTime`, which is the duration of the
+  event in CPU time in seconds.
+
 
 Utilities
 ---------
