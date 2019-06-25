@@ -754,6 +754,10 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
             {
               G4int collIndex = (int) (result - collimatorIndices.begin());
               collimators[collIndex]->SetPrimaryStopped(true);
+              collimators[collIndex]->primaryInteracted = true;
+              // it must've interacted if it stopped - could be that we kill
+              // secondaries and there's no energy deposition therefore not identified
+              // as primaryInteracted=true in BDSOutputROOTEventCollimator::Fill()
             }
         }
     }
