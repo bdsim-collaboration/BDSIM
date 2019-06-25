@@ -96,13 +96,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeCollimatorLinks       = g->StoreCollimatorLinks();
-  // automatically store ion info if generating ion hits - this option
-  // controls generation and storage of the ion hits
-  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
+  storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
+  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
+  // store primary hits if ion hits or links hits are turned on
+  storeCollimatorHits        = g->StoreCollimatorHits() || storeCollimatorHitsLinks || storeCollimatorHitsIons;
 
-  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorLinks || storeCollimatorHitsIons;
+  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorHits || storeCollimatorHitsLinks || storeCollimatorHitsIons;
 
   storeELoss                 = g->StoreELoss();
   // store histograms if storing general energy deposition as negligible in size
@@ -739,7 +739,8 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
       G4int collimatorIndex = hit->collimatorIndex;      
       collimators[collimatorIndex]->Fill(hit,
 					 collimatorInfo[collimatorIndex],
-					 collimatorDifferences[collimatorIndex]);
+					 collimatorDifferences[collimatorIndex],
+					 storeCollimatorHits);
     }
 
   // identify whether the primary loss point was in a collimator
@@ -763,10 +764,10 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
     }
   
   // if required loop over collimators and get them to calculate and fill extra information
-  if (storeCollimatorLinks || storeCollimatorHitsIons)
+  if (storeCollimatorHitsLinks || storeCollimatorHitsIons)
     {
       for (auto collimator : collimators)
-	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorLinks);}
+	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorHitsLinks);}
     }
 
   // after all collimator hits have been filled, we summarise whether the primary
