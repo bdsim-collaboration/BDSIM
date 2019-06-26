@@ -97,6 +97,8 @@ Bug Fixes
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
+  They're now filled correctly.
 
 Output Changes
 --------------
@@ -109,6 +111,8 @@ Output Changes
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
 * New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
+* `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` variables in Model tree are now filled
+  correctly.
 
 
 Utilities
