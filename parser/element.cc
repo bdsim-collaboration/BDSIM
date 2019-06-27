@@ -212,6 +212,7 @@ void Element::PublishMembers()
   publish("mountmaterial",       &Element::mountmaterial);
   publish("spec",                &Element::spec);
   publish("cavityModel",         &Element::cavityModel);
+  publish("cavityFieldType",     &Element::cavityFieldType);
   publish("bias",                &Element::bias);
   publish("biasMaterial",        &Element::biasMaterial);
   publish("biasVacuum",          &Element::biasVacuum);
@@ -522,6 +523,7 @@ void Element::flush()
   scintmaterial = "";
   spec = "";
   cavityModel = "";
+  cavityFieldType = "bdsim";
 
   colour = "";
 

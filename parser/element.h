@@ -206,6 +206,7 @@ namespace GMAD
     std::string mountmaterial;  ///< for AWAKE spectrometer
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
+    std::string cavityFieldType; ///< rf cavity field Style (bdsim/nominal or madx/8).
 
     /// Override colour for certain items
     std::string colour;

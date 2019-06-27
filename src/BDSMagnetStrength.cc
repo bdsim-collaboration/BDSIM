@@ -62,6 +62,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "nominalenergy",   // nominal beam energy needed by some integrators
   "scaling",         // field scaling factor needed by dipolequadrupole integrator
   "isentrance",      // bool to determine is integrator is for entrance (1) or exit (0) face
+  "ismadfield",      // bool to determine if a field is mad-type. Required for correct rfcavity field.
   "kick1",
   "kick2",
   "kick3",
@@ -135,6 +136,7 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
     {"scaling"       , {"",    1.0}},
     {"isentrance"    , {"",    1.0}},
+    {"ismadfield"    , {"",    1.0}},
     {"kick1"         , {"",    1.0}},
     {"kick2"         , {"",    1.0}},
     {"kick3"         , {"",    1.0}},
