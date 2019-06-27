@@ -31,7 +31,8 @@ BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength,
 				     G4double                 brho):
   BDSFieldESinusoid((*strength)["efield"],
 		    (*strength)["frequency"],
-		    (*strength)["phase"])
+		    (*strength)["phase"],
+            G4bool((*strength)["ismadfield"]))  // cast to bool to be safe
 {
   G4int sign = BDS::Sign(brho);
   eField *= sign;
@@ -39,10 +40,12 @@ BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength,
 
 BDSFieldESinusoid::BDSFieldESinusoid(G4double eFieldAmplitudeIn,
 				     G4double frequencyIn,
-				     G4double phaseOffsetIn):
+				     G4double phaseOffsetIn,
+                     G4bool   isMadFieldIn):
   eField(eFieldAmplitudeIn),
   angularFrequency(CLHEP::twopi*frequencyIn),
-  phase(phaseOffsetIn)
+  phase(phaseOffsetIn),
+  isMadField(isMadFieldIn)
 {
   finiteStrength = BDS::IsFinite(eField);
 }
@@ -51,6 +54,9 @@ G4ThreeVector BDSFieldESinusoid::GetField(const G4ThreeVector& /*position*/,
 					  const G4double       t) const
 {
   G4double eZ = eField*std::cos(angularFrequency*t + phase);
+  if (isMadField)
+    {eZ = eField*std::cos(phase);}
+
   G4ThreeVector field = G4ThreeVector(0, 0, eZ);
   return field;
 }
