@@ -2166,15 +2166,19 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
 
   G4double phase = el->phase * CLHEP::rad;
   if (BDS::IsFinite(el->phase)) // phase specified - use that
-    if (cavityFieldType == BDSCavityFieldType::bdsim)
+    {
+      if (cavityFieldType == BDSCavityFieldType::bdsim)
         {(*st)["phase"] = phaseOffset + phase;}
-    else if (cavityFieldType == BDSCavityFieldType::mad8)
+      else if (cavityFieldType == BDSCavityFieldType::mad8)
         {(*st)["phase"] = phase;}
+    }
   else
-    if (cavityFieldType == BDSCavityFieldType::bdsim)
-      {(*st)["phase"] = phaseOffset;}
-    else if (cavityFieldType == BDSCavityFieldType::mad8)
-      {(*st)["phase"] = 0;}
+    {
+      if (cavityFieldType == BDSCavityFieldType::bdsim)
+        {(*st)["phase"] = phaseOffset;}
+      else if (cavityFieldType == BDSCavityFieldType::mad8)
+        {(*st)["phase"] = 0;}
+    }
 
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"] = chordLength;
