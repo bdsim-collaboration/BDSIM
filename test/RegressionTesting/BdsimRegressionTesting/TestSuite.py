@@ -486,7 +486,8 @@ class TestSuite(object):
             energy = machineInfo['energy']
             particle = machineInfo['particle']
 
-            bannedComponents = ["rbend", "sbend", "muspoiler"]
+            #bannedComponents = ["rbend", "sbend", "muspoiler"]
+            bannedComponents = ["muspoiler"]
             # loop over all components
             for component in GlobalData.components:
                 if component not in bannedComponents:

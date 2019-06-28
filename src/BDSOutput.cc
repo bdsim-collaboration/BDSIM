@@ -103,13 +103,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeCollimatorLinks       = g->StoreCollimatorLinks();
-  // automatically store ion info if generating ion hits - this option
-  // controls generation and storage of the ion hits
-  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
+  storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
+  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
+  // store primary hits if ion hits or links hits are turned on
+  storeCollimatorHits        = g->StoreCollimatorHits() || storeCollimatorHitsLinks || storeCollimatorHitsIons || g->StoreCollimatorHitsAll();
 
-  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorLinks || storeCollimatorHitsIons;
+  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorHits;
 
   storeELoss                 = g->StoreELoss();
   // store histograms if storing general energy deposition as negligible in size
@@ -802,7 +802,8 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
       G4int collimatorIndex = hit->collimatorIndex;      
       collimators[collimatorIndex]->Fill(hit,
 					 collimatorInfo[collimatorIndex],
-					 collimatorDifferences[collimatorIndex]);
+					 collimatorDifferences[collimatorIndex],
+					 storeCollimatorHits);  // this includes the || storeCollimatorHitsLinks || storeCollimatorHitsIons);
     }
 
   // identify whether the primary loss point was in a collimator
@@ -817,15 +818,19 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
             {
               G4int collIndex = (int) (result - collimatorIndices.begin());
               collimators[collIndex]->SetPrimaryStopped(true);
+              collimators[collIndex]->primaryInteracted = true;
+              // it must've interacted if it stopped - could be that we kill
+              // secondaries and there's no energy deposition therefore not identified
+              // as primaryInteracted=true in BDSOutputROOTEventCollimator::Fill()
             }
         }
     }
   
   // if required loop over collimators and get them to calculate and fill extra information
-  if (storeCollimatorLinks || storeCollimatorHitsIons)
+  if (storeCollimatorHitsLinks || storeCollimatorHitsIons)
     {
       for (auto collimator : collimators)
-	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorLinks);}
+	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorHitsLinks);}
     }
 
   // after all collimator hits have been filled, we summarise whether the primary

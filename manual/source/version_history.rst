@@ -39,6 +39,12 @@ New Features
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits               | Store colliamtor hits for primary particles. This is addition to   |
+|                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                   | compatible.                                                        |
++-----------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -58,6 +64,10 @@ General
   hit information in the output. The crystal channelling process is ignore as a step defining process
   for generating unique hits in the crystal.
 * All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
+* The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
+  the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
+  each per-collimator branch in Event. This allows greater control over the amount of information stored.
+  The primary hits can be turned on as well with the option `storeCollimatorHits`.
   
 Bug Fixes
 ---------
@@ -86,6 +96,11 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
+  v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
+  applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
+  They're now filled correctly.
 
 Output Changes
 --------------
@@ -97,8 +112,9 @@ Output Changes
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
   are turned on or not for the samplers.
-* New Event.Summary variable `cpuTime`, which is the duration of the
-  event in CPU time in seconds.
+* New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
+* `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` variables in Model tree are now filled
+  correctly.
 
 
 Utilities
@@ -289,7 +305,7 @@ New Features
 |                                  | generated, `isIon`, `ionA` and `ionZ` variables are filled.      |
 |                                  | Collimator hits will now also be generated for all ions.         |
 +----------------------------------+------------------------------------------------------------------+
-| storeCollimatorLinks             | If `storeCollimatorInfo` is on and collimator hits are           |
+| storeCollimatorHitsLinks         | If `storeCollimatorInfo` is on and collimator hits are           |
 |                                  | generated, extra information is stored for each collimator hit.  |
 +----------------------------------+------------------------------------------------------------------+
 | storeEloss                       | Ability to completely turn off generation of energy deposition   |
