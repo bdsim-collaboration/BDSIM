@@ -1117,11 +1117,20 @@ element is used to find the phase offset.
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
 
+Instead of the standard sinusoidal cavity field, cavities can be set to accelerate with a MAD8-like
+field with :code:`cavityFieldType="mad8"`. The parameter has a default of :code:`"bdsim"`.
+The cavity field type can be set for all cavities with the general option :code:`cavityFieldType="mad8"`.
+Unlike the BDSIM field, the phase for a MAD8-like field is not automatically calculated and must
+instead be supplied. The phase can only be supplied with `phase`, `tOffset` is ignored.
+
+See the developer documentation :ref:`_field-sinusoid-efield` for a description of the field.
+
 Simple examples: ::
 
    rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
    rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
    rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
+   rf4: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.1, cavityFieldType="mad8";
 
 Rather than just a simple E-field, an electromagnetic field that is the solution to
 a cylindrical pill-box cavity may be used. A cavity object (described in more detail
@@ -4034,9 +4043,14 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+| collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
++----------------------------------+-------------------------------------------------------+
+| cavityFieldType                  | The cavity field type for all rf cavities, either     |
+|                                  | "bdsim" or "mad8". Setting `cavityFieldType` on an    |
+|                                  | individual cavity will override this global option.   |
+|                                  | (default = "bdsim").                                  |
 +----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
 |                                  | magnets with finite poleface angles. The length of    |

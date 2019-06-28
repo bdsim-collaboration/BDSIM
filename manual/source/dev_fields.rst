@@ -494,6 +494,11 @@ The 3D Cartesian field vectors are therefore:
    \mathbf{B} & = (0, \,0, \,0) \\
    \mathbf{E} & = (0, \,0, \,E_z)
 
+A mad8-like field can be provided instead for all cavities with the global option :code:`cavityFieldType="mad8"`
+or to individual cavities with the parameter :code:`cavityFieldType="mad8"`. The MAD8 electric field is:
+
+.. math::
+   E_z = E\,\cos(\phi)
 
 Electromagnetic Fields From Equations
 ======================================
