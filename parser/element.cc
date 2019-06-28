@@ -523,7 +523,7 @@ void Element::flush()
   scintmaterial = "";
   spec = "";
   cavityModel = "";
-  cavityFieldType = "bdsim";
+  cavityFieldType = "";
 
   colour = "";
 

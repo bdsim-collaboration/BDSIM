@@ -2157,7 +2157,12 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double fractionalPart = std::modf(nPeriods, &integerPart);
   G4double phaseOffset    = fractionalPart * CLHEP::twopi;
 
-  BDSCavityFieldType cavityFieldType = BDS::DetermineCavityFieldType(el->cavityFieldType);
+  // element cavity field type overrides global options default so check first.
+  BDSCavityFieldType cavityFieldType;
+  if (el->cavityFieldType != "")
+    {cavityFieldType = BDS::DetermineCavityFieldType(el->cavityFieldType);}
+  else
+    {cavityFieldType = BDS::DetermineCavityFieldType(BDSGlobalConstants::Instance()->CavityFieldType());}
 
   G4double phase = el->phase * CLHEP::rad;
   if (BDS::IsFinite(el->phase)) // phase specified - use that

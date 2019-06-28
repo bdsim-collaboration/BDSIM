@@ -338,6 +338,7 @@ void Options::PublishMembers()
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
+  publish("cavityFieldType",          &Options::cavityFieldType);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);
