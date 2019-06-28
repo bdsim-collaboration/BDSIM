@@ -96,13 +96,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeCollimatorLinks       = g->StoreCollimatorLinks();
-  // automatically store ion info if generating ion hits - this option
-  // controls generation and storage of the ion hits
-  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
+  storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
+  storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
+  // store primary hits if ion hits or links hits are turned on
+  storeCollimatorHits        = g->StoreCollimatorHits() || storeCollimatorHitsLinks || storeCollimatorHitsIons || g->StoreCollimatorHitsAll();
 
-  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorLinks || storeCollimatorHitsIons;
+  createCollimatorOutputStructures = storeCollimatorInfo || storeCollimatorHits;
 
   storeELoss                 = g->StoreELoss();
   // store histograms if storing general energy deposition as negligible in size
@@ -121,30 +121,16 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
-
-  // polar coords don't require a look up of any other PDG info so it
-  // doesn't need to involved in the following optimisation groupings
-  // of various options
-
-  // charge is required for rigidity calculation so force storage from sampler hits
-  if (storeSamplerRigidity && !storeSamplerCharge)
-    {storeSamplerCharge = true;}
-
-  // charge + mass + rigidity - particle stuff
-  storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
-  // charge + mass + rigidity + kinetic energy - particle stuff
-  storeOption2 = storeOption1 && storeSamplerKineticEnergy;
-  // everything except ion properties
-  storeOption3 = storeOption1 && storeSamplerIon;
-  // everything
-  storeOption4 = storeOption2 && storeSamplerIon;
-
+  
   // easy option for everything - overwrite bools we've just set individually
   if (g->StoreSamplerAll())
     {
-      storeOption4       = true;
-      storeSamplerCharge = true;
-      storeSamplerPolarCoords = true;
+      storeSamplerPolarCoords   = true;
+      storeSamplerCharge        = true;
+      storeSamplerKineticEnergy = true;
+      storeSamplerMass          = true;
+      storeSamplerRigidity      = true;
+      storeSamplerIon           = true;
     }
 }
 
@@ -220,16 +206,22 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    vertexInfoBDS->charge,
 		    vertex->GetPrimary()->GetPDGcode(),
 		    turnsTaken,
-		    vertexInfoBDS->primaryVertex.beamlineIndex);
+		    vertexInfoBDS->primaryVertex.beamlineIndex,
+		    vertexInfoBDS->nElectrons,
+		    vertexInfoBDS->mass,
+		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
     }
 }
 
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 				     const G4double charge,
-				     const G4int pdgID)
+				     const G4int pdgID,
+				     const G4int nElectrons,
+				     const G4double mass,
+				     const G4double rigidity)
 {
-  primary->Fill(coords.local, charge, pdgID, 0, 0);
+  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();
@@ -545,45 +537,17 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
-      samplerTrees[samplerID]->Fill(hit, storeSamplerCharge, storeSamplerPolarCoords);
+      samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
     }
 
   // extra information
-  // choose by a few strategies for optimisation (reduced PDGid searching)
-  // some options partially degenerate with lower numbered options - check first
-  if (storeOption4) // everything
+  G4bool firstSampler = true;
+  for (auto& sampler : samplerTrees)
     {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMRIK();}
-    }
-  else if (storeOption3) // option1 + ion
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRI();}
-    }
-  else if (storeOption2) // option1 + kinetic energy
-    {
-      for (auto &sampler : samplerTrees)
-      {sampler->FillMRK();}
-    }
-  else if (storeOption1) // also applies for 2 and 3
-    {
-      for (auto &sampler : samplerTrees)
-        {sampler->FillMR();}
-    }
-  else
-    {// treat individually
-      for (auto& sampler : samplerTrees)
-        {
-          if (storeSamplerKineticEnergy)
-	    {sampler->FillKineticEnergy();}
-          if (storeSamplerMass)
-	    {sampler->FillMass();}
-          if (storeSamplerRigidity)
-	    {sampler->FillRigidity();}
-          if (storeSamplerIon)
-	    {sampler->FillIon();}
-        }
+      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
+	{firstSampler = false; continue;}
+      if (storeSamplerIon)
+        {sampler->FillIon();}
     }
 }
 
@@ -775,7 +739,8 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
       G4int collimatorIndex = hit->collimatorIndex;      
       collimators[collimatorIndex]->Fill(hit,
 					 collimatorInfo[collimatorIndex],
-					 collimatorDifferences[collimatorIndex]);
+					 collimatorDifferences[collimatorIndex],
+					 storeCollimatorHits);  // this includes the || storeCollimatorHitsLinks || storeCollimatorHitsIons);
     }
 
   // identify whether the primary loss point was in a collimator
@@ -790,15 +755,19 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
             {
               G4int collIndex = (int) (result - collimatorIndices.begin());
               collimators[collIndex]->SetPrimaryStopped(true);
+              collimators[collIndex]->primaryInteracted = true;
+              // it must've interacted if it stopped - could be that we kill
+              // secondaries and there's no energy deposition therefore not identified
+              // as primaryInteracted=true in BDSOutputROOTEventCollimator::Fill()
             }
         }
     }
   
   // if required loop over collimators and get them to calculate and fill extra information
-  if (storeCollimatorLinks || storeCollimatorHitsIons)
+  if (storeCollimatorHitsLinks || storeCollimatorHitsIons)
     {
       for (auto collimator : collimators)
-	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorLinks);}
+	{collimator->FillExtras(storeCollimatorHitsIons, storeCollimatorHitsLinks);}
     }
 
   // after all collimator hits have been filled, we summarise whether the primary

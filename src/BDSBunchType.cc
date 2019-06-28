@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBunchType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "globals.hh"
 
@@ -72,7 +73,7 @@ BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
       G4cout << "Available distributions are:" << G4endl;
       for (auto it : types)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "");
     }
   
 #ifdef BDSDEBUG

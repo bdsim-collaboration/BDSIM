@@ -168,17 +168,10 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x1           = rmat11 * x0                      + rmat12 * xp * CLHEP::meter + rmat13 * y0                      + rmat14 * yp * CLHEP::meter + rmat15 * t + rmat16 * deltaEoverP + kick1;
-  G4double xp1          = rmat21 * x0 * CLHEP::milliradian + rmat22 * xp                + rmat23 * y0 * CLHEP::milliradian + rmat24 * yp                + rmat25 * t + rmat26 * deltaEoverP + kick2;
-  G4double y1           = rmat31 * x0                      + rmat32 * xp * CLHEP::meter + rmat33 * y0                      + rmat34 * yp * CLHEP::meter + rmat35 * t + rmat36 * deltaEoverP + kick3;
-  G4double yp1          = rmat41 * x0 * CLHEP::milliradian + rmat42 * xp                + rmat43 * y0 * CLHEP::milliradian + rmat44 * yp                + rmat45 * t + rmat46 * deltaEoverP + kick4;
-  G4double t1           = rmat51 * x0                      + rmat52 * xp                + rmat53 * y0                      + rmat54 * yp                + rmat55 * t + rmat56 * deltaEoverP;
-  G4double deltaEoverP1 = rmat61 * x0                      + rmat62 * xp                + rmat63 * y0                      + rmat64 * yp                + rmat65 * t + rmat66 * deltaEoverP;
-
-//  G4double E1 = deltaEoverP0_1 * nomMomentum + eq->TotalEnergy(mom);
-
-//  momMag = std::sqrt(std::pow(E1,2) - std::pow(nominalMass,2));
-
+  G4double x1    = rmat11 * x0 + rmat12 * xp * CLHEP::m + rmat13 * y0 + rmat14 * yp * CLHEP::m + kick1;
+  G4double xp1   = rmat21 * x0 / CLHEP::m + rmat22 * xp + rmat23 * y0 / CLHEP::m + rmat24 * yp + kick2;
+  G4double y1    = rmat31 * x0 + rmat32 * xp * CLHEP::meter + rmat33 * y0 + rmat34 * yp * CLHEP::m + kick3;
+  G4double yp1   = rmat41 * x0 / CLHEP::m + rmat42 * xp + rmat43 * y0 / CLHEP::m + rmat44 * yp + kick4;
   G4double z1    = z0 + h;
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
