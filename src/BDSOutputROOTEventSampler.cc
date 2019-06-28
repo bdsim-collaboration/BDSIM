@@ -24,8 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__
-#include "BDSParticleCoordsFull.hh"
 #include "BDSHitSampler.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSPhysicalConstants.hh"
 #include "tracker/TRKBunch.hh"
 
 #include "globals.hh"
@@ -59,8 +60,12 @@ template
 #ifndef __ROOTBUILD__
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
+					G4bool storeMass,
 					G4bool storeCharge,
-					G4bool storePolarCoords)
+					G4bool storePolarCoords,
+					G4bool storeElectrons,
+					G4bool storeRigidity,
+					G4bool storeKineticEnergy)
 {
   // get single values
   n++;
@@ -84,19 +89,35 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   trackID.push_back(hit->trackID);
   turnNumber.push_back(hit->turnsTaken);
 
+  // require mass to calculate kinetic energ
+  if (storeMass)
+    {mass.push_back((double)(hit->mass / CLHEP::GeV));}
+
   if (storeCharge)
     {charge.push_back((int)(hit->charge / (G4double)CLHEP::eplus));}
 
+  if (storeKineticEnergy)
+    {kineticEnergy.push_back((double)(hit->coords.totalEnergy - hit->mass) / CLHEP::GeV);}
+
+  if (storeRigidity)
+    {rigidity.push_back((double)hit->rigidity/(CLHEP::tesla*CLHEP::m));}
+
   if (storePolarCoords)
     {FillPolarCoords(hit->coords);}
+
+  if (storeElectrons)
+    {nElectrons.push_back((int)hit->nElectrons);}
 }
 
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4double chargeIn,
-					const G4int pdgID,
-					const G4int turnsTaken,
-					const G4int beamlineIndex)
+					const G4int    pdgID,
+					const G4int    turnsTaken,
+					const G4int    beamlineIndex,
+					const G4int    nElectronsIn,
+					const G4double massIn,
+					const G4double rigidityIn)
 {
   n++;
   energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
@@ -114,8 +135,15 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   modelID = beamlineIndex;
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
+
+  // always store optional bits for primary
   charge.push_back((int)(chargeIn / (G4double)CLHEP::eplus));
+  mass.push_back((double)(massIn / CLHEP::GeV));
+  rigidity.push_back((double)rigidityIn /(CLHEP::tesla*CLHEP::m));
+  nElectrons.push_back((int)nElectronsIn);
+  kineticEnergy.push_back((double)(coords.totalEnergy - massIn) / CLHEP::GeV);
   FillPolarCoords(coords);
+  FillIon();
 }
 
 template <class U>
@@ -204,6 +232,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSOutputROOTEventSampler<U>* othe
   isIon = other->isIon;
   ionA  = other->ionA;
   ionZ  = other->ionZ;
+  nElectrons = other->nElectrons;
 }
 
 template <class U> void BDSOutputROOTEventSampler<U>::SetBranchAddress(TTree *)
@@ -241,6 +270,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   isIon.clear();
   ionA.clear();
   ionZ.clear();
+  nElectrons.clear();
 }
 
 template <class U>
@@ -279,11 +309,16 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 template <class U>
 std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
 {
+  bool useNElectrons = nElectrons.size() > 0;
   std::vector<bool> result((unsigned long)n);
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
-    {result[i] = particleTable->IsIon(partID[i]);}
+    {
+      result[i] = particleTable->IsIon(partID[i]);
+      if (useNElectrons)
+        {result[i] = result[i] || nElectrons[i] > 0;}
+    }
   return result;
 }
 
@@ -307,95 +342,6 @@ std::vector<int> BDSOutputROOTEventSampler<U>::getIonZ()
   for (int i = 0; i < n; ++i)
     {result[i] = particleTable->IonZ(partID[i]);}
   return result;
-}
-
-template <class U>
-void BDSOutputROOTEventSampler<U>::FillMR()
-{
-  if (!particleTable)
-    {return;}
-  for (int i = 0; i < n; ++i)
-    {// loop over all existing entires in the branch vectors
-      auto& pid = partID[i];
-      auto& pInfo = particleTable->GetParticleInfo(pid);
-      mass.push_back(pInfo.mass);
-      rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
-    }
-}
-
-template <class U>
-void BDSOutputROOTEventSampler<U>::FillMRK()
-{
-  if (!particleTable)
-    {return;}
-  for (int i = 0; i < n; ++i)
-    {// loop over all existing entires in the branch vectors
-      auto& pid = partID[i];
-      auto& pInfo = particleTable->GetParticleInfo(pid);
-      mass.push_back(pInfo.mass);
-      rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
-      kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
-    }
-}
-
-template <class U>
-void BDSOutputROOTEventSampler<U>::FillMRIK()
-{
-  if (!particleTable)
-    {return;}
-  for (int i = 0; i < n; ++i)
-    {// loop over all existing entires in the branch vectors
-      auto& pid = partID[i];
-      if (particleTable->IsIon(pid))
-        {
-          auto& ionInfo = particleTable->GetIonInfo(pid);
-          mass.push_back(ionInfo.mass);
-          rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
-          isIon.push_back(true);
-          ionA.push_back(ionInfo.a);
-          ionZ.push_back(ionInfo.z);
-          kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
-        }
-      else
-        {// particle
-          auto& pInfo = particleTable->GetParticleInfo(pid);
-          mass.push_back(pInfo.mass);
-          rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
-          isIon.push_back(false);
-          ionA.push_back(0);
-          ionZ.push_back(0);
-          kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
-        }
-    }
-}
-
-template <class U>
-void BDSOutputROOTEventSampler<U>::FillMRI()
-{
-  if (!particleTable)
-    {return;}
-  for (int i = 0; i < n; ++i)
-    {// loop over all existing entires in the branch vectors
-      auto& pid = partID[i];
-      if (particleTable->IsIon(pid))
-	{
-	  auto& ionInfo = particleTable->GetIonInfo(pid);
-	  mass.push_back(ionInfo.mass);
-	  rigidity.push_back(ionInfo.rigidity(energy[i], charge[i]));
-	  isIon.push_back(true);
-	  ionA.push_back(ionInfo.a);
-	  ionZ.push_back(ionInfo.z);
-	}
-      else
-	{// particle
-	  auto& pInfo = particleTable->GetParticleInfo(pid);
-	  mass.push_back(pInfo.mass);
-	  rigidity.push_back(pInfo.rigidity(energy[i], charge[i]));
-	  isIon.push_back(false);
-	  ionA.push_back(0);
-	  ionZ.push_back(0);
-	}
-    }
 }
 
 template class BDSOutputROOTEventSampler<float>;
