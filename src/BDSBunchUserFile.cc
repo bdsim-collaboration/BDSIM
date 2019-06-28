@@ -46,7 +46,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   bunchFormat(""),
   nlinesIgnore(0),
   particleMass(0),
-  lineCounter(0)
+  lineCounter(0),
+  printedOutFirstTime(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -56,7 +57,7 @@ void BDSBunchUserFile<T>::CheckParameters()
 {
   BDSBunch::CheckParameters();
   if (distrFile.empty())
-    {G4cerr << __METHOD_NAME__ << "No input file specified for distribution" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "No input file specified for distribution");}
 }
 
 template<class T>
@@ -68,10 +69,15 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
+  if (!printedOutFirstTime)
+    {
+      G4cout << "BDSBunchUserFile::OpenBunchFile> opening " << distrFilePath << G4endl;
+      printedOutFirstTime = true;
+    }
   lineCounter = 0;
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
-    {throw BDSException(__METHOD_NAME__, "Cannot open bunch file " + distrFilePath);}
+    {throw BDSException("BDSBunchUserFile::OpenBunchFile>", "Cannot open bunch file " + distrFilePath);}
 }
 
 template<class T>
@@ -218,7 +224,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       sd.unit=1;
       fields.push_back(sd);
     } else {
-      G4cerr << "Cannot determine bunch data format" << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Cannot determine bunch data format");
     }
   } 
   return;
@@ -235,11 +241,12 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 template<class T>
 void BDSBunchUserFile<T>::SkipLines()
 {
-  if (BDS::IsFinite(nlinesIgnore))
+  if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
-      G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
+      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
+	     << nlinesSkip << " lines" << G4endl;
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore; i++)
+      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
 	{
 	  std::getline(InputBunchFile, line);
 	  lineCounter++;
@@ -260,6 +267,7 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   distrFilePath = BDS::GetFullPath(beam.distrFile);
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
+  nlinesSkip    = beam.nlinesSkip;
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();
@@ -275,8 +283,7 @@ G4double BDSBunchUserFile<T>::ParseEnergyUnit(const G4String& fmt)
   else if(fmt=="KeV") unit=1.e-6;
   else if(fmt=="eV") unit=1.e-9;
   else {
-    G4cout << __METHOD_NAME__ << "Unrecognised energy unit! " << fmt << G4endl;
-    exit(1);
+    throw BDSException(__METHOD_NAME__, "Unrecognised energy unit! " +fmt);
   }
   return unit;
 }
@@ -291,8 +298,7 @@ G4double BDSBunchUserFile<T>::ParseLengthUnit(const G4String& fmt)
   else if(fmt=="mum" || fmt=="um") unit=1.e-6;
   else if(fmt=="nm") unit=1.e-9;
   else {
-    G4cout << __METHOD_NAME__ << "Unrecognised length unit! " << fmt << G4endl;
-    exit(1);
+    throw BDSException(__METHOD_NAME__, "Unrecognised length unit! " + fmt);
   }
   return unit;
 }
@@ -306,8 +312,7 @@ G4double BDSBunchUserFile<T>::ParseAngleUnit(const G4String& fmt)
   else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
   else if(fmt=="nrad") unit=1.e-9;
   else {
-    G4cout << __METHOD_NAME__ << "Unrecognised angle unit! " << fmt << G4endl;
-    exit(1);
+    throw BDSException(__METHOD_NAME__, "Unrecognised angle unit! " + fmt);
   }
   return unit;
 }
@@ -322,8 +327,7 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(const G4String& fmt)
   else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
   else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
   else {
-    G4cout << __METHOD_NAME__ << "Unrecognised time unit! " << fmt << G4endl;
-    exit(1);
+    throw BDSException(__METHOD_NAME__, "Unrecognised time unit! " + fmt);
   }
   return unit;
 }
