@@ -1,4 +1,4 @@
-V1.4 - 2019 / 05 / 20
+V1.4 - 2019 / ?? / ??
 =====================
 
 Expected Changes To Results
@@ -16,6 +16,9 @@ New Features
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
+  a distribution file.
+* Support for partially stripped ions in output samplers.
 
 * New options:
 
@@ -36,6 +39,12 @@ New Features
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits               | Store colliamtor hits for primary particles. This is addition to   |
+|                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
++-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                   | compatible.                                                        |
++-----------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -47,10 +56,25 @@ General
 * wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
 * wirescanner element now requires a material to be specified as this makes a large difference
   to the expected result. This should be specified.
+* Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
+  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
+* Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
+  hit information in the output. The crystal channelling process is ignore as a step defining process
+  for generating unique hits in the crystal.
+* All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
+* The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
+  the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
+  each per-collimator branch in Event. This allows greater control over the amount of information stored.
+  The primary hits can be turned on as well with the option `storeCollimatorHits`.
   
 Bug Fixes
 ---------
 
+* Fix for potential segfault when analysing collimator information branches in event tree. Dependent
+  on number of collimators analysed causing std::vector to reallocate and invalidate address of
+  pointers as required by ROOT.
 * Fixed warnings about exiting when Geant4 geometry in closed state in the event
   of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
   the exception.
@@ -62,6 +86,34 @@ Bug Fixes
   instead.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* The rigidity was correcte for partially stripped ions in the sampler output.
+* The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
+  the nuclear mass not including the mass of the electrons. The magnetic fields were however
+  calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
+* Fix a bug where if a userfile with different particle types was used and `-\\-generatePrimariesOnly`
+  was used the phase space coordinates would be correct but the mass, charge, rigidity would be
+  written wrongly to the output. The particle definition is now updated correctly in the special
+  case of generating primaries only where the Geant4 kernel isn't used.
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
+  v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
+  applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
+  They're now filled correctly.
+
+Output Changes
+--------------
+
+* Samplers now have a new variable called `nElectrons` that is the number of electrons on a
+  partially stripped ion (if it is one) passing through the sampler. This is filled alongside
+  the other ion information.
+* `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
+  passes through a sampler.
+* All extra coordinates are now recorded in the Primary sampler structure no matter if these
+  are turned on or not for the samplers.
+* New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
+* `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` variables in Model tree are now filled
+  correctly.
+
 
 Utilities
 ---------
@@ -71,6 +123,18 @@ Utilities
 * pymad8 v1.5.0
 * pytransport v1.3.0
 
+
+V1.3.3 - 2019 / 05 / 21
+=======================
+
+Bug Fixes
+---------
+
+* Hot fix for fields not attached to thin elements such as dipole fringes or thin multipoles. This bug
+  crept in through a modification to avoid Geant4 getting stuck with strong fields in very narrow gaps
+  between layers of geometry in beam pipes, resulting in subsequent bad tracking due to the bad state of
+  Geant4 navigators internally. Regression testing has subsequently been introduced to protect against
+  this kind of bugging going unnoticed in future.
 
 V1.3.2 - 2019 / 04 / 20
 =======================
@@ -239,7 +303,7 @@ New Features
 |                                  | generated, `isIon`, `ionA` and `ionZ` variables are filled.      |
 |                                  | Collimator hits will now also be generated for all ions.         |
 +----------------------------------+------------------------------------------------------------------+
-| storeCollimatorLinks             | If `storeCollimatorInfo` is on and collimator hits are           |
+| storeCollimatorHitsLinks         | If `storeCollimatorInfo` is on and collimator hits are           |
 |                                  | generated, extra information is stored for each collimator hit.  |
 +----------------------------------+------------------------------------------------------------------+
 | storeEloss                       | Ability to completely turn off generation of energy deposition   |

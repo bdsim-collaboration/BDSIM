@@ -4261,6 +4261,10 @@ with the following options.
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits               | Store hits in per-collimator structures with hits for only primary |
+|                                   | particles. With only `storeCollimatorInfo` on, only the            |
+|                                   | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
 |                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
 |                                   | will now also be generated for all ions whether primary or         |
@@ -4271,15 +4275,16 @@ with the following options.
 |                                   | collimators whether primary or secondary and whether ion or not.   |
 |                                   | Default off.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsLinks          | If `storeCollimatorHits` is on and collimator hits are generated,  |
+|                                   | `charge`, `mass`, `rigidity` and `kineticEnergy` variables are     |
+|                                   | also stored for each collimator hit.                               |
++-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
 |                                   | only collimators is filled. Collimator structures are created in   |
 |                                   | the Event Tree of the output for each collimator and prefixed with |
 |                                   | "COLL\_" and contain hits from (only) primary particles.           |
 |                                   | Collimator summary histograms are also created and stored. Default |
 |                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorLinks              | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | extra information is stored for each collimator hit.               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
 |                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
@@ -4372,7 +4377,8 @@ with the following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not         |
+| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not as well |
+|                                   | as the `nElectrons` variable for possible number of electrons.     |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
 |                                   | stored. This must be turned on to store any trajectories at all.   |
@@ -5301,10 +5307,31 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
+| `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
+|                                  | number of coordinate lines to skip. This also counts  |
+|                                  | comment lines.                                        |
++----------------------------------+-------------------------------------------------------+
 | `matchDistrFileLength`           | Option for certain distributions to simulate the same |
 |                                  | number of events as are in the file. Currently only   |
 |                                  | for the `ptc` distribution.                           |
 +----------------------------------+-------------------------------------------------------+
+
+Skipping and Ignoring Lines:
+
+* `nlinesIgnore` is intended for header lines to ignore at the start of the file.
+* `nlinesSkip` is intended for the number of particle coordinate lines to skip after `nlinesIgnore`.
+* `nlinesSkip` is available as the executable option :code:`--distrFileNLinesSkip`.
+* The number of lines skipped from a file is `nlinesIgnore` + `nlinesSkip`. The user could use
+  only one of these, but only `nlinesSkip` is available through the executable option described above.
+* If more events are generated than are lines in the file, the file is read again including the skipped
+  lines.
+
+Examples:
+
+1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
+2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
+   The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
+   for another instance of BDSIM on a compure farm.
 
 Acceptable tokens for the columns are:
 
@@ -5421,7 +5448,7 @@ The automatic tunnel building is controlled through the following options used w
 | buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
 |                                  | just in a straight line (default = 0)                 |
 +----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | Whether to add a floor to the tunnel                  |
+| buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
