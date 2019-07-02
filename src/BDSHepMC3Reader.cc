@@ -48,7 +48,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HepMC3/ReaderAsciiHepMC2.h"
 #include "HepMC3/ReaderHEPEVT.h"
 #include "HepMC3/ReaderLHEF.h"
-#ifdef HEPMC3_ROOTIO
+#ifdef USE_HEPMC3_ROOTIO
 #include "HepMC3/ReaderRoot.h"
 #include "HepMC3/ReaderRootTree.h"
 #endif
@@ -106,7 +106,7 @@ void BDSHepMC3Reader::OpenFile()
       {reader = new HepMC3::ReaderAscii(fileName); break;}
     case BDSEventGeneratorFileType::hpe:
       {reader = new HepMC3::ReaderHEPEVT(fileName); break;}
-#ifdef HEPMC3_ROOTIO
+#ifdef USE_HEPMC3_ROOTIO
     case BDSEventGeneratorFileType::root:
       {reader = new HepMC3::ReaderRoot(fileName); break;}
     case BDSEventGeneratorFileType::treeroot:
