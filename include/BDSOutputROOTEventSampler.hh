@@ -28,6 +28,7 @@ class BDSOutputROOTGeant4Data;
 #include "globals.hh"
 class BDSParticleCoordsFull;
 class BDSHitSampler;
+class BDSPrimaryVertexInformationV;
 #endif
 
 #include "TObject.h"
@@ -107,8 +108,11 @@ public:
 	    const G4int    beamlineIndex,
 	    const G4int    nElectronsIn,
 	    const G4double massIn,
-	    const G4double rigidityIn);
-  void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
+	    const G4double rigidityIn,
+	    G4bool fillIon = true);
+  void FillPolarCoords(const BDSParticleCoordsFull& coords);  ///< Calculate polar coords and fill.
+  void Fill(const BDSPrimaryVertexInformationV* vertexInfos,
+	    const G4int turnsTaken); ///< Fill a vertex directly.
 #endif
   void Fill(const BDSOutputROOTEventSampler<U>* other);
 
