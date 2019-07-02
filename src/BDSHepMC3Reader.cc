@@ -253,4 +253,7 @@ G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
   else return true;
 }
 
+#else
+// insert empty function to avoid no symbols warning
+void _SymbolToPreventWarningHEPMC3Reader(){;}
 #endif
