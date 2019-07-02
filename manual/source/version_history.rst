@@ -19,6 +19,8 @@ New Features
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * Support for partially stripped ions in output samplers.
+* Optional linking to HepMC3 for event generator output file loading. Can load any format
+  HepMC3 can load.
 
 * New options:
 
@@ -113,7 +115,9 @@ Output Changes
 * New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
 * `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` variables in Model tree are now filled
   correctly.
-
+* BDSOutputROOTEventCoords member variables are now all vectors instead of single numbers. This
+  is to allow the possibility of more than one primary particle as is possible when loading a
+  file from an event generator.
 
 Utilities
 ---------
