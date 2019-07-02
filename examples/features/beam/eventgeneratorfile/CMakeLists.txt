@@ -7,8 +7,4 @@ if (USE_HEPMC3)
   simple_testing(bunch-eventgeneratorfile-hepmc2-lowphysics  "--file=eventgeneratorfile-hepmc2-lowphysics.gmad"   "")
   simple_testing(bunch-eventgeneratorfile-hepmc2-offset      "--file=eventgeneratorfile-hepmc2-offset.gmad"       "")
   simple_testing(bunch-eventgeneratorfile-hepmc2-recreate    "--file=eventgeneratorfile-hepmc2-recreate.gmad"     "")
-  if (DEFINED HEPMC3_ROOTIO_LIB)
-    # we have no example file for now
-    #simple_testing(bunch-eventgeneratorfile-hepmc2-root      "--file=eventgeneratorfile-hepmc2root.gmad"          "")
-  endif()
 endif()
