@@ -101,6 +101,9 @@ Bug Fixes
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
   They're now filled correctly.
+* Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in
+  the physics list and also biased. Previously, the proton would not be biased but instead only the
+  ions would be.
 
 Output Changes
 --------------
