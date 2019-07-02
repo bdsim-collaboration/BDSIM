@@ -37,26 +37,33 @@ class BDSHitSampler: public G4VHit
 public:
   BDSHitSampler(G4int samplerIDIn,
 		const BDSParticleCoordsFull& coordsIn,
+		G4double massIn,
 		G4double chargeIn,
+		G4double rigidityIn,
 		G4int    pdgIDIn,
 		G4int    parentIDIn,
 		G4int    trackIDIn,
 		G4int    turnsTakenIn,
-		G4int    beamlineIndexIn);
-  
-  virtual ~BDSHitSampler(){;}
+		G4int    beamlineIndexIn,
+		G4int    nElectronsIn = 0);
+
+  /// Note this should not be inline when we use a G4Allocator.
+  virtual ~BDSHitSampler();
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
 
   G4int                 samplerID;
   BDSParticleCoordsFull coords;
+  G4double              mass;
   G4double              charge; ///< Double as g4 uses charge as a double.
+  G4double              rigidity;
   G4int                 pdgID;
   G4int                 parentID;
   G4int                 trackID;
   G4int                 turnsTaken;
   G4int                 beamlineIndex;
+  G4int                 nElectrons; ///< Can only get this at inspection time so include here.
   
 private:
   BDSHitSampler() = delete; ///< No default constructor.

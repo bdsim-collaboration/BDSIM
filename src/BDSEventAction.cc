@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
+#include "BDSSDApertureImpacts.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDEnergyDepositionGlobal.hh"
@@ -92,6 +93,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eCounterWorldContentsID(-1),
   worldExitCollID(-1),
   collimatorCollID(-1),
+  apertureCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -183,9 +185,11 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       eCounterWorldContentsID  = g4SDMan->GetCollectionID(bdsSDMan->EnergyDepositionWorldContents()->GetName());
       worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
+      apertureCollID           = g4SDMan->GetCollectionID(bdsSDMan->ApertureImpacts()->GetName());
     }
   FireLaserCompton=true;
 
+  cpuStartTime = std::clock();
   // get the current time - last thing before we hand off to geant4
   startTime = time(nullptr);
   eventInfo->SetStartTime(startTime);
@@ -210,12 +214,18 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Record if event was aborted - ie whether it's useable for analyses.
   eventInfo->SetAborted(evt->IsAborted());
-  
-  // Get the current time
+
+  // Calculate the elapsed CPU time for the event.
+  auto cpuEndTime = std::clock();
+  auto cpuTime = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+
+  eventInfo->SetCPUTime(cpuTime);
+
+  // Get the current wall time
   stopTime = time(nullptr);
   eventInfo->SetStopTime(stopTime);
 
-  // Timing information
+  // Timing information (wall)
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
   eventInfo->SetDuration(G4float(stops - starts));
@@ -250,6 +260,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   ecghc* eCounterWorldHits          = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldID));
   ecghc* eCounterWorldContentsHits  = dynamic_cast<ecghc*>(HCE->GetHC(eCounterWorldContentsID));
   ecghc* worldExitHits              = dynamic_cast<ecghc*>(HCE->GetHC(worldExitCollID));
+
+  // aperture hits
+  typedef BDSHitsCollectionApertureImpacts aihc;
+  aihc* apertureImpactHits = dynamic_cast<aihc*>(HCE->GetHC(apertureCollID));
   
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
@@ -490,6 +504,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    primaryLoss,
 		    interestingTraj,
 		    collimatorHits,
+		    apertureImpactHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end

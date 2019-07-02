@@ -70,7 +70,7 @@ Event::~Event()
   delete Histos;
   delete Summary;
   delete Info;
-  delete Aperture;
+  delete ApertureImpacts;
   for (auto s : Samplers)
     {delete s;}
   for (auto c : collimators)
@@ -98,7 +98,7 @@ void Event::CommonCtor()
   Histos             = new BDSOutputROOTEventHistograms();
   Summary            = new BDSOutputROOTEventInfo();
   Info               = new BDSOutputROOTEventInfo();
-  Aperture           = new BDSOutputROOTEventAperture();
+  ApertureImpacts    = new BDSOutputROOTEventAperture();
 }
 
 #ifdef __ROOTDOUBLE__
@@ -163,6 +163,9 @@ void Event::SetBranchAddress(TTree* t,
   // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
 
+  int nCollimatorsToTurnOn = 0;
+  int ithCollimator = 0;
+
   // turn on only what we need to speed up analysis as with more things
   // on, more data is loaded from the file for each GetEntry().
   // these objects are small - always load
@@ -215,9 +218,26 @@ void Event::SetBranchAddress(TTree* t,
 	  t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);
 	  SetBranchAddressCollimators(t, collimatorNamesIn);
 	}
+      if (dataVersion > 4)
+	{
+	  if (((*t).GetListOfBranches()->FindObject("ApertureImpacts.")) != nullptr)
+	    {t->SetBranchAddress("ApertureImpacts.",  &ApertureImpacts);}
+	}
     }
   else if (branchesToTurnOn)
     {
+      // pre-count the number of collimators at once (dynamically created local objects)
+      // we new them all at once and put the pointers in a vector at once. This way, the
+      // vector is never reallocated (can happen with repeated push_backs) as this would
+      // result in the vector being recopied somewhere else and the pointer pointers being
+      // invalid for SetBranchAddress.
+      for (const auto& name : *branchesToTurnOn)
+        {
+          if (name.substr(0,4) == "COLL")
+            {nCollimatorsToTurnOn++;}
+        }
+      collimators.resize(nCollimatorsToTurnOn); // reserve size of required vector to avoid recopying
+      
       for (const auto& name : *branchesToTurnOn)
 	{
 	  std::string nameStar = name + "*";
@@ -249,7 +269,10 @@ void Event::SetBranchAddress(TTree* t,
 	  else if (name == "Trajectory")
 	    {t->SetBranchAddress("Trajectory.", &Trajectory);}
 	  else if (name.substr(0,4) == "COLL")
-	    {SetBranchAddressCollimatorSingle(t, name);}
+	    {
+	      SetBranchAddressCollimatorSingle(t, name+".", ithCollimator);
+	      ithCollimator++;
+	    }
 	}
     }
 
@@ -296,6 +319,8 @@ void Event::SetBranchAddress(TTree* t,
 
 void Event::RegisterCollimator(std::string collimatorName)
 {
+  // be careful of push_back to collimators vector as this might invalidate
+  // any &pointers used with SetBranchAddress
   BDSOutputROOTEventCollimator* collimator = new BDSOutputROOTEventCollimator();
   collimatorNames.push_back(collimatorName);
   collimators.push_back(collimator);
@@ -304,10 +329,17 @@ void Event::RegisterCollimator(std::string collimatorName)
 
 void Event::RegisterSampler(std::string samplerName)
 {
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* sampler = new BDSOutputROOTEventSampler<double>();
+  samplerNames.push_back(samplerName);
+  Samplers.push_back(sampler);
+  samplerMap[samplerName] = sampler;
+#else
   BDSOutputROOTEventSampler<float>* sampler = new BDSOutputROOTEventSampler<float>();
   samplerNames.push_back(samplerName);
   Samplers.push_back(sampler);
   samplerMap[samplerName] = sampler;
+#endif
 }
 
 void Event::SetBranchAddressCollimators(TTree* t,
@@ -315,25 +347,29 @@ void Event::SetBranchAddressCollimators(TTree* t,
 {
   if (collimatorNamesIn)
     {
+      int i = 0;
       for (const auto& name : *collimatorNamesIn)
 	{
 	  collimators.resize((unsigned int)collimatorNamesIn->size());
-	  SetBranchAddressCollimatorSingle(t, name);
+	  SetBranchAddressCollimatorSingle(t, name, i);
+	  i++;
 	}
     }
 }
 
 void Event::SetBranchAddressCollimatorSingle(TTree* t,
-					     const std::string& name)
+					     const std::string& name,
+					     int i)
 {
-  BDSOutputROOTEventCollimator* col = new BDSOutputROOTEventCollimator();
-  collimators.push_back(col);
+  // we must not push_back to collimators (vector) as this might expand it
+  // and invalidate all addresses to pointers in that vector
+  collimators[i] = new BDSOutputROOTEventCollimator();
   collimatorNames.push_back(name);
-  collimatorMap[name] = col;
-
-  t->SetBranchAddress((name + ".").c_str(), &collimators.back());
+  collimatorMap[name] = collimators[i];
+  
+  t->SetBranchAddress(name.c_str(), &collimators[i]);
   if (debug)
-    {std::cout << "Event::SetBranchAddress> " << name << " " << col << std::endl;}
+    {std::cout << "Event::SetBranchAddress> " << name << " " << collimators[i] << std::endl;}
 }
 
 void Event::Fill(Event* other)
@@ -353,7 +389,7 @@ void Event::Fill(Event* other)
   Histos->FillSimple(other->Histos);
   Summary->Fill(other->Summary);
   Info->Fill(other->Info);
-  Aperture->Fill(other->Aperture);
+  ApertureImpacts->Fill(other->ApertureImpacts);
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
     {Samplers[i]->Fill(other->Samplers[i]);}
@@ -379,6 +415,7 @@ void Event::Flush()
   Histos->Flush();
   Summary->Flush();
   Info->Flush();
+  ApertureImpacts->Flush();
   FlushCollimators();
   FlushSamplers();
 }

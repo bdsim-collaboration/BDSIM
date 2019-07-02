@@ -112,6 +112,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
     {// we test one by one for the exact name of very specific physics lists
       if (physicsListNameLower == "completechannelling" || physicsListNameLower == "completechannellingemd")
 	{
+	  G4cout << "Constructing \"" << physicsListNameLower << "\" complete physics list" << G4endl;
 #if G4VERSION_NUMBER > 1039
 	  G4bool useEMD = physicsListNameLower.contains("emd");
 	  // we don't assign 'result' variable or proceed as that would result in the
@@ -176,6 +177,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
 
       G4IonTable* ionTable = particleTable->GetIonTable();
       G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
+      mass += ionDef->NElectrons()*G4Electron::Definition()->GetPDGMass();
       G4double charge = ionDef->Charge(); // correct even if overridden
       particleDefB = new BDSParticleDefinition(particleName, mass, charge,
 					       totalEnergy, ffact, ionDef);
@@ -315,7 +317,10 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(const G4bool useEMD)
 
   // optional electromagnetic dissociation that isn't in FTFP_BERT by default
   if (useEMD)
-    {physlist->RegisterPhysics(new BDSPhysicsEMDissociation());}
+    {
+      G4cout << "Adding EM Dissocation to crystal channelling physics list" << G4endl;
+      physlist->RegisterPhysics(new BDSPhysicsEMDissociation());
+    }
 
   biasingPhysics->PhysicsBiasAllCharged();
   physlist->RegisterPhysics(biasingPhysics);
