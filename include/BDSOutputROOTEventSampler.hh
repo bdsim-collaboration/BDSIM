@@ -29,6 +29,7 @@ class BDSOutputROOTGeant4Data;
 #include "tracker/TRKBunch.hh"
 class BDSParticleCoordsFull;
 class BDSHitSampler;
+class BDSPrimaryVertexInformationV;
 class TRKBunch;
 #endif
 
@@ -109,10 +110,13 @@ public:
 	    const G4int    beamlineIndex,
 	    const G4int    nElectronsIn,
 	    const G4double massIn,
-	    const G4double rigidityIn);
+	    const G4double rigidityIn,
+	    G4bool fillIon = true);
+  void FillPolarCoords(const BDSParticleCoordsFull& coords);  ///< Calculate polar coords and fill.
+  void Fill(const BDSPrimaryVertexInformationV* vertexInfos,
+	    const G4int turnsTaken); ///< Fill a vertex directly.
+    
   void Fill(const TRKBunch& bunch);
-  void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
-
 #endif
   void Fill(const BDSOutputROOTEventSampler<U>* other);
 
@@ -125,7 +129,7 @@ public:
 
   static BDSOutputROOTGeant4Data* particleTable;
 
-  ClassDef(BDSOutputROOTEventSampler,3);
+  ClassDef(BDSOutputROOTEventSampler,4);
 };
 
 #endif
