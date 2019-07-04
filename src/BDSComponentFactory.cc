@@ -2108,14 +2108,24 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   G4double equatorRadius = horizontalWidth - thickness;
   if (equatorRadius <= 0)
     {
-      throw BDSException(__METHOD_NAME__, "combination of horizontalWidth and beampipeThickness for eement \"" +
+      throw BDSException(__METHOD_NAME__, "combination of horizontalWidth and beampipeThickness for element \"" +
 			 el->name + "\" produce 0 size cavity");
     }
 
-  G4double cellLength = 2*CLHEP::c_light / frequency; // half wavelength
+  // assume single cell cavity
   G4double length     = el->l * CLHEP::m;
-  G4double nCavities  = length / cellLength;
-  G4int nCells = G4int(std::floor(nCavities));
+  G4double cellLength = length;
+  G4int nCells        = 1;
+
+  // calculate number of cells if frequency is finite -
+  // frequency can be zero in which case only build 1 cell
+  if (BDS::IsFinite(frequency))
+    {
+	  cellLength = 2*CLHEP::c_light / frequency; // half wavelength
+	  G4double nCavities  = length / cellLength;
+	  nCells = G4int(std::floor(nCavities));
+    }
+
   if (nCells == 0) // protect against long wavelengths or cavities
     {
       nCells = 1;
