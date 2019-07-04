@@ -105,6 +105,8 @@ Bug Fixes
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
   They're now filled correctly.
+* Fix scaling of relativistic beta in the dipolequadrupole integrator, the particle design beta was
+  always was used before regardless of dipole scaling.
 
 Output Changes
 --------------
