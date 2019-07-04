@@ -104,6 +104,8 @@ Bug Fixes
 * Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in
   the physics list and also biased. Previously, the proton would not be biased but instead only the
   ions would be.
+* Fix Event.Summary.memoryUsageMb which was always 0. Also now correct units on linux and Mac. Was previously
+  a factor of 1048 too big on linux.
 
 Output Changes
 --------------
