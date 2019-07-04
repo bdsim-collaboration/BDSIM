@@ -21,6 +21,8 @@ New Features
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
+* Ability to print out all particles and physics processes to be helpful for finding Geant4
+  names for biasing. See new options below.
 
 * New options:
 
@@ -29,6 +31,9 @@ New Features
 +-----------------------------------+--------------------------------------------------------------------+
 | **Option**                        | **Description**                                                    |
 +===================================+====================================================================+
+| printPhysicsProcesses             | Print out all defined particles according to the physics list and  |
+|                                   | the names of all defined physics processes for that particle.      |
++-----------------------------------+--------------------------------------------------------------------+
 | storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
 |                                   | tree in the output that contains coordinates of where the primary  |
 |                                   | particle exists the beam pipe. Note this could be multiple times.  |

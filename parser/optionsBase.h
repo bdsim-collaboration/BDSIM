@@ -315,6 +315,7 @@ namespace GMAD
 
     double   printFractionEvents;
     double   printFractionTurns;
+    bool     printPhysicsProcesses;
 
     // visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
