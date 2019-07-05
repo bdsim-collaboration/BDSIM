@@ -45,8 +45,7 @@ public:
   /// Construct from E amplitude, frequency (G4Units) and phase.
   BDSFieldESinusoid(G4double eFieldAmplitude,
 		    G4double frequencyIn,
-		    G4double phaseOffsetIn,
-            G4bool isMadField);
+		    G4double phaseOffsetIn);
 
   virtual ~BDSFieldESinusoid(){;}
 
@@ -67,9 +66,6 @@ private:
 
   /// Phase in radians.
   G4double phase;
-
-  /// If field is mad-like.
-  G4bool isMadField;
 };
 
 #endif
