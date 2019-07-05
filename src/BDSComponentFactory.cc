@@ -510,12 +510,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 					       fieldTrans);
 
   // limit step length in field - crucial to this component
-  // to get the motion correct this has to be less than one oscillation
-  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-  G4double limit = (*st)["length"] * 0.025;
-  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
-  if (ul != defaultUL)
-    {vacuumField->SetUserLimits(ul);}
+  // to get the motion correct this has to be less than one oscillation.
+  // Don't set if frequency is zero as the field will have no oscillation.
+  if (BDS::IsFinite(element->frequency))
+    {
+	  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+	  G4double limit = (*st)["length"] * 0.025;
+	  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+	  if (ul != defaultUL) { vacuumField->SetUserLimits(ul); }
+    }
+
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
