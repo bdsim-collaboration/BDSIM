@@ -208,7 +208,6 @@ OptionsBase::OptionsBase()
   sampleElementsWithPoleface  = false;   // affects dipole tracking in certain integrator sets when true
   nominalMatrixRelativeMomCut = 0.05;  // be careful adjusting this as it affects dipolequadrupole tracking
   teleporterFullTransform  = true;
-  cavityFieldType          = "bdsim";  // used to determine if cavity is mad8-type or conventional (default).
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;

@@ -251,7 +251,6 @@ namespace GMAD
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
     bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
-    std::string cavityFieldType;        ///< Field type of all RF cavities, .
 
     // hit generation - only two parts that go in the same collection / branch
     bool      sensitiveOuter;
