@@ -2161,18 +2161,22 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   // phase - construct it so that phase is w.r.t. the centre of the cavity
   // and that it's 0 by default
   G4double frequency = (*st)["frequency"];
-  G4double period    = 1. / frequency;
-  G4double tOffset   = 0;
-  if (BDS::IsFinite(el->tOffset)) // use the one specified
-    {tOffset = el->tOffset * CLHEP::s;}
-  else // this gives 0 phase at the middle of cavity
-    {tOffset = (currentArcLength + 0.5*chordLength) / CLHEP::c_light;}
+  G4double phaseOffset = 0;
+  if (BDS::IsFinite(frequency))
+    {
+	  G4double period = 1. / frequency;
+	  G4double tOffset = 0;
+	  if (BDS::IsFinite(el->tOffset)) // use the one specified
+	    {tOffset = el->tOffset * CLHEP::s;}
+	  else // this gives 0 phase at the middle of cavity
+	    {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
 
-  G4double nPeriods       = tOffset / period;
-  // phase is the remainder from total phase / N*2pi, where n is unknown.
-  G4double integerPart    = 0;
-  G4double fractionalPart = std::modf(nPeriods, &integerPart);
-  G4double phaseOffset    = fractionalPart * CLHEP::twopi;
+	  G4double nPeriods = tOffset / period;
+	  // phase is the remainder from total phase / N*2pi, where n is unknown.
+	  G4double integerPart = 0;
+	  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+	  phaseOffset = fractionalPart * CLHEP::twopi;
+    }
 
   // element cavity field type overrides global options default so check first.
   BDSCavityFieldType cavityFieldType;
