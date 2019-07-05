@@ -54,7 +54,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSLine.hh"
-#include "BDSCavityFieldType.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSCrystalInfo.hh"
@@ -2182,36 +2181,13 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
 	  phaseOffset = fractionalPart * CLHEP::twopi;
     }
 
-  // element cavity field type overrides global options default so check first.
-  BDSCavityFieldType cavityFieldType;
-  if (el->cavityFieldType != "")
-    {cavityFieldType = BDS::DetermineCavityFieldType(el->cavityFieldType);}
-  else
-    {cavityFieldType = BDS::DetermineCavityFieldType(BDSGlobalConstants::Instance()->CavityFieldType());}
-
   G4double phase = el->phase * CLHEP::rad;
   if (BDS::IsFinite(el->phase)) // phase specified - use that
-    {
-      if (cavityFieldType == BDSCavityFieldType::bdsim)
-        {(*st)["phase"] = phaseOffset + phase;}
-      else if (cavityFieldType == BDSCavityFieldType::mad8)
-        {(*st)["phase"] = phase;}
-    }
+    {(*st)["phase"] = phaseOffset + phase;}
   else
-    {
-      if (cavityFieldType == BDSCavityFieldType::bdsim)
-        {(*st)["phase"] = phaseOffset;}
-      else if (cavityFieldType == BDSCavityFieldType::mad8)
-        {(*st)["phase"] = 0;}
-    }
-
+    {(*st)["phase"] = phaseOffset;}
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"] = chordLength;
-
-  if (cavityFieldType == BDSCavityFieldType::mad8)
-    {(*st)["ismadfield"] = true;}
-  else
-    {(*st)["ismadfield"] = false;}
   return st;
 }
 

@@ -150,7 +150,6 @@ Parameters::Parameters()
   setMap["mountmaterial"]  = false;
   setMap["spec"]           = false;
   setMap["cavityModel"]    = false;
-  setMap["cavityFieldType"] = false;
 
   setMap["numberWedges"]      = false;
   setMap["wedgeLength"]       = false;
