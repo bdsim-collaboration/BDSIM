@@ -19,7 +19,6 @@ New Features
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * Support for partially stripped ions in output samplers.
-* Support for MAD8-like rf cavity fields.
 
 * New options:
 
@@ -46,9 +45,7 @@ New Features
 | storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                   | compatible.                                                        |
 +-----------------------------------+--------------------------------------------------------------------+
-| cavityFieldType                   | Set the electric field of all RF cavities to match the behaviour   |
-|                                   | of MAD8 cavities.                                                  |
-+-----------------------------------+--------------------------------------------------------------------+
+
 
 General
 -------
@@ -71,9 +68,6 @@ General
   the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
   each per-collimator branch in Event. This allows greater control over the amount of information stored.
   The primary hits can be turned on as well with the option `storeCollimatorHits`.
-* The electric field in RF cavities can be set to match the behaviour of MAD8 cavities with the
-  option `cavityFieldType`. Individual RF cavities can be set to match this behaviour with the element
-  parameter `cavityFieldType="mad8"`.
   
 Bug Fixes
 ---------
@@ -92,7 +86,7 @@ Bug Fixes
   instead.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
-* The rigidity was corrected for partially stripped ions in the sampler output.
+* The rigidity was correcte for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
   calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
