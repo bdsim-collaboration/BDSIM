@@ -1117,6 +1117,9 @@ element is used to find the phase offset.
 If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
 
+In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
+used. See the developer documentation :ref:`_field-sinusoid-efield` for a description of the field.
+
 Simple examples: ::
 
    rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
