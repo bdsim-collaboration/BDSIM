@@ -278,8 +278,9 @@ OptionsBase::OptionsBase()
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
 
-  printFractionEvents = 0.1;
-  printFractionTurns  = 0.2;
+  printFractionEvents   = 0.1;
+  printFractionTurns    = 0.2;
+  printPhysicsProcesses = false;
   
   // visualisation
   nSegmentsPerCircle       = 50;

@@ -88,7 +88,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
   
-  // calculate momentum - used by some generators
+  // calculate momentum - used by some bunch distributions
   G4double mass = beamParticle->Mass();
   mass2 = std::pow(mass,2);
   if (E0 <= mass)

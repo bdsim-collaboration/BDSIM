@@ -3601,14 +3601,19 @@ Cross-Section Biasing
 ^^^^^^^^^^^^^^^^^^^^^
 
 The cross-section for a physics process for a specific particle can be artificially altered
-by a numerical scaling factor using cross-section biasing. This is done on a per-particle
-and per-physics-process basis.  The biasing is defined with the
+by a numerical scaling factor using cross-section biasing (up or down scaling it). This is
+done on a per-particle and per-physics-process basis.  The biasing is defined with the
 keyword **xsecbias**, to define a bias 'object'. This can then be attached to various bits
 of the geometry or all of it. This is provided with the Geant4 generic biasing feature.
 
 Geant4 automatically includes the reciprocal of the factor as a weighting, which is
 recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
 used should be multiplied by the weight to achieve the correct physical result.
+
+Generally, one should understand that Geant4 has particle definitions and physics processes
+are attached to these. e.g. "protonElastic" is a physics process that's attached to the
+(unique) definition of a proton. There can be many individual proton tracks, but there is
+only one proton definition.
 
 .. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
@@ -3629,7 +3634,7 @@ used should be multiplied by the weight to achieve the correct physical result.
 
 * Particle names should be exactly as they are in Geant4 (case-sensitive). The
   best way to find these out is to the run a single event with the desired physics
-  list. The physics list print out will name particles used.
+  list and the executable option `--printPhysicsProcesses`.
 * The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
   the best way to find these names is to run a single event with the desired physics
   list.
@@ -3639,6 +3644,12 @@ used should be multiplied by the weight to achieve the correct physical result.
   or secondary or all particles. This is because Geant4 uses the concept of a
   generic ion as there are so many possible ions.
 * Examples can be found in :code:`bdsim/examples/features/processes/5_biasing`.
+* The option :code:`option, printPhysicsProcesses=1;` or executable option
+  :code:`--printPhysicsProcesses` will print out all particle names and all
+  the physics processes registered for each particle. This is useful to get
+  the exact particle names and process names. We recommend running one event
+  with the desired physics list, or a complete Geant4 one such as
+  :code:`option, physicsList="g4FTFP_BERT";` to see all particles and processes.
 
 Example::
 
@@ -3796,6 +3807,12 @@ Common Options
 |                                  | of the total number of turns to simulation (default   |
 |                                  | is 0.2 (i.e. 20%).  Varies from 0 to 1. -1 for all.   |
 |                                  | Will only print out in an event that also prints out. |
++----------------------------------+-------------------------------------------------------+
+| printPhysicsProcesses            | (Boolean) Print out every particle registered         |
+|                                  | according to the physics list and for each particle,  |
+|                                  | print out the name of every physics process           |
+|                                  | registered to it. Done at the start of a run. Run 1   |
+|                                  | particle for minimal job to see this output.          |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m]                                    |
@@ -4675,9 +4692,18 @@ should only be used with understanding.
 Beam Parameters
 ---------------
 
-BDSIM starts each event by simulating one particle from a beam distribution. A distribution is
-chosen by the user in the input GMAD and the particle coordinates are randomly generated according
-to this distribution. To specify the input particle distribution, the :code:`beam` command is
+BDSIM starts each event in one of two ways.
+
+1) Particles coordinates for one particle
+   are generated from a chosen beam distribution, which is specified in the input GMAD file.
+   In most cases, the particle coordinates are randomly generated according
+   to the distribution.
+
+2) A primary vertex is loaded from an event genertor file. This currently requires linking to
+   HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
+   `eventgeneratorfile`_).
+
+To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
 design total energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic rigidity that normalised magnetic
@@ -4785,6 +4811,12 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
+.. note:: This will not work when using an event generator file. Using an event generator
+	  file requires the particle table in Geant4 be loaded and this can only be done
+	  in a full run where we construct the model. By default, the generate primaries
+	  only, only generates coordinates and does not build a Geant4 model.
+
+
 Beam in Output
 ^^^^^^^^^^^^^^
 
@@ -4822,6 +4854,7 @@ The following beam distributions are available in BDSIM
 - `composite`_
 - `userfile`_
 - `ptc`_
+- `eventgeneratorfile`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -5416,6 +5449,57 @@ Output from MAD-X PTC used as input for BDSIM.
 +----------------------------------+-------------------------------------------------------+
 
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
+
+eventgeneratorfile
+^^^^^^^^^^^^^^^^^^
+
+To use a file from an event generator, the HepMC3 library must be used and BDSIM must be
+compiled with respect to it.  See :ref:`installation-bdsim-config-options` for more details.
+
+When using an event generator file, the **design** particle and total energy must still be
+specified. These are used to calculate the magnetic field strengths.
+
+The following parameters are used to control the use of an event generator file.
+
+.. tabularcolumns:: |p{3cm}|p{14cm}|
+
++----------------+---------------------------------------------------------------------+
+| Option         | Description                                                         |
++================+=====================================================================+
+| distrType      | This should be "eventgeneratorfile:format" where format is one of   |
+|                | the acceptable formats listed below.                                |
++----------------+---------------------------------------------------------------------+
+| distrFile      | The path to the input file desired.                                 |
++----------------+---------------------------------------------------------------------+
+
+.. warning:: Only particles available through the chosen physics list can be used otherwise they will
+	     not have the correct properties and will **not be** added to the primary vertex and are
+	     simply skipped. The number (if any) that are skipped will be printed out for every event.
+
+* Compressed ASCII files (such as gzipped) cannot be used as HepMC3 does not support this.
+
+The following formats are available:
+
+* `hepmc2` - HepMC2 data format
+* `hepmc3` - HepMC3 data format
+* `hpe` - HEP EVT format (fortran format)
+* `root` - HepMC ROOT format (not BDSIM's)
+* `treeroot` - HepMC ROOT tree format (not BDSIM's)
+* `lhef` - LHEF format files
+
+These are put together with "eventgeneratorfile" for the `distrType` parameter. e.g.
+:code:`distrType="eventgeneratorfile:hepmc2";`.
+
+Examples can be found in `bdsim/examples/features/beam/eventgeneratorfile`. Below are some
+examples: ::
+
+  option, physicsList="g4FTFP_BERT";
+  beam, particle = "proton",
+        energy = 6.5*TeV,
+	distrType = "eventgeneratorfile:hepmc3",
+	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
+
+
 
 .. _tunnel-geometry:
 

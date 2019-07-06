@@ -100,6 +100,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "nGenerate", 1, 0, 0 },
 					{ "printFractionEvents", 1, 0, 0},
 					{ "printFractionTurns", 1, 0, 0},
+					{ "printPhysicsProcesses", 0, 0, 0},
 					{ "exportGeometryTo", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ "ignoresigint", 0, 0, 0},
@@ -257,6 +258,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsNumber(optarg, result);
 	  options.set_value("printFractionTurns", result);
 	}
+      else if ( !strcmp(optionName, "printPhysicsProcesses") )
+	{options.set_value("printPhysicsProcesses", true);}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
       else if( !strcmp(optionName, "ignoresigint") )

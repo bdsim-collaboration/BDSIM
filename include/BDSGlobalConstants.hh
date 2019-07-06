@@ -144,6 +144,7 @@ public:
   
   inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
   inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
+  inline G4bool   PrintPhysicsProcesses()    const {return G4bool  (options.printPhysicsProcesses);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double LengthSafetyLarge()        const {return G4double(options.lengthSafetyLarge*CLHEP::m);}
   inline G4double HorizontalWidth()          const {return G4double(options.horizontalWidth)*CLHEP::m;}
@@ -289,7 +290,7 @@ public:
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
-  
+
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}

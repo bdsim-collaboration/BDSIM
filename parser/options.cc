@@ -425,6 +425,7 @@ void Options::PublishMembers()
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+  publish("printPhysicsProcesses",    &Options::printPhysicsProcesses);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
