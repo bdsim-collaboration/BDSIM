@@ -111,6 +111,8 @@ Bug Fixes
   ions would be.
 * Fix Event.Summary.memoryUsageMb which was always 0. Also now correct units on linux and Mac. Was previously
   a factor of 1048 too big on linux.
+* Fix scaling of relativistic beta in the dipolequadrupole integrator, the particle design beta was
+  always was used before regardless of dipole scaling.
 
 Output Changes
 --------------
