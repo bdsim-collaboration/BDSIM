@@ -29,8 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorCavityFringe::BDSIntegratorCavityFringe(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn,
                                                    G4double maximumRadiusIn):
-  BDSIntegratorRMatrixThin(strength, eqOfMIn, 6),
-  maximumRadius(maximumRadiusIn)
+  BDSIntegratorRMatrixThin(strength, eqOfMIn, maximumRadiusIn)
 {
   kick1   = (*strength)["kick1"];
   kick2   = (*strength)["kick2"];
