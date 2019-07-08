@@ -53,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldType.hh"
 #include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorCavityFringe.hh"
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipoleRodrigues.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
@@ -592,6 +593,8 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
       integrator = new BDSIntegratorG4RK4MinStep(eqOfM, BDSGlobalConstants::Instance()->ChordStepMinimumYoke()); break;
     case BDSIntegratorType::rmatrixthin:
       integrator = new BDSIntegratorRMatrixThin(strength,eqOfM, info.BeamPipeRadius()); break;
+	case BDSIntegratorType::cavityfringe:
+	  integrator = new BDSIntegratorCavityFringe(strength,eqOfM, info.BeamPipeRadius()); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
