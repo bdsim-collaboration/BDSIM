@@ -498,8 +498,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
       BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
       fieldType = field->FieldType();
     }
+  // note cavity length is not the same as currentArcLength
+  G4double cavityLength = element->l * CLHEP::m;
 
-  BDSMagnetStrength* st = PrepareCavityStrength(element, currentArcLength);
+  G4bool buildIncomingFringe = true;
+  if (prevElement) // could be nullptr
+	{// only build fringe if previous element isn't another solenoid
+		buildIncomingFringe = prevElement->type != ElementType::_SOLENOID;
+	}
+
+  G4bool buildOutgoingFringe = true;
+  if (nextElement) // could be nullptr
+	{// only build fringe if next element isn't another solenoid
+		buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
+	}
+
+  if (buildIncomingFringe)
+	{cavityLength -= thinElementLength;}
+  if (buildOutgoingFringe)
+	{cavityLength -= thinElementLength;}
+
+  // supply currentArcLength (not element length) to strength as its needed
+  // for time offset from s=0 position
+  BDSMagnetStrength* st = PrepareCavityStrength(element, cavityLength, currentArcLength);
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
@@ -524,12 +545,51 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // update 0 point of field with geometry
   (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
-    
-  return new BDSCavityElement(elementName,
-			      element->l*CLHEP::m,
-			      vacuumMaterial,
-			      vacuumField,
-			      cavityInfo);
+
+  if (!BDS::IsFinite((*st)["efield"]) || !includeFringeFields)
+	{// ie no rf field - don't bother with fringe effects
+	  return new BDSCavityElement(elementName,
+	                              cavityLength,
+		                          vacuumMaterial,
+		                          vacuumField,
+		                          cavityInfo);
+	}
+
+  BDSLine* cavityLine = new BDSLine(elementName);
+
+  if (buildIncomingFringe)
+	{
+	  auto stIn = new BDSMagnetStrength();
+	  (*stIn)["rmat11"] = 1;
+  	  (*stIn)["rmat22"] = 1;
+	  (*stIn)["rmat33"] = 1;
+	  (*stIn)["rmat44"] = 1;
+	  (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
+	  auto cavityFringeIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+	  cavityLine->AddComponent(cavityFringeIn);
+	}
+
+  auto cavity = new BDSCavityElement(elementName,
+	                                 cavityLength,
+	                                 vacuumMaterial,
+	                                 vacuumField,
+	                                 cavityInfo);
+
+  cavityLine->AddComponent(cavity);
+
+  if (buildOutgoingFringe)
+	{
+	  auto stOut = new BDSMagnetStrength();
+	  (*stOut)["rmat11"] = 1;
+	  (*stOut)["rmat22"] = 1;
+	  (*stOut)["rmat33"] = 1;
+	  (*stOut)["rmat44"] = 1;
+	  (*stOut)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
+	  auto cavityFringeIn = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+	  cavityLine->AddComponent(cavityFringeIn);
+	}
+
+  return cavityLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
@@ -2147,17 +2207,22 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 }
 
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
+                                  G4double cavityLength,
 							      G4double currentArcLength) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
-  G4double chordLength = el->l * CLHEP::m;
+  G4double chordLength = cavityLength; //length may be reduced for fringe placement.
   G4double scaling     = el->scaling;
-  
+
+  // scale factor to account for reduced body length due to fringe placement.
+  G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
+
   if (BDS::IsFinite(el->gradient))
     {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
     {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
+  (*st)["efield"] /= lengthScaling;
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
