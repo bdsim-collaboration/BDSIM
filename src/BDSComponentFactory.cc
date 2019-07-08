@@ -2247,7 +2247,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     }
 
   G4double phase = el->phase * CLHEP::rad;
-  if (BDS::IsFinite(el->phase)) // phase specified - use that
+  if (BDS::IsFinite(phase)) // phase specified - use that
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
