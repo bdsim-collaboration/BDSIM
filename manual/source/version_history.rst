@@ -113,6 +113,8 @@ Bug Fixes
   a factor of 1048 too big on linux.
 * Fix scaling of relativistic beta in the dipolequadrupole integrator, the particle design beta was
   always was used before regardless of dipole scaling.
+* Fix phase term in rf field when frequency is 0. When frequency is 0, the field should be constant and
+  maximal, however, it was constant but still modulated by the phase of the incoming particle.
 
 Output Changes
 --------------
