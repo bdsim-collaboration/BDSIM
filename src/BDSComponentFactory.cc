@@ -503,14 +503,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 
   G4bool buildIncomingFringe = true;
   if (prevElement) // could be nullptr
-	{// only build fringe if previous element isn't another solenoid
-		buildIncomingFringe = prevElement->type != ElementType::_SOLENOID;
+	{// only build fringe if previous element isn't another cavity
+		buildIncomingFringe = prevElement->type != ElementType::_RF;
 	}
 
   G4bool buildOutgoingFringe = true;
   if (nextElement) // could be nullptr
-	{// only build fringe if next element isn't another solenoid
-		buildOutgoingFringe = nextElement->type != ElementType::_SOLENOID;
+	{// only build fringe if next element isn't another cavity
+		buildOutgoingFringe = nextElement->type != ElementType::_RF;
 	}
 
   if (buildIncomingFringe)
