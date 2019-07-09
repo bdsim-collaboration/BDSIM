@@ -513,12 +513,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // Don't set if frequency is zero as the field will have no oscillation.
   if (BDS::IsFinite(element->frequency))
     {
-	  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-	  G4double limit = (*st)["length"] * 0.025;
-	  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
-	  if (ul != defaultUL) { vacuumField->SetUserLimits(ul); }
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      G4double limit = (*st)["length"] * 0.025;
+      auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+      if (ul != defaultUL)
+	{vacuumField->SetUserLimits(ul);}
     }
-
+  
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
@@ -533,7 +534,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
-  {
+{
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
@@ -2124,9 +2125,9 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   // frequency can be zero in which case only build 1 cell
   if (BDS::IsFinite(frequency))
     {
-	  cellLength = 2*CLHEP::c_light / frequency; // half wavelength
-	  G4double nCavities  = length / cellLength;
-	  nCells = G4int(std::floor(nCavities));
+      cellLength = 2*CLHEP::c_light / frequency; // half wavelength
+      G4double nCavities  = length / cellLength;
+      nCells = G4int(std::floor(nCavities));
     }
 
   if (nCells == 0) // protect against long wavelengths or cavities
