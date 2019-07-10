@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTEGRATORCAVITYFRINGE_HH
 #define BDSINTEGRATORCAVITYFRINGE_HH
 
+#include "BDSMagUsualEqRhs.hh"
 #include "BDSIntegratorRMatrixThin.hh"
 
 #include "globals.hh"
@@ -54,6 +55,13 @@ public:
 
 private:
   BDSIntegratorCavityFringe();
+
+  const	G4double phase;
+  const	G4double efield;
+  const	G4double isentrance;
+
+protected:
+  BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
 };
 
 #endif
