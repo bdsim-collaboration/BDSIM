@@ -1118,7 +1118,7 @@ If `phase` is specified, this is added to the calculated phase offset from eithe
 position or `tOffset`.
 
 In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
-used. See the developer documentation :ref:`_field-sinusoid-efield` for a description of the field.
+used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
 
 Simple examples: ::
 
