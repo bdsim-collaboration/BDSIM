@@ -49,4 +49,27 @@ void BDSIntegratorCavityFringe::Stepper(const G4double yIn[],
                                        const G4double h,
                                        G4double       yOut[],
                                        G4double       yErr[])
-{BDSIntegratorRMatrixThin::Stepper(yIn,0,h,yOut,yErr);}
+{
+  // get particle charge from reverse of how it's calculated in G4Mag_EqRhs::SetChargeMomentumMass.
+  G4double charge = eq->FCof()/(eplus*c_light);
+  G4double gammaPrime = charge*efield*std::cos(phase) * CLHEP::m;
+
+  // don't update matrix for chargeless particles - remains identity matrix
+  if (BDS::IsFinite(charge))
+    {
+	  G4double sign = 1;
+	  if (!(G4bool)isentrance)
+	    {sign = -1;}
+
+	  // set energy dependant matrix terms
+	  rmat21 = sign * gammaPrime / (2 * eq->TotalEnergy(yIn));
+	  rmat43 = sign * gammaPrime / (2 * eq->TotalEnergy(yIn));
+    }
+
+  // apply kick in thin rmatrix base class
+  BDSIntegratorRMatrixThin::Stepper(yIn,0,h,yOut,yErr);
+
+  // set matrix terms back to zero.
+  rmat21 = 0;
+  rmat43 = 0;
+}
