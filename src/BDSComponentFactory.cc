@@ -1660,7 +1660,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
 								const BDSMagnetStrength* st,
-								G4String name)
+								G4String name,
+								BDSIntegratorType intType,
+								BDSFieldType fieldType)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -1668,9 +1670,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
                                                                -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = integratorSet->rmatrixThin;
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rmatrix,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
                                                brho,
                                                intType,
                                                st,
@@ -1692,6 +1693,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
                                    thinElementLength*0.5));
 
   return thinRMatrix;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double angleIn,
+                                                                const BDSMagnetStrength* st,
+                                                                G4String name)
+{
+  BDSIntegratorType intType = integratorSet->cavityFringe;
+  BDSFieldType fieldType = BDSFieldType::cavityfringe;
+  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType);
+  return cavityFringe;
 }
 
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,

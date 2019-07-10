@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
@@ -235,11 +236,16 @@ private:
   BDSAcceleratorComponent* CreateRMatrix();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     const BDSMagnetStrength* stIn,
-					     G4String name);
+					     G4String name,
+					     BDSIntegratorType intType = BDSIntegratorType::rmatrixthin,
+					     BDSFieldType fieldType = BDSFieldType::rmatrix);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     G4String name);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
+  BDSAcceleratorComponent* CreateCavityFringe(G4double angleIn,
+	                     const BDSMagnetStrength* stIn,
+	                     G4String name);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
