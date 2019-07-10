@@ -558,36 +558,44 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSLine* cavityLine = new BDSLine(elementName);
 
   if (buildIncomingFringe)
-	{
-	  auto stIn = new BDSMagnetStrength();
-	  (*stIn)["rmat11"] = 1;
-  	  (*stIn)["rmat22"] = 1;
-	  (*stIn)["rmat33"] = 1;
-	  (*stIn)["rmat44"] = 1;
-	  (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
-	  auto cavityFringeIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
-	  cavityLine->AddComponent(cavityFringeIn);
-	}
+    {
+      // copy for cavity parameter but update with info for fringe matrix elements
+      BDSMagnetStrength* stIn   = new BDSMagnetStrength(*st);
+      (*stIn)["rmat11"] = 1;
+      (*stIn)["rmat21"] = 0;
+      (*stIn)["rmat22"] = 1;
+      (*stIn)["rmat33"] = 1;
+      (*stIn)["rmat43"] = 0;
+      (*stIn)["rmat44"] = 1;
+      (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
+      (*stIn)["isentrance"] = true;
+      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in");
+      cavityLine->AddComponent(cavityFringeIn);
+    }
 
   auto cavity = new BDSCavityElement(elementName,
-	                                 cavityLength,
-	                                 vacuumMaterial,
-	                                 vacuumField,
-	                                 cavityInfo);
+	                             cavityLength,
+	                             vacuumMaterial,
+	                             vacuumField,
+	                             cavityInfo);
 
   cavityLine->AddComponent(cavity);
 
   if (buildOutgoingFringe)
-	{
-	  auto stOut = new BDSMagnetStrength();
-	  (*stOut)["rmat11"] = 1;
-	  (*stOut)["rmat22"] = 1;
-	  (*stOut)["rmat33"] = 1;
-	  (*stOut)["rmat44"] = 1;
-	  (*stOut)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
-	  auto cavityFringeIn = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
-	  cavityLine->AddComponent(cavityFringeIn);
-	}
+    {
+      // copy for cavity parameter but update with info for fringe matrix elements
+      BDSMagnetStrength* stOut   = new BDSMagnetStrength(*st);
+      (*stOut)["rmat11"] = 1;
+      (*stOut)["rmat21"] = 0;
+      (*stOut)["rmat22"] = 1;
+      (*stOut)["rmat33"] = 1;
+      (*stOut)["rmat43"] = 0;
+      (*stOut)["rmat44"] = 1;
+      (*stOut)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
+      (*stOut)["isentrance"] = false;
+      auto cavityFringeIn = CreateCavityFringe(0, stOut, elementName + "_fringe_out");
+      cavityLine->AddComponent(cavityFringeIn);
+    }
 
   return cavityLine;
 }
