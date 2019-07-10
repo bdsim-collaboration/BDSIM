@@ -5476,6 +5476,14 @@ The following parameters are used to control the use of an event generator file.
 	     not have the correct properties and will **not be** added to the primary vertex and are
 	     simply skipped. The number (if any) that are skipped will be printed out for every event.
 
+.. warning:: If the executable option `-\\-generatePrimariesOnly` is used, the coordinates will
+	     not reflect the loaded event and will only be the reference coordinates. This is
+	     because when this option is used, no Geant4 model is built. The event generator
+	     file loader is significantly different from the other distributions and effectively
+	     replaces the primary generator action. In this case, a small model of only a
+	     drift with `option, worldMaterial="vacuum";` is the quickest way to achieve the
+	     same thing.
+
 * Compressed ASCII files (such as gzipped) cannot be used as HepMC3 does not support this.
 
 The following formats are available:
