@@ -327,6 +327,8 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return multipoleOuter;   break;}
     case BDSFieldType::rmatrix:
       {return rmatrixThin;      break;}
+	case BDSFieldType::cavityfringe:
+	  {return cavityFringe;     break;}
     case BDSFieldType::paralleltransporter:
       {return parallelTransporter; break;}
     default:

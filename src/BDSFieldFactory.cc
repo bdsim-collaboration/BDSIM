@@ -545,6 +545,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
       {result = CreateTeleporter(info); break;}
     case BDSFieldType::rmatrix:
       {result = CreateRMatrix(info); break;}
+	case BDSFieldType::cavityfringe:
+	  {result = CreateCavityFringe(info); break;}
     case BDSFieldType::paralleltransporter:
       {result = CreateParallelTransport(info); break;}
     default:
@@ -774,6 +776,16 @@ BDSFieldObjects* BDSFieldFactory::CreateRMatrix(const BDSFieldInfo& info)
   G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion,0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
                                                             bEqOfMotion, integrator);
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateCavityFringe(const BDSFieldInfo& info)
+{
+  BDSFieldMag* bGlobalField           = new BDSFieldMagZero();
+  BDSMagUsualEqRhs* bEqOfMotion       = new BDSMagUsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorCavityFringe(info.MagnetStrength(),bEqOfMotion,0.95*info.BeamPipeRadius());
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
+	                                                          bEqOfMotion, integrator);
   return completeField;
 }
 
