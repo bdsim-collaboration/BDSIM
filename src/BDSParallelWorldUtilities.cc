@@ -111,8 +111,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
 	  massWorld->RegisterParallelWorld(cLWorld);
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
-      acceleratorModel->RegisterParallelWorld(cLWorld);
-      acceleratorModel->RegisterParallelWorld(cLBridgeWorld);
+	  acceleratorModel->RegisterParallelWorld(cLWorld);
+	  acceleratorModel->RegisterParallelWorld(cLBridgeWorld);
 	}
       if (info.samplerWorld)
 	{
