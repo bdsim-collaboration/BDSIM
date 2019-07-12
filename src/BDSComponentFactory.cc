@@ -559,8 +559,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 
   if (buildIncomingFringe)
     {
-      // copy for cavity parameter but update with info for fringe matrix elements
-      BDSMagnetStrength* stIn   = new BDSMagnetStrength(*st);
+      BDSMagnetStrength* stIn = PrepareCavityFringeStrength(element, cavityLength, currentArcLength, true);
+	  // update with info for fringe matrix elements
       (*stIn)["rmat11"] = 1;
       (*stIn)["rmat21"] = 0;
       (*stIn)["rmat22"] = 1;
@@ -583,8 +583,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 
   if (buildOutgoingFringe)
     {
-      // copy for cavity parameter but update with info for fringe matrix elements
-      BDSMagnetStrength* stOut   = new BDSMagnetStrength(*st);
+	  BDSMagnetStrength* stOut = PrepareCavityFringeStrength(element, cavityLength, currentArcLength, false);
+	  // update with info for fringe matrix elements
       (*stOut)["rmat11"] = 1;
       (*stOut)["rmat21"] = 0;
       (*stOut)["rmat22"] = 1;
@@ -2272,6 +2272,49 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset;}
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"] = chordLength;
+  return st;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareCavityFringeStrength(Element const* el,
+                                                              G4double cavityLength,
+                                                              G4double currentArcLength,
+															  G4bool isStart) const
+{
+  // initial strength same as main cavity
+  BDSMagnetStrength* st = PrepareCavityStrength(el, cavityLength, currentArcLength);
+
+  G4double frequency = (*st)["frequency"];
+  // phase info already correct for zero frequency cavity strength so nothing more to do here
+  if (!BDS::IsFinite(frequency))
+    {return st;}
+
+  G4double phaseOffset = 0;
+  G4double chordLength = cavityLength; //length may be reduced for fringe placement.
+
+  G4double period = 1. / frequency;
+  G4double tOffset = 0;
+  if (BDS::IsFinite(el->tOffset)) // use the one specified
+    {tOffset = el->tOffset * CLHEP::s;}
+  else // this gives 0 phase at the middle of cavity
+    {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
+
+  G4double tHalfCavity = (0.5 * chordLength) / CLHEP::c_light;
+  if (isStart) // this gives correct phase at the beginning of cavity
+    {tOffset -= tHalfCavity;}
+  else // this gives correct phase at the end of cavity
+    {tOffset += tHalfCavity;}
+
+  G4double nPeriods = tOffset / period;
+  // phase is the remainder from total phase / N*2pi, where n is unknown.
+  G4double integerPart = 0;
+  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+  phaseOffset = fractionalPart * CLHEP::twopi;
+
+  G4double phase = el->phase * CLHEP::rad;
+  if (BDS::IsFinite(phase)) // phase specified - use that
+	{(*st)["phase"] = phaseOffset + phase;}
+  else
+	{(*st)["phase"] = phaseOffset;}
   return st;
 }
 

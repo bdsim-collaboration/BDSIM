@@ -299,6 +299,12 @@ private:
                        G4double cavityLength,
 					   G4double currentArcLength) const;
 
+  /// Utility function to prepare field strength object for rf cavity.
+  BDSMagnetStrength* PrepareCavityFringeStrength(GMAD::Element const* el,
+                                                 G4double cavityLength,
+	                                             G4double currentArcLength,
+                                                 G4bool isStart) const;
+
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.
