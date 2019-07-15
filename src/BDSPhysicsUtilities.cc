@@ -42,7 +42,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GenericIon.hh"
 #include "G4IonTable.hh"
+#include "G4KaonMinus.hh"
+#include "G4KaonPlus.hh"
 #include "G4MuonMinus.hh"
+#include "G4KaonZeroLong.hh"
 #include "G4MuonPlus.hh"
 #include "G4NeutrinoE.hh"
 #include "G4Neutron.hh"
@@ -223,6 +226,12 @@ void BDS::ConstructBeamParticleG4(G4String name)
     {G4MuonMinus::MuonMinusDefinition();}
   else if (name == "mu+")
     {G4MuonPlus::MuonPlusDefinition();}
+  else if (name == "kaon-")
+    {G4KaonMinus::KaonMinusDefinition();}
+  else if (name == "kaon+")
+    {G4KaonPlus::KaonPlusDefinition();}
+  else if (name == "kaon0L")
+    {G4KaonZeroLong::KaonZeroLongDefinition();}
   else
     {
       G4cout << "Unknown common particle type \"" << name << "\"" << G4endl;
