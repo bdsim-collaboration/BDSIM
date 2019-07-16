@@ -31,6 +31,7 @@ simple_testing(bunch-reference                "--file=reference.gmad"           
 simple_testing(bunch-ring                     "--file=ring.gmad"                    "")
 simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"                "")
 simple_testing(bunch-square                   "--file=square.gmad"                  "")
+simple_testing(bunch-tilt                     "--file=tilt.gmad"                    "")
 
 set(TESTING_ARGS --ngenerate=32)
 simple_testing(bunch-ptc-loop-file "--file=ptc.gmad" "")
