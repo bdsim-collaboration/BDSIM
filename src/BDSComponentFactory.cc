@@ -388,6 +388,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
+      // the minimum kinetic energy is only implemented in certain components
       component->SetMinimumKineticEnergy(element->minimumKineticEnergy*CLHEP::GeV);
 
       // infinite absorbers for collimators - must be done after SetMinimumKineticEnergy and
