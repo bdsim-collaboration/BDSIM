@@ -1203,9 +1203,12 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
-axes of the entrance aperture must be the same ratio for the exit aperture.
+half-axes respectively.
 
+* A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
+  same value.
+* When tapered, the ratio between the horizontal and vertical half-axes of the entrance
+  aperture must be the same ratio for the exit aperture.
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol
