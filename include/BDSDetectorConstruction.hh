@@ -131,6 +131,10 @@ public:
   static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
                                                 const BDSBeamline*      beamLine,
 						G4double*               S = nullptr);
+
+  /// Whether to build a sampler world or not. If we've counted more than one sampler we
+  /// should build the world in the end.
+  G4bool BuildSamplerWorld() const {return nSamplers > 0;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -223,6 +227,8 @@ private:
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
 
   BDSComponentFactoryUser* userComponentFactory;
+
+  G4int nSamplers; ///< Count of number of samplers to be built.
 };
 
 #endif
