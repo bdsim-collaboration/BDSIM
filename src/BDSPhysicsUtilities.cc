@@ -70,6 +70,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <set>
+#include <string> // for stoi
+#include <stdexcept>
 
 G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 {
@@ -188,15 +190,29 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
     }
   else
     {
-      BDS::ConstructBeamParticleG4(particleName);
-      auto particleDef = particleTable->FindParticle(particleName);
+      BDS::ConstructBeamParticleG4(particleName); // enforce construction of some basic particles
+      G4ParticleDefinition* particleDef = nullptr;
+      // try and see if it's an integer and therefore PDG ID, if not search by string
+      try
+        {
+          // we try this because std::stoi can throw a std::invalid_argument or
+          // std::out_of_range exception, both of which inherit std::logic_error
+          int particleID = std::stoi(particleName);
+          // we don't use the G4ParticleTable->FindParticle(int) because it unnecessarily
+          // checks for physics readiness and throws an exception. here we just inspect
+          // the encoding dictionary ourselve. it's all typedeffed but it's std::map<G4int, G4ParticleDefinition*>
+          G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
+          auto search = encoding->find(particleID);
+          if (search != encoding->end())
+            {particleDef = search->second;}
+          else
+            {throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleName + "not found in particle table");}
+        }
+      catch (const std::logic_error&) // else, usual way by string search
+        {particleDef = particleTable->FindParticle(particleName);}
       if (!particleDef)
 	{
-	  G4cout << "Available particles are:" << G4endl;
-	  auto pt = G4ParticleTable::GetParticleTable();
-	  auto it = pt->GetIterator();
-	  while ((*it)()) // iterate over all particles defined and print out names
-	    {G4cout << it->value()->GetParticleName() << G4endl;}
+	  BDS::PrintDefinedParticles();
 	  throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found.");
 	}
       particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
@@ -233,10 +249,7 @@ void BDS::ConstructBeamParticleG4(G4String name)
   else if (name == "kaon0L")
     {G4KaonZeroLong::KaonZeroLongDefinition();}
   else
-    {
-      G4cout << "Unknown common particle type \"" << name << "\"" << G4endl;
-      G4cout << "Attempting to search physics list particles." << G4endl;
-    }
+    {G4cout << "Unknown common particle type \"" << name << "\"" << G4endl;}
 }
 
 void BDS::ConstructMinimumParticleSet()
@@ -309,7 +322,7 @@ void BDS::PrintDefinedParticles()
 {
   G4cout << __METHOD_NAME__ << "Defined particles: " << G4endl;
   auto it = G4ParticleTable::GetParticleTable()->GetIterator();
-  it->reset();
+  it->reset(); // because there's only 1 iterator due to geant4 design
   while ((*it)())
     {G4cout <<  it->value()->GetParticleName() << " ";}
   G4cout << G4endl;
