@@ -27,6 +27,8 @@ New Features
 * The beam particle may now be specified by its PDG integer ID rather than by name.
 * A new physics list called "all_particles" has been introduced to construct all particles
   only but no physics processes. Useful for an exotic beam where only tracking is required.
+* New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
+  are generated as an easy method to introduce coupling.
 
 * New options:
 

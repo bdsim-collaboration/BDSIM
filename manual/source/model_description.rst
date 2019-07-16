@@ -4855,6 +4855,32 @@ Event Tree, as described in :ref:`output-event-tree`.
 	     precision numbers are used so that the beam distribution is accurate. A float typically
 	     has seven significant figures and a double 15.
 
+Beam Tilt
+^^^^^^^^^
+
+The possibility exists to rotate the beam after the local curvilinear coordinates are calculated
+from one of the following bunch distributions. This is an angle about the local unit Z axis, i.e.
+the direction of the beam by default. This is applied **after** the local coordinates are generated
+by the bunch distribution and rotates, the x,y and xp,yp coordinates by an angle in radians. The
+rotation is in a right-handed coordinate system.
+
+Looking along the direction of the beam, a particle at positive X0 and zero Y0 with a tilt of
+positive pi/2 will become zero X0 and finite Y0. Looking along the beam direction, the rotation
+is clockwise. This is irrespective of particle charge.
+
+The parameter that controls this is `tilt` in the beam command and is in radians. For example: ::
+
+  beam, particle="e-",
+        energy=10*GeV,
+	distrType="gauss",
+	sigmaX=100*um,
+	sigmaY=1*um,
+	sigmaXp=1e-8,
+	sigmaYp=1e-10,
+	tilt=0.01;
+
+Here a beam 100 x 1 um is generated as a Gaussian and then rotated by 0.01 radians.
+
 .. _beam-distributions:
 
 Beam Distributions
