@@ -3239,6 +3239,13 @@ Examples: ::
 +==============================+========================================================================+
 |                              | Transportation of primary particles only - no scattering in material   |
 +------------------------------+------------------------------------------------------------------------+
+| all_particles                | All particles definitions are constructed but no physics processes are |
+|                              | created and attached to them. Useful for exotic beams. Note by default |
+|                              | we only construct the necessary particles. It is more efficient to     |
+|                              | keep the particle set to the minimum. This uses G4LeptonConstructor,   |
+|                              | G4ShortLivedConstructor, G4MesonConstructor, G4BaryonConstructor and   |
+|                              | G4IonConstructor.                                                      |
++------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`                                              |
 +------------------------------+------------------------------------------------------------------------+
 | channelling                  | This constructs the `G4Channelling` and attaches it to all charged     |
