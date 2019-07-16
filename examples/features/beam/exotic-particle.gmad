@@ -9,4 +9,6 @@ beam,  particle="sigma-",
 include options.gmad;
 include fodo.gmad;
 
-option, ngenerate=10;
+option, ngenerate=5;
+
+option, physicsVerbose=1;
