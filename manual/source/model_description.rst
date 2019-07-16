@@ -3641,10 +3641,13 @@ only one proton definition.
 
 * Particle names should be exactly as they are in Geant4 (case-sensitive). The
   best way to find these out is to the run a single event with the desired physics
-  list and the executable option `--printPhysicsProcesses`.
+  list and the executable option `--printPhysicsProcesses`. Also the input option
+  `option, physicsVerbose=1;` will show the primary particle and all physics processes
+  registered to it by name.
 * The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
   the best way to find these names is to run a single event with the desired physics
-  list.
+  list using the input option `option, physicsVerbose=1;` to see all the names of the
+  physics processes.
 * A special particle name "all" will bias all defined particles. (case-sensitive).
 * In the case of an **ion** beam, the particle name should be "GenericIon". The
   biasing will apply to all ions, so the flag should be used to select primary
@@ -4743,7 +4746,8 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is the total energy in `GeV`. The beam particle may be one of the following:
+Energy is the total energy in `GeV`. The beam particle may be specified by name as it is
+in Geant4 (exactly) or by it's PDG ID. The follow are available by default:
 
 * `e-` or `e+`
 * `proton` or `antiproton`
@@ -4752,11 +4756,19 @@ Energy is the total energy in `GeV`. The beam particle may be one of the followi
 * `mu-` or `mu+`
 * `pi-` or `pi+`
 * `photon` or `gamma`
+* `kaon-`, `kaon+` or `kaon0L`
 
 In fact, the user may specify any particle that is available through the physics lists
-used. The particle must be given by the Geant4 name. The ones above are always defined
-and so can always safely be used irrespective of the physics lists used. If the particle
-definition is not found, BDSIM will print a warning and exit.
+used. If given by name, the particle must be given by the Geant4 name exactly. The ones
+above are always defined and so can always safely be used irrespective of the physics
+lists used. If the particle definition is not found, BDSIM will print a warning and exit.
+
+If more exotic particles are desired but no corresponding physics processes are desired, then
+the special physics list "all_particles" can be used to only load the particle definitions.
+
+The PDG IDs can be found at the PDG website; reviews and tables; Monte Carlo Numbering Scheme.
+
+* `<http://pdg.lbl.gov/2019/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
 
 Ion Beams
 ^^^^^^^^^

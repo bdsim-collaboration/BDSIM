@@ -23,6 +23,10 @@ New Features
   HepMC3 can load.
 * Ability to print out all particles and physics processes to be helpful for finding Geant4
   names for biasing. See new options below.
+* `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
+* The beam particle may now be specified by its PDG integer ID rather than by name.
+* A new physics list called "all_particles" has been introduced to construct all particles
+  only but no physics processes. Useful for an exotic beam where only tracking is required.
 
 * New options:
 
