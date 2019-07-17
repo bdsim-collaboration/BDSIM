@@ -88,6 +88,7 @@ Bug Fixes
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
   on number of collimators analysed causing std::vector to reallocate and invalidate address of
   pointers as required by ROOT.
+* Fix for warnings about unknown collimator branch names when loading data with DataLoader class.
 * Fixed warnings about exiting when Geant4 geometry in closed state in the event
   of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
   the exception.
