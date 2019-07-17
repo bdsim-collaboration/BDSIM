@@ -161,7 +161,7 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postEnergy         = -1.;
   preMomentum        = G4ThreeVector();
   postMomentum       = G4ThreeVector();
-  energy             = -1.;
+  energy             = 0.0;
   preS               = -1000;
   postS              = -1000;
   beamlineIndex      = -1;
@@ -183,7 +183,13 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint() const
   G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
   G4bool notParallel       = processType != fParallel;
 
-  if (initialised && notTransportation && notGeneral && notParallel)
+  if (energy > 1e-9 )
+    {
+      // std::cout << energy << " " << preS << " " << postS << std::endl;
+      return true;
+    }
+
+  if (initialised && notTransportation && notGeneral && notParallel) // energy can change in transportation step (EM)
     {
 #ifdef BDSDEBUG
       G4cout << "Interaction point found at "
