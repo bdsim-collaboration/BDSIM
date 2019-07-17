@@ -23,6 +23,12 @@ New Features
   HepMC3 can load.
 * Ability to print out all particles and physics processes to be helpful for finding Geant4
   names for biasing. See new options below.
+* `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
+* The beam particle may now be specified by its PDG integer ID rather than by name.
+* A new physics list called "all_particles" has been introduced to construct all particles
+  only but no physics processes. Useful for an exotic beam where only tracking is required.
+* New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
+  are generated as an easy method to introduce coupling.
 
 * New options:
 
@@ -113,6 +119,8 @@ Bug Fixes
   a factor of 1048 too big on linux.
 * Fix scaling of relativistic beta in the dipolequadrupole integrator, the particle design beta was
   always was used before regardless of dipole scaling.
+* Fix phase term in rf field when frequency is 0. When frequency is 0, the field should be constant and
+  maximal, however, it was constant but still modulated by the phase of the incoming particle.
 
 Output Changes
 --------------

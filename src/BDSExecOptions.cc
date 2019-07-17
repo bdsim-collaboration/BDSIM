@@ -351,6 +351,8 @@ void BDSExecOptions::Usage() const
 	<<"                             -1 is all, range [0-1]"                            << G4endl
     	<<"--printFractionTurns=N     : fraction of turns to print out (default 0.2)"      << G4endl
 	<<"                             -1 is all, range [0-1]"                            << G4endl
+	<<"--printPhysicsProcesses    : print out every particle registered and all "      << G4endl
+	<<"                             their processes - depends on physics list in input"<< G4endl
 	<<"--verbose                  : display general parameters before run"             << G4endl
 	<<"--verbose_event            : display information for every event "              << G4endl
 	<<"--verbose_event_num=N      : display tracking information for event number N"   << G4endl
