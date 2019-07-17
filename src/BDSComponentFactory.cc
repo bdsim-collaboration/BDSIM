@@ -2188,13 +2188,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double phase = el->phase * CLHEP::rad; // default is 0
   (*st)["phase"] = phaseOffset + phase;
 
-  G4double phase = el->phase * CLHEP::rad;
-  if (BDS::IsFinite(el->phase)) // phase specified - use that
-    {(*st)["phase"] = phase;}//phaseOffset + phase;}
-  else
-    {(*st)["phase"] = 0;}//phaseOffset;}
-  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
-  (*st)["length"] = chordLength;
   return st;
 }
 
