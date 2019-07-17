@@ -2270,7 +2270,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double phaseOffset = fractionalPart * CLHEP::twopi;
 
   G4double phase = el->phase * CLHEP::rad;
-  (*st)["phase"] = phaseOffset + phase;} // default is 0
+  (*st)["phase"] = phaseOffset + phase; // default is 0
   return st;
 }
 
