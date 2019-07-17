@@ -2310,10 +2310,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityFringeStrength(Element cons
   phaseOffset = fractionalPart * CLHEP::twopi;
 
   G4double phase = el->phase * CLHEP::rad;
-  if (BDS::IsFinite(phase)) // phase specified - use that
-	{(*st)["phase"] = phaseOffset + phase;}
-  else
-	{(*st)["phase"] = phaseOffset;}
+  (*st)["phase"] = phaseOffset + phase; // default is 0
   return st;
 }
 
