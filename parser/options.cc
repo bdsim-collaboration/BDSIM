@@ -154,6 +154,7 @@ void Options::PublishMembers()
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
+  publish("outputDoublePrecision", &Options::outputDoublePrecision);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
   publish("verbose",               &Options::verbose);

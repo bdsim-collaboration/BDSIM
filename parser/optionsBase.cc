@@ -36,6 +36,11 @@ OptionsBase::OptionsBase()
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
+#ifdef __ROOTDOUBLE__
+  outputDoublePrecision = true;
+#else
+  outputDoublePrecision = false;
+#endif
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;

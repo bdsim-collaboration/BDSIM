@@ -65,7 +65,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
 #endif
   if(!auxNavigator)
-    {/// Navigator for checking points in read out geometry
+    {// navigator for converting coordinates to curvilinear coordinate system 
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
@@ -73,7 +73,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   int idx = 0;
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
-      BDSTrajectory *traj = (*iT).first;
+      BDSTrajectory* traj = (*iT).first;
       if((*iT).second)
 	{
 	  traj->SetTrajIndex(idx);     
@@ -119,7 +119,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       BDSTrajectory *traj = (*iT).first;
       
       // check if the trajectory is to be stored
-      if( !(*iT).second) 
+      if(!(*iT).second) 
 	{continue;}
       
       partID.push_back((int &&) traj->GetPDGEncoding());

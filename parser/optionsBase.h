@@ -44,6 +44,7 @@ namespace GMAD
     ///@{ Parameter for output format
     std::string outputFileName;
     std::string outputFormat;
+    bool        outputDoublePrecision;
     ///@}
   
     ///@{ Parameter for survey
