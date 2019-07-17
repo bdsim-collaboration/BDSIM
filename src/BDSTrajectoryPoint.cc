@@ -81,8 +81,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
 #endif
   if (info)
     {
-      prePosLocal  = auxNavigator->ConvertToLocal(track->GetPosition());
-      postPosLocal = auxNavigator->ConvertToLocal(track->GetPosition());
+      prePosLocal  = auxNavigator->ConvertToLocalNoSetup(track->GetPosition());
+      postPosLocal = auxNavigator->ConvertToLocalNoSetup(track->GetPosition());
       
       G4double sCentre = info->GetSPos();
       preS             = sCentre + prePosLocal.z();
@@ -134,8 +134,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
 #endif
   if (info)
   {
-    prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
-    postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
+    prePosLocal  = auxNavigator->ConvertToLocalNoSetup(prePoint->GetPosition());
+    postPosLocal = auxNavigator->ConvertToLocalNoSetup(postPoint->GetPosition());
 
     G4double sCentre = info->GetSPos();
     preS             = sCentre + prePosLocal.z();
