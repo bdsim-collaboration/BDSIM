@@ -507,8 +507,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 					       st,
 					       true,
 					       fieldTrans);
-  
-  BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
+
+    // limit step length in field - crucial to this component
+    // to get the motion correct this has to be less than one oscillation
+    // TODO check step limits for cavities and undulators
+    /*
+    auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+    G4double limit = (*st)["length"] * 0.025;
+    auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+    if (ul != defaultUL)
+      {vacuumField->SetUserLimits(ul);}
+    */
+
+    BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
   (*st)["equatorradius"] = cavityInfo->equatorRadius;
@@ -2158,9 +2169,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
 
   G4double phase = el->phase * CLHEP::rad;
   if (BDS::IsFinite(el->phase)) // phase specified - use that
-    {(*st)["phase"] = phaseOffset + phase;}
+    {(*st)["phase"] = phase;}//phaseOffset + phase;}
   else
-    {(*st)["phase"] = phaseOffset;}
+    {(*st)["phase"] = 0;}//phaseOffset;}
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"] = chordLength;
   return st;
