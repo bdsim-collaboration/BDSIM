@@ -149,6 +149,14 @@ Bug Fixes
 * Fix missing geometrical margins in undulator.
 * Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
   input text file.
+* Fix a bug where the PrimaryFirstHit or PrimayrLastHit S coordinate may appear to jump back and forth
+  or be discontinuous or wrong. This was fixed by using a more robust directional lookup in the geometry
+  on boundaries. Although with the exact same coordinates, Geant4's navigation internally can 'stick'
+  to surfaces and it's more robust to use a navigator search with a direction of motion included. For
+  the primary trajectory we did a repeated point-only lookup, leading to occasionally the calculated S
+  position from the centre of the element being wrong. Even if the primary trajectory isn't stored, a
+  light version is used to identify the primary first and last hit points. This only happened in very
+  specific circumstances and depended on the physics list used.
 
 Output Changes
 --------------
