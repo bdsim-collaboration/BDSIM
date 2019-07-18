@@ -37,6 +37,10 @@ New Features
 +-----------------------------------+--------------------------------------------------------------------+
 | **Option**                        | **Description**                                                    |
 +===================================+====================================================================+
+| preprocessGDMLSchema              | Whether to preprocess a copy of the GDML file where the URL of     |
+|                                   | the GDML schema is changed to a local copy provided in BDSIM so    |
+|                                   | geometry can be loaded without internet access. On by default.     |
++-----------------------------------+--------------------------------------------------------------------+
 | printPhysicsProcesses             | Print out all defined particles according to the physics list and  |
 |                                   | the names of all defined physics processes for that particle.      |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -57,6 +61,20 @@ New Features
 +-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                   | compatible.                                                        |
++-----------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberContinueFor     | (1-inf) number of events to continue printing out the verbose      |
+|                                   | event information stepping information for. Default is 1.          |
++-----------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberLevel           | (0-5) Like `verboseEventNumber` but only for the specific event    |
+|                                   | specified by `verboseEventNumber`. Turns on verbose stepping       |
+|                                   | information at the specified level.                                |
++-----------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberPrimaryOnly     | Whether to only print out the verbose stepping as chosen by        |
+|                                   | `verboseEventNumberLevel` for primary tracks and the default is    |
+|                                   | true (1).                                                          |
++-----------------------------------+--------------------------------------------------------------------+
+| verboseImportanceSampling         | Extra information printed out when using geometric importance      |
+|                                   | sampling. (0-5)                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 
 
@@ -81,6 +99,9 @@ General
   the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
   each per-collimator branch in Event. This allows greater control over the amount of information stored.
   The primary hits can be turned on as well with the option `storeCollimatorHits`.
+* Remove use of exit(1) thoughout code.
+* Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
+  element definition from now on.
   
 Bug Fixes
 ---------
@@ -88,6 +109,7 @@ Bug Fixes
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
   on number of collimators analysed causing std::vector to reallocate and invalidate address of
   pointers as required by ROOT.
+* Fix for warnings about unknown collimator branch names when loading data with DataLoader class.
 * Fixed warnings about exiting when Geant4 geometry in closed state in the event
   of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
   the exception.
@@ -97,6 +119,7 @@ Bug Fixes
   transforms) diameter given the maximum bending angle of bends in the whole lattice. This is
   required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
   instead.
+* Fix wire scanner sensitivity. The wire was never sensitive.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
@@ -123,6 +146,11 @@ Bug Fixes
   always was used before regardless of dipole scaling.
 * Fix phase term in rf field when frequency is 0. When frequency is 0, the field should be constant and
   maximal, however, it was constant but still modulated by the phase of the incoming particle.
+* Fix for default value of "energy" (actually energy loss) in the trajectory branch of the Event tree
+  where the default value was -1 whereas it should be 0.
+* Fix missing geometrical margins in undulator.
+* Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
+  input text file.
 
 Output Changes
 --------------
