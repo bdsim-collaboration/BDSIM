@@ -170,7 +170,7 @@ int BDSIM::Initialise()
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
   
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
-  auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld);
+  auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld, realWorld->BuildSamplerWorld());
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
@@ -337,7 +337,9 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
 #endif
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, beamParticle);
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch,
+							      beamParticle,
+							      parser->GetBeam());
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 

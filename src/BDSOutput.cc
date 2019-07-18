@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
+#include "BDSPrimaryVertexInformationV.hh"
 #include "BDSHitSampler.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -136,10 +137,13 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
 
 void BDSOutput::InitialiseGeometryDependent()
 {
-  PrepareCollimatorInformation();
+  if (createCollimatorOutputStructures)
+    {
+      PrepareCollimatorInformation(); // prepare names, offsets and indices
+      InitialiseCollimators(); // allocate local objects
+    }
   CreateHistograms();
   InitialiseSamplers();
-  InitialiseCollimators();
 }
 
 void BDSOutput::FillHeader()
@@ -198,19 +202,24 @@ void BDSOutput::FillModel()
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 			    const G4int            turnsTaken)
 {
-  auto vertexInfo    = vertex->GetUserInformation();
-  auto vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo);
-  if (vertexInfoBDS)
+  const G4VUserPrimaryVertexInformation* vertexInfo = vertex->GetUserInformation();
+  if (const BDSPrimaryVertexInformation* vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo))
     {
       primary->Fill(vertexInfoBDS->primaryVertex.local,
 		    vertexInfoBDS->charge,
-		    vertex->GetPrimary()->GetPDGcode(),
+		    vertexInfoBDS->pdgID,
 		    turnsTaken,
 		    vertexInfoBDS->primaryVertex.beamlineIndex,
 		    vertexInfoBDS->nElectrons,
 		    vertexInfoBDS->mass,
 		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
+    }
+  else if (const BDSPrimaryVertexInformationV* vertexInfoBDSV = dynamic_cast<const BDSPrimaryVertexInformationV*>(vertexInfo))
+    {// vector version - multiple primaries at primary vertex
+      primary->Fill(vertexInfoBDSV,
+		    turnsTaken);
+      primaryGlobal->Fill(vertexInfoBDSV);
     }
 }
 
