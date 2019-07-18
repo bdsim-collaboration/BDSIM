@@ -3977,6 +3977,11 @@ described in `Tunnel Geometry`_.
 |                                  | loader that cannot load multiple files correctly. On  |
 |                                  | by default.                                           |
 +----------------------------------+-------------------------------------------------------+
+| preprocessGDMLSchema             | Whether to preprocess a copy of the GDML file where   |
+|                                  | the URL of the GDML schema is changed to a local copy |
+|                                  | provided in BDSIM so geometry can be loaded without   |
+|                                  | internet access. On by default.                       |
++----------------------------------+-------------------------------------------------------+
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
@@ -4508,13 +4513,13 @@ Recommendations:
 | verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out for all       |
 |                                  |          | events.                                                   |
 +----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventNumberLevel          | integer  | (0-5) Like `verboseEventNumber` but only for the specific |
-|                                  |          | event specified by `verboseEventNumber`. Turns on verbose |
-|                                  |          | stepping information at the specified level.              |
-+----------------------------------+----------+-----------------------------------------------------------+
 | verboseEventNumberContinueFor    | integer  | (1-inf) number of events to continue printing out the     |
 |                                  |          | verbose event information stepping information for.       |
 |                                  |          | default is 1.                                             |
++----------------------------------+----------+-----------------------------------------------------------+
+| verboseEventNumberLevel          | integer  | (0-5) Like `verboseEventNumber` but only for the specific |
+|                                  |          | event specified by `verboseEventNumber`. Turns on verbose |
+|                                  |          | stepping information at the specified level.              |
 +----------------------------------+----------+-----------------------------------------------------------+
 | verboseEventNumberPrimaryOnly    | Boolean  | Whether to only print out the verbose stepping            |
 |                                  |          | as chosen by `verboseEventNumberLevel` for primary tracks |
