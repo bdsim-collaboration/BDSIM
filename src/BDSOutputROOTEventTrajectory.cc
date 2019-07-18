@@ -138,6 +138,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       
       std::vector<TVector3> trajectory;
       std::vector<TVector3> momentum;
+      std::vector<double>   trajectoryS;
       std::vector<int>      modelIndex;
       
       // loop over trajectory points and fill structures
@@ -171,11 +172,13 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  momentum.push_back(TVector3(mom.getX(),
 				      mom.getY(),
 				      mom.getZ()));
+	  trajectoryS.push_back(point->GetPreS() / CLHEP::m);
 	}
       
       trajectories.push_back(trajectory);
       modelIndicies.push_back(modelIndex);
       momenta.push_back(momentum);
+      trajectoriesS.push_back(trajectoryS);
       preProcessTypes.push_back(preProcessType);
       preProcessSubTypes.push_back(preProcessSubType);
       postProcessTypes.push_back(postProcessType);
@@ -261,6 +264,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   postWeights.clear();
   energies.clear();
   trajectories.clear();
+  trajectoriesS.clear();
   momenta.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
@@ -290,6 +294,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   postWeights         = other->postWeights;
   energies            = other->energies;
   trajectories        = other->trajectories;
+  trajectoriesS       = other->trajectoriesS;
   momenta             = other->momenta;
   modelIndicies       = other->modelIndicies;
   trackID_trackIndex  = other->trackID_trackIndex;
