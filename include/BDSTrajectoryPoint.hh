@@ -61,6 +61,12 @@ public:
   /// Check to see if point is a scattering point (from physics point of view)
   G4bool IsScatteringPoint() const;
 
+  /// Return true if step isn't defined by transportation processes.
+  G4bool NotTransportationLimitedStep() const;
+
+  /// Static function to determine whether a step corresponds to scattering.
+  static G4bool IsScatteringPoint(const G4Step* step);
+
   /// @{ Accessor
   inline G4int    GetPreProcessType()          const {return preProcessType;}
   inline G4int    GetPreProcessSubType()       const {return preProcessSubType;}

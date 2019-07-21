@@ -202,6 +202,15 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint() const
   return false;
 }
 
+G4bool BDSTrajectoryPoint::TransportationLimitedStep() const
+{
+  G4bool preStep = (preProcessType  != 1   /* transportation */ &&
+		    preProcessType  != 10 /* parallel world */);
+  G4bool posStep = (postProcessType != 1   /* transportation */ &&
+		    postProcessType != 10 /* parallel world */);
+  return preStep || posStep;
+}
+
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
 {
   out << p.GetPosition();
@@ -216,4 +225,32 @@ G4double BDSTrajectoryPoint::PrePosR() const
 G4double BDSTrajectoryPoint::PostPosR() const
 {
   return std::hypot(postPosLocal.x(), postPosLocal.y());
+}
+
+G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
+{
+  const G4StepPoint* postPoint   = step->GetPostStepPoint();
+  const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
+
+  G4int postProcessType    = -1;
+  G4int postProcessSubType = -1;
+  if (postProcess)
+    {
+      postProcessType    = postProcess->GetProcessType();
+      postProcessSubType = postProcess->GetProcessSubType();
+    }
+  
+  // test against things we want to exclude like tracking - these are not
+  // points of scattering
+  G4bool initialised       = postProcessType != -1;
+  G4bool notTransportation = postProcessType != fTransportation;
+  G4bool notGeneral        = (postProcessType != fGeneral) && (postProcessSubType != STEP_LIMITER);
+  G4bool notParallel       = postProcessType != fParallel;
+
+  // energy can change in transportation step (EM)
+  G4double energy = step->GetTotalEnergyDeposit();
+  if (energy > 1e-9)
+    {return true;}
+
+  return initialised && notTransportation && notGeneral && notParallel;
 }
