@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSProcessMap.hh"
+#include "BDSStep.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh"
@@ -73,20 +74,21 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   postGlobalTime = preGlobalTime;
 
   // s position for pre and post step point
-  G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(track->GetPosition());
-  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
+  BDSStep localPosition = auxNavigator->ConvertToLocal(track->GetPosition(),
+						       track->GetMomentumDirection(),
+						       1*CLHEP::nm,
+						       true);
+  //G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(track->GetPosition());
+  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Process (main|sub) (" << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << ")" << G4endl;
 #endif
   if (info)
     {
-      prePosLocal  = auxNavigator->ConvertToLocalNoSetup(track->GetPosition());
-      postPosLocal = auxNavigator->ConvertToLocalNoSetup(track->GetPosition());
-      
       G4double sCentre = info->GetSPos();
-      preS             = sCentre + prePosLocal.z();
-      postS            = sCentre + postPosLocal.z();
+      preS             = sCentre + localPosition.PreStepPoint().z();
+      postS            = sCentre + localPosition.PostStepPoint().z();
       beamlineIndex    = info->GetBeamlineMassWorldIndex();
       beamline         = info->GetBeamlineMassWorld();
       turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
@@ -125,25 +127,34 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   preGlobalTime  = prePoint->GetGlobalTime();
   postGlobalTime = postPoint->GetGlobalTime();
 
-  // s position for pre and post step point
-  G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
-  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
+  // get local coordinates and volume for transform
+  BDSStep localPosition = auxNavigator->ConvertToLocal(step);
+  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
 #endif
   if (info)
-  {
-    prePosLocal  = auxNavigator->ConvertToLocalNoSetup(prePoint->GetPosition());
-    postPosLocal = auxNavigator->ConvertToLocalNoSetup(postPoint->GetPosition());
+    {
+      G4double sCentre = info->GetSPos();
+      preS             = sCentre + localPosition.PreStepPoint().z();
+      postS            = sCentre + localPosition.PostStepPoint().z();
+      beamlineIndex    = info->GetBeamlineMassWorldIndex();
+      beamline         = info->GetBeamlineMassWorld();
+      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+    }
 
-    G4double sCentre = info->GetSPos();
-    preS             = sCentre + prePosLocal.z();
-    postS            = sCentre + postPosLocal.z();
-    beamlineIndex    = info->GetBeamlineMassWorldIndex();
-    beamline         = info->GetBeamlineMassWorld();
-    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
-  }
+  /*
+    if ((postS - (GetPosition().z()+1434837.026)) > 30*CLHEP::cm)
+    {
+    G4double ps = postS;
+    G4double gz = GetPosition().z();
+    G4double gzo = gz + 1434837.026;
+    G4double diff = postS - gzo;
+    G4cout << "Arg" << G4endl;
+    BDSStep localPosition2 = auxNavigator->ConvertToLocal(step);
+    }
+  */
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
