@@ -64,32 +64,34 @@ BDSTrajectoryPrimary::~BDSTrajectoryPrimary()
 
 void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
 {
-  // check if scattering point and cache it if so
-  if (!firstHit)
+  if (aStep->GetTrack()->GetTrackStatus() != G4TrackStatus::fAlive)
     {
-      BDSTrajectoryPoint* point = new BDSTrajectoryPoint(aStep);
-      if (point->IsScatteringPoint())
-	{
-	  firstHit = point;
-	  hasScatteredThisTurn = true;
-	}
-      else
-	{delete point;} // don't store it
-    }
-  else if (!hasScatteredThisTurn)
-    {
-      BDSTrajectoryPoint* point = new BDSTrajectoryPoint(aStep);
-      if (point->IsScatteringPoint())
-	{hasScatteredThisTurn = true;}
-      delete point;
+      // update last point
+      delete lastPoint;
+      lastPoint = new BDSTrajectoryPoint(aStep);
     }
 
-  // update last point
-  delete lastPoint; // clear old last point
-  lastPoint = new BDSTrajectoryPoint(aStep); // construct separate copy as easier to manage.
-
+  //G4bool isScatteringPoint = lastPoint->IsScatteringPoint();
+  G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(aStep);
+  
+  // check if scattering point and cache it also as first hit if so
+  if (!firstHit && isScatteringPoint)
+    {
+      // copy it (avoids work of coordinate transform lookups again)
+      firstHit = new BDSTrajectoryPoint(aStep);
+      hasScatteredThisTurn = true;
+    }
+  else if (isScatteringPoint && !hasScatteredThisTurn)
+    {hasScatteredThisTurn = true;}
+  // already a first scattering point but need to know if it scattered at all on this turn
+  
   if (storeTrajectoryPoints)
-    {BDSTrajectory::AppendStep(aStep);}
+    {
+      if (lastPoint)
+        {BDSTrajectory::AppendStep(lastPoint);}
+      else
+        {BDSTrajectory::AppendStep(aStep);}
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPrimary const& t)
