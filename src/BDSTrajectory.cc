@@ -68,6 +68,17 @@ BDSTrajectory::~BDSTrajectory()
   delete fpBDSPointsContainer;
 }
 
+void BDSTrajectory::AppendStep(const BDSTrajectoryPoint* pointIn)
+{
+  if (trajNoTransportation && !interactive)
+    {
+      if (pointIn->NotTransportationLimitedStep())
+	{fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(*pointIn));}
+    }
+  else
+    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(*pointIn));}
+}
+
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
   // we do not use G4Trajectory::AppendStep here as that would
