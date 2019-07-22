@@ -172,36 +172,22 @@ void BDSTrajectoryPoint::InitialiseVariables()
 
 G4bool BDSTrajectoryPoint::IsScatteringPoint() const
 {
-  auto processType    = GetPostProcessType();
-  auto processSubType = GetPostProcessSubType();
-  
-  // test against things we want to exclude like tracking - these are not
-  // points of scattering
-  G4bool initialised       = processType != -1;
-  G4bool notTransportation = processType != fTransportation;
-  G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
-  G4bool notParallel       = processType != fParallel;
+  // use general static function
+  G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(postProcessType,
+								   postProcessSubType,
+								   energy);
 
-  if (energy > 1e-9 )
-    {
-      // std::cout << energy << " " << preS << " " << postS << std::endl;
-      return true;
-    }
-
-  if (initialised && notTransportation && notGeneral && notParallel) // energy can change in transportation step (EM)
-    {
 #ifdef BDSDEBUG
-      G4cout << "Interaction point found at "
-	     << GetPreS()/CLHEP::m
-	     << " m - "
+  if (isScatteringPoint)
+    {
+      G4cout << "Interaction point found at " << GetPreS()/CLHEP::m << " m - "
 	     << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
-#endif
-      return true;
     }
-  return false;
+#endif
+  return isScatteringPoint;
 }
 
-G4bool BDSTrajectoryPoint::TransportationLimitedStep() const
+G4bool BDSTrajectoryPoint::NotTransportationLimitedStep() const
 {
   G4bool preStep = (preProcessType  != 1   /* transportation */ &&
 		    preProcessType  != 10 /* parallel world */);
