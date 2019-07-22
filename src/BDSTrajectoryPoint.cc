@@ -250,7 +250,15 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
       postProcessType    = postProcess->GetProcessType();
       postProcessSubType = postProcess->GetProcessSubType();
     }
+
+  G4double totalEnergyDeposit = step->GetTotalEnergyDeposit();
+  return BDSTrajectoryPoint::IsScatteringPoint(postProcessType, postProcessSubType, totalEnergyDeposit);
+}
   
+G4bool BDSTrajectoryPoint::IsScatteringPoint(G4int postProcessType,
+					     G4int postProcessSubType,
+					     G4double totalEnergyDeposit)
+{
   // test against things we want to exclude like tracking - these are not
   // points of scattering
   G4bool initialised       = postProcessType != -1;
@@ -259,8 +267,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
   G4bool notParallel       = postProcessType != fParallel;
 
   // energy can change in transportation step (EM)
-  G4double energy = step->GetTotalEnergyDeposit();
-  if (energy > 1e-9)
+  if (totalEnergyDeposit > 1e-9)
     {return true;}
 
   return initialised && notTransportation && notGeneral && notParallel;
