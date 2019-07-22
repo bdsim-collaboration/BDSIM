@@ -157,6 +157,11 @@ Bug Fixes
   position from the centre of the element being wrong. Even if the primary trajectory isn't stored, a
   light version is used to identify the primary first and last hit points. This only happened in very
   specific circumstances and depended on the physics list used.
+* Fix for incorrect curvilinear transforms resulting in wrong S coordinate. This was caused when the
+  geometry search fell back to the curvilinear bridge world instead of the regular curvilinear world.
+  The transform was used from the regular curvilinear world though, which would be the transform from
+  the last lookup. This only affected a small fraction of cases with steps on boundaries on samplers in
+  between elements. Most tracking routines do not depend on S / z, so there is little effect to tracking.
 
 Output Changes
 --------------

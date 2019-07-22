@@ -109,8 +109,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     {
       preProcessType    = preProcess->GetProcessType();
       preProcessSubType = preProcess->GetProcessSubType();
-    }
-  
+    }  
   if (postProcess)
     {
       postProcessType    = postProcess->GetProcessType();
