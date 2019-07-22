@@ -49,14 +49,14 @@ New Features
 |                                   | particle exists the beam pipe. Note this could be multiple times.  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all secondary ions as well as the primay. No information will  |
+|                                   | for all secondary ions as well as the primary. No information will |
 |                                   | be generated for other particles.                                  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
 |                                   | for all particles leaving the beam pipe when this option is turned |
 |                                   | on.                                                                |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHits               | Store colliamtor hits for primary particles. This is addition to   |
+| storeCollimatorHits               | Store collimator hits for primary particles. This is addition to   |
 |                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
@@ -88,8 +88,8 @@ General
 * wirescanner element now requires a material to be specified as this makes a large difference
   to the expected result. This should be specified.
 * Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
-  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
-  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  and cannot be reliably or easily back-calculated afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increases the memory usage per sampler hit, so
   a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
 * Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
   hit information in the output. The crystal channelling process is ignore as a step defining process
@@ -99,7 +99,7 @@ General
   the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
   each per-collimator branch in Event. This allows greater control over the amount of information stored.
   The primary hits can be turned on as well with the option `storeCollimatorHits`.
-* Remove use of exit(1) thoughout code.
+* Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
   
@@ -122,7 +122,7 @@ Bug Fixes
 * Fix wire scanner sensitivity. The wire was never sensitive.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
-* The rigidity was correcte for partially stripped ions in the sampler output.
+* The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
   calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
@@ -130,7 +130,7 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
-* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
