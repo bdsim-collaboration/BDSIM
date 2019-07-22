@@ -559,11 +559,13 @@ tracking still includes the pole face effects.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h1`            | input poleface curvature          | 0         | no              |
+| `h1`            | Input poleface curvature          | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h2`            | output poleface curvature         | 0         | no              |
+| `h2`            | Output poleface curvature         | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `tilt`          | Tilt of magnet [rad]              | 0         | no              |
 +-----------------+-----------------------------------+-----------+-----------------+
 
 Notes:
@@ -591,7 +593,7 @@ A few points about rbends:
    :math:`2 \tan(\mathrm{eX})`.
 4) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
    or at the end of the rbend. The length of the fringe field element can be
-   set by the option `thinElementLength` (see `options`_).
+   set by the option `thinElementLength` (see `options`_) but is an advanced option.
 5) In the case of finite `fint` or `fintx` and `hgap`, a fringe field is used even
    if `e1` and `e2` have no angle.
 6) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
@@ -602,7 +604,10 @@ A few points about rbends:
    the option `includeFringeFields=0` (see `options`_).
 8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
-9) Rbends are limited in angle to less than pi/2.
+9) rbends are limited in angle to less than :math:`\pi/2`.
+10) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
+    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an rbend with a
+    positive bending angle will produce a vertical bend where the beam is bent downwards.
 
 Examples: ::
 
@@ -686,11 +691,13 @@ that the maximum tangential error in the aperture is 1 mm.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h1`            | input poleface curvature          | 0         | no              |
+| `h1`            | Input poleface curvature          | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h2`            | output poleface curvature         | 0         | no              |
+| `h2`            | Output poleface curvature         | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `tilt`          | Tilt of magnet [rad]              | 0         | no              |
 +-----------------+-----------------------------------+-----------+-----------------+
 
 Notes:
@@ -725,8 +732,11 @@ A few points about sbends:
    the option `includeFringeFields=0` (see `options`_).
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
-8) Sbends are limited in angle to less than 2 pi. If the sbends are not split with the option dontSplitSBends,
-   an sbend will be limited in angle to a maximum of pi/2.
+8) Sbends are limited in angle to less than :math:`2\pi`. If the sbends are not split with the option dontSplitSBends,
+   an sbend will be limited in angle to a maximum of :math:`\pi/2`.
+9) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
+   we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
+   positive bending angle will produce a vertical bend where the beam is bent downwards.
 
 Examples: ::
 
@@ -1687,13 +1697,15 @@ and make a placement at the appropriate point in global coordinates.
 | `angle`           | Angle the component bends the    | 0            | No            |
 |                   | beam line.                       |              |               |
 +-------------------+----------------------------------+--------------+---------------+
+| `tilt`            | Tilt of the whole component.     | 0            | No            |
++-------------------+----------------------------------+--------------+---------------+
 
-`geometryFile` should be of the format `format:filename`, where `format` is the geometry
-format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
-file. See :ref:`externally-provided-geometry` for more details.
-
-`fieldAll` should refer to the name of a field object the user has defined in the input
-gmad file. The syntax for this is described in :ref:`field-maps`.
+* `geometryFile` should be of the format `format:filename`, where `format` is the geometry
+  format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
+  file. See :ref:`externally-provided-geometry` for more details.
+* `fieldAll` should refer to the name of a field object the user has defined in the input
+  gmad file. The syntax for this is described in :ref:`field-maps`.
+* The field map will also be tilted with the component if it is tilted.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length

@@ -6,6 +6,11 @@ Expected Changes To Results
 
 * Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
   their rotation angle. Not doing this will result in different angles and therefore results.
+* Fix for field maps with finite rotations (but not multiples of :math:`\pi/2`). The field will now be correct
+  but this may be different from previous releases.
+* Field maps now pick up the tilt from the element, so a separate tilt isn't required in the field
+  definition as was in the past to make the field align with a tilted element. In this case, the field
+  definition tilt should be removed and the field will be orientated to the component it's attached to.
 
 New Features
 ------------
@@ -28,7 +33,9 @@ New Features
 * A new physics list called "all_particles" has been introduced to construct all particles
   only but no physics processes. Useful for an exotic beam where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
-  are generated as an easy method to introduce coupling.
+  are generated as an easy method to introduce coupling.  Note, this is in the beam command.
+* Field maps are now automatically tilted when attached to a tilted beam line element, whereas
+  they weren't before.
 
 * New options:
 
@@ -165,6 +172,9 @@ Bug Fixes
   The transform was used from the regular curvilinear world though, which would be the transform from
   the last lookup. This only affected a small fraction of cases with steps on boundaries on samplers in
   between elements. Most tracking routines do not depend on S / z, so there is little effect to tracking.
+* Fix for field map rotation when using a tilt in the field. If the field was tilted by a multiple of
+  :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
+  due to a double transform.
 
 Output Changes
 --------------
