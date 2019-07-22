@@ -5528,6 +5528,9 @@ The following parameters are used to control the use of an event generator file.
 .. warning:: Only particles available through the chosen physics list can be used otherwise they will
 	     not have the correct properties and will **not be** added to the primary vertex and are
 	     simply skipped. The number (if any) that are skipped will be printed out for every event.
+	     We recommend using the physics list :code:`option, physicsList="all_particles";` to
+	     define all particles without any relevant physics list. This can be used in combination
+	     with other physics lists safely.
 
 .. warning:: If the executable option `-\\-generatePrimariesOnly` is used, the coordinates will
 	     not reflect the loaded event and will only be the reference coordinates. This is
