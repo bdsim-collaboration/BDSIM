@@ -66,28 +66,27 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
 {
   if (aStep->GetTrack()->GetTrackStatus() != G4TrackStatus::fAlive)
     {
-      // update last point
+      // particle is being killed, ie end of track. update last point
       delete lastPoint;
       lastPoint = new BDSTrajectoryPoint(aStep);
     }
-
-  //G4bool isScatteringPoint = lastPoint->IsScatteringPoint();
+  
   G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(aStep);
   
-  // check if scattering point and cache it also as first hit if so
+  // if we don't have a first hit already and it's a scattering point, record it
   if (!firstHit && isScatteringPoint)
     {
-      // copy it (avoids work of coordinate transform lookups again)
       firstHit = new BDSTrajectoryPoint(aStep);
       hasScatteredThisTurn = true;
     }
   else if (isScatteringPoint && !hasScatteredThisTurn)
     {hasScatteredThisTurn = true;}
-  // already a first scattering point but need to know if it scattered at all on this turn
+  // already a first hit scattering point but need to know if it scattered at all on this turn
+  // hasScatteredThisTurn is externally updated (reset) each turn in a circular machine
   
   if (storeTrajectoryPoints)
     {
-      if (lastPoint)
+      if (lastPoint) // copy it if we've already done the work of preparing the point
         {BDSTrajectory::AppendStep(lastPoint);}
       else
         {BDSTrajectory::AppendStep(aStep);}

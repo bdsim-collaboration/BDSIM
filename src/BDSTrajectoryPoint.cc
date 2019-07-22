@@ -73,17 +73,17 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   preGlobalTime = track->GetGlobalTime();
   postGlobalTime = preGlobalTime;
 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Process (main|sub) (" << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << ")" << G4endl;
+#endif
+  
   // s position for pre and post step point
+  // with a track, we're at the start and have no step - use 1nm for step to aid geometrical lookup
   BDSStep localPosition = auxNavigator->ConvertToLocal(track->GetPosition(),
 						       track->GetMomentumDirection(),
 						       1*CLHEP::nm,
 						       true);
-  //G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(track->GetPosition());
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Process (main|sub) (" << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << ")" << G4endl;
-#endif
   if (info)
     {
       G4double sCentre = info->GetSPos();
@@ -105,13 +105,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   const G4VProcess*  preProcess  = prePoint->GetProcessDefinedStep();
   const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
 
-  if(preProcess)
+  if (preProcess)
     {
       preProcessType    = preProcess->GetProcessType();
       preProcessSubType = preProcess->GetProcessSubType();
     }
   
-  if(postProcess)
+  if (postProcess)
     {
       postProcessType    = postProcess->GetProcessType();
       postProcessSubType = postProcess->GetProcessSubType();
@@ -127,13 +127,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   preGlobalTime  = prePoint->GetGlobalTime();
   postGlobalTime = postPoint->GetGlobalTime();
 
-  // get local coordinates and volume for transform
-  BDSStep localPosition = auxNavigator->ConvertToLocal(step);
-  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
 #endif
+  
+  // get local coordinates and volume for transform
+  BDSStep localPosition = auxNavigator->ConvertToLocal(step);
+  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
       G4double sCentre = info->GetSPos();
@@ -143,18 +143,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
       beamline         = info->GetBeamlineMassWorld();
       turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
     }
-
-  /*
-    if ((postS - (GetPosition().z()+1434837.026)) > 30*CLHEP::cm)
-    {
-    G4double ps = postS;
-    G4double gz = GetPosition().z();
-    G4double gzo = gz + 1434837.026;
-    G4double diff = postS - gzo;
-    G4cout << "Arg" << G4endl;
-    BDSStep localPosition2 = auxNavigator->ConvertToLocal(step);
-    }
-  */
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
