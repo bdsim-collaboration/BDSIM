@@ -34,48 +34,51 @@ New Features
 
 .. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
   
-+-----------------------------------+--------------------------------------------------------------------+
-| **Option**                        | **Description**                                                    |
-+===================================+====================================================================+
-| preprocessGDMLSchema              | Whether to preprocess a copy of the GDML file where the URL of     |
-|                                   | the GDML schema is changed to a local copy provided in BDSIM so    |
-|                                   | geometry can be loaded without internet access. On by default.     |
-+-----------------------------------+--------------------------------------------------------------------+
-| printPhysicsProcesses             | Print out all defined particles according to the physics list and  |
-|                                   | the names of all defined physics processes for that particle.      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
-|                                   | tree in the output that contains coordinates of where the primary  |
-|                                   | particle exists the beam pipe. Note this could be multiple times.  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all secondary ions as well as the primary. No information will |
-|                                   | be generated for other particles.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all particles leaving the beam pipe when this option is turned |
-|                                   | on.                                                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHits               | Store collimator hits for primary particles. This is addition to   |
-|                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
-|                                   | compatible.                                                        |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberContinueFor     | (1-inf) number of events to continue printing out the verbose      |
-|                                   | event information stepping information for. Default is 1.          |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberLevel           | (0-5) Like `verboseEventNumber` but only for the specific event    |
-|                                   | specified by `verboseEventNumber`. Turns on verbose stepping       |
-|                                   | information at the specified level.                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberPrimaryOnly     | Whether to only print out the verbose stepping as chosen by        |
-|                                   | `verboseEventNumberLevel` for primary tracks and the default is    |
-|                                   | true (1).                                                          |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseImportanceSampling         | Extra information printed out when using geometric importance      |
-|                                   | sampling. (0-5)                                                    |
-+-----------------------------------+--------------------------------------------------------------------+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| preprocessGDMLSchema               | Whether to preprocess a copy of the GDML file where the URL of     |
+|                                    | the GDML schema is changed to a local copy provided in BDSIM so    |
+|                                    | geometry can be loaded without internet access. On by default.     |
++------------------------------------+--------------------------------------------------------------------+
+| printPhysicsProcesses              | Print out all defined particles according to the physics list and  |
+|                                    | the names of all defined physics processes for that particle.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                    | tree in the output that contains coordinates of where the primary  |
+|                                    | particle exists the beam pipe. Note this could be multiple times.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons           | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all secondary ions as well as the primary. No information will |
+|                                    | be generated for other particles.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all particles leaving the beam pipe when this option is turned |
+|                                    | on.                                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits                | Store collimator hits for primary particles. This is addition to   |
+|                                    | the basic `primaryInteracted` and `primaryStopped` variables.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
+|                                    | `trajNoTransportation` option.                                     |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberContinueFor      | (1-inf) number of events to continue printing out the verbose      |
+|                                    | event information stepping information for. Default is 1.          |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberLevel            | (0-5) Like `verboseEventNumber` but only for the specific event    |
+|                                    | specified by `verboseEventNumber`. Turns on verbose stepping       |
+|                                    | information at the specified level.                                |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberPrimaryOnly      | Whether to only print out the verbose stepping as chosen by        |
+|                                    | `verboseEventNumberLevel` for primary tracks and the default is    |
+|                                    | true (1).                                                          |
++------------------------------------+--------------------------------------------------------------------+
+| verboseImportanceSampling          | Extra information printed out when using geometric importance      |
+|                                    | sampling. (0-5)                                                    |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
