@@ -180,7 +180,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint() const
   if (isScatteringPoint)
     {
       G4cout << "Interaction point found at " << GetPreS()/CLHEP::m << " m - "
-	     << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+	     << BDSProcessMap::Instance()->GetProcessName(GetPostProcessType(), GetPostProcessSubType()) << G4endl;
     }
 #endif
   return isScatteringPoint;
