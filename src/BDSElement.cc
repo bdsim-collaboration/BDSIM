@@ -25,6 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 globals / types
 
+#include <iomanip>
+
 BDSElement::BDSElement(G4String nameIn,
 		       G4double arcLengthIn,
 		       G4double horizontalWidthIn,
@@ -63,13 +65,24 @@ void BDSElement::BuildContainerLogicalVolume()
   if (nominalExt.TransverselyGreaterThan(geomExtent))
     {SetExtent(nominalExt);}
 
+  // check extent of geometry as compared to user input length of component in
+  // beam line. If longer (including some numerical tolerance), warn user
   G4double extLength = GetExtent().DZ();
-  if (extLength > chordLength)
+  G4double tolerance = 1*CLHEP::micrometer;
+  if ((extLength - chordLength) > tolerance)
     {
+      G4cerr << std::setprecision(15); // precise print out to aid user
+      G4cerr.setf( std::ios::fixed, std:: ios::floatfield );
       G4cerr << "BDSElement> The loaded geometry is larger than the specified length"
 	     << " of the element, which will cause overlaps!" << G4endl
-	     << "Calculated extent along z: " << extLength << " mm, vs specified "
-	     << chordLength << G4endl;
-      throw BDSException(__METHOD_NAME__, "overlaps in element \"" + name + "\"");
+	     << "Calculated extent along z of geometry: " << extLength << " mm" << G4endl;
+      G4cerr << "Arc length    " << arcLength   << " mm"  << G4endl;
+      G4cerr << "Bending angle " << angle       << " rad" << G4endl;
+      G4cerr << "Chord length  " << chordLength << " mm"  << G4endl;
+      G4cerr << "Chord length must be >= geometry length" << G4endl;
+      G4cerr << "Possible overlaps in element \"" << name << "\"" << G4endl << G4endl << G4endl;
+      // we don't force an exit here as our testing might not be exact for angled components
+      // for now, we leave it to the user to ensure this is acceptable
+      //throw BDSException(__METHOD_NAME__, "overlaps in element \"" + name + "\"");
     }
 }
