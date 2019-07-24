@@ -5448,7 +5448,7 @@ Acceptable tokens for the columns are:
 +------------+----------------------------------------+
 | "zp"       | Longitudinal angle                     |
 +------------+----------------------------------------+
-| "s"        | Path length displacement,              |
+| "S"        | Global path length displacement,       |
 |            | not to be used in conjunction with "z".|
 +------------+----------------------------------------+
 | "pt"       | PDG particle ID                        |
