@@ -348,10 +348,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  ReadValue(ss, type);
 	  updateParticleDefinition = true; // update particle definition after reading line
 	}
-      else if (it->name == "s") {
-	ReadValue(ss, z);
-	z *= CLHEP::m * it->unit;
-      }
+      else if (it->name == "s")
+	{
+	  ReadValue(ss, z);
+	  z *= CLHEP::m * it->unit;
+	}
       else if(it->name=="weight")
 	{ReadValue(ss, weight);}
 
