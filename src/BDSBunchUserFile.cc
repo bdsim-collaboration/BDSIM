@@ -129,7 +129,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       G4String name = token.substr(0,2);
       G4String rest = token.substr(2);
       CheckAndParseUnits(name, rest, ParseAngleUnit);
-    } else if (token.substr(0, 1) == "s") {
+    } else if (token.substr(0, 1) == "S") {
       G4String name = token.substr(0, 1);
       G4String rest = token.substr(1);
       CheckAndParseUnits(name, rest, ParseLengthUnit);
@@ -348,7 +348,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  ReadValue(ss, type);
 	  updateParticleDefinition = true; // update particle definition after reading line
 	}
-      else if (it->name == "s")
+      else if (it->name == "S")
 	{
 	  ReadValue(ss, z);
 	  z *= CLHEP::m * it->unit;
