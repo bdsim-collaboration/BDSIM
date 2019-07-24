@@ -559,11 +559,13 @@ tracking still includes the pole face effects.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h1`            | input poleface curvature          | 0         | no              |
+| `h1`            | Input poleface curvature          | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h2`            | output poleface curvature         | 0         | no              |
+| `h2`            | Output poleface curvature         | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `tilt`          | Tilt of magnet [rad]              | 0         | no              |
 +-----------------+-----------------------------------+-----------+-----------------+
 
 Notes:
@@ -591,7 +593,7 @@ A few points about rbends:
    :math:`2 \tan(\mathrm{eX})`.
 4) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
    or at the end of the rbend. The length of the fringe field element can be
-   set by the option `thinElementLength` (see `options`_).
+   set by the option `thinElementLength` (see `options`_) but is an advanced option.
 5) In the case of finite `fint` or `fintx` and `hgap`, a fringe field is used even
    if `e1` and `e2` have no angle.
 6) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
@@ -602,7 +604,10 @@ A few points about rbends:
    the option `includeFringeFields=0` (see `options`_).
 8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
-9) Rbends are limited in angle to less than pi/2.
+9) rbends are limited in angle to less than :math:`\pi/2`.
+10) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
+    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an rbend with a
+    positive bending angle will produce a vertical bend where the beam is bent downwards.
 
 Examples: ::
 
@@ -686,11 +691,13 @@ that the maximum tangential error in the aperture is 1 mm.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h1`            | input poleface curvature          | 0         | no              |
+| `h1`            | Input poleface curvature          | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `h2`            | output poleface curvature         | 0         | no              |
+| `h2`            | Output poleface curvature         | 0         | no              |
 |                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `tilt`          | Tilt of magnet [rad]              | 0         | no              |
 +-----------------+-----------------------------------+-----------+-----------------+
 
 Notes:
@@ -725,8 +732,11 @@ A few points about sbends:
    the option `includeFringeFields=0` (see `options`_).
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
-8) Sbends are limited in angle to less than 2 pi. If the sbends are not split with the option dontSplitSBends,
-   an sbend will be limited in angle to a maximum of pi/2.
+8) Sbends are limited in angle to less than :math:`2\pi`. If the sbends are not split with the option dontSplitSBends,
+   an sbend will be limited in angle to a maximum of :math:`\pi/2`.
+9) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
+   we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
+   positive bending angle will produce a vertical bend where the beam is bent downwards.
 
 Examples: ::
 
@@ -1687,13 +1697,15 @@ and make a placement at the appropriate point in global coordinates.
 | `angle`           | Angle the component bends the    | 0            | No            |
 |                   | beam line.                       |              |               |
 +-------------------+----------------------------------+--------------+---------------+
+| `tilt`            | Tilt of the whole component.     | 0            | No            |
++-------------------+----------------------------------+--------------+---------------+
 
-`geometryFile` should be of the format `format:filename`, where `format` is the geometry
-format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
-file. See :ref:`externally-provided-geometry` for more details.
-
-`fieldAll` should refer to the name of a field object the user has defined in the input
-gmad file. The syntax for this is described in :ref:`field-maps`.
+* `geometryFile` should be of the format `format:filename`, where `format` is the geometry
+  format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
+  file. See :ref:`externally-provided-geometry` for more details.
+* `fieldAll` should refer to the name of a field object the user has defined in the input
+  gmad file. The syntax for this is described in :ref:`field-maps`.
+* The field map will also be tilted with the component if it is tilted.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length
@@ -4263,210 +4275,211 @@ with the following options.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+-----------------------------------+--------------------------------------------------------------------+
-| **Option**                        | **Function**                                                       |
-+===================================+====================================================================+
-| elossHistoBinWidth                | The width of the histogram bins [m]                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| nperfile                          | Number of events to record per output file                         |
-+-----------------------------------+--------------------------------------------------------------------+
-| sensitiveOuter                    | Whether the outer part of each component (other than the beam      |
-|                                   | pipe) records energy loss. `storeELoss` is required to be on for   |
-|                                   | this to work. The user may turn off energy loss from the           |
-|                                   | beam pipe and retain losses from the magnet outer in combination   |
-|                                   | with the next option `sensitiveBeamPipe`. Both are stored together |
-|                                   | in `Eloss` branch of the Event Tree in the output. Default on.     |
-+-----------------------------------+--------------------------------------------------------------------+
-| sensitiveBeamPipe                 | Whether the beam pipe records energy loss. This includes cavities. |
-|                                   | This can be used in combination with the above option              |
-|                                   | `sensitiveOuter`, to control which energy loss is recorded.        |
-|                                   | Energy loss from this option is recorded in the `Eloss` branch     |
-|                                   | of the Event Tree in the output. Default on.                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
-|                                   | Energy loss from this option is recorded in the `Eloss` branch     |
-|                                   | of the Event Tree in the output. Default on.                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
-|                                   | tree in the output that contains coordinates of where the primary  |
-|                                   | particle exists the beam pipe. Note this could be multiple times.  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all secondary ions as well as the primay. No information will  |
-|                                   | be generated for other particles.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all particles leaving the beam pipe when this option is turned |
-|                                   | on.                                                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHits               | Store hits in per-collimator structures with hits for only primary |
-|                                   | particles. With only `storeCollimatorInfo` on, only the            |
-|                                   | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHitsIons           | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
-|                                   | will now also be generated for all ions whether primary or         |
-|                                   | secondary. Default off.                                            |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHitsAll            | If `storeCollimatorInfo` is on and collimator hits are generated,  |
-|                                   | hits will be generated for all particles interacting with the      |
-|                                   | collimators whether primary or secondary and whether ion or not.   |
-|                                   | Default off.                                                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHitsLinks          | If `storeCollimatorHits` is on and collimator hits are generated,  |
-|                                   | `charge`, `mass`, `rigidity` and `kineticEnergy` variables are     |
-|                                   | also stored for each collimator hit.                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorInfo               | With this option on, summary information in the Model Tree about   |
-|                                   | only collimators is filled. Collimator structures are created in   |
-|                                   | the Event Tree of the output for each collimator and prefixed with |
-|                                   | "COLL\_" and contain hits from (only) primary particles.           |
-|                                   | Collimator summary histograms are also created and stored. Default |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeEloss                        | Whether to store the energy deposition hits. Default on. By        |
-|                                   | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
-|                                   | `sensitiveVacuum` have no effect. Saves run time memory and output |
-|                                   | file size. See next option `storeEloss` for combination.           |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossHistograms              | Whether to store energy deposition histograms `Eloss` and          |
-|                                   | `ElossPE`. This will automatically be on if `storeEloss` is on.    |
-|                                   | With `storeEloss` off, this option can be turned on to retain the  |
-|                                   | energy deposition histograms. If both this and `storeEloss` are    |
-|                                   | off, no energy deposition hits will be generated saving memory.    |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossVacuum                  | Whether to store energy deposition from the vacuum volumes as hits |
-|                                   | in the `ElossVacuum` branch and the corresponding summary          |
-|                                   | histograms. Default off.                                           |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossVacuumHistograms        | Whether to generate summary histograms of energy deposition in the |
-|                                   | vacuum volumes. If `storeElossVacuum` is on, this will be on. The  |
-|                                   | user may turn off `storeElossVacuum` but turn this on to store     |
-|                                   | the energy deposition histograms.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossTunnel                  | Whether to store energy deposition hits from the tunnel geometry   |
-|                                   | in the `ElossTunnel` branch of the Event Tree. Default off.        |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossTunnelHistograms        | Whether to generate summary histograms of energy deposition in the |
-|                                   | tunnel volumes. If `storeElossTunnel` is on, this will be on. The  |
-|                                   | user may turn off `storeElossTunnel` but turn this on to store     |
-|                                   | the energy deposition histograms.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossWorld                   | Whether to record energy deposition in the world volume and, in    |
-|                                   | the case of using Geant4.10.3 or newer, the energy leaving the     |
-|                                   | world volume as well. Default off.                                 |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossWorldContents           | Whether to record energy deposition in the daughter volumes within |
-|                                   | the world volume when supplied as external world geometry.         |
-|                                   | Default off.                                                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
-|                                   | and for each trajectory point. Default off.                        |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossLinks                   | For each energy deposition hit, the particle ID, track ID, parent  |
-|                                   | ID and beam line index will be stored - this is intended to help   |
-|                                   | 'link' the energy deposition back to other information. Default    |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
-|                                   | and for each trajectory point. Default off.                        |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossModelID                 | Store the beam line index of the object the energy deposition hit  |
-|                                   | was in. If `storeElossLinks` is on, this will be on irrespective   |
-|                                   | of this option.                                                    |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossTime                    | The time since the start of the event will be stored for each point|
-|                                   | of energy deposition and trajectory. Default off.                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossTurn                    | Store the turn number of each energy deposition hit. Default off,  |
-|                                   | but automatically on when using a circular machine with the        |
-|                                   | (also executable) option :code:`circular`.                         |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossStepLength              | Stores the step length for each energy deposition hit or not.      |
-|                                   | Default off.                                                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeElossPreStepKineticEnergy    | Stores the kinetic energy of the particle causing energy deposition|
-|                                   | as taken from the beginning of the step before it made it. Default |
-|                                   | off.                                                               |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeGeant4Data                   | Whether to store basic particle information for all particles used |
-|                                   | in the simulation under Geant4Data in the output. This can be      |
-|                                   | relatively large when ions are used as there are many thousands    |
-|                                   | of ion definitions. Default on.                                    |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeModel                        | Whether to store the model information in the output. Default on.  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerAll                   | Convenience option to turn on all optional sampler output.         |
-|                                   | Equivalent to turning on `storeSamplerCharge`,                     |
-|                                   | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
-|                                   | `storeSamplerRigidity`, `storeSamplerIon`. Overrides these         |
-|                                   | options even if they are explicitly set to off (0).                |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerKineticEnergy         | Stores corresponding kinetic energy of particle for every entry in |
-|                                   | sampler.                                                           |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerMass                  | Stores corresponding mass (in GeV) of particle for every entry in  |
-|                                   | the sampler.                                                       |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerPolarCoords           | Calculate and store the polar coordinates (r, phi) and (rp, phip)  |
-|                                   | for the sampler data.                                              |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerRigidity              | Stores the rigidity (in Tm) of particle for every entry in sampler |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeSamplerIon                   | Stores A, Z and Boolean whether the entry is an ion or not as well |
-|                                   | as the `nElectrons` variable for possible number of electrons.     |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
-|                                   | stored. This must be turned on to store any trajectories at all.   |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectories                 | An alias to `storeTrajectory`                                      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryDepth              | The depth of the particle tree to store the trajectories to  0 is  |
-|                                   | the primary, 1 is the first generation of secondaries, etc.        |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryELossSRange        | Ranges in curvilinear S coordinate that if a particular track      |
-|                                   | causes energy deposition in this range, its trajectory will be     |
-|                                   | stored. The value should be a string inside which are pairs of     |
-|                                   | numbers separated by a colon and ranges separated by whitespace    |
-|                                   | such as "0.3:1.23 45.6:47.6".                                      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryParticle           | The Geant4 name of particle(s) to only store trajectories for.     |
-|                                   | This is case sensitive. Multiple particle names can be used with   |
-|                                   | a space between them. e.g. "proton pi-".                           |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryParticleID         | The PDG ID of the particle(s) to only store trajectories for.      |
-|                                   | Multiple particle IDs can be supplied with a space between them.   |
-|                                   | e.g. "11 12 22 13".                                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryEnergyThreshold    | The threshold energy for storing trajectories. Trajectories for    |
-|                                   | any particles with energy less than this amount (in GeV) will not  |
-|                                   | be stored.                                                         |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectorySamplerID          | If a trajectory reaches the name of these samplers, store that     |
-|                                   | trajectory. This value supplied should be a whitespace separated   |
-|                                   | string such as "cd1 qf32x".                                        |
-+-----------------------------------+--------------------------------------------------------------------+
-| trajConnect                       | Stores all the trajectories that connect a trajectory to be        |
-|                                   | stored all the way to the primary particle. For example, if the    |
-|                                   | filters from other trajectory options are to store only muons      |
-|                                   | with an energy greater than 10 GeV, the few trajectories stored    |
-|                                   | would appear unrelated. This option forces the storage of only     |
-|                                   | the trajectories of any particles (irrespective of filters) that   |
-|                                   | lead to the muon in question.                                      |
-+-----------------------------------+--------------------------------------------------------------------+
-| trajNoTransportation              | Suppresses trajectory points generated by transportation. When a   |
-|                                   | particle hits a volume boundary, two trajectories would be created |
-|                                   | for before and afterwards, even if it didn't interact or change.   |
-|                                   | This option removes these points.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| trajCutGTZ                        | Only stores trajectories whose *global* z-coordinate is greater    |
-|                                   | than this value in metres [m].                                     |
-+-----------------------------------+--------------------------------------------------------------------+
-| trajCutLTR                        | Only stores trajectories whose *global* radius is from the start   |
-|                                   | position (sqrt(x^2, y^2)).                                         |
-+-----------------------------------+--------------------------------------------------------------------+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Function**                                                       |
++====================================+====================================================================+
+| elossHistoBinWidth                 | The width of the histogram bins [m]                                |
++------------------------------------+--------------------------------------------------------------------+
+| nperfile                           | Number of events to record per output file                         |
++------------------------------------+--------------------------------------------------------------------+
+| sensitiveOuter                     | Whether the outer part of each component (other than the beam      |
+|                                    | pipe) records energy loss. `storeELoss` is required to be on for   |
+|                                    | this to work. The user may turn off energy loss from the           |
+|                                    | beam pipe and retain losses from the magnet outer in combination   |
+|                                    | with the next option `sensitiveBeamPipe`. Both are stored together |
+|                                    | in `Eloss` branch of the Event Tree in the output. Default on.     |
++------------------------------------+--------------------------------------------------------------------+
+| sensitiveBeamPipe                  | Whether the beam pipe records energy loss. This includes cavities. |
+|                                    | This can be used in combination with the above option              |
+|                                    | `sensitiveOuter`, to control which energy loss is recorded.        |
+|                                    | Energy loss from this option is recorded in the `Eloss` branch     |
+|                                    | of the Event Tree in the output. Default on.                       |
++------------------------------------+--------------------------------------------------------------------+
+| sensitiveVacuum                    | Whether energy deposition in the residual vacuum gas is recorded.  |
+|                                    | Energy loss from this option is recorded in the `Eloss` branch     |
+|                                    | of the Event Tree in the output. Default on.                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                    | tree in the output that contains coordinates of where the primary  |
+|                                    | particle exists the beam pipe. Note this could be multiple times.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons           | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all secondary ions as well as the primay. No information will  |
+|                                    | be generated for other particles.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all particles leaving the beam pipe when this option is turned |
+|                                    | on.                                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
+|                                    | particles. With only `storeCollimatorInfo` on, only the            |
+|                                    | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsIons            | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                    | `isIon`, `ionA` and `ionZ` variables are filled. Collimator hits   |
+|                                    | will now also be generated for all ions whether primary or         |
+|                                    | secondary. Default off.                                            |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsAll             | If `storeCollimatorInfo` is on and collimator hits are generated,  |
+|                                    | hits will be generated for all particles interacting with the      |
+|                                    | collimators whether primary or secondary and whether ion or not.   |
+|                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHitsLinks           | If `storeCollimatorHits` is on and collimator hits are generated,  |
+|                                    | `charge`, `mass`, `rigidity` and `kineticEnergy` variables are     |
+|                                    | also stored for each collimator hit.                               |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorInfo                | With this option on, summary information in the Model Tree about   |
+|                                    | only collimators is filled. Collimator structures are created in   |
+|                                    | the Event Tree of the output for each collimator and prefixed with |
+|                                    | "COLL\_" and contain hits from (only) primary particles.           |
+|                                    | Collimator summary histograms are also created and stored. Default |
+|                                    | off.                                                               |
++------------------------------------+--------------------------------------------------------------------+
+| storeEloss                         | Whether to store the energy deposition hits. Default on. By        |
+|                                    | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
+|                                    | `sensitiveVacuum` have no effect. Saves run time memory and output |
+|                                    | file size. See next option `storeEloss` for combination.           |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossHistograms               | Whether to store energy deposition histograms `Eloss` and          |
+|                                    | `ElossPE`. This will automatically be on if `storeEloss` is on.    |
+|                                    | With `storeEloss` off, this option can be turned on to retain the  |
+|                                    | energy deposition histograms. If both this and `storeEloss` are    |
+|                                    | off, no energy deposition hits will be generated saving memory.    |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossVacuum                   | Whether to store energy deposition from the vacuum volumes as hits |
+|                                    | in the `ElossVacuum` branch and the corresponding summary          |
+|                                    | histograms. Default off.                                           |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossVacuumHistograms         | Whether to generate summary histograms of energy deposition in the |
+|                                    | vacuum volumes. If `storeElossVacuum` is on, this will be on. The  |
+|                                    | user may turn off `storeElossVacuum` but turn this on to store     |
+|                                    | the energy deposition histograms.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossTunnel                   | Whether to store energy deposition hits from the tunnel geometry   |
+|                                    | in the `ElossTunnel` branch of the Event Tree. Default off.        |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossTunnelHistograms         | Whether to generate summary histograms of energy deposition in the |
+|                                    | tunnel volumes. If `storeElossTunnel` is on, this will be on. The  |
+|                                    | user may turn off `storeElossTunnel` but turn this on to store     |
+|                                    | the energy deposition histograms.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossWorld                    | Whether to record energy deposition in the world volume and, in    |
+|                                    | the case of using Geant4.10.3 or newer, the energy leaving the     |
+|                                    | world volume as well. Default off.                                 |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContents            | Whether to record energy deposition in the daughter volumes within |
+|                                    | the world volume when supplied as external world geometry.         |
+|                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossGlobal                   | Global coordinates will be stored for each energy deposition hit   |
+|                                    | and for each trajectory point. Default off.                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossLinks                    | For each energy deposition hit, the particle ID, track ID, parent  |
+|                                    | ID and beam line index will be stored - this is intended to help   |
+|                                    | 'link' the energy deposition back to other information. Default    |
+|                                    | off.                                                               |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossLocal                    | Local coordinates will be stored for each energy deposition hit    |
+|                                    | and for each trajectory point. Default off.                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossModelID                  | Store the beam line index of the object the energy deposition hit  |
+|                                    | was in. If `storeElossLinks` is on, this will be on irrespective   |
+|                                    | of this option.                                                    |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossTime                     | The time since the start of the event will be stored for each point|
+|                                    | of energy deposition and trajectory. Default off.                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossTurn                     | Store the turn number of each energy deposition hit. Default off,  |
+|                                    | but automatically on when using a circular machine with the        |
+|                                    | (also executable) option :code:`circular`.                         |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossStepLength               | Stores the step length for each energy deposition hit or not.      |
+|                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossPreStepKineticEnergy     | Stores the kinetic energy of the particle causing energy deposition|
+|                                    | as taken from the beginning of the step before it made it. Default |
+|                                    | off.                                                               |
++------------------------------------+--------------------------------------------------------------------+
+| storeGeant4Data                    | Whether to store basic particle information for all particles used |
+|                                    | in the simulation under Geant4Data in the output. This can be      |
+|                                    | relatively large when ions are used as there are many thousands    |
+|                                    | of ion definitions. Default on.                                    |
++------------------------------------+--------------------------------------------------------------------+
+| storeModel                         | Whether to store the model information in the output. Default on.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
+|                                    | Equivalent to turning on `storeSamplerCharge`,                     |
+|                                    | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
+|                                    | `storeSamplerRigidity`, `storeSamplerIon`. Overrides these         |
+|                                    | options even if they are explicitly set to off (0).                |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerCharge                 | Stores corresponding charge of particle for every entry in sampler |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerKineticEnergy          | Stores corresponding kinetic energy of particle for every entry in |
+|                                    | sampler.                                                           |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerMass                   | Stores corresponding mass (in GeV) of particle for every entry in  |
+|                                    | the sampler.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerPolarCoords            | Calculate and store the polar coordinates (r, phi) and (rp, phip)  |
+|                                    | for the sampler data.                                              |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerRigidity               | Stores the rigidity (in Tm) of particle for every entry in sampler |
++------------------------------------+--------------------------------------------------------------------+
+| storeSamplerIon                    | Stores A, Z and Boolean whether the entry is an ion or not as well |
+|                                    | as the `nElectrons` variable for possible number of electrons.     |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectory                    | Whether to store trajectories. If turned on, all trajectories are  |
+|                                    | stored. This must be turned on to store any trajectories at all.   |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectories                  | An alias to `storeTrajectory`                                      |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to  0 is  |
+|                                    | the primary, 1 is the first generation of secondaries, etc.        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryELossSRange         | Ranges in curvilinear S coordinate that if a particular track      |
+|                                    | causes energy deposition in this range, its trajectory will be     |
+|                                    | stored. The value should be a string inside which are pairs of     |
+|                                    | numbers separated by a colon and ranges separated by whitespace    |
+|                                    | such as "0.3:1.23 45.6:47.6".                                      |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticle            | The Geant4 name of particle(s) to only store trajectories for.     |
+|                                    | This is case sensitive. Multiple particle names can be used with   |
+|                                    | a space between them. e.g. "proton pi-".                           |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticleID          | The PDG ID of the particle(s) to only store trajectories for.      |
+|                                    | Multiple particle IDs can be supplied with a space between them.   |
+|                                    | e.g. "11 12 22 13".                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryEnergyThreshold     | The threshold energy for storing trajectories. Trajectories for    |
+|                                    | any particles with energy less than this amount (in GeV) will not  |
+|                                    | be stored.                                                         |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
+|                                    | trajectory. This value supplied should be a whitespace separated   |
+|                                    | string such as "cd1 qf32x".                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryTransportationSteps | On by default. If true, include steps in the trajectories that     |
+|                                    | are created by transportation only. When a particle crosses a      |
+|                                    | boundary, this forces a step in geant4 and therefore another       |
+|                                    | trajectory point. Legacy option is :code:`trajNoTransportation`    |
+|                                    | that is opposite to this option.                                   |
++------------------------------------+--------------------------------------------------------------------+
+| trajConnect                        | Stores all the trajectories that connect a trajectory to be        |
+|                                    | stored all the way to the primary particle. For example, if the    |
+|                                    | filters from other trajectory options are to store only muons      |
+|                                    | with an energy greater than 10 GeV, the few trajectories stored    |
+|                                    | would appear unrelated. This option forces the storage of only     |
+|                                    | the trajectories of any particles (irrespective of filters) that   |
+|                                    | lead to the muon in question.                                      |
++------------------------------------+--------------------------------------------------------------------+
+| trajCutGTZ                         | Only stores trajectories whose *global* z-coordinate is greater    |
+|                                    | than this value in metres [m].                                     |
++------------------------------------+--------------------------------------------------------------------+
+| trajCutLTR                         | Only stores trajectories whose *global* radius is from the start   |
+|                                    | position (sqrt(x^2, y^2)).                                         |
++------------------------------------+--------------------------------------------------------------------+
 
 .. _bdsim-options-verbosity:
 
@@ -5528,6 +5541,9 @@ The following parameters are used to control the use of an event generator file.
 .. warning:: Only particles available through the chosen physics list can be used otherwise they will
 	     not have the correct properties and will **not be** added to the primary vertex and are
 	     simply skipped. The number (if any) that are skipped will be printed out for every event.
+	     We recommend using the physics list :code:`option, physicsList="all_particles";` to
+	     define all particles without any relevant physics list. This can be used in combination
+	     with other physics lists safely.
 
 .. warning:: If the executable option `-\\-generatePrimariesOnly` is used, the coordinates will
 	     not reflect the loaded event and will only be the reference coordinates. This is

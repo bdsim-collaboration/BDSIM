@@ -6,6 +6,11 @@ Expected Changes To Results
 
 * Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
   their rotation angle. Not doing this will result in different angles and therefore results.
+* Fix for field maps with finite rotations (but not multiples of :math:`\pi/2`). The field will now be correct
+  but this may be different from previous releases.
+* Field maps now pick up the tilt from the element, so a separate tilt isn't required in the field
+  definition as was in the past to make the field align with a tilted element. In this case, the field
+  definition tilt should be removed and the field will be orientated to the component it's attached to.
 
 New Features
 ------------
@@ -28,54 +33,59 @@ New Features
 * A new physics list called "all_particles" has been introduced to construct all particles
   only but no physics processes. Useful for an exotic beam where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
-  are generated as an easy method to introduce coupling.
+  are generated as an easy method to introduce coupling.  Note, this is in the beam command.
+* Field maps are now automatically tilted when attached to a tilted beam line element, whereas
+  they weren't before.
 
 * New options:
 
 .. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
   
-+-----------------------------------+--------------------------------------------------------------------+
-| **Option**                        | **Description**                                                    |
-+===================================+====================================================================+
-| preprocessGDMLSchema              | Whether to preprocess a copy of the GDML file where the URL of     |
-|                                   | the GDML schema is changed to a local copy provided in BDSIM so    |
-|                                   | geometry can be loaded without internet access. On by default.     |
-+-----------------------------------+--------------------------------------------------------------------+
-| printPhysicsProcesses             | Print out all defined particles according to the physics list and  |
-|                                   | the names of all defined physics processes for that particle.      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpacts              | Create an optional branch called "ApertureImpacts" in the Event    |
-|                                   | tree in the output that contains coordinates of where the primary  |
-|                                   | particle exists the beam pipe. Note this could be multiple times.  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsIons          | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all secondary ions as well as the primay. No information will  |
-|                                   | be generated for other particles.                                  |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeApertureImpactsAll           | If `storeApertureImpacts` is on, the information will be generated |
-|                                   | for all particles leaving the beam pipe when this option is turned |
-|                                   | on.                                                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHits               | Store colliamtor hits for primary particles. This is addition to   |
-|                                   | the basic `primaryInteracted` and `primaryStopped` variables.      |
-+-----------------------------------+--------------------------------------------------------------------+
-| storeCollimatorHtisLinks          | `storeCollimatorLinks` has been renamed to this (backwards         |
-|                                   | compatible.                                                        |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberContinueFor     | (1-inf) number of events to continue printing out the verbose      |
-|                                   | event information stepping information for. Default is 1.          |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberLevel           | (0-5) Like `verboseEventNumber` but only for the specific event    |
-|                                   | specified by `verboseEventNumber`. Turns on verbose stepping       |
-|                                   | information at the specified level.                                |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseEventNumberPrimaryOnly     | Whether to only print out the verbose stepping as chosen by        |
-|                                   | `verboseEventNumberLevel` for primary tracks and the default is    |
-|                                   | true (1).                                                          |
-+-----------------------------------+--------------------------------------------------------------------+
-| verboseImportanceSampling         | Extra information printed out when using geometric importance      |
-|                                   | sampling. (0-5)                                                    |
-+-----------------------------------+--------------------------------------------------------------------+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| preprocessGDMLSchema               | Whether to preprocess a copy of the GDML file where the URL of     |
+|                                    | the GDML schema is changed to a local copy provided in BDSIM so    |
+|                                    | geometry can be loaded without internet access. On by default.     |
++------------------------------------+--------------------------------------------------------------------+
+| printPhysicsProcesses              | Print out all defined particles according to the physics list and  |
+|                                    | the names of all defined physics processes for that particle.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                    | tree in the output that contains coordinates of where the primary  |
+|                                    | particle exists the beam pipe. Note this could be multiple times.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons           | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all secondary ions as well as the primary. No information will |
+|                                    | be generated for other particles.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all particles leaving the beam pipe when this option is turned |
+|                                    | on.                                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits                | Store collimator hits for primary particles. This is addition to   |
+|                                    | the basic `primaryInteracted` and `primaryStopped` variables.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
+|                                    | `trajNoTransportation` option.                                     |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberContinueFor      | (1-inf) number of events to continue printing out the verbose      |
+|                                    | event information stepping information for. Default is 1.          |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberLevel            | (0-5) Like `verboseEventNumber` but only for the specific event    |
+|                                    | specified by `verboseEventNumber`. Turns on verbose stepping       |
+|                                    | information at the specified level.                                |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventNumberPrimaryOnly      | Whether to only print out the verbose stepping as chosen by        |
+|                                    | `verboseEventNumberLevel` for primary tracks and the default is    |
+|                                    | true (1).                                                          |
++------------------------------------+--------------------------------------------------------------------+
+| verboseImportanceSampling          | Extra information printed out when using geometric importance      |
+|                                    | sampling. (0-5)                                                    |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -88,8 +98,8 @@ General
 * wirescanner element now requires a material to be specified as this makes a large difference
   to the expected result. This should be specified.
 * Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
-  and cannot be reliably or easily back-calcualted afterwards based on the particle definition (PDG ID)
-  for partially stripped ions. This storage marginally increasese the memory usage per sampler hit, so
+  and cannot be reliably or easily back-calculated afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increases the memory usage per sampler hit, so
   a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
 * Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
   hit information in the output. The crystal channelling process is ignore as a step defining process
@@ -99,7 +109,7 @@ General
   the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
   each per-collimator branch in Event. This allows greater control over the amount of information stored.
   The primary hits can be turned on as well with the option `storeCollimatorHits`.
-* Remove use of exit(1) thoughout code.
+* Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
   
@@ -122,7 +132,7 @@ Bug Fixes
 * Fix wire scanner sensitivity. The wire was never sensitive.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
-* The rigidity was correcte for partially stripped ions in the sampler output.
+* The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
   calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
@@ -130,7 +140,7 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
-* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced betwee
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
@@ -149,6 +159,22 @@ Bug Fixes
 * Fix missing geometrical margins in undulator.
 * Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
   input text file.
+* Fix a bug where the PrimaryFirstHit or PrimayrLastHit S coordinate may appear to jump back and forth
+  or be discontinuous or wrong. This was fixed by using a more robust directional lookup in the geometry
+  on boundaries. Although with the exact same coordinates, Geant4's navigation internally can 'stick'
+  to surfaces and it's more robust to use a navigator search with a direction of motion included. For
+  the primary trajectory we did a repeated point-only lookup, leading to occasionally the calculated S
+  position from the centre of the element being wrong. Even if the primary trajectory isn't stored, a
+  light version is used to identify the primary first and last hit points. This only happened in very
+  specific circumstances and depended on the physics list used.
+* Fix for incorrect curvilinear transforms resulting in wrong S coordinate. This was caused when the
+  geometry search fell back to the curvilinear bridge world instead of the regular curvilinear world.
+  The transform was used from the regular curvilinear world though, which would be the transform from
+  the last lookup. This only affected a small fraction of cases with steps on boundaries on samplers in
+  between elements. Most tracking routines do not depend on S / z, so there is little effect to tracking.
+* Fix for field map rotation when using a tilt in the field. If the field was tilted by a multiple of
+  :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
+  due to a double transform.
 
 Output Changes
 --------------
