@@ -10,6 +10,7 @@ simple_testing(bunch-userfile-neutral-particle "--file=userfile-neutral.gmad"   
 simple_testing(bunch-userfile-placet           "--file=userfile-placet.gmad"           "")
 simple_testing(bunch-userfile-recreate         "--file=userfile-recreate.gmad"         "")
 simple_testing(bunch-userfile-unknown-particle "--file=userfile-unknown-particle.gmad" "")
+simple_testing(bunch-userfile-s                "--file=userfile-s.gmad" "")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
