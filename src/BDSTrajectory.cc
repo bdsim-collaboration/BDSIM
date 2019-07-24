@@ -16,9 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSTrajectory.hh"
-
 #include "BDSDebug.hh"
+#include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -38,7 +37,7 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
 			     const G4bool&  suppressTransportationSteps):
   G4Trajectory(aTrack),
   interactive(interactiveIn),
-  trajNoTransportation(suppressTransportationSteps)
+  suppressTransportationSteps(suppressTransportationSteps)
 {
   const G4VProcess* proc = aTrack->GetCreatorProcess();
   if (proc)
@@ -68,15 +67,24 @@ BDSTrajectory::~BDSTrajectory()
   delete fpBDSPointsContainer;
 }
 
+void BDSTrajectory::AppendStep(const BDSTrajectoryPoint* pointIn)
+{
+  if (suppressTransportationSteps && !interactive)
+    {
+      if (pointIn->NotTransportationLimitedStep())
+	{fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(*pointIn));}
+    }
+  else
+    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(*pointIn));}
+}
+
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
   // we do not use G4Trajectory::AppendStep here as that would
   // duplicate position information in its own vector of positions
-  // which we prevent access to be overrideing GetPoint
+  // which we prevent access to be overriding GetPoint
 
-  // TODO filter transportation steps if storing trajectory and batch
-  // here, we're storing all trajectories and then filtering post event.
-  if (trajNoTransportation && !interactive)
+  if (suppressTransportationSteps && !interactive)
     {
       // decode aStep and if on storage.
       auto preStepPoint  = aStep->GetPreStepPoint();
@@ -111,7 +119,7 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   BDSTrajectory* second = (BDSTrajectory*)secondTrajectory;
   G4int ent = second->GetPointEntries();
   // initial point of the second trajectory should not be merged
-  for(G4int i = 1; i < ent; ++i)
+  for (G4int i = 1; i < ent; ++i)
     {fpBDSPointsContainer->push_back((*(second->fpBDSPointsContainer))[i]);}
   delete (*second->fpBDSPointsContainer)[0];
   second->fpBDSPointsContainer->clear();
@@ -149,7 +157,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction()const
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {
-  for(G4int i = 0; i < t.GetPointEntries(); i++)
+  for (G4int i = 0; i < t.GetPointEntries(); i++)
     {out << *(static_cast<BDSTrajectoryPoint*>(t.GetPoint(i))) << G4endl;}
   return out;
 }

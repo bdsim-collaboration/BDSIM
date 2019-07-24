@@ -40,6 +40,7 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   localToGlobal(G4AffineTransform()),
   globalToLocalCL(G4AffineTransform()),
   localToGlobalCL(G4AffineTransform()),
+  bridgeVolumeWasUsed(false),
   volumeMargin(0.1*CLHEP::mm)
 {
   numberOfInstances++;
@@ -70,6 +71,7 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 								    const G4bool ignoreDirection,
 								    G4bool useCurvilinear) const
 {
+  bridgeVolumeWasUsed = false; // reset flag
   G4Navigator* nav = Navigator(useCurvilinear);
   auto selectedVol = nav->LocateGlobalPointAndSetup(point, direction,
 					pRelativeSearch, ignoreDirection);
@@ -84,6 +86,7 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 #ifdef BDSDEBUGNAV
       G4cout << "Trying bridge world" << G4endl;
 #endif
+      bridgeVolumeWasUsed = true;
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(point, direction,
 							       pRelativeSearch, ignoreDirection);
       // if we find a non-world volume, then good. if we find the world volume even
@@ -127,7 +130,7 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
   G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position, &globalDirUnit);
-
+  bridgeVolumeWasUsed = false; // reset flag
 #ifdef BDSDEBUGNAV
   G4cout << __METHOD_NAME__ << selectedVol->GetName() << G4endl;
 #endif
@@ -137,6 +140,7 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
 #ifdef BDSDEBUGNAV
       G4cout << "Trying bridge world" << G4endl;
 #endif
+      bridgeVolumeWasUsed = true;
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(position, &globalDirUnit);
       // if we find a non-world volume, then good. if we find the world volume even
       // of the bridge world, it must really lie outside the curvilinear volumes
@@ -473,8 +477,16 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool massWorld,
     }
   if (curvilinearWorld)
     {
-      globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
-      localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+      if (bridgeVolumeWasUsed)
+        {
+          globalToLocalCL = auxNavigatorCLB->GetGlobalToLocalTransform();
+          localToGlobalCL = auxNavigatorCLB->GetLocalToGlobalTransform();
+        }
+      else
+        {
+          globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+          localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+        }
     }
 }
 
