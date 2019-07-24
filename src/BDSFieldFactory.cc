@@ -229,10 +229,11 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	    {fieldLimit = ul;}
 	}
 
+      BDSMagnetStrength* st = new BDSMagnetStrength();
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,
-					    nullptr, /*for now, no parameterised strengths*/
+					    st, /*empty strengths to avoid any possible segfault*/
 					    G4bool(definition.globalTransform),
 					    transform,
 					    magFile,

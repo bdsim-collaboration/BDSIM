@@ -481,9 +481,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
       throw BDSException(__METHOD_NAME__, "");
     }
 
-  return (new BDSDrift( elementName,
-			length,
-			beamPipeInfo));
+  return (new BDSDrift(elementName,
+		       length,
+		       beamPipeInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength)
@@ -1030,12 +1030,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
   if(!HasSufficientMinimumLength(element)) 
     {return nullptr;}
-  
+
+  // we don't specify the field explicitly here - this is done generically
+  // in the main CreateComponent method with SetFieldDefinitions.
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
-			 element->fieldAll,
 			 element->angle * CLHEP::rad));
 }
 
