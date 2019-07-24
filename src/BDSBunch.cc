@@ -188,7 +188,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
   G4int beamlineIndex = 0;
   G4double S = S0 + localIn.z;
   if (S < 0) {
-    throw BDSException(__METHOD_NAME__, "Negative s detected for particle.");
+    throw BDSException(__METHOD_NAME__, "Negative S detected for particle.");
   }
   G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S,
 							       localIn.x,
