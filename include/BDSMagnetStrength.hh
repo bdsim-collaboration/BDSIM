@@ -57,9 +57,6 @@ public:
   /// Default constructor does nothing as class will return 0 for uninitialised keys
   BDSMagnetStrength(){;}
 
-  /// Copy constructor.
-  BDSMagnetStrength(const BDSMagnetStrength& other);
-
   /// This constructor allows instantiation with a map of keys and values.
   explicit BDSMagnetStrength(std::map<G4String, G4double> keyvalues);
 
