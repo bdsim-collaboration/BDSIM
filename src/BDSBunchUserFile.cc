@@ -147,12 +147,11 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       sd.name="skip";
       sd.unit=1;
       fields.push_back(sd);
-    } else {
-      G4String message =
-          G4String("Cannot determine bunch data format.  Failed at token: ") +
-          token;
-      throw BDSException(__METHOD_NAME__, message);
-    }
+    } else
+      {
+	G4String message = "Cannot determine bunch data format.  Failed at token: " + token;
+	throw BDSException(__METHOD_NAME__, message);
+      }
   }
   return;
 }
@@ -160,8 +159,8 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 template <typename T>
 template <typename U>
 void BDSBunchUserFile<T>::CheckAndParseUnits(G4String name, G4String rest,
-                                             U unitParser) {
-
+                                             U unitParser)
+{
   struct BDSBunchUserFile::Doublet sd;
   G4int pos1 = rest.find("[");
   G4int pos2 = rest.find("]");
@@ -408,8 +407,8 @@ template class BDSBunchUserFile<std::ifstream>;
 template class BDSBunchUserFile<igzstream>;
 #endif
 
-namespace {
-
+namespace
+{
 G4double ParseEnergyUnit(const G4String& fmt)
 {
   G4double unit=1.;
@@ -418,9 +417,8 @@ G4double ParseEnergyUnit(const G4String& fmt)
   else if(fmt=="MeV") unit=1.e-3;
   else if(fmt=="KeV") unit=1.e-6;
   else if(fmt=="eV") unit=1.e-9;
-  else {
-    throw BDSException(__METHOD_NAME__, "Unrecognised energy unit! " +fmt);
-  }
+  else
+    {throw BDSException(__METHOD_NAME__, "Unrecognised energy unit! " +fmt);}
   return unit;
 }
 
@@ -432,9 +430,8 @@ G4double ParseLengthUnit(const G4String& fmt)
   else if(fmt=="mm") unit=1.e-3;
   else if(fmt=="mum" || fmt=="um") unit=1.e-6;
   else if(fmt=="nm") unit=1.e-9;
-  else {
-    throw BDSException(__METHOD_NAME__, "Unrecognised length unit! " + fmt);
-  }
+  else
+    {throw BDSException(__METHOD_NAME__, "Unrecognised length unit! " + fmt);}
   return unit;
 }
 
@@ -445,9 +442,8 @@ G4double ParseAngleUnit(const G4String& fmt)
   else if(fmt=="mrad") unit=1.e-3;
   else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
   else if(fmt=="nrad") unit=1.e-9;
-  else {
-    throw BDSException(__METHOD_NAME__, "Unrecognised angle unit! " + fmt);
-  }
+  else
+    {throw BDSException(__METHOD_NAME__, "Unrecognised angle unit! " + fmt);}
   return unit;
 }
 
@@ -460,11 +456,9 @@ G4double ParseTimeUnit(const G4String& fmt)
   else if(fmt=="ns") unit=1.e-9;
   else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
   else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
-  else {
-    throw BDSException(__METHOD_NAME__, "Unrecognised time unit! " + fmt);
-  }
+  else
+    {throw BDSException(__METHOD_NAME__, "Unrecognised time unit! " + fmt);}
   return unit;
 }
-
 
 }

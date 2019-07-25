@@ -103,7 +103,8 @@ private:
   G4double ffact; ///< Cache of flip factor from global constants.
 };
 
-namespace {
+namespace
+{
   /// @{ Utility function to parse variable and unit string.  These
   /// are meant for passing to CheckAndParseUnits.
   G4double ParseEnergyUnit(const G4String& fmt);
