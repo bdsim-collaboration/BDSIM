@@ -34,6 +34,8 @@ New Features
   only but no physics processes. Useful for an exotic beam where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
   are generated as an easy method to introduce coupling.  Note, this is in the beam command.
+* The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
+  coordinates as input.
 * Field maps are now automatically tilted when attached to a tilted beam line element, whereas
   they weren't before.
 
