@@ -2,7 +2,7 @@ beam,  particle="e-",
        energy = 1*GeV,
        distrType  = "userfile",
        distrFile  = "userfile-s.dat",
-       distrFileFormat = "s[m]";
+       distrFileFormat = "S[m]";
 
 include options.gmad
 include fodo.gmad;
