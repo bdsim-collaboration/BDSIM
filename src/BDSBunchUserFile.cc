@@ -103,56 +103,75 @@ void BDSBunchUserFile<T>::ParseFileFormat()
     }
   for (auto const& token : results)
     {
-    if(token.substr(0,1)=="E" || token.substr(0,1)=="P") {
-      G4String name,rest;
-      if(token.substr(0,2)=="Ek") {//Kinetic energy (longer name).
-	name = token.substr(0,2);
-	rest = token.substr(2);
-      } else {
-	name = token.substr(0,1);
-	rest = token.substr(1);
-      }
-      CheckAndParseUnits(name, rest, ParseEnergyUnit);
-    } else if(token.substr(0,1)=="t") {
-      G4String name = token.substr(0, 1);
-      G4String rest = token.substr(1);
-      CheckAndParseUnits(name, rest, ParseTimeUnit);
-    } else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
+      if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
+	{
+	  G4String name,rest;
+	  if(token.substr(0,2)=="Ek")
+	    {//Kinetic energy (longer name).
+	      name = token.substr(0,2);
+	      rest = token.substr(2);
+	    }
+	  else
+	    {
+	      name = token.substr(0,1);
+	      rest = token.substr(1);
+	    }
+	  CheckAndParseUnits(name, rest, ParseEnergyUnit);
+	}
+      else if(token.substr(0,1)=="t")
+	{
+	  G4String name = token.substr(0, 1);
+	  G4String rest = token.substr(1);
+	  CheckAndParseUnits(name, rest, ParseTimeUnit);
+	}
+      else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
 	       ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
-	       ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) ) {
-      G4String name = token.substr(0,1);
-      G4String rest = token.substr(1);
-      CheckAndParseUnits(name, rest, ParseLengthUnit);
-    } else if ( (token.substr(0,2)=="xp") ||
+	       ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
+	{
+	  G4String name = token.substr(0,1);
+	  G4String rest = token.substr(1);
+	  CheckAndParseUnits(name, rest, ParseLengthUnit);
+	}
+      else if ( (token.substr(0,2)=="xp") ||
 		(token.substr(0,2)=="yp") ||
-		(token.substr(0,2)=="zp") ) {
-      G4String name = token.substr(0,2);
-      G4String rest = token.substr(2);
-      CheckAndParseUnits(name, rest, ParseAngleUnit);
-    } else if (token.substr(0, 1) == "S") {
-      G4String name = token.substr(0, 1);
-      G4String rest = token.substr(1);
-      CheckAndParseUnits(name, rest, ParseLengthUnit);
-      useCurvilinear = true;
-    } else if(token.substr(0,2)=="pt") {
-      sd.name="pt";
-      sd.unit=1;
-      fields.push_back(sd);
-    } else if(token.substr(0,1)=="w") {
-      sd.name="weight";
-      sd.unit=1;
-      fields.push_back(sd);
-    } else if (token.substr(0,1)=="-") {
-      // skip
-      sd.name="skip";
-      sd.unit=1;
-      fields.push_back(sd);
-    } else
-      {
-	G4String message = "Cannot determine bunch data format.  Failed at token: " + token;
-	throw BDSException(__METHOD_NAME__, message);
-      }
-  }
+		(token.substr(0,2)=="zp") )
+	{
+	  G4String name = token.substr(0,2);
+	  G4String rest = token.substr(2);
+	  CheckAndParseUnits(name, rest, ParseAngleUnit);
+	}
+      else if (token.substr(0, 1) == "S")
+	{
+	  G4String name = token.substr(0, 1);
+	  G4String rest = token.substr(1);
+	  CheckAndParseUnits(name, rest, ParseLengthUnit);
+	  useCurvilinear = true;
+	}
+      else if(token.substr(0,2)=="pt")
+	{
+	  sd.name="pt";
+	  sd.unit=1;
+	  fields.push_back(sd);
+	}
+      else if(token.substr(0,1)=="w")
+	{
+	  sd.name="weight";
+	  sd.unit=1;
+	  fields.push_back(sd);
+	}
+      else if (token.substr(0,1)=="-")
+	{
+	  // skip
+	  sd.name="skip";
+	  sd.unit=1;
+	  fields.push_back(sd);
+	}
+      else
+	{
+	  G4String message = "Cannot determine bunch data format.  Failed at token: " + token;
+	  throw BDSException(__METHOD_NAME__, message);
+	}
+    }
   return;
 }
 
@@ -164,18 +183,19 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(G4String name, G4String rest,
   struct BDSBunchUserFile::Doublet sd;
   G4int pos1 = rest.find("[");
   G4int pos2 = rest.find("]");
-  if (pos1 < 0 || pos2 < 0) {
-    G4cerr << "Incorrect unit format." << G4endl;
-  } else {
-    G4String fmt = rest.substr(pos1 + 1, pos2 - 1);
+  if (pos1 < 0 || pos2 < 0)
+    {G4cerr << "Incorrect unit format." << G4endl;}
+  else
+    {
+      G4String fmt = rest.substr(pos1 + 1, pos2 - 1);
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "name = " << name << "\n";
-    G4cout << __METHOD_NAME__ << "rest = " << rest << "\n";
+      G4cout << __METHOD_NAME__ << "name = " << name << "\n";
+      G4cout << __METHOD_NAME__ << "rest = " << rest << "\n";
 #endif
-    sd.name = name;
-    sd.unit = unitParser(fmt);
-    fields.push_back(sd);
-  }
+      sd.name = name;
+      sd.unit = unitParser(fmt);
+      fields.push_back(sd);
+    }
 }
 
 template<class T>
@@ -305,13 +325,13 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   
   if (results.size() < fields.size())
     {// ensure enough columns
-    std::string message = "Invalid line at line " + std::to_string(lineCounter) +
-                          ".  Expected " + std::to_string(fields.size()) +
-                          " columns , but got " + std::to_string(results.size()) +
-                          ".";
-    throw BDSException(__METHOD_NAME__, message);
+      std::string message = "Invalid line at line " + std::to_string(lineCounter) +
+	".  Expected " + std::to_string(fields.size()) +
+	" columns , but got " + std::to_string(results.size()) +
+	".";
+      throw BDSException(__METHOD_NAME__, message);
     }
-
+  
   std::stringstream ss(line);
   for (auto it=fields.begin();it!=fields.end();it++)
     {
