@@ -103,7 +103,7 @@ private:
   G4double ffact; ///< Cache of flip factor from global constants.
 };
 
-namespace
+namespace BDS
 {
   /// @{ Utility function to parse variable and unit string.  These
   /// are meant for passing to CheckAndParseUnits.

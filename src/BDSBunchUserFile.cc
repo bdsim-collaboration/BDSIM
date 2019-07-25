@@ -116,13 +116,13 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	      name = token.substr(0,1);
 	      rest = token.substr(1);
 	    }
-	  CheckAndParseUnits(name, rest, ParseEnergyUnit);
+	  CheckAndParseUnits(name, rest, BDS::ParseEnergyUnit);
 	}
       else if(token.substr(0,1)=="t")
 	{
 	  G4String name = token.substr(0, 1);
 	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, ParseTimeUnit);
+	  CheckAndParseUnits(name, rest, BDS::ParseTimeUnit);
 	}
       else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
 	       ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
@@ -130,7 +130,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	{
 	  G4String name = token.substr(0,1);
 	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, ParseLengthUnit);
+	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
 	}
       else if ( (token.substr(0,2)=="xp") ||
 		(token.substr(0,2)=="yp") ||
@@ -138,13 +138,13 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	{
 	  G4String name = token.substr(0,2);
 	  G4String rest = token.substr(2);
-	  CheckAndParseUnits(name, rest, ParseAngleUnit);
+	  CheckAndParseUnits(name, rest, BDS::ParseAngleUnit);
 	}
       else if (token.substr(0, 1) == "S")
 	{
 	  G4String name = token.substr(0, 1);
 	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, ParseLengthUnit);
+	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
 	  useCurvilinear = true;
 	}
       else if(token.substr(0,2)=="pt")
@@ -427,7 +427,7 @@ template class BDSBunchUserFile<std::ifstream>;
 template class BDSBunchUserFile<igzstream>;
 #endif
 
-namespace
+namespace BDS
 {
 G4double ParseEnergyUnit(const G4String& fmt)
 {
