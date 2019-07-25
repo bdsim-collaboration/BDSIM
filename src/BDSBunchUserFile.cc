@@ -148,7 +148,10 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       sd.unit=1;
       fields.push_back(sd);
     } else {
-      throw BDSException(__METHOD_NAME__, "Cannot determine bunch data format");
+      G4String message =
+          G4String("Cannot determine bunch data format.  Failed at token: ") +
+          token;
+      throw BDSException(__METHOD_NAME__, message);
     }
   }
   return;
@@ -303,10 +306,12 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   
   if (results.size() < fields.size())
     {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns";
-      throw BDSException(__METHOD_NAME__, errString);
-    } 
+    std::string message = "Invalid line at line " + std::to_string(lineCounter) +
+                          ".  Expected " + std::to_string(fields.size()) +
+                          " columns , but got " + std::to_string(results.size()) +
+                          ".";
+    throw BDSException(__METHOD_NAME__, message);
+    }
 
   std::stringstream ss(line);
   for (auto it=fields.begin();it!=fields.end();it++)
