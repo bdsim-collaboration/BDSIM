@@ -2314,8 +2314,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // this gives correct phase at the end of cavity
   tOffsetOut += tHalfCavity;
 
-  G4double phaseOffsetIn  = getPhaseFromT(tOffset, period);
-  G4double phaseOffsetOut = getPhaseFromT(tOffset, period);
+  G4double phaseOffsetIn  = getPhaseFromT(tOffsetIn, period);
+  G4double phaseOffsetOut = getPhaseFromT(tOffsetOut, period);
   (*fringeIn)["phase"] = phaseOffsetIn;
   (*fringeOut)["phase"] = phaseOffsetOut;
   
