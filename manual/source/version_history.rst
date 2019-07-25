@@ -23,6 +23,7 @@ New Features
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
+* New executable option :code:`--nturns` to control the number of turns in a circular machine.
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
