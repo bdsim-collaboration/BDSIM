@@ -2067,6 +2067,10 @@ and rotations. Every component can be displaced transversely and rotated along t
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
 
+.. note:: Tilts and offsets are independent of one another, that is to
+          say, a tilt of :math:`\pi/2` combined with a non-zero
+          offsetX will not result in a vertical displacement.
+
 The misalignments can be controlled through the following parameters.
 
 +--------------+------------------------------------------------------------------------------------+
