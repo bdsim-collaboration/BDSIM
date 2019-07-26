@@ -112,5 +112,5 @@ namespace BDS
   G4double ParseAngleUnit(const G4String& fmt);
   G4double ParseTimeUnit(const G4String& fmt);
   /// @}
-};
+}
 #endif
