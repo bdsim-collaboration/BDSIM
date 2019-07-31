@@ -115,6 +115,9 @@ General
 * Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
+* The generic beam line "element" will now be inspected for end piece coil placement on the edge of mangets
+  and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
+  placed if (strictly) drifts were on either side of the magnet.
   
 Bug Fixes
 ---------
