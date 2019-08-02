@@ -23,6 +23,7 @@ New Features
 * New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
+* New executable option :code:`--nturns` to control the number of turns in a circular machine.
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
@@ -34,6 +35,8 @@ New Features
   only but no physics processes. Useful for an exotic beam where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
   are generated as an easy method to introduce coupling.  Note, this is in the beam command.
+* The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
+  coordinates as input.
 * Field maps are now automatically tilted when attached to a tilted beam line element, whereas
   they weren't before.
 
@@ -112,6 +115,9 @@ General
 * Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
+* The generic beam line "element" will now be inspected for end piece coil placement on the edge of mangets
+  and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
+  placed if (strictly) drifts were on either side of the magnet.
   
 Bug Fixes
 ---------

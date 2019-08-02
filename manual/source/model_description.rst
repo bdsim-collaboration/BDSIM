@@ -2067,6 +2067,10 @@ and rotations. Every component can be displaced transversely and rotated along t
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
 
+.. note:: Tilts and offsets are independent of one another, that is to
+          say, a tilt of :math:`\pi/2` combined with a non-zero
+          offsetX will not result in a vertical displacement.
+
 The misalignments can be controlled through the following parameters.
 
 +--------------+------------------------------------------------------------------------------------+
@@ -5437,35 +5441,38 @@ Examples:
 
 Acceptable tokens for the columns are:
 
-+------------+------------------------+
-| **Token**  |  **Description**       |
-+============+========================+
-| "E"        | Total energy           |
-+------------+------------------------+
-| "Ek"       | Kinetic energy         |
-+------------+------------------------+
-| "P"        | Momentum               |
-+------------+------------------------+
-| "t"        | Time                   |
-+------------+------------------------+
-| "x"        | Horizontal position    |
-+------------+------------------------+
-| "y"        | Vertical position      |
-+------------+------------------------+
-| "z"        | Longitudinal position  |
-+------------+------------------------+
-| "xp"       | Horizontal angle       |
-+------------+------------------------+
-| "yp"       | Vertical angle         |
-+------------+------------------------+
-| "zp"       | Longitudinal           |
-+------------+------------------------+
-| "pt"       | PDG particle ID        |
-+------------+------------------------+
-| "w"        | Weight                 |
-+------------+------------------------+
-| "-"        | Skip this column       |
-+------------+------------------------+
++------------+----------------------------------------+
+| **Token**  |  **Description**                       |
++============+========================================+
+| "E"        | Total energy                           |
++------------+----------------------------------------+
+| "Ek"       | Kinetic energy                         |
++------------+----------------------------------------+
+| "P"        | Momentum                               |
++------------+----------------------------------------+
+| "t"        | Time                                   |
++------------+----------------------------------------+
+| "x"        | Horizontal position                    |
++------------+----------------------------------------+
+| "y"        | Vertical position                      |
++------------+----------------------------------------+
+| "z"        | Longitudinal position                  |
++------------+----------------------------------------+
+| "xp"       | Horizontal angle                       |
++------------+----------------------------------------+
+| "yp"       | Vertical angle                         |
++------------+----------------------------------------+
+| "zp"       | Longitudinal angle                     |
++------------+----------------------------------------+
+| "S"        | Global path length displacement,       |
+|            | not to be used in conjunction with "z".|
++------------+----------------------------------------+
+| "pt"       | PDG particle ID                        |
++------------+----------------------------------------+
+| "w"        | Weight                                 |
++------------+----------------------------------------+
+| "-"        | Skip this column                       |
++------------+----------------------------------------+
 
 **Energy Units**
 "eV", "KeV", "MeV", "GeV", "TeV"
