@@ -238,14 +238,16 @@ private:
 					     const BDSMagnetStrength* stIn,
 					     G4String name,
 					     BDSIntegratorType intType = BDSIntegratorType::rmatrixthin,
-					     BDSFieldType fieldType = BDSFieldType::rmatrix);
+					     BDSFieldType fieldType = BDSFieldType::rmatrix,
+					     G4double beamPipeRadius = 0);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     G4String name);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
   BDSAcceleratorComponent* CreateCavityFringe(G4double angleIn,
 	                     const BDSMagnetStrength* stIn,
-	                     G4String name);
+	                     G4String name,
+	                     G4double irisRadius);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();

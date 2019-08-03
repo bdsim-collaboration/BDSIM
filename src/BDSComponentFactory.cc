@@ -550,6 +550,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
 
+  // aperture radius. Default is beam pipe radius / aper1 if a cavity model isn't specified.
+  G4double cavityApertureRadius = cavityInfo->irisRadius;
+
   if (!BDS::IsFinite((*st)["efield"]) || !includeFringeFields)
 	{// ie no rf field - don't bother with fringe effects
 	  delete stIn;
@@ -575,7 +578,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
       (*stIn)["rmat44"] = 1;
       (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
       (*stIn)["isentrance"] = true;
-      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in");
+      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in", cavityApertureRadius);
       cavityLine->AddComponent(cavityFringeIn);
     }
   else
@@ -601,7 +604,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
       (*stOut)["rmat44"] = 1;
       (*stOut)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
       (*stOut)["isentrance"] = false;
-      auto cavityFringeIn = CreateCavityFringe(0, stOut, elementName + "_fringe_out");
+      auto cavityFringeIn = CreateCavityFringe(0, stOut, elementName + "_fringe_out", cavityApertureRadius);
       cavityLine->AddComponent(cavityFringeIn);
     }
   else
@@ -1681,10 +1684,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
 								const BDSMagnetStrength* st,
 								G4String name,
 								BDSIntegratorType intType,
-								BDSFieldType fieldType)
+								BDSFieldType fieldType,
+								G4double beamPipeRadius)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
+
+  // override beampipe radius if supplied - must be set to be iris size for cavity model fringes.
+  if (BDS::IsFinite(beamPipeRadius))
+	{beamPipeInfo->aper1 = beamPipeRadius;}
+
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
                                                                -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
@@ -1716,11 +1725,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double angleIn,
                                                                 const BDSMagnetStrength* st,
-                                                                G4String name)
+                                                                G4String name,
+                                                                G4double irisRadius)
 {
   BDSIntegratorType intType = integratorSet->cavityFringe;
   BDSFieldType fieldType = BDSFieldType::cavityfringe;
-  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType);
+  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType, irisRadius);
   return cavityFringe;
 }
 
