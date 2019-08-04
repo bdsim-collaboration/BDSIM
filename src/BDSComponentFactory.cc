@@ -2181,9 +2181,8 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
 
   // check cavity radius against horizontal width. Cavity radius calculation same as that in CavityFactory classes.
   G4double cavityRadius = info->equatorRadius + info->thickness + lengthSafety;
-  G4double outerHorizontal = std::abs(element->horizontalWidth) * CLHEP::m;
-  G4double outerVertical   = std::abs(element->horizontalWidth*element->vhRatio) * CLHEP::m;
-  if (cavityRadius > outerHorizontal || cavityRadius > outerVertical)
+  G4double horizontalWidth = PrepareHorizontalWidth(el);
+  if (cavityRadius > horizontalWidth)
 	{
 	  throw BDSException(__METHOD_NAME__, "Cavity horizontalWidth for element \"" + elementName + "\" is smaller " +
 	                                      "than the cavity model radius.");
