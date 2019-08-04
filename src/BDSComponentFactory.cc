@@ -2179,6 +2179,16 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
   // we make a per element copy of the definition
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
 
+  // check cavity radius against horizontal width. Cavity radius calculation same as that in CavityFactory classes.
+  G4double cavityRadius = info->equatorRadius + info->thickness + lengthSafety;
+  G4double outerHorizontal = std::abs(element->horizontalWidth) * CLHEP::m;
+  G4double outerVertical   = std::abs(element->horizontalWidth*element->vhRatio) * CLHEP::m;
+  if (cavityRadius > outerHorizontal || cavityRadius > outerVertical)
+	{
+	  throw BDSException(__METHOD_NAME__, "Cavity horizontalWidth for element \"" + elementName + "\" is smaller " +
+	                                      "than the cavity model radius.");
+	}
+
   // If no material specified, we take the material from the element. If no material at
   // all, we exit with warning.
   if (!info->material)
