@@ -4026,8 +4026,8 @@ described in `Tunnel Geometry`_.
 |                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
-|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
-|                                  | (more to come in v0.9)                                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`,    |
+|                                  | `ilc`, or `rectaboveground`.                          |
 +----------------------------------+-------------------------------------------------------+
 | tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
 |                                  | horizontal [m]                                        |
