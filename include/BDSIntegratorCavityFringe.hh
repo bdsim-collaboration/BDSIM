@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BDSINTEGRATORRMATRIXTHIN_HH
-#define BDSINTEGRATORRMATRIXTHIN_HH
+#ifndef BDSINTEGRATORCAVITYFRINGE_HH
+#define BDSINTEGRATORCAVITYFRINGE_HH
 
-#include "BDSIntegratorMag.hh"
+#include "BDSMagUsualEqRhs.hh"
+#include "BDSIntegratorRMatrixThin.hh"
 
 #include "globals.hh"
 
@@ -28,25 +29,23 @@ class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**
- * @brief Integrator that just moves the particle parallel to the s axis
- *
- * Teleporter for moving particles without changing angle but only advances the particle
- * by h.
+ * @brief Integrator for RF cavity fringes. Only the transverse momentum kicks are
+ * applied, this integrator will not accelerate any particles.
  *
  * If the new particle x,y coordinates are greater than maximumRadius, they are clipped
  * to this value.
  *
- * @author Stewart Boogert
+ * @author William Shields
  */
 
-class BDSIntegratorRMatrixThin: public BDSIntegratorMag
+class BDSIntegratorCavityFringe: public BDSIntegratorRMatrixThin
 {
 public:
-  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
+	BDSIntegratorCavityFringe(BDSMagnetStrength const* strength,
 			   G4Mag_EqRhs* eqOfMIn,
 			   G4double maximumRadiusIn);
 
-  virtual ~BDSIntegratorRMatrixThin(){;}
+  virtual ~BDSIntegratorCavityFringe(){;}
 
   virtual void Stepper(const G4double y[],
                        const G4double dydx[],
@@ -55,32 +54,14 @@ public:
                        G4double       yErr[]);
 
 private:
-  BDSIntegratorRMatrixThin();
+  BDSIntegratorCavityFringe();
+
+  const	G4double phase;
+  const	G4double efield;
+  const	G4double isentrance;
 
 protected:
-  // matrix elements set differently in derived cavity fringe class.
-  G4double kick1;
-  G4double kick2;
-  G4double kick3;
-  G4double kick4;
-  G4double rmat11;
-  G4double rmat12;
-  G4double rmat13;
-  G4double rmat14;
-  G4double rmat21;
-  G4double rmat22;
-  G4double rmat23;
-  G4double rmat24;
-  G4double rmat31;
-  G4double rmat32;
-  G4double rmat33;
-  G4double rmat34;
-  G4double rmat41;
-  G4double rmat42;
-  G4double rmat43;
-  G4double rmat44;
-
-  G4double maximumRadius;
+  BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
 };
 
 #endif
