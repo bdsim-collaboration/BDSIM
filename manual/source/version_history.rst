@@ -40,6 +40,8 @@ New Features
   coordinates as input.
 * Field maps are now automatically tilted when attached to a tilted beam line element, whereas
   they weren't before.
+* RF cavity fringe fields have been implemented and are on by default. They are controlled with
+  the `includeFringeFields` option.
 
 * New options:
 
@@ -185,6 +187,8 @@ Bug Fixes
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
 * Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
+  is specified for that element.
 
 Output Changes
 --------------

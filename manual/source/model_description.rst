@@ -1078,7 +1078,8 @@ There are several geometry and field options as well as ways to specify the stre
 The default field is a uniform (in space) electric-only field that is time varying
 according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electromagnetic
 field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
-numerical integrator is used to calculate the motion of particles in both cases.
+numerical integrator is used to calculate the motion of particles in both cases. Fringes for
+the edge effects are provided by default and are controllable with the option `includeFringeFields`.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -1118,6 +1119,10 @@ numerical integrator is used to calculate the motion of particles in both cases.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
+* The entrance / exit cavity fringes are not constructed if the previous / next element
+  is also an rf cavity.
+* The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
+  model is supplied, the cavity fringes are built with the same radius as the model iris radius.
 
 If `tOffset` is specified, a phase offset is calculated from this time for the **speed
 of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
