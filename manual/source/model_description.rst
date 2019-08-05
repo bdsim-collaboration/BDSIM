@@ -208,12 +208,15 @@ Some useful predefined values / units are:
 Name        Value
 ==========  =================================
 pi          3.14159265358979
+twopi       2 * pi
+halfpi      0.5 * pi
 degrees     :math:`\pi` / 180
 GeV         1
 eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
+PeV         :math:`10^{6}`
 V           1
 kV          :math:`10^{3}`
 MV          :math:`10^{6}`
