@@ -449,7 +449,7 @@ This algorithm transports a particle through free space with no external force a
 This is provided here, although provided generally by Geant4, as it is required by other
 BDSIM integrators under various circumstances. It exists in the
 :code:`BDSIntegratorBase::AdvanceDrift`
-base class for the majority of BDSIM integrators.
+base class function for the BDSIM magnetic field integrators.
 
 .. math::
 

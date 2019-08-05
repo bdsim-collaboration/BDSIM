@@ -174,8 +174,11 @@ void Parser::Initialise()
   add_func("atan",std::atan);
   add_func("abs",std::abs);
  
-  add_var("pi",4.0*std::atan(1),reserved);
+  add_var("pi",     4.0*std::atan(1),reserved);
+  add_var("twopi",  8.0*std::atan(1),reserved);
+  add_var("halfpi", 2.0*std::atan(1),reserved);
 
+  add_var("PeV",1e+6,reserved);
   add_var("TeV",1e+3,reserved);
   add_var("GeV",1.0 ,reserved);
   add_var("MeV",1e-3,reserved);

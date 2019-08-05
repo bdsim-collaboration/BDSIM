@@ -208,12 +208,15 @@ Some useful predefined values / units are:
 Name        Value
 ==========  =================================
 pi          3.14159265358979
+twopi       2 * pi
+halfpi      0.5 * pi
 degrees     :math:`\pi` / 180
 GeV         1
 eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
+PeV         :math:`10^{6}`
 V           1
 kV          :math:`10^{3}`
 MV          :math:`10^{6}`
@@ -2066,6 +2069,10 @@ and rotations. Every component can be displaced transversely and rotated along t
 	  matches the behaviour of MAD8 and MAD-X.
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
+
+.. note:: Tilts and offsets are independent of one another, that is to
+          say, a tilt of :math:`\pi/2` combined with a non-zero
+          offsetX will not result in a vertical displacement.
 
 The misalignments can be controlled through the following parameters.
 
@@ -4022,8 +4029,8 @@ described in `Tunnel Geometry`_.
 |                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
-|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
-|                                  | (more to come in v0.9)                                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`,    |
+|                                  | `ilc`, or `rectaboveground`.                          |
 +----------------------------------+-------------------------------------------------------+
 | tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
 |                                  | horizontal [m]                                        |
@@ -4855,10 +4862,22 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
-.. note:: This will not work when using an event generator file. Using an event generator
-	  file requires the particle table in Geant4 be loaded and this can only be done
-	  in a full run where we construct the model. By default, the generate primaries
-	  only, only generates coordinates and does not build a Geant4 model.
+* The exact coordinates generated will not be the same as those generated in a run, even
+  with the same seed. This is because the physics models will also advanced the random
+  number generator, where as with :code:`--generatePrimariesOnly`, only the bunch distribution
+  generator will. For a large number of primaries (at least 100), the option
+  :code:`offsetSampleMean` can be used with Gaussian distributions to pre-generate the coordinates
+  before the run. In this case, they would be consistent.
+* This will not work when using an event generator file. Using an event generator
+  file requires the particle table in Geant4 be loaded and this can only be done
+  in a full run where we construct the model. By default, the generate primaries
+  only option only generates coordinates and does not build a Geant4 model.
+
+.. warning:: In a conventional run of BDSIM, after a set of coordinates are generated, a check
+	     is made to ensure the total energy chosen is greater than the rest mass of the
+	     particle. This check is **not** done in the case of :code:`--generatePrimariesOnly`.
+	     Therefore, it's possible to generate values of total energy below the rest mass of
+	     the beam particle.
 
 
 Beam in Output
@@ -5441,35 +5460,38 @@ Examples:
 
 Acceptable tokens for the columns are:
 
-+------------+------------------------+
-| **Token**  |  **Description**       |
-+============+========================+
-| "E"        | Total energy           |
-+------------+------------------------+
-| "Ek"       | Kinetic energy         |
-+------------+------------------------+
-| "P"        | Momentum               |
-+------------+------------------------+
-| "t"        | Time                   |
-+------------+------------------------+
-| "x"        | Horizontal position    |
-+------------+------------------------+
-| "y"        | Vertical position      |
-+------------+------------------------+
-| "z"        | Longitudinal position  |
-+------------+------------------------+
-| "xp"       | Horizontal angle       |
-+------------+------------------------+
-| "yp"       | Vertical angle         |
-+------------+------------------------+
-| "zp"       | Longitudinal           |
-+------------+------------------------+
-| "pt"       | PDG particle ID        |
-+------------+------------------------+
-| "w"        | Weight                 |
-+------------+------------------------+
-| "-"        | Skip this column       |
-+------------+------------------------+
++------------+----------------------------------------+
+| **Token**  |  **Description**                       |
++============+========================================+
+| "E"        | Total energy                           |
++------------+----------------------------------------+
+| "Ek"       | Kinetic energy                         |
++------------+----------------------------------------+
+| "P"        | Momentum                               |
++------------+----------------------------------------+
+| "t"        | Time                                   |
++------------+----------------------------------------+
+| "x"        | Horizontal position                    |
++------------+----------------------------------------+
+| "y"        | Vertical position                      |
++------------+----------------------------------------+
+| "z"        | Longitudinal position                  |
++------------+----------------------------------------+
+| "xp"       | Horizontal angle                       |
++------------+----------------------------------------+
+| "yp"       | Vertical angle                         |
++------------+----------------------------------------+
+| "zp"       | Longitudinal angle                     |
++------------+----------------------------------------+
+| "S"        | Global path length displacement,       |
+|            | not to be used in conjunction with "z".|
++------------+----------------------------------------+
+| "pt"       | PDG particle ID                        |
++------------+----------------------------------------+
+| "w"        | Weight                                 |
++------------+----------------------------------------+
+| "-"        | Skip this column                       |
++------------+----------------------------------------+
 
 **Energy Units**
 "eV", "KeV", "MeV", "GeV", "TeV"
