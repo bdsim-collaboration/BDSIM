@@ -4855,10 +4855,22 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
-.. note:: This will not work when using an event generator file. Using an event generator
-	  file requires the particle table in Geant4 be loaded and this can only be done
-	  in a full run where we construct the model. By default, the generate primaries
-	  only, only generates coordinates and does not build a Geant4 model.
+* The exact coordinates generated will not be the same as those generated in a run, even
+  with the same seed. This is because the physics models will also advanced the random
+  number generator, where as with :code:`--generatePrimariesOnly`, only the bunch distribution
+  generator will. For a large number of primaries (at least 100), the option
+  :code:`offsetSampleMean` can be used with Gaussian distributions to pre-generate the coordinates
+  before the run. In this case, they would be consistent.
+* This will not work when using an event generator file. Using an event generator
+  file requires the particle table in Geant4 be loaded and this can only be done
+  in a full run where we construct the model. By default, the generate primaries
+  only option only generates coordinates and does not build a Geant4 model.
+
+.. warning:: In a conventional run of BDSIM, after a set of coordinates are generated, a check
+	     is made to ensure the total energy chosen is greater than the rest mass of the
+	     particle. This check is **not** done in the case of :code:`--generatePrimariesOnly`.
+	     Therefore, it's possible to generate values of total energy below the rest mass of
+	     the beam particle.
 
 
 Beam in Output
