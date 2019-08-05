@@ -15,6 +15,7 @@ Expected Changes To Results
 New Features
 ------------
 
+* New units: `twopi`, `halfpi` and `PeV`.
 * Improved event level verbosity.
 * All verbosity options now documented, including corresponding executable options.
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
