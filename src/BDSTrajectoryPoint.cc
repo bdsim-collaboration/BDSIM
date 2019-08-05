@@ -83,6 +83,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
 						       track->GetMomentumDirection(),
 						       1*CLHEP::nm,
 						       true);
+  prePosLocal = localPosition.PreStepPoint();
+  postPosLocal = localPosition.PostStepPoint();
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
