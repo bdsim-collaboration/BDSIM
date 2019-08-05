@@ -181,6 +181,7 @@ Bug Fixes
 * Fix for field map rotation when using a tilt in the field. If the field was tilted by a multiple of
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
+* Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
 
 Output Changes
 --------------
