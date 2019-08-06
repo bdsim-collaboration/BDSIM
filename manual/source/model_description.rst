@@ -4945,6 +4945,7 @@ The following beam distributions are available in BDSIM
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
+- `sphere`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -5341,6 +5342,7 @@ Example::
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
 
+.. _beam-composite:
 
 composite
 ^^^^^^^^^
@@ -5603,8 +5605,29 @@ examples: ::
 	distrType = "eventgeneratorfile:hepmc3",
 	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
 
+sphere
+^^^^^^
 
+The `sphere` distribution generates a distribution with a uniform random direction at one location.
+Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
+momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
+Marsaglia (1972) method.
 
+* `Xp0`, `Yp0`, `Zp0` are ignored.
+* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
+* No energy spread.
+
+If an energy spread is desired, please use a :ref:`beam-composite` distribution.
+
+An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+
+  beam, particle = "proton",
+        energy = 1.2*GeV,
+	distrType = "sphere",
+	X0 = 9*cm,
+	Z0 = 0.5*m;
+
+  
 .. _tunnel-geometry:
 
 Tunnel Geometry
