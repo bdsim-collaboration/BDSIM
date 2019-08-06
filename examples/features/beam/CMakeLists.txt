@@ -28,6 +28,7 @@ simple_testing(bunch-ion-qe                   "--file=ionQE.gmad"               
 simple_testing(bunch-ptc                      "--file=ptc.gmad"                     "")
 simple_testing(bunch-particle-pdgid           "--file=particle-pdgid.gmad"          "")
 simple_testing(bunch-reference                "--file=reference.gmad"               "")
+simple_testing(bunch-reference-backwards      "--file=reference-backwards.gmad"     "")
 simple_testing(bunch-ring                     "--file=ring.gmad"                    "")
 simple_testing(bunch-sphere                   "--file=sphere.gmad"                  "")
 simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"                "")
