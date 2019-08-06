@@ -4757,8 +4757,8 @@ Apart from the design particle and energy, a beam of particles of a different sp
 energy may be specified. By default, if only one particle is specified this is assumed to be
 both the design particle and the particle used for the beam distribution.
 
-.. note:: The design energy is required to be specified, but the central energy, of say
-	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
+.. note:: The design energy is required to be specified, but the central energy, of
+	  a bunch, for example with a Gaussian distribution, can be specified with `E0`.
 
 .. note:: `energy` here is the **total energy** of the particle. This must be greater than
 	  the rest mass of the particle.
@@ -4978,6 +4978,8 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Z0`                             | Longitudinal position [m]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
+| `S0`                             | Curvilinear S offset [m]                              | 0        |
++----------------------------------+-------------------------------------------------------+----------+
 | `T0`                             | Longitudinal position [s]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 | `Xp0`                            | Horizontal canonical momentum                         | 0        |
@@ -4986,6 +4988,12 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
+
+* `S0` allows the beam to be translated to a certain point in the beam line, where the beam
+  coordinates are with respect to the curvilinear frame at that point in the beam line.
+* `S0` and `Z0` cannot both be set - BDSIM will exit with a warning if this conflicting input is given.
+* If `S0` is used, the local coordinates are generated and then transformed to that point in the beam line.
+  Each set of coordinates will be stored in the output under `Primary` (local) and `PrimaryGlobal` (global).
 
 Examples: ::
 
