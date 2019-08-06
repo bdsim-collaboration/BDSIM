@@ -1078,7 +1078,8 @@ There are several geometry and field options as well as ways to specify the stre
 The default field is a uniform (in space) electric-only field that is time varying
 according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electromagnetic
 field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
-numerical integrator is used to calculate the motion of particles in both cases.
+numerical integrator is used to calculate the motion of particles in both cases. Fringes for
+the edge effects are provided by default and are controllable with the option `includeFringeFields`.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -1118,6 +1119,10 @@ numerical integrator is used to calculate the motion of particles in both cases.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
+* The entrance / exit cavity fringes are not constructed if the previous / next element
+  is also an rf cavity.
+* The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
+  model is supplied, the cavity fringes are built with the same radius as the model iris radius.
 
 If `tOffset` is specified, a phase offset is calculated from this time for the **speed
 of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
@@ -4756,8 +4761,8 @@ Apart from the design particle and energy, a beam of particles of a different sp
 energy may be specified. By default, if only one particle is specified this is assumed to be
 both the design particle and the particle used for the beam distribution.
 
-.. note:: The design energy is required to be specified, but the central energy, of say
-	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
+.. note:: The design energy is required to be specified, but the central energy, of
+	  a bunch, for example with a Gaussian distribution, can be specified with `E0`.
 
 .. note:: `energy` here is the **total energy** of the particle. This must be greater than
 	  the rest mass of the particle.
@@ -4944,6 +4949,7 @@ The following beam distributions are available in BDSIM
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
+- `sphere`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -4976,6 +4982,8 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Z0`                             | Longitudinal position [m]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
+| `S0`                             | Curvilinear S offset [m]                              | 0        |
++----------------------------------+-------------------------------------------------------+----------+
 | `T0`                             | Longitudinal position [s]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 | `Xp0`                            | Horizontal canonical momentum                         | 0        |
@@ -4984,6 +4992,12 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
+
+* `S0` allows the beam to be translated to a certain point in the beam line, where the beam
+  coordinates are with respect to the curvilinear frame at that point in the beam line.
+* `S0` and `Z0` cannot both be set - BDSIM will exit with a warning if this conflicting input is given.
+* If `S0` is used, the local coordinates are generated and then transformed to that point in the beam line.
+  Each set of coordinates will be stored in the output under `Primary` (local) and `PrimaryGlobal` (global).
 
 Examples: ::
 
@@ -5340,6 +5354,7 @@ Example::
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
 
+.. _beam-composite:
 
 composite
 ^^^^^^^^^
@@ -5602,8 +5617,29 @@ examples: ::
 	distrType = "eventgeneratorfile:hepmc3",
 	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
 
+sphere
+^^^^^^
 
+The `sphere` distribution generates a distribution with a uniform random direction at one location.
+Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
+momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
+Marsaglia (1972) method.
 
+* `Xp0`, `Yp0`, `Zp0` are ignored.
+* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
+* No energy spread.
+
+If an energy spread is desired, please use a :ref:`beam-composite` distribution.
+
+An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+
+  beam, particle = "proton",
+        energy = 1.2*GeV,
+	distrType = "sphere",
+	X0 = 9*cm,
+	Z0 = 0.5*m;
+
+  
 .. _tunnel-geometry:
 
 Tunnel Geometry

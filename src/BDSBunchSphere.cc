@@ -16,31 +16,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBUNCHTYPE_H
-#define BDSBUNCHTYPE_H
+#include "BDSBunchSphere.hh"
+#include "BDSParticleCoordsFull.hh"
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+#include "globals.hh"
+#include "G4RandomDirection.hh"
 
-/**
- * @brief Type definition for bunch distributions - used for comparison
- * in factory methods
- * 
- * @author Laurie Nevay
- */
+BDSBunchSphere::BDSBunchSphere()
+{;}
 
-struct bunchtypes_def
+BDSParticleCoordsFull BDSBunchSphere::GetNextParticleLocal()
 {
-  enum type {reference, gaussmatrix, gauss, gausstwiss, circle, square, ring, eshell,
-	     halo, composite, userfile, ptc, sixtrack, eventgeneratorfile, sphere};
-};
-
-typedef BDSTypeSafeEnum<bunchtypes_def,int> BDSBunchType;
-
-namespace BDS
-{
-  /// Function that gives corresponding enum value for string (case-insensitive).
-  BDSBunchType DetermineBunchType(G4String distrType);
+  G4ThreeVector momentumUnitVector = G4RandomDirection();
+  G4double xp = momentumUnitVector.x();
+  G4double yp = momentumUnitVector.y();
+  G4double zp = momentumUnitVector.z();  
+  return BDSParticleCoordsFull(X0,Y0,Z0,xp,yp,zp,T0,S0,E0,/*weight=*/1.0);
 }
-
-#endif

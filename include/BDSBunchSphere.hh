@@ -16,31 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBUNCHTYPE_H
-#define BDSBUNCHTYPE_H
+#ifndef BDSBUNCHSPHERE_H
+#define BDSBUNCHSPHERE_H 
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+#include "BDSBunch.hh"
 
 /**
- * @brief Type definition for bunch distributions - used for comparison
- * in factory methods
+ * @brief A bunch distribution that produces an uncorrelated uniform
+ * random distribution over a sphere.
  * 
  * @author Laurie Nevay
  */
 
-struct bunchtypes_def
-{
-  enum type {reference, gaussmatrix, gauss, gausstwiss, circle, square, ring, eshell,
-	     halo, composite, userfile, ptc, sixtrack, eventgeneratorfile, sphere};
+class BDSBunchSphere: public BDSBunch
+{ 
+public: 
+  BDSBunchSphere(); 
+  virtual ~BDSBunchSphere(){;}
+  
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSBunchSphere& operator=(const BDSBunchSphere&) = delete;
+  BDSBunchSphere(BDSBunchSphere&) = delete;
+  /// @}
+
+  /// Generate a random unit vector for direction and use reference spatial
+  /// coordinates. No energy spread.
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
 };
-
-typedef BDSTypeSafeEnum<bunchtypes_def,int> BDSBunchType;
-
-namespace BDS
-{
-  /// Function that gives corresponding enum value for string (case-insensitive).
-  BDSBunchType DetermineBunchType(G4String distrType);
-}
 
 #endif
