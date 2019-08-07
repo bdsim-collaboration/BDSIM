@@ -184,6 +184,7 @@ BDSSDManager::BDSSDManager()
   // thin things
   thinThingSD = new BDSSDThinThing("thinthing_general");
   thinThingSD->SetFilter(filters["primary"]);
+  SDMan->AddNewDetector(thinThingSD);
 
   // wire scanner wires SD
   wireCompleteSD = new BDSMultiSensitiveDetectorOrdered("wire_complete");
