@@ -129,7 +129,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
 }
 
 BDSEventAction::~BDSEventAction()
-{}
+{;}
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 {
