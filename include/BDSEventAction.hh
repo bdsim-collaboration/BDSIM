@@ -68,6 +68,7 @@ private:
   G4int worldExitCollID;          ///< Collection ID for the world exit hits.
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
   G4int apertureCollID;           ///< Collection ID for the aperture hits.
+  G4int thinThingCollID;          ///< Collection ID for the thin thing hits.
 
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
