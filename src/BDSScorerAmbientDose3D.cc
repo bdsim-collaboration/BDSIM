@@ -108,13 +108,6 @@ G4bool BDSScorerAmbientDose3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
     EvtMap3D->add(index,radiation_quantity);
 
-
-    const G4Step* realWorldStep = aStep->GetTrack()->GetStep();
-
-    // get the material of the logical volume
-    G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
-    G4Material* stepMaterial = stepLV->GetMaterial();
-
     return true;
 }
 
