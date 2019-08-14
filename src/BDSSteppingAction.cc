@@ -59,7 +59,7 @@ void BDSSteppingAction::VerboseSteppingAction(const G4Step* step)
 { 
   //output in case of verbose step
   G4Track* track        = step->GetTrack();
-  int ID                = track->GetTrackID();
+  int trackID           = track->GetTrackID();
   G4VPhysicalVolume* pv = track->GetVolume();
   G4LogicalVolume* lv   = pv->GetLogicalVolume();
   G4ThreeVector pos     = track->GetPosition();
@@ -68,23 +68,22 @@ void BDSSteppingAction::VerboseSteppingAction(const G4Step* step)
   
   int G4precision = G4cout.precision();
   G4cout.precision(10);
-  G4cout << "Physical volume = " << pv->GetName() << G4endl;
-  G4cout << "Logical volume  = " << lv->GetName() << G4endl;
-  G4cout << "ID="        << ID
-	 << " part="     << track->GetDefinition()->GetParticleName()
-	 << " Energy="   << track->GetTotalEnergy()/CLHEP::GeV
-	 << " position=" << pos << "mm "
-	 << " momentum=" << mom
-	 << " material=" << materialName
+  G4cout << "pv: " << pv->GetName() << " lv: " << lv->GetName() << G4endl;
+  G4cout << "trackID: "  << trackID
+	 << " pdgID: " << track->GetDefinition()->GetParticleName()
+	 << " Energy: "   << track->GetTotalEnergy()/CLHEP::GeV
+	 << " position: " << pos << "mm "
+	 << " momentum: " << mom
+	 << " material: " << materialName
 	 << G4endl;
 	    
   auto preProcess  = step->GetPreStepPoint()->GetProcessDefinedStep();
   auto postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
   
   if (preProcess)
-    {G4cout << "Pre-step process= " << preProcess->GetProcessName() << G4endl;}
+    {G4cout << "Pre-step process: " << preProcess->GetProcessName() << G4endl;}
   if (postProcess)
-    {G4cout << "Post-step process= " << postProcess->GetProcessName() << G4endl;}
+    {G4cout << "Post-step process: " << postProcess->GetProcessName() << G4endl;}
 
   // set precision back
   G4cout.precision(G4precision);
