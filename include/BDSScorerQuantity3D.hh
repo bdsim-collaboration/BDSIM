@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSRADIATIONQUANTITY3D_H
-#define BDSRADIATIONQUANTITY3D_H
+#ifndef BDSSCORERQUANTITY3D_H
+#define BDSSCORERQUANTITY3D_H
 
 #include "globals.hh"
 #include "G4THitsMap.hh"
