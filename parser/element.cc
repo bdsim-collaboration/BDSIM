@@ -303,10 +303,10 @@ void Element::print(int ident)const{
       }
     case ElementType::_ELEMENT:
       {
-	std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
-		  << "precision region " << region       << std::endl
-		  << "Geometry file : "  << geometryFile << std::endl
-		  << "Field object  : "  << fieldAll     << std::endl;
+	std::cout << "horizontalWidth: " << horizontalWidth << "m" << std::endl
+		  << "region:          " << region       << std::endl
+		  << "geometryFile:    " << geometryFile << std::endl
+		  << "Field object :   " << fieldAll     << std::endl;
 	break;
       }	
     case ElementType::_AWAKESCREEN:
@@ -342,8 +342,7 @@ void Element::print(int ident)const{
       }
     case ElementType::_SCREEN:
       {
-	std::cout << "angle=" << angle <<"rad" << std::endl
-		  << "precision region " << region << std::endl;
+	std::cout << "angle=" << angle <<"rad" << std::endl;
 	break;
       }
     case ElementType::_TRANSFORM3D:
