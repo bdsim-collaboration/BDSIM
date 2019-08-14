@@ -217,7 +217,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
   // Get event number information
   G4int event_number = evt->GetEventID();
-  G4bool verboseThisEvent = BDS::VerboseThisEvent(event_number, verboseEventStart, verboseEventStop);
+  G4bool verboseThisEvent = verboseEventBDSIM && BDS::VerboseThisEvent(event_number, verboseEventStart, verboseEventStop);
 #ifdef BDSDEBUG
   verboseThisEvent = true; // force on for debug mode
 #endif
