@@ -105,8 +105,9 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eventInfo(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  verboseEvent              = globals->VerboseEvent();
-  verboseEventNumber        = globals->VerboseEventNumber();
+  verboseEventBDSIM         = globals->VerboseEventBDSIM();
+  verboseEventStart         = globals->VerboseEventStart();
+  verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   isBatch                   = globals->Batch();
   storeTrajectory           = globals->StoreTrajectory();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
@@ -118,8 +119,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   depth                     = globals->StoreTrajectoryDepth();
   samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
   sRangeToStore             = globals->StoreTrajectoryELossSRange();
-
-  printModulo = globals->PrintModuloEvents();
+  printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
   std::stringstream iss(particleIDToStore);
@@ -183,7 +183,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}
-  if(verboseEvent)
+  if (verboseEventBDSIM) // always print this out
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
   // cache hit collection IDs for quicker access
@@ -220,12 +220,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
   // Get event number information
   G4int event_number = evt->GetEventID();
-  G4bool verboseThisEvent = verboseEvent || verboseEventNumber == event_number;
+  G4bool verboseThisEvent = verboseEventBDSIM && BDS::VerboseThisEvent(event_number, verboseEventStart, verboseEventStop);
 #ifdef BDSDEBUG
   verboseThisEvent = true; // force on for debug mode
 #endif
   const G4int nChar = 50; // for print out
-  if(verboseThisEvent)
+  if (verboseThisEvent)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   eventInfo->SetIndex(event_number);
 
