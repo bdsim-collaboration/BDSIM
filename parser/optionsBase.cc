@@ -60,7 +60,7 @@ OptionsBase::OptionsBase()
   verboseSteppingLevel            = 0;
   verboseSteppingEventStart       = -1;
   verboseSteppingEventContinueFor = -1;
-  verboseSteppingPrimaryOnly      = true;
+  verboseSteppingPrimaryOnly      = false;
   
   verboseImportanceSampling = 0;
   

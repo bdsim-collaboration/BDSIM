@@ -578,9 +578,11 @@ std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
 G4int BDS::VerboseEventStop(G4int verboseEventStart,
 			    G4int verboseEventContinueFor)
 {
-  G4int verboseEventStop = verboseEventStart + 1;
+  G4int verboseEventStop = 0;
   if (verboseEventContinueFor < 1)
     {verboseEventStop = std::numeric_limits<int>::max();}
+  else
+    {verboseEventStop = verboseEventStart + verboseEventContinueFor;}
   return verboseEventStop;
 }
 
