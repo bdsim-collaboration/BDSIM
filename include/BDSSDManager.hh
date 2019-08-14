@@ -35,6 +35,7 @@ class BDSSDEnergyDepositionGlobal;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
+class BDSSDThinThing;
 class BDSSDVolumeExit;
 
 class G4VSDFilter;
@@ -123,6 +124,13 @@ public:
   /// SD for collimator impacts + energy deposition at the same time in order.
   inline BDSMultiSensitiveDetectorOrdered* CollimatorComplete() const {return collimatorCompleteSD;}
 
+  /// SD for generating primary hits for thin elements where discrete processes
+  /// may not work regularly.
+  inline BDSSDThinThing* ThinThing() const {return thinThingSD;}
+
+  /// SD for wire scanner wires that is a composite of thin things + energy deposition full.
+  inline BDSMultiSensitiveDetectorOrdered* WireComplete() const {return wireCompleteSD;}
+
   /// Make a record of a primitive scorer name. If it has a '/' in it, we take the last
   /// bit of the name as the just primitive scorer name. We store both versions in member vectors.
   void RegisterPrimitiveScorerName(const G4String& nameIn, G4double unit = 1.0);
@@ -166,8 +174,10 @@ private:
   G4VSensitiveDetector* apertureCompleteSD;
 #endif
   /// @}
-  BDSSDCollimator* collimatorSD;
+  BDSSDCollimator*                  collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
+  BDSSDThinThing*                   thinThingSD;
+  BDSMultiSensitiveDetectorOrdered* wireCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;

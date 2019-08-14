@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitEnergyDepositionExtra.hh"
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSHitSampler.hh"
+#include "BDSHitThinThing.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
@@ -35,6 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSDTerminator.hh"
+#include "BDSSDThinThing.hh"
 #include "BDSSDVolumeExit.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectory.hh"
@@ -104,8 +106,9 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   eventInfo(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  verboseEvent              = globals->VerboseEvent();
-  verboseEventNumber        = globals->VerboseEventNumber();
+  verboseEventBDSIM         = globals->VerboseEventBDSIM();
+  verboseEventStart         = globals->VerboseEventStart();
+  verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   isBatch                   = globals->Batch();
   storeTrajectory           = globals->StoreTrajectory();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
@@ -117,8 +120,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   depth                     = globals->StoreTrajectoryDepth();
   samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
   sRangeToStore             = globals->StoreTrajectoryELossSRange();
-
-  printModulo = globals->PrintModuloEvents();
+  printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
   std::stringstream iss(particleIDToStore);
@@ -128,7 +130,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
 }
 
 BDSEventAction::~BDSEventAction()
-{}
+{;}
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 {
@@ -182,7 +184,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}
-  if(verboseEvent)
+  if (verboseEventBDSIM) // always print this out
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
   // cache hit collection IDs for quicker access
@@ -201,6 +203,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       worldExitCollID          = g4SDMan->GetCollectionID(bdsSDMan->WorldExit()->GetName());
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
       apertureCollID           = g4SDMan->GetCollectionID(bdsSDMan->ApertureImpacts()->GetName());
+      thinThingCollID          = g4SDMan->GetCollectionID(bdsSDMan->ThinThing()->GetName());
       std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
       for (const auto& name : scorerNames)
         {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
@@ -221,12 +224,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
   // Get event number information
   G4int event_number = evt->GetEventID();
-  G4bool verboseThisEvent = verboseEvent || verboseEventNumber == event_number;
+  G4bool verboseThisEvent = verboseEventBDSIM && BDS::VerboseThisEvent(event_number, verboseEventStart, verboseEventStop);
 #ifdef BDSDEBUG
   verboseThisEvent = true; // force on for debug mode
 #endif
   const G4int nChar = 50; // for print out
-  if(verboseThisEvent)
+  if (verboseThisEvent)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   eventInfo->SetIndex(event_number);
 
@@ -282,6 +285,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // aperture hits
   typedef BDSHitsCollectionApertureImpacts aihc;
   aihc* apertureImpactHits = dynamic_cast<aihc*>(HCE->GetHC(apertureCollID));
+
+  // thin thing hits
+  typedef BDSHitsCollectionThinThing tthc;
+  tthc* thinThingHits = dynamic_cast<tthc*>(HCE->GetHC(thinThingCollID));
   
   std::map<G4String, G4THitsMap<G4double>*> scorerHits;
   for (const auto& nameIndex : scorerCollectionIDs)
@@ -347,6 +354,29 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
       primaryHit  = primary->FirstHit();
       primaryLoss = primary->LastPoint();
+    }
+
+  if (thinThingHits)
+    {// thinThingHits might be nullptr
+      if (thinThingHits->entries() > 0)
+	{// if no thin hits, no more information we can add so continue
+	  // get all thin hits (may be multiple), include the existing primary hit, and sort them
+	  std::vector<const BDSTrajectoryPoint*> points = BDSHitThinThing::TrajectoryPointsFromHC(thinThingHits);
+	  if (primaryHit) // if there is a primary hit, add it to the vector for sorting
+	    {points.push_back(primaryHit);}
+
+	  // use a lambda function to compare contents of pointers and not pointers themselves
+	  auto TrajPointComp = [](const BDSTrajectoryPoint* a, const BDSTrajectoryPoint* b)
+			       {
+				 if (!a && !b)
+				   {return false;}
+				 else
+				   {return *a < *b;}
+			       };
+	  // find the earliest on hit
+	  std::sort(points.begin(), points.end(), TrajPointComp);
+	  primaryHit = points[0]; // use this as the primary hit
+	}
     }
 
   // Save interesting trajectories

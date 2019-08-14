@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultiSensitiveDetectorOrdered.hh"
+#include "BDSSensitiveDetector.hh" // for inheritance
 #include "BDSSDApertureImpacts.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
+#include "BDSSDThinThing.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
 #include "BDSSDVolumeExit.hh"
@@ -104,7 +106,7 @@ BDSSDManager::BDSSDManager()
   
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
-  // sampler plane
+  // Sampler plane
   samplerPlane = new BDSSDSampler("plane");
   SDMan->AddNewDetector(samplerPlane);
 
@@ -113,7 +115,7 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(samplerCylinder);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
-  terminator  = new BDSSDTerminator("terminator");
+  terminator = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
   energyDeposition = new BDSSDEnergyDeposition("general", storeELossExtras);
@@ -183,6 +185,16 @@ BDSSDManager::BDSSDManager()
   collimatorSD->SetFilter(filter);
   SDMan->AddNewDetector(collimatorSD);
   SDMan->AddNewDetector(collimatorCompleteSD);
+
+  // thin things
+  thinThingSD = new BDSSDThinThing("thinthing_general");
+  thinThingSD->SetFilter(filters["primary"]);
+  SDMan->AddNewDetector(thinThingSD);
+
+  // wire scanner wires SD
+  wireCompleteSD = new BDSMultiSensitiveDetectorOrdered("wire_complete");
+  wireCompleteSD->AddSD(energyDepositionFull);
+  wireCompleteSD->AddSD(thinThingSD);
 }
 
 G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
@@ -290,6 +302,20 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 	  {result = apertureImpacts;}
 	break;
 #endif
+      }
+    case BDSSDType::thinthing:
+      {return thinThingSD; break;}
+    case BDSSDType::wirecomplete:
+      {
+	if (applyOptions)
+	  {
+	    result = generateELossHits
+	      ? static_cast<G4VSensitiveDetector*>(wireCompleteSD)
+	      : static_cast<G4VSensitiveDetector*>(thinThingSD);
+	  }
+	else
+	  {result = wireCompleteSD;}
+	break;
       }
     default:
       {result = nullptr; break;}
