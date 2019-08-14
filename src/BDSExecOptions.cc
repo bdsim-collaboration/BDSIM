@@ -88,6 +88,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "verboseSteppingLevel", 1, 0, 0 },
 					{ "verboseSteppingEventStart", 1, 0, 0 },
 					{ "verboseSteppingEventContinueFor", 1, 0, 0 },
+					{ "verboseSteppingPrimaryOnly", 0, 0, 0 },
 					{ "file", 1, 0, 0 },
 					{ "distrFile", 1, 0, 0 },
 					{ "distrFileNLinesSkip", 1, 0, 0 },
@@ -213,7 +214,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseSteppingEventContinueFor", result);
-	}     
+	}
+      else if( !strcmp(optionName , "verboseSteppingPrimaryOnly") )
+	{options.set_value("verboseSteppingPrimaryOnly", true);}
       else if( !strcmp(optionName , "output") )
 	{options.set_value("outputFormat", std::string(optarg));}
       else if( !strcmp(optionName , "outfile") )
