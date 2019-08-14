@@ -5,6 +5,6 @@ option, ngenerate=10;
 ! for event #3, use level 2 stepping verbosity for only the primary
 ! particle. Do this for only 1 event from that point ('continue for')
 option, verboseSteppingEventStart=3,
+	verboseSteppingEventContinueFor=1,
 	verboseSteppingLevel=2,
-	verboseEventSteppingContinueFor=1,
-	verboseEventSteppingPrimaryOnly=1;
+	verboseSteppingPrimaryOnly=1;
