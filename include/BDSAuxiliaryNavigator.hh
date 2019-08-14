@@ -222,6 +222,7 @@ protected:
   mutable G4AffineTransform localToGlobal;
   mutable G4AffineTransform globalToLocalCL;
   mutable G4AffineTransform localToGlobalCL;
+  mutable G4bool            bridgeVolumeWasUsed;
   
   /// Navgiator object for safe navigation in the real (mass) world without
   /// affecting tracking of the particle.

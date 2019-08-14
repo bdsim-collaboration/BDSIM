@@ -44,18 +44,26 @@ OptionsBase::OptionsBase()
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;
+  
   verbose               = false;
-  verboseEvent          = false;
-  verboseStep           = false;
-  verboseEventNumber            = -1;
-  verboseEventNumberContinueFor = 1;
-  verboseEventNumberLevel       = 0;
-  verboseEventNumberPrimaryOnly = true;
+  
   verboseRunLevel       = 0;
-  verboseEventLevel     = 0;
+
+  verboseEventBDSIM       = false;
+  verboseEventLevel       = 0;
+  verboseEventStart       = -1;
+  verboseEventContinueFor = -1;
+  
   verboseTrackingLevel  = 0;
-  verboseSteppingLevel  = 0;
+  
+  verboseSteppingBDSIM            = false;
+  verboseSteppingLevel            = 0;
+  verboseSteppingEventStart       = -1;
+  verboseSteppingEventContinueFor = -1;
+  verboseSteppingPrimaryOnly      = false;
+  
   verboseImportanceSampling = 0;
+  
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;
@@ -262,6 +270,8 @@ OptionsBase::OptionsBase()
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  storeTrajectoryTransportationSteps = true;
+  trajNoTransportation               = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -274,7 +284,6 @@ OptionsBase::OptionsBase()
   trajCutGTZ               = 1e99;  // minimum z position, so large default value
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
-  trajNoTransportation     = false;
   
   writePrimaries           = true;
   storeModel               = true;

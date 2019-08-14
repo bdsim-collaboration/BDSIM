@@ -160,7 +160,11 @@ int BDSIM::Initialise()
 
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
-    {G4cout << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl; return 1;}
+    {
+      G4cerr << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl;
+      G4cout << "A common fault is the wrong Geant4 environment as compared to the one BDSIM was compiled with." << G4endl;
+      return 1;
+    }
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
@@ -311,10 +315,14 @@ int BDSIM::Initialise()
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for performance reasons)
-  if (globalConstants->VerboseStep())
+  G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
+  G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
+							  globalConstants->VerboseSteppingEventContinueFor());
+  if (globalConstants->VerboseSteppingBDSIM())
     {
-      G4int verboseEventNumber = globalConstants->VerboseEventNumber();
-      runManager->SetUserAction(new BDSSteppingAction(true, verboseEventNumber));
+      runManager->SetUserAction(new BDSSteppingAction(true,
+						      verboseSteppingEventStart,
+						      verboseSteppingEventStop));
     }
   
 #ifdef BDSDEBUG 
@@ -322,12 +330,12 @@ int BDSIM::Initialise()
 #endif
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
-						  globalConstants->TrajNoTransportation(),
+						  !globalConstants->StoreTrajectoryTransportationSteps(),
 						  eventAction,
-						  globalConstants->VerboseEventNumberLevel(),
-						  globalConstants->VerboseEventNumber(),
-						  globalConstants->VerboseEventNumberContinueFor(),
-						  globalConstants->VerboseEventNumberPrimaryOnly()));
+						  verboseSteppingEventStart,
+						  verboseSteppingEventStop,
+						  globalConstants->VerboseSteppingPrimaryOnly(),
+						  globalConstants->VerboseSteppingLevel()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
@@ -359,11 +367,12 @@ int BDSIM::Initialise()
       BDS::PrintDefinedParticles();
     }
 
-  /// Set verbosity levels
+  /// Set verbosity levels at run and G4 event level. Per event and stepping are controlled
+  /// in event, tracking and stepping action. These have to be done here due to the order
+  /// of construction in Geant4.
   runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
   G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(globalConstants->VerboseSteppingLevel());
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
