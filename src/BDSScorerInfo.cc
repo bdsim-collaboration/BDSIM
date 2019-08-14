@@ -56,23 +56,23 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   minimumEnergy = scorer.minimumEnergy*CLHEP::GeV;
   maximumEnergy = scorer.maximumEnergy*CLHEP::GeV;
   filename      = scorer.conversionFactorFile;
+  pathname      = scorer.conversionFactorPath;
   minimumTime   = scorer.minimumTime*CLHEP::second;
   maximumTime   = scorer.maximumTime*CLHEP::second;
-  
-  G4bool error = false;
-  
+  material      = scorer.material;
+
   if (scorer.particlePDGID != 0)
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particlePDGID);
-      error = !particle;
+      if(!particle)
+      {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
     }
-  else if (!(scorer.particleName.empty()))
+   if (!(scorer.particleName.empty()))
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particleName);
-      error = !particle;
+        if(!particle)
+        {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
     }
-  if (error)
-    {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
 }

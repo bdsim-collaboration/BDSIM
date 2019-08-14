@@ -58,6 +58,7 @@ private:
   G4VPrimitiveScorer* GetAppropriateScorer(G4String                  name,
 					   const BDSScorerType       scorerType,
 					   G4String                  filename,
+					   G4String                  pathname,
 					   const BDSHistBinMapper3D* mapper,
 					   G4double*                 unit = nullptr);
 };

@@ -54,7 +54,9 @@ public:
   G4double      minimumTime;         ///< Minimum time
   G4double      maximumTime;         ///< Maximum time
   G4String      filename;            ///< Name of the conversion factor file
-  
+  G4String      pathname;            ///< Path of the conversion factor file (for ambient dose)
+  G4String      material;            ///< Name of the material where to score
+
 private:
   /// Pivate default constructor as unused.
   BDSScorerInfo();
