@@ -320,22 +320,22 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   //buildInnerCoil = false;
   if (buildInnerCoil)
     {
-      coil1Inner = new G4CutTubs(name+"_coil1_inner_solid",            // name
-				 innerCoilInnerRadius,                 // inner radius
-				 innerCoilOuterRadius,                 // outer radius
-				 length*0.5 - lengthSafetyLarge,       // length
-				 -coilInnerFullAngle*0.5,              // start angle
-				 coilInnerFullAngle,                   // sweep angle
-				 inputFaceNormal,                      // input face normal
-				 outputFaceNormal);                    // output face normal
-      coil2Inner = new G4CutTubs(name+"_coil2_inner_solid",            // name
-				 innerCoilInnerRadius,                 // inner radius
-				 innerCoilOuterRadius,                 // outer radius
-				 length*0.5 - lengthSafetyLarge,       // length
-				 CLHEP::pi-coilInnerFullAngle*0.5,     // start angle
-				 coilInnerFullAngle,                   // sweep angle
-				 inputFaceNormal,                      // input face normal
-				 outputFaceNormal);                    // output face normal
+      coil1Inner = new G4CutTubs(name+"_coil1_inner_solid",                // name
+				 innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+				 innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+				 length*0.5 - lengthSafetyLarge,           // length
+				 -coilInnerFullAngle*0.5,                  // start angle
+				 coilInnerFullAngle,                       // sweep angle
+				 inputFaceNormal,                          // input face normal
+				 outputFaceNormal);                        // output face normal
+      coil2Inner = new G4CutTubs(name+"_coil2_inner_solid",                // name
+				 innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+				 innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+				 length*0.5 - lengthSafetyLarge,           // length
+				 CLHEP::pi-coilInnerFullAngle*0.5,         // start angle
+				 coilInnerFullAngle,                       // sweep angle
+				 inputFaceNormal,                          // input face normal
+				 outputFaceNormal);                        // output face normal
       coil1InnerLV =  new G4LogicalVolume(coil1Inner,
 					  nbti,
 					  name+"_coil1_Inner_lv");
