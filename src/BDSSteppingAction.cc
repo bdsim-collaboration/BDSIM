@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSSteppingAction.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4Event.hh"
@@ -30,13 +31,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSSteppingAction::BDSSteppingAction():
   verboseStep(false),
-  verboseEventNumber(-1)	     
+  verboseEventStart(0),
+  verboseEventStop(0)
 {;}
 
 BDSSteppingAction::BDSSteppingAction(G4bool verboseStepIn,
-				     G4int  verboseEventNumberIn):
+				     G4int  verboseEventStartIn,
+				     G4int  verboseEventStopIn):
   verboseStep(verboseStepIn),
-  verboseEventNumber(verboseEventNumberIn)
+  verboseEventStart(verboseEventStartIn),
+  verboseEventStop(verboseEventStopIn)
 {;}
 
 BDSSteppingAction::~BDSSteppingAction()
@@ -44,8 +48,10 @@ BDSSteppingAction::~BDSSteppingAction()
 
 void BDSSteppingAction::UserSteppingAction(const G4Step* step)
 {
-  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
-  if(verboseStep || event_number == verboseEventNumber)
+  if (!verboseStep)
+    {return;}
+  G4int eventID = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  if (BDS::VerboseThisEvent(eventID, verboseEventStart, verboseEventStop))
     {VerboseSteppingAction(step);}
 }
 
