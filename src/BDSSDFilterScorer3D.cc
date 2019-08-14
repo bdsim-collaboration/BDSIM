@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerInfo.hh"
 #include "BDSSDFilterTime.hh"
 #include "BDSSDFilterLogicalVolume.hh"
+#include "BDSSDFilterMaterial.hh"
+#include "BDSMaterials.hh"
 
 #include "globals.hh"
 #include "G4SDParticleWithEnergyFilter.hh"
@@ -36,11 +38,12 @@ BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
   G4VSDFilter(name),
   particleWithKineticEnergyFilter(nullptr),
   timeFilter(nullptr),
-  volumeFilter(nullptr)
+  volumeFilter(nullptr),
+  materialFilter(nullptr)
 {
   // Define the different scorers depending info.
 
-  // Particle with kinetic energy filter
+  // Particle with kinetic energy filte;
   if (info->particle)
     {
       G4String particleName = info->particle->GetParticleName();
@@ -59,11 +62,19 @@ BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
     }
 
   // For the ambient dose, make a filter to only have the world volume
+  /*
   if ((info->scorerType.underlying()) == BDSScorerType::ambientdose)
     {
       volumeFilter = new BDSSDFilterLogicalVolume("volume_filter",
 						  BDSAcceleratorModel::Instance()->WorldLV());
     }
+  */
+
+  if (!(info->material.empty())) {
+      /// maybe have an array to allow multiple material ?
+      materialFilter = new BDSSDFilterMaterial("material_filter",
+                                               BDSMaterials::Instance()->GetMaterial(info->material));
+  }
 }
 
 BDSSDFilterScorer3D::~BDSSDFilterScorer3D()
@@ -85,6 +96,11 @@ G4bool BDSSDFilterScorer3D::Accept(const G4Step* aStep) const
     {
       if (!volumeFilter->Accept(aStep))
 	{return false;}
+    }
+  if (materialFilter)
+    {
+        if (!materialFilter->Accept(aStep))
+        {return false;}
     }
   return true;
 }
