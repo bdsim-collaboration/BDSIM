@@ -19,6 +19,7 @@ simple_testing(option-executable-verbose_G4stepping      "--file=sm.gmad --verbo
 simple_testing(option-executable-verboseSteppingLevel    "--file=sm.gmad --verboseSteppingLevel=2"     "")
 simple_testing(option-executable-verboseSteppingEventStart       "--file=sm.gmad --verboseSteppingLevel=2 --verboseSteppingEventStart=2"         "")
 simple_testing(option-executable-verboseSteppingEventContinueFor "--file=sm.gmad --verboseSteppingLevel=2 --verboseSteppingEventContinueFor=2"   "")
+simple_testing(option-executable-verboseSteppingPrimaryOnly      "--file=sm.gmad --verboseSteppingLevel=2 --verboseSteppingPrimaryOnly"          "")
 simple_testing(option-executable-distrFile               "--file=userfile.gmad --distrFile=../beam/userfile/userbeamdata-comment.dat" "")
 simple_testing(option-executable-distrFileNLinesSkip     "--file=userfile.gmad --distrFileNLinesSkip=2"                               "")
 simple_testing(option-exectuable-output                  "--file=sm.gmad --output=none"                "")
