@@ -241,15 +241,10 @@ std::string Element::getPublishedName(std::string nameIn)const
 }
 
 bool Element::isSpecial()const {
-  bool isSpecial = false;
-
-  if (type == ElementType::_TRANSFORM3D ||
-      type == ElementType::_MARKER ||
-      type == ElementType::_LINE ||
-      type == ElementType::_REV_LINE )
-    {isSpecial = true;}
-
-  return isSpecial;
+  return (type == ElementType::_TRANSFORM3D ||
+	  type == ElementType::_MARKER ||
+	  type == ElementType::_LINE ||
+	  type == ElementType::_REV_LINE);
 }
 
 void Element::print(int ident)const{
