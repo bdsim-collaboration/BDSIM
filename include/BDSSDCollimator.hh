@@ -91,7 +91,7 @@ private:
   /// Hits collection ID - an integer look up for the hits collection
   /// provided by G4SDManager (a registry) that is given to the
   /// G4HCofThisEvent (Hits collection of the event).
-  int itsHCID;
+  G4int itsHCID;
 
   /// An auxiliary navigator object for coordinate transforms.
   BDSAuxiliaryNavigator* auxNavigator;

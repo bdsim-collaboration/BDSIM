@@ -58,9 +58,23 @@ public:
   inline int operator==(const BDSTrajectoryPoint& right) const
   {return (this==&right);};
 
-  /// Check to see if point is a scattering point (from physics point of view)
+  /// Check to see if point is a scattering point (from a physics point of view). Uses
+  /// static functions defined below. This is defined by whether the processes that defined
+  /// the step length is non-transportation or the energy loss along step is greater than
+  /// 1e-9 MeV, which could be due to continuous energy loss processes along step that might
+  /// not limit the step length.
   G4bool IsScatteringPoint() const;
 
+  /// Return true if step isn't defined by transportation processes.
+  G4bool NotTransportationLimitedStep() const;
+  
+  /// @{ Static function to determine whether a step corresponds to scattering.
+  static G4bool IsScatteringPoint(const G4Step* step);
+  static G4bool IsScatteringPoint(G4int    postProcessType,
+				  G4int    postProcessSubType,
+				  G4double totalEnergyDeposit);
+  /// @}
+  
   /// @{ Accessor
   inline G4int    GetPreProcessType()          const {return preProcessType;}
   inline G4int    GetPreProcessSubType()       const {return preProcessSubType;}
@@ -91,6 +105,14 @@ public:
 
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
+
+  // logic taken from BDSExtent - implement only one operator; rest come for free
+  /// @{ Comparison operator.
+  inline G4bool operator< (const BDSTrajectoryPoint& other) const;
+  inline G4bool operator> (const BDSTrajectoryPoint& other) const {return other < (*this);}
+  inline G4bool operator<=(const BDSTrajectoryPoint& other) const {return !((*this) > other);}
+  inline G4bool operator>=(const BDSTrajectoryPoint& other) const {return !((*this) < other);}
+  /// @}
   
 private:
   /// Initialisation of variables in separate function to reduce duplication in
@@ -136,6 +158,14 @@ inline void* BDSTrajectoryPoint::operator new(size_t)
 inline void BDSTrajectoryPoint::operator delete(void *aTrajectoryPoint)
 {
   bdsTrajectoryPointAllocator.FreeSingle((BDSTrajectoryPoint *) aTrajectoryPoint);
+}
+
+inline G4bool BDSTrajectoryPoint::operator< (const BDSTrajectoryPoint& other) const
+{
+  // can't test position without knowledge of beam line direction etc - too difficult / inaccurate
+  // for now, this is simplistic
+  // TBC deal with multiple beam lines and s coordinate change at join point
+  return (preS < other.preS) && (preGlobalTime < other.preGlobalTime);
 }
 
 #endif
