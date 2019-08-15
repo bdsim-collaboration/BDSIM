@@ -6107,9 +6107,10 @@ More examples can be found in :ref:`crystal-examples`.
 Regions
 -------
 
-In Geant4, it is possible to drive different *regions*- each with their own production cuts and user limits.
-In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
-the user may define additional regions and attach them to the objects desired.  For example::
+In Geant4, it is possible to drive different *regions* - each with their own production cuts and user limits.
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) that applies
+everywhere.  Additionally, the user may define additional regions (using the :code:`cutsregion` object)
+and attach these to the beam line elements desired.  For example::
 
   precisionRegion: cutsregion, prodCutProtons=1*m,
                                prodCutElectrons=10*m,
@@ -6118,7 +6119,49 @@ the user may define additional regions and attach them to the objects desired.  
 
   d1: drift, l=10*m, region="precisionRegion";
 
+The following parameters are available in the `cutsregion` object:
 
++--------------------+----------------------------------------+
+| **Parmater**       | **Description**                        |
++====================+========================================+
+| defaultRangeCut    | The default range cut for this object. |
++--------------------+----------------------------------------+
+| prodCutProtons     | The range cut for protons.             |
++--------------------+----------------------------------------+
+| prodCutPhotons     | The range cut for photons / gammas.    |
++--------------------+----------------------------------------+
+| prodCutElectrons   | The range cut for electrons.           |
++--------------------+----------------------------------------+
+| prodCutPositrons   | The range cut for positrons.           |
++--------------------+----------------------------------------+
+
+A range cut is a length that a secondary particle would have to travel in that
+material. If it would not travel that distance, then it is not tracked and its
+energy deposited there.
+
+Geant4 translates these to an energy scale per particle type per material. This
+method is documented as being much more physically accurate than a simple energy
+cut across all volumes for all particle types. i.e. the computation time can be
+reduced but the physical accuracy maintained in areas of vastly different
+density.
+
+* The default for Geant4 is **1 mm** or **0.7 mm** depending on the version.
+  This approximately corresponds to keV energy scales in air for most particles.
+* The related energies in various materials do not scale linearly or continuously
+  with the range parameter. This is ok.
+
+.. warning:: Setting a length scale longer or larger than the beam line element or
+	     volume the region will be used in may result in inaccurate physics
+	     result and peaks and troughs in energy deposition around boundaries.
+
+* If the `option, defaultRangeCut` is set, this will be the default for the other options
+  if not specified.
+* If `defaultRangeCut` is not specified in a `cutsregion` object, the default for each
+  range will be the corresponding range from the options. e.g. `option, prodCutProtons`
+  will be the default for `prodCutProtons` in a `cutsregion` object if `defaultRangeCut`
+  is not specified in the object.
+* See :code:`bdsim/examples/features/processes/regions` for documented examples.
+  
 .. rubric:: Footnotes
 
 .. _bend-tracking-behaviour:

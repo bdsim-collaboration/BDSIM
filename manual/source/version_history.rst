@@ -49,6 +49,9 @@ New Features
   the `includeFringeFields` option.
 * Revised executable options for verbosity. These are now the exact same as the intput options. Old
   options are still functional but undocumented.
+* New internal region class allows better setting of defaults when defining custom regions. Preivously,
+  these would just be the default in the class if they weren't specified, which was 0. The global ones
+  will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
 
 * New options:
 
@@ -163,7 +166,7 @@ General
   and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
   placed if (strictly) drifts were on either side of the magnet.
 * When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
-  but shouldn't interfere if no ranges are set. This has been changed as the defaultRangeCut would be enforced
+  but shouldn't interfere if no ranges are set. This has been changed as the `defaultRangeCut` would be enforced
   in the past even if not set explicitly by the user, causing BDSIM's default 1 mm range to be used.
   
 Bug Fixes
