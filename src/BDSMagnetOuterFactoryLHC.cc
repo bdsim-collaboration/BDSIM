@@ -369,29 +369,29 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
       allPhysicalVolumes.insert(coil1InnerPV);
       allPhysicalVolumes.insert(coil2InnerPV);
 
-      collar1PoleTopInnerSolid    = new G4CutTubs(name+"_collar1_pole_inner_top",      // name
-						  innerCoilInnerRadius,                // inner radius
-						  innerCoilOuterRadius,                // outer radius
-						  length*0.5 - lengthSafetyLarge,      // length
+      collar1PoleTopInnerSolid    = new G4CutTubs(name+"_collar1_pole_inner_top",           // name
+						  innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+						  innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+						  length*0.5 - lengthSafetyLarge,           // length
 						  CLHEP::pi*0.5-poleInnerFullAngle*0.5,// start angle
-						  poleInnerFullAngle,                  // sweep angle
-						  inputFaceNormal,                     // input face normal
-						  outputFaceNormal);                   // output face normal
-      collar1PoleBottomInnerSolid = new G4CutTubs(name+"_collar1_pole_inner_bottom",   // name
-						  innerCoilInnerRadius,                // inner radius
-						  innerCoilOuterRadius,                // outer radius
-						  length*0.5 - lengthSafetyLarge,      // length
-						  CLHEP::pi*1.5-poleInnerFullAngle*0.5,// start angle
-						  poleInnerFullAngle,                  // sweep angle
-						  inputFaceNormal,                     // input face normal
-						  outputFaceNormal);                   // output face normal
+						  poleInnerFullAngle,                       // sweep angle
+						  inputFaceNormal,                          // input face normal
+						  outputFaceNormal);                        // output face normal
+      collar1PoleBottomInnerSolid = new G4CutTubs(name+"_collar1_pole_inner_bottom",        // name
+						  innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+						  innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+						  length*0.5 - lengthSafetyLarge,           // length
+						  CLHEP::pi*1.5-poleInnerFullAngle*0.5,     // start angle
+						  poleInnerFullAngle,                       // sweep angle
+						  inputFaceNormal,                          // input face normal
+						  outputFaceNormal);                        // output face normal
       collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
 						     stainlesssteel,
 						     name+"_collar1_pole_top_inner_lv");
       collar1PoleBottomInnerLV = new G4LogicalVolume(collar1PoleBottomInnerSolid,
 						     stainlesssteel,
 						     name+"_collar1_pole_bottom_inner_lv");
-      
+
       collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
       collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
 
