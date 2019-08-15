@@ -117,7 +117,7 @@ void TRKTracker::Track(TRKBunch* bunch)
       std::map<BDSTrajectory*, bool> trajectorymap;
       output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			nullptr, trajectorymap, nullptr, i);
+			nullptr, trajectorymap, nullptr, nullptr, i);
     }// end of turns iteration
     
     
