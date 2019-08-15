@@ -52,6 +52,7 @@ void Region::print()const
 {
   std::cout << "region: "
 	    << name             << " "
+	    << defaultRangeCut  << " "
 	    << prodCutPhotons   << " "
 	    << prodCutElectrons << " "
 	    << prodCutPositrons << " "
