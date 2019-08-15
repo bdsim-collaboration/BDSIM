@@ -359,7 +359,7 @@ void BDS::SetRangeCuts(G4VModularPhysicsList* physicsList)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
 
   // overwrite when explicitly set in options
-  if (globals->DefaultRangeCutSet())
+  if (globals->DefaultRangeCutsSet())
     {physicsList->SetDefaultCutValue(globals->DefaultRangeCut());}
   if (globals->ProdCutPhotonsSet())
     {physicsList->SetCutValue(globals->ProdCutPhotons(),  "gamma");}
