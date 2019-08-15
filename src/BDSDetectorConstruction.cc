@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "parser/blmplacement.h"
 #include "parser/element.h"
@@ -392,14 +393,38 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 #endif
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
-      
-      auto terminator = theComponentFactory->CreateTerminator();
+
+      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {
+        return ble->GetBeamPipeInfo() != nullptr;
+      };
+      auto firstElementWithBPInfo =
+	std::find_if(massWorld->begin(), massWorld->end(), hasBeamPipeInfo);
+      auto lastElementWithBPInfo =
+	std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
+
+      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)
+                                        ->GetBeamPipeInfo()
+                                        ->Extent()
+                                        .MaximumAbsTransverse();
+
+      G4double lastbeamPipeMaxExtent = (*lastElementWithBPInfo)
+                                       ->GetBeamPipeInfo()
+                                       ->Extent()
+                                       .MaximumAbsTransverse();
+
+      // the extent is a half width, so we double it.
+      G4double teleporterWidth = // Also the terminator width.
+          2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
+
+
+      auto terminator = theComponentFactory->CreateTerminator(teleporterWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
       auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+							      teleporterWidth,
 							      teleporterTransform);
       if (teleporter)
 	{

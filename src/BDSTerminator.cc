@@ -29,8 +29,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <limits>
 
-BDSTerminator::BDSTerminator():
-  BDSAcceleratorComponent("terminator", BDSSamplerPlane::ChordLength(), 0, "terminator")
+BDSTerminator::BDSTerminator(G4double widthIn):
+  BDSAcceleratorComponent("terminator", BDSSamplerPlane::ChordLength(), 0, "terminator"),
+  width(widthIn)
 {;}
 
 BDSTerminator::~BDSTerminator()
@@ -43,11 +44,9 @@ void BDSTerminator::Build()
 
 void BDSTerminator::BuildContainerLogicalVolume()
 {
-  // Bascially a copy of BDSSampler but with different sensitive detector added
-  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name + "_container_solid",
-                             radius,
-                             radius,
+                             width * 0.5,
+                             width * 0.5,
                              chordLength * 0.5);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                                emptyMaterial,
@@ -71,6 +70,5 @@ void BDSTerminator::BuildContainerLogicalVolume()
   containerLogicalVolume->SetVisAttributes(containerVisAttr);
 
   // register extents with BDSGeometryComponent base class
-  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
+  SetExtent(BDSExtent(0.5*width, 0.5*width, chordLength*0.5));
 }
-
