@@ -70,13 +70,25 @@ void BDSExecOptions::Parse(int argc, char **argv)
 {
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
 					{ "verbose", 0, 0, 0 },
-					{ "verbose_step", 0, 0, 0 },
-					{ "verbose_event", 0, 0, 0 },
-					{ "verbose_event_num", 1, 0, 0 },
-					{ "verbose_G4run", 1, 0, 0 },
-					{ "verbose_G4event", 1, 0, 0 },
-					{ "verbose_G4tracking", 1, 0, 0 },
+					{ "verbose_step", 0, 0, 0 },         // old
+					{ "verboseSteppingBDSIM", 0, 0, 0 }, // new
+					{ "verbose_event", 0, 0, 0 },        // old
+					{ "verboseEventBDSIM", 0, 0, 0 },    // new
+					{ "verbose_event_num", 1, 0, 0 },    // old
+					{ "verboseEventNumber", 1, 0, 0 },   // new
+					{ "verboseEventStart", 1, 0, 0 },
+					{ "verboseEventContinueFor",  1, 0, 0 },
+					{ "verbose_G4run", 1, 0, 0 },        // old
+					{ "verboseRunLevel", 1, 0, 0},       // new
+					{ "verbose_G4event", 1, 0, 0 },      // old
+					{ "verboseEventLevel", 1, 0, 0},     // new
+					{ "verbose_G4tracking", 1, 0, 0 },   // old
+					{ "verboseTrackingLevel", 1, 0, 0 }, // new
 					{ "verbose_G4stepping", 1, 0, 0 },
+					{ "verboseSteppingLevel", 1, 0, 0 },
+					{ "verboseSteppingEventStart", 1, 0, 0 },
+					{ "verboseSteppingEventContinueFor", 1, 0, 0 },
+					{ "verboseSteppingPrimaryOnly", 0, 0, 0 },
 					{ "file", 1, 0, 0 },
 					{ "distrFile", 1, 0, 0 },
 					{ "distrFileNLinesSkip", 1, 0, 0 },
@@ -98,6 +110,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
+					{ "nturns",    1, 0, 0 },
+					{ "nTurns",    1, 0, 0 },
 					{ "printFractionEvents", 1, 0, 0},
 					{ "printFractionTurns", 1, 0, 0},
 					{ "printPhysicsProcesses", 0, 0, 0},
@@ -139,43 +153,70 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("batch",true);}
       else if( !strcmp(optionName , "verbose") )
 	{options.set_value("verbose", true);}
-      else if( !strcmp(optionName , "verbose_step") )
-	{// we shouldn't have verbose steps without verbose events
-	  options.set_value("verboseStep", true); 
-	  options.set_value("verboseEvent", true);
+      else if( !strcmp(optionName , "verbose_step") || !strcmp(optionName , "verboseSteppingBDSIM"))
+	{// we shouldn't have verbose steps without (minimally) verbose events
+	  options.set_value("verboseSteppingBDSIM", true); 
+	  options.set_value("verboseEventBDSIM",    true);
 	}
       else if( !strcmp(optionName , "verbose_event") )
 	{options.set_value("verboseEvent", true);}
-      else if( !strcmp(optionName , "verbose_event_num") )
+      else if( !strcmp(optionName , "verbose_event_num") || !strcmp(optionName , "verboseEventNumber"))
 	{
 	  int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventNumber", result);
+	  options.set_value("verboseEventStart", result);
+	  options.set_value("verboseEventContinueFor", 1);
 	}
-      else if( !strcmp(optionName , "verbose_G4run") )
+      else if( !strcmp(optionName , "verboseEventStart") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseEventStart", result);
+	}
+      else if( !strcmp(optionName , "verboseEventContinueFor") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseEventContinueFor", result);
+	}
+      else if( !strcmp(optionName , "verbose_G4run") || !strcmp(optionName , "verboseRunLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseRunLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4event") )
+      else if( !strcmp(optionName , "verbose_G4event") || !strcmp(optionName , "verboseEventLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseEventLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4tracking") )
+      else if( !strcmp(optionName , "verbose_G4tracking") || !strcmp(optionName , "verboseTrackingLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseTrackingLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4stepping") )
+      else if( !strcmp(optionName , "verbose_G4stepping") || !strcmp(optionName , "verboseSteppingLevel"))
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseSteppingLevel", result);
 	}
+      else if( !strcmp(optionName , "verboseSteppingEventStart") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseSteppingEventStart", result);
+	}
+      else if( !strcmp(optionName , "verboseSteppingEventContinueFor") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseSteppingEventContinueFor", result);
+	}
+      else if( !strcmp(optionName , "verboseSteppingPrimaryOnly") )
+	{options.set_value("verboseSteppingPrimaryOnly", true);}
       else if( !strcmp(optionName , "output") )
 	{options.set_value("outputFormat", std::string(optarg));}
       else if( !strcmp(optionName , "outfile") )
@@ -245,6 +286,12 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("ngenerate", result);
 	  beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
+	}
+      else if( !strcmp(optionName, "nturns") || !strcmp(optionName, "nTurns"))
+	{
+	  int result = 1;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("nturns", result);
 	}
       else if ( !strcmp(optionName, "printFractionEvents") )
 	{
@@ -339,6 +386,8 @@ void BDSExecOptions::Usage() const
 	<<"                             by default"                                        << G4endl
 	<<"--ngenerate=N              : the number of primary events to simulate:"         << G4endl
 	<<"                             overrides ngenerate option in the input gmad file" << G4endl
+	<<"--nturns=N                 : the number of turns to simulate:"                  << G4endl
+	<<"                             overrides nturns option in the input gmad file"    << G4endl
 	<<"--output=<fmt>             : output format (rootevent|none), default rootevent" << G4endl
 	<<"--outfile=<file>           : output file name. Will be appended with _N"        << G4endl
         <<"                             where N = 0, 1, 2, 3... etc."                      << G4endl
