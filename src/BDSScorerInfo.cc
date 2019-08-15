@@ -31,7 +31,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 
-
 BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 			     G4bool upgradeTo3D):
   particle(nullptr)
@@ -65,14 +64,13 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particlePDGID);
-      if(!particle)
-      {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
     }
-   if (!(scorer.particleName.empty()))
+  else (!(scorer.particleName.empty()))
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particleName);
-        if(!particle)
-        {throw BDSException(__METHOD_NAME__,"Particle not found for scorer "+ scorer.name);}
     }
+  
+  if (!particle)
+    {throw BDSException(__METHOD_NAME__, "Particle not found for scorer "+ scorer.name);}
 }

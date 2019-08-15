@@ -43,7 +43,7 @@ BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
 {
   // Define the different scorers depending info.
 
-  // Particle with kinetic energy filte;
+  // Particle with kinetic energy filter
   if (info->particle)
     {
       G4String particleName = info->particle->GetParticleName();
