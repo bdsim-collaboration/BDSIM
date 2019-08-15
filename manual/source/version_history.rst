@@ -12,6 +12,8 @@ Expected Changes To Results
   definition as was in the past to make the field align with a tilted element. In this case, the field
   definition tilt should be removed and the field will be orientated to the component it's attached to.
 * PrimaryFirstHit location on wire scanners will now be more accurate, where it might have missed it before.
+* Default range cut from BDSIM will not be enforced if using a Geant4 physics list. It will only be set if
+  specified in the user input.
 
 New Features
 ------------
@@ -160,6 +162,9 @@ General
 * The generic beam line "element" will now be inspected for end piece coil placement on the edge of mangets
   and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
   placed if (strictly) drifts were on either side of the magnet.
+* When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
+  but shouldn't interfere if no ranges are set. This has been changed as the defaultRangeCut would be enforced
+  in the past even if not set explicitly by the user, causing BDSIM's default 1 mm range to be used.
   
 Bug Fixes
 ---------
