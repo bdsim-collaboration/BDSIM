@@ -302,7 +302,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   momenta             = other->momenta;
   modelIndicies       = other->modelIndicies;
   trackID_trackIndex  = other->trackID_trackIndex;
-  preT               = other->preT;
+  preT                = other->preT;
 }
 
 #if 0

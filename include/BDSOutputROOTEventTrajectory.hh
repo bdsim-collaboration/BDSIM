@@ -194,7 +194,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
-  ClassDef(BDSOutputROOTEventTrajectory,2);
+  ClassDef(BDSOutputROOTEventTrajectory,3);
 };
 
 
