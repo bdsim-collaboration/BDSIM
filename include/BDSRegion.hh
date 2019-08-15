@@ -17,11 +17,14 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSREGION_H
-#define BDSREGSION_H
+#define BDSREGION_H
 
 #include "globals.hh"
 
+#include <ostream>
+
 class G4ProductionCuts;
+class G4Region;
 
 namespace GMAD
 {
@@ -37,32 +40,36 @@ namespace GMAD
 class BDSRegion
 {
 public:
-  BDSRegion();
-  BDSRegion(G4double defaultRangeCutIn,
-	    G4double rangeCutElectornsIn,
-	    G4double rangeCutPositronsIn,
-	    G4double rangeCutProtonsIn,
-	    G4double rangeCutPhotonsIn);
-  BDSRegion(const BDSRegion& defaultValue,
+  explicit BDSRegion(G4String nameIn);
+  BDSRegion(G4String nameIn,
+	    const BDSRegion* defaultValue,
 	    G4double defaultRangeCutIn,
-	    G4double rangeCutElectornsIn,
+	    G4double rangeCutElectronsIn,
 	    G4double rangeCutPositronsIn,
 	    G4double rangeCutProtonsIn,
 	    G4double rangeCutPhotonsIn);
-  BDSRegion(const BDSRegion& defaultValue,
-	    const GMAD::Region& regionIn);
+  BDSRegion(const GMAD::Region& parserRegion,
+	    const BDSRegion*    defaultRegion);
 	    
   ~BDSRegion();
-
-  /// Produce a production cuts object (doesn't retain ownership).
-  G4ProductionCuts* Cuts();
-
-private:
+  
+  /// @{ Public members for simplicity.
+  G4String name;
   G4double defaultRangeCut;
   G4double rangeCutElectrons;
   G4double rangeCutPositrons;
   G4double rangeCutProtons;
   G4double rangeCutPhotons;
-}
+  G4ProductionCuts* g4cuts;
+  G4Region*         g4region;
+  /// @}
+
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSRegion const &r);
+
+private:
+  /// Function to create cuts and region.
+  void ProduceG4Region();
+};
 
 #endif
