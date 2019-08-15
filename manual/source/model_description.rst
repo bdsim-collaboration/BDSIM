@@ -208,12 +208,15 @@ Some useful predefined values / units are:
 Name        Value
 ==========  =================================
 pi          3.14159265358979
+twopi       2 * pi
+halfpi      0.5 * pi
 degrees     :math:`\pi` / 180
 GeV         1
 eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
+PeV         :math:`10^{6}`
 V           1
 kV          :math:`10^{3}`
 MV          :math:`10^{6}`
@@ -1075,7 +1078,8 @@ There are several geometry and field options as well as ways to specify the stre
 The default field is a uniform (in space) electric-only field that is time varying
 according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electromagnetic
 field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
-numerical integrator is used to calculate the motion of particles in both cases.
+numerical integrator is used to calculate the motion of particles in both cases. Fringes for
+the edge effects are provided by default and are controllable with the option `includeFringeFields`.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -1115,6 +1119,10 @@ numerical integrator is used to calculate the motion of particles in both cases.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
+* The entrance / exit cavity fringes are not constructed if the previous / next element
+  is also an rf cavity.
+* The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
+  model is supplied, the cavity fringes are built with the same radius as the model iris radius.
 
 If `tOffset` is specified, a phase offset is calculated from this time for the **speed
 of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
@@ -2066,6 +2074,10 @@ and rotations. Every component can be displaced transversely and rotated along t
 	  matches the behaviour of MAD8 and MAD-X.
 
 .. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
+
+.. note:: Tilts and offsets are independent of one another, that is to
+          say, a tilt of :math:`\pi/2` combined with a non-zero
+          offsetX will not result in a vertical displacement.
 
 The misalignments can be controlled through the following parameters.
 
@@ -4022,8 +4034,8 @@ described in `Tunnel Geometry`_.
 |                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
 | tunnelType                       | Which style of tunnel to use - one of:                |
-|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
-|                                  | (more to come in v0.9)                                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`,    |
+|                                  | `ilc`, or `rectaboveground`.                          |
 +----------------------------------+-------------------------------------------------------+
 | tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
 |                                  | horizontal [m]                                        |
@@ -4491,77 +4503,102 @@ amounts of output will cause a simulation to run slowly and should only be used 
 particular physics outcome if really desired or not understood. It is recommended to print out as little
 as possible and then work 'up' to more print out as required.
 
-BDSIM prints out the most minimal information for its purpose. The physics tables printed out can be
-length, but are an important set of information for a given simulation.
+BDSIM generally prints out the most minimal information for its purpose. The physics tables printed out can be
+lengthy, but are an important set of information for a given simulation.
 
 Some of the following options are available through executable options (with different names). See
 :ref:`executable-options` for more details.
 
 Recommendations:
 
-* `-\\-verbose_G4stepping=2` to see one line per entry / exit of a volume to see where a particle is going.
-* "Tracking" refers to a particle track which is essentiall one particle being put through the simulation.
+* `-\\-verboseSteppingLevel=2` to see one line per entry / exit of a volume to see where a particle is going.
+* "Tracking" refers to a particle track which is essentially one particle being put through the simulation.
 * Stepping is the incremental step of each particle trajectory through the simulation.
-* Event is the minimal unit of simulation.
+* Event is the minimal unit of simulation - usually in BDSIM this is the propagation of 1 primary particle.
 * Run is a group of events where the physics and geometry remained the same.
 
-+----------------------------------+----------+-----------------------------------------------------------+
-| **Option**                       | **Type** | **Description**                                           |
-+==================================+==========+===========================================================+
-| verbose                          | Boolean  | Whether general verbosity is on - some extra print out.   |
-|                                  |          | This highlights general construction steps of the         |
-|                                  |          | geometry; print out any field definitions defined in the  |
-|                                  |          | parser; a summary of all modular physics lists activated  |
-|                                  |          | or not.                                                   |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEvent                     | Boolean  | Extra print out identifying the start and end of event    |
-|                                  |          | action as well as the allocator pool sizes. Print out     |
-|                                  |          | the size of each hits collection if it exists at all. The |
-|                                  |          | same as `-\\-verbose_event` executable option.            |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventNumber               | integer  | Extra print out as in `verboseEvent`, but only for the    |
-|                                  |          | event number specified - zero counting. The same as       |
-|                                  |          | `-\\-verbose_event_num=X` executable option.              |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out for all       |
-|                                  |          | events.                                                   |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventNumberContinueFor    | integer  | (1-inf) number of events to continue printing out the     |
-|                                  |          | verbose event information stepping information for.       |
-|                                  |          | default is 1.                                             |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventNumberLevel          | integer  | (0-5) Like `verboseEventNumber` but only for the specific |
-|                                  |          | event specified by `verboseEventNumber`. Turns on verbose |
-|                                  |          | stepping information at the specified level.              |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseEventNumberPrimaryOnly    | Boolean  | Whether to only print out the verbose stepping            |
-|                                  |          | as chosen by `verboseEventNumberLevel` for primary tracks |
-|                                  |          | and the default is true (1).                              |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseImportanceSampling        | integer  | (0-5) level of importance sampling related print out.     |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseRunLevel                  | integer  | (0-5) level of Geant4 run level print out. The same as    |
-|                                  |          | `-\\-verbose_G4run=X` executable option.                  |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseStep                      | Boolean  | Whether to use the verbose stepping action for every      |
-|                                  |          | step. Note, this is a lot of output.                      |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseSteppingLevel             | integer  | (0-5) level of Geant4 stepping level print out. The same  |
-|                                  |          | as `-\\-verbose_G4stepping=X` executable option.          |
-+----------------------------------+----------+-----------------------------------------------------------+
-| verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same  |
-|                                  |          | as `-\\-verbose_G4tracking=X` executable option.          |
-+----------------------------------+----------+-----------------------------------------------------------+
+The options listed below are list roughly in terms of the simulation hiearchy.
+
++----------------------------------+----------+-------------------------------------------------------------------+
+| **Option**                       | **Type** | **Description**                                                   |
++==================================+==========+===================================================================+
+| verbose                          | Boolean  | Whether general verbosity is on - some extra print out.           |
+|                                  |          | This highlights general construction steps of the                 |
+|                                  |          | geometry; print out any field definitions defined in the          |
+|                                  |          | parser; a summary of all modular physics lists activated          |
+|                                  |          | or not.                                                           |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseRunLevel                  | integer  | (0-5) level of Geant4 run level print out. The same as            |
+|                                  |          | `-\\-verboseRun=X` executable option.                             |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseEventBDSIM                | Boolean  | Extra print out identifying the start and end of event            |
+|                                  |          | action as well as the allocator pool sizes. Print out             |
+|                                  |          | the size of each hits collection if it exists at all. The         |
+|                                  |          | same as `-\\-verboseEventBDSIM` executable option.                |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseEventStart                | integer  | Event index to start print out according to                       |
+|                                  |          | `verboseEventBDSIM`. Zero counting.                               |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseEventContinueFor          | integer  | Number of events to continue print out event information          |
+|                                  |          | according to `verboseEventBDSIM`. -1 means all subsequent         |
+|                                  |          | events.                                                           |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseEventLevel                | integer  | (0-5) level of Geant4 event level print out for all               |
+|                                  |          | events.                                                           |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingBDSIM             | Boolean  | Extra print out for all steps of all particles from BDSIM         |
+|                                  |          | for events in the range according to `verboseSteppingEventStart`  |
+|                                  |          | and `verboseSteppingEventContinueFor`. Default is all events.     |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingLevel             | integer  | (0-5) level of Geant4 print out per step of each particle. This   |
+|                                  |          | done according to the range of `verboseSteppingEventStart, and    |
+|                                  |          | `verboseSteppingEventContinueFor`. Default is all events and all  |
+|                                  |          | particles.                                                        |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingEventStart        | integer  | Event offset (zero counting) to start stepping print out          |
+|                                  |          | according to `verboseSteppingLevel`.                              |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingEventContinueFor  | integer  | Number of events to continue print out stepping information for   |
+|                                  |          | according to `verboseSteppingLevel`.                              |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingPrimaryOnly       | Boolean  | If true, only print out stepping information for the primary.     |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseImportanceSampling        | integer  | (0-5) level of importance sampling related print out.             |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseStep                      | Boolean  | Whether to use the verbose stepping action for every              |
+|                                  |          | step. Note, this is a lot of output.                              |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSteppingLevel             | integer  | (0-5) level of Geant4 stepping level print out. The same          |
+|                                  |          | as `-\\-verbose_G4stepping=X` executable option.                  |
++----------------------------------+----------+-------------------------------------------------------------------+
+| verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same          |
+|                                  |          | as `-\\-verbose_G4tracking=X` executable option.                  |
++----------------------------------+----------+-------------------------------------------------------------------+
 
 Examples: ::
 
-  option, verboseEventNumber=3,
-          verboseEventNumberLevel=2;
+  option, verboseEventStart=3,
+          verboseEventLevel=2;
 
 This will print out verbose stepping information for the primary particle (default is only the primary)
-for the 4th event (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
-example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`.
+for the 4th event onwwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`. This will print out for
+every event after this.  Another example is: ::
 
+  option, verboseSteppingEventStart=3,
+          verboseSteppingLevel=2,
+	  verboseSteppingEventContinueFor=1,
+	  verboseSteppingPrimaryOnly=0;
+
+This will print out verbose stepping information for all particles starting from the 4th event for 1 event.
+
+::
+
+   bdsim --file=sm.gmad --batch --ngenerate=10 --verboseSteppingLevel=2 --verboseSteppingEventStart=3 \\
+         --verboseSteppingEventContinueFor=1 --verboseSteppingPrimaryOnly
+
+This will print out the volume name for each step of the primary particle (only) for event #3 (the 4th event).
+	 
 .. _beamline-offset:
 
 Offset for Main Beam Line
@@ -4745,8 +4782,8 @@ Apart from the design particle and energy, a beam of particles of a different sp
 energy may be specified. By default, if only one particle is specified this is assumed to be
 both the design particle and the particle used for the beam distribution.
 
-.. note:: The design energy is required to be specified, but the central energy, of say
-	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
+.. note:: The design energy is required to be specified, but the central energy, of
+	  a bunch, for example with a Gaussian distribution, can be specified with `E0`.
 
 .. note:: `energy` here is the **total energy** of the particle. This must be greater than
 	  the rest mass of the particle.
@@ -4851,10 +4888,22 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
 
-.. note:: This will not work when using an event generator file. Using an event generator
-	  file requires the particle table in Geant4 be loaded and this can only be done
-	  in a full run where we construct the model. By default, the generate primaries
-	  only, only generates coordinates and does not build a Geant4 model.
+* The exact coordinates generated will not be the same as those generated in a run, even
+  with the same seed. This is because the physics models will also advanced the random
+  number generator, where as with :code:`--generatePrimariesOnly`, only the bunch distribution
+  generator will. For a large number of primaries (at least 100), the option
+  :code:`offsetSampleMean` can be used with Gaussian distributions to pre-generate the coordinates
+  before the run. In this case, they would be consistent.
+* This will not work when using an event generator file. Using an event generator
+  file requires the particle table in Geant4 be loaded and this can only be done
+  in a full run where we construct the model. By default, the generate primaries
+  only option only generates coordinates and does not build a Geant4 model.
+
+.. warning:: In a conventional run of BDSIM, after a set of coordinates are generated, a check
+	     is made to ensure the total energy chosen is greater than the rest mass of the
+	     particle. This check is **not** done in the case of :code:`--generatePrimariesOnly`.
+	     Therefore, it's possible to generate values of total energy below the rest mass of
+	     the beam particle.
 
 
 Beam in Output
@@ -4921,6 +4970,7 @@ The following beam distributions are available in BDSIM
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
+- `sphere`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -4953,6 +5003,8 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Z0`                             | Longitudinal position [m]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
+| `S0`                             | Curvilinear S offset [m]                              | 0        |
++----------------------------------+-------------------------------------------------------+----------+
 | `T0`                             | Longitudinal position [s]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 | `Xp0`                            | Horizontal canonical momentum                         | 0        |
@@ -4961,6 +5013,12 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
+
+* `S0` allows the beam to be translated to a certain point in the beam line, where the beam
+  coordinates are with respect to the curvilinear frame at that point in the beam line.
+* `S0` and `Z0` cannot both be set - BDSIM will exit with a warning if this conflicting input is given.
+* If `S0` is used, the local coordinates are generated and then transformed to that point in the beam line.
+  Each set of coordinates will be stored in the output under `Primary` (local) and `PrimaryGlobal` (global).
 
 Examples: ::
 
@@ -5317,6 +5375,7 @@ Example::
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
 
+.. _beam-composite:
 
 composite
 ^^^^^^^^^
@@ -5437,35 +5496,38 @@ Examples:
 
 Acceptable tokens for the columns are:
 
-+------------+------------------------+
-| **Token**  |  **Description**       |
-+============+========================+
-| "E"        | Total energy           |
-+------------+------------------------+
-| "Ek"       | Kinetic energy         |
-+------------+------------------------+
-| "P"        | Momentum               |
-+------------+------------------------+
-| "t"        | Time                   |
-+------------+------------------------+
-| "x"        | Horizontal position    |
-+------------+------------------------+
-| "y"        | Vertical position      |
-+------------+------------------------+
-| "z"        | Longitudinal position  |
-+------------+------------------------+
-| "xp"       | Horizontal angle       |
-+------------+------------------------+
-| "yp"       | Vertical angle         |
-+------------+------------------------+
-| "zp"       | Longitudinal           |
-+------------+------------------------+
-| "pt"       | PDG particle ID        |
-+------------+------------------------+
-| "w"        | Weight                 |
-+------------+------------------------+
-| "-"        | Skip this column       |
-+------------+------------------------+
++------------+----------------------------------------+
+| **Token**  |  **Description**                       |
++============+========================================+
+| "E"        | Total energy                           |
++------------+----------------------------------------+
+| "Ek"       | Kinetic energy                         |
++------------+----------------------------------------+
+| "P"        | Momentum                               |
++------------+----------------------------------------+
+| "t"        | Time                                   |
++------------+----------------------------------------+
+| "x"        | Horizontal position                    |
++------------+----------------------------------------+
+| "y"        | Vertical position                      |
++------------+----------------------------------------+
+| "z"        | Longitudinal position                  |
++------------+----------------------------------------+
+| "xp"       | Horizontal angle                       |
++------------+----------------------------------------+
+| "yp"       | Vertical angle                         |
++------------+----------------------------------------+
+| "zp"       | Longitudinal angle                     |
++------------+----------------------------------------+
+| "S"        | Global path length displacement,       |
+|            | not to be used in conjunction with "z".|
++------------+----------------------------------------+
+| "pt"       | PDG particle ID                        |
++------------+----------------------------------------+
+| "w"        | Weight                                 |
++------------+----------------------------------------+
+| "-"        | Skip this column                       |
++------------+----------------------------------------+
 
 **Energy Units**
 "eV", "KeV", "MeV", "GeV", "TeV"
@@ -5576,8 +5638,29 @@ examples: ::
 	distrType = "eventgeneratorfile:hepmc3",
 	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
 
+sphere
+^^^^^^
 
+The `sphere` distribution generates a distribution with a uniform random direction at one location.
+Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
+momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
+Marsaglia (1972) method.
 
+* `Xp0`, `Yp0`, `Zp0` are ignored.
+* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
+* No energy spread.
+
+If an energy spread is desired, please use a :ref:`beam-composite` distribution.
+
+An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+
+  beam, particle = "proton",
+        energy = 1.2*GeV,
+	distrType = "sphere",
+	X0 = 9*cm,
+	Z0 = 0.5*m;
+
+  
 .. _tunnel-geometry:
 
 Tunnel Geometry
@@ -6024,9 +6107,10 @@ More examples can be found in :ref:`crystal-examples`.
 Regions
 -------
 
-In Geant4, it is possible to drive different *regions*- each with their own production cuts and user limits.
-In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
-the user may define additional regions and attach them to the objects desired.  For example::
+In Geant4, it is possible to drive different *regions* - each with their own production cuts and user limits.
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) that applies
+everywhere.  Additionally, the user may define additional regions (using the :code:`cutsregion` object)
+and attach these to the beam line elements desired.  For example::
 
   precisionRegion: cutsregion, prodCutProtons=1*m,
                                prodCutElectrons=10*m,
@@ -6035,7 +6119,49 @@ the user may define additional regions and attach them to the objects desired.  
 
   d1: drift, l=10*m, region="precisionRegion";
 
+The following parameters are available in the `cutsregion` object:
 
++--------------------+----------------------------------------+
+| **Parmater**       | **Description**                        |
++====================+========================================+
+| defaultRangeCut    | The default range cut for this object. |
++--------------------+----------------------------------------+
+| prodCutProtons     | The range cut for protons.             |
++--------------------+----------------------------------------+
+| prodCutPhotons     | The range cut for photons / gammas.    |
++--------------------+----------------------------------------+
+| prodCutElectrons   | The range cut for electrons.           |
++--------------------+----------------------------------------+
+| prodCutPositrons   | The range cut for positrons.           |
++--------------------+----------------------------------------+
+
+A range cut is a length that a secondary particle would have to travel in that
+material. If it would not travel that distance, then it is not tracked and its
+energy deposited there.
+
+Geant4 translates these to an energy scale per particle type per material. This
+method is documented as being much more physically accurate than a simple energy
+cut across all volumes for all particle types. i.e. the computation time can be
+reduced but the physical accuracy maintained in areas of vastly different
+density.
+
+* The default for Geant4 is **1 mm** or **0.7 mm** depending on the version.
+  This approximately corresponds to keV energy scales in air for most particles.
+* The related energies in various materials do not scale linearly or continuously
+  with the range parameter. This is ok.
+
+.. warning:: Setting a length scale longer or larger than the beam line element or
+	     volume the region will be used in may result in inaccurate physics
+	     result and peaks and troughs in energy deposition around boundaries.
+
+* If the `option, defaultRangeCut` is set, this will be the default for the other options
+  if not specified.
+* If `defaultRangeCut` is not specified in a `cutsregion` object, the default for each
+  range will be the corresponding range from the options. e.g. `option, prodCutProtons`
+  will be the default for `prodCutProtons` in a `cutsregion` object if `defaultRangeCut`
+  is not specified in the object.
+* See :code:`bdsim/examples/features/processes/regions` for documented examples.
+  
 .. rubric:: Footnotes
 
 .. _bend-tracking-behaviour:
