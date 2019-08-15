@@ -370,7 +370,7 @@ void BDS::SetRangeCuts(G4VModularPhysicsList* physicsList)
   if (globals->ProdCutProtonsSet())
     {physicsList->SetCutValue(globals->ProdCutProtons(),  "proton");}
 
-  G4cout << __METHOD_NAME__ << "Range cuts (from inspection of physics list)" << G4endl;
+  G4cout << __METHOD_NAME__ << "Range cuts from inspection of the physics list" << G4endl;
   G4cout << __METHOD_NAME__ << "Default production range cut  " << physicsList->GetDefaultCutValue()  << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Photon production range cut   " << physicsList->GetCutValue("gamma")  << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut " << physicsList->GetCutValue("e-")     << " mm" << G4endl;
