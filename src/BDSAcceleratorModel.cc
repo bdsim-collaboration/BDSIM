@@ -25,8 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSScorerHistogramDef.hh"
 #include "BDSRegion.hh"
+#include "BDSScorerHistogramDef.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
