@@ -1,0 +1,38 @@
+c1: rcol, l=0.2*m, material="W", horizontalWidth=2*m;
+l1: line=(c1);
+use, l1;
+
+ambientdose_material: scorer,
+             type="ambientdose",
+             minimumEnergy=1e-11*MeV,
+             maximumEnergy=20*MeV,
+             conversionFactorPath="/Users/rtesse/reps/ULB-Metronu/bdsim-datafiles/data/h10_conversion_factors/",
+             materialFilter="G4_AIR";
+
+ambientdose_particle: scorer,
+             type="ambientdose",
+             minimumEnergy=1e-11*MeV,
+             maximumEnergy=20*MeV,
+             conversionFactorPath="/Users/rtesse/reps/ULB-Metronu/bdsim-datafiles/data/h10_conversion_factors/",
+             particleName="neutron";
+
+! mesh in collimator
+meshCol_mat: scorermesh, nx=2, ny=2, nz=1, scoreQuantity="ambientdose_material",
+	 xsize=2*m-2*um, ysize=2*m-2*um, zsize=20*cm-2*um,
+	 z=10*cm;
+
+meshCol_part: scorermesh, nx=2, ny=2, nz=1, scoreQuantity="ambientdose_particle",
+	 xsize=2*m-2*um, ysize=2*m-2*um, zsize=20*cm-2*um,
+	 z=10*cm;
+
+beam, particle="proton",
+      energy=50*GeV;
+
+option, physicsList="g4FTFP_BERT",
+	defaultRangeCut=1*cm,
+	elossHistoBinWidth=5*mm;
+
+option, minimumKineticEnergy=0.5*GeV;
+
+
+beam, X0 = 0.5*m, Y0 = 0.5*m;
