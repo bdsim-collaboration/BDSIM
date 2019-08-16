@@ -1,0 +1,23 @@
+
+d1: drift, l=10*m;
+l1: line=(d1);
+use, l1;
+
+beam, particle="e-",
+      energy=10*GeV,
+      X0=50*cm,
+      Y0=50*cm;
+
+electronFlux: scorer, type="population", particleName="e-";
+
+option, physicsList="em";
+
+
+BLM: blm,
+     s=0.5*m,
+     side="top",
+     geometryType="cylinder",
+     blmMaterial="Si",
+     blm1=25*cm,
+     blm2=4.5*cm,
+     scoreQuantity="electronFlux";
