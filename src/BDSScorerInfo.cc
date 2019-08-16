@@ -65,11 +65,13 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particlePDGID);
     }
-  else (!(scorer.particleName.empty()))
+  else if (!(scorer.particleName.empty()))
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       particle = particleTable->FindParticle(scorer.particleName);
     }
+  else
+    {throw BDSException(__METHOD_NAME__, "no particle defined in either particlePDGID or particleName");}
   
   if (!particle)
     {throw BDSException(__METHOD_NAME__, "Particle not found for scorer "+ scorer.name);}
