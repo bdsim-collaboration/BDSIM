@@ -79,7 +79,9 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
 }
 
 BDSScorerQuantity3D::~BDSScorerQuantity3D()
-{;}
+{
+  delete conversionFactor;
+}
 
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {

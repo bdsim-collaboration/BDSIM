@@ -64,7 +64,12 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
 }
 
 BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
-{;}
+{
+  delete conversionFactor_protons;
+  delete conversionFactor_neutrons;
+  delete conversionFactor_gammas;
+  delete conversionFactor_electrons;
+}
 
 G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double energy) const
 {
