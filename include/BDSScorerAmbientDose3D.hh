@@ -19,9 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERAMBIENTDOSE3D_H
 #define BDSSCORERAMBIENTDOSE3D_H
 
+#include "BDSScorerQuantity3D.hh"
+
 #include "globals.hh"
-#include "G4THitsMap.hh"
-#include "G4VPrimitiveScorer.hh"
 
 class BDSHistBinMapper3D;
 class G4PhysicsVector;
@@ -32,7 +32,7 @@ class G4PhysicsVector;
  * @author Robin Tesse
  */
 
-class BDSScorerAmbientDose3D: public G4VPrimitiveScorer
+class BDSScorerAmbientDose3D: public BDSScorerQuantity3D
 {
 public:
   BDSScorerAmbientDose3D(const G4String            scorer_name,
@@ -48,33 +48,14 @@ public:
   virtual ~BDSScorerAmbientDose3D() override;
 
 public:
-  void Initialize(G4HCofThisEvent* HCE) override;
-  void EndOfEvent(G4HCofThisEvent* HCE) override;
-  void clear() override;
-  G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
-  G4int  GetIndex(G4Step* aStep) override;
-  G4double GetConversionFactor(G4int particleID, G4double energy);
+  virtual G4double GetConversionFactor(G4int particleID, G4double energy) const override;
   
 private:
-  G4int                 HCID3D;   ///< Collection ID.
-  G4THitsMap<G4double>* EvtMap3D; ///< Hits map.
-  
-  /// @{ Depth in replica to look for each dimension.
-  G4int fDepthi;
-  G4int fDepthj;
-  G4int fDepthk;
-  /// @}
-  
   /// Conversion factor interpolator object.
   G4PhysicsVector* conversionFactor_protons;
   G4PhysicsVector* conversionFactor_neutrons;
   G4PhysicsVector* conversionFactor_gammas;
   G4PhysicsVector* conversionFactor_electrons;
-  
-  /// Mapping from coordinate systems in mesh to global replica number.
-  const BDSHistBinMapper3D* mapper; ///< We don't own this.
-  
-  std::map<G4VSolid*, G4double> volumeCache;
 };
 
 #endif

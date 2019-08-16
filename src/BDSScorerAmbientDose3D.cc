@@ -47,16 +47,8 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
 					       G4int depi,
 					       G4int depj,
 					       G4int depk):
-  G4VPrimitiveScorer(scorer_name),
-  HCID3D(-1),
-  EvtMap3D(nullptr),
-  fDepthi(depi),fDepthj(depj),fDepthk(depk),
-  mapper(mapperIn)
+  BDSScorerQuantity3D(scorer_name, mapperIn, "nosinglefileused", ni, nj, nk, depi, depj, depk)
 {
-  fNi = ni;
-  fNj = nj;
-  fNk = nk;
-  
   if (pathname.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorer_name + "\" - required");}
   
@@ -74,43 +66,7 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
 BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
 {;}
 
-G4bool BDSScorerAmbientDose3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
-{
-  G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
-  G4double radiation_quantity = 0;
-  
-  // fluence computation
-  if (!BDS::IsFinite(stepLength))
-    {return false;}
-  
-  const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-  G4VSolid* solid = touchable->GetSolid();
-  G4double cubicVolume = 1;
-  auto search = volumeCache.find(solid);
-  if (search == volumeCache.end())
-    {// cache the volume of the volume to avoid repeated calculation
-      // this is simple for a cube, but expensive for a cuttubs
-      cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
-      volumeCache[solid] = cubicVolume;
-    }
-  else
-    {cubicVolume = search->second;}
-  
-  G4double CellFlux = stepLength / cubicVolume;
-  CellFlux *= aStep->GetPreStepPoint()->GetWeight();
-  
-  G4double energy = aStep->GetPreStepPoint()->GetKineticEnergy();
-  
-  G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), energy);
-  radiation_quantity = CellFlux*factor;
-  G4int index = GetIndex(aStep);
-  
-  EvtMap3D->add(index,radiation_quantity);
-  
-  return true;
-}
-
-G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double energy)
+G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double energy) const
 {
   switch (particleID){
   case 2212 : //protons
@@ -129,45 +85,4 @@ G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double 
     return 0;
     break;
   }
-}
-
-void BDSScorerAmbientDose3D::Initialize(G4HCofThisEvent* HCE)
-{
-  EvtMap3D = new G4THitsMap<G4double>(detector->GetName(),
-				      GetName());
-  if (HCID3D < 0)
-    {HCID3D = GetCollectionID(0);}
-  HCE->AddHitsCollection(HCID3D,EvtMap3D);
-}
-
-void BDSScorerAmbientDose3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
-{;}
-
-void BDSScorerAmbientDose3D::clear()
-{
-  EvtMap3D->clear();
-}
-
-G4int BDSScorerAmbientDose3D::GetIndex(G4Step* aStep)
-{
-  const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-  G4int i = touchable->GetReplicaNumber(fDepthi);
-  G4int j = touchable->GetReplicaNumber(fDepthj);
-  G4int k = touchable->GetReplicaNumber(fDepthk);
-  
-  if (i<0 || j<0 || k<0)
-    {
-      G4ExceptionDescription ED;
-      ED << "GetReplicaNumber is negative" << G4endl
-	 << "touchable->GetReplicaNumber(fDepthi) returns i,j,k = "
-	 << i << "," << j << "," << k << " for volume "
-	 << touchable->GetVolume(fDepthi)->GetName() << ","
-	 << touchable->GetVolume(fDepthj)->GetName() << ","
-	 << touchable->GetVolume(fDepthk)->GetName() << G4endl;
-      G4Exception("PSRadiationQuantity3D::GetIndex","DetPS0006",JustWarning,ED);
-    }
-  
-  G4int globalIndex = mapper->GlobalFromIJKIndex(i,j,k); // x,y,z
-  //G4int oldResult = i*fNj*fNk+j*fNk+k;
-  return globalIndex;
 }
