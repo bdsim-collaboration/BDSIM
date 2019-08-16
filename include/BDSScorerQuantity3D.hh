@@ -50,8 +50,8 @@ public:
   G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
   G4int  GetIndex(G4Step* aStep) override;
 
-  virtual G4bool GetConversionFactor(G4int    particleID,
-				     G4double energy) const;
+  virtual G4double GetConversionFactor(G4int    particleID,
+				       G4double energy) const;
   
 private:
   G4int                 HCID3D;   ///< Collection ID.

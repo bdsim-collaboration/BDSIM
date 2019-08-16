@@ -115,8 +115,8 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   return true;
 }
 
-G4bool BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
-						G4double energy) const
+G4double BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
+						  G4double energy) const
 {
   return conversionFactor->Value(energy);
 }
