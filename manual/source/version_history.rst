@@ -241,6 +241,7 @@ Bug Fixes
   physics process. However, the kinetic energy and momentum direction often change due to along-step
   processes that are not identified easily in Geant4. We now detect these changes and correctly identify
   the primary as impacting the wire as the PrimaryFirstHit location.
+* Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 
 Output Changes
 --------------
