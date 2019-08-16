@@ -413,18 +413,18 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
                                        .MaximumAbsTransverse();
 
       // the extent is a half width, so we double it.
-      G4double teleporterWidth = // Also the terminator width.
+      G4double teleporterHorizontalWidth = // Also the terminator width.
           2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
 
 
-      auto terminator = theComponentFactory->CreateTerminator(teleporterWidth);
+      auto terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
       auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
-							      teleporterWidth,
+							      teleporterHorizontalWidth,
 							      teleporterTransform);
       if (teleporter)
 	{

@@ -50,8 +50,8 @@ private:
   /// BDSAcceleratorComponent replacing the user limits on the terminator.
   virtual void Build();
 
-  /// The terminator's width
-  G4double width;
+  /// The terminator's full horizontal width
+  G4double horizontalWidth;
 
   /// Construct a simple box and attach an instance of the customised
   /// BDSTerminatorUserLimits() to it.

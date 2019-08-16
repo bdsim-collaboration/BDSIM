@@ -37,10 +37,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSTeleporter::BDSTeleporter(const G4double length,
-			     const G4double width,
+			     const G4double horizontalWidthIn,
 			     BDSFieldInfo*  vacuumFieldInfoIn):
   BDSAcceleratorComponent("teleporter", length, 0, "teleporter"),
-  width(width),
+  horizontalWidth(horizontalWidthIn),
   vacuumFieldInfo(vacuumFieldInfoIn)
 {;}
 
@@ -67,15 +67,15 @@ void BDSTeleporter::Build()
 void BDSTeleporter::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name+"_container_solid",
-			     width * 0.5,
-			     width * 0.5,
+			     horizontalWidth * 0.5,
+			     horizontalWidth * 0.5,
 			     chordLength*0.5);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
 
   // register extents with BDSGeometryComponent base class
-  SetExtent(BDSExtent(0.5*width, 0.5*width, chordLength*0.5));
+  SetExtent(BDSExtent(0.5*horizontalWidth, 0.5*horizontalWidth, chordLength*0.5));
 }
 
 G4Transform3D BDS::CalculateTeleporterDelta(const BDSBeamline* beamline,

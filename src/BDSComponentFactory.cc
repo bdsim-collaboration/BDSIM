@@ -417,7 +417,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4double      teleporterLength,
-							       const G4double      teleporterWidth,
+							       const G4double      teleporterHorizontalWidth,
 							       const G4Transform3D transformIn)
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
@@ -433,7 +433,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4double   
 	 << "l = " << teleporterLength/CLHEP::m << "m"
 	 << G4endl;
 
-  return( new BDSTeleporter(teleporterLength, teleporterWidth, vacuumFieldInfo));
+  return( new BDSTeleporter(teleporterLength, teleporterHorizontalWidth, vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
