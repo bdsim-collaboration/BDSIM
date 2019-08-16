@@ -102,7 +102,8 @@ void Placement::print()const
 Placement::Placement(const SamplerPlacement& sp):
   geometryFile(""),
   sequence(""),
-  sensitive(false)
+  sensitive(false),
+  side("")
 {
   name      = sp.name;
   referenceElement       = sp.referenceElement;
@@ -123,7 +124,8 @@ Placement::Placement(const SamplerPlacement& sp):
 
 Placement::Placement(const ScorerMesh& sm):
   geometryFile(""),
-  sensitive(false)
+  sensitive(false),
+  side("")
 {
   name      = sm.name;
   sequence  = sm.sequence;
