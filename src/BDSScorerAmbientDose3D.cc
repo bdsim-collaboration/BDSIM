@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UnitsTable.hh"
 
 #include <fstream>
+#include <map>
 #include <string>
 
 #ifdef USE_GZSTREAM
@@ -53,41 +54,48 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
     {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorer_name + "\" - required");}
   
   G4String filePath = BDS::GetFullPath(pathname);
-  
+
+  const std::map<std::string, G4int> files = {{"h10protons.dat",   2212},
+					      {"h10neutrons.dat",  2112},
+					      {"h10photons.dat",   22},
+					      {"h10electrons.dat", 11},
+					      {"h10positrons.dat", -11}};
+
+  G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
   BDSScorerConversionLoader<std::ifstream> loader;
-  
-  //TODO use an option instead of hardcoding the filename
-  conversionFactor_protons = loader.Load(filePath+"/h10protons.dat");
-  conversionFactor_neutrons = loader.Load(filePath+"/h10neutrons.dat");
-  conversionFactor_gammas = loader.Load(filePath+"/h10photons.dat");
-  conversionFactor_electrons = loader.Load(filePath+"/h10electrons.dat");
+  for (const auto& filePDG : files)
+    {
+      G4String uncompressedFile = filePath + filePDG.first;
+      G4String compressedFile   = filePath + filePDG.first+".gz";
+      if (BDS::FileExists(uncompressedFile))
+	{
+	  conversionFactors[filePDG.second] = loader.Load(uncompressedFile);
+	  G4cout << __METHOD_NAME__ << "adding: " << uncompressedFile << G4endl;
+	}
+      else if (BDS::FileExists(compressedFile))
+	{
+#ifdef USE_GZSTREAM
+	  BDSScorerConversionLoader<igzstream> loaderC;
+	  conversionFactors[filePDG.second] = loaderC.Load(compressedFile);
+	  G4cout << __METHOD_NAME__ << "adding: " << compressedFile << G4endl;
+#else
+	  throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
+#endif
+	}
+    }
 }
 
 BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
 {
-  delete conversionFactor_protons;
-  delete conversionFactor_neutrons;
-  delete conversionFactor_gammas;
-  delete conversionFactor_electrons;
+  for (auto conversionFactor : conversionFactors)
+    {delete conversionFactor.second;}
 }
 
 G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double energy) const
 {
-  switch (particleID){
-  case 2212 : //protons
-    return conversionFactor_protons->Value(energy);
-    break;
-  case 2112 : //neutrons
-    return conversionFactor_neutrons->Value(energy);
-    break;
-  case 22 : //gamma
-    return conversionFactor_gammas->Value(energy);
-    break;
-  case 11 : //electron
-    return conversionFactor_electrons->Value(energy);
-    break;
-  default:
-    return 0;
-    break;
-  }
+  auto search = conversionFactors.find(particleID);
+  if (search != conversionFactors.end())
+    {return search->second->Value(energy);}
+  else
+    {return 0;}
 }

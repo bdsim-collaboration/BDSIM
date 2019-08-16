@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <map>
+
 class BDSHistBinMapper3D;
 class G4PhysicsVector;
 
@@ -51,11 +53,7 @@ public:
   virtual G4double GetConversionFactor(G4int particleID, G4double energy) const override;
   
 private:
-  /// Conversion factor interpolator object.
-  G4PhysicsVector* conversionFactor_protons;
-  G4PhysicsVector* conversionFactor_neutrons;
-  G4PhysicsVector* conversionFactor_gammas;
-  G4PhysicsVector* conversionFactor_electrons;
+  std::map<G4int, G4PhysicsVector*> conversionFactors;
 };
 
 #endif
