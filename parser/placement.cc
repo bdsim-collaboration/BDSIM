@@ -160,4 +160,5 @@ Placement::Placement(const BLMPlacement& bp):
   axisZ     = bp.axisZ;
   angle     = bp.angle;
   axisAngle = bp.axisAngle;
+  side      = bp.side;
 }
