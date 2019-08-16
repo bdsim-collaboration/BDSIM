@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -26,12 +26,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSScorerHistogramDef.hh"
+#include "BDSRegion.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
-#include "G4ProductionCuts.hh"
-#include "G4Region.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSolid.hh"
 #include "G4VUserParallelWorld.hh"
@@ -40,6 +39,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 #include <vector>
+
+class G4Region;
 
 BDSAcceleratorModel* BDSAcceleratorModel::instance = nullptr;
 
@@ -66,11 +67,11 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
 {
   // User feedback as deletion can take some time
   G4cout << "BDSAcceleratorModel> Deleting model" << G4endl;
-  
+
   delete worldPV;
   delete worldLV;
   delete worldSolid;
-  
+
   delete tunnelBeamline;
   delete placementBeamline;
   delete blmsBeamline;
@@ -79,21 +80,19 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
     {delete world;}
 
   mainBeamlineSet.DeleteContents();
-  
+
   for (auto& bl : extraBeamlines)
     {bl.second.DeleteContents();}
-  
+
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
   for (auto f : fields)
     {delete f;}
-  for (auto r : regions)
-    {delete r.second;}
+  for (auto r : regionStorage)
+    {delete r;}
   for (auto a : apertures)
     {delete a.second;}
-  for (auto c : cuts)
-    {delete c.second;}
 
   for (auto vr : volumeRegistries)
     {delete vr.second;}
@@ -123,7 +122,7 @@ const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
 {
   if (name == "main")
     {return mainBeamlineSet;}
-  
+
   const auto search = extraBeamlines.find(name);
   if (search == extraBeamlines.end())
     {throw BDSException(__METHOD_NAME__, "No such beam line set \"" + name + "\"");}
@@ -131,11 +130,10 @@ const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
     {return search->second;}
 }
 
-void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut)
+void BDSAcceleratorModel::RegisterRegion(BDSRegion* region)
 {
-  G4String name = region->GetName();
-  regions[name] = region;
-  cuts[name]    = cut;
+  regions[region->name] = region;
+  regionStorage.insert(region);
 }
 
 void BDSAcceleratorModel::RegisterApertures(const std::map<G4String, BDSApertureInfo*>& aperturesIn)
@@ -156,7 +154,7 @@ G4Region* BDSAcceleratorModel::Region(G4String name) const
 {
   auto result = regions.find(name);
   if (result != regions.end())
-    {return result->second;}
+    {return result->second->g4region;}
   else
     {
       G4cerr << "Invalid region name \"" << name << "\"" << G4endl;

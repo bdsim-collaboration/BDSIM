@@ -163,6 +163,7 @@ public:
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
   inline G4double ProdCutPositrons()         const {return G4double(options.prodCutPositrons)*CLHEP::m;}
   inline G4double ProdCutProtons()           const {return G4double(options.prodCutProtons)*CLHEP::m;}
+  inline G4bool   DefaultRangeCutsSet()      const {return G4bool  (options.HasBeenSet("defaultRangeCut"));}
   inline G4bool   ProdCutPhotonsSet()        const {return G4bool  (options.HasBeenSet("prodCutPhotons"));}
   inline G4bool   ProdCutElectronsSet()      const {return G4bool  (options.HasBeenSet("prodCutElectrons"));}
   inline G4bool   ProdCutPositronsSet()      const {return G4bool  (options.HasBeenSet("prodCutPositrons"));}
