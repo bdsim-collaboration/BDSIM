@@ -49,6 +49,7 @@ void Placement::clear()
   angle = 0;
   sensitive     = true;
   axisAngle     = false;
+  side          = "";
 }
 
 void Placement::PublishMembers()
@@ -71,6 +72,7 @@ void Placement::PublishMembers()
   publish("angle",         &Placement::angle);
   publish("sensitive",     &Placement::sensitive);
   publish("axisAngle",     &Placement::axisAngle);
+  publish("side",          &Placement::side);
 }
 
 void Placement::print()const
@@ -93,7 +95,8 @@ void Placement::print()const
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
 	    << "sensitive "     << sensitive     << std::endl
-	    << "axisAngle "     << axisAngle     << std::endl;
+	    << "axisAngle "     << axisAngle     << std::endl
+	    << "side "          << side          << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
