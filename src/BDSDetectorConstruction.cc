@@ -382,7 +382,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
     }
 
   // Special circular machine bits
-  // Add terminator to do ring turn counting logic
+  // Add terminator to do ring turn counting logic and kill particles
   // Add teleporter to account for slight ring offset
   if (beamlineIsCircular && !massWorld->empty())
     {
@@ -392,38 +392,26 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
 
-      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {
-        return ble->GetBeamPipeInfo() != nullptr;
-      };
-      auto firstElementWithBPInfo =
-	std::find_if(massWorld->begin(), massWorld->end(), hasBeamPipeInfo);
-      auto lastElementWithBPInfo =
-	std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
+      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {return ble->GetBeamPipeInfo() != nullptr;};
+      auto firstElementWithBPInfo = std::find_if(massWorld->begin(),  massWorld->end(),  hasBeamPipeInfo);
+      auto lastElementWithBPInfo  = std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
 
-      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)
-                                        ->GetBeamPipeInfo()
-                                        ->Extent()
-                                        .MaximumAbsTransverse();
+      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+      G4double lastbeamPipeMaxExtent  = (*lastElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
 
-      G4double lastbeamPipeMaxExtent = (*lastElementWithBPInfo)
-                                       ->GetBeamPipeInfo()
-                                       ->Extent()
-                                       .MaximumAbsTransverse();
-
-      // the extent is a half width, so we double it.
-      G4double teleporterHorizontalWidth = // Also the terminator width.
-          2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
-
-
-      auto terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
+      // the extent is a half width, so we double it - also the terminator width.
+      G4double teleporterHorizontalWidth = 2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
+      
+      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
-      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
-							      teleporterHorizontalWidth,
-							      teleporterTransform);
+      
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+										  teleporterHorizontalWidth,
+										  teleporterTransform);
       if (teleporter)
 	{
 	  teleporter->Initialise();
