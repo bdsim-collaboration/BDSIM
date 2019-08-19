@@ -38,6 +38,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
+                                         const BDSHistBinMapper3D* mapperIn,
+                                         G4int ni,
+                                         G4int nj,
+                                         G4int nk,
+                                         G4int depi,
+                                         G4int depj,
+                                         G4int depk):
+        G4VPrimitiveScorer(scorer_name),
+        HCID3D(-1),
+        EvtMap3D(nullptr),
+        fDepthi(depi),fDepthj(depj),fDepthk(depk),
+        mapper(mapperIn)
+{
+    fNi = ni;
+    fNj = nj;
+    fNk = nk;
+}
 
 BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
 					 const BDSHistBinMapper3D* mapperIn,
@@ -57,7 +75,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
   fNi = ni;
   fNj = nj;
   fNk = nk;
-  
+
   if (filename.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorer_name + "\" - required");}
 
@@ -112,7 +130,7 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), energy);
   radiation_quantity = CellFlux*factor;
   G4int index = GetIndex(aStep);
-  
+
   EvtMap3D->add(index, radiation_quantity);
   return true;
 }

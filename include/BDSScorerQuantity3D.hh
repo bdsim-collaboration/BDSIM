@@ -35,13 +35,19 @@ class G4PhysicsVector;
 class BDSScorerQuantity3D: public G4VPrimitiveScorer
 {
 public:
-  BDSScorerQuantity3D(const G4String            scorer_name,
+
+    BDSScorerQuantity3D(const G4String            scorer_name,
+                        const BDSHistBinMapper3D* mapperIn,
+                        G4int ni=1,G4int nj=1, G4int nk=1,
+                        G4int depi=2, G4int depj=1, G4int depk=0);
+
+    BDSScorerQuantity3D(const G4String            scorer_name,
 		      const BDSHistBinMapper3D* mapperIn,
 		      const G4String           filename,
 		      G4int ni=1,G4int nj=1, G4int nk=1,
 		      G4int depi=2, G4int depj=1, G4int depk=0);
   
-  virtual ~BDSScorerQuantity3D() override;
+    virtual ~BDSScorerQuantity3D() override;
   
 public:
   void Initialize(G4HCofThisEvent* HCE) override;
