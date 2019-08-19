@@ -163,6 +163,9 @@ public:
 					    G4double y = 0,
 					    G4int* indexOfFoundElement = nullptr) const;
 
+  const BDSBeamlineElement *
+  GetElementFromGlobalS(G4double s, G4int *indexOfFoundElement = nullptr) const;
+
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.
   std::vector<G4double> GetEdgeSPositions() const;

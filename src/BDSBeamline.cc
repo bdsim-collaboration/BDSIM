@@ -593,6 +593,17 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
+const BDSBeamlineElement*
+BDSBeamline::GetElementFromGlobalS(G4double s,
+                                   G4int *indexOfFoundElement) const {
+  // find element that s position belongs to
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
+  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  if (indexOfFoundElement)
+    {*indexOfFoundElement = index;}
+  return beamline.at(index);
+}
+
 G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y,
 						       G4int* indexOfFoundElement) const
 {
@@ -606,18 +617,14 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
       return G4Transform3D();
     }
 
-  // find element that s position belongs to
-  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
-  G4int index = lower - sEnd.begin(); // subtract iterators to get index
-  const BDSBeamlineElement* element = beamline.at(index);
+  const auto element = GetElementFromGlobalS(s, indexOfFoundElement);
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "S position requested: " << s     << G4endl;
-  G4cout << "Index:                " << index << G4endl;
+  G4cout << "Index:                " << indexOfFoundElement << G4endl;
   G4cout << "Element: " << *element << G4endl;
 #endif
-  if (indexOfFoundElement)
-    {*indexOfFoundElement = index;}
 
   G4double dx = 0;
   // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
