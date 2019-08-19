@@ -48,7 +48,7 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
 					       G4int depi,
 					       G4int depj,
 					       G4int depk):
-  BDSScorerQuantity3D(scorer_name, mapperIn, "nosinglefileused", ni, nj, nk, depi, depj, depk)
+  BDSScorerQuantity3D(scorer_name, mapperIn, ni, nj, nk, depi, depj, depk)
 {
   if (pathname.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorer_name + "\" - required");}
