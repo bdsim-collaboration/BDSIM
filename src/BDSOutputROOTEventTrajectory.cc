@@ -174,7 +174,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 				      mom.getY(),
 				      mom.getZ()));
 	  trajectoryS.push_back(point->GetPreS() / CLHEP::m);
-	  preTime.push_back(point->GetPreGlobalTime());
+	  preTime.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 	}
       
       trajectories.push_back(trajectory);
