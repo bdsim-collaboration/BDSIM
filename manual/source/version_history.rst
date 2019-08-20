@@ -52,6 +52,8 @@ New Features
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 
 * New options:
 
