@@ -1126,15 +1126,25 @@ namespace {
     auto out = G4ThreeVector(0., 0., 0.);
     auto side = placement.side;
 
+    const G4double ls = // Multiplied by 5 because it works...
+      5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
 
     if (side == "top")
-      {out.setY(extent1.YPos() + extent2.YPos());}
+      {
+	out.setY(extent1.YPos() + extent2.YPos() + ls);
+	auto xOffset = extent1.XPos() - 0.5*extent1.DX() ;
+	out.setX(xOffset);
+      }
     else if (side == "bottom")
-      {out.setY(extent1.YNeg() + extent2.YNeg());}
+      {
+	out.setY(extent1.YNeg() + extent2.YNeg() - ls);
+	auto xOffset = extent1.XPos() - 0.5*extent1.DX() ;
+	out.setX(xOffset);
+      }
     else if (side == "left")
-      {out.setX(extent1.XPos() + extent2.XPos());}
+      {out.setX(extent1.XPos() + extent2.XPos() + ls);}
     else if (side == "right")
-      {out.setX(extent1.XNeg() + extent2.XNeg());}
+      {out.setX(extent1.XNeg() + extent2.XNeg() - ls);}
     else if (side != "")
       {throw BDSException(std::string("Unknown side in placement: " + side));}
     return out;
