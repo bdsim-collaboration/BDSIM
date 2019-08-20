@@ -157,15 +157,18 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.blm3 * CLHEP::m,
 				     bp.blm4 * CLHEP::m,
 				     sd);
-      
-      G4double length = blm->GetExtent().DZ();
+      auto blmExtent = blm->GetExtent();
+      G4double length = blmExtent.DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
 							blm,
 							length);
 
       G4double S = -1000;
-      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine, &S);
-      // do a little checking here as transform code in CreatePlacement can't know who's calling it to warn
+      G4Transform3D transform =
+          BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine,
+                                                            &S, &blmExtent);
+      // do a little checking here as transform code in CreatePlacement can't
+      // know who's calling it to warn
       if (BDS::IsFinite(bp.s) && transform == G4Transform3D::Identity)
 	{throw BDSException(__METHOD_NAME__, "the S coordinate (" + std::to_string(bp.s) + " m) for blm \"" + bp.name + "\" was not found in the beam line - please check");}
       

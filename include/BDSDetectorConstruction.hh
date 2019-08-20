@@ -113,7 +113,8 @@ public:
   /// updated with the final S coordinate calculated.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine,
-						G4double*              S = nullptr);
+						G4double*              S = nullptr,
+						BDSExtent*             placementExtent=nullptr);
 
   /// Create a sampler placement transform. Turns the sampler placement into a
   /// placement and uses the above function.
@@ -124,7 +125,8 @@ public:
   /// Create a sampler placement from a blm plcement.
   static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
 						const BDSBeamline*        bemaLine,
-						G4double*                 S = nullptr);
+						G4double*                 S = nullptr,
+						BDSExtent*                blmExtent=nullptr);
     
   // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.

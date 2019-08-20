@@ -99,6 +99,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <vector>
 
+namespace {
+  G4ThreeVector SideToLocalOffset(const GMAD::Placement &placement,
+				  const BDSExtent       &extent1,
+				  const BDSExtent       &extent2);
+}
+
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
   designParticle(nullptr),
@@ -697,7 +703,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine,
-								G4double*              S)
+								G4double*              S,
+								BDSExtent*             placementExtent)
 {
   G4Transform3D result;
 
@@ -749,17 +756,39 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
       if (S)
 	{*S = sCoordinate;}
-      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
-									 placement.x*CLHEP::m,
-									 placement.y*CLHEP::m);
+
+
+      auto offset = G4ThreeVector(0, 0, 0);
+      if (placementExtent)
+	{
+	auto elementExtent = element->GetExtent();
+	offset = SideToLocalOffset(placement, elementExtent, *placementExtent);
+	}
+
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(
+          sCoordinate,
+	  placement.x * CLHEP::m + offset.x(),
+          placement.y * CLHEP::m + offset.y());
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;      
     }
   else if (BDS::IsFinite(placement.s))
     {// scenario 2
-      G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
-									  placement.x*CLHEP::m,
-									  placement.y*CLHEP::m);
+
+      auto offset = G4ThreeVector(0, 0, 0);
+      if (placementExtent)
+	{
+	  auto elementExtent =
+	    beamLine->GetElementFromGlobalS(placement.s*CLHEP::m)->GetExtent();
+          offset =
+              SideToLocalOffset(placement, elementExtent, *placementExtent);
+        }
+
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(
+          placement.s * CLHEP::m,
+	  placement.x * CLHEP::m + offset.x(),
+          placement.y * CLHEP::m + offset.y());
+
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
       if (S)
@@ -800,11 +829,12 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Samp
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
 								const BDSBeamline*        beamLine,
-								G4double*                 S)
+								G4double*                 S,
+								BDSExtent*                blmExtent)
 {
   // convert a sampler placement to a general placement for generation of the transform.
-  GMAD::Placement convertedPlacement(blmPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+  GMAD::Placement convertedPlacement(blmPlacement);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent);
 }
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
@@ -1083,4 +1113,30 @@ void BDSDetectorConstruction::ConstructMeshes()
       // multifunctionaldetector and therefore has the complete name of the scorer collection
       BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames); 
     }
+}
+
+
+//  Attach component with extent2 to component with extent1 with
+//  placement.
+namespace {
+  G4ThreeVector SideToLocalOffset(const GMAD::Placement &placement,
+				  const BDSExtent       &extent1,
+				  const BDSExtent       &extent2)
+  {
+    auto out = G4ThreeVector(0., 0., 0.);
+    auto side = placement.side;
+
+
+    if (side == "top")
+      {out.setY(extent1.YPos() + extent2.YPos());}
+    else if (side == "bottom")
+      {out.setY(extent1.YNeg() + extent2.YNeg());}
+    else if (side == "left")
+      {out.setX(extent1.XPos() + extent2.XPos());}
+    else if (side == "right")
+      {out.setX(extent1.XNeg() + extent2.XNeg());}
+    else if (side != "")
+      {throw BDSException(std::string("Unknown side in placement: " + side));}
+    return out;
+  }
 }
