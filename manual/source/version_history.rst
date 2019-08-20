@@ -244,6 +244,7 @@ Bug Fixes
   processes that are not identified easily in Geant4. We now detect these changes and correctly identify
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
+* Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
 
 Output Changes
 --------------
