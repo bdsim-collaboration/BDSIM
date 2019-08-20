@@ -62,6 +62,7 @@ namespace GMAD
     bool   sensitive;     ///< Whether to record hits or not.
     bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
     std::string side;     ///< which side to attach to: top, bottom, left, right.
+    double sideOffset;    ///< Gap between side and component.
 
     /// constructor
     Placement();

@@ -1126,8 +1126,11 @@ namespace {
     auto out = G4ThreeVector(0., 0., 0.);
     auto side = placement.side;
 
-    const G4double ls = // Multiplied by 5 because it works...
+    G4double ls = // Multiplied by 5 because it works...
       5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
+
+    if (placement.sideOffset)
+      {ls = placement.sideOffset;}
 
     if (side == "top")
       {
