@@ -52,9 +52,9 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
         fDepthi(depi),fDepthj(depj),fDepthk(depk),
         mapper(mapperIn)
 {
-    fNi = ni;
-    fNj = nj;
-    fNk = nk;
+  fNi = ni;
+  fNj = nj;
+  fNk = nk;
 }
 
 BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,

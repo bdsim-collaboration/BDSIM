@@ -35,46 +35,49 @@ class G4PhysicsVector;
 class BDSScorerQuantity3D: public G4VPrimitiveScorer
 {
 public:
-
-    BDSScorerQuantity3D(const G4String            scorer_name,
-                        const BDSHistBinMapper3D* mapperIn,
-                        G4int ni=1,G4int nj=1, G4int nk=1,
-                        G4int depi=2, G4int depj=1, G4int depk=0);
-
-    BDSScorerQuantity3D(const G4String            scorer_name,
+  /// Constructor where no conversion factor file is provided and all cell fluxes just
+  /// use conversion factor 1.0.
+  BDSScorerQuantity3D(const G4String            scorer_name,
 		      const BDSHistBinMapper3D* mapperIn,
-		      const G4String           filename,
-		      G4int ni=1,G4int nj=1, G4int nk=1,
+		      G4int ni=1, G4int nj=1, G4int nk=1,
 		      G4int depi=2, G4int depj=1, G4int depk=0);
-  
-    virtual ~BDSScorerQuantity3D() override;
+
+  /// Constructor where conversion factor file is provided and loaded into a physics vector.
+  /// Cell fluxes are multiplied by the factor as a function of the particle kinetic energy.
+  BDSScorerQuantity3D(const G4String            scorer_name,
+		      const BDSHistBinMapper3D* mapperIn,
+		      const G4String            filename,
+		      G4int ni=1, G4int nj=1, G4int nk=1,
+		      G4int depi=2, G4int depj=1, G4int depk=0);
+
+  virtual ~BDSScorerQuantity3D() override;
   
 public:
-  void Initialize(G4HCofThisEvent* HCE) override;
-  void EndOfEvent(G4HCofThisEvent* HCE) override;
-  void clear() override;
+  void   Initialize(G4HCofThisEvent* HCE) override;
+  void   EndOfEvent(G4HCofThisEvent* HCE) override;
+  void   clear() override;
   G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
   G4int  GetIndex(G4Step* aStep) override;
-
+  
   virtual G4double GetConversionFactor(G4int    particleID,
 				       G4double energy) const;
   
 private:
   G4int                 HCID3D;   ///< Collection ID.
   G4THitsMap<G4double>* EvtMap3D; ///< Hits map.
-
+  
   /// @{ Depth in replica to look for each dimension.
   G4int fDepthi;
   G4int fDepthj;
   G4int fDepthk;
   /// @}
-
+  
   /// Conversion factor interpolator object.
   G4PhysicsVector* conversionFactor;
-
+  
   /// Mapping from coordinate systems in mesh to global replica number.
   const BDSHistBinMapper3D* mapper; ///< We don't own this.
-
+  
   std::map<G4VSolid*, G4double> volumeCache;
 };
 
