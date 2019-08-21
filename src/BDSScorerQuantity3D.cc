@@ -71,6 +71,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
   HCID3D(-1),
   evtMap3D(nullptr),
   fDepthi(depi),fDepthj(depj),fDepthk(depk),
+  conversionFactor(nullptr),
   mapper(mapperIn)
 {
   fNi = ni;
@@ -99,7 +100,9 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
 
 BDSScorerQuantity3D::~BDSScorerQuantity3D()
 {
-  delete conversionFactor;
+    if(conversionFactor){
+        delete conversionFactor;
+    }
 }
 
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
