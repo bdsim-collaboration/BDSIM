@@ -37,14 +37,14 @@ class BDSScorerQuantity3D: public G4VPrimitiveScorer
 public:
   /// Constructor where no conversion factor file is provided and all cell fluxes just
   /// use conversion factor 1.0.
-  BDSScorerQuantity3D(const G4String            scorer_name,
+  BDSScorerQuantity3D(const G4String            scorerName,
 		      const BDSHistBinMapper3D* mapperIn,
 		      G4int ni=1, G4int nj=1, G4int nk=1,
 		      G4int depi=2, G4int depj=1, G4int depk=0);
 
   /// Constructor where conversion factor file is provided and loaded into a physics vector.
   /// Cell fluxes are multiplied by the factor as a function of the particle kinetic energy.
-  BDSScorerQuantity3D(const G4String            scorer_name,
+  BDSScorerQuantity3D(const G4String            scorerName,
 		      const BDSHistBinMapper3D* mapperIn,
 		      const G4String            filename,
 		      G4int ni=1, G4int nj=1, G4int nk=1,
@@ -64,7 +64,7 @@ public:
   
 private:
   G4int                 HCID3D;   ///< Collection ID.
-  G4THitsMap<G4double>* EvtMap3D; ///< Hits map.
+  G4THitsMap<G4double>* evtMap3D; ///< Hits map.
   
   /// @{ Depth in replica to look for each dimension.
   G4int fDepthi;

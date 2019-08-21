@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
                                          const BDSHistBinMapper3D* mapperIn,
                                          G4int ni,
                                          G4int nj,
@@ -46,9 +46,9 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
                                          G4int depi,
                                          G4int depj,
                                          G4int depk):
-  G4VPrimitiveScorer(scorer_name),
+  G4VPrimitiveScorer(scorerName),
   HCID3D(-1),
-  EvtMap3D(nullptr),
+  evtMap3D(nullptr),
   fDepthi(depi),fDepthj(depj),fDepthk(depk),
   conversionFactor(nullptr),
   mapper(mapperIn)
@@ -58,7 +58,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
   fNk = nk;
 }
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
 					 const BDSHistBinMapper3D* mapperIn,
 					 const G4String            filename,
 					 G4int ni,
@@ -67,9 +67,9 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
 					 G4int depi,
 					 G4int depj,
 					 G4int depk):
-  G4VPrimitiveScorer(scorer_name),
+  G4VPrimitiveScorer(scorerName),
   HCID3D(-1),
-  EvtMap3D(nullptr),
+  evtMap3D(nullptr),
   fDepthi(depi),fDepthj(depj),fDepthk(depk),
   mapper(mapperIn)
 {
@@ -78,7 +78,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
   fNk = nk;
 
   if (filename.empty())
-    {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorer_name + "\" - required");}
+    {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorerName + "\" - required");}
 
   G4String filePath = BDS::GetFullPath(filename);
   if (filePath.rfind("gz") != std::string::npos)
@@ -105,7 +105,7 @@ BDSScorerQuantity3D::~BDSScorerQuantity3D()
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
-  G4double radiation_quantity = 0;
+  G4double radiationQuantity = 0;
 
   // fluence computation
   if (!BDS::IsFinite(stepLength))
@@ -124,15 +124,15 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   else
     {cubicVolume = search->second;}
   
-  G4double CellFlux = stepLength / cubicVolume;
-  CellFlux *= aStep->GetPreStepPoint()->GetWeight();
+  G4double cellFlux = stepLength / cubicVolume;
+  cellFlux *= aStep->GetPreStepPoint()->GetWeight();
 
   G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
   G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy);
-  radiation_quantity = CellFlux*factor;
+  radiationQuantity = cellFlux * factor;
   G4int index = GetIndex(aStep);
 
-  EvtMap3D->add(index, radiation_quantity);
+  evtMap3D->add(index, radiationQuantity);
   return true;
 }
 
@@ -144,11 +144,11 @@ G4double BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
 
 void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
 {
-  EvtMap3D = new G4THitsMap<G4double>(detector->GetName(),
+  evtMap3D = new G4THitsMap<G4double>(detector->GetName(),
 				      GetName());
   if (HCID3D < 0)
     {HCID3D = GetCollectionID(0);}
-  HCE->AddHitsCollection(HCID3D,EvtMap3D);
+  HCE->AddHitsCollection(HCID3D, evtMap3D);
 }
 
 void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
@@ -156,7 +156,7 @@ void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
 
 void BDSScorerQuantity3D::clear()
 {
-  EvtMap3D->clear();
+  evtMap3D->clear();
 }
 
 G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)

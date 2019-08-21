@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_name,
+BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorerName,
 					       const BDSHistBinMapper3D* mapperIn,
 					       const G4String            pathname,
 					       G4int ni,
@@ -48,10 +48,10 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorer_
 					       G4int depi,
 					       G4int depj,
 					       G4int depk):
-  BDSScorerQuantity3D(scorer_name, mapperIn, ni, nj, nk, depi, depj, depk)
+  BDSScorerQuantity3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
 {
   if (pathname.empty())
-    {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorer_name + "\" - required");}
+    {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorerName + "\" - required");}
   
   G4String filePath = BDS::GetFullPath(pathname);
 
