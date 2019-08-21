@@ -77,8 +77,6 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 
 void BDSScorerInfo::CheckParticle(G4ParticleDefinition* particleIn, G4String nameIn)
 {
-    if (!particleIn)
-    {
-        throw BDSException(__METHOD_NAME__, "Particle not found for scorer "+ nameIn);
-    }
+  if (!particleIn)
+    {throw BDSException(__METHOD_NAME__, "Particle not found for scorer " + nameIn);}
 }

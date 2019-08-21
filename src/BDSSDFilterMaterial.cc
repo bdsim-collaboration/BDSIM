@@ -18,15 +18,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSSDFilterMaterial.hh"
 
+#include "G4LogicalVolume.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSDFilterMaterial::BDSSDFilterMaterial(G4String name,
+class G4Material;
+
+BDSSDFilterMaterial::BDSSDFilterMaterial(G4String    name,
                                          G4Material* referenceMaterialIn):
-        G4VSDFilter(name),
-        referenceMaterial(referenceMaterialIn)
+  G4VSDFilter(name),
+  referenceMaterial(referenceMaterialIn)
 {;}
 
 BDSSDFilterMaterial::~BDSSDFilterMaterial()
@@ -34,11 +37,11 @@ BDSSDFilterMaterial::~BDSSDFilterMaterial()
 
 G4bool BDSSDFilterMaterial::Accept(const G4Step* aStep) const
 {
-    // get the step in the mass world
-    const G4Step* realWorldStep = aStep->GetTrack()->GetStep();
-
-    // get the material of the logical volume
-    G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
-    G4Material* stepMaterial = stepLV->GetMaterial();
-    return stepMaterial == referenceMaterial;
+  // get the step in the mass world
+  const G4Step* realWorldStep = aStep->GetTrack()->GetStep();
+  
+  // get the material of the logical volume
+  G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+  G4Material* stepMaterial = stepLV->GetMaterial();
+  return stepMaterial == referenceMaterial;
 }
