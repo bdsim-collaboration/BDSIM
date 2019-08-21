@@ -55,11 +55,11 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorerN
   
   G4String filePath = BDS::GetFullPath(pathname);
 
-  const std::map<std::string, G4int> files = {{"h10protons.dat",   2212},
-					      {"h10neutrons.dat",  2112},
-					      {"h10photons.dat",   22},
-					      {"h10electrons.dat", 11},
-					      {"h10positrons.dat", -11}};
+  const std::map<std::string, G4int> files = {{"protons.dat",   2212},
+					      {"neutrons.dat",  2112},
+					      {"photons.dat",   22},
+					      {"electrons.dat", 11},
+					      {"positrons.dat", -11}};
 
   G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
   BDSScorerConversionLoader<std::ifstream> loader;
