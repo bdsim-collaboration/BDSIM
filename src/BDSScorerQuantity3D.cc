@@ -46,11 +46,12 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorer_name,
                                          G4int depi,
                                          G4int depj,
                                          G4int depk):
-        G4VPrimitiveScorer(scorer_name),
-        HCID3D(-1),
-        EvtMap3D(nullptr),
-        fDepthi(depi),fDepthj(depj),fDepthk(depk),
-        mapper(mapperIn)
+  G4VPrimitiveScorer(scorer_name),
+  HCID3D(-1),
+  EvtMap3D(nullptr),
+  fDepthi(depi),fDepthj(depj),fDepthk(depk),
+  conversionFactor(nullptr),
+  mapper(mapperIn)
 {
   fNi = ni;
   fNj = nj;
@@ -138,7 +139,7 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 G4double BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
 						  G4double energy) const
 {
-  return conversionFactor->Value(energy);
+  return conversionFactor ? conversionFactor->Value(kineticEnergy) : 1.0;}
 }
 
 void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
