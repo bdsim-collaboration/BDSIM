@@ -100,9 +100,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
 
 BDSScorerQuantity3D::~BDSScorerQuantity3D()
 {
-    if(conversionFactor){
-        delete conversionFactor;
-    }
+  delete conversionFactor;
 }
 
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
