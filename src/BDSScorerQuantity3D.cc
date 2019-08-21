@@ -127,8 +127,8 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4double CellFlux = stepLength / cubicVolume;
   CellFlux *= aStep->GetPreStepPoint()->GetWeight();
 
-  G4double energy = aStep->GetPreStepPoint()->GetKineticEnergy();
-  G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), energy);
+  G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
+  G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy);
   radiation_quantity = CellFlux*factor;
   G4int index = GetIndex(aStep);
 
@@ -137,9 +137,9 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 }
 
 G4double BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
-						  G4double energy) const
+						  G4double kineticEnergy) const
 {
-  return conversionFactor ? conversionFactor->Value(kineticEnergy) : 1.0;}
+  return conversionFactor ? conversionFactor->Value(kineticEnergy) : 1.0;
 }
 
 void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)

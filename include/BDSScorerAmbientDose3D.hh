@@ -50,7 +50,7 @@ public:
   virtual ~BDSScorerAmbientDose3D() override;
 
 public:
-  virtual G4double GetConversionFactor(G4int particleID, G4double energy) const override;
+  virtual G4double GetConversionFactor(G4int particleID, G4double kineticEnergy) const override;
   
 private:
   std::map<G4int, G4PhysicsVector*> conversionFactors;

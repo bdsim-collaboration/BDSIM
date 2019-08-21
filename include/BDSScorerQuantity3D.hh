@@ -60,7 +60,7 @@ public:
   G4int  GetIndex(G4Step* aStep) override;
   
   virtual G4double GetConversionFactor(G4int    particleID,
-				       G4double energy) const;
+				       G4double kineticEnergy) const;
   
 private:
   G4int                 HCID3D;   ///< Collection ID.

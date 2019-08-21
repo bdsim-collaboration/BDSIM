@@ -91,11 +91,11 @@ BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
     {delete conversionFactor.second;}
 }
 
-G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double energy) const
+G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double kineticEnergy) const
 {
   auto search = conversionFactors.find(particleID);
   if (search != conversionFactors.end())
-    {return search->second->Value(energy);}
+    {return search->second->Value(kineticEnergy);}
   else
     {return 0;}
 }
