@@ -3105,6 +3105,10 @@ in global Cartesian coordinates.
 |                         | By default not attached to any side.  Should be combined with      |
 |                         | either `s` and/or `referenceElement` to determine the element to   |
 |                         | be attached to.  Can be further combined with local `x`, `y`, `z`. |
+|                         | Note: it is up to the user to ensure that overlaps with components |
+|                         | preceding and following the component the BLM is attached to are   |
+|                         | not present.  The option `sideOffset` can be used to aid with      |
+|                         | this.                                                              |
 +-------------------------+--------------------------------------------------------------------+
 | sideOffset              | By default the BLM will be attached flush against the side of the  |
 |                         | given component. Use this to introduce a gap between the BLM and   |
