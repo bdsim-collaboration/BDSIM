@@ -71,9 +71,19 @@ BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
   */
 
   if (!(info->material.empty())) {
-      /// maybe have an array to allow multiple material ?
+      // If we have multiple material, put everything in a vector.
+      std::vector<G4Material*> materialVector;
+      std::istringstream ss(info->material);
+      G4String token;
+
+      while(std::getline(ss, token, ' '))
+      {
+          materialVector.push_back(BDSMaterials::Instance()->GetMaterial(token));
+      }
+
       materialFilter = new BDSSDFilterMaterial("material_filter",
-                                               BDSMaterials::Instance()->GetMaterial(info->material));
+                                               materialVector);
+
   }
 }
 

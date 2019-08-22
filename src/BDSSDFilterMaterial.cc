@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <algorithm>
+
 #include "BDSSDFilterMaterial.hh"
 
 #include "G4LogicalVolume.hh"
@@ -27,9 +29,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class G4Material;
 
 BDSSDFilterMaterial::BDSSDFilterMaterial(G4String    name,
-                                         G4Material* referenceMaterialIn):
-  G4VSDFilter(name),
-  referenceMaterial(referenceMaterialIn)
+                                         std::vector<G4Material*> referenceMaterialIn):
+
+  G4VSDFilter(name),referenceMaterial(referenceMaterialIn)
 {;}
 
 BDSSDFilterMaterial::~BDSSDFilterMaterial()
@@ -43,5 +45,9 @@ G4bool BDSSDFilterMaterial::Accept(const G4Step* aStep) const
   // get the material of the logical volume
   G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
   G4Material* stepMaterial = stepLV->GetMaterial();
-  return stepMaterial == referenceMaterial;
+
+  if (std::find(referenceMaterial.begin(),referenceMaterial.end(), stepMaterial) != referenceMaterial.end() )
+      return TRUE;
+
+  return FALSE;
 }

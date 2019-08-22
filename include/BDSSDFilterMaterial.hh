@@ -21,8 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4VSDFilter.hh"
-
-class G4Material;
+#include "G4Material.hh"
 
 /**
  * @brief SD filter for a particular volume.
@@ -34,7 +33,7 @@ class BDSSDFilterMaterial: public G4VSDFilter
 {
 public:
     BDSSDFilterMaterial(G4String name,
-                        G4Material* referenceMaterialIn);
+                       std::vector<G4Material*> referenceMaterialIn);
 
     virtual ~BDSSDFilterMaterial();
 
@@ -42,7 +41,8 @@ public:
     virtual G4bool Accept(const G4Step* aStep) const;
 
 private:
-    G4Material const* referenceMaterial;
+    std::vector<G4Material*> referenceMaterial;
+
 };
 
 #endif
