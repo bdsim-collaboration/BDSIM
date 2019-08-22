@@ -188,4 +188,9 @@ inline G4bool BDSExtent::TransverselyLessThan(const BDSExtent& r) const
   return xOK && yOK;
 }
 
+namespace BDS {
+  /// Returns the extent which is the greatest extent in all six directions.
+  BDSExtent MaximumCombinedExtent(BDSExtent first, BDSExtent second);
+}
+
 #endif
