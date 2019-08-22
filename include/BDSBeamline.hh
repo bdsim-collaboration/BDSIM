@@ -187,6 +187,9 @@ public:
   G4bool         empty() const {return beamline.empty();}
   ///@}
 
+  /// Returns an iterator to the beamline element at s.
+  const_iterator FindFromS(G4double s) const;
+
   /// Return a pointer to the previous element. First this beamline is
   /// searched for the vector. If there is no such element or no previous
   /// element because it's the beginning, then a nullptr is returned. The

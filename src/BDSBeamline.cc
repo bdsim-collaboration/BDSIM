@@ -604,6 +604,13 @@ BDSBeamline::GetElementFromGlobalS(G4double s,
   return beamline.at(index);
 }
 
+BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double s) const {
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
+  auto iter = begin();
+  std::advance(iter, std::distance(sEnd.begin(), lower));
+  return iter;
+}
+
 G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y,
 						       G4int* indexOfFoundElement) const
 {
