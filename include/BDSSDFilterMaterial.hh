@@ -21,7 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4VSDFilter.hh"
-#include "G4Material.hh"
+#include <vector>
+
+class G4Material;
 
 /**
  * @brief SD filter for a particular volume.
