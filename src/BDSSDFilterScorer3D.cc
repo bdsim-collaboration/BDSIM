@@ -80,12 +80,6 @@ BDSSDFilterScorer3D::BDSSDFilterScorer3D(G4String             name,
       {
           materialVector.push_back(BDSMaterials::Instance()->GetMaterial(token));
       }
-      /*
-      while(std::getline(ss, token, ' '))
-      {
-          materialVector.push_back(BDSMaterials::Instance()->GetMaterial(token));
-      }
-       */
       materialFilter = new BDSSDFilterMaterial("material_filter",
                                                materialVector);
 
