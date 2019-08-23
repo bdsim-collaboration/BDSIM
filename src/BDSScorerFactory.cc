@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
+#include "BDSScorerAmbientDose3D.hh"
 #include "BDSScorerQuantity3D.hh"
 #include "BDSSDFilterScorer3D.hh"
 #include "BDSScorerType.hh"
@@ -49,6 +50,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
   G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name,
 							     info->scorerType,
 							     info->filename,
+							     info->pathname,
 							     mapper,
 							     unit);
 
@@ -61,6 +63,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String                  name,
 							   const BDSScorerType       scorerType,
 							   G4String                  filename,
+							   G4String                  pathname,
 							   const BDSHistBinMapper3D* mapper,
 							   G4double*                 unit)
 {
@@ -115,7 +118,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
       }
     case BDSScorerType::ambientdose:
       {
-	result = new BDSScorerQuantity3D(name,mapper,filename);
+	result = new BDSScorerAmbientDose3D(name,mapper,pathname);
 	break;
 	// TBC unit
       }

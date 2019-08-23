@@ -45,6 +45,8 @@ namespace GMAD
     double      minimumTime;
     double      maximumTime;
     std::string conversionFactorFile;
+    std::string conversionFactorPath;
+    std::string material;
     
     /// Constructor
     Scorer();

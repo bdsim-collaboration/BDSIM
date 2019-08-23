@@ -170,6 +170,9 @@ General
 * When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
   but shouldn't interfere if no ranges are set. This has been changed as the `defaultRangeCut` would be enforced
   in the past even if not set explicitly by the user, causing BDSIM's default 1 mm range to be used.
+* `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
+  only the placement of the container volume of the loaded geometry was checked to see if it overlaps
+  with any other geometry, but nothing internally.
   
 Bug Fixes
 ---------
