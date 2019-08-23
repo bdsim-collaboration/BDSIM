@@ -1159,7 +1159,7 @@ namespace {
       5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
 
     if (placement.sideOffset)
-      {ls = placement.sideOffset;}
+      {ls = placement.sideOffset * CLHEP::m;}
 
     if (side == "top")
       {
