@@ -1,17 +1,11 @@
-d1: drift, l=3*m;
-
+d1: drift, l=10*cm;
 MQY4R1B1: quadrupole,
-	  aper1=0.0289,
-	  aper2=0.024,
-	  aper3=0.0289,
-	  aper4=0.0289,
 	  apertureType="rectellipse",
-	  l=3.4,
+	  l=1*m,
 	  magnetGeometryType="lhcleft",
 	  outerDiameter=0.5;
 
-l1: line=(d1,MQY4R1B1);
-
+l1: line=(MQY4R1B1,d1,MQY4R1B1);
 use, l1;
 
 beam, particle="e-",
@@ -23,7 +17,7 @@ electronFlux: scorer, type="population", particleName="e-";
 
 option, physicsList="em";
 
-blm_position = 3.5*m;
+blm_position = 1.05*m;
 
 BLM_Top: blm,
      s=blm_position,
