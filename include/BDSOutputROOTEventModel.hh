@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 
-#include "TROOT.h"
+#include "Rtypes.h"
 #include "TObject.h"
 #include "TVector3.h"
 #include "TRotation.h"

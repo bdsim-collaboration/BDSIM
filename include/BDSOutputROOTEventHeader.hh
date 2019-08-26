@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTHEADER_H
 #define BDSOUTPUTROOTEVENTHEADER_H
 
-#include "TROOT.h"
+#include "Rtypes.h"
 #include "TObject.h"
 
 /** 

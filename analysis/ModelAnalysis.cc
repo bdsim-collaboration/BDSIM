@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ModelAnalysis.hh"
 
-#include "TROOT.h"
 #include "Model.hh"
 #include "TChain.h"
 
