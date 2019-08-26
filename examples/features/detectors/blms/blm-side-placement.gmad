@@ -42,6 +42,7 @@ BLM_Right: blm,
 BLM_Bottom: blm,
      s=blm_position,
      side="bottom",
+     sideOffset=10*cm,  ! Note the offset here and not any other blm.
      geometryType="cylinder",
      blmMaterial="Si",
      blm1=25*cm,
