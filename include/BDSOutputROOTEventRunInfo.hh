@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TObject.h"
 
 #include <ctime>
+#include <string>
 
 class BDSOutputROOTEventInfo;
 

@@ -26,8 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #endif
 
+#include <cmath>
 #include <map>
 #include <limits>
+#include <string>
 
 /**
  * @brief Geant4 particle data for particles used in simulation

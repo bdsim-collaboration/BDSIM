@@ -21,8 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h"
 #include "TVector3.h"
-#include <vector>
+
 #include <map>
+#include <vector>
 
 #ifndef __ROOTBUILD__
 class BDSHitEnergyDeposition;

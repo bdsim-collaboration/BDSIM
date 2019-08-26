@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "ModelAnalysis.hh"
 
 #include "Model.hh"
-#include "TChain.h"
 
 ClassImp(ModelAnalysis)
 

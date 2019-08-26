@@ -22,8 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "Rtypes.h"
 #include "TObject.h"

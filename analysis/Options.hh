@@ -44,9 +44,8 @@ public:
 			bool                      allBranchesOn    = true,
 			const RBDS::VectorString* branchesToTurnOn = nullptr);
 
-  /// @{ Member that ROOT can map file data to locally.
+  /// Member that ROOT can map file data to locally.
   BDSOutputROOTEventOptions* options;
-  /// @}
 
 private:
   bool debug;
