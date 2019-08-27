@@ -1133,9 +1133,9 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   
   // Fold across the extents returning the greatest extent. The transverse extents
   // will give be the transverse extents of the beamline section.
-  BDSExtent section_max_extent = BDSExtent();
+  BDSExtent sectionMaxExtent = BDSExtent();
   for (auto iter = start; iter != end; ++iter)
-    {section_max_extent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), section_max_extent);}
+    {sectionMaxExtent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), sectionMaxExtent);}
 
   // Multiplied by 5 because it works...
   G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
@@ -1145,20 +1145,20 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   
   if (side == "top")
     {
-      result.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
-      G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      result.setY(sectionMaxExtent.YPos() + placementExtent.YPos() + ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
       result.setX(xOffset);
     }
   else if (side == "bottom")
     {
-      result.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
-      G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      result.setY(sectionMaxExtent.YNeg() + placementExtent.YNeg() - ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
       result.setX(xOffset);
     }
   else if (side == "left")
-    {result.setX(section_max_extent.XPos() + placementExtent.XPos() + ls);}
+    {result.setX(sectionMaxExtent.XPos() + placementExtent.XPos() + ls);}
   else if (side == "right")
-    {result.setX(section_max_extent.XNeg() + placementExtent.XNeg() - ls);}
+    {result.setX(sectionMaxExtent.XNeg() + placementExtent.XNeg() - ls);}
   else if (side != "")
     {throw BDSException(std::string("Unknown side in placement: " + side));}
   return result;
