@@ -127,6 +127,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       sensitiveDetectors[combinedName] = sd;
       SDMan->AddNewDetector(sd);
     }
+  
   BDSSDManager::Instance()->RegisterPrimitiveScorerNames(uniquePrimitiveScorerNames, &scorerUnits);
   
   BDSBeamline* blms = new BDSBeamline();
@@ -157,16 +158,15 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.blm3 * CLHEP::m,
 				     bp.blm4 * CLHEP::m,
 				     sd);
-      auto blmExtent = blm->GetExtent();
+      BDSExtent blmExtent = blm->GetExtent();
       G4double length = blmExtent.DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
 							blm,
 							length);
 
       G4double S = -1000;
-      G4Transform3D transform =
-          BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine,
-                                                            &S, &blmExtent);
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine,
+										  &S, &blmExtent);
       // do a little checking here as transform code in CreatePlacement can't
       // know who's calling it to warn
       if (BDS::IsFinite(bp.s) && transform == G4Transform3D::Identity)

@@ -766,8 +766,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       if (S)
 	{*S = sCoordinate;}
 
-
-      auto offset = G4ThreeVector(0, 0, 0);
+      G4ThreeVector offset = G4ThreeVector();
       if (placementExtent)
       	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
 
@@ -779,8 +778,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
     }
   else if (BDS::IsFinite(placement.s))
     {// scenario 2
-
-      auto offset = G4ThreeVector(0, 0, 0);
+      G4ThreeVector offset = G4ThreeVector();
       if (placementExtent)
 	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
 
