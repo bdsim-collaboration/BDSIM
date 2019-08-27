@@ -98,6 +98,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <map>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 
@@ -1123,18 +1124,18 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 							 const BDSBeamline*     beamLine,
 							 const BDSExtent&       placementExtent)
 {
-  G4ThreeVector out = G4ThreeVector(0., 0., 0.);
+  G4ThreeVector result = G4ThreeVector();
   G4String side = G4String(placement.side);
   
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.
-  G4double path_length = placement.s*CLHEP::m;
+  G4double pathLength = placement.s*CLHEP::m;
   std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
-  G4double s_low = path_length + extent_z.first;
-  G4double s_high = path_length + extent_z.second;
+  G4double sLow  = pathLength + extent_z.first;
+  G4double sHigh = pathLength + extent_z.second;
   // iterator pointing to lower bound
-  auto start = beamLine->FindFromS(s_low);
-  auto end   = beamLine->FindFromS(s_high);
+  auto start = beamLine->FindFromS(sLow);
+  auto end   = beamLine->FindFromS(sHigh);
   if (end != beamLine->end())
     {end++;}
   
@@ -1152,21 +1153,21 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   
   if (side == "top")
     {
-      out.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
+      result.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
       G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
-      out.setX(xOffset);
+      result.setX(xOffset);
     }
   else if (side == "bottom")
     {
-      out.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
+      result.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
       G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
-      out.setX(xOffset);
+      result.setX(xOffset);
     }
   else if (side == "left")
-    {out.setX(section_max_extent.XPos() + placementExtent.XPos() + ls);}
+    {result.setX(section_max_extent.XPos() + placementExtent.XPos() + ls);}
   else if (side == "right")
-    {out.setX(section_max_extent.XNeg() + placementExtent.XNeg() - ls);}
+    {result.setX(section_max_extent.XNeg() + placementExtent.XNeg() - ls);}
   else if (side != "")
     {throw BDSException(std::string("Unknown side in placement: " + side));}
-  return out;
+  return result;
 }
