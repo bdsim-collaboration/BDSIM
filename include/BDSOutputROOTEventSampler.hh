@@ -19,10 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTSAMPLER_H
 #define BDSOUTPUTROOTEVENTSAMPLER_H
 
-#include "TROOT.h"
+#include "Rtypes.h"
+#include "TObject.h"
+
+#include <string>
 #include <vector>
 
 class BDSOutputROOTGeant4Data;
+class TTree;
 
 #ifndef __ROOTBUILD__
 #include "globals.hh"
@@ -32,9 +36,6 @@ class BDSHitSampler;
 class BDSPrimaryVertexInformationV;
 class TRKBunch;
 #endif
-
-#include "TObject.h"
-#include "TTree.h"
 
 /**
  * @brief Information stored per sampler per event.
@@ -70,6 +71,7 @@ public:
   std::vector<U>     rp;
   std::vector<U>     phi;
   std::vector<U>     phip;
+  std::vector<U>     theta;
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
