@@ -253,6 +253,8 @@ Output Changes
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
+* Samplers now have a new variable called `theta` included in polar coordinates (optional), which
+  is the angle with respect to the local z axis. i.e. :math:`tan^{-1}(r^{\prime}/z^{\prime})`.
 * `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
