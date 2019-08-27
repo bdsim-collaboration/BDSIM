@@ -744,7 +744,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
     } 
 
-  // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
+  // create a transform w.r.t. the beam line if s is finite and it's not w.r.t a
   // particular element. If it's w.r.t. a particular element, treat s as local curvilinear
   // s and use as local 'z' in the transform.
   if (!placement.referenceElement.empty())
@@ -759,7 +759,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
 	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
-	  exit(1);
+	  throw BDSException("Error in placement.");
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
