@@ -806,7 +806,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 						placement.z*CLHEP::m);
       
       
-      // result = G4Transform3D(rm, translation);
+      result = G4Transform3D(rm, translation);
       if (S)
 	{*S = -1000;} // default
     }
