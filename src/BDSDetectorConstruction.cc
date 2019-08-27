@@ -769,14 +769,11 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 
       auto offset = G4ThreeVector(0, 0, 0);
       if (placementExtent)
-      	{
-      	  offset = SideToLocalOffset(placement, beamLine, *placementExtent);
-      	}
+      	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
 
-      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(
-          sCoordinate,
-	  placement.x * CLHEP::m + offset.x(),
-          placement.y * CLHEP::m + offset.y());
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
+									 placement.x * CLHEP::m + offset.x(),
+									 placement.y * CLHEP::m + offset.y());
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;      
     }
@@ -785,14 +782,11 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 
       auto offset = G4ThreeVector(0, 0, 0);
       if (placementExtent)
-	{
-          offset = SideToLocalOffset(placement, beamLine, *placementExtent);
-        }
+	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
 
-      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(
-          placement.s * CLHEP::m,
-	  placement.x * CLHEP::m + offset.x(),
-          placement.y * CLHEP::m + offset.y());
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(placement.s * CLHEP::m,
+									 placement.x * CLHEP::m + offset.x(),
+									 placement.y * CLHEP::m + offset.y());
 
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
