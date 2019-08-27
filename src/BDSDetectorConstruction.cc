@@ -1123,52 +1123,50 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 							 const BDSBeamline*     beamLine,
 							 const BDSExtent&       placementExtent)
 {
-    auto out = G4ThreeVector(0., 0., 0.);
-    auto side = placement.side;
+  G4ThreeVector out = G4ThreeVector(0., 0., 0.);
+  auto side = placement.side;
+  
+  // Get the iterators pointing to the first and last elements
+  // that the placement lines up with.
+  auto path_length = placement.s*CLHEP::m;
+  auto extent_z = placementExtent.ExtentZ();
+  auto s_low = path_length + extent_z.first;
+  auto s_high = path_length + extent_z.second;
+  auto start = beamLine->FindFromS(s_low);
+  auto end = beamLine->FindFromS(s_high);
+  if (end != beamLine->end())
+    {end++;}
+  
+  // fold across the extents returning the greatest extent.  the
+  // transverse extents will give be the transverse extents of the
+  // beamline section.
+  auto section_max_extent = BDSExtent();
+  for (auto iter = start; iter != end; ++iter)
+    {section_max_extent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), section_max_extent);}
 
-    // Get the iterators pointing to the first and last elements
-    // that the placement lines up with.
-    auto path_length = placement.s*CLHEP::m;
-    auto extent_z = placementExtent.ExtentZ();
-    auto s_low = path_length + extent_z.first;
-    auto s_high = path_length + extent_z.second;
-    auto start = beamLine->FindFromS(s_low);
-    auto end = beamLine->FindFromS(s_high);
-    if (end != beamLine->end()) {
-      end++;
+  // Multiplied by 5 because it works...
+  G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
+
+  if (placement.sideOffset)
+    {ls = placement.sideOffset * CLHEP::m;}
+  
+  if (side == "top")
+    {
+      out.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
+      auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      out.setX(xOffset);
     }
-
-    // fold across the extents returning the greatest extent.  the
-    // transverse extents will give be the transverse extents of the
-    // beamline section.
-    auto section_max_extent = BDSExtent();
-    for (auto iter = start; iter != end; ++iter) {
-      section_max_extent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), section_max_extent);
+  else if (side == "bottom")
+    {
+      out.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
+      auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      out.setX(xOffset);
     }
-
-    G4double ls = // Multiplied by 5 because it works...
-      5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
-
-    if (placement.sideOffset)
-      {ls = placement.sideOffset * CLHEP::m;}
-
-    if (side == "top")
-      {
-	out.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
-	auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
-	out.setX(xOffset);
-      }
-    else if (side == "bottom")
-      {
-	out.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
-	auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
-	out.setX(xOffset);
-      }
-    else if (side == "left")
-      {out.setX(section_max_extent.XPos() + placementExtent.XPos() + ls);}
-    else if (side == "right")
-      {out.setX(section_max_extent.XNeg() + placementExtent.XNeg() - ls);}
-    else if (side != "")
-      {throw BDSException(std::string("Unknown side in placement: " + side));}
-    return out;
+  else if (side == "left")
+    {out.setX(section_max_extent.XPos() + placementExtent.XPos() + ls);}
+  else if (side == "right")
+    {out.setX(section_max_extent.XNeg() + placementExtent.XNeg() - ls);}
+  else if (side != "")
+    {throw BDSException(std::string("Unknown side in placement: " + side));}
+  return out;
 }
