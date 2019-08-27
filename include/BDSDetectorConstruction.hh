@@ -116,6 +116,12 @@ public:
 						G4double*              S = nullptr,
 						BDSExtent*             placementExtent=nullptr);
 
+  // Create a scorermesh placement transform. Turns the scorermesh into a
+  /// placement and uses the above function.
+  static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
+                                                const BDSBeamline*      beamLine,
+						G4double*               S = nullptr);
+  
   /// Create a sampler placement transform. Turns the sampler placement into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
@@ -127,12 +133,6 @@ public:
 						const BDSBeamline*        bemaLine,
 						G4double*                 S = nullptr,
 						BDSExtent*                blmExtent=nullptr);
-    
-  // Create a scorermesh placement transform. Turns the scorermesh into a
-  /// placement and uses the above function.
-  static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
-                                                const BDSBeamline*      beamLine,
-						G4double*               S = nullptr);
 
   ///  Attach component with extent2 to component with extent1 with placement.
   static G4ThreeVector SideToLocalOffset(const GMAD::Placement& placement,

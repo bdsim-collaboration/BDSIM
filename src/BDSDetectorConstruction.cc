@@ -834,6 +834,59 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMP
   return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent);
 }
 
+
+G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
+							 const BDSBeamline*     beamLine,
+							 const BDSExtent&       placementExtent)
+{
+  G4ThreeVector result = G4ThreeVector();
+  G4String side = G4String(placement.side);
+  
+  // Get the iterators pointing to the first and last elements
+  // that the placement lines up with.
+  G4double pathLength = placement.s*CLHEP::m;
+  std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
+  G4double sLow  = pathLength + extent_z.first;
+  G4double sHigh = pathLength + extent_z.second;
+  // iterator pointing to lower bound
+  auto start = beamLine->FindFromS(sLow);
+  auto end   = beamLine->FindFromS(sHigh);
+  if (end != beamLine->end())
+    {end++;}
+  
+  // Fold across the extents returning the greatest extent. The transverse extents
+  // will give be the transverse extents of the beamline section.
+  BDSExtent sectionMaxExtent = BDSExtent();
+  for (auto iter = start; iter != end; ++iter)
+    {sectionMaxExtent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), sectionMaxExtent);}
+
+  // Multiplied by 5 because it works...
+  G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
+
+  if (placement.sideOffset)
+    {ls = placement.sideOffset * CLHEP::m;}
+  
+  if (side == "top")
+    {
+      result.setY(sectionMaxExtent.YPos() + placementExtent.YPos() + ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
+      result.setX(xOffset);
+    }
+  else if (side == "bottom")
+    {
+      result.setY(sectionMaxExtent.YNeg() + placementExtent.YNeg() - ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
+      result.setX(xOffset);
+    }
+  else if (side == "left")
+    {result.setX(sectionMaxExtent.XPos() + placementExtent.XPos() + ls);}
+  else if (side == "right")
+    {result.setX(sectionMaxExtent.XNeg() + placementExtent.XNeg() - ls);}
+  else if (side != "")
+    {throw BDSException(std::string("Unknown side in placement: " + side));}
+  return result;
+}
+
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const
 {
   BDSExtent apertureExtent;
@@ -1110,56 +1163,4 @@ void BDSDetectorConstruction::ConstructMeshes()
       // multifunctionaldetector and therefore has the complete name of the scorer collection
       BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames); 
     }
-}
-
-G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
-							 const BDSBeamline*     beamLine,
-							 const BDSExtent&       placementExtent)
-{
-  G4ThreeVector result = G4ThreeVector();
-  G4String side = G4String(placement.side);
-  
-  // Get the iterators pointing to the first and last elements
-  // that the placement lines up with.
-  G4double pathLength = placement.s*CLHEP::m;
-  std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
-  G4double sLow  = pathLength + extent_z.first;
-  G4double sHigh = pathLength + extent_z.second;
-  // iterator pointing to lower bound
-  auto start = beamLine->FindFromS(sLow);
-  auto end   = beamLine->FindFromS(sHigh);
-  if (end != beamLine->end())
-    {end++;}
-  
-  // Fold across the extents returning the greatest extent. The transverse extents
-  // will give be the transverse extents of the beamline section.
-  BDSExtent sectionMaxExtent = BDSExtent();
-  for (auto iter = start; iter != end; ++iter)
-    {sectionMaxExtent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), sectionMaxExtent);}
-
-  // Multiplied by 5 because it works...
-  G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
-
-  if (placement.sideOffset)
-    {ls = placement.sideOffset * CLHEP::m;}
-  
-  if (side == "top")
-    {
-      result.setY(sectionMaxExtent.YPos() + placementExtent.YPos() + ls);
-      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
-      result.setX(xOffset);
-    }
-  else if (side == "bottom")
-    {
-      result.setY(sectionMaxExtent.YNeg() + placementExtent.YNeg() - ls);
-      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
-      result.setX(xOffset);
-    }
-  else if (side == "left")
-    {result.setX(sectionMaxExtent.XPos() + placementExtent.XPos() + ls);}
-  else if (side == "right")
-    {result.setX(sectionMaxExtent.XNeg() + placementExtent.XNeg() - ls);}
-  else if (side != "")
-    {throw BDSException(std::string("Unknown side in placement: " + side));}
-  return result;
 }
