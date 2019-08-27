@@ -593,25 +593,6 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-const BDSBeamlineElement* BDSBeamline::GetElementFromGlobalS(G4double S,
-							     G4int*   indexOfFoundElement) const
-{
-  // find element that s position belongs to
-  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
-  G4int index = lower - sEnd.begin(); // subtract iterators to get index
-  if (indexOfFoundElement)
-    {*indexOfFoundElement = index;}
-  return beamline.at(index);
-}
-
-BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double S) const
-{
-  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
-  auto iter = begin();
-  std::advance(iter, std::distance(sEnd.begin(), lower));
-  return iter;
-}
-
 G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y,
 						       G4int* indexOfFoundElement) const
 {
@@ -679,6 +660,25 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4cout << "Resultant global position: " << globalPos << G4endl;
 #endif
   return result;
+}
+
+const BDSBeamlineElement* BDSBeamline::GetElementFromGlobalS(G4double S,
+							     G4int*   indexOfFoundElement) const
+{
+  // find element that s position belongs to
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
+  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  if (indexOfFoundElement)
+    {*indexOfFoundElement = index;}
+  return beamline.at(index);
+}
+
+BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double S) const
+{
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
+  auto iter = begin();
+  std::advance(iter, std::distance(sEnd.begin(), lower));
+  return iter;
 }
 
 const BDSBeamlineElement* BDSBeamline::GetPrevious(const BDSBeamlineElement* element) const
