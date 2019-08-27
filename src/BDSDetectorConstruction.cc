@@ -100,11 +100,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <vector>
 
-namespace {
-    G4ThreeVector SideToLocalOffset(const GMAD::Placement &placement,
-				    const BDSBeamline*    beamLine,
-				    const BDSExtent       &placementExtent);
-}
 
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
@@ -1124,14 +1119,10 @@ void BDSDetectorConstruction::ConstructMeshes()
     }
 }
 
-
-//  Attach component with extent2 to component with extent1 with
-//  placement.
-namespace {
-  G4ThreeVector SideToLocalOffset(const GMAD::Placement &placement,
-				  const BDSBeamline*    beamLine,
-				  const BDSExtent       &placementExtent)
-  {
+G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
+							 const BDSBeamline*     beamLine,
+							 const BDSExtent&       placementExtent)
+{
     auto out = G4ThreeVector(0., 0., 0.);
     auto side = placement.side;
 
@@ -1180,5 +1171,4 @@ namespace {
     else if (side != "")
       {throw BDSException(std::string("Unknown side in placement: " + side));}
     return out;
-  }
 }

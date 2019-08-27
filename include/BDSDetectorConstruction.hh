@@ -134,6 +134,11 @@ public:
                                                 const BDSBeamline*      beamLine,
 						G4double*               S = nullptr);
 
+  ///  Attach component with extent2 to component with extent1 with placement.
+  static G4ThreeVector SideToLocalOffset(const GMAD::Placement& placement,
+					 const BDSBeamline*     beamLine,
+					 const BDSExtent&       placementExtent);
+
   /// Whether to build a sampler world or not. If we've counted more than one sampler we
   /// should build the world in the end.
   G4bool BuildSamplerWorld() const {return nSamplers > 0;}
