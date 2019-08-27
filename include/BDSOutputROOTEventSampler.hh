@@ -69,6 +69,7 @@ public:
   std::vector<U>     rp;
   std::vector<U>     phi;
   std::vector<U>     phip;
+  std::vector<U>     theta;
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
