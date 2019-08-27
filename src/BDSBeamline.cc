@@ -593,18 +593,19 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-const BDSBeamlineElement*
-BDSBeamline::GetElementFromGlobalS(G4double s,
-                                   G4int *indexOfFoundElement) const {
+const BDSBeamlineElement* BDSBeamline::GetElementFromGlobalS(G4double S,
+							     G4int*   indexOfFoundElement) const
+{
   // find element that s position belongs to
-  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
   G4int index = lower - sEnd.begin(); // subtract iterators to get index
   if (indexOfFoundElement)
     {*indexOfFoundElement = index;}
   return beamline.at(index);
 }
 
-BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double s) const {
+BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double S) const
+{
   auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
   auto iter = begin();
   std::advance(iter, std::distance(sEnd.begin(), lower));
