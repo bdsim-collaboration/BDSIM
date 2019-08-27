@@ -1124,23 +1124,23 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 							 const BDSExtent&       placementExtent)
 {
   G4ThreeVector out = G4ThreeVector(0., 0., 0.);
-  auto side = placement.side;
+  G4String side = G4String(placement.side);
   
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.
-  auto path_length = placement.s*CLHEP::m;
-  auto extent_z = placementExtent.ExtentZ();
-  auto s_low = path_length + extent_z.first;
-  auto s_high = path_length + extent_z.second;
+  G4double path_length = placement.s*CLHEP::m;
+  std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
+  G4double s_low = path_length + extent_z.first;
+  G4double s_high = path_length + extent_z.second;
+  // iterator pointing to lower bound
   auto start = beamLine->FindFromS(s_low);
-  auto end = beamLine->FindFromS(s_high);
+  auto end   = beamLine->FindFromS(s_high);
   if (end != beamLine->end())
     {end++;}
   
-  // fold across the extents returning the greatest extent.  the
-  // transverse extents will give be the transverse extents of the
-  // beamline section.
-  auto section_max_extent = BDSExtent();
+  // Fold across the extents returning the greatest extent. The transverse extents
+  // will give be the transverse extents of the beamline section.
+  BDSExtent section_max_extent = BDSExtent();
   for (auto iter = start; iter != end; ++iter)
     {section_max_extent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), section_max_extent);}
 
@@ -1153,13 +1153,13 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   if (side == "top")
     {
       out.setY(section_max_extent.YPos() + placementExtent.YPos() + ls);
-      auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
       out.setX(xOffset);
     }
   else if (side == "bottom")
     {
       out.setY(section_max_extent.YNeg() + placementExtent.YNeg() - ls);
-      auto xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
+      G4double xOffset = section_max_extent.XPos() - 0.5*section_max_extent.DX() ;
       out.setX(xOffset);
     }
   else if (side == "left")
