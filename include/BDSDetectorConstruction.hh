@@ -125,12 +125,12 @@ public:
   /// Create a sampler placement transform. Turns the sampler placement into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            bemaLine,
+						const BDSBeamline*            beamLine,
 						G4double*                     S = nullptr);
 
   /// Create a sampler placement from a blm plcement.
   static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-						const BDSBeamline*        bemaLine,
+						const BDSBeamline*        beamLine,
 						G4double*                 S = nullptr,
 						BDSExtent*                blmExtent=nullptr);
 
