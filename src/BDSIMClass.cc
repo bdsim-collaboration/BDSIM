@@ -278,7 +278,7 @@ int BDSIM::Initialise()
         }
 	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons, mass, rigidity);
 	}
-      // Write options now file open.
+      // Write options now the file is open
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
       bdsOutput->FillOptions(ob);
 
@@ -306,7 +306,7 @@ int BDSIM::Initialise()
   runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon()));
 
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Event Action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
 #endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);

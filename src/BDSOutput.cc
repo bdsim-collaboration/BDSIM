@@ -160,16 +160,16 @@ void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
   // always prepare geant4 data and link to other classes, but optionally fill it
   geant4DataOutput->Flush();
-      geant4DataOutput->Fill(writeIons);
+  geant4DataOutput->Fill(writeIons);
 
 #ifdef __ROOTDOUBLE__
-      BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
 #else
-      BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
 #endif
-      BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
-      BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
-
+  BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
+  BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
+  
   if (storeGeant4Data)
     {WriteGeant4Data();}
 }
