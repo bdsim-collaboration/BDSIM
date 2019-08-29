@@ -61,6 +61,12 @@ int main(int argc, char* argv[])
 	  emittanceOnFly = true;
 	  std::cout << "Calculating emittance per sampler" << std::endl;
 	}
+      else
+	{
+	  std::cout << "Unknown option \"" << argv[3] << "\"" << std::endl;
+	  usage();
+	  exit(1);
+	}
     }
 
   DataLoader dl = DataLoader(inputFileName, false, true);
