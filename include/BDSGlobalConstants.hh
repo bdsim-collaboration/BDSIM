@@ -30,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-#include "parser/beam.h"
 #include "parser/options.h"
 
 #include <map>
@@ -69,8 +68,7 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  explicit BDSGlobalConstants(const GMAD::Options& opt,
-			      GMAD::Beam&          beamIn);
+  explicit BDSGlobalConstants(const GMAD::Options& opt);
 
 private:
   /// Singleton instance
@@ -78,9 +76,6 @@ private:
 
   /// Options instance that this is largely based on and extends
   const GMAD::Options& options;
-
-  /// Copy of beam definition. Can't be const as we may update the contents.
-  GMAD::Beam& beam;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
