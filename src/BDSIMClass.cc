@@ -261,15 +261,10 @@ int BDSIM::Initialise()
 	  auto coords = bdsBunch->GetNextParticle();
 	  // always pull out other variables in case they're different
           const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
-          G4int    pdgID      = pDef->ParticleDefinition()->GetPDGEncoding();
-          G4double charge     = pDef->Charge();
-          G4double mass       = pDef->Mass();
-          G4double rigidity   = pDef->BRho();
-	  G4int    nElectrons = 0;
+	  G4int nElectrons = 0;
           if (const BDSIonDefinition* iondDef = pDef->IonDefinition())
             {nElectrons = iondDef->NElectrons();}
-	  
-	  bdsOutput->FillEventPrimaryOnly(coords, charge, pdgID, nElectrons, mass, rigidity);
+	  bdsOutput->FillEventPrimaryOnly(coords, pDef, nElectrons);
 	}
       // Write options now the file is open
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();

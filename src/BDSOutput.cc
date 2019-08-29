@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
 #include "BDSHitSampler.hh"
@@ -53,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 
@@ -226,12 +228,13 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 }
 
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
-				     const G4double charge,
-				     const G4int pdgID,
-				     const G4int nElectrons,
-				     const G4double mass,
-				     const G4double rigidity)
+				     const BDSParticleDefinition*       particle,
+				     const G4int                        nElectrons)
 {
+  G4double charge   = particle->Charge();
+  G4double pdgID    = particle->ParticleDefinition()->GetPDGEncoding();
+  G4double mass     = particle->Mass();
+  G4double rigidity = particle->BRho();
   primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
