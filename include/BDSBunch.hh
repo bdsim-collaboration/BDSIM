@@ -100,6 +100,8 @@ public:
   /// event number.
   virtual void RecreateAdvanceToEvent(G4int /*eventOffset*/){;}
 
+  /// Access whether the beam particle is an ion or not.
+  inline G4bool BeamParticleIsAnIon() const {return particleDefinition->IsAnIon();}
 protected:
   /// Apply either the curivilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
