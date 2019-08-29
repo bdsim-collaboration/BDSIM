@@ -148,6 +148,9 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
       if ((coords.local.totalEnergy - particleDefinition->Mass()) > 0)
 	{break;}
     }
+  if (n >= maxTries)
+    {throw BDSException(__METHOD_NAME__, "unable to generate coordinates above rest mass after 100 attempts.");}
+
   return coords;
 }
 
