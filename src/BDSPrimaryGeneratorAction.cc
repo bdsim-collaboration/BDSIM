@@ -46,18 +46,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4Version.hh"
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
-						     BDSParticleDefinition* beamParticleIn,
-						     const GMAD::Beam&      beam):
-  beamParticle(beamParticleIn),
-  ionDefinition(beamParticleIn->IonDefinition()),
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
+						     const GMAD::Beam& beam):
   bunch(bunchIn),
   recreateFile(nullptr),
   eventOffset(0),
-  ionPrimary(beamParticleIn->IsAnIon()),
-  particleCharge(beamParticleIn->Charge()), // always right even if ion
+  ionPrimary(bunchIn->BeamParticleIsAnIon()),
   useEventGeneratorFile(false),
   ionCached(false),
   oneTurnMap(nullptr)
@@ -140,27 +135,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 #endif
 
-  G4double mass = beamParticle->Mass();
-
   // update particle definition if special case of an ion - can only be done here
-  // do this before call the bunch as it may use particle definition in globals
   if (ionPrimary && !ionCached)
     {
-      G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-      G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
-							      ionDefinition->A(),
-							      ionDefinition->ExcitationEnergy());
-      beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
-      // Note we don't need to take care of electrons here. These are automatically
-      // allocated by Geant4 when it converts the primary vertex to a dynamic particle
-      // (in the process of constructing a track from it) (done in G4PrimaryTransformer)
-      // this relies on the charge being set correctly - Geant4 detects this isn't the same
-      // as Z and adds electrons accordingly.
-#if G4VERSION_NUMBER > 1049
-      // in the case of ions the particle definition is only available now
-      // fix the looping thresholds now it's available
-      BDS::FixGeant105ThreshholdsForParticle(ionParticleDef);
-#endif
+      bunch->UpdateIonDefinition();
       ionCached = true;
     }
 
@@ -173,8 +151,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	{
 	  ++n;
 	  coords = bunch->GetNextParticle();
-	  
-	  if ((coords.local.totalEnergy - mass) > 0)
+
+	  // ensure total energy is greater than the rest mass
+	  if ((coords.local.totalEnergy - bunch->ParticleDefinition()->Mass()) > 0)
 	    {break;}
 	}
     }
@@ -193,35 +172,13 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
     }
 
-  // set particle definition
-  // either from input bunch file, an ion, or regular beam particle
-  const BDSParticleDefinition* particleToUse = beamParticle;
-  G4ParticleDefinition* particleDef = beamParticle->ParticleDefinition();
-  if (bunch->ParticleCanBeDifferentFromBeam())
-    {
-      particleToUse = bunch->ParticleDefinition();
-      if (particleToUse->IsAnIon())
-	{
-	  BDSIonDefinition* id = particleToUse->IonDefinition();
-	  G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-	  particleDef = ionTable->GetIon(id->Z(), id->A(), id->ExcitationEnergy());
-	  // See note above - we don't need to take care of electrons in this definition as
-      // Geant4 will handle this for us as long as A Z and the gun charge are correct
-	}
-      else
-	{particleDef = particleToUse->ParticleDefinition();}
-      // update charge as always set explicitly with particleGun
-      // note for ions, this may be different from particleDef->GetPDGCharge
-      particleCharge = beamParticle->Charge();
-    }
-
-  particleGun->SetParticleDefinition(particleDef);
-
+  particleGun->SetParticleDefinition(bunch->ParticleDefinition()->ParticleDefinition());
+  
   // always update the charge - ok for normal particles; fixes purposively specified ions.
-  particleGun->SetParticleCharge(particleCharge);
+  particleGun->SetParticleCharge(bunch->ParticleDefinition()->Charge());
   // check that kinetic energy is positive and finite anyway and abort if not.
   // get the mass from the beamParticle as this takes into account any electrons
-  G4double EK = coords.local.totalEnergy - beamParticle->Mass();
+  G4double EK = coords.local.totalEnergy - bunch->ParticleDefinition()->Mass();
   if(EK <= 0)
     {
       G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! "
@@ -268,18 +225,17 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // associate full set of coordinates with vertex for writing to output after event
   G4int nElectrons = 0;
-
-  if (const BDSIonDefinition* ionDef = particleToUse->IonDefinition())
+  if (const BDSIonDefinition* ionDef = bunch->ParticleDefinition()->IonDefinition())
     {nElectrons = ionDef->NElectrons();}
+  
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
-							     particleCharge,
-							     particleToUse->BRho(),
-							     particleToUse->Mass(),
-							     particleToUse->ParticleDefinition()->GetPDGEncoding(),
+							     bunch->ParticleDefinition()->Charge(),
+							     bunch->ParticleDefinition()->BRho(),
+							     bunch->ParticleDefinition()->Mass(),
+							     bunch->ParticleDefinition()->ParticleDefinition()->GetPDGEncoding(),
 							     nElectrons));
 
 #ifdef BDSDEBUG
   vertex->Print();
 #endif
-
 }

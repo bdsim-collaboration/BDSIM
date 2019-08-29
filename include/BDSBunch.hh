@@ -23,12 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleCoords.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
 class BDSBeamline;
-class BDSParticleDefinition;
 
 namespace GMAD
 {
@@ -45,7 +45,7 @@ class BDSBunch
 {
 public:
   BDSBunch();
-  virtual ~BDSBunch(){;}
+  virtual ~BDSBunch();
 
   /// Make BDSHepMC3Reader a friend so it can use the protected ApplyTransform function.
   friend class BDSHepMC3Reader;
@@ -102,6 +102,13 @@ public:
 
   /// Access whether the beam particle is an ion or not.
   inline G4bool BeamParticleIsAnIon() const {return particleDefinition->IsAnIon();}
+
+  /// Update the Geant4 Particle Definition inside particleDefinition member in the
+  /// case it's an ion. This can only be done later one once the run has started. Since
+  /// the particle definition is kept here in the bunch this interface allows control
+  /// over it being updated.
+  void UpdateIonDefinition();
+
 protected:
   /// Apply either the curivilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
@@ -145,8 +152,8 @@ protected:
   /// Derived class must change explicitly.
   G4bool particleCanBeDifferent;
 
-  /// Optional particle definition that can be used. Does not own.
-  const BDSParticleDefinition* particleDefinition;
+  /// Particle definition for bunch - this class owns it.
+  BDSParticleDefinition* particleDefinition;
 
   G4bool finiteTilt; ///< Flag of whether to apply beam rotation.
   /// @{ Flags to ignore random number generator in case of no finite E or T.
