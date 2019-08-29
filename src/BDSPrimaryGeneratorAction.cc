@@ -167,14 +167,17 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   // always update the charge - ok for normal particles; fixes purposively specified ions.
   particleGun->SetParticleCharge(bunch->ParticleDefinition()->Charge());
+
   // check that kinetic energy is positive and finite anyway and abort if not.
   // get the mass from the beamParticle as this takes into account any electrons
   G4double EK = coords.local.totalEnergy - bunch->ParticleDefinition()->Mass();
-  if(EK <= 0)
+  if (EK <= 0)
     {
-      G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! "
+      G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
+	     << " - Particle kinetic energy smaller than 0! "
 	     << "This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
+      return;
     }
 
   // write initial particle position and momentum
