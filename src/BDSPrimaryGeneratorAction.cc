@@ -229,10 +229,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     {nElectrons = ionDef->NElectrons();}
   
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
-							     bunch->ParticleDefinition()->Charge(),
-							     bunch->ParticleDefinition()->BRho(),
-							     bunch->ParticleDefinition()->Mass(),
-							     bunch->ParticleDefinition()->ParticleDefinition()->GetPDGEncoding(),
+							     bunch->ParticleDefinition(),
 							     nElectrons));
 
 #ifdef BDSDEBUG

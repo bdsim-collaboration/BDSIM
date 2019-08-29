@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4VUserPrimaryVertexInformation.hh"
 
+class BDSParticleDefinition;
+
 /**
  * @brief Full set of coordinates for association with primary vertex.
  *
@@ -38,10 +40,7 @@ class BDSPrimaryVertexInformation: public G4VUserPrimaryVertexInformation
 {
 public:
   BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
-			      const G4double chargeIn,
-			      const G4double rigidityIn,
-			      const G4double massIn,
-			      const G4int    pdgID,
+			      const BDSParticleDefinition*       particle,
 			      const G4int    nElectronsIn = 0);
   virtual ~BDSPrimaryVertexInformation(){;}
 
