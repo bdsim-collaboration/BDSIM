@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   if (argc == 4)
     {
       std::string emittanceOnFlyS = std::string(argv[3]);
-      if (emittanceOnFlyS == "--emittanceOnFly")
+      if (emittanceOnFlyS == "--emittanceOnTheFly" || emittanceOnFlyS == "--emittanceOnFly")
 	{
 	  emittanceOnFly = true;
 	  std::cout << "Calculating emittance per sampler" << std::endl;
