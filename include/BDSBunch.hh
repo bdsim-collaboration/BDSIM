@@ -69,6 +69,13 @@ public:
   /// transform if required.
   BDSParticleCoordsFullGlobal GetNextParticle();
 
+  /// Interface to allow multiple calls until a safe particle is generated. This will
+  /// repeatedly call GetNextParticle() until a particle is generated where the total
+  /// energy is greater than the rest mass. This can be overridden by derived classes
+  /// if they do not wish this behaviour. This may throw an exception if the maximum
+  /// number of attempts (maxTries) is exceeded.
+  virtual BDSParticleCoordsFullGlobal GetNextParticleValid(G4int maxTries = 100);
+
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
   /// calculate sample mean offsets in some derived classes.

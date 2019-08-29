@@ -269,6 +269,13 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 }
 
 template<class T>
+BDSParticleCoordsFullGlobal BDSBunchUserFile<T>::GetNextParticleValid(G4int /*maxTries*/)
+{
+  // no looping - just read one particle from file
+  return GetNextParticle();
+}
+
+template<class T>
 BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
   if (InputBunchFile.eof())

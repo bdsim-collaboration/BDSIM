@@ -136,6 +136,23 @@ void BDSBunch::CheckParameters()
     {throw BDSException(__METHOD_NAME__, "sigmaT " + std::to_string(sigmaT) + " < 0!");}
 }
 
+BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
+{
+  // continue generating particles until positive finite kinetic energy.
+  G4int n = 0;
+  BDSParticleCoordsFullGlobal coords;
+  while (n < maxTries) // prevent infinite loops
+    {
+      ++n;
+      coords = GetNextParticle();
+      
+      // ensure total energy is greater than the rest mass
+      if ((coords.local.totalEnergy - particleDefinition->Mass()) > 0)
+	{break;}
+    }
+  return coords;
+}
+
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
 {
   BDSParticleCoordsFull local = GetNextParticleLocal();

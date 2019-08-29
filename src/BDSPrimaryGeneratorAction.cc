@@ -142,21 +142,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       ionCached = true;
     }
 
-  // continue generating particles until positive finite kinetic energy.
-  G4int n = 0;
+  // generate set of coordinates - internally the bunch may try many times to generate
+  // coordinates with total energy above the rest mass and may throw an exception if
+  // it can't
   BDSParticleCoordsFullGlobal coords;
   try
-    {
-      while (n < 100) // prevent infinite loops
-	{
-	  ++n;
-	  coords = bunch->GetNextParticle();
-
-	  // ensure total energy is greater than the rest mass
-	  if ((coords.local.totalEnergy - bunch->ParticleDefinition()->Mass()) > 0)
-	    {break;}
-	}
-    }
+    {coords = bunch->GetNextParticleValid();}
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
       // could be because of user input file
