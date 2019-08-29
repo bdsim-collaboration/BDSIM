@@ -45,6 +45,10 @@ include(cmake/CompilerCheck.cmake)
 # Check AFS and OS
 include(cmake/SystemCheck.cmake)
 
+# Regression testing flag
+set(BDSIM_GENERATE_REGRESSION_DATA OFF CACHE BOOL "Whether to generate regression testing data from tests.")
+mark_as_advanced(BDSIM_GENERATE_REGRESSION_DATA)
+
 #################  
 # Find Packages #
 #################
