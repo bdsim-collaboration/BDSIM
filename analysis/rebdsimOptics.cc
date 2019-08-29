@@ -33,11 +33,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage()
 { 
-  std::cout << "usage: rebdsimOptics <dataFile> <outputfile> <--emittanceOnFly>" << std::endl;
-  std::cout << " <datafile>   - root file to operate on ie run1.root"            << std::endl;
-  std::cout << " <outputfile> - name of output file ie optics.dat"               << std::endl;
-  std::cout << " --emittanceOnFly - calculate emittance per sampler (optional)"  << std::endl;
-  std::cout << "Quotes should be used if * is used in the input file name."      << std::endl;
+  std::cout << "usage: rebdsimOptics <dataFile> <outputfile> <--emittanceOnFly>"    << std::endl;
+  std::cout << " <datafile>   - root file to operate on ie run1.root"               << std::endl;
+  std::cout << " <outputfile> - name of output file ie optics.dat"                  << std::endl;
+  std::cout << " --emittanceOnTheFly - calculate emittance per sampler (optional)"  << std::endl;
+  std::cout << "Quotes should be used if * is used in the input file name."         << std::endl;
 }
 
 int main(int argc, char* argv[])
