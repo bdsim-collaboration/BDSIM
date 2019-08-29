@@ -90,8 +90,8 @@ public:
   /// z0 will be treated as S and the global z0 be calculated.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
 
-  G4double GetCentralMomentum() {return P0;}
-  G4bool GetUseCurvilinear() {return useCurvilinear;}
+  /// Access whether there's a finite S offset and therefore we're using a CL transform.
+  G4bool   UseCurvilinearTransform()  const {return useCurvilinear;}
 
   /// When recreating events, it's possible that setting the seed state may not
   /// be sufficient for the bunch to get the right distribution. This is true when

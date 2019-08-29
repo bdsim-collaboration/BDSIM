@@ -189,7 +189,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   if (oneTurnMap)
     {
-      G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
+      G4bool offsetSAndOnFirstTurn = bunch->UseCurvilinearTransform();
       oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
     }
 
