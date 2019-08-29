@@ -33,7 +33,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSParticleCoordsFull;
 class BDSParticleCoordsFullGlobal;
 
-
 /**
  * @brief A bunch distribution that reads a user specified column file.
  * 
