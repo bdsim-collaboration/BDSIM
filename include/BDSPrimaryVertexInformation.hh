@@ -42,6 +42,12 @@ public:
   BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 			      const BDSParticleDefinition*       particle,
 			      const G4int    nElectronsIn = 0);
+  BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
+			      const G4double chargeIn,
+			      const G4double rigidityIn,
+			      const G4double massIn,
+			      const G4int    pdgID,
+			      const G4int    nElectronsIn = 0);
   virtual ~BDSPrimaryVertexInformation(){;}
 
   /// Required implementation by virtual base class.

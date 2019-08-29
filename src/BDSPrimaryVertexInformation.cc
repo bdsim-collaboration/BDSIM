@@ -36,6 +36,20 @@ BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoord
   nElectrons(nElectronsIn)
 {;}
 
+BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
+							  const G4double chargeIn,
+							  const G4double rigidityIn,
+							  const G4double massIn,
+							  const G4int    pdgIDIn,
+							  const G4int    nElectronsIn):
+  primaryVertex(primaryVertexIn),
+  charge(chargeIn),
+  rigidity(rigidityIn),
+  mass(massIn),
+  pdgID(pdgIDIn),
+  nElectrons(nElectronsIn)
+{;}
+
 void BDSPrimaryVertexInformation::Print() const
 {
   G4cout << primaryVertex << G4endl;
