@@ -107,14 +107,14 @@ class BDSOutputROOTEventTrajectoryPoint: public TObject
 public :
   BDSOutputROOTEventTrajectoryPoint() :
           partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
-          processType(-1), processSubType(-1), weight(-1.0), energy(-1.0),
-          position(0,0,0), momentum(0,0,0), model(-1), preTime(0) {};
+          processType(-1), processSubType(-1), weight(-1.0), energyDeposited(-1.0),
+          position(0,0,0), momentum(0,0,0), model(-1), time(0) {};
   BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
                                     int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
                                     TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn) :
           partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
-          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energy(energyIn),
-          position(positionIn), momentum(momentumIn), model(modelIn), preTime(preTimeIn) {}
+          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
+          position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn) {}
   virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
 
   int partID;
@@ -124,11 +124,11 @@ public :
   int processType;
   int processSubType;
   double weight;
-  double energy;
+  double energyDeposited;
   TVector3 position;
   TVector3 momentum;
   int model;
-  double preTime;
+  double time;
 
   ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
@@ -171,12 +171,12 @@ public:
 
   std::vector<std::vector<double>>   preWeights;
   std::vector<std::vector<double>>   postWeights;
-  std::vector<std::vector<double>>   energies;
+  std::vector<std::vector<double>>   energiesDeposit;
 
-  std::vector<std::vector<TVector3>> trajectories;
-  std::vector<std::vector<double>>   trajectoriesS;
-  std::vector<std::vector<TVector3>> momenta;
-  std::vector<std::vector<double>>   preT;
+  std::vector<std::vector<TVector3>> XYZ;
+  std::vector<std::vector<double>>   S;
+  std::vector<std::vector<TVector3>> PXPYPZ;
+  std::vector<std::vector<double>>   T;
 
   std::vector<std::vector<int>>      modelIndicies;
 

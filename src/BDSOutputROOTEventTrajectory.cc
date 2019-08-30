@@ -134,13 +134,13 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       std::vector<int>    postProcessSubType;
       std::vector<double> preWeight;
       std::vector<double> postWeight;
-      std::vector<double> energy;
+      std::vector<double> energyDeposited;
       
-      std::vector<TVector3> trajectory;
+      std::vector<TVector3> position;
       std::vector<TVector3> momentum;
-      std::vector<double>   trajectoryS;
+      std::vector<double>   positionS;
       std::vector<int>      modelIndex;
-      std::vector<double>   preTime;
+      std::vector<double>   time;
       
       // loop over trajectory points and fill structures
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
@@ -149,7 +149,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  
 	  // Position
 	  G4ThreeVector pos = point->GetPosition();
-	  trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
+	  position.push_back(TVector3(pos.getX() / CLHEP::m,
 					pos.getY() / CLHEP::m,
 					pos.getZ() / CLHEP::m));
 	  
@@ -168,27 +168,27 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  
 	  preWeight.push_back(point->GetPreWeight());
 	  postWeight.push_back(point->GetPostWeight());
-	  energy.push_back(point->GetEnergy());
+	  energyDeposited.push_back(point->GetEnergy());
 	  G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
 	  momentum.push_back(TVector3(mom.getX(),
 				      mom.getY(),
 				      mom.getZ()));
-	  trajectoryS.push_back(point->GetPreS() / CLHEP::m);
-	  preTime.push_back(point->GetPreGlobalTime() / CLHEP::ns);
+	  positionS.push_back(point->GetPreS() / CLHEP::m);
+	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 	}
       
-      trajectories.push_back(trajectory);
+      XYZ.push_back(position);
       modelIndicies.push_back(modelIndex);
-      momenta.push_back(momentum);
-      trajectoriesS.push_back(trajectoryS);
+      PXPYPZ.push_back(momentum);
+      S.push_back(positionS);
       preProcessTypes.push_back(preProcessType);
       preProcessSubTypes.push_back(preProcessSubType);
       postProcessTypes.push_back(postProcessType);
       postProcessSubTypes.push_back(postProcessSubType);
       preWeights.push_back(preWeight);
       postWeights.push_back(postWeight);
-      energies.push_back(energy);
-      preT.push_back(preTime);
+      energiesDeposit.push_back(energyDeposited);
+      T.push_back(time);
       
       // recursively search for primary interaction step  
       primaryStepIndex.push_back(findPrimaryStepIndex(traj));
@@ -265,13 +265,13 @@ void BDSOutputROOTEventTrajectory::Flush()
   postProcessSubTypes.clear();
   preWeights.clear();
   postWeights.clear();
-  energies.clear();
-  trajectories.clear();
-  trajectoriesS.clear();
-  momenta.clear();
+  energiesDeposit.clear();
+  XYZ.clear();
+  S.clear();
+  PXPYPZ.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
-  preT.clear();
+  T.clear();
   
   // trackIndex_trackProcess.clear();
   //  trackIndex_modelIndex.clear();
@@ -296,13 +296,13 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   postProcessSubTypes = other->postProcessSubTypes;
   preWeights          = other->preWeights;
   postWeights         = other->postWeights;
-  energies            = other->energies;
-  trajectories        = other->trajectories;
-  trajectoriesS       = other->trajectoriesS;
-  momenta             = other->momenta;
+  energiesDeposit     = other->energiesDeposit;
+  XYZ                 = other->XYZ;
+  S                   = other->S;
+  PXPYPZ              = other->PXPYPZ;
   modelIndicies       = other->modelIndicies;
   trackID_trackIndex  = other->trackID_trackIndex;
-  preT                = other->preT;
+  T                   = other->T;
 }
 
 #if 0
@@ -343,7 +343,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
-  int nstep = trajectories[ti].size();
+  int nstep = XYZ[ti].size();
   for (int i = 0;i<nstep; ++i)
     {
       int ppt = postProcessTypes[ti][i];
@@ -352,9 +352,9 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 	  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
 					      parentID[ti], parentIndex[ti],
 					      postProcessTypes[ti][i], postProcessSubTypes[ti][i],
-					      postWeights[ti][i],energies[ti][i],
-					      trajectories[ti][i], momenta[ti][i],
-					      modelIndicies[ti][i], preT[ti][i]);
+					      postWeights[ti][i],energiesDeposit[ti][i],
+					      XYZ[ti][i], PXPYPZ[ti][i],
+					      modelIndicies[ti][i], T[ti][i]);
 	  tpv.push_back(p);
 	}
     }
@@ -369,9 +369,9 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
   BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
                                       parentID[ti], parentIndex[ti],
                                       postProcessTypes[ti][si], postProcessSubTypes[ti][si],
-                                      postWeights[ti][si],energies[ti][si],
-                                      trajectories[ti][si], momenta[ti][si],
-                                      modelIndicies[ti][si], preT[ti][si]);
+                                      postWeights[ti][si],energiesDeposit[ti][si],
+                                      XYZ[ti][si], PXPYPZ[ti][si],
+                                      modelIndicies[ti][si], T[ti][si]);
   return p;
 }
 
@@ -388,9 +388,9 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
       BDSOutputROOTEventTrajectoryPoint p(partID[pi], trackID[pi],
 					  parentID[pi], parentIndex[pi],
 					  postProcessTypes[pi][psi], postProcessSubTypes[pi][psi],
-					  postWeights[pi][psi],energies[pi][psi],
-					  trajectories[pi][psi], momenta[pi][psi],
-					  modelIndicies[pi][psi], preT[pi][psi]);
+					  postWeights[pi][psi],energiesDeposit[pi][psi],
+					  XYZ[pi][psi], PXPYPZ[pi][psi],
+					  modelIndicies[pi][psi], T[pi][psi]);
       tpv.push_back(p);
       ti = pi;
     }
@@ -413,18 +413,18 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
             << std::setw(wdt) << "p_y"       << " " << std::setw(wdt) << "p_z"      << " "
             << std::setw(wdt) << "t"         << std::endl;
 
-  for (size_t j=0; j<trajectories[i].size(); ++j)
+  for (size_t j=0; j<XYZ[i].size(); ++j)
     {
       std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
 		<< std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
 		<< std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
 		<< std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
 		<< std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
-		<< std::setw(wdt) << trajectories[i][j].X() << " " << std::setw(wdt) << trajectories[i][j].Y()   << " "
-		<< std::setw(wdt) << trajectories[i][j].Z() << " " << std::setw(wdt) << energies[i][j]           << " "
-		<< std::setw(wdt) << momenta[i][j].Mag()    << " " << std::setw(wdt) << momenta[i][j].X()        << " "
-		<< std::setw(wdt) << momenta[i][j].Y()      << " " << std::setw(wdt) << momenta[i][j].Z()        << " "
-		<< std::setw(wdt) << preT[i][j]             << std::endl;
+		<< std::setw(wdt) << XYZ[i][j].X() << " " << std::setw(wdt) << XYZ[i][j].Y()   << " "
+		<< std::setw(wdt) << XYZ[i][j].Z() << " " << std::setw(wdt) << energiesDeposit[i][j]           << " "
+		<< std::setw(wdt) << PXPYPZ[i][j].Mag()    << " " << std::setw(wdt) << PXPYPZ[i][j].X()        << " "
+		<< std::setw(wdt) << PXPYPZ[i][j].Y()      << " " << std::setw(wdt) << PXPYPZ[i][j].Z()        << " "
+		<< std::setw(wdt) << T[i][j]             << std::endl;
     }
 }
 
@@ -440,7 +440,7 @@ std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const 
 	      << " " << t.preProcessTypes[i][j]   << " " << t.preProcessSubTypes[i][j]
 	      << " " << t.postProcessTypes[i][j]  << " " << t.postProcessSubTypes[i][j]
 	      << " " << t.preWeights[i][j]        << " " << t.postWeights[i][j]
-	      << " " << t.energies[i][j]          << " " << t.preT[i][j]
+	      << " " << t.energiesDeposit[i][j]          << " " << t.T[i][j]
 	      << std::endl;
 	  //}
 	}
