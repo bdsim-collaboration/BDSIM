@@ -84,9 +84,6 @@ public:
   /// An action that is called at the end of a run. By default, does nothing.
   virtual void EndOfRunAction();
 
-  /// Access whether the particle generated may be different from the design particle.
-  inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
-
   /// Access the beam particle definition.
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
@@ -118,6 +115,10 @@ public:
   /// the particle definition is kept here in the bunch this interface allows control
   /// over it being updated.
   void UpdateIonDefinition();
+
+  /// Whether the particle definition has been updated since the last call to
+  /// GetNextParticle() or GetNextParticleValid().
+  inline G4bool ParticleDefinitionHasBeenUpdated() const {return particleDefinitionHasBeenUpdated;}
 
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
@@ -154,13 +155,12 @@ protected:
   /// Whether to ignore z and use s and transform for curvilinear coordinates
   G4bool useCurvilinear;
 
-  /// Wether the bunch distribution can specify a particle that's different
-  /// from the one used for the reference particle that created the beam line.
-  /// Derived class must change explicitly.
-  G4bool particleCanBeDifferent;
-
   /// Particle definition for bunch - this class owns it.
   BDSParticleDefinition* particleDefinition;
+
+  /// Whether the particle definition has been updated since last call to
+  /// GetNextParticle() or GetNextParticleValid().
+  G4bool particleDefinitionHasBeenUpdated;
 
   G4bool finiteTilt; ///< Flag of whether to apply beam rotation.
   /// @{ Flags to ignore random number generator in case of no finite E or T.

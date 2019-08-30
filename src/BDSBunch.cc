@@ -51,8 +51,8 @@ BDSBunch::BDSBunch():
   tilt(0.0),
   sigmaT(0.0), sigmaP(0.0), sigmaE(0.0),
   useCurvilinear(false),
-  particleCanBeDifferent(false),
   particleDefinition(nullptr),
+  particleDefinitionHasBeenUpdated(false),
   finiteTilt(false),
   finiteSigmaE(true),
   finiteSigmaT(true),
@@ -131,6 +131,12 @@ void BDSBunch::CheckParameters()
 
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
 {
+  particleDefinitionHasBeenUpdated = false; // reset flag for this call
+  // use a separate flag to record whether the particle definitions has
+  // been updated as subsequent calls to GetNextParticle may reset it to
+  // false but it was updated in the first call
+  G4bool flag = false;
+
   // continue generating particles until positive finite kinetic energy.
   G4int n = 0;
   BDSParticleCoordsFullGlobal coords;
@@ -138,6 +144,7 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
     {
       ++n;
       coords = GetNextParticle();
+      flag = flag || particleDefinitionHasBeenUpdated;
       
       // ensure total energy is greater than the rest mass
       if ((coords.local.totalEnergy - particleDefinition->Mass()) > 0)
@@ -146,11 +153,13 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
   if (n >= maxTries)
     {throw BDSException(__METHOD_NAME__, "unable to generate coordinates above rest mass after 100 attempts.");}
 
+  particleDefinitionHasBeenUpdated = flag;
   return coords;
 }
 
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
 {
+  particleDefinitionHasBeenUpdated = false; // reset flag
   BDSParticleCoordsFull local = GetNextParticleLocal();
   if (finiteTilt)
     {ApplyTilt(local);}
