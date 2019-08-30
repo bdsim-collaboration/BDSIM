@@ -75,6 +75,8 @@ int main(int argc, char* argv[])
   delete f2;
   
   bool allPassed = Compare::Summarise(results);
+  for (auto r : results)
+    {delete r;}
   if (!allPassed)
     {
       std::cout << "TESTS_FAILED" << std::endl; // key to look for
