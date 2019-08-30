@@ -258,18 +258,15 @@ int BDSIM::Initialise()
 	{
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-	  auto coords = bdsBunch->GetNextParticle();
-	  // always pull out other variables in case they're different
-          const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
-	  G4int nElectrons = 0;
-          if (const BDSIonDefinition* iondDef = pDef->IonDefinition())
-            {nElectrons = iondDef->NElectrons();}
-	  bdsOutput->FillEventPrimaryOnly(coords, pDef, nElectrons);
+	  BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
+	  // always pull particle definition in case it's updated
+	  const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
+	  bdsOutput->FillEventPrimaryOnly(coords, pDef);
 	}
       // Write options now the file is open
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
       bdsOutput->FillOptions(ob);
-
+      
       // Write beam
       const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
       bdsOutput->FillBeam(bb);

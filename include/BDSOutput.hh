@@ -103,8 +103,7 @@ public:
   /// and calls WriteFileEventLevel() and then clears the structures. It therefore
   /// should not be used in conjunction with FillEvent().
   void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
-			    const BDSParticleDefinition*       particle,
-			    const G4int                        nElectrons);
+			    const BDSParticleDefinition*       particle);
   
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                            info,

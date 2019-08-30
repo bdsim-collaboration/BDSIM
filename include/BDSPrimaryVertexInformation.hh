@@ -40,8 +40,7 @@ class BDSPrimaryVertexInformation: public G4VUserPrimaryVertexInformation
 {
 public:
   BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
-			      const BDSParticleDefinition*       particle,
-			      const G4int    nElectronsIn = 0);
+			      const BDSParticleDefinition*       particle);
   BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 			      const G4double chargeIn,
 			      const G4double rigidityIn,

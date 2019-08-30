@@ -26,14 +26,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
-							  const BDSParticleDefinition*       particle,
-							  const G4int                        nElectronsIn):
+							  const BDSParticleDefinition*       particle):
   primaryVertex(primaryVertexIn),
   charge(particle->Charge()),
   rigidity(particle->BRho()),
   mass(particle->Mass()),
   pdgID(particle->ParticleDefinition()->GetPDGEncoding()),
-  nElectrons(nElectronsIn)
+  nElectrons(particle->NElectrons())
 {;}
 
 BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
