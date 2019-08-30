@@ -3065,7 +3065,7 @@ Beam loss monitors (BLMs) are simple detectors that give one integrated value pe
 quantity to be generated can be chosen and the shape and location of the BLM can also be chosen.
 Below are the available parameters. A BLM is created using the `blm` command.::
 
-  detectorname, blm, parameter=value...
+  detectorname: blm, parameter=value...
 
 Either a simple geometric shape can be used, which is a single volume of one material, or a
 user supplied geometry file can be used.
