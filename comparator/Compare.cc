@@ -410,7 +410,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 {
   ResultEventTree* ret = new ResultEventTree();
   ret->name            = t1->GetName();
-  ret->passed          = true; // set deafault to pass
+  ret->passed          = true; // set default to pass
   ret->objtype         = "TTree(Event)";
   ret->t1NEntries      = (int)t1->GetEntries();
   ret->t2NEntries      = (int)t2->GetEntries();
@@ -533,6 +533,7 @@ bool Compare::Summarise(std::vector<Result*> results)
   const int titleWidth = 20;
   const int fullWidth  = titleWidth + 22;
   std::cout << std::endl;
+  std::cout << "N results: " << results.size() << std::endl;
   std::cout << "Comparison: " << std::setw(titleWidth) << "Object Name" << "   "
 	    << "Result" << std::endl;
   std::cout << std::setfill('-') << std::setw(fullWidth) << " " << std::endl;
