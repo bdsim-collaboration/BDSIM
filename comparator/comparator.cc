@@ -41,7 +41,8 @@ enum EXIT_CODE {
   _EXIT_FAILED         = 1,
   _EXIT_INCORRECT_ARGS = 2,
   _EXIT_FILE_NOT_FOUND = 3,
-  _EXIT_BAD_FILE       = 4
+  _EXIT_BAD_FILE       = 4,
+  _EXIT_SUCCESS_NONE   = 5 // all 0 tests passed i.e. there were no tests
 };
 
 int main(int argc, char* argv[])
@@ -75,7 +76,15 @@ int main(int argc, char* argv[])
       return EXIT_CODE::_EXIT_FAILED;
     }
   else
-    {return EXIT_CODE::_EXIT_SUCCESS;}
+    {
+      if (results.empty())
+	{
+	  std::cout << "No tests" << std::endl;
+	  return EXIT_CODE::_EXIT_SUCCESS_NONE;
+	}
+      else
+	{return EXIT_CODE::_EXIT_SUCCESS;}
+    }
 }
 
 void usage()
