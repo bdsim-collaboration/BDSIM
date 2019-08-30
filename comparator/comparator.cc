@@ -69,6 +69,11 @@ int main(int argc, char* argv[])
 
   std::vector<Result*> results = Compare::Files(f1,f2);
 
+  f1->Close();
+  delete f1;
+  f2->Close();
+  delete f2;
+  
   bool allPassed = Compare::Summarise(results);
   if (!allPassed)
     {
