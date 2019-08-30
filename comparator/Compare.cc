@@ -54,6 +54,8 @@ const double        TREETOLERANCE = 0.05;
 const double OPTICSSIGMATOLERANCE = 10;
 const double   EVENTTREETOLERANCE = 1e-10;
 
+const int    EXPECTEDDATAVERSION  = 4;
+
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
   std::vector<Result*> results; 
@@ -426,8 +428,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 
   // Need to tell Event to process samplers at construction time.
   G4bool processSamplers = !samplerNames.empty();
-  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
-  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
+  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers, EXPECTEDDATAVERSION);
+  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers, EXPECTEDDATAVERSION);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames);
 
