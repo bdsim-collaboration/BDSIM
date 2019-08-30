@@ -43,6 +43,8 @@ void BLMPlacement::clear()
   axisZ = 0;
   angle = 0;
   axisAngle = false;
+  side = "";
+  sideOffset = 0;
 
   geometryFile = "";
   geometryType = "";
@@ -71,6 +73,8 @@ void BLMPlacement::PublishMembers()
   publish("axisZ",         &BLMPlacement::axisZ);
   publish("angle",         &BLMPlacement::angle);
   publish("axisAngle",     &BLMPlacement::axisAngle);
+  publish("side",          &BLMPlacement::side);
+  publish("sideOffset",    &BLMPlacement::sideOffset);
 
   publish("geometryFile",  &BLMPlacement::geometryFile);
   publish("geometryType",  &BLMPlacement::geometryType);
@@ -100,6 +104,8 @@ void BLMPlacement::print()const
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
 	    << "axisAngle "     << axisAngle     << std::endl
+	    << "side "          << side          << std::endl
+	    << "sideOffset "    << sideOffset    << std::endl
 	    << "geometryFile "  << geometryFile  << std::endl
 	    << "geometryType "  << geometryType  << std::endl
 	    << "blmMaterial "   << blmMaterial   << std::endl

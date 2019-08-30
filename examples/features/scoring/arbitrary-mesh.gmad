@@ -2,13 +2,13 @@ c1: rcol, l=0.2*m, material="W";
 l1: line=(c1);
 use, l1;
 
-protonAmbient: scorer, type="ambientdose",
-	    	       particleName="proton",
-		       minimumEnergy=20*MeV,
-		       maximumEnergy=1*GeV,
-		       minimumTime=0*s,
-		       maximumTime=1*s,
-		       conversionFactorFile="h10protons.txt";
+neutronActivation: scorer, type="activation",
+	    	       particleName="neutron",
+	    	       minimumEnergy=1e-11*MeV,
+	    	       maximumEnergy=20*MeV,
+	    	       minimumTime=0*s,
+	    	       maximumTime=1*s,
+	    	       conversionFactorFile="conversion_factors/crs_element.dat";
 
 neutronPopulation: scorer, type="population", particleName="neutron";
 

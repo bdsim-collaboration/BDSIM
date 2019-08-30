@@ -62,6 +62,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsMap.hh"
 #include "G4Version.hh"
 
+#include "TH1D.h"
+#include "TH3D.h"
+
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 

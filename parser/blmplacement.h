@@ -56,7 +56,9 @@ namespace GMAD
     double axisZ;
     double angle;
     /// @}
-    bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
+    bool   axisAngle;  ///< Flag to use the axis angle construction of rotation.
+    std::string side;  ///< which side to attach to: top, bottom, left, right.
+    double sideOffset; ///< Offset between the geometry and the BLM.
 
     std::string geometryFile;
     std::string geometryType;

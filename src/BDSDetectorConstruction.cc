@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -97,7 +98,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <map>
 #include <sstream>
+#include <utility>
 #include <vector>
+
 
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
@@ -391,7 +394,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
     }
 
   // Special circular machine bits
-  // Add terminator to do ring turn counting logic
+  // Add terminator to do ring turn counting logic and kill particles
   // Add teleporter to account for slight ring offset
   if (beamlineIsCircular && !massWorld->empty())
     {
@@ -400,15 +403,27 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 #endif
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
+
+      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {return ble->GetBeamPipeInfo() != nullptr;};
+      auto firstElementWithBPInfo = std::find_if(massWorld->begin(),  massWorld->end(),  hasBeamPipeInfo);
+      auto lastElementWithBPInfo  = std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
+
+      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+      G4double lastbeamPipeMaxExtent  = (*lastElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+
+      // the extent is a half width, so we double it - also the terminator width.
+      G4double teleporterHorizontalWidth = 2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
       
-      auto terminator = theComponentFactory->CreateTerminator();
+      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
-      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
-							      teleporterTransform);
+      
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+										  teleporterHorizontalWidth,
+										  teleporterTransform);
       if (teleporter)
 	{
 	  teleporter->Initialise();
@@ -697,7 +712,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine,
-								G4double*              S)
+								G4double*              S,
+								BDSExtent*             placementExtent)
 {
   G4Transform3D result;
 
@@ -728,7 +744,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
     } 
 
-  // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
+  // create a transform w.r.t. the beam line if s is finite and it's not w.r.t a
   // particular element. If it's w.r.t. a particular element, treat s as local curvilinear
   // s and use as local 'z' in the transform.
   if (!placement.referenceElement.empty())
@@ -743,23 +759,33 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
 	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
-	  exit(1);
+	  throw BDSException("Error in placement.");
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
       if (S)
 	{*S = sCoordinate;}
+
+      G4ThreeVector offset = G4ThreeVector();
+      if (placementExtent)
+      	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
+
       G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
-									 placement.x*CLHEP::m,
-									 placement.y*CLHEP::m);
+									 placement.x * CLHEP::m + offset.x(),
+									 placement.y * CLHEP::m + offset.y());
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;      
     }
   else if (BDS::IsFinite(placement.s))
     {// scenario 2
-      G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
-									  placement.x*CLHEP::m,
-									  placement.y*CLHEP::m);
+      G4ThreeVector offset = G4ThreeVector();
+      if (placementExtent)
+	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
+
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(placement.s * CLHEP::m,
+									 placement.x * CLHEP::m + offset.x(),
+									 placement.y * CLHEP::m + offset.y());
+
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
       if (S)
@@ -800,11 +826,65 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Samp
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
 								const BDSBeamline*        beamLine,
-								G4double*                 S)
+								G4double*                 S,
+								BDSExtent*                blmExtent)
 {
   // convert a sampler placement to a general placement for generation of the transform.
-  GMAD::Placement convertedPlacement(blmPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+  GMAD::Placement convertedPlacement(blmPlacement);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent);
+}
+
+
+G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
+							 const BDSBeamline*     beamLine,
+							 const BDSExtent&       placementExtent)
+{
+  G4ThreeVector result = G4ThreeVector();
+  G4String side = G4String(placement.side);
+  
+  // Get the iterators pointing to the first and last elements
+  // that the placement lines up with.
+  G4double pathLength = placement.s*CLHEP::m;
+  std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
+  G4double sLow  = pathLength + extent_z.first;
+  G4double sHigh = pathLength + extent_z.second;
+  // iterator pointing to lower bound
+  auto start = beamLine->FindFromS(sLow);
+  auto end   = beamLine->FindFromS(sHigh);
+  if (end != beamLine->end())
+    {end++;}
+  
+  // Fold across the extents returning the greatest extent. The transverse extents
+  // will give be the transverse extents of the beamline section.
+  BDSExtent sectionMaxExtent = BDSExtent();
+  for (auto iter = start; iter != end; ++iter)
+    {sectionMaxExtent = BDS::MaximumCombinedExtent((*iter)->GetExtent(), sectionMaxExtent);}
+
+  // Multiplied by 5 because it works...
+  G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
+
+  if (placement.sideOffset)
+    {ls = placement.sideOffset * CLHEP::m;}
+  
+  if (side == "top")
+    {
+      result.setY(sectionMaxExtent.YPos() + placementExtent.YPos() + ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
+      result.setX(xOffset);
+    }
+  else if (side == "bottom")
+    {
+      result.setY(sectionMaxExtent.YNeg() + placementExtent.YNeg() - ls);
+      G4double xOffset = sectionMaxExtent.XPos() - 0.5*sectionMaxExtent.DX();
+      result.setX(xOffset);
+    }
+  else if (side == "left")
+    {result.setX(sectionMaxExtent.XPos() + placementExtent.XPos() + ls);}
+  else if (side == "right")
+    {result.setX(sectionMaxExtent.XNeg() + placementExtent.XNeg() - ls);}
+  else if (side != "")
+    {throw BDSException(std::string("Unknown side in placement: " + side));}
+  return result;
 }
 
 BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD::SamplerPlacement& sp) const

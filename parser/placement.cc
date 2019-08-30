@@ -49,6 +49,8 @@ void Placement::clear()
   angle = 0;
   sensitive     = true;
   axisAngle     = false;
+  side          = "";
+  sideOffset    = 0;
 }
 
 void Placement::PublishMembers()
@@ -71,6 +73,8 @@ void Placement::PublishMembers()
   publish("angle",         &Placement::angle);
   publish("sensitive",     &Placement::sensitive);
   publish("axisAngle",     &Placement::axisAngle);
+  publish("side",          &Placement::side);
+  publish("sideOffset",    &Placement::sideOffset);
 }
 
 void Placement::print()const
@@ -93,13 +97,17 @@ void Placement::print()const
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
 	    << "sensitive "     << sensitive     << std::endl
-	    << "axisAngle "     << axisAngle     << std::endl;
+	    << "axisAngle "     << axisAngle     << std::endl
+	    << "side "          << side          << std::endl
+            << "sideOffset "    << sideOffset    << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
   geometryFile(""),
   sequence(""),
-  sensitive(false)
+  sensitive(false),
+  side(""),
+  sideOffset(0)
 {
   name      = sp.name;
   referenceElement       = sp.referenceElement;
@@ -120,7 +128,9 @@ Placement::Placement(const SamplerPlacement& sp):
 
 Placement::Placement(const ScorerMesh& sm):
   geometryFile(""),
-  sensitive(false)
+  sensitive(false),
+  side(""),
+  sideOffset(0)
 {
   name      = sm.name;
   sequence  = sm.sequence;
@@ -148,16 +158,18 @@ Placement::Placement(const BLMPlacement& bp):
   name      = bp.name;
   referenceElement       = bp.referenceElement;
   referenceElementNumber = bp.referenceElementNumber;
-  s         = bp.s;
-  x         = bp.x;
-  y         = bp.y;
-  z         = bp.z;
-  phi       = bp.phi;
-  theta     = bp.theta;
-  psi       = bp.psi;
-  axisX     = bp.axisX;
-  axisY     = bp.axisY;
-  axisZ     = bp.axisZ;
-  angle     = bp.angle;
-  axisAngle = bp.axisAngle;
+  s          = bp.s;
+  x          = bp.x;
+  y          = bp.y;
+  z          = bp.z;
+  phi        = bp.phi;
+  theta      = bp.theta;
+  psi        = bp.psi;
+  axisX      = bp.axisX;
+  axisY      = bp.axisY;
+  axisZ      = bp.axisZ;
+  angle      = bp.angle;
+  axisAngle  = bp.axisAngle;
+  side       = bp.side;
+  sideOffset = bp.sideOffset;
 }

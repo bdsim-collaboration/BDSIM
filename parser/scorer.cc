@@ -38,6 +38,7 @@ void Scorer::clear()
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
+  material = "";
 }
 
 void Scorer::PublishMembers()
@@ -50,7 +51,10 @@ void Scorer::PublishMembers()
   publish("maximumEnergy",        &Scorer::maximumEnergy);
   publish("minimumTime",          &Scorer::minimumTime);
   publish("maximumTime",          &Scorer::maximumTime);
-  publish("conversionFactorFile",&Scorer::conversionFactorFile);
+  publish("conversionFactorFile", &Scorer::conversionFactorFile);
+  publish("conversionFactorPath", &Scorer::conversionFactorPath);
+  publish("material",       &Scorer::material);
+
 }
 
 void Scorer::print()const
@@ -64,5 +68,7 @@ void Scorer::print()const
 	    << "maximumEnergy "         << maximumEnergy       << std::endl
 	    << "minimumTime "           << minimumTime       << std::endl
         << "maximumTime "           << maximumTime       << std::endl
-	    << "conversionFactorFile " << conversionFactorFile << std::endl;
+	    << "conversionFactorFile "  << conversionFactorFile << std::endl
+	    << "conversionFactorPath "  << conversionFactorPath << std::endl
+	    << "material " << material  << std::endl;
 }

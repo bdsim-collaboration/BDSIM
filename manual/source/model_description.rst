@@ -2529,6 +2529,9 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 | mokka                | | An SQL style description of geometry                              |
 +----------------------+---------------------------------------------------------------------+
 
+* With the `option, checkOverlaps=1;` turned on, each externally loaded piece of geometry will
+  also be checked for overlaps.
+
 .. note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
@@ -3101,6 +3104,15 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
 +-------------------------+--------------------------------------------------------------------+
+| side                    | Which side to attach the blm to ("top", "left", "right", "bottom") |
+|                         | By default not attached to any side.  Should be combined with      |
+|                         | either `s` and/or `referenceElement` to determine the element to   |
+|                         | be attached to.  Can be further combined with local `x`, `y`, `z`. |
++-------------------------+--------------------------------------------------------------------+
+| sideOffset              | By default the BLM will be attached flush against the side of the  |
+|                         | given component. Use this to introduce a gap between the BLM and   |
+|                         | the given beamline component.                                      |
++-------------------------+--------------------------------------------------------------------+
 | sensitive               | Whether the geometry records energy deposition (default true)      |
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
@@ -3152,7 +3164,18 @@ Examples
 		    blmMaterial="N",
 		    blm1=20*cm;
 
-2) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
+2) The same BLM as above, but attached flush to the right hand side of the
+   BLM using `side`.
+
+   ::
+      minidetector: blm, s=2.3*m,
+                    side="right",
+	      	    geometryType="sphere",
+		    blmMaterial="N",
+		    blm1=20*cm;
+
+
+3) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
 
    ::
 
@@ -3162,7 +3185,7 @@ Examples
 		    blm1=20*cm,
 		    blm2=5*cm;
 
-3) User defined geometry in a GDML file.
+4) User defined geometry in a GDML file.
 
    ::
 

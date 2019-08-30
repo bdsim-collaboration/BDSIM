@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSScorerInfo;
 class BDSSDFilterTime;
 class BDSSDFilterLogicalVolume;
+class BDSSDFilterMaterial;
 class G4SDParticleWithEnergyFilter;
 
 /**
@@ -51,6 +52,7 @@ private:
   G4SDParticleWithEnergyFilter* particleWithKineticEnergyFilter;
   BDSSDFilterTime*              timeFilter;
   BDSSDFilterLogicalVolume*     volumeFilter;
+  BDSSDFilterMaterial*          materialFilter;
 };
 
 #endif

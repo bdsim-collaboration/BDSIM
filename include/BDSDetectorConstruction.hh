@@ -110,27 +110,36 @@ public:
 				   G4bool                useIncrementalCopyNumbers = false);
 
   /// Create a transform based on the information in the placement. If S is supplied, it's
-  /// updated with the final S coordinate calculated.
+  /// updated with the final S coordinate calculated. If an extent is given - only in the
+  /// case of a placement transform w.r.t. the curvilinear system (ie not global) - the side
+  /// parameter from the placement is used to include an offset to the edge of the element.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine,
-						G4double*              S = nullptr);
+						G4double*              S               = nullptr,
+						BDSExtent*             placementExtent = nullptr);
 
-  /// Create a sampler placement transform. Turns the sampler placement into a
-  /// placement and uses the above function.
-  static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            bemaLine,
-						G4double*                     S = nullptr);
-
-  /// Create a sampler placement from a blm plcement.
-  static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
-						const BDSBeamline*        bemaLine,
-						G4double*                 S = nullptr);
-    
   // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::ScorerMesh& scorerMesh,
                                                 const BDSBeamline*      beamLine,
 						G4double*               S = nullptr);
+  
+  /// Create a sampler placement transform. Turns the sampler placement into a
+  /// placement and uses the above function.
+  static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
+						const BDSBeamline*            beamLine,
+						G4double*                     S = nullptr);
+
+  /// Create a sampler placement from a blm plcement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+						const BDSBeamline*        beamLine,
+						G4double*                 S         = nullptr,
+						BDSExtent*                blmExtent = nullptr);
+
+  ///  Attach component with extent2 to component with extent1 with placement.
+  static G4ThreeVector SideToLocalOffset(const GMAD::Placement& placement,
+					 const BDSBeamline*     beamLine,
+					 const BDSExtent&       placementExtent);
 
   /// Whether to build a sampler world or not. If we've counted more than one sampler we
   /// should build the world in the end.

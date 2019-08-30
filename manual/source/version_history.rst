@@ -52,6 +52,8 @@ New Features
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 
 * New options:
 
@@ -168,6 +170,9 @@ General
 * When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
   but shouldn't interfere if no ranges are set. This has been changed as the `defaultRangeCut` would be enforced
   in the past even if not set explicitly by the user, causing BDSIM's default 1 mm range to be used.
+* `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
+  only the placement of the container volume of the loaded geometry was checked to see if it overlaps
+  with any other geometry, but nothing internally.
   
 Bug Fixes
 ---------
@@ -243,6 +248,9 @@ Bug Fixes
   physics process. However, the kinetic energy and momentum direction often change due to along-step
   processes that are not identified easily in Geant4. We now detect these changes and correctly identify
   the primary as impacting the wire as the PrimaryFirstHit location.
+* Fixed a bug where the terminator and teleporters would overlap with the tunnel.
+* Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Fixed a bug where the `lhcright` transverse extent was set incorrectly.
 
 Output Changes
 --------------
@@ -250,6 +258,8 @@ Output Changes
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
+* Samplers now have a new variable called `theta` included in polar coordinates (optional), which
+  is the angle with respect to the local z axis. i.e. :math:`tan^{-1}(r^{\prime}/z^{\prime})`.
 * `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
