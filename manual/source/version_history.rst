@@ -175,6 +175,8 @@ General
 Bug Fixes
 ---------
 
+* Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
+  updated when multiple different particles were used for a `userfile` distribution.
 * Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
   was not filled correctly - this has been fixed.
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
