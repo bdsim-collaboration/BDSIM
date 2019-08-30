@@ -90,6 +90,9 @@ public:
   /// Access the beam particle definition.
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
+  /// Set the flag to whether we're only generating primaries only. This sets the member
+  /// variable generatePrimariesOnly which skips trying to perform a curvilinear transform
+  /// if true. i.e. if we're generating primaries only, there's no beam line.
   virtual void SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn);
 
   /// Each derived class can override this default method of reference
@@ -98,7 +101,7 @@ public:
   virtual BDSParticleCoordsFull GetNextParticleLocal();
 
   /// Access whether there's a finite S offset and therefore we're using a CL transform.
-  G4bool   UseCurvilinearTransform()  const {return useCurvilinear;}
+  G4bool UseCurvilinearTransform() const {return useCurvilinear;}
 
   /// When recreating events, it's possible that setting the seed state may not
   /// be sufficient for the bunch to get the right distribution. This is true when
@@ -117,7 +120,7 @@ public:
   void UpdateIonDefinition();
 
 protected:
-  /// Apply either the curivilinear transform if we're using curvilinear coordinates or
+  /// Apply either the curvilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
   /// curvilinear coordinates.
   BDSParticleCoordsFullGlobal ApplyTransform(const BDSParticleCoordsFull& localIn) const;
@@ -176,10 +179,8 @@ private:
   /// Transform that beam line starts with that will also be applied to coordinates.
   G4Transform3D beamlineTransform;
 
-  /// Beamline initial S position
-  G4double beamlineS;
-  
-  G4double mass2; ///< Cache of mass squared as required to convert from p to E.
+  G4double beamlineS; ///< Beamline initial S position
+  G4double mass2;     ///< Cache of mass squared as required to convert from p to E.
   
   /// A reference to the fully constructed beamline that's lazily instantiated.
   mutable const BDSBeamline* beamline;

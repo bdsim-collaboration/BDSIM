@@ -135,7 +135,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 #endif
 
-  // update particle definition if special case of an ion - can only be done here
+  // update particle definition in the special case of an ion - can only be done here
+  // and not before due to Geant4 ion information availability only at run time
   if (ionPrimary && !ionCached)
     {
       bunch->UpdateIonDefinition();
@@ -162,7 +163,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4bool offsetSAndOnFirstTurn = bunch->UseCurvilinearTransform();
       oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
     }
-
+  
   particleGun->SetParticleDefinition(bunch->ParticleDefinition()->ParticleDefinition());
   
   // always update the charge - ok for normal particles; fixes purposively specified ions.
