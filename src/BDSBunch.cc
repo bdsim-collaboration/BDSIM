@@ -67,11 +67,6 @@ BDSBunch::~BDSBunch()
   delete particleDefinition;
 }
 
-G4double BDSBunch::EFromP(const G4double &pIn) const
-{//E2 = p2 + m2
-  return std::sqrt(std::pow(pIn,2) + mass2);
-}
-
 void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& /*distrType*/,

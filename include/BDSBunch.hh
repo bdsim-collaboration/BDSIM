@@ -134,9 +134,6 @@ protected:
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
-  /// Convert a momentum to a total energy given the beam particle mass.
-  G4double EFromP(const G4double &pIn) const;
-
   ///@{ Centre of distributions
   G4double X0;
   G4double Y0;
