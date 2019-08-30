@@ -48,7 +48,8 @@ include(cmake/SystemCheck.cmake)
 # Regression testing flag
 set(BDSIM_GENERATE_REGRESSION_DATA OFF CACHE BOOL "Whether to generate regression testing data from tests.")
 mark_as_advanced(BDSIM_GENERATE_REGRESSION_DATA)
-set(BDSIM_REGRESSION_PREFIX "ref" CACHE STRING "Prefix for regression file generation.")
+# Default prefix is test as we expect to be testing. Change to "ref" for reference results.
+set(BDSIM_REGRESSION_PREFIX "test" CACHE STRING "Prefix for regression file generation.")
 mark_as_advanced(BDSIM_REGRESSION_PREFIX)
 
 #################  
