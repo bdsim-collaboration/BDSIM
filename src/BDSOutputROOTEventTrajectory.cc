@@ -167,7 +167,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  
 	  preWeight.push_back(point->GetPreWeight());
 	  postWeight.push_back(point->GetPostWeight());
-	  energy.push_back(point->GetEnergy());
+	  energy.push_back(point->GetEnergy() / CLHEP::GeV);
 	  G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
 	  momentum.push_back(TVector3(mom.getX(),
 				      mom.getY(),
