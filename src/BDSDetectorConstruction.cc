@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -47,6 +48,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSRegion.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
@@ -211,17 +213,14 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
 void BDSDetectorConstruction::InitialiseRegions()
 {
+  BDSRegion* defaultRegion = new BDSRegion("default");
   for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
     {
-      G4Region* region = new G4Region(G4String(r.name));
-      G4ProductionCuts* cuts = new G4ProductionCuts();
-      cuts->SetProductionCut(r.prodCutPhotons*CLHEP::m,   "gamma");
-      cuts->SetProductionCut(r.prodCutElectrons*CLHEP::m, "e-");
-      cuts->SetProductionCut(r.prodCutPositrons*CLHEP::m, "e+");
-      cuts->SetProductionCut(r.prodCutProtons*CLHEP::m,   "proton");
-      region->SetProductionCuts(cuts);
-      acceleratorModel->RegisterRegion(region, cuts);
+      BDSRegion* reg = new BDSRegion(r, defaultRegion);
+      G4cout << "New region defined: " << G4endl << *reg << G4endl;
+      acceleratorModel->RegisterRegion(reg);
     }
+  delete defaultRegion;
 }
 
 void BDSDetectorConstruction::InitialiseApertures()
@@ -383,7 +382,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
     }
 
   // Special circular machine bits
-  // Add terminator to do ring turn counting logic
+  // Add terminator to do ring turn counting logic and kill particles
   // Add teleporter to account for slight ring offset
   if (beamlineIsCircular && !massWorld->empty())
     {
@@ -392,15 +391,27 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 #endif
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
+
+      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {return ble->GetBeamPipeInfo() != nullptr;};
+      auto firstElementWithBPInfo = std::find_if(massWorld->begin(),  massWorld->end(),  hasBeamPipeInfo);
+      auto lastElementWithBPInfo  = std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
+
+      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+      G4double lastbeamPipeMaxExtent  = (*lastElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+
+      // the extent is a half width, so we double it - also the terminator width.
+      G4double teleporterHorizontalWidth = 2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
       
-      auto terminator = theComponentFactory->CreateTerminator();
+      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
-      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
-							      teleporterTransform);
+      
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+										  teleporterHorizontalWidth,
+										  teleporterTransform);
       if (teleporter)
 	{
 	  teleporter->Initialise();

@@ -70,13 +70,25 @@ void BDSExecOptions::Parse(int argc, char **argv)
 {
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
 					{ "verbose", 0, 0, 0 },
-					{ "verbose_step", 0, 0, 0 },
-					{ "verbose_event", 0, 0, 0 },
-					{ "verbose_event_num", 1, 0, 0 },
-					{ "verbose_G4run", 1, 0, 0 },
-					{ "verbose_G4event", 1, 0, 0 },
-					{ "verbose_G4tracking", 1, 0, 0 },
+					{ "verbose_step", 0, 0, 0 },         // old
+					{ "verboseSteppingBDSIM", 0, 0, 0 }, // new
+					{ "verbose_event", 0, 0, 0 },        // old
+					{ "verboseEventBDSIM", 0, 0, 0 },    // new
+					{ "verbose_event_num", 1, 0, 0 },    // old
+					{ "verboseEventNumber", 1, 0, 0 },   // new
+					{ "verboseEventStart", 1, 0, 0 },
+					{ "verboseEventContinueFor",  1, 0, 0 },
+					{ "verbose_G4run", 1, 0, 0 },        // old
+					{ "verboseRunLevel", 1, 0, 0},       // new
+					{ "verbose_G4event", 1, 0, 0 },      // old
+					{ "verboseEventLevel", 1, 0, 0},     // new
+					{ "verbose_G4tracking", 1, 0, 0 },   // old
+					{ "verboseTrackingLevel", 1, 0, 0 }, // new
 					{ "verbose_G4stepping", 1, 0, 0 },
+					{ "verboseSteppingLevel", 1, 0, 0 },
+					{ "verboseSteppingEventStart", 1, 0, 0 },
+					{ "verboseSteppingEventContinueFor", 1, 0, 0 },
+					{ "verboseSteppingPrimaryOnly", 0, 0, 0 },
 					{ "file", 1, 0, 0 },
 					{ "distrFile", 1, 0, 0 },
 					{ "distrFileNLinesSkip", 1, 0, 0 },
@@ -141,43 +153,70 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("batch",true);}
       else if( !strcmp(optionName , "verbose") )
 	{options.set_value("verbose", true);}
-      else if( !strcmp(optionName , "verbose_step") )
-	{// we shouldn't have verbose steps without verbose events
-	  options.set_value("verboseStep", true); 
-	  options.set_value("verboseEvent", true);
+      else if( !strcmp(optionName , "verbose_step") || !strcmp(optionName , "verboseSteppingBDSIM"))
+	{// we shouldn't have verbose steps without (minimally) verbose events
+	  options.set_value("verboseSteppingBDSIM", true); 
+	  options.set_value("verboseEventBDSIM",    true);
 	}
       else if( !strcmp(optionName , "verbose_event") )
 	{options.set_value("verboseEvent", true);}
-      else if( !strcmp(optionName , "verbose_event_num") )
+      else if( !strcmp(optionName , "verbose_event_num") || !strcmp(optionName , "verboseEventNumber"))
 	{
 	  int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventNumber", result);
+	  options.set_value("verboseEventStart", result);
+	  options.set_value("verboseEventContinueFor", 1);
 	}
-      else if( !strcmp(optionName , "verbose_G4run") )
+      else if( !strcmp(optionName , "verboseEventStart") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseEventStart", result);
+	}
+      else if( !strcmp(optionName , "verboseEventContinueFor") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseEventContinueFor", result);
+	}
+      else if( !strcmp(optionName , "verbose_G4run") || !strcmp(optionName , "verboseRunLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseRunLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4event") )
+      else if( !strcmp(optionName , "verbose_G4event") || !strcmp(optionName , "verboseEventLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseEventLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4tracking") )
+      else if( !strcmp(optionName , "verbose_G4tracking") || !strcmp(optionName , "verboseTrackingLevel") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseTrackingLevel", result);
 	}
-      else if( !strcmp(optionName , "verbose_G4stepping") )
+      else if( !strcmp(optionName , "verbose_G4stepping") || !strcmp(optionName , "verboseSteppingLevel"))
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("verboseSteppingLevel", result);
 	}
+      else if( !strcmp(optionName , "verboseSteppingEventStart") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseSteppingEventStart", result);
+	}
+      else if( !strcmp(optionName , "verboseSteppingEventContinueFor") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("verboseSteppingEventContinueFor", result);
+	}
+      else if( !strcmp(optionName , "verboseSteppingPrimaryOnly") )
+	{options.set_value("verboseSteppingPrimaryOnly", true);}
       else if( !strcmp(optionName , "output") )
 	{options.set_value("outputFormat", std::string(optarg));}
       else if( !strcmp(optionName , "outfile") )
@@ -191,7 +230,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName, "distrFile") )
 	{// build absolute path
-          beam.set_value("distrFile", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          beam.set_value("distrFile", std::string(optarg));
         }
       else if( !strcmp(optionName, "distrFileNLinesSkip") )
 	{
@@ -202,9 +241,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{options.set_value("visMacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+	{options.set_value("visMacroFileName",  std::string(optarg));}
       else if( !strcmp(optionName , "geant4Macro") )
-	{options.set_value("geant4MacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+	{options.set_value("geant4MacroFileName", std::string(optarg));}
       else if( !strcmp(optionName, "colours") )
 	{
 	  BDSColours::Instance()->Print();
@@ -226,7 +265,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName, "recreate") )
 	{
           options.set_value("recreate", true);
-          options.set_value("recreateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          options.set_value("recreateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "startFromEvent") )
 	{
@@ -239,7 +278,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName, "seedState")  || !strcmp(optionName, "seedStateFileName"))
 	{
           options.set_value("useASCIISeedState", true);
-          options.set_value("seedStateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          options.set_value("seedStateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
@@ -309,15 +348,15 @@ void BDSExecOptions::Parse(int argc, char **argv)
   // there should be no remaining options
   if (OptionNumber < argc - 1)
     {
-      G4cout << "ERROR there are remaining options: " << G4endl;
+      G4cout << __METHOD_NAME__ << "there are remaining unknown options: " << G4endl;
       for (int i=1; i<argc; i++)
 	{
 	  // options with '-' are ignored by getopt_long, other unknown options are covered
 	  if (strncmp(argv[i], "-", 1))
-	    {G4cout << argv[i] << G4endl;}
+	    {G4cout << "\"" << argv[i] << "\"" << G4endl;}
 	}
-      
-      G4cout << "Please check your input" << G4endl;
+
+      G4cout << "Please check your command line arguments" << G4endl;
       exit(1);
     }
   }

@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "analysis/Model.hh"
 #include "analysis/Options.hh"
 
+#include "BDSDebug.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventSampler.hh"
 
 #include <algorithm>
@@ -363,7 +365,14 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 		{break;} // skip test when errors are 0
 
 	      // check for nans or negative values that shouldn't be there
-	      if (NanOrInf(t1v) || NanOrInf(t2v) || GTEZero(t1v) != shouldBeGTEZero || GTEZero(t2v) != shouldBeGTEZero)
+	      // only check if greater than zero if they should be, otherwise no need to check.
+	      bool valueIsGood = true;
+	      if (shouldBeGTEZero)
+	        {
+	      	  if (!GTEZero(t1v) || !GTEZero(t2v))
+	            {valueIsGood = false;}
+	        }
+	      if (NanOrInf(t1v) || NanOrInf(t2v) || !valueIsGood)
 		{
 		  branchFailed = true;
 		  std::cout << "Invalid value found for branch \"" << branchName << "\"" << G4endl;

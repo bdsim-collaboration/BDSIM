@@ -100,7 +100,14 @@ include(rebdsim_test_macros)
 include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
-set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+if (USE_HEPMC3)
+  #TBC - need to test if we can just use this
+  #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib;${HEPMC3_ROOT_DIR}/lib")
+  #message(STATUS "rpath = ${CMAKE_INSTALL_RPATH}")
+else()
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+endif()
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(SYSCONFIG_INSTALL_DIR etc/bdsim/)
@@ -289,9 +296,10 @@ export(EXPORT BDSIMTargets
 )
 
 include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/BDSIMConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+configure_package_config_file(cmake/BDSIMConfig.cmake.in
+			      ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
 			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsimcmake/cmake
-			      PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
+			      PATH_VARS INCLUDE_INSTALL_DIR BIN_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake
   VERSION ${BDSIM_VERSION}
   COMPATIBILITY AnyNewerVersion

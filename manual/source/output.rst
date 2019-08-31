@@ -1104,6 +1104,13 @@ doubles the output file size.
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | rp (\*)         | std::vector<T>    | Vector of the radius calculated from xp and yp                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
+| phi (\*)        | std::vector<T>    | Vector of angle of x and y (calculated from arctan(y/x)                  |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| phip (\*)       | std::vector<T>    | Vector of angle of xp and yp (calcualted from arctan(yp/xp)              |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| theta (\*)      | std::vector<T>    | Vector of the angle of the particle from the local z axis (calculated    |
+|                 |                   | from arctan(rp/zp)                                                       |
++-----------------+-------------------+--------------------------------------------------------------------------+
 | charge (\*)     | std::vector<int>  | Vector of the PDG charge of the particle for each hit                    |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | mass (\*)       | std::vector<T>    | Vector of the PDG mass of the particle for each hit (GeV)                |

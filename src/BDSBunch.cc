@@ -196,7 +196,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
 							       &beamlineIndex);
   // rotate the momentum vector
   G4ThreeVector cMom = G4ThreeVector(localIn.xp, localIn.yp, localIn.zp).transform(cTrans.getRotation());
-  // translation contains displacement from origin already
+  // translation contains displacement from origin already - including any local offset
   G4ThreeVector cPos = cTrans.getTranslation();
 
   BDSParticleCoords global = BDSParticleCoords(cPos.x(), cPos.y(), cPos.z(),
