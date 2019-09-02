@@ -22,6 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 #include "G4TrajectoryPoint.hh"
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
+#include "BDSTrajectoryPointIon.hh"
 
 #include <ostream>
 
@@ -45,11 +48,17 @@ public:
   
   /// This constructor is used to construct a point from a step intended to
   /// be appended to a trajectory. It uses the post step point as the main position.
-  explicit BDSTrajectoryPoint(const G4Step* step);
+  explicit BDSTrajectoryPoint(const G4Step* step,
+                              G4bool storeExtrasLocalIn,
+                              G4bool storeExtrasLinkIn,
+                              G4bool storeExtrasIonIn);
   
   /// This constructor is required for the beginning of each track
   /// and produces the initial vertex point.
-  explicit BDSTrajectoryPoint(const G4Track* track);
+  explicit BDSTrajectoryPoint(const G4Track* track,
+                              G4bool storeExtrasLocalIn,
+                              G4bool storeExtrasLinkIn,
+                              G4bool storeExtrasIonIn);
 
   virtual ~BDSTrajectoryPoint();
 
@@ -113,6 +122,9 @@ public:
   inline G4bool operator<=(const BDSTrajectoryPoint& other) const {return !((*this) > other);}
   inline G4bool operator>=(const BDSTrajectoryPoint& other) const {return !((*this) < other);}
   /// @}
+  G4bool storeExtrasLocal;
+  G4bool storeExtrasLink;
+  G4bool storeExtrasIon;
   
 private:
   /// Initialisation of variables in separate function to reduce duplication in
@@ -140,6 +152,12 @@ private:
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
+
+
+  BDSTrajectoryPointLocal *extraLocal;
+  BDSTrajectoryPointLink *extraLink;
+  BDSTrajectoryPointIon  *extraIon;
+
 
   /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.

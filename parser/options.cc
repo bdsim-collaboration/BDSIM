@@ -421,6 +421,11 @@ void Options::PublishMembers()
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
   publish("trajNoTransportation",               &Options::trajNoTransportation);
 
+  publish("storeSamplerLocal",              &Options::storeSamplerLocal);
+  publish("storeSamplerLinks",              &Options::storeSamplerLinks);
+  publish("storeSamplerIons",              &Options::storeSamplerIons);
+
+
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);

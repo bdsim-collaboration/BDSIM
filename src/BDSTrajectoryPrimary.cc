@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSTrajectoryPrimary.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Allocator.hh"
@@ -68,7 +69,10 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
     {
       // particle is being killed, ie end of track. update last point
       delete lastPoint;
-      lastPoint = new BDSTrajectoryPoint(aStep);
+      lastPoint = new BDSTrajectoryPoint(aStep,
+                                         BDSGlobalConstants::Instance()->storeSamplerLocal(),
+                                         BDSGlobalConstants::Instance()->storeSamplerLinks(),
+                                         BDSGlobalConstants::Instance()->storeSamplerIons());
     }
   
   G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(aStep);
@@ -76,7 +80,10 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
   // if we don't have a first hit already and it's a scattering point, record it
   if (!firstHit && isScatteringPoint)
     {
-      firstHit = new BDSTrajectoryPoint(aStep);
+      firstHit = new BDSTrajectoryPoint(aStep,
+                                        BDSGlobalConstants::Instance()->storeSamplerLocal(),
+                                        BDSGlobalConstants::Instance()->storeSamplerLinks(),
+                                        BDSGlobalConstants::Instance()->storeSamplerIons());
       hasScatteredThisTurn = true;
     }
   else if (isScatteringPoint && !hasScatteredThisTurn)

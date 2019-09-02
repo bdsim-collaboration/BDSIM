@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Allocator.hh"
@@ -55,7 +56,10 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   fParentIndex = -1;
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
-  (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack));
+  (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack,
+                                                           BDSGlobalConstants::Instance()->storeSamplerLocal(),
+                                                           BDSGlobalConstants::Instance()->storeSamplerLinks(),
+                                                           BDSGlobalConstants::Instance()->storeSamplerIons()));
 }
 
 BDSTrajectory::~BDSTrajectory()
@@ -102,12 +106,18 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 	      preProcessType  != 10 /* parallel world */) ||
 	     (postProcessType != 1   /* transportation */ &&
 	      postProcessType != 10 /* parallel world */) )
-	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));}
+	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
+                                                                BDSGlobalConstants::Instance()->storeSamplerLocal(),
+                                                                BDSGlobalConstants::Instance()->storeSamplerLinks(),
+                                                                BDSGlobalConstants::Instance()->storeSamplerIons()));}
 	}
     }
   else
     {
-      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
+      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
+                                                             BDSGlobalConstants::Instance()->storeSamplerLocal(),
+                                                             BDSGlobalConstants::Instance()->storeSamplerLinks(),
+                                                             BDSGlobalConstants::Instance()->storeSamplerIons()));
     }
 }
 
