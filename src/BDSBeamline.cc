@@ -731,7 +731,7 @@ const BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentN
 G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentName,
 						  G4int    i) const
 {
-  BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
+  const BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
   if (!result)
     {
       G4cerr << __METHOD_NAME__ << "No element named \""
