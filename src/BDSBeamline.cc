@@ -720,10 +720,35 @@ const BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentN
 {
   // build placement name based on acc component name and ith placement
   // matches construction in BDSBeamlineElement
-  G4String placementName = acceleratorComponentName + "_" + std::to_string(i);
+  G4String suffix        = "_" + std::to_string(i);
+  G4String placementName = acceleratorComponentName + suffix;
   const auto search = components.find(placementName);
   if (search == components.end())
-    {return nullptr;} //wasn't found
+    {
+      // Try again but search including naming convention of uniquely built
+      // components. Sometimes we modify an element or build it uniquely for
+      // that position in the lattice, so we therefore add a suffix to the
+      // name for storing in the component registry.
+      // Naming will be NAME_MOD_MODNUMBER_PLACEMENTNUMBER
+      // Why not search registry? -> should be found from this beam line
+      // 1) search with starts with NAME
+      std::vector<const BDSBeamlineElement*> candidates;
+      std::for_each(this->begin(),
+		    this->end(),
+		    [&acceleratorComponentName,&candidates](const BDSBeamlineElement* el)
+		    {if (BDS::StartsWith(el->GetPlacementName(), acceleratorComponentName)){candidates.push_back(el);};});
+      
+      if (candidates.empty())
+        {return nullptr;} // nothing found
+      else
+        {// 2) of things that start with NAME, search for ones that end in _PLACEMENTNUMBER
+          auto foundItem = std::find_if(candidates.begin(),
+					candidates.end(),
+					[&suffix](const BDSBeamlineElement* el)
+					{return BDS::EndsWith(el->GetPlacementName(), suffix);});
+          return foundItem != candidates.end() ? *foundItem : nullptr;
+        }
+    }
   else
     {return search->second;}
 }

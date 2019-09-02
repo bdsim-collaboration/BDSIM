@@ -246,6 +246,9 @@ Bug Fixes
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 * Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
+  where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
+  improved to deal with any uniquely built components, such as rf cavities.
 
 Output Changes
 --------------
