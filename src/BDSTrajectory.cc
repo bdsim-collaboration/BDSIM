@@ -57,9 +57,9 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
   (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack,
-                                                           BDSGlobalConstants::Instance()->storeTrajectoryLocal(),
-                                                           BDSGlobalConstants::Instance()->storeTrajectoryLinks(),
-                                                           BDSGlobalConstants::Instance()->storeTrajectoryIons()));
+                                                           BDSGlobalConstants::Instance()->StoreTrajectoryLocal(),
+                                                           BDSGlobalConstants::Instance()->StoreTrajectoryLinks(),
+                                                           BDSGlobalConstants::Instance()->StoreTrajectoryIons()));
 }
 
 BDSTrajectory::~BDSTrajectory()
@@ -107,17 +107,17 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 	     (postProcessType != 1   /* transportation */ &&
 	      postProcessType != 10 /* parallel world */) )
 	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
-                                                                BDSGlobalConstants::Instance()->storeTrajectoryLocal(),
-                                                                BDSGlobalConstants::Instance()->storeTrajectoryLinks(),
-                                                                BDSGlobalConstants::Instance()->storeTrajectoryIons()));}
+                                                                BDSGlobalConstants::Instance()->StoreTrajectoryLocal(),
+                                                                BDSGlobalConstants::Instance()->StoreTrajectoryLinks(),
+                                                                BDSGlobalConstants::Instance()->StoreTrajectoryIons()));}
 	}
     }
   else
     {
       fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
-                                                             BDSGlobalConstants::Instance()->storeTrajectoryLocal(),
-                                                             BDSGlobalConstants::Instance()->storeTrajectoryLinks(),
-                                                             BDSGlobalConstants::Instance()->storeTrajectoryIons()));
+                                                             BDSGlobalConstants::Instance()->StoreTrajectoryLocal(),
+                                                             BDSGlobalConstants::Instance()->StoreTrajectoryLinks(),
+                                                             BDSGlobalConstants::Instance()->StoreTrajectoryIons()));
     }
 }
 
