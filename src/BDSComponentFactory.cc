@@ -197,27 +197,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	}
     }
   else if (element->type == ElementType::_THINMULT)
-    {// thinmultipole only uses one angle - so angleIn
-      if (prevElement && nextElement)
+    {// thinmultipole only uses one angle - so `angleIn`
+       if (prevElement && nextElement)
 	{// both exist
 	  ElementType prevType = prevElement->type;
 	  ElementType nextType = nextElement->type;
-	  if (prevType == ElementType::_DRIFT && nextType == ElementType::_DRIFT)
-	    {angleIn = 0;} // between two drifts - flat
-	  else if (prevType == ElementType::_DRIFT)
+	  if (prevType == ElementType::_DRIFT && nextType != ElementType::_DRIFT)
 	    {angleIn = -IncomingFaceAngle(nextElement);} // previous is drift which will match next
-	  else
-	    {angleIn = OutgoingFaceAngle(prevElement);} // next is drift which will match prev
+	  else if (prevType != ElementType::_DRIFT && nextType == ElementType::_DRIFT)
+	    {angleIn = OutgoingFaceAngle(prevElement);}  // next is drift which will match prev
 	}
       else if (prevElement)
 	{angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
       else
 	{angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
 
-      // because thin multipoles adapt to what's around them, it's not possible to know
-      // if, in the case the thin multipole already exists in the registry, it's been
-      // modified or is flat, therefore we mark them all as unique.
-      differentFromDefinition = true;
+      // flag as unique only if the angleIn is changed and the geometry is built at an angle
+      if (BDS::IsFinite(angleIn))
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_SOLENOID)
     {// we build incoming / outgoing fringe fields for solenoids
