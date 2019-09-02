@@ -889,7 +889,7 @@ multipole
 
    knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
-starting with the quadrupole component. The skew strength parameter :math:`ksl`
+starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
 
 ================  ===========================  ==========  ===========
@@ -902,6 +902,8 @@ Parameter         Description                  Default     Required
 
 Notes:
 
+* The values for `knl` and `ksl` are 1-counting, i.e. the first number is the order 1 component,
+  which is the quadrupole coefficient.
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
@@ -910,6 +912,8 @@ Notes:
 Examples: ::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
+   QUADRUPOLE1: multipole, l=20*cm, knl={2.3};
+   
 
 thinmultipole
 ^^^^^^^^^^^^^
@@ -917,6 +921,8 @@ thinmultipole
 `thinmultipole` is the same as multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
+
+* `knl` and `ksl` are the same as the thick multiple documented above.  See `multipole`_.
 
 Examples: ::
 
