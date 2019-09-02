@@ -715,8 +715,8 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
     }
 }
 
-BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
-					    G4int    i) const
+const BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
+						  G4int    i) const
 {
   // build placement name based on acc component name and ith placement
   // matches construction in BDSBeamlineElement
