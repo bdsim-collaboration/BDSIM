@@ -87,9 +87,9 @@ G4bool BDSSDThinThing::ProcessHitsOrdered(G4Step* step,
 						 track->GetParentID(),
 						 turnsTaken,
 						 new BDSTrajectoryPoint(step,
-                                                BDSGlobalConstants::Instance()->storeSamplerLocal(),
-                                                BDSGlobalConstants::Instance()->storeSamplerLinks(),
-                                                BDSGlobalConstants::Instance()->storeSamplerIons()));
+                                                BDSGlobalConstants::Instance()->storeTrajectoryLocal(),
+                                                BDSGlobalConstants::Instance()->storeTrajectoryLinks(),
+                                                BDSGlobalConstants::Instance()->storeTrajectoryIons()));
       thinThingCollection->insert(hit);
       return true;
     }

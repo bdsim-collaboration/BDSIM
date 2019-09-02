@@ -421,9 +421,9 @@ void Options::PublishMembers()
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
   publish("trajNoTransportation",               &Options::trajNoTransportation);
 
-  publish("storeSamplerLocal",              &Options::storeSamplerLocal);
-  publish("storeSamplerLinks",              &Options::storeSamplerLinks);
-  publish("storeSamplerIons",              &Options::storeSamplerIons);
+  publish("storeTrajectoryLocal",              &Options::storeTrajectoryLocal);
+  publish("storeTrajectoryLinks",              &Options::storeTrajectoryLinks);
+  publish("storeTrajectoryIons",              &Options::storeTrajectoryIons);
 
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);

@@ -152,6 +152,8 @@ private:
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
+  G4ThreeVector preMomentumLocal;
+  G4ThreeVector postMomentumLocal;
 
 
   BDSTrajectoryPointLocal *extraLocal;

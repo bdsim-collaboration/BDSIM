@@ -308,9 +308,9 @@ namespace GMAD
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
 
     // New Trajectory information booleans
-    bool        storeSamplerLocal;
-    bool        storeSamplerLinks;
-    bool        storeSamplerIons;
+    bool        storeTrajectoryLocal;
+    bool        storeTrajectoryLinks;
+    bool        storeTrajectoryIons;
 
     bool        storeSamplerAll;
     bool        storeSamplerPolarCoords;

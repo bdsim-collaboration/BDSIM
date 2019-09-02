@@ -273,9 +273,9 @@ OptionsBase::OptionsBase()
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false;
 
-  storeSamplerLocal         = false;
-  storeSamplerLinks         = false;
-  storeSamplerIons          = false;
+  storeTrajectoryLocal         = false;
+  storeTrajectoryLinks         = false;
+  storeTrajectoryIons          = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
