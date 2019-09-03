@@ -2426,7 +2426,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT)
-    {(*st)["length"] = 1;}
+    {(*st)["length"] = 1*CLHEP::m;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();
   std::vector<G4String> normKeys = st->NormalComponentKeys();
