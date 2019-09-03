@@ -37,9 +37,10 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
 {
   // multiple by brho to get field coefficients and work out maximum finite
   // order to loop up to
+  // power is i+2 as 0th element is quadrupole coefficient which has 1/m^2
   for (G4int i = 0; i < (G4int)normalComponents.size(); i++)
     {
-      normalComponents[i] *= (brho / std::pow(CLHEP::m, i+1));
+      normalComponents[i] *= (brho / std::pow(CLHEP::m, i+2));
       G4double kn      = normalComponents[i];
       G4bool nonZeroKN = BDS::IsFiniteStrength(kn);
       finiteStrength   = nonZeroKN || finiteStrength;
@@ -48,7 +49,7 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
     }
   for (G4int i = 0; i < (G4int)skewComponents.size(); i++)
     {
-      skewComponents[i] *= (brho / std::pow(CLHEP::m, i+1));
+      skewComponents[i] *= (brho / std::pow(CLHEP::m, i+2));
       G4double ks = skewComponents[i];
       G4bool nonZeroKS = BDS::IsFiniteStrength(ks);
       finiteStrength = nonZeroKS || finiteStrength;
