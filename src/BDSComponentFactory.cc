@@ -2423,7 +2423,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double scaling = el->scaling;
-  G4double length = el->l;
+  G4double length  = el->l;
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT)
     {length = 1;}
@@ -2433,9 +2433,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   std::vector<G4String> skewKeys = st->SkewComponentKeys();
   auto nkey = normKeys.begin();
   auto skey = skewKeys.begin();
-  //Separate loops for kn and ks. The length of knl and ksl is determined by the input in the gmad file.
-  //A single loop for both kn and ks using only one of their end iterators can end the loop
-  //prematurely for the other, potentially missing higher order components.
+  // Separate loops for kn and ks. The length of knl and ksl are determined by the input in the gmad file.
   for (; kn != el->knl.end(); kn++, nkey++)
     {(*st)[*nkey] = scaling * (*kn);}
   for (; ks != el->ksl.end(); ks++, skey++)
