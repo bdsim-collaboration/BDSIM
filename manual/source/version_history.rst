@@ -175,6 +175,7 @@ General
 Bug Fixes
 ---------
 
+* Fix thick multipole element where the field was 1M times too strong because of the omission of units.
 * Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
   was not filled correctly - this has been fixed.
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
