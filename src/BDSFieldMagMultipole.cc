@@ -39,7 +39,7 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
   // order to loop up to
   for (G4int i = 0; i < (G4int)normalComponents.size(); i++)
     {
-      normalComponents[i] *= brho;
+      normalComponents[i] *= (brho / std::pow(CLHEP::m, i+1));
       G4double kn      = normalComponents[i];
       G4bool nonZeroKN = BDS::IsFiniteStrength(kn);
       finiteStrength   = nonZeroKN || finiteStrength;
@@ -48,7 +48,7 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
     }
   for (G4int i = 0; i < (G4int)skewComponents.size(); i++)
     {
-      skewComponents[i] *= brho;
+      skewComponents[i] *= (brho / std::pow(CLHEP::m, i+1));
       G4double ks = skewComponents[i];
       G4bool nonZeroKS = BDS::IsFiniteStrength(ks);
       finiteStrength = nonZeroKS || finiteStrength;
