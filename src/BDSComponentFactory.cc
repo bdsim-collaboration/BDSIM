@@ -503,14 +503,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // note cavity length is not the same as currentArcLength
   G4double cavityLength = element->l * CLHEP::m;
 
-  G4bool buildIncomingFringe = true;
-  if (prevElement) // could be nullptr
+  // use cavity fringe option, includeFringeFields does not affect cavity fringes
+  G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldCavities();
+
+  G4bool buildIncomingFringe = buildCavityFringes;
+  // only check if trying to build fringes to begin with as this check should only ever turn off fringe building
+  if (prevElement && buildIncomingFringe) // could be nullptr
 	{// only build fringe if previous element isn't another cavity
 		buildIncomingFringe = prevElement->type != ElementType::_RF;
 	}
 
-  G4bool buildOutgoingFringe = true;
-  if (nextElement) // could be nullptr
+  G4bool buildOutgoingFringe = buildCavityFringes;
+  // only check if trying to build fringes to begin with as this check should only ever turn off fringe building
+	if (nextElement && buildOutgoingFringe) // could be nullptr
 	{// only build fringe if next element isn't another cavity
 		buildOutgoingFringe = nextElement->type != ElementType::_RF;
 	}
@@ -554,7 +559,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // aperture radius. Default is beam pipe radius / aper1 if a cavity model isn't specified.
   G4double cavityApertureRadius = cavityInfo->irisRadius;
 
-  if (!BDS::IsFinite((*st)["efield"]) || !includeFringeFields)
+  if (!BDS::IsFinite((*st)["efield"]) || !buildCavityFringes)
 	{// ie no rf field - don't bother with fringe effects
 	  delete stIn;
 	  delete stOut;

@@ -253,6 +253,7 @@ void Options::PublishMembers()
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
+  publish("includeFringeFieldCavities", &Options::includeFringeFieldCavities);
   publish("beampipeRadius",       &Options::aper1);
   publish("beampipeThickness",    &Options::beampipeThickness);
   publish("apertureType",         &Options::apertureType);

@@ -46,7 +46,7 @@ New Features
 * Field maps are now automatically tilted when attached to a tilted beam line element, whereas
   they weren't before.
 * RF cavity fringe fields have been implemented and are on by default. They are controlled with
-  the `includeFringeFields` option.
+  the `includeFringeFieldCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the intput options. Old
   options are still functional but undocumented.
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
@@ -60,6 +60,11 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| includeFringeFieldCavities         | Include thin fringe fields for RF cavities only, on by default.    |
+|                                    | Cavity fringes are not affected by the includeFringeFields option, |
+|                                    | includeFringeFieldCavities must be explicitly turned off if no     |
+|                                    | fringes are to be built at all in the model.                       |
++------------------------------------+--------------------------------------------------------------------+
 | preprocessGDMLSchema               | Whether to preprocess a copy of the GDML file where the URL of     |
 |                                    | the GDML schema is changed to a local copy provided in BDSIM so    |
 |                                    | geometry can be loaded without internet access. On by default.     |
