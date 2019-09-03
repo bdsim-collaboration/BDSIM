@@ -749,7 +749,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
   // s and use as local 'z' in the transform.
   if (!placement.referenceElement.empty())
     {// scenario 3
-      BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
+      const BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
 							 placement.referenceElementNumber);
       if (!element)
 	{
