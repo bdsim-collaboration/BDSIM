@@ -18,24 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSTrajectoryPointLocal.hh"
 
-#include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 
 //G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
 
-BDSTrajectoryPointLocal::BDSTrajectoryPointLocal(
-							 G4double xIn,                      // local x
-							 G4double yIn,                      // local y
-							 G4double zIn,                		 // local z
-							 G4double pxIn,                     // local px
-							 G4double pyIn,					 // local py
-							 G4double pzIn):				 // local pz
-  x(xIn),
-  y(yIn),
-  z(zIn),
-  px(pxIn),
-  py(pyIn),
-  pz(pzIn)
+BDSTrajectoryPointLocal::BDSTrajectoryPointLocal(G4ThreeVector positionLocalIn,                      // local position
+							 G4ThreeVector momentumLocalIn):				 // local momentum
+  positionLocal(positionLocalIn),
+  momentumLocal(momentumLocalIn)
 {;}
 
 BDSTrajectoryPointLocal::~BDSTrajectoryPointLocal()

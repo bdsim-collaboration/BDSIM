@@ -19,13 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSTRAJECTORYPOINTLOCAL_H
 #define BDSTRAJECTORYPOINTLOCAL_H
 
-#include "globals.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
+#include "G4ThreeVector.hh"
 
 /**
  * @brief Extra information recorded for a single piece of energy deposition.
  *
- * @author Siobhan Alden
+ * @author Siobhan Alden    
  */
 
 class BDSTrajectoryPointLocal
@@ -34,24 +35,14 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSTrajectoryPointLocal(G4double xIn,                      // local x
-			      G4double yIn,                      // local y
-		          G4double zIn,                		 // local z
-			      G4double pxIn,                     // local px
-		  	      G4double pyIn,					 // local py
-		          G4double pzIn);				 // local pz
-
+  BDSTrajectoryPointLocal(G4ThreeVector positionLocalIn,
+                          G4ThreeVector momentumLocalIn);// local pz
 
   ~BDSTrajectoryPointLocal();
 
   // Local coordinate & Momentum
-  G4double 		x;
-  G4double 		y;
-  G4double 		z;
-  G4double 		px;
-  G4double 		py;
-  G4double 		pz;
-
+  G4ThreeVector positionLocal;
+  G4ThreeVector momentumLocal;
 private:
   /// Private default constructor.  
   BDSTrajectoryPointLocal() = delete;
