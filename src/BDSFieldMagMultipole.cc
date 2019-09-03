@@ -31,10 +31,12 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
 					   G4double          const  brho,
 					   G4int             const  orderIn):
   order(orderIn),
+  maximumNonZeroOrder(0),
   normalComponents(strength->NormalComponents()),
   skewComponents(strength->SkewComponents())
 {
   // multiple by brho to get field coefficients
+  /*
   for (auto kn : normalComponents)
     {
       finiteStrength = BDS::IsFinite(kn) || finiteStrength;
@@ -45,7 +47,27 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
       finiteStrength = BDS::IsFinite(ksn) || finiteStrength;
       ksn *= brho;
     }
-  
+  */
+
+  for (G4int i = 0; i < (G4int)normalComponents.size(); i++)
+    {
+      normalComponents[i] *= brho;
+      G4double kn      = normalComponents[i];
+      G4bool nonZeroKN = BDS::IsFiniteStrength(kn);
+      finiteStrength   = nonZeroKN || finiteStrength;
+      if (nonZeroKN)
+	{maximumNonZeroOrder = std::max(maximumNonZeroOrder, i);}
+    }
+  for (G4int i = 0; i < (G4int)skewComponents.size(); i++)
+    {
+      skewComponents[i] *= brho;
+      G4double ks = skewComponents[i];
+      G4bool nonZeroKS = BDS::IsFiniteStrength(ks);
+      finiteStrength = nonZeroKS || finiteStrength;
+      if (nonZeroKS)
+	{maximumNonZeroOrder = std::max(maximumNonZeroOrder, i);}
+    }
+  maximumNonZeroOrder += 1;
   // safety check - ensure we're not going to a higher order than the strength
   // class supports.
   if (std::abs(order) > (G4int)normalComponents.size())
@@ -76,7 +98,7 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
   // I want to use the strange convention of dipole coeff. with opposite sign -
   // then it is the same sign as angle.
   G4double ffact = -1;
-  for (G4int i = 0; i < order; i++)
+  for (G4int i = 0; i < maximumNonZeroOrder; i++)
     {
       // Here we add to so order represents kn properly
       G4double o = (G4double)i+2; // the current order
