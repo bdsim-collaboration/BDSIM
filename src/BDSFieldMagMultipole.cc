@@ -35,20 +35,8 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
   normalComponents(strength->NormalComponents()),
   skewComponents(strength->SkewComponents())
 {
-  // multiple by brho to get field coefficients
-  /*
-  for (auto kn : normalComponents)
-    {
-      finiteStrength = BDS::IsFinite(kn) || finiteStrength;
-      kn *= brho;
-    }
-  for (auto ksn : skewComponents)
-    {
-      finiteStrength = BDS::IsFinite(ksn) || finiteStrength;
-      ksn *= brho;
-    }
-  */
-
+  // multiple by brho to get field coefficients and work out maximum finite
+  // order to loop up to
   for (G4int i = 0; i < (G4int)normalComponents.size(); i++)
     {
       normalComponents[i] *= brho;
@@ -67,7 +55,8 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
       if (nonZeroKS)
 	{maximumNonZeroOrder = std::max(maximumNonZeroOrder, i);}
     }
-  maximumNonZeroOrder += 1;
+  maximumNonZeroOrder += 1; // 0 to 1 counting
+  
   // safety check - ensure we're not going to a higher order than the strength
   // class supports.
   if (std::abs(order) > (G4int)normalComponents.size())
