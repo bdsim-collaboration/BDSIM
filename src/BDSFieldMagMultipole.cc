@@ -80,7 +80,7 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
   // Translate cartesian to polar coordinates
   G4double r   = std::hypot(position.x(),position.y());
   G4double phi = 0;
-  if (BDS::IsFinite(std::abs(r)))
+  if (BDS::IsFiniteStrength(std::abs(r)))
     {phi = atan2(position.y(),position.x());}
 
   // compute B field in cylindrical coordinates first then convert to cartesian
