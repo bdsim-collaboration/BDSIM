@@ -37,7 +37,7 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
   brho(brhoIn)
 {
   b0l = (*strength)["field"] * brho;
-  G4double l = (*strength)["length"] * CLHEP::m;
+  G4double l = (*strength)["length"] / CLHEP::m;
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
