@@ -670,7 +670,7 @@ that the maximum tangential error in the aperture is 1 mm.
 +-----------------+-----------------------------------+-----------+-----------------+
 | `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
+| `yokeOnInside`  | Yoke on inside of bend or not     | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -678,18 +678,18 @@ that the maximum tangential error in the aperture is 1 mm.
 |                 | function magnet                   |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fint`          | Fringe field integral for the     | 0         | No              |
-|                 | entrance face of the rbend        |           |                 |
+|                 | entrance face of the sbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintx`         | Fringe field integral for the     | -1        | No              |
-|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | exit face of the sbend. -1 means  |           |                 |
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintK2`        | Second fringe field integral for  | 0         | No              |
-|                 | the entrance face of the rbend    |           |                 |
+|                 | the entrance face of the sbend    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintxK2`       | Second fringe field integral for  | 0         | No              |
-|                 | the exit face of the rbend        |           |                 |
+|                 | the exit face of the sbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
