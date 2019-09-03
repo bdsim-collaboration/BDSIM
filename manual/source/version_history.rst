@@ -180,6 +180,9 @@ General
 Bug Fixes
 ---------
 
+* Fix thick multipole element where the field was 1M times too strong because of the omission of units.
+* Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
+  updated when multiple different particles were used for a `userfile` distribution.
 * Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
   was not filled correctly - this has been fixed.
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
@@ -251,6 +254,9 @@ Bug Fixes
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 * Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
+  where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
+  improved to deal with any uniquely built components, such as rf cavities.
 
 Output Changes
 --------------
@@ -258,6 +264,8 @@ Output Changes
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
+* Samplers now have a new variable called `theta` included in polar coordinates (optional), which
+  is the angle with respect to the local z axis. i.e. :math:`tan^{-1}(r^{\prime}/z^{\prime})`.
 * `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
   passes through a sampler.
 * All extra coordinates are now recorded in the Primary sampler structure no matter if these
