@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Extra information recorded for a single piece of energy deposition.
  *
- * @author Siobhan Alden    
+ * @author Siobhan Alden
  */
 
 class BDSTrajectoryPointLocal

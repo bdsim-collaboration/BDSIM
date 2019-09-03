@@ -105,16 +105,33 @@ class BDSAuxiliaryNavigator;
 class BDSOutputROOTEventTrajectoryPoint: public TObject
 {
 public :
-  BDSOutputROOTEventTrajectoryPoint() :
-          partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
-          processType(-1), processSubType(-1), weight(-1.0), energyDeposited(-1.0),
-          position(0,0,0), momentum(0,0,0), model(-1), time(0) {};
+    BDSOutputROOTEventTrajectoryPoint() :
+            partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
+            processType(-1), processSubType(-1), weight(-1.0), energyDeposited(-1.0),
+            position(0,0,0), momentum(0,0,0), model(-1), time(0), positionLocal(0,0,0),
+            momentumLocal(0,0,0), charge(0), kineticEnergy(0), turnsTaken(0),
+            rigidity(0), isIon(0), ionA(0), ionZ(0), nElectrons(0) {};
   BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
                                     int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
                                     TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn) :
           partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
           processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
           position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn) {}
+  // override constructor for extra information
+  BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
+                                      int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
+                                      TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn,
+                                      TVector3 positionLocalIn, TVector3 momentumLocalIn, double chargeIn,
+                                      double kineticEnergyIn, int turnsTakenIn, double rigidityIn, bool isIonIn,
+                                      int ionAIn, int ionZIn, int nElectronsIn) :
+                                      partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
+                                      processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn),
+                                      energyDeposited(energyIn), position(positionIn), momentum(momentumIn), model(modelIn),
+                                      time(preTimeIn),positionLocal(positionLocalIn), momentumLocal(momentumLocalIn),
+                                      charge(chargeIn), kineticEnergy(kineticEnergyIn), turnsTaken(turnsTakenIn),
+                                      rigidity(rigidityIn), isIon(isIonIn), ionA(ionAIn), ionZ(ionZIn), nElectrons(nElectronsIn){}
+
+
   virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
 
   int partID;
@@ -129,6 +146,17 @@ public :
   TVector3 momentum;
   int model;
   double time;
+  TVector3 positionLocal;
+  TVector3 momentumLocal;
+  double charge;
+  double kineticEnergy;
+  int turnsTaken;
+  double rigidity;
+  bool isIon;
+  int ionA;
+  int ionZ;
+  int nElectrons;
+
 
   ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
@@ -197,7 +225,8 @@ public:
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;          // trackID to trackIndex 
+  std::map<int, int>                 trackID_trackIndex;// trackID to trackIndex
+
 
   //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
@@ -213,6 +242,10 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
   ClassDef(BDSOutputROOTEventTrajectory,3);
+
+  G4bool extraLocal;
+  G4bool extraLink;
+  G4bool extraIon;
 };
 
 

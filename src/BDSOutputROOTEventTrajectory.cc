@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSGlobalConstants.hh"
 
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
@@ -37,7 +38,10 @@ ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
-  n(0)
+  n(0),
+  extraLocal(BDSGlobalConstants::Instance()->StoreTrajectoryLocal()),
+  extraLink(BDSGlobalConstants::Instance()->StoreTrajectoryLinks()),
+  extraIon(BDSGlobalConstants::Instance()->StoreTrajectoryIons())
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
@@ -190,7 +194,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  positionS.push_back(point->GetPreS() / CLHEP::m);
 	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 
-      if(point->extraLocal)
+      if(extraLocal)
       {
           G4ThreeVector localPos = point->GetPositionLocal();
           G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
@@ -202,7 +206,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
                                            localMom.getZ()));
       }
 
-      if(point->extraLink)
+      if(extraLink)
       {
           charges.push_back(point->GetLinkCharge());
           kineticEnergy.push_back(point->GetLinkKineticEnergy());
@@ -211,7 +215,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
           rigidities.push_back(point->GetLinkRigidity());
       }
 
-      if(point->extraIon)
+      if(extraIon)
       {
           ion.push_back(point->GetIsIon());
           ionANumber.push_back(point->GetIonA());
@@ -439,13 +443,16 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
       int ppt = postProcessTypes[ti][i];
       if (ppt != -1 && ppt != 1 && ppt != 10)
 	{
-	  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
-					      parentID[ti], parentIndex[ti],
-					      postProcessTypes[ti][i], postProcessSubTypes[ti][i],
-					      postWeights[ti][i],energiesDeposit[ti][i],
-					      XYZ[ti][i], PXPYPZ[ti][i],
-					      modelIndicies[ti][i], T[ti][i]);
-	  tpv.push_back(p);
+
+            BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                                parentID[ti], parentIndex[ti],
+                                                postProcessTypes[ti][i], postProcessSubTypes[ti][i],
+                                                postWeights[ti][i], energiesDeposit[ti][i],
+                                                XYZ[ti][i], PXPYPZ[ti][i],
+                                                modelIndicies[ti][i], T[ti][i]);
+            tpv.push_back(p);
+
+
 	}
     }
   return tpv;
@@ -455,14 +462,17 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 {
   int ti = trackID_trackIndex.at(trackid);  // get track index
   int si = parentStepIndex.at(ti);          // get primary index          
-  
-  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
-                                      parentID[ti], parentIndex[ti],
-                                      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
-                                      postWeights[ti][si],energiesDeposit[ti][si],
-                                      XYZ[ti][si], PXPYPZ[ti][si],
-                                      modelIndicies[ti][si], T[ti][si]);
-  return p;
+
+  if(charge.size()>0)
+
+      BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                          parentID[ti], parentIndex[ti],
+                                          postProcessTypes[ti][si], postProcessSubTypes[ti][si],
+                                          postWeights[ti][si], energiesDeposit[ti][si],
+                                          XYZ[ti][si], PXPYPZ[ti][si],
+                                          modelIndicies[ti][si], T[ti][si]);
+      return p;
+
 }
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
@@ -474,15 +484,16 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
     {
       int pi  = parentIndex.at(ti);
       int psi = parentStepIndex.at(ti);
-      
-      BDSOutputROOTEventTrajectoryPoint p(partID[pi], trackID[pi],
-					  parentID[pi], parentIndex[pi],
-					  postProcessTypes[pi][psi], postProcessSubTypes[pi][psi],
-					  postWeights[pi][psi],energiesDeposit[pi][psi],
-					  XYZ[pi][psi], PXPYPZ[pi][psi],
-					  modelIndicies[pi][psi], T[pi][psi]);
-      tpv.push_back(p);
-      ti = pi;
+
+          BDSOutputROOTEventTrajectoryPoint p(partID[pi], trackID[pi],
+                                              parentID[pi], parentIndex[pi],
+                                              postProcessTypes[pi][psi], postProcessSubTypes[pi][psi],
+                                              postWeights[pi][psi], energiesDeposit[pi][psi],
+                                              XYZ[pi][psi], PXPYPZ[pi][psi],
+                                              modelIndicies[pi][psi], T[pi][psi]);
+          tpv.push_back(p);
+          ti = pi;
+
     }
   std::reverse(tpv.begin(),tpv.end());
   return tpv;
@@ -492,29 +503,31 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
   int wdt = 11;
 
-  std::cout << std::setw(wdt) << "trIx"      << " " << std::setw(wdt) << "trkId"    << " "
-            << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
-            << std::setw(wdt) << "prStpIx"   << " " << std::setw(wdt) << "pID"      << " "
-            << std::setw(wdt) << "prePrcT"   << " " << std::setw(wdt) << "prePrcST" << " "
-            << std::setw(wdt) << "pstPrcT"   << " " << std::setw(wdt) << "pstPrcST" << " "
-            << std::setw(wdt) << "X"         << " " << std::setw(wdt) << "Y"        << " "
-            << std::setw(wdt) << "Z"         << " " << std::setw(wdt) << "E"        << " "
-            << std::setw(wdt) << "p"         << " " << std::setw(wdt) << "p_x"      << " "
-            << std::setw(wdt) << "p_y"       << " " << std::setw(wdt) << "p_z"      << " "
-            << std::setw(wdt) << "t"         << std::endl;
+      std::cout << std::setw(wdt) << "trIx" << " " << std::setw(wdt) << "trkId" << " "
+                << std::setw(wdt) << "prId" << " " << std::setw(wdt) << "prIx" << " "
+                << std::setw(wdt) << "prStpIx" << " " << std::setw(wdt) << "pID" << " "
+                << std::setw(wdt) << "prePrcT" << " " << std::setw(wdt) << "prePrcST" << " "
+                << std::setw(wdt) << "pstPrcT" << " " << std::setw(wdt) << "pstPrcST" << " "
+                << std::setw(wdt) << "X" << " " << std::setw(wdt) << "Y" << " "
+                << std::setw(wdt) << "Z" << " " << std::setw(wdt) << "E" << " "
+                << std::setw(wdt) << "p" << " " << std::setw(wdt) << "p_x" << " "
+                << std::setw(wdt) << "p_y" << " " << std::setw(wdt) << "p_z" << " "
+                << std::setw(wdt) << "t" << " " << std::endl;
 
   for (size_t j=0; j<XYZ[i].size(); ++j)
     {
-      std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
-		<< std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
-		<< std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
-		<< std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
-		<< std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
-		<< std::setw(wdt) << XYZ[i][j].X() << " " << std::setw(wdt) << XYZ[i][j].Y()   << " "
-		<< std::setw(wdt) << XYZ[i][j].Z() << " " << std::setw(wdt) << energiesDeposit[i][j]           << " "
-		<< std::setw(wdt) << PXPYPZ[i][j].Mag()    << " " << std::setw(wdt) << PXPYPZ[i][j].X()        << " "
-		<< std::setw(wdt) << PXPYPZ[i][j].Y()      << " " << std::setw(wdt) << PXPYPZ[i][j].Z()        << " "
-		<< std::setw(wdt) << T[i][j]             << std::endl;
+
+            std::cout << std::setw(wdt) << j << " " << std::setw(wdt) << trackID[i] << " "
+                      << std::setw(wdt) << parentID[i] << " " << std::setw(wdt) << parentIndex[i] << " "
+                      << std::setw(wdt) << parentStepIndex[i] << " " << std::setw(wdt) << partID[i] << " "
+                      << std::setw(wdt) << preProcessTypes[i][j] << " " << std::setw(wdt) << preProcessSubTypes[i][j]
+                      << " " << std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]
+                      << " " << std::setw(wdt) << XYZ[i][j].X() << " " << std::setw(wdt) << XYZ[i][j].Y() << " "
+                      << std::setw(wdt) << XYZ[i][j].Z() << " " << std::setw(wdt) << energiesDeposit[i][j] << " "
+                      << std::setw(wdt) << PXPYPZ[i][j].Mag() << " " << std::setw(wdt) << PXPYPZ[i][j].X() << " "
+                      << std::setw(wdt) << PXPYPZ[i][j].Y() << " " << std::setw(wdt) << PXPYPZ[i][j].Z() << " "
+                      << std::setw(wdt) << T[i][j] << std::endl;
+
     }
 }
 
