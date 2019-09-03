@@ -197,27 +197,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	}
     }
   else if (element->type == ElementType::_THINMULT)
-    {// thinmultipole only uses one angle - so angleIn
-      if (prevElement && nextElement)
+    {// thinmultipole only uses one angle - so `angleIn`
+       if (prevElement && nextElement)
 	{// both exist
 	  ElementType prevType = prevElement->type;
 	  ElementType nextType = nextElement->type;
-	  if (prevType == ElementType::_DRIFT && nextType == ElementType::_DRIFT)
-	    {angleIn = 0;} // between two drifts - flat
-	  else if (prevType == ElementType::_DRIFT)
+	  if (prevType == ElementType::_DRIFT && nextType != ElementType::_DRIFT)
 	    {angleIn = -IncomingFaceAngle(nextElement);} // previous is drift which will match next
-	  else
-	    {angleIn = OutgoingFaceAngle(prevElement);} // next is drift which will match prev
+	  else if (prevType != ElementType::_DRIFT && nextType == ElementType::_DRIFT)
+	    {angleIn = OutgoingFaceAngle(prevElement);}  // next is drift which will match prev
 	}
       else if (prevElement)
 	{angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
       else
 	{angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
 
-      // because thin multipoles adapt to what's around them, it's not possible to know
-      // if, in the case the thin multipole already exists in the registry, it's been
-      // modified or is flat, therefore we mark them all as unique.
-      differentFromDefinition = true;
+      // flag as unique only if the angleIn is changed and the geometry is built at an angle
+      if (BDS::IsFinite(angleIn))
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_SOLENOID)
     {// we build incoming / outgoing fringe fields for solenoids
@@ -503,14 +500,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // note cavity length is not the same as currentArcLength
   G4double cavityLength = element->l * CLHEP::m;
 
-  G4bool buildIncomingFringe = true;
-  if (prevElement) // could be nullptr
+  // use cavity fringe option, includeFringeFields does not affect cavity fringes
+  G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldCavities();
+
+  G4bool buildIncomingFringe = buildCavityFringes;
+  // only check if trying to build fringes to begin with as this check should only ever turn off fringe building
+  if (prevElement && buildIncomingFringe) // could be nullptr
 	{// only build fringe if previous element isn't another cavity
 		buildIncomingFringe = prevElement->type != ElementType::_RF;
 	}
 
-  G4bool buildOutgoingFringe = true;
-  if (nextElement) // could be nullptr
+  G4bool buildOutgoingFringe = buildCavityFringes;
+  // only check if trying to build fringes to begin with as this check should only ever turn off fringe building
+	if (nextElement && buildOutgoingFringe) // could be nullptr
 	{// only build fringe if next element isn't another cavity
 		buildOutgoingFringe = nextElement->type != ElementType::_RF;
 	}
@@ -554,7 +556,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // aperture radius. Default is beam pipe radius / aper1 if a cavity model isn't specified.
   G4double cavityApertureRadius = cavityInfo->irisRadius;
 
-  if (!BDS::IsFinite((*st)["efield"]) || !includeFringeFields)
+  if (!BDS::IsFinite((*st)["efield"]) || !buildCavityFringes)
 	{// ie no rf field - don't bother with fringe effects
 	  delete stIn;
 	  delete stOut;
@@ -2426,23 +2428,21 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double scaling = el->scaling;
-  G4double length = el->l;
+  (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT)
-    {length = 1;}
+    {(*st)["length"] = 1*CLHEP::m;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();
   std::vector<G4String> normKeys = st->NormalComponentKeys();
   std::vector<G4String> skewKeys = st->SkewComponentKeys();
   auto nkey = normKeys.begin();
   auto skey = skewKeys.begin();
-  //Separate loops for kn and ks. The length of knl and ksl is determined by the input in the gmad file.
-  //A single loop for both kn and ks using only one of their end iterators can end the loop
-  //prematurely for the other, potentially missing higher order components.
+  // Separate loops for kn and ks. The length of knl and ksl are determined by the input in the gmad file.
   for (; kn != el->knl.end(); kn++, nkey++)
-    {(*st)[*nkey] = scaling * (*kn) / length;}
+    {(*st)[*nkey] = scaling * (*kn);}
   for (; ks != el->ksl.end(); ks++, skey++)
-    {(*st)[*skey] = scaling * (*ks) / length;}
+    {(*st)[*skey] = scaling * (*ks);}
 
   return st;
 }

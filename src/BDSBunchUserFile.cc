@@ -269,6 +269,13 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 }
 
 template<class T>
+BDSParticleCoordsFullGlobal BDSBunchUserFile<T>::GetNextParticleValid(G4int /*maxTries*/)
+{
+  // no looping - just read one particle from file
+  return GetNextParticle();
+}
+
+template<class T>
 BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
   if (InputBunchFile.eof())
@@ -366,11 +373,8 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       else if(it->name=="zp") { ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
       else if(it->name=="pt")
 	{// particle type
-	  // update base class flag - user file can specify different particles
-	  if (!particleCanBeDifferent)
-	    {particleCanBeDifferent = true;}
 	  ReadValue(ss, type);
-	  updateParticleDefinition = true; // update particle definition after reading line
+	  updateParticleDefinition = true; // update particle definition after finished reading line
 	}
       else if (it->name == "S")
 	{
@@ -408,7 +412,8 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       // Requires that total energy 'E' already be set.
       delete particleDefinition;
       particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
-      updateParticleDefinition = false; // reset it back to false
+      updateParticleDefinition = false; // reset flag back to false
+      particleDefinitionHasBeenUpdated = true;
     }
 
   return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);
