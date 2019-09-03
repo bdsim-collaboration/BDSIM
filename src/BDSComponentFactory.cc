@@ -2437,10 +2437,10 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   //A single loop for both kn and ks using only one of their end iterators can end the loop
   //prematurely for the other, potentially missing higher order components.
   for (; kn != el->knl.end(); kn++, nkey++)
-    {(*st)[*nkey] = scaling * (*kn) / length;}
+    {(*st)[*nkey] = scaling * (*kn);}
   for (; ks != el->ksl.end(); ks++, skey++)
-    {(*st)[*skey] = scaling * (*ks) / length;}
-
+    {(*st)[*skey] = scaling * (*ks);}
+  (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   return st;
 }
 
