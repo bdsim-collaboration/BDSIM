@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSProcessMap.hh"
 #include "BDSStep.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSPhysicalConstants.hh"
+
 
 #include "globals.hh"
 #include "G4Allocator.hh"
@@ -105,19 +107,32 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 
   if(storeExtrasLocal)
   {
-    extraLocal = new BDSTrajectoryPointLocal(prePosLocal.x(),
-                                             prePosLocal.y(),
-                                             prePosLocal.z(),
-                                             0,
-                                             0,
-                                             0);
+    G4ThreeVector preMomLocal;
+    preMomLocal.set(0,0,0);
+    extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
+                                             preMomLocal);
   }
-/*
+
   if(storeExtrasLink)
   {
-    extraLink = new BDSTrajectoryPointLink();
+    G4double charge = track->GetDynamicParticle()->GetCharge();
+    G4double rigidity = track->GetDynamicParticle()->GetMomentum().mag() / CLHEP::GeV / BDS::cOverGeV / charge;
+    extraLink = new BDSTrajectoryPointLink(charge,
+                                           track->GetDynamicParticle()->GetKineticEnergy(),
+                                           BDSGlobalConstants::Instance()->TurnsTaken(),
+                                           track->GetDynamicParticle()->GetMass(),
+                                           rigidity);
   }
-  */
+
+  if(storeExtrasIon)
+  {
+    const G4ParticleDefinition* ionDef = track->GetParticleDefinition();
+    const G4DynamicParticle* ionPart = track->GetDynamicParticle();
+    extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
+                                         ionDef->GetAtomicMass(),
+                                         ionDef->GetAtomicNumber(),
+                                         ionPart->GetElectronOccupancy()->GetTotalOccupancy());
+  }
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
@@ -178,21 +193,21 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 
   if(storeExtrasLocal)
   {
-    extraLocal = new BDSTrajectoryPointLocal(prePosLocal.getX(),
-                                             prePosLocal.getY(),
-                                             prePosLocal.getZ(),
-                                             0,
-                                             0,
-                                             0);
+    G4ThreeVector preMomLocal;
+    preMomLocal.set(0,0,0);
+    extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
+                                             preMomLocal);
   }
 
   if(storeExtrasLink)
   {
-    extraLink = new BDSTrajectoryPointLink(prePoint->GetCharge(),
+    G4double charge = step->GetTrack()->GetDynamicParticle()->GetCharge();
+    G4double rigidity = step->GetTrack()->GetMomentum().mag() /CLHEP::GeV / BDS::cOverGeV / charge;
+    extraLink = new BDSTrajectoryPointLink(charge,
                                            prePoint->GetKineticEnergy(),
                                            BDSGlobalConstants::Instance()->TurnsTaken(),
                                            prePoint->GetMass(),
-                                           0);
+                                           rigidity);
   }
 
   if(storeExtrasIon)

@@ -105,7 +105,25 @@ public:
   inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
-  /// @}
+
+  //Accessor for the extra information Local
+
+  inline G4ThreeVector GetPositionLocal() const {return extraLocal ? extraLocal->positionLocal : G4ThreeVector();}
+  inline G4ThreeVector GetMomentumLocal() const {return extraLocal ? extraLocal->momentumLocal : G4ThreeVector();}
+  //Accessor for the extra information Links
+  inline G4int      GetLinkCharge()         const{return extraLink ? extraLink->charge : 0;}
+  inline G4double   GetLinkKineticEnergy()  const{return extraLink ? extraLink->kineticEnergy :0;}
+  inline G4int      GetLinkTurnsTaken()         const{return extraLink ? extraLink->turnsTaken :0;}
+  inline G4double   GetLinkMass()           const{return extraLink ? extraLink->mass :0;}
+  inline G4double   GetLinkRigidity()       const{return extraLink ? extraLink->rigidity :0;}
+
+  //Accessor for the extra information Ions
+  inline G4bool   GetIsIon()      const {return extraIon ? extraIon->isIon : 0;}
+  inline G4int    GetIonA()       const {return extraIon ? extraIon->ionA : 0;}
+  inline G4int    GetIonZ()       const {return extraIon ? extraIon->ionZ : 0;}
+  inline G4int    GetNElectrons()   const {return extraIon ? extraIon->nElectrons : 0;}
+
+    /// @}
 
   /// @{ Return the transverse local radius in x,y.
   G4double PrePosR() const;
@@ -125,7 +143,11 @@ public:
   G4bool storeExtrasLocal;
   G4bool storeExtrasLink;
   G4bool storeExtrasIon;
-  
+
+  BDSTrajectoryPointLocal* extraLocal;
+  BDSTrajectoryPointLink* extraLink;
+  BDSTrajectoryPointIon* extraIon;
+
 private:
   /// Initialisation of variables in separate function to reduce duplication in
   /// multiple constructors.
@@ -152,13 +174,8 @@ private:
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
-  G4ThreeVector preMomentumLocal;
-  G4ThreeVector postMomentumLocal;
 
 
-  BDSTrajectoryPointLocal* extraLocal;
-  BDSTrajectoryPointLink* extraLink;
-  BDSTrajectoryPointIon* extraIon;
 
 
   /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
