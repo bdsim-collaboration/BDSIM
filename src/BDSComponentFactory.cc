@@ -2423,10 +2423,10 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double scaling = el->scaling;
-  G4double length  = el->l;
+  (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT)
-    {length = 1;}
+    {(*st)["length"] = 1;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();
   std::vector<G4String> normKeys = st->NormalComponentKeys();
@@ -2438,7 +2438,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
     {(*st)[*nkey] = scaling * (*kn);}
   for (; ks != el->ksl.end(); ks++, skey++)
     {(*st)[*skey] = scaling * (*ks);}
-  (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
+
   return st;
 }
 
