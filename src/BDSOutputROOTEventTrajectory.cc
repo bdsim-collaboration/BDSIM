@@ -141,7 +141,21 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       std::vector<double>   positionS;
       std::vector<int>      modelIndex;
       std::vector<double>   time;
-      
+
+      std::vector<TVector3> localPosition;
+      std::vector<TVector3> localMomentum;
+
+      std::vector<int>      charges;
+      std::vector<double>   kineticEnergy;
+      std::vector<int>      turn;
+      std::vector<double>   masses;
+      std::vector<double>   rigidities;
+
+      std::vector<bool>     ion;
+      std::vector<int>      ionANumber;
+      std::vector<int>      ionZNumber;
+      std::vector<int>      electrons;
+
       // loop over trajectory points and fill structures
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
 	{
@@ -175,6 +189,36 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 				      mom.getZ()));
 	  positionS.push_back(point->GetPreS() / CLHEP::m);
 	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
+
+      if(point->extraLocal)
+      {
+          G4ThreeVector localPos = point->GetPositionLocal();
+          G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
+          localPosition.push_back(TVector3(localPos.getX() / CLHEP::m,
+                                           localPos.getY() / CLHEP::m,
+                                           localPos.getZ() / CLHEP::m));
+          localMomentum.push_back(TVector3(localMom.getX(),
+                                           localMom.getY(),
+                                           localMom.getZ()));
+      }
+
+      if(point->extraLink)
+      {
+          charges.push_back(point->GetLinkCharge());
+          kineticEnergy.push_back(point->GetLinkKineticEnergy());
+          turn.push_back(point->GetLinkTurnsTaken());
+          masses.push_back(point->GetLinkMass());
+          rigidities.push_back(point->GetLinkRigidity());
+      }
+
+      if(point->extraIon)
+      {
+          ion.push_back(point->GetIsIon());
+          ionANumber.push_back(point->GetIonA());
+          ionZNumber.push_back(point->GetIonZ());
+          electrons.push_back(point->GetNElectrons());
+      }
+
 	}
       
       XYZ.push_back(position);
@@ -189,7 +233,30 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       postWeights.push_back(postWeight);
       energiesDeposit.push_back(energyDeposited);
       T.push_back(time);
-      
+
+      if(localPosition.size()>0)
+      {
+          xyz.push_back(localPosition);
+          pxpypz.push_back(localMomentum);
+      }
+
+      if(charges.size()>0)
+      {
+          charge.push_back(charges);
+          kineticEnergies.push_back(kineticEnergy);
+          turnsTaken.push_back(turn);
+          mass.push_back(masses);
+          rigidity.push_back(rigidities);
+      }
+
+      if(ion.size()>0)
+      {
+          isIon.push_back(ion);
+          ionA.push_back(ionANumber);
+          ionZ.push_back(ionZNumber);
+          nElectrons.push_back(electrons);
+      }
+
       // recursively search for primary interaction step  
       primaryStepIndex.push_back(findPrimaryStepIndex(traj));
       
@@ -272,6 +339,18 @@ void BDSOutputROOTEventTrajectory::Flush()
   modelIndicies.clear();
   trackID_trackIndex.clear();
   T.clear();
+
+  xyz.clear();
+  pxpypz.clear();
+  charge.clear();
+  kineticEnergies.clear();
+  turnsTaken.clear();
+  mass.clear();
+  rigidity.clear();
+  isIon.clear();
+  ionA.clear();
+  ionZ.clear();
+  nElectrons.clear();
   
   // trackIndex_trackProcess.clear();
   //  trackIndex_modelIndex.clear();
@@ -303,6 +382,17 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   modelIndicies       = other->modelIndicies;
   trackID_trackIndex  = other->trackID_trackIndex;
   T                   = other->T;
+
+  xyz                 = other->xyz;
+  pxpypz              = other->pxpypz;
+  charge              = other->charge;
+  kineticEnergies     = other->kineticEnergies;
+  turnsTaken          = other->turnsTaken;
+  rigidity            = other->rigidity;
+  isIon               = other->isIon;
+  ionA                = other->ionA;
+  ionZ                = other->ionZ;
+  nElectrons          = other->nElectrons;
 }
 
 #if 0

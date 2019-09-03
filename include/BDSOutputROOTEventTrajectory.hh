@@ -178,6 +178,23 @@ public:
   std::vector<std::vector<TVector3>> PXPYPZ;
   std::vector<std::vector<double>>   T;
 
+  // local trajectory information
+  std::vector<std::vector<TVector3>> xyz;
+  std::vector<std::vector<TVector3>> pxpypz;
+
+  // link trajectory information
+  std::vector<std::vector<int>>      charge;
+  std::vector<std::vector<double>>   kineticEnergies;
+  std::vector<std::vector<int>>      turnsTaken;
+  std::vector<std::vector<double>>   mass;
+  std::vector<std::vector<double>>   rigidity;
+
+  // ion trajectory information
+  std::vector<std::vector<bool>>     isIon;
+  std::vector<std::vector<int>>      ionA;
+  std::vector<std::vector<int>>      ionZ;
+  std::vector<std::vector<int>>      nElectrons;
+
   std::vector<std::vector<int>>      modelIndicies;
 
   std::map<int, int>                 trackID_trackIndex;          // trackID to trackIndex 
