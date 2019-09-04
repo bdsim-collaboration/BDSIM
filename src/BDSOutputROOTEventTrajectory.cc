@@ -461,17 +461,14 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 {
   int ti = trackID_trackIndex.at(trackid);  // get track index
   int si = parentStepIndex.at(ti);          // get primary index          
-
-  if(charge.size()>0)
-
-      BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
-                                          parentID[ti], parentIndex[ti],
-                                          postProcessTypes[ti][si], postProcessSubTypes[ti][si],
-                                          postWeights[ti][si], energiesDeposit[ti][si],
-                                          XYZ[ti][si], PXPYPZ[ti][si],
-                                          modelIndicies[ti][si], T[ti][si]);
-      return p;
-
+  
+  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+				      parentID[ti], parentIndex[ti],
+				      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
+				      postWeights[ti][si], energiesDeposit[ti][si],
+				      XYZ[ti][si], PXPYPZ[ti][si],
+				      modelIndicies[ti][si], T[ti][si]);
+  return p;
 }
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
