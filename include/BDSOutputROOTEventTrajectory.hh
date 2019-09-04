@@ -240,12 +240,11 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
+  bool extraLocal;
+  bool extraLink;
+  bool extraIon;
+  
   ClassDef(BDSOutputROOTEventTrajectory,3);
-
-  G4bool extraLocal;
-  G4bool extraLink;
-  G4bool extraIon;
 };
-
 
 #endif
