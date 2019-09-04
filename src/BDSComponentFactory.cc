@@ -2258,18 +2258,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   return defaultCI;
 }
 
-BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
-							      G4double cavityLength,
-							      G4double currentArcLength) const
-{
-  BDSMagnetStrength* fringeIn  = nullptr;
-  BDSMagnetStrength* fringeOut = nullptr;
-  BDSMagnetStrength* result = PrepareCavityStrength(el, cavityLength, currentArcLength, fringeIn, fringeOut);
-  delete fringeIn;
-  delete fringeOut;
-  return result;
-}
-
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*      el,
 							      G4double            cavityLength,
 							      G4double            currentArcLength,
