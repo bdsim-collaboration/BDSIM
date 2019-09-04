@@ -22,8 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 //G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
 
-BDSTrajectoryPointLocal::BDSTrajectoryPointLocal(G4ThreeVector positionLocalIn,                      // local position
-							 G4ThreeVector momentumLocalIn):				 // local momentum
+BDSTrajectoryPointLocal::BDSTrajectoryPointLocal(G4ThreeVector positionLocalIn,
+						 G4ThreeVector momentumLocalIn):
   positionLocal(positionLocalIn),
   momentumLocal(momentumLocalIn)
 {;}

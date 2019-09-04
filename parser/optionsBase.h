@@ -307,8 +307,6 @@ namespace GMAD
     std::string storeTrajectoryELossSRange;
     bool        storeTrajectoryTransportationSteps;
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
-
-    // New Trajectory information booleans
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIons;

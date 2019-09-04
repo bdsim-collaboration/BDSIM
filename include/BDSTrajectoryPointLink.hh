@@ -34,23 +34,19 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSTrajectoryPointLink(
-		          G4int    chargeIn,					 // charge
-		          G4double kineticEnergyIn,		     // kinetic energy
-			      G4int    turnsTakenIn,             // turns taken if circular
-		          G4double massIn,					 // mass
-		  		  G4double rigidityIn			 // rigidity
-  );
-
+  BDSTrajectoryPointLink(G4int    chargeIn,
+			 G4double kineticEnergyIn,
+			 G4int    turnsTakenIn,
+			 G4double massIn,
+			 G4double rigidityIn);
+  
   ~BDSTrajectoryPointLink();
-
-  // links
+  
   G4int 	charge;
   G4double 	kineticEnergy;
   G4int     turnsTaken;
   G4double 	mass;
   G4double  rigidity;
-
 
 private:
   /// Private default constructor.  

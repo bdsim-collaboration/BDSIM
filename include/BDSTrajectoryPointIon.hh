@@ -34,15 +34,13 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSTrajectoryPointIon(G4bool isIonIn,   // is particle ion
-                          G4int ionAIn,
-                          G4int ionZIn,
-                          G4int nElectronsIn);				 // number of electrons on ion
-
+  BDSTrajectoryPointIon(G4bool isIonIn,
+			G4int ionAIn,
+			G4int ionZIn,
+			G4int nElectronsIn);
 
   ~BDSTrajectoryPointIon();
-
-  // ions
+  
   G4bool 	isIon;
   G4int  	ionA;
   G4int		ionZ;

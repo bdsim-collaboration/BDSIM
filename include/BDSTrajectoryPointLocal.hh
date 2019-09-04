@@ -36,13 +36,13 @@ public:
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
   BDSTrajectoryPointLocal(G4ThreeVector positionLocalIn,
-                          G4ThreeVector momentumLocalIn);// local pz
+                          G4ThreeVector momentumLocalIn);
 
   ~BDSTrajectoryPointLocal();
-
-  // Local coordinate & Momentum
+  
   G4ThreeVector positionLocal;
   G4ThreeVector momentumLocal;
+  
 private:
   /// Private default constructor.  
   BDSTrajectoryPointLocal() = delete;
