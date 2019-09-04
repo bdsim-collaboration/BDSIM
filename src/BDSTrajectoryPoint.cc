@@ -92,7 +92,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 						       1*CLHEP::nm,
 						       true);
   prePosLocal = localPosition.PreStepPoint();
-  postPosLocal = localPosition.PostStepPoint();
+  postPosLocal = prePosLocal;
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
@@ -106,10 +106,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 
   if (storeExtrasLocal)
     {
-      G4ThreeVector preMomLocal;
-      preMomLocal.set(0,0,0);
       extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
-					       preMomLocal);
+					       localPosition.PostStepPoint());
     }
 
   if (storeExtrasLink)
@@ -178,7 +176,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   // get local coordinates and volume for transform
   BDSStep localPosition = auxNavigator->ConvertToLocal(step);
   prePosLocal = localPosition.PreStepPoint();
-  postPosLocal = localPosition.PostStepPoint();
+  postPosLocal = prePosLocal;
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
@@ -192,10 +190,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 
   if (storeExtrasLocal)
     {
-      G4ThreeVector preMomLocal;
-      preMomLocal.set(0,0,0);
       extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
-					       preMomLocal);
+					       localPosition.PostStepPoint());
     }
   
   if (storeExtrasLink)
