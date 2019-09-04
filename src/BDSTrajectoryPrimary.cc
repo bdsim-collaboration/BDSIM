@@ -61,7 +61,6 @@ BDSTrajectoryPrimary::~BDSTrajectoryPrimary()
 {
   delete firstHit;
   delete lastPoint;
-
 }
 
 void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)

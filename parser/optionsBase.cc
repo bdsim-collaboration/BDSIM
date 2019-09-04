@@ -273,10 +273,9 @@ OptionsBase::OptionsBase()
   storeTrajectoryELossSRange     = "";
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false;
-
-  storeTrajectoryLocal         = false;
-  storeTrajectoryLinks         = false;
-  storeTrajectoryIons          = false;
+  storeTrajectoryLocal           = false;
+  storeTrajectoryLinks           = false;
+  storeTrajectoryIons            = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;

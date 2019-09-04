@@ -18,23 +18,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSTrajectoryPointLink.hh"
 
-#include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 
 //G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
 
-BDSTrajectoryPointLink::BDSTrajectoryPointLink(
-							 G4int    chargeIn,					 // charge
-							 G4double kineticEnergyIn,		     // kinetic energy
-							 G4int    turnsTakenIn,             // turns taken if circular
-							 G4double massIn,					 // mass
-							 G4double rigidityIn):				 // rigidity
+BDSTrajectoryPointLink::BDSTrajectoryPointLink(G4int    chargeIn,
+					       G4double kineticEnergyIn,
+					       G4int    turnsTakenIn,
+					       G4double massIn,
+					       G4double rigidityIn):
   charge(chargeIn),
   kineticEnergy(kineticEnergyIn),
   turnsTaken(turnsTakenIn),
   mass(massIn),
   rigidity(rigidityIn)
-
 {;}
 
 BDSTrajectoryPointLink::~BDSTrajectoryPointLink()

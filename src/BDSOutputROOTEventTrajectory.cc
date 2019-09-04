@@ -25,19 +25,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
 
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
-#include "BDSTrajectory.hh"
-#include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
+#include "BDSTrajectory.hh"
 #endif
 
 ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
+<<<<<<< HEAD
   n(0)
+=======
+  n(0),
+  extraLocal(false),
+  extraLink(false),
+  extraIon(false)
+>>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
@@ -190,6 +197,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  positionS.push_back(point->GetPreS() / CLHEP::m);
 	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 
+<<<<<<< HEAD
       if(point->extraLocal)
       {
           G4ThreeVector localPos = point->GetPositionLocal();
@@ -219,6 +227,36 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
           electrons.push_back(point->GetNElectrons());
       }
 
+=======
+	  if (extraLocal)
+	    {
+	      G4ThreeVector localPos = point->GetPositionLocal();
+	      G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
+	      localPosition.push_back(TVector3(localPos.getX() / CLHEP::m,
+					       localPos.getY() / CLHEP::m,
+					       localPos.getZ() / CLHEP::m));
+	      localMomentum.push_back(TVector3(localMom.getX(),
+					       localMom.getY(),
+					       localMom.getZ()));
+	    }
+	  
+	  if (extraLink)
+	    {
+	      charges.push_back(point->GetLinkCharge());
+	      kineticEnergy.push_back(point->GetLinkKineticEnergy());
+	      turn.push_back(point->GetLinkTurnsTaken());
+	      masses.push_back(point->GetLinkMass());
+	      rigidities.push_back(point->GetLinkRigidity());
+	    }
+	  
+	  if (extraIon)
+	    {
+	      ion.push_back(point->GetIsIon());
+	      ionANumber.push_back(point->GetIonA());
+	      ionZNumber.push_back(point->GetIonZ());
+	      electrons.push_back(point->GetNElectrons());
+	    }
+>>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
 	}
       
       XYZ.push_back(position);
@@ -234,29 +272,29 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       energiesDeposit.push_back(energyDeposited);
       T.push_back(time);
 
-      if(localPosition.size()>0)
-      {
+      if (localPosition.size()>0)
+	{
           xyz.push_back(localPosition);
           pxpypz.push_back(localMomentum);
-      }
-
-      if(charges.size()>0)
-      {
+	}
+      
+      if (charges.size()>0)
+	{
           charge.push_back(charges);
           kineticEnergies.push_back(kineticEnergy);
           turnsTaken.push_back(turn);
           mass.push_back(masses);
           rigidity.push_back(rigidities);
-      }
-
-      if(ion.size()>0)
-      {
-          isIon.push_back(ion);
+	}
+      
+      if (ion.size()>0)
+	{
+	  isIon.push_back(ion);
           ionA.push_back(ionANumber);
           ionZ.push_back(ionZNumber);
           nElectrons.push_back(electrons);
-      }
-
+	}
+      
       // recursively search for primary interaction step  
       primaryStepIndex.push_back(findPrimaryStepIndex(traj));
       
@@ -457,11 +495,19 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
   int si = parentStepIndex.at(ti);          // get primary index          
   
   BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+<<<<<<< HEAD
                                       parentID[ti], parentIndex[ti],
                                       postProcessTypes[ti][si], postProcessSubTypes[ti][si],
                                       postWeights[ti][si],energiesDeposit[ti][si],
                                       XYZ[ti][si], PXPYPZ[ti][si],
                                       modelIndicies[ti][si], T[ti][si]);
+=======
+				      parentID[ti], parentIndex[ti],
+				      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
+				      postWeights[ti][si], energiesDeposit[ti][si],
+				      XYZ[ti][si], PXPYPZ[ti][si],
+				      modelIndicies[ti][si], T[ti][si]);
+>>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
   return p;
 }
 

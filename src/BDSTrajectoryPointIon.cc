@@ -18,15 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSTrajectoryPointIon.hh"
 
-#include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 
 //G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
 
-BDSTrajectoryPointIon::BDSTrajectoryPointIon(G4bool   isIonIn,					 // particle type = ion
-							 G4int    ionAIn, 					 // ion atomic mass number (Z+N)
-							 G4int    ionZIn, 					 // ion atomic / proton number
-							 G4int	  nElectronsIn): 			 // number of electrons on ion
+BDSTrajectoryPointIon::BDSTrajectoryPointIon(G4bool isIonIn,
+					     G4int  ionAIn,
+					     G4int  ionZIn,
+					     G4int  nElectronsIn):
   isIon(isIonIn),
   ionA(ionAIn),
   ionZ(ionZIn),
