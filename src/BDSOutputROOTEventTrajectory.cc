@@ -25,9 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
 
-#include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSTrajectory.hh"
@@ -37,14 +37,7 @@ ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
-<<<<<<< HEAD
   n(0)
-=======
-  n(0),
-  extraLocal(false),
-  extraLink(false),
-  extraIon(false)
->>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
@@ -57,12 +50,12 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 #ifndef __ROOTBUILD__
 int findPrimaryStepIndex(BDSTrajectory* traj)
 {
-  if(!traj->GetParent()) 
+  if(!traj->GetParent())
     {return -1;}
 
-  if(traj->GetParent()->GetTrackID() == 1) 
+  if(traj->GetParent()->GetTrackID() == 1)
     {return traj->GetParentStepIndex();}
-  else 
+  else
     {return findPrimaryStepIndex(traj->GetParent());}
 }
 
@@ -72,25 +65,25 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
 #endif
   if(!auxNavigator)
-    {// navigator for converting coordinates to curvilinear coordinate system 
+    {// navigator for converting coordinates to curvilinear coordinate system
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
-  // assign trajectory indicies 
+  // assign trajectory indicies
   int idx = 0;
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
       BDSTrajectory* traj = (*iT).first;
       if((*iT).second)
 	{
-	  traj->SetTrajIndex(idx);     
+	  traj->SetTrajIndex(idx);
 	  idx++;
 	}
-      else 
+      else
 	{traj->SetTrajIndex(-1);}
     }
-  
-  // assign parent (and step) indicies 
+
+  // assign parent (and step) indicies
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
       BDSTrajectory* traj   = (*iT).first;
@@ -98,7 +91,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       if ((*iT).second && parent)
 	{ // to store and not primary
 	  traj->SetParentIndex(parent->GetTrajIndex());
-	  
+
 	  // search for parent step index
 	  if (parent->GetTrajIndex() != -1)
 	    {
@@ -114,7 +107,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 		}
 	    }
 	  else
-	    {parent->SetParentStepIndex(-1);}	
+	    {parent->SetParentStepIndex(-1);}
 	}
       else
 	{traj->SetParentIndex(-1);}
@@ -124,17 +117,17 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
       BDSTrajectory *traj = (*iT).first;
-      
+
       // check if the trajectory is to be stored
-      if(!(*iT).second) 
+      if(!(*iT).second)
 	{continue;}
-      
+
       partID.push_back((int &&) traj->GetPDGEncoding());
       trackID.push_back((unsigned int &&) traj->GetTrackID());
       parentID.push_back((unsigned int &&) traj->GetParentID());
       parentIndex.push_back((int &&) traj->GetParentIndex());
       parentStepIndex.push_back((int &&) traj->GetParentStepIndex());
-      
+
       std::vector<int>    preProcessType;
       std::vector<int>    preProcessSubType;
       std::vector<int>    postProcessType;
@@ -142,7 +135,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       std::vector<double> preWeight;
       std::vector<double> postWeight;
       std::vector<double> energyDeposited;
-      
+
       std::vector<TVector3> position;
       std::vector<TVector3> momentum;
       std::vector<double>   positionS;
@@ -167,26 +160,26 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
 	{
 	  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
-	  
+
 	  // Position
 	  G4ThreeVector pos = point->GetPosition();
 	  position.push_back(TVector3(pos.getX() / CLHEP::m,
 					pos.getY() / CLHEP::m,
 					pos.getZ() / CLHEP::m));
-	  
+
 	  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
 	  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
 	  if(theInfo)
 	    {modelIndex.push_back(theInfo->GetBeamlineIndex());}
 	  else
 	    {modelIndex.push_back(-1);}
-	  
+
 	  // Process types
 	  preProcessType.push_back(point->GetPreProcessType());
 	  preProcessSubType.push_back(point->GetPreProcessSubType());
 	  postProcessType.push_back(point->GetPostProcessType());
 	  postProcessSubType.push_back(point->GetPostProcessSubType());
-	  
+
 	  preWeight.push_back(point->GetPreWeight());
 	  postWeight.push_back(point->GetPostWeight());
 	  energyDeposited.push_back(point->GetEnergy());
@@ -197,7 +190,6 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  positionS.push_back(point->GetPreS() / CLHEP::m);
 	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 
-<<<<<<< HEAD
       if(point->extraLocal)
       {
           G4ThreeVector localPos = point->GetPositionLocal();
@@ -227,38 +219,8 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
           electrons.push_back(point->GetNElectrons());
       }
 
-=======
-	  if (extraLocal)
-	    {
-	      G4ThreeVector localPos = point->GetPositionLocal();
-	      G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
-	      localPosition.push_back(TVector3(localPos.getX() / CLHEP::m,
-					       localPos.getY() / CLHEP::m,
-					       localPos.getZ() / CLHEP::m));
-	      localMomentum.push_back(TVector3(localMom.getX(),
-					       localMom.getY(),
-					       localMom.getZ()));
-	    }
-	  
-	  if (extraLink)
-	    {
-	      charges.push_back(point->GetLinkCharge());
-	      kineticEnergy.push_back(point->GetLinkKineticEnergy());
-	      turn.push_back(point->GetLinkTurnsTaken());
-	      masses.push_back(point->GetLinkMass());
-	      rigidities.push_back(point->GetLinkRigidity());
-	    }
-	  
-	  if (extraIon)
-	    {
-	      ion.push_back(point->GetIsIon());
-	      ionANumber.push_back(point->GetIonA());
-	      ionZNumber.push_back(point->GetIonZ());
-	      electrons.push_back(point->GetNElectrons());
-	    }
->>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
 	}
-      
+
       XYZ.push_back(position);
       modelIndicies.push_back(modelIndex);
       PXPYPZ.push_back(momentum);
@@ -272,39 +234,39 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       energiesDeposit.push_back(energyDeposited);
       T.push_back(time);
 
-      if (localPosition.size()>0)
-	{
+      if(localPosition.size()>0)
+      {
           xyz.push_back(localPosition);
           pxpypz.push_back(localMomentum);
-	}
-      
-      if (charges.size()>0)
-	{
+      }
+
+      if(charges.size()>0)
+      {
           charge.push_back(charges);
           kineticEnergies.push_back(kineticEnergy);
           turnsTaken.push_back(turn);
           mass.push_back(masses);
           rigidity.push_back(rigidities);
-	}
-      
-      if (ion.size()>0)
-	{
-	  isIon.push_back(ion);
+      }
+
+      if(ion.size()>0)
+      {
+          isIon.push_back(ion);
           ionA.push_back(ionANumber);
           ionZ.push_back(ionZNumber);
           nElectrons.push_back(electrons);
-	}
-      
-      // recursively search for primary interaction step  
+      }
+
+      // recursively search for primary interaction step
       primaryStepIndex.push_back(findPrimaryStepIndex(traj));
-      
+
       // geant4 trackID to trackIndex in this table
       trackID_trackIndex.insert(std::pair<int,int>(traj->GetTrackID(),n));
-      
+
       // this->printTrajectoryInfo(n);
       n++;
     }
-  
+
   /////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////
@@ -314,17 +276,17 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   for (auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
     {
       BDSTrajectory *traj = *iT;
-      
+
       // map of trackID to trackIndex
       trackID_trackIndex.insert(std::pair<int, int>(traj->GetTrackID(),trackIndex));
-      
-      std::cout << trajVec.size() << " " << parentID.size() << " " << parentIndex.size() << " " 
+
+      std::cout << trajVec.size() << " " << parentID.size() << " " << parentIndex.size() << " "
 		<< traj->GetTrackID() << " " << traj->GetParentID() << " " << trackIndex << std::endl;
-      
+
       // map of trackIndex to trackProcess
       auto processPair = findParentProcess(trackIndex);
       trackIndex_trackProcess.insert(std::pair<int,std::pair<int,int>>(trackIndex,processPair));
-      
+
       // map of modelIndex to trackProcess
       if(processPair.first != -1)
 	{
@@ -338,7 +300,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	      modelIndex_trackIndex.at(mi).push_back(trackIndex);
 	    }
 	}
-      
+
       ++trackIndex;
     }
 #endif
@@ -389,7 +351,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   ionA.clear();
   ionZ.clear();
   nElectrons.clear();
-  
+
   // trackIndex_trackProcess.clear();
   //  trackIndex_modelIndex.clear();
   //  modelIndex_trackIndex.clear();
@@ -399,7 +361,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
 {
   if (!other)
     {return;}
-  
+
   n = 0;
   partID              = other->partID;
   trackID             = other->trackID;
@@ -457,10 +419,10 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
       pid = parentID.at(tid);
       pin = parentIndex.at(tid);
       sin = parentStepIndex.at(tid);
-      
+
       std::cout << tid << " " << pid << " " << pin << " " << sin << " " << std::endl;
     }
-  
+
   return std::pair<int,int>(pin,sin);
 }
 #endif
@@ -492,22 +454,14 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
   int ti = trackID_trackIndex.at(trackid);  // get track index
-  int si = parentStepIndex.at(ti);          // get primary index          
-  
+  int si = parentStepIndex.at(ti);          // get primary index
+
   BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
-<<<<<<< HEAD
                                       parentID[ti], parentIndex[ti],
                                       postProcessTypes[ti][si], postProcessSubTypes[ti][si],
                                       postWeights[ti][si],energiesDeposit[ti][si],
                                       XYZ[ti][si], PXPYPZ[ti][si],
                                       modelIndicies[ti][si], T[ti][si]);
-=======
-				      parentID[ti], parentIndex[ti],
-				      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
-				      postWeights[ti][si], energiesDeposit[ti][si],
-				      XYZ[ti][si], PXPYPZ[ti][si],
-				      modelIndicies[ti][si], T[ti][si]);
->>>>>>> bf29c3a546ca6f5bda4c65cf988ad11d2afbf355
   return p;
 }
 

@@ -25,11 +25,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
+
 #ifndef __ROOTBUILD__
 class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+class BDSTrajectoryPointLocal;
+class BDSTrajectoryPointLink;
+class BDSTrajectoryPointIon;
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -118,19 +122,18 @@ public:
     processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
     position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn) {}
   // override constructor for extra information
-  BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
-				    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
-				    TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn,
-				    TVector3 positionLocalIn, TVector3 momentumLocalIn, double chargeIn,
-				    double kineticEnergyIn, int turnsTakenIn, double rigidityIn, bool isIonIn,
-				    int ionAIn, int ionZIn, int nElectronsIn) :
-    partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
-    processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn),
-    energyDeposited(energyIn), position(positionIn), momentum(momentumIn), model(modelIn),
-    time(preTimeIn),positionLocal(positionLocalIn), momentumLocal(momentumLocalIn),
-    charge(chargeIn), kineticEnergy(kineticEnergyIn), turnsTaken(turnsTakenIn),
-    rigidity(rigidityIn), isIon(isIonIn), ionA(ionAIn), ionZ(ionZIn), nElectrons(nElectronsIn){}
-  
+#ifndef __ROOTBUILD__
+    BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
+                                    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
+                                    TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn,
+                                    BDSTrajectoryPointLocal* extraLocalIn, BDSTrajectoryPointLink* extraLinkIn,
+                                    BDSTrajectoryPointIon* extraIonIn ) :
+          partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
+          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
+          position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn), extraLocal(extraLocalIn),
+          extraLink(extraLinkIn), extraIon(extraIonIn) {}
+#endif
+
   virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
 
   int      partID;
@@ -156,6 +159,11 @@ public:
   int      ionZ;
   int      nElectrons;
 
+#ifndef __ROOTBUILD__
+  BDSTrajectoryPointLocal* extraLocal;
+  BDSTrajectoryPointLink* extraLink;
+  BDSTrajectoryPointIon* extraIon;
+#endif
   ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
 
