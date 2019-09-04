@@ -21,17 +21,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSGlobalConstants.hh"
 
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
 
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
-#include "BDSTrajectory.hh"
-#include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
+#include "BDSTrajectory.hh"
 #endif
 
 ClassImp(BDSOutputROOTEventTrajectory)
@@ -39,9 +38,9 @@ ClassImp(BDSOutputROOTEventTrajectory)
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
   n(0),
-  extraLocal(BDSGlobalConstants::Instance()->StoreTrajectoryLocal()),
-  extraLink(BDSGlobalConstants::Instance()->StoreTrajectoryLinks()),
-  extraIon(BDSGlobalConstants::Instance()->StoreTrajectoryIons())
+  extraLocal(false),
+  extraLink(false),
+  extraIon(false)
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
