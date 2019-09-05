@@ -501,7 +501,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   G4double cavityLength = element->l * CLHEP::m;
 
   // use cavity fringe option, includeFringeFields does not affect cavity fringes
-  G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldCavities();
+  G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldsCavities();
 
   G4bool buildIncomingFringe = buildCavityFringes;
   // only check if trying to build fringes to begin with as this check should only ever turn off fringe building

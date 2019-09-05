@@ -262,7 +262,7 @@ public:
   inline G4bool   TurnOnOpticalSurface()     const {return G4bool  (options.turnOnOpticalSurface);}
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
-  inline G4bool   IncludeFringeFieldCavities() const {return G4bool  (options.includeFringeFieldCavities);}
+  inline G4bool   IncludeFringeFieldsCavities() const {return G4bool  (options.includeFringeFieldsCavities);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
   inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
   inline G4bool   HStyle()                   const {return G4bool  (options.hStyle);}
