@@ -21,9 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Allocator.hh"
-
+#include "G4THitsCollection.hh"
 /**
- * @brief Extra information recorded for a single piece of energy deposition.
+ * @brief Extra information recorded for a single piece of Trajectory Link information.
  *
  * @author Siobhan Alden
  */
@@ -41,7 +41,11 @@ public:
 			 G4double rigidityIn);
   
   ~BDSTrajectoryPointLink();
-  
+
+  //inline void* operator new(size_t) ;
+  //inline void operator delete(void *aHit);
+
+
   G4int 	charge;
   G4double 	kineticEnergy;
   G4int     turnsTaken;
@@ -53,21 +57,21 @@ private:
   BDSTrajectoryPointLink() = delete;
 };
 
+
 /*
+typedef G4THitsCollection<BDSTrajectoryPointLink> BDCollectionSTrajectoryPointLink;
+extern G4Allocator<BDSTrajectoryPointLink> BDSAllocatorTrajectoryPointLink;
 
-typedef G4THitsCollection<BDSHitEnergyDepositionExtra> BDSHitsCollectionEnergyDepositionExtra;
-extern G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
-
-inline void* BDSHitEnergyDepositionExtra::operator new(size_t)
+inline void* BDSTrajectoryPointLink::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSAllocatorEnergyDepositionExtra.MallocSingle();
+  aHit=(void*) BDSAllocatorTrajectoryPointLink.MallocSingle();
   return aHit;
 }
 
-inline void BDSHitEnergyDepositionExtra::operator delete(void *aHit)
+inline void BDSTrajectoryPointLink::operator delete(void *aHit)
 {
- BDSAllocatorEnergyDepositionExtra.FreeSingle((BDSHitEnergyDepositionExtra*) aHit);
-}*/
-
+ BDSAllocatorTrajectoryPointLink.FreeSingle((BDSTrajectoryPointLink*) aHit);
+}
+*/
 #endif

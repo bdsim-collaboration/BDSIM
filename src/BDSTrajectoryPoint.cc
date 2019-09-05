@@ -26,6 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryPoint.hh"
 #include "BDSPhysicalConstants.hh"
 
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
+#include "BDSTrajectoryPointIon.hh"
 
 #include "globals.hh"
 #include "G4Allocator.hh"
@@ -176,7 +179,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   // get local coordinates and volume for transform
   BDSStep localPosition = auxNavigator->ConvertToLocal(step);
   prePosLocal = localPosition.PreStepPoint();
-  postPosLocal = prePosLocal;
+  postPosLocal = localPosition.PostStepPoint();
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
@@ -190,6 +193,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 
   if (storeExtrasLocal)
     {
+      G4ThreeVector preMomLocal;
+      preMomLocal.set(0,0,0);
       extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
 					       localPosition.PostStepPoint());
     }

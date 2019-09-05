@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h"
 #include "TVector3.h"
 
+
 #include <map>
 #include <vector>
 
@@ -34,6 +35,9 @@ typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposit
 class BDSTrajectoryPointLocal;
 class BDSTrajectoryPointLink;
 class BDSTrajectoryPointIon;
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
+#include "BDSTrajectoryPointIon.hh"
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -122,17 +126,41 @@ public:
     processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
     position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn) {}
   // override constructor for extra information
+/*
 #ifndef __ROOTBUILD__
     BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
                                     int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
                                     TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn,
-                                    BDSTrajectoryPointLocal* extraLocalIn, BDSTrajectoryPointLink* extraLinkIn,
-                                    BDSTrajectoryPointIon* extraIonIn ) :
+                                    bool extraLocalIn, bool extraLinkIn, bool extraIonIn) :
           partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
           processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
           position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn), extraLocal(extraLocalIn),
-          extraLink(extraLinkIn), extraIon(extraIonIn) {}
+          extraLink(extraLinkIn), extraIon(extraIonIn)
+    {
+     if(extraLocal)
+     {
+       TVector3 positionLocal(extraLocal->positionLocal.x(),extraLocal->positionLocal.y(),extraLocal->positionLocal.z());
+       TVector3 momentumLocal(extraLocal->momentumLocal.x(),extraLocal->momentumLocal.y(),extraLocal->momentumLocal.z());
+     }
+      if(extraLink)
+      {
+        turnsTaken=extraLink->turnsTaken;
+        charge=extraLink->charge;
+        kineticEnergy=extraLink->kineticEnergy;
+        mass=extraLink->mass;
+        rigidity=extraLink->rigidity;
+      }
+      if(extraIon)
+      {
+        isIon=extraIon->isIon;
+        ionA=extraIon->ionA;
+        ionZ=extraIon->ionZ;
+        nElectrons=extraIon->nElectrons;
+
+      }
+    }
 #endif
+ */
 
   virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
 
@@ -154,17 +182,18 @@ public:
   double   kineticEnergy;
   int      turnsTaken;
   double   rigidity;
+  double   mass;
   bool     isIon;
   int      ionA;
   int      ionZ;
   int      nElectrons;
 
-#ifndef __ROOTBUILD__
-  BDSTrajectoryPointLocal* extraLocal;
-  BDSTrajectoryPointLink* extraLink;
-  BDSTrajectoryPointIon* extraIon;
-#endif
-  ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
+
+  bool extraLocal;
+  bool extraLink;
+  bool extraIon;
+
+ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
 
 
@@ -248,9 +277,13 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
-  bool extraLocal;
-  bool extraLink;
-  bool extraIon;
+
+
+#ifndef __ROOTBUILD__
+    BDSTrajectoryPointLocal* pointLocal;
+    BDSTrajectoryPointLink* pointLink;
+    BDSTrajectoryPointIon* pointIon;
+#endif
   
   ClassDef(BDSOutputROOTEventTrajectory,3);
 };

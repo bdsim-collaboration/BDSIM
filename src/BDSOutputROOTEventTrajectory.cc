@@ -34,7 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 ClassImp(BDSOutputROOTEventTrajectory)
-
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
   n(0)
@@ -479,7 +478,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 					  parentID[pi], parentIndex[pi],
 					  postProcessTypes[pi][psi], postProcessSubTypes[pi][psi],
 					  postWeights[pi][psi],energiesDeposit[pi][psi],
-					  XYZ[pi][psi], PXPYPZ[pi][psi],
+					  XYZ[pi][psi], PXPYPZ[pi][psi] ,
 					  modelIndicies[pi][psi], T[pi][psi]);
       tpv.push_back(p);
       ti = pi;

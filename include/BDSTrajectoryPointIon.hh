@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Allocator.hh"
+#include "G4THitsCollection.hh"
 
 /**
  * @brief Extra information recorded for a single piece of energy deposition.
@@ -40,7 +41,10 @@ public:
 			G4int nElectronsIn);
 
   ~BDSTrajectoryPointIon();
-  
+
+  //inline void* operator new(size_t) ;
+  //inline void operator delete(void *aHit);
+
   G4bool 	isIon;
   G4int  	ionA;
   G4int		ionZ;
@@ -50,22 +54,22 @@ private:
   /// Private default constructor.  
   BDSTrajectoryPointIon() = delete;
 };
-
 /*
 
-typedef G4THitsCollection<BDSHitEnergyDepositionExtra> BDSHitsCollectionEnergyDepositionExtra;
-extern G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
 
-inline void* BDSHitEnergyDepositionExtra::operator new(size_t)
+typedef G4THitsCollection<BDSTrajectoryPointIon> BDSCollectionTrajectoryPointIon;
+extern G4Allocator<BDSTrajectoryPointIon> BDSAllocatorTrajectoryPointIon;
+
+inline void* BDSTrajectoryPointIon::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSAllocatorEnergyDepositionExtra.MallocSingle();
+  aHit=(void*) BDSAllocatorTrajectoryPointIon.MallocSingle();
   return aHit;
 }
 
-inline void BDSHitEnergyDepositionExtra::operator delete(void *aHit)
+inline void BDSTrajectoryPointIon::operator delete(void *aHit)
 {
- BDSAllocatorEnergyDepositionExtra.FreeSingle((BDSHitEnergyDepositionExtra*) aHit);
-}*/
-
+ BDSAllocatorTrajectoryPointIon.FreeSingle((BDSTrajectoryPointIon*) aHit);
+}
+*/
 #endif

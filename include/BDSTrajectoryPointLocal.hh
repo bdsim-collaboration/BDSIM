@@ -21,7 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
-
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
 /**
  * @brief Extra information recorded for a single piece of energy deposition.
  *
@@ -38,7 +39,11 @@ public:
                           G4ThreeVector momentumLocalIn);
 
   ~BDSTrajectoryPointLocal();
-  
+
+  //inline void* operator new(size_t) ;
+  //inline void operator delete(void *aHit);
+
+
   G4ThreeVector positionLocal;
   G4ThreeVector momentumLocal;
   
@@ -49,19 +54,19 @@ private:
 
 /*
 
-typedef G4THitsCollection<BDSHitEnergyDepositionExtra> BDSHitsCollectionEnergyDepositionExtra;
-extern G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
+typedef G4THitsCollection<BDSTrajectoryPointLocal> BDSCollectionTrajectoryPointLocal;
+extern G4Allocator<BDSTrajectoryPointLocal> BDSAllocatorTrajectoryPointLocal;
 
-inline void* BDSHitEnergyDepositionExtra::operator new(size_t)
+inline void* BDSTrajectoryPointLocal::operator new(size_t)
 {
   void* aHit;
-  aHit=(void*) BDSAllocatorEnergyDepositionExtra.MallocSingle();
+  aHit=(void*) BDSAllocatorTrajectoryPointLocal.MallocSingle();
   return aHit;
 }
 
-inline void BDSHitEnergyDepositionExtra::operator delete(void *aHit)
+inline void BDSTrajectoryPointLocal::operator delete(void *aHit)
 {
- BDSAllocatorEnergyDepositionExtra.FreeSingle((BDSHitEnergyDepositionExtra*) aHit);
-}*/
-
+ BDSAllocatorTrajectoryPointLocal.FreeSingle((BDSTrajectoryPointLocal*) aHit);
+}
+*/
 #endif
