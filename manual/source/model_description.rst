@@ -670,7 +670,7 @@ that the maximum tangential error in the aperture is 1 mm.
 +-----------------+-----------------------------------+-----------+-----------------+
 | `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
+| `yokeOnInside`  | Yoke on inside of bend or not     | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -678,18 +678,18 @@ that the maximum tangential error in the aperture is 1 mm.
 |                 | function magnet                   |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fint`          | Fringe field integral for the     | 0         | No              |
-|                 | entrance face of the rbend        |           |                 |
+|                 | entrance face of the sbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintx`         | Fringe field integral for the     | -1        | No              |
-|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | exit face of the sbend. -1 means  |           |                 |
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintK2`        | Second fringe field integral for  | 0         | No              |
-|                 | the entrance face of the rbend    |           |                 |
+|                 | the entrance face of the sbend    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `fintxK2`       | Second fringe field integral for  | 0         | No              |
-|                 | the exit face of the rbend        |           |                 |
+|                 | the exit face of the sbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
@@ -889,7 +889,7 @@ multipole
 
    knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
-starting with the quadrupole component. The skew strength parameter :math:`ksl`
+starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
 
 ================  ===========================  ==========  ===========
@@ -902,6 +902,8 @@ Parameter         Description                  Default     Required
 
 Notes:
 
+* The values for `knl` and `ksl` are 1-counting, i.e. the first number is the order 1 component,
+  which is the quadrupole coefficient.
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
@@ -910,6 +912,8 @@ Notes:
 Examples: ::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
+   QUADRUPOLE1: multipole, l=20*cm, knl={2.3};
+   
 
 thinmultipole
 ^^^^^^^^^^^^^
@@ -917,6 +921,8 @@ thinmultipole
 `thinmultipole` is the same as multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
+
+* `knl` and `ksl` are the same as the thick multiple documented above.  See `multipole`_.
 
 Examples: ::
 
@@ -1079,7 +1085,7 @@ The default field is a uniform (in space) electric-only field that is time varyi
 according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electromagnetic
 field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
 numerical integrator is used to calculate the motion of particles in both cases. Fringes for
-the edge effects are provided by default and are controllable with the option `includeFringeFields`.
+the edge effects are provided by default and are controllable with the option `includeFringeFieldsCavities`.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -4104,8 +4110,16 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
-|                                  | magnets with finite poleface angles. The length of    |
-|                                  | the total element is conserved. (default = false).    |
+|                                  | magnets with finite poleface angles, and solenoids.   |
+|                                  | The length of the total element is conserved.         |
+|                                  | (default = true).                                     |
++----------------------------------+-------------------------------------------------------+
+| includeFringeFieldsCavities      | Include thin fringe fields for RF cavities only.      |
+|                                  | Cavity fringes are not affected by the                |
+|                                  | includeFringeFields option,                           |
+|                                  | includeFringeFieldsCavities must be explicitly turned |
+|                                  | off if no fringes are to be built at all in the model.|
+|                                  | (default = true).                                     |
 +----------------------------------+-------------------------------------------------------+
 | integratorSet                    | Set of tracking routines to use ("bdsimmatrix",       |
 |                                  | "bdsimtwo", "bdsimmatrixfringescaling", "geant4", or  |
