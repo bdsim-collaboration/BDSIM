@@ -1137,6 +1137,7 @@ void BDSDetectorConstruction::ConstructMeshes()
       
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
+      std::vector<G4double> meshPrimitiveScorerUnits;
       std::vector<G4String> scorerNames;
       std::stringstream sqss(mesh.scoreQuantity);
       G4String word;
@@ -1154,6 +1155,7 @@ void BDSDetectorConstruction::ConstructMeshes()
 	  // name here and store it.
 	  G4String uniqueName = meshName + "/" + ps->GetName();
 	  meshPrimitiveScorerNames.push_back(uniqueName);
+	  meshPrimitiveScorerUnits.push_back(psUnit);
 	  Scorer_box->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
 	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
 	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
@@ -1164,6 +1166,6 @@ void BDSDetectorConstruction::ConstructMeshes()
       // register it with the sd manager as this is where we get all collection IDs from
       // in the end of event action. This must come from the mesh as it creates the
       // multifunctionaldetector and therefore has the complete name of the scorer collection
-      BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames); 
+      BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames, &meshPrimitiveScorerUnits);
     }
 }
