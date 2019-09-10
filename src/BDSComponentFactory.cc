@@ -832,6 +832,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
         {
           // overwrite magnet strength with copy of fringe strength. Should be safe as it has the
           // kicker information from copying previously.
+	  delete st;
           st = new BDSMagnetStrength(*fringeStIn);
           // supply the field for a thin kicker field as it is required to calculate the
           // effective bending radius needed for fringe field and poleface effects
@@ -1672,6 +1673,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   bLine->AddComponent(parallelTransport1);
   bLine->AddComponent(rmatrix);
   bLine->AddComponent(parallelTransport2);
+
+  delete elementNew;
 
   return bLine;
 }
