@@ -962,6 +962,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
   if(!HasSufficientMinimumLength(element, false))
     {
+      delete fringeStIn;
+      delete fringeStOut;
       // fringe effect applied in integrator so nothing more to do.
       return new BDSMagnet(t,
 			   baseName,
