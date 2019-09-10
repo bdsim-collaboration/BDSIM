@@ -26,9 +26,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo&  mesh,
 					     const G4String&           uniqueNameIn,
+					     const G4String&           primitiveScorerNameIn,
+					     G4double                  primitiveScorerUnitValueIn,
 					     const BDSHistBinMapper3D& coordinateMapperIn):
   BDSScorerMeshInfo(mesh),
   uniqueName(uniqueNameIn),
+  primitiveScorerName(primitiveScorerNameIn),
+  primitiveScorerUnitValue(primitiveScorerUnitValueIn),
   coordinateMapper(coordinateMapperIn)
 {
   outputName = uniqueNameIn;
