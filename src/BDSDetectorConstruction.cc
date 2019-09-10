@@ -1146,7 +1146,8 @@ void BDSDetectorConstruction::ConstructMeshes()
 	  if (search == scorerRecipes.end())
 	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper);
+      G4double psUnit = 1.0;
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit);
 	  // The mesh internally creates a multifunctional detector which is an SD and has
 	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
 	  // the hits map we need the full name of the unique primitive scorer so we build that
@@ -1154,7 +1155,7 @@ void BDSDetectorConstruction::ConstructMeshes()
 	  G4String uniqueName = meshName + "/" + ps->GetName();
 	  meshPrimitiveScorerNames.push_back(uniqueName);
 	  Scorer_box->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
-	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, *mapper);
+	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
 	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
 	}
 
