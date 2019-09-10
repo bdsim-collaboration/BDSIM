@@ -521,6 +521,7 @@ void BDSOutput::CreateHistograms()
 					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
 					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
 	  histIndices3D[def.uniqueName] = histID;
+	  histIndexToUnits3D[histID] = def.primitiveScorerUnitValue;
 	  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
 	  scorerCoordinateMaps.insert(std::make_pair(def.uniqueName, def.coordinateMapper));
 	}
@@ -557,7 +558,6 @@ void BDSOutput::CreateHistograms()
 
       // make BLM histograms and map the full collection name to that histogram ID for easy filling
       // at the end of event. Note, multiple collections may feed into the same histogram.
-      histNameToUnits1D = scorerUnits; // copy directly
       for (const auto &hn : blmHistoNames)
         {
           G4String blmHistName = "BLM_" + hn;
@@ -911,6 +911,7 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
     {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
 
   G4int histIndex = histIndices3D[histogramDefName];
+  G4double unit   = BDS::MapGetWithDefault(histIndexToUnits3D, histIndex, 1.0);
   // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
   const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
   TH3D* hist = evtHistos->Get3DHistogram(histIndex);
@@ -925,7 +926,7 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
       // convert from scorer global index to 3d i,j,k index of 3d scorer
       mapper.IJKFromGlobal(hit.first, x,y,z);
       G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
-      evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second);
+      evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second / unit);
     }
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
