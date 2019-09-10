@@ -71,37 +71,17 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
   switch (scorerType.underlying())
     {
     case BDSScorerType::cellcharge:
-      {result = new G4PSCellCharge(name); break;}
+      {result = new G4PSCellCharge(name);    break;}
     case BDSScorerType::cellcharge3d:
-      {result = new G4PSCellCharge3D(name); break;}
+      {result = new G4PSCellCharge3D(name);  break;}
     case BDSScorerType::depositeddose:
-      {
-	result = new G4PSDoseDeposit(name);
-	if (unit)
-	  {*unit = CLHEP::gray;}
-	break;
-      }
+      {result = new G4PSDoseDeposit(name);   break;}
     case BDSScorerType::depositeddose3d:
-      {
-	result = new G4PSDoseDeposit3D(name);
-	if (unit)
-	  {*unit = CLHEP::gray;}
-	break;
-      }
+      {result = new G4PSDoseDeposit3D(name); break;}
     case BDSScorerType::depositedenergy:
-      {
-	result = new G4PSEnergyDeposit(name);
-	if (unit)
-	  {*unit = CLHEP::GeV;}
-	break;
-      }
+      {result = new G4PSEnergyDeposit(name, "GeV"); break;}
     case BDSScorerType::depositedenergy3d:
-      {
-	result = new G4PSEnergyDeposit3D(name);
-	if (unit)
-	  {*unit = CLHEP::GeV;}
-	break;
-      }
+      {result = new G4PSEnergyDeposit3D(name, "GeV"); break;}
     case BDSScorerType::population:
       {
 	G4PSPopulation* scorer = new G4PSPopulation(name);
@@ -134,5 +114,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
 	break;
       }
     }
+  if (unit)
+    {*unit = result->GetUnitValue();}
   return result;
 }
