@@ -388,6 +388,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
             {sType = BDSSamplerType::none;}
           if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
             {sType = BDSSamplerType::none;}
+          if (temp->GetType() == "dump") // don't sample after a dump as there'll be nothing
+            {sType = BDSSamplerType::none;}
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
