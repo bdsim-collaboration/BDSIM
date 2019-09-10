@@ -85,14 +85,14 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
     case BDSScorerType::population:
       {
 	G4PSPopulation* scorer = new G4PSPopulation(name);
-	scorer->Weighted(TRUE);
+	scorer->Weighted(true);
 	result = scorer;
 	break;
       }
     case BDSScorerType::population3d:
       {
 	G4PSPopulation3D* scorer = new G4PSPopulation3D(name);
-	scorer->Weighted(TRUE);
+	scorer->Weighted(true);
 	result = scorer;
 	break;
       }
