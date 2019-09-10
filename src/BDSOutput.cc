@@ -548,14 +548,14 @@ void BDSOutput::CreateHistograms()
               for (const auto& scorerName : psnames)
                 {
                   if (scorerNameComplete.contains("/"+scorerName)) // only match end of full name with '/'
-                    {
+		    {
 		      blmHistoNames.insert(scorerName);
 		      psFullNameToPS[scorerNameComplete] = scorerName;
 		    }
                 }
             }
         }
-
+      
       // make BLM histograms and map the full collection name to that histogram ID for easy filling
       // at the end of event. Note, multiple collections may feed into the same histogram.
       for (const auto &hn : blmHistoNames)
@@ -563,7 +563,7 @@ void BDSOutput::CreateHistograms()
           G4String blmHistName = "BLM_" + hn;
           G4int hind = Create1DHistogram(blmHistName, blmHistName, nBLMs, 0, nBLMs);
           histIndices1D[blmHistName] = hind;
-	      histIndexToUnits1D[hind]   = scorerUnits[hn];
+	  histIndexToUnits1D[hind]   = scorerUnits[hn];
           for (const auto& kv : psFullNameToPS)
             {
               if (hn == kv.second)
