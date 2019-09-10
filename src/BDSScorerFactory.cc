@@ -97,17 +97,9 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
 	break;
       }
     case BDSScorerType::ambientdose:
-      {
-	result = new BDSScorerAmbientDose3D(name,mapper,pathname);
-	break;
-	// TBC unit
-      }
+      {result = new BDSScorerAmbientDose3D(name,mapper,pathname); break;}
      case BDSScorerType::activation:
-      {
-	result = new BDSScorerQuantity3D(name,mapper,filename);
-	break;
-	// TBC unit
-      }
+      {result = new BDSScorerQuantity3D(name,mapper,filename);break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");
