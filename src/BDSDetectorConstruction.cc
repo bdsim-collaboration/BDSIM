@@ -1100,10 +1100,10 @@ G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Elem
 
 void BDSDetectorConstruction::ConstructMeshes()
 {
-  std::vector<GMAD::ScorerMesh> scoring_meshes = BDSParser::Instance()->GetScorerMesh();
+  std::vector<GMAD::ScorerMesh> scoringMeshes = BDSParser::Instance()->GetScorerMesh();
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
 
-  if (scoring_meshes.empty())
+  if (scoringMeshes.empty())
     {return;}
 
   G4ScoringManager* scManager = G4ScoringManager::GetScoringManager();
@@ -1119,7 +1119,7 @@ void BDSDetectorConstruction::ConstructMeshes()
 
   // construct meshes
   BDSScorerFactory scorerFactory;
-  for (const auto& mesh : scoring_meshes)
+  for (const auto& mesh : scoringMeshes)
     {
       // convert to recipe class as this checks parameters
       BDSScorerMeshInfo meshRecipe = BDSScorerMeshInfo(mesh);
@@ -1132,8 +1132,8 @@ void BDSDetectorConstruction::ConstructMeshes()
       G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
       
       // create a scoring box
-      BDSScoringBox* Scorer_box = new BDSScoringBox(meshName, meshRecipe, placement);
-      const BDSHistBinMapper3D* mapper = Scorer_box->Mapper();
+      BDSScoringBox* scorerBox = new BDSScoringBox(meshName, meshRecipe, placement);
+      const BDSHistBinMapper3D* mapper = scorerBox->Mapper();
       
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
@@ -1156,12 +1156,12 @@ void BDSDetectorConstruction::ConstructMeshes()
 	  G4String uniqueName = meshName + "/" + ps->GetName();
 	  meshPrimitiveScorerNames.push_back(uniqueName);
 	  meshPrimitiveScorerUnits.push_back(psUnit);
-	  Scorer_box->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
+	  scorerBox->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
 	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
 	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
 	}
 
-      scManager->RegisterScoringMesh(Scorer_box);
+      scManager->RegisterScoringMesh(scorerBox);
 
       // register it with the sd manager as this is where we get all collection IDs from
       // in the end of event action. This must come from the mesh as it creates the
