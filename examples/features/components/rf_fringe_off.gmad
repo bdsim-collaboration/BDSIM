@@ -27,4 +27,4 @@ lat: line = (d1, rf1, d1, rf2, d1, rf3, d1, rf4, d1, rf5, d1, rf6, d1, rf7, d1);
 
 include optionsTest.gmad;
 
-option, includeFringeFieldCavities=0;
+option, includeFringeFieldsCavities=0;
