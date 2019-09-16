@@ -95,7 +95,7 @@ G4bool BDSSDCollimator::ProcessHitsOrdered(G4Step* step,
   G4int  processSubType     = postProcess->GetProcessSubType();
   G4bool initialised        = processType != -1;
   // step is not of interest if it was caused by just a transportation limit - ie no physics happened.
-  // we should still generate the hit though if the process was due to artifical energy cuts etc.
+  // we should still generate the hit though if the process was due to artificial energy cuts etc.
   G4bool notTransportation  = processType    != G4ProcessType::fTransportation;
   G4bool notTransportation2 = processSubType != G4TransportationProcessType::COUPLED_TRANSPORTATION;
   G4bool notTransportation3 = processSubType != G4TransportationProcessType::TRANSPORTATION;
