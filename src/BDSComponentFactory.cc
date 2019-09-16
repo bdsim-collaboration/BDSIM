@@ -832,6 +832,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
         {
           // overwrite magnet strength with copy of fringe strength. Should be safe as it has the
           // kicker information from copying previously.
+	  delete st;
           st = new BDSMagnetStrength(*fringeStIn);
           // supply the field for a thin kicker field as it is required to calculate the
           // effective bending radius needed for fringe field and poleface effects
@@ -961,6 +962,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
   if(!HasSufficientMinimumLength(element, false))
     {
+      delete fringeStIn;
+      delete fringeStOut;
       // fringe effect applied in integrator so nothing more to do.
       return new BDSMagnet(t,
 			   baseName,
@@ -1663,15 +1666,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   GMAD::Element* elementNew = new GMAD::Element(*element);
   elementNew->l = (element->l-thinElementLength)/2.0;
 
-  auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
-  auto rmatrix            = CreateThinRMatrix(0, elementName + "_centre");
-  auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+  BDSAcceleratorComponent* parallelTransport1 = CreateMagnet(elementNew,
+							     st,
+							     BDSFieldType::paralleltransporter,
+							     BDSMagnetType::paralleltransporter);
+  BDSAcceleratorComponent* rmatrix = CreateThinRMatrix(0,
+						       elementName + "_centre");
+  BDSAcceleratorComponent* parallelTransport2 = CreateMagnet(elementNew,
+							     st,
+							     BDSFieldType::paralleltransporter,
+							     BDSMagnetType::paralleltransporter);
 
   const G4String baseName = elementName;
   BDSLine* bLine = new BDSLine(baseName);
   bLine->AddComponent(parallelTransport1);
   bLine->AddComponent(rmatrix);
   bLine->AddComponent(parallelTransport2);
+
+  delete elementNew;
 
   return bLine;
 }

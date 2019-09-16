@@ -4880,9 +4880,14 @@ or::
 
   beam, particle="ion A Z Q";
 
-where `A`, `Z` and `Q` should be replaced by the atomic number, the number of protons
-in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
-ionised ion). In this case, it is recommended to use the `ion` physics list.
+where `A`, `Z` and `Q` should be replaced by the atomic mass number (an integer),
+the number of protons in the nucleus, and the charge respectively. The charge is
+optional and by default is Z (i.e. a fully ionised ion).  For example: ::
+
+  beam, particle="ion 12 6",
+        energy = 52 * GeV;
+
+* The user should take care to use a physics list that includes ion physics processes.
 
 Available input distributions and their associated parameters are described in the following
 section.
