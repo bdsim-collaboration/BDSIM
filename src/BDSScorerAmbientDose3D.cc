@@ -87,8 +87,8 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorerN
 
 BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
 {
-  for (auto conversionFactor : conversionFactors)
-    {delete conversionFactor.second;}
+  for (auto cf : conversionFactors)
+    {delete cf.second;}
 }
 
 G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double kineticEnergy) const
