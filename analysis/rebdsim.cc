@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   std::string configFileExtension = configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
   if (configFileExtension != "txt")
     {
-      std::cerr << "Unrecognised extension for file: " << configFilePath << ".  Extension: " << configFilePath << std::endl;
+      std::cerr << "Unrecognised extension for file: " << configFilePath << ".  Extension: " << configFileExtension << std::endl;
       std::cerr << "Make sure the config file is plain text with the .txt extension!" << std::endl;
       exit(1);
     }
