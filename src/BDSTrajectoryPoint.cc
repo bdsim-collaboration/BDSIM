@@ -128,10 +128,21 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
     {
       const G4ParticleDefinition* ionDef = track->GetParticleDefinition();
       const G4DynamicParticle* ionPart = track->GetDynamicParticle();
-      extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-					   ionDef->GetAtomicMass(),
-					   ionDef->GetAtomicNumber(),
-					   ionPart->GetElectronOccupancy()->GetTotalOccupancy());
+      if(ionPart->GetElectronOccupancy())
+      {
+          extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
+                                               ionDef->GetAtomicMass(),
+                                               ionDef->GetAtomicNumber(),
+                                               ionPart->GetElectronOccupancy()->GetTotalOccupancy());
+      }
+      else
+      {
+          extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
+                                                 ionDef->GetAtomicMass(),
+                                                 ionDef->GetAtomicNumber(),
+                                                 0);
+      }
+
     }
 }
 
@@ -209,16 +220,27 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 					     prePoint->GetMass(),
 					     rigidity);
     }
-  
-  if (storeExtrasIon)
+
+  if(storeExtrasIon)
+  {
+    const G4ParticleDefinition* ionDef = step->GetTrack()->GetParticleDefinition();
+    const G4DynamicParticle* ionPart = step->GetTrack()->GetDynamicParticle();
+    if(ionPart->GetElectronOccupancy())
     {
-      const G4ParticleDefinition* ionDef = step->GetTrack()->GetParticleDefinition();
-      const G4DynamicParticle* ionPart = step->GetTrack()->GetDynamicParticle();
       extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-					   ionDef->GetAtomicMass(),
-					   ionDef->GetAtomicNumber(),
-					   ionPart->GetElectronOccupancy()->GetTotalOccupancy());
+                                           ionDef->GetAtomicMass(),
+                                           ionDef->GetAtomicNumber(),
+                                           ionPart->GetElectronOccupancy()->GetTotalOccupancy());
     }
+    else
+    {
+      extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
+                                           ionDef->GetAtomicMass(),
+                                           ionDef->GetAtomicNumber(),
+                                           0);
+    }
+
+  }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
