@@ -162,7 +162,7 @@ namespace GMAD
 
     bool      yokeFields;
     bool        includeFringeFields;
-    bool        includeFringeFieldCavities;
+    bool        includeFringeFieldsCavities;
 
     ///@{ default beampipe parameters
     double      beampipeThickness;
