@@ -42,8 +42,8 @@ public:
 
   ~BDSTrajectoryPointIon();
 
-  //inline void* operator new(size_t) ;
-  //inline void operator delete(void *aHit);
+  inline void* operator new(size_t) ;
+  inline void operator delete(void *aHit);
 
   G4bool 	isIon;
   G4int  	ionA;
@@ -54,7 +54,7 @@ private:
   /// Private default constructor.  
   BDSTrajectoryPointIon() = delete;
 };
-/*
+
 
 
 typedef G4THitsCollection<BDSTrajectoryPointIon> BDSCollectionTrajectoryPointIon;
@@ -71,5 +71,5 @@ inline void BDSTrajectoryPointIon::operator delete(void *aHit)
 {
  BDSAllocatorTrajectoryPointIon.FreeSingle((BDSTrajectoryPointIon*) aHit);
 }
-*/
+
 #endif

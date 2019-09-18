@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Allocator.hh"
 
-//G4Allocator<BDSHitEnergyDepositionExtra> BDSAllocatorEnergyDepositionExtra;
+G4Allocator<BDSTrajectoryPointLink> BDSAllocatorTrajectoryPointLink;
 
 BDSTrajectoryPointLink::BDSTrajectoryPointLink(G4int    chargeIn,
 					       G4double kineticEnergyIn,

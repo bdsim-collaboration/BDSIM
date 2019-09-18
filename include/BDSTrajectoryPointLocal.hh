@@ -40,8 +40,8 @@ public:
 
   ~BDSTrajectoryPointLocal();
 
-  //inline void* operator new(size_t) ;
-  //inline void operator delete(void *aHit);
+  inline void* operator new(size_t) ;
+  inline void operator delete(void *aHit);
 
 
   G4ThreeVector positionLocal;
@@ -52,7 +52,7 @@ private:
   BDSTrajectoryPointLocal() = delete;
 };
 
-/*
+
 
 typedef G4THitsCollection<BDSTrajectoryPointLocal> BDSCollectionTrajectoryPointLocal;
 extern G4Allocator<BDSTrajectoryPointLocal> BDSAllocatorTrajectoryPointLocal;
@@ -68,5 +68,5 @@ inline void BDSTrajectoryPointLocal::operator delete(void *aHit)
 {
  BDSAllocatorTrajectoryPointLocal.FreeSingle((BDSTrajectoryPointLocal*) aHit);
 }
-*/
+
 #endif

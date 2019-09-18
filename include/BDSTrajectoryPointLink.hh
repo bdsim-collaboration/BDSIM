@@ -42,8 +42,8 @@ public:
   
   ~BDSTrajectoryPointLink();
 
-  //inline void* operator new(size_t) ;
-  //inline void operator delete(void *aHit);
+  inline void* operator new(size_t) ;
+  inline void operator delete(void *aHit);
 
 
   G4int 	charge;
@@ -58,7 +58,7 @@ private:
 };
 
 
-/*
+
 typedef G4THitsCollection<BDSTrajectoryPointLink> BDCollectionSTrajectoryPointLink;
 extern G4Allocator<BDSTrajectoryPointLink> BDSAllocatorTrajectoryPointLink;
 
@@ -73,5 +73,5 @@ inline void BDSTrajectoryPointLink::operator delete(void *aHit)
 {
  BDSAllocatorTrajectoryPointLink.FreeSingle((BDSTrajectoryPointLink*) aHit);
 }
-*/
+
 #endif
