@@ -343,10 +343,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
-	{ 
-	  ReadValue(ss, E);
-	  E *= (CLHEP::GeV * it->unit);
-	  E += particleMass;
+	{
+	  G4double kineticEnergy = 0;
+	  ReadValue(ss, kineticEnergy);
+	  kineticEnergy *= (CLHEP::GeV * it->unit);
+	  E = kineticEnergy + particleMass;
 	}
       else if(it->name=="E")
 	{
@@ -355,10 +356,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	}
       else if(it->name=="P")
 	{ 
-	  G4double P=0;
-	  ReadValue(ss, P); P *= (CLHEP::GeV * it->unit); //Paticle momentum
+	  G4double P = 0;
+	  ReadValue(ss, P);
+	  P *= (CLHEP::GeV * it->unit);
 	  G4double totalEnergy = std::hypot(P,particleMass);
-	  E = totalEnergy - particleMass;
+	  E = totalEnergy;
 	}
       else if(it->name=="t")
 	{ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
