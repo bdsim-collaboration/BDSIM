@@ -276,7 +276,7 @@ Example 1: ::
 
   neutronPopulation: scorer, type="population", particleName="neutron";
 	  
-  meshAir: scorerMesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
+  meshAir: scorermesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
                        scoreQuantity="neutronPopulation", z=20.75*m;
 
 This defines a scoring mesh that counts the population of neutrons in a 40 x 20 x 20 cm mesh
@@ -295,7 +295,7 @@ Example 2: ::
 		         maximumTime=1*s,
 		         conversionFactorFile="h10protons.txt";
 	  
-  meshAir: scorerMesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
+  meshAir: scorermesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm,
                        scoreQuantity="neutronPopulation protonAmbient", z=20.75*m;
 
 In this example, a similar mesh as Example 1 is used, but two 3D histograms are made. One for
