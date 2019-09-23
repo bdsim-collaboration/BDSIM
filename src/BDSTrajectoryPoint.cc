@@ -60,7 +60,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
   G4TrajectoryPoint(track->GetPosition()),
   storeExtrasLocal(storeExtrasLocalIn),
   storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn)
+  storeExtrasIon(storeExtrasIonIn),
+  extraLocal(nullptr),
+  extraLink(nullptr),
+  extraIon(nullptr)
 {
   InitialiseVariables();
 
@@ -106,6 +109,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
       beamline         = info->GetBeamlineMassWorld();
       turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
     }
+
 
   if (storeExtrasLocal)
     {
@@ -153,7 +157,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition()),
   storeExtrasLocal(storeExtrasLocalIn),
   storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn)
+  storeExtrasIon(storeExtrasIonIn),
+  extraLocal(nullptr),
+  extraLink(nullptr),
+  extraIon(nullptr)
 {
   InitialiseVariables();
   
