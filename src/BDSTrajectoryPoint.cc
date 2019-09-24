@@ -125,7 +125,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 					     rigidity);
     }
   
-  if(storeExtrasIon)
+  if (storeExtrasIon)
     {
       const G4ParticleDefinition* ionDef = track->GetParticleDefinition();
       const G4DynamicParticle* ionPart = track->GetDynamicParticle();
@@ -246,30 +246,30 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other)
 {
-    extraLocal = other.extraLocal ? new BDSTrajectoryPointLocal(*other.extraLocal) : nullptr;
-    extraLink  = other.extraLink  ? new BDSTrajectoryPointLink(*other.extraLink)   : nullptr;
-    extraIon   = other.extraIon   ? new BDSTrajectoryPointIon(*other.extraIon)     : nullptr;
-    preProcessType     = other.preProcessType;
-    preProcessSubType  = other.preProcessSubType;
-    postProcessType    = other.postProcessType;
-    postProcessSubType = other.postProcessSubType;
-    preWeight          = other.preWeight;
-    postWeight         = other.postWeight;
-    preEnergy          = other.preEnergy;
-    postEnergy         = other.postEnergy;
-    preMomentum        = other.preMomentum;
-    postMomentum       = other.postMomentum;
-    energy             = other.energy;
-    preS               = other.preS;
-    postS              = other.postS;
-    beamlineIndex      = other.beamlineIndex;
-    beamline           = other.beamline;
-    turnstaken         = other.turnstaken;
-    prePosLocal        = other.prePosLocal;
-    postPosLocal       = other.postPosLocal;
-    extraLocal         = other.extraLocal;
-    extraLink          = other.extraLink;
-    extraIon           = other.extraIon;
+  extraLocal = other.extraLocal ? new BDSTrajectoryPointLocal(*other.extraLocal) : nullptr;
+  extraLink  = other.extraLink  ? new BDSTrajectoryPointLink(*other.extraLink)   : nullptr;
+  extraIon   = other.extraIon   ? new BDSTrajectoryPointIon(*other.extraIon)     : nullptr;
+  preProcessType     = other.preProcessType;
+  preProcessSubType  = other.preProcessSubType;
+  postProcessType    = other.postProcessType;
+  postProcessSubType = other.postProcessSubType;
+  preWeight          = other.preWeight;
+  postWeight         = other.postWeight;
+  preEnergy          = other.preEnergy;
+  postEnergy         = other.postEnergy;
+  preMomentum        = other.preMomentum;
+  postMomentum       = other.postMomentum;
+  energy             = other.energy;
+  preS               = other.preS;
+  postS              = other.postS;
+  beamlineIndex      = other.beamlineIndex;
+  beamline           = other.beamline;
+  turnstaken         = other.turnstaken;
+  prePosLocal        = other.prePosLocal;
+  postPosLocal       = other.postPosLocal;
+  extraLocal         = other.extraLocal;
+  extraLink          = other.extraLink;
+  extraIon           = other.extraIon;
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
