@@ -60,10 +60,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
   G4TrajectoryPoint(track->GetPosition()),
   storeExtrasLocal(storeExtrasLocalIn),
   storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn),
-  extraLocal(nullptr),
-  extraLink(nullptr),
-  extraIon(nullptr)
+  storeExtrasIon(storeExtrasIonIn)
 {
   InitialiseVariables();
 
@@ -157,10 +154,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition()),
   storeExtrasLocal(storeExtrasLocalIn),
   storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn),
-  extraLocal(nullptr),
-  extraLink(nullptr),
-  extraIon(nullptr)
+  storeExtrasIon(storeExtrasIonIn)
 {
   InitialiseVariables();
   
@@ -250,6 +244,34 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   }
 }
 
+BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other)
+{
+    extraLocal = other.extraLocal ? new BDSTrajectoryPointLocal(*other.extraLocal) : nullptr;
+    extraLink  = other.extraLink  ? new BDSTrajectoryPointLink(*other.extraLink)   : nullptr;
+    extraIon   = other.extraIon   ? new BDSTrajectoryPointIon(*other.extraIon)     : nullptr;
+    preProcessType     = other.preProcessType;
+    preProcessSubType  = other.preProcessSubType;
+    postProcessType    = other.postProcessType;
+    postProcessSubType = other.postProcessSubType;
+    preWeight          = other.preWeight;
+    postWeight         = other.postWeight;
+    preEnergy          = other.preEnergy;
+    postEnergy         = other.postEnergy;
+    preMomentum        = other.preMomentum;
+    postMomentum       = other.postMomentum;
+    energy             = other.energy;
+    preS               = other.preS;
+    postS              = other.postS;
+    beamlineIndex      = other.beamlineIndex;
+    beamline           = other.beamline;
+    turnstaken         = other.turnstaken;
+    prePosLocal        = other.prePosLocal;
+    postPosLocal       = other.postPosLocal;
+    extraLocal         = other.extraLocal;
+    extraLink          = other.extraLink;
+    extraIon           = other.extraIon;
+}
+
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
 {
   delete extraLocal;
@@ -277,6 +299,9 @@ void BDSTrajectoryPoint::InitialiseVariables()
   turnstaken         = 0;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
+  extraLocal         = nullptr;
+  extraLink          = nullptr;
+  extraIon           = nullptr;
 
 
 }

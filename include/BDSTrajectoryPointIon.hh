@@ -57,7 +57,6 @@ private:
 
 
 
-typedef G4THitsCollection<BDSTrajectoryPointIon> BDSCollectionTrajectoryPointIon;
 extern G4Allocator<BDSTrajectoryPointIon> BDSAllocatorTrajectoryPointIon;
 
 inline void* BDSTrajectoryPointIon::operator new(size_t)

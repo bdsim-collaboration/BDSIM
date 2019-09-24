@@ -60,6 +60,9 @@ public:
                               G4bool storeExtrasLinkIn,
                               G4bool storeExtrasIonIn);
 
+    /// Implement copy constructor as we have pointers we own.
+  BDSTrajectoryPoint(const BDSTrajectoryPoint& other);
+
   virtual ~BDSTrajectoryPoint();
 
   inline void *operator new(size_t);
