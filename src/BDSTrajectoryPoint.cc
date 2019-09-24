@@ -109,41 +109,30 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 
 
   if (storeExtrasLocal)
-    {
-      extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
-					       localPosition.PostStepPoint());
-    }
-
+    {extraLocal = new BDSTrajectoryPointLocal(prePosLocal, localPosition.PostStepPoint());}
+  
   if (storeExtrasLink)
     {
-      G4double charge = track->GetDynamicParticle()->GetCharge();
-      G4double rigidity = track->GetDynamicParticle()->GetMomentum().mag() / CLHEP::GeV / BDS::cOverGeV / charge;
+      const G4DynamicParticle* dynamicParticleDef = track->GetDynamicParticle();
+      G4double charge   = dynamicParticleDef->GetCharge();
+      G4double rigidity = dynamicParticleDef->GetMomentum().mag() / CLHEP::GeV / BDS::cOverGeV / charge;
       extraLink = new BDSTrajectoryPointLink(charge,
-					     track->GetDynamicParticle()->GetKineticEnergy(),
+					     dynamicParticleDef->GetKineticEnergy(),
 					     BDSGlobalConstants::Instance()->TurnsTaken(),
-					     track->GetDynamicParticle()->GetMass(),
+					     dynamicParticleDef->GetMass(),
 					     rigidity);
     }
   
   if (storeExtrasIon)
     {
-      const G4ParticleDefinition* ionDef = track->GetParticleDefinition();
-      const G4DynamicParticle* ionPart = track->GetDynamicParticle();
-      if(ionPart->GetElectronOccupancy())
-      {
-          extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-                                               ionDef->GetAtomicMass(),
-                                               ionDef->GetAtomicNumber(),
-                                               ionPart->GetElectronOccupancy()->GetTotalOccupancy());
-      }
-      else
-      {
-          extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-                                                 ionDef->GetAtomicMass(),
-                                                 ionDef->GetAtomicNumber(),
-                                                 0);
-      }
-
+      const G4ParticleDefinition* particleDef        = track->GetParticleDefinition();
+      const G4DynamicParticle*    dynamicParticleDef = track->GetDynamicParticle();
+      const G4ElectronOccupancy*  eo = dynamicParticleDef->GetElectronOccupancy();
+      G4int nElectrons = eo ? eo->GetTotalOccupancy() : 0;
+      extraIon = new BDSTrajectoryPointIon(particleDef->IsGeneralIon(),
+					   particleDef->GetAtomicMass(),
+					   particleDef->GetAtomicNumber(),
+					   nElectrons);
     }
 }
 
@@ -204,17 +193,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
     }
 
   if (storeExtrasLocal)
-    {
-      G4ThreeVector preMomLocal;
-      preMomLocal.set(0,0,0);
-      extraLocal = new BDSTrajectoryPointLocal(prePosLocal,
-					       localPosition.PostStepPoint());
-    }
-  
+    {extraLocal = new BDSTrajectoryPointLocal(prePosLocal, localPosition.PostStepPoint());}
+
+  G4Track* track = step->GetTrack();
   if (storeExtrasLink)
     {
-      G4double charge = step->GetTrack()->GetDynamicParticle()->GetCharge();
-      G4double rigidity = step->GetTrack()->GetMomentum().mag() /CLHEP::GeV / BDS::cOverGeV / charge;
+      G4double charge   = track->GetDynamicParticle()->GetCharge();
+      G4double rigidity = track->GetMomentum().mag() /CLHEP::GeV / BDS::cOverGeV / charge;
       extraLink = new BDSTrajectoryPointLink(charge,
 					     prePoint->GetKineticEnergy(),
 					     BDSGlobalConstants::Instance()->TurnsTaken(),
@@ -222,26 +207,17 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 					     rigidity);
     }
 
-  if(storeExtrasIon)
-  {
-    const G4ParticleDefinition* ionDef = step->GetTrack()->GetParticleDefinition();
-    const G4DynamicParticle* ionPart = step->GetTrack()->GetDynamicParticle();
-    if(ionPart->GetElectronOccupancy())
+  if (storeExtrasIon)
     {
-      extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-                                           ionDef->GetAtomicMass(),
-                                           ionDef->GetAtomicNumber(),
-                                           ionPart->GetElectronOccupancy()->GetTotalOccupancy());
+      const G4ParticleDefinition* particleDef        = track->GetParticleDefinition();
+      const G4DynamicParticle*    dynamicParticleDef = track->GetDynamicParticle();
+      const G4ElectronOccupancy*  eo = dynamicParticleDef->GetElectronOccupancy();
+      G4int nElectrons = eo ? eo->GetTotalOccupancy() : 0;
+      extraIon = new BDSTrajectoryPointIon(particleDef->IsGeneralIon(),
+					   particleDef->GetAtomicMass(),
+					   particleDef->GetAtomicNumber(),
+					   nElectrons);
     }
-    else
-    {
-      extraIon = new BDSTrajectoryPointIon(ionDef->IsGeneralIon(),
-                                           ionDef->GetAtomicMass(),
-                                           ionDef->GetAtomicNumber(),
-                                           0);
-    }
-
-  }
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other)
