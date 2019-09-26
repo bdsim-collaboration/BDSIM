@@ -335,7 +335,7 @@ G4bool BDS::Geant4EnvironmentIsSet()
       if (!env_p)
 	{
 	  result = false;
-	  G4cout << "Vairable: \"" << variable << "\" not found." << G4endl;
+	  G4cerr << "Variable: \"" << variable << "\" not found." << G4endl;
 	}
     }
   return result;
