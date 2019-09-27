@@ -178,7 +178,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  preProcessSubType.push_back(point->GetPreProcessSubType());
 	  postProcessType.push_back(point->GetPostProcessType());
 	  postProcessSubType.push_back(point->GetPostProcessSubType());
-
+	  
 	  preWeight.push_back(point->GetPreWeight());
 	  postWeight.push_back(point->GetPostWeight());
 	  energyDeposited.push_back(point->GetEnergy());
@@ -189,37 +189,36 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  positionS.push_back(point->GetPreS() / CLHEP::m);
 	  time.push_back(point->GetPreGlobalTime() / CLHEP::ns);
 
-      if(point->extraLocal)
-      {
-          G4ThreeVector localPos = point->GetPositionLocal();
-          G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
-          localPosition.push_back(TVector3(localPos.getX() / CLHEP::m,
-                                           localPos.getY() / CLHEP::m,
-                                           localPos.getZ() / CLHEP::m));
-          localMomentum.push_back(TVector3(localMom.getX(),
-                                           localMom.getY(),
-                                           localMom.getZ()));
-      }
-
-      if(point->extraLink)
-      {
-          charges.push_back(point->GetLinkCharge());
-          kineticEnergy.push_back(point->GetLinkKineticEnergy());
-          turn.push_back(point->GetLinkTurnsTaken());
-          masses.push_back(point->GetLinkMass());
-          rigidities.push_back(point->GetLinkRigidity());
-      }
-
-      if(point->extraIon)
-      {
-          ion.push_back(point->GetIsIon());
-          ionANumber.push_back(point->GetIonA());
-          ionZNumber.push_back(point->GetIonZ());
-          electrons.push_back(point->GetNElectrons());
-      }
-
+	  if (point->extraLocal)
+	    {
+	      G4ThreeVector localPos = point->GetPositionLocal();
+	      G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
+	      localPosition.push_back(TVector3(localPos.getX() / CLHEP::m,
+					       localPos.getY() / CLHEP::m,
+					       localPos.getZ() / CLHEP::m));
+	      localMomentum.push_back(TVector3(localMom.getX(),
+					       localMom.getY(),
+					       localMom.getZ()));
+	    }
+	  
+	  if (point->extraLink)
+	    {
+	      charges.push_back(point->GetLinkCharge());
+	      kineticEnergy.push_back(point->GetLinkKineticEnergy());
+	      turn.push_back(point->GetLinkTurnsTaken());
+	      masses.push_back(point->GetLinkMass());
+	      rigidities.push_back(point->GetLinkRigidity());
+	    }
+	  
+	  if (point->extraIon)
+	    {
+	      ion.push_back(point->GetIsIon());
+	      ionANumber.push_back(point->GetIonA());
+	      ionZNumber.push_back(point->GetIonZ());
+	      electrons.push_back(point->GetNElectrons());
+	    }	  
 	}
-
+      
       XYZ.push_back(position);
       modelIndicies.push_back(modelIndex);
       PXPYPZ.push_back(momentum);
@@ -233,29 +232,29 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       energiesDeposit.push_back(energyDeposited);
       T.push_back(time);
 
-      if(localPosition.size()>0)
-      {
+      if (localPosition.size()>0)
+	{
           xyz.push_back(localPosition);
           pxpypz.push_back(localMomentum);
-      }
+	}
 
-      if(charges.size()>0)
-      {
+      if (charges.size()>0)
+	{
           charge.push_back(charges);
           kineticEnergies.push_back(kineticEnergy);
           turnsTaken.push_back(turn);
           mass.push_back(masses);
           rigidity.push_back(rigidities);
-      }
-
-      if(ion.size()>0)
-      {
-          isIon.push_back(ion);
-          ionA.push_back(ionANumber);
+	}
+      
+      if (ion.size()>0)
+	{
+	  isIon.push_back(ion);
+	  ionA.push_back(ionANumber);
           ionZ.push_back(ionZNumber);
           nElectrons.push_back(electrons);
-      }
-
+	}
+      
       // recursively search for primary interaction step
       primaryStepIndex.push_back(findPrimaryStepIndex(traj));
 
@@ -265,10 +264,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       // this->printTrajectoryInfo(n);
       n++;
     }
-
-  /////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////
+  
 #if 0
   // Fill maps for later analysis
   int trackIndex = 0;
@@ -303,16 +299,12 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       ++trackIndex;
     }
 #endif
-  /////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////
 }
 
 void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition* phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }
-
 
 #endif
 

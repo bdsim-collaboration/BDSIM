@@ -184,9 +184,8 @@ public:
   bool extraLink;
   bool extraIon;
 
-ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
+  ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
-
 
 /**
  * @brief Structure to record a trajectory.
