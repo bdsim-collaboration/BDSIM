@@ -115,10 +115,10 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
       canSampleAngledFaces = globals->SampleElementsWithPoleface();
     }
 
-  UpdateSamplerDiameter();
+  UpdateSamplerDiameterAndCountSamplers();
 }
 
-void BDSDetectorConstruction::UpdateSamplerDiameter()
+void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
 {
   nSamplers = 0;
   auto beamline = BDSParser::Instance()->GetBeamline(); // main beam line
