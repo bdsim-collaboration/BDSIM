@@ -113,11 +113,11 @@ public:
   /// @}
 
   /// @{ Accessor for the extra information links.
-  inline G4int      GetLinkCharge()         const {return extraLink ? extraLink->charge        : 0;}
-  inline G4double   GetLinkKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
-  inline G4int      GetLinkTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
-  inline G4double   GetLinkMass()           const {return extraLink ? extraLink->mass          : 0;}
-  inline G4double   GetLinkRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
+  inline G4int      GetCharge()         const {return extraLink ? extraLink->charge        : 0;}
+  inline G4double   GetKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
+  inline G4int      GetTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
+  inline G4double   GetMass()           const {return extraLink ? extraLink->mass          : 0;}
+  inline G4double   GetRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
   /// @}
 
   /// @{ Accessor for the extra information ions.

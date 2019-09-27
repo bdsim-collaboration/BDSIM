@@ -205,11 +205,11 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 	  
 	  if (point->extraLink)
 	    {
-	      charges.push_back(point->GetLinkCharge());
-	      kineticEnergy.push_back(point->GetLinkKineticEnergy());
-	      turn.push_back(point->GetLinkTurnsTaken());
-	      masses.push_back(point->GetLinkMass());
-	      rigidities.push_back(point->GetLinkRigidity());
+	      charges.push_back(point->GetCharge());
+	      kineticEnergy.push_back(point->GetKineticEnergy());
+	      turn.push_back(point->GetTurnsTaken());
+	      masses.push_back(point->GetMass());
+	      rigidities.push_back(point->GetRigidity());
 	    }
 	  
 	  if (point->extraIon)
