@@ -243,9 +243,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other)
   turnstaken         = other.turnstaken;
   prePosLocal        = other.prePosLocal;
   postPosLocal       = other.postPosLocal;
-  extraLocal         = other.extraLocal;
-  extraLink          = other.extraLink;
-  extraIon           = other.extraIon;
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
@@ -278,8 +275,6 @@ void BDSTrajectoryPoint::InitialiseVariables()
   extraLocal         = nullptr;
   extraLink          = nullptr;
   extraIon           = nullptr;
-
-
 }
 
 G4bool BDSTrajectoryPoint::IsScatteringPoint() const
