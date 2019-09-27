@@ -154,6 +154,9 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
 	}
     }
+
+    // add number of sampler placements to count of samplers
+    nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
