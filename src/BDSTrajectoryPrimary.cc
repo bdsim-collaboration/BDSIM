@@ -48,9 +48,9 @@ BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 }
 
 BDSTrajectoryPrimary::BDSTrajectoryPrimary(const G4Track* aTrack,
-					   const G4bool& interactiveIn,
-					   const G4bool& suppressTransportationStepsIn,
-					   const G4bool& storeTrajectoryPointsIn):
+					   G4bool         interactiveIn,
+					   G4bool         suppressTransportationStepsIn,
+					   G4bool         storeTrajectoryPointsIn):
   BDSTrajectory(aTrack, interactiveIn, suppressTransportationStepsIn),
   firstHit(nullptr),
   lastPoint(nullptr),
