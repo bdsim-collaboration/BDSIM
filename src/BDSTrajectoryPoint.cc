@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSPhysicalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "BDSTrajectoryPointLocal.hh"
 #include "BDSTrajectoryPointLink.hh"
@@ -111,7 +112,9 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
     {
       const G4DynamicParticle* dynamicParticleDef = track->GetDynamicParticle();
       G4double charge   = dynamicParticleDef->GetCharge();
-      G4double rigidity = dynamicParticleDef->GetMomentum().mag() / CLHEP::GeV / BDS::cOverGeV / charge;
+      G4double rigidity = 0;
+      if (BDS::IsFinite(charge))
+	{rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
       extraLink = new BDSTrajectoryPointLink(charge,
 					     dynamicParticleDef->GetKineticEnergy(),
 					     BDSGlobalConstants::Instance()->TurnsTaken(),
@@ -191,7 +194,9 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   if (storeExtrasLink)
     {
       G4double charge   = track->GetDynamicParticle()->GetCharge();
-      G4double rigidity = track->GetMomentum().mag() /CLHEP::GeV / BDS::cOverGeV / charge;
+      G4double rigidity = 0;
+      if (BDS::IsFinite(charge))
+	{rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
       extraLink = new BDSTrajectoryPointLink(charge,
 					     prePoint->GetKineticEnergy(),
 					     BDSGlobalConstants::Instance()->TurnsTaken(),
