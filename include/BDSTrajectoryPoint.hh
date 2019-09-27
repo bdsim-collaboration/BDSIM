@@ -142,9 +142,6 @@ public:
   inline G4bool operator<=(const BDSTrajectoryPoint& other) const {return !((*this) > other);}
   inline G4bool operator>=(const BDSTrajectoryPoint& other) const {return !((*this) < other);}
   /// @}
-  G4bool storeExtrasLocal;
-  G4bool storeExtrasLink;
-  G4bool storeExtrasIon;
 
   BDSTrajectoryPointLocal* extraLocal;
   BDSTrajectoryPointLink*  extraLink;

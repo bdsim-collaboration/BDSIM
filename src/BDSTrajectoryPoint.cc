@@ -54,13 +54,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint():
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
-				       G4bool storeExtrasLocalIn,
-				       G4bool storeExtrasLinkIn,
-				       G4bool storeExtrasIonIn):
-  G4TrajectoryPoint(track->GetPosition()),
-  storeExtrasLocal(storeExtrasLocalIn),
-  storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn)
+				       G4bool storeExtrasLocal,
+				       G4bool storeExtrasLink,
+				       G4bool storeExtrasIon):
+  G4TrajectoryPoint(track->GetPosition())
 {
   InitialiseVariables();
 
@@ -136,13 +133,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
-                                       G4bool storeExtrasLocalIn,
-                                       G4bool storeExtrasLinkIn,
-                                       G4bool storeExtrasIonIn):
-  G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition()),
-  storeExtrasLocal(storeExtrasLocalIn),
-  storeExtrasLink(storeExtrasLinkIn),
-  storeExtrasIon(storeExtrasIonIn)
+                                       G4bool storeExtrasLocal,
+                                       G4bool storeExtrasLink,
+                                       G4bool storeExtrasIon):
+  G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
   InitialiseVariables();
   
