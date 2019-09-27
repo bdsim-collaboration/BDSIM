@@ -224,7 +224,7 @@ public:
 
   std::vector<std::vector<double>>   preWeights;
   std::vector<std::vector<double>>   postWeights;
-  std::vector<std::vector<double>>   energiesDeposit;
+  std::vector<std::vector<double>>   energyDeposit;
 
   std::vector<std::vector<TVector3>> XYZ;
   std::vector<std::vector<double>>   S;
@@ -238,7 +238,7 @@ public:
 
   /// @{ Link trajectory information.
   std::vector<std::vector<int>>      charge;
-  std::vector<std::vector<double>>   kineticEnergies;
+  std::vector<std::vector<double>>   kineticEnergy;
   std::vector<std::vector<int>>      turnsTaken;
   std::vector<std::vector<double>>   mass;
   std::vector<std::vector<double>>   rigidity;
