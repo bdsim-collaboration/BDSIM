@@ -104,7 +104,6 @@ public:
   inline G4double GetPostGlobalTime()          const {return postGlobalTime;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
   inline BDSBeamline* GetBeamLine()            const {return beamline;}
-  inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
 
@@ -174,7 +173,6 @@ private:
   G4double postGlobalTime;        ///< Time since event started of post-step point.
   G4int    beamlineIndex;         ///< Index to beam line element in the mass world beam line.
   BDSBeamline* beamline;          ///< Beam line (if any) point belongs to (always mass world).
-  G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
 

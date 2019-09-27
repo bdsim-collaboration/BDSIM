@@ -104,7 +104,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
       postS            = sCentre + localPosition.PostStepPoint().z();
       beamlineIndex    = info->GetBeamlineMassWorldIndex();
       beamline         = info->GetBeamlineMassWorld();
-      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
     }
 
 
@@ -189,7 +188,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
       postS            = sCentre + localPosition.PostStepPoint().z();
       beamlineIndex    = info->GetBeamlineMassWorldIndex();
       beamline         = info->GetBeamlineMassWorld();
-      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
     }
 
   if (storeExtrasLocal)
@@ -240,7 +238,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other)
   postS              = other.postS;
   beamlineIndex      = other.beamlineIndex;
   beamline           = other.beamline;
-  turnstaken         = other.turnstaken;
   prePosLocal        = other.prePosLocal;
   postPosLocal       = other.postPosLocal;
 }
@@ -269,7 +266,6 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postS              = -1000;
   beamlineIndex      = -1;
   beamline           = nullptr;
-  turnstaken         = 0;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
   extraLocal         = nullptr;
