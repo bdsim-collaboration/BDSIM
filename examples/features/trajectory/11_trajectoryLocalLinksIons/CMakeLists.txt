@@ -1,2 +1,2 @@
-simple_testing(trajectory-locallinksions "--file=trajectories-localinksions.gmad --ngenerate=1 --outfile=trajectory-locallinksions" "")
+simple_testing(trajectory-locallinksions "--file=trajectories-localinksions.gmad --ngenerate=1 --outfile=trajectories-locallinksions" "")
 
