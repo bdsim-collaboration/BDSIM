@@ -18,26 +18,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSOUTPUTROOTEVENTTRAJECTORY_H
 #define BDSOUTPUTROOTEVENTTRAJECTORY_H
-
 #include "Rtypes.h"
 #include "TVector3.h"
 
-
 #include <map>
 #include <vector>
-
 
 #ifndef __ROOTBUILD__
 class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
-class BDSTrajectoryPointLocal;
-class BDSTrajectoryPointLink;
-class BDSTrajectoryPointIon;
-#include "BDSTrajectoryPointLocal.hh"
-#include "BDSTrajectoryPointLink.hh"
-#include "BDSTrajectoryPointIon.hh"
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -276,14 +267,6 @@ public:
   void                                           printTrajectoryInfo(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
-
-
-
-#ifndef __ROOTBUILD__
-    BDSTrajectoryPointLocal* pointLocal;
-    BDSTrajectoryPointLink* pointLink;
-    BDSTrajectoryPointIon* pointIon;
-#endif
   
   ClassDef(BDSOutputROOTEventTrajectory,3);
 };
