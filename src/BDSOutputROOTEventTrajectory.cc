@@ -73,12 +73,12 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
       BDSTrajectory* traj = (*iT).first;
-      if((*iT).second)
+      if ((*iT).second) // ie we want to save this trajectory
 	{
 	  traj->SetTrajIndex(idx);
 	  idx++;
 	}
-      else
+      else // we don't want to save it
 	{traj->SetTrajIndex(-1);}
     }
 
@@ -115,7 +115,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
   n = 0;
   for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
     {
-      BDSTrajectory *traj = (*iT).first;
+      BDSTrajectory* traj = (*iT).first;
 
       // check if the trajectory is to be stored
       if(!(*iT).second)
@@ -127,6 +127,8 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       parentIndex.push_back((int &&) traj->GetParentIndex());
       parentStepIndex.push_back((int &&) traj->GetParentStepIndex());
 
+      // now we convert the geant4 type based BDSTrajectory information into
+      // basic C++ and ROOT types for the output
       std::vector<int>    preProcessType;
       std::vector<int>    preProcessSubType;
       std::vector<int>    postProcessType;
@@ -155,16 +157,16 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
       std::vector<int>      ionZNumber;
       std::vector<int>      electrons;
 
-      // loop over trajectory points and fill structures
+      // loop over trajectory points in this trajectory and fill structures
       for (auto i = 0; i < traj->GetPointEntries(); ++i)
 	{
 	  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
-
+	  
 	  // Position
 	  G4ThreeVector pos = point->GetPosition();
 	  position.push_back(TVector3(pos.getX() / CLHEP::m,
-					pos.getY() / CLHEP::m,
-					pos.getZ() / CLHEP::m));
+				      pos.getY() / CLHEP::m,
+				      pos.getZ() / CLHEP::m));
 
 	  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
 	  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
@@ -344,8 +346,8 @@ void BDSOutputROOTEventTrajectory::Flush()
   nElectrons.clear();
 
   // trackIndex_trackProcess.clear();
-  //  trackIndex_modelIndex.clear();
-  //  modelIndex_trackIndex.clear();
+  // trackIndex_modelIndex.clear();
+  // modelIndex_trackIndex.clear();
 }
 
 void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* other)
