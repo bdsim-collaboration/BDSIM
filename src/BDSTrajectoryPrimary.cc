@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSTrajectoryPrimary.hh"
 
@@ -48,10 +47,18 @@ BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 }
 
 BDSTrajectoryPrimary::BDSTrajectoryPrimary(const G4Track* aTrack,
-					   G4bool         interactiveIn,
-					   G4bool         suppressTransportationStepsIn,
+					   G4bool         interactive,
+					   G4bool         suppressTransportationSteps,
+					   G4bool         storeTrajectoryLocal,
+					   G4bool         storeTrajectoryLinks,
+					   G4bool         storeTrajectoryIons,
 					   G4bool         storeTrajectoryPointsIn):
-  BDSTrajectory(aTrack, interactiveIn, suppressTransportationStepsIn),
+  BDSTrajectory(aTrack,
+		interactive,
+		suppressTransportationSteps,
+		storeTrajectoryLocal,
+		storeTrajectoryLinks,
+		storeTrajectoryIons),
   firstHit(nullptr),
   lastPoint(nullptr),
   storeTrajectoryPoints(storeTrajectoryPointsIn)
@@ -70,9 +77,9 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
       // particle is being killed, ie end of track. update last point
       delete lastPoint;
       lastPoint = new BDSTrajectoryPoint(aStep,
-                                         BDSGlobalConstants::Instance()->StoreTrajectoryLocal(),
-                                         BDSGlobalConstants::Instance()->StoreTrajectoryLinks(),
-                                         BDSGlobalConstants::Instance()->StoreTrajectoryIons());
+					 storeTrajectoryLocal,
+					 storeTrajectoryLinks,
+					 storeTrajectoryIons);
     }
   
   G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(aStep);
@@ -81,9 +88,9 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
   if (!firstHit && isScatteringPoint)
     {
       firstHit = new BDSTrajectoryPoint(aStep,
-                                        BDSGlobalConstants::Instance()->StoreTrajectoryLocal(),
-                                        BDSGlobalConstants::Instance()->StoreTrajectoryLinks(),
-                                        BDSGlobalConstants::Instance()->StoreTrajectoryIons());
+					storeTrajectoryLocal,
+					storeTrajectoryLinks,
+					storeTrajectoryIons);
       hasScatteredThisTurn = true;
     }
   else if (isScatteringPoint && !hasScatteredThisTurn)

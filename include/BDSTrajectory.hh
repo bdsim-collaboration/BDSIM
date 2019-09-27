@@ -44,8 +44,11 @@ class BDSTrajectory: public G4Trajectory
 {
 public:
   BDSTrajectory(const G4Track* aTrack,
-		const G4bool& interactiveIn,
-		const G4bool& suppressTransportationSteps);
+		G4bool         interactiveIn,
+		G4bool         suppressTransportationSteps,
+		G4bool         storeTrajectoryLocalIn,
+		G4bool         storeTrajectoryLinksIn,
+		G4bool         storeTrajectoryIonsIn);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
 
@@ -110,6 +113,9 @@ protected:
   G4double       weight;
   G4bool         interactive;
   const G4bool   suppressTransportationSteps;
+  const G4bool   storeTrajectoryLocal;
+  const G4bool   storeTrajectoryLinks;
+  const G4bool   storeTrajectoryIons;
   BDSTrajectory* fParent;
   G4int          fTrajIndex;
   G4int          fParentIndex;
