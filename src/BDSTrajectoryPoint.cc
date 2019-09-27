@@ -24,12 +24,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSProcessMap.hh"
 #include "BDSStep.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSTrajectoryPointIon.hh"
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
 #include "BDSPhysicalConstants.hh"
 #include "BDSUtilities.hh"
 
-#include "BDSTrajectoryPointLocal.hh"
-#include "BDSTrajectoryPointLink.hh"
-#include "BDSTrajectoryPointIon.hh"
+
 
 #include "globals.hh"
 #include "G4Allocator.hh"

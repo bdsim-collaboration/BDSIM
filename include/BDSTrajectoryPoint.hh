@@ -18,13 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSTRAJECTORYPOINT_H
 #define BDSTRAJECTORYPOINT_H
+#include "BDSTrajectoryPointIon.hh"
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 #include "G4TrajectoryPoint.hh"
-#include "BDSTrajectoryPointLocal.hh"
-#include "BDSTrajectoryPointLink.hh"
-#include "BDSTrajectoryPointIon.hh"
 
 #include <ostream>
 
