@@ -18,9 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSTrajectoryPrimary.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Allocator.hh"

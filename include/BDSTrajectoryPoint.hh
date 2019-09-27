@@ -49,17 +49,17 @@ public:
   /// This constructor is used to construct a point from a step intended to
   /// be appended to a trajectory. It uses the post step point as the main position.
   BDSTrajectoryPoint(const G4Step* step,
-                              G4bool storeExtrasLocalIn,
-                              G4bool storeExtrasLinkIn,
-                              G4bool storeExtrasIonIn);
+		     G4bool storeExtrasLocalIn,
+		     G4bool storeExtrasLinkIn,
+		     G4bool storeExtrasIonIn);
   
   /// This constructor is required for the beginning of each track
   /// and produces the initial vertex point.
   BDSTrajectoryPoint(const G4Track* track,
-                              G4bool storeExtrasLocalIn,
-                              G4bool storeExtrasLinkIn,
-                              G4bool storeExtrasIonIn);
-
+		     G4bool storeExtrasLocalIn,
+		     G4bool storeExtrasLinkIn,
+		     G4bool storeExtrasIonIn);
+  
   /// Implement copy constructor as we have pointers we own.
   BDSTrajectoryPoint(const BDSTrajectoryPoint& other);
 
