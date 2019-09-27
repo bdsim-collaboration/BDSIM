@@ -18,10 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSTRAJECTORYPOINTION_H
 #define BDSTRAJECTORYPOINTION_H
-
 #include "globals.hh"
 #include "G4Allocator.hh"
-#include "G4THitsCollection.hh"
 
 /**
  * @brief Extra information recorded for a single piece of energy deposition.
@@ -54,8 +52,6 @@ private:
   /// Private default constructor.  
   BDSTrajectoryPointIon() = delete;
 };
-
-
 
 extern G4Allocator<BDSTrajectoryPointIon> BDSAllocatorTrajectoryPointIon;
 

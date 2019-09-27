@@ -18,10 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSTRAJECTORYPOINTLINK_H
 #define BDSTRAJECTORYPOINTLINK_H
-
 #include "globals.hh"
 #include "G4Allocator.hh"
-#include "G4THitsCollection.hh"
+
 /**
  * @brief Extra information recorded for a single piece of Trajectory Link information.
  *
@@ -44,20 +43,17 @@ public:
 
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
-
-
-  G4int 	charge;
-  G4double 	kineticEnergy;
-  G4int     turnsTaken;
-  G4double 	mass;
-  G4double  rigidity;
+  
+  G4int    charge;
+  G4double kineticEnergy;
+  G4int    turnsTaken;
+  G4double mass;
+  G4double rigidity;
 
 private:
   /// Private default constructor.  
   BDSTrajectoryPointLink() = delete;
 };
-
-
 
 extern G4Allocator<BDSTrajectoryPointLink> BDSAllocatorTrajectoryPointLink;
 
@@ -70,7 +66,7 @@ inline void* BDSTrajectoryPointLink::operator new(size_t)
 
 inline void BDSTrajectoryPointLink::operator delete(void *aHit)
 {
- BDSAllocatorTrajectoryPointLink.FreeSingle((BDSTrajectoryPointLink*) aHit);
+  BDSAllocatorTrajectoryPointLink.FreeSingle((BDSTrajectoryPointLink*) aHit);
 }
 
 #endif
