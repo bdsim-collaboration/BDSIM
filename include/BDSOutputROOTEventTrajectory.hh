@@ -179,11 +179,6 @@ public:
   int      ionZ;
   int      nElectrons;
 
-
-  bool extraLocal;
-  bool extraLink;
-  bool extraIon;
-
   ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
 
