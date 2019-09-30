@@ -1,4 +1,4 @@
-/* 
+/*
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2019.
 
@@ -132,6 +132,7 @@ OptionsBase::OptionsBase()
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
   includeFringeFields  = true;
+  includeFringeFieldsCavities = true;
 
   yokeFields           = true;
   
@@ -272,6 +273,9 @@ OptionsBase::OptionsBase()
   storeTrajectoryELossSRange     = "";
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false;
+  storeTrajectoryLocal           = false;
+  storeTrajectoryLinks           = false;
+  storeTrajectoryIons            = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;

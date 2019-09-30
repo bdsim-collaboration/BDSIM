@@ -115,10 +115,10 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
       canSampleAngledFaces = globals->SampleElementsWithPoleface();
     }
 
-  UpdateSamplerDiameter();
+  UpdateSamplerDiameterAndCountSamplers();
 }
 
-void BDSDetectorConstruction::UpdateSamplerDiameter()
+void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
 {
   nSamplers = 0;
   auto beamline = BDSParser::Instance()->GetBeamline(); // main beam line
@@ -154,6 +154,9 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
 	}
     }
+
+    // add number of sampler placements to count of samplers
+    nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -375,6 +378,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
           if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
             {sType = BDSSamplerType::none;}
           if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
+            {sType = BDSSamplerType::none;}
+          if (temp->GetType() == "dump") // don't sample after a dump as there'll be nothing
             {sType = BDSSamplerType::none;}
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);

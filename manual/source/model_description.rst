@@ -1085,7 +1085,7 @@ The default field is a uniform (in space) electric-only field that is time varyi
 according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electromagnetic
 field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
 numerical integrator is used to calculate the motion of particles in both cases. Fringes for
-the edge effects are provided by default and are controllable with the option `includeFringeFields`.
+the edge effects are provided by default and are controllable with the option `includeFringeFieldsCavities`.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -4110,8 +4110,16 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
-|                                  | magnets with finite poleface angles. The length of    |
-|                                  | the total element is conserved. (default = false).    |
+|                                  | magnets with finite poleface angles, and solenoids.   |
+|                                  | The length of the total element is conserved.         |
+|                                  | (default = true).                                     |
++----------------------------------+-------------------------------------------------------+
+| includeFringeFieldsCavities      | Include thin fringe fields for RF cavities only.      |
+|                                  | Cavity fringes are not affected by the                |
+|                                  | includeFringeFields option,                           |
+|                                  | includeFringeFieldsCavities must be explicitly turned |
+|                                  | off if no fringes are to be built at all in the model.|
+|                                  | (default = true).                                     |
 +----------------------------------+-------------------------------------------------------+
 | integratorSet                    | Set of tracking routines to use ("bdsimmatrix",       |
 |                                  | "bdsimtwo", "bdsimmatrixfringescaling", "geant4", or  |
@@ -4455,6 +4463,16 @@ with the following options.
 |                                    | stored. This must be turned on to store any trajectories at all.   |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to  0 is  |
 |                                    | the primary, 1 is the first generation of secondaries, etc.        |
@@ -4848,9 +4866,14 @@ or::
 
   beam, particle="ion A Z Q";
 
-where `A`, `Z` and `Q` should be replaced by the atomic number, the number of protons
-in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
-ionised ion). In this case, it is recommended to use the `ion` physics list.
+where `A`, `Z` and `Q` should be replaced by the atomic mass number (an integer),
+the number of protons in the nucleus, and the charge respectively. The charge is
+optional and by default is Z (i.e. a fully ionised ion).  For example: ::
+
+  beam, particle="ion 12 6",
+        energy = 52 * GeV;
+
+* The user should take care to use a physics list that includes ion physics processes.
 
 Available input distributions and their associated parameters are described in the following
 section.

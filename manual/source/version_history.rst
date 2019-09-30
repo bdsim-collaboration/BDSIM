@@ -46,7 +46,7 @@ New Features
 * Field maps are now automatically tilted when attached to a tilted beam line element, whereas
   they weren't before.
 * RF cavity fringe fields have been implemented and are on by default. They are controlled with
-  the `includeFringeFields` option.
+  the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the intput options. Old
   options are still functional but undocumented.
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
@@ -60,6 +60,11 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| includeFringeFieldsCavities        | Include thin fringe fields for RF cavities only, on by default.    |
+|                                    | Cavity fringes are not affected by the includeFringeFields option, |
+|                                    | includeFringeFieldsCavities must be explicitly turned off if no    |
+|                                    | fringes are to be built at all in the model.                       |
++------------------------------------+--------------------------------------------------------------------+
 | preprocessGDMLSchema               | Whether to preprocess a copy of the GDML file where the URL of     |
 |                                    | the GDML schema is changed to a local copy provided in BDSIM so    |
 |                                    | geometry can be loaded without internet access. On by default.     |
@@ -84,6 +89,16 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
@@ -252,6 +267,7 @@ Bug Fixes
 * Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
+* Small memory leaks reported by Coverity.
 
 Output Changes
 --------------

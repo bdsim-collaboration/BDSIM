@@ -253,6 +253,7 @@ void Options::PublishMembers()
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
+  publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);
   publish("beampipeThickness",    &Options::beampipeThickness);
   publish("apertureType",         &Options::apertureType);
@@ -410,16 +411,19 @@ void Options::PublishMembers()
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeGeant4Data",                &Options::storeGeant4Data);
   
-  publish("storeTrajectory",                &Options::storeTrajectory);
-  publish("storeTrajectories",              &Options::storeTrajectory);
-  publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
-  publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
-  publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
-  publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
-  publish("storeTrajectorySamplerID",       &Options::storeTrajectorySamplerID);
-  publish("storeTrajectoryELossSRange",     &Options::storeTrajectoryELossSRange);
+  publish("storeTrajectory",                    &Options::storeTrajectory);
+  publish("storeTrajectories",                  &Options::storeTrajectory);
+  publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
+  publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
+  publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
+  publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
+  publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
   publish("trajNoTransportation",               &Options::trajNoTransportation);
+  publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
+  publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
+  publish("storeTrajectoryIons",                &Options::storeTrajectoryIons);
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
