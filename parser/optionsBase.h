@@ -162,6 +162,7 @@ namespace GMAD
 
     bool      yokeFields;
     bool        includeFringeFields;
+    bool        includeFringeFieldsCavities;
 
     ///@{ default beampipe parameters
     double      beampipeThickness;
@@ -306,6 +307,9 @@ namespace GMAD
     std::string storeTrajectoryELossSRange;
     bool        storeTrajectoryTransportationSteps;
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
+    bool        storeTrajectoryLocal;
+    bool        storeTrajectoryLinks;
+    bool        storeTrajectoryIons;
 
     bool        storeSamplerAll;
     bool        storeSamplerPolarCoords;
