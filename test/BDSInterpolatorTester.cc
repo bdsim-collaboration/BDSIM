@@ -74,7 +74,8 @@ void Query(BDSFieldMag* field,
   std::ofstream ofile2;
   ofile2.open(outputName+"_raw.dat");
   auto r = dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array();
-  ofile2 << *r;
+  if (r)
+    {ofile2 << *r;}
   ofile2.close();
 }
 
@@ -128,13 +129,16 @@ int main(int /*argc*/, char** /*argv*/)
 
   // Get the raw data
   BDSFieldMagInterpolated2D* fieldInterp = dynamic_cast<BDSFieldMagInterpolated2D*>(biNearest);
-  auto interp = fieldInterp->Interpolator();
-  auto arrCoords = interp->Array();
-  const BDSArray4D* arr = dynamic_cast<const BDSArray4D*>(arrCoords);
-  std::ofstream ofile;
-  ofile.open("raw.dat");
-  ofile << *arr;
-  ofile.close();
+  if (fieldInterp)
+    {
+      auto interp = fieldInterp->Interpolator();
+      auto arrCoords = interp->Array();
+      const BDSArray4D* arr = static_cast<const BDSArray4D*>(arrCoords);
+      std::ofstream ofile;
+      ofile.open("raw.dat");
+      ofile << *arr;
+      ofile.close();
+    }
 
   // Query across full range of magnet including just outside range too.
   Query(biNearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");
