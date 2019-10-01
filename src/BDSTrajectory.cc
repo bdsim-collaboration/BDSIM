@@ -43,7 +43,11 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   suppressTransportationSteps(suppressTransportationStepsIn),
   storeTrajectoryLocal(storeTrajectoryLocalIn),
   storeTrajectoryLinks(storeTrajectoryLinksIn),
-  storeTrajectoryIons(storeTrajectoryIonsIn)
+  storeTrajectoryIons(storeTrajectoryIonsIn),
+  fParent(nullptr),
+  fTrajIndex(0),
+  fParentIndex(0),
+  fParentStepIndex(0)
 {
   const G4VProcess* proc = aTrack->GetCreatorProcess();
   if (proc)
