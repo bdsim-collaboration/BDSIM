@@ -2605,6 +2605,8 @@ G4double BDSComponentFactory::BendAngle(const Element* el) const
 
 G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 {
+  if (!el)
+    {return 0;}
   // note thin multipoles will match the faces of any magnets, but not contain
   // the face angles themselves in the GMAD::Element. this is ok though as
   // detector construction will not give a thin multipole as a previous element
@@ -2643,6 +2645,8 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 
 G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 {
+  if (!el)
+    {return 0;}
   // note thin multipoles will match the faces of any magnets, but not contain
   // the face angles themselves in the GMAD::Element. this is ok though as
   // detector construction will not give a thin multipole as a next element

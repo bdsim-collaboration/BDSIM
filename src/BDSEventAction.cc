@@ -511,7 +511,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	}
       
       // loop over samplers to connect trajectories
-      if (samplerIDsToStore.size() != 0)
+      if (samplerIDsToStore.size() != 0 && SampHC)
 	{
 	  G4int nHits = SampHC->entries();
 	  for (G4int i = 0; i < nHits; i++)

@@ -79,14 +79,17 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}
     }
-  // empty contents
-  mean->Reset();
-  variance->Reset();
-  result->Reset();
-  // set title
-  result->SetTitle(resultHistTitle.c_str());
-  mean->SetTitle(meanName.c_str());
-  variance->SetTitle(variName.c_str());
+  if (mean && variance && result)
+    {// technically these could be nullptr
+      // empty contents
+      mean->Reset();
+      variance->Reset();
+      result->Reset();
+      // set title
+      result->SetTitle(resultHistTitle.c_str());
+      mean->SetTitle(meanName.c_str());
+      variance->SetTitle(variName.c_str());
+    }
 }
 
 HistogramAccumulator::~HistogramAccumulator()
