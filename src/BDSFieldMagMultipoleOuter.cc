@@ -103,8 +103,12 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
 	}
       
       reciprocal = 1/cToPosMag;
+      if (!std::isnormal(reciprocal))
+	{reciprocal = 1.0;} // protect against bad values
       cToPosPerp = G4TwoVector(-cToPos.y(), cToPos.x());
-      result += std::pow(-1, pole+1)*cToPosPerp.unit() * reciprocal;
+      G4TwoVector val = std::pow(-1, pole+1)*cToPosPerp.unit() * reciprocal;
+      if (!std::isfinite(val.x()) || !std::isfinite(val.y())) // tolerate bad values
+	{result += val;}
       pole++;
     }
 
