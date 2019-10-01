@@ -77,6 +77,39 @@ void BDSGeometryFactorySQL::CleanUp()
 
 void BDSGeometryFactorySQL::CleanUpSQL()
 {
+  NVariables = 0;
+  VisRed    = 0;
+  VisGreen  = 0;
+  VisBlue   = 0;
+  VisAlpha  = 0;
+  VisType   = "";
+  Material  = "";
+  TableName = "";
+  Name      = "";
+  PosX      = 0;
+  PosY      = 0;
+  PosZ      = 0;
+  RotPsi    = 0;
+  RotTheta  = 0;
+  RotPhi    = 0;
+  K1        = 0;
+  K2        = 0;
+  K3        = 0;
+  K4        = 0;
+  PARENTNAME       = "";
+  InheritStyle     = "";
+  Parameterisation = "";
+  MagType          = "";
+  align_in         = 0;
+  align_out        = 0;
+  SetSensitive     = 0;
+  PrecisionRegion  = 0;
+  ApproximationRegion = 0;
+  FieldX           = 0;
+  FieldY           = 0;
+  FieldZ           = 0;
+  lengthUserLimit  = 0;
+  
   unShiftedExtents.clear();
   
   precisionRegionSQL     = nullptr;
@@ -660,10 +693,9 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildSampler(BDSMySQLTable* aSQLTable, G
   AssignVariable(aSQLTable,k,"RINNEREND"  ,rInnerEnd);
   AssignVariable(aSQLTable,k,"ROUTERSTART",rOuterStart);
   AssignVariable(aSQLTable,k,"ROUTEREND"  ,rOuterEnd);
-
-  if(aSQLTable->GetVariable("NAME")!=nullptr)
+  
+  if (BDSMySQLVariable* sqlName = aSQLTable->GetVariable("NAME"))
     {
-      BDSMySQLVariable* sqlName = aSQLTable->GetVariable("NAME");
       Name = sqlName->GetStrValue(k);
       sqlName->SetStrValue(k,Name+"_SQL");
       Name = sqlName->GetStrValue(k);
