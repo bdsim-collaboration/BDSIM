@@ -38,8 +38,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VModularPhysicsList.hh"
 
 #include "BDSAcceleratorModel.hh"
+#include "BDSBeamPipeFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
+#include "BDSCavityFactory.hh"
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDebug.hh"
@@ -434,6 +436,8 @@ BDSIM::~BDSIM()
   try
     {
       // order important here because of singletons relying on each other
+      delete BDSBeamPipeFactory::Instance();
+      delete BDSCavityFactory::Instance();
       delete BDSGeometryFactory::Instance();
       delete BDSAcceleratorModel::Instance();
       delete BDSTemporaryFiles::Instance();
