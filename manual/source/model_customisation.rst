@@ -1597,7 +1597,7 @@ Regions
 -------
 
 In Geant4, it is possible to drive different *regions* - each with their own production cuts and user limits.
-In BDSIM, there is one default region to which the options prodCutXXXX apply (see :ref:`options`) that applies
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see :ref:`bdsim-options`) that applies
 everywhere.  Additionally, the user may define additional regions (using the :code:`cutsregion` object)
 and attach these to the beam line elements desired.  For example::
 

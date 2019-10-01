@@ -2841,6 +2841,150 @@ if used aggressively. ::
 .. warning:: This will affect the location of energy deposition - i.e. the curve of
 	     energy deposition of a particle showering in a material will be different.
 
+
+.. _physics-biasing:
+
+Physics Biasing
+---------------
+
+BDSIM currently provides two ways to artificially interfere with the physics processes
+to make the desired outcome happen more often. In both cases, the goal is to simulate
+the correct physical outcome, but more efficiently in the parameters of interest,
+i.e. variance reduction.
+
+The two cases are :ref:`physics-bias-cross-section-biasing` and
+:ref:`physics-bias-importance-sampling`, each described below.
+
+.. _physics-bias-cross-section-biasing:
+
+Cross-Section Biasing
+^^^^^^^^^^^^^^^^^^^^^
+
+The cross-section for a physics process for a specific particle can be artificially altered
+by a numerical scaling factor using cross-section biasing (up or down scaling it). This is
+done on a per-particle and per-physics-process basis.  The biasing is defined with the
+keyword **xsecbias**, to define a bias 'object'. This can then be attached to various bits
+of the geometry or all of it. This is provided with the Geant4 generic biasing feature.
+
+Geant4 automatically includes the reciprocal of the factor as a weighting, which is
+recorded in the BDSIM output as "weight" in each relevant piece of data. Any data
+used should be multiplied by the weight to achieve the correct physical result.
+
+Generally, one should understand that Geant4 has particle definitions and physics processes
+are attached to these. e.g. "protonElastic" is a physics process that's attached to the
+(unique) definition of a proton. There can be many individual proton tracks, but there is
+only one proton definition.
+
+.. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
+
++------------------+------------------------------------------------------+
+| **Parameter**    | **Description**                                      |
++==================+======================================================+
+| name             | Biasing process name                                 |
++------------------+------------------------------------------------------+
+| particle         | Particle that will be biased                         |
++------------------+------------------------------------------------------+
+| proc             | Process(es) to be biased                             |
++------------------+------------------------------------------------------+
+| xsecfact         | Biasing factor(s) for the process(es)                |
++------------------+------------------------------------------------------+
+| flag             | Flag which particles are biased for the process(es)  |
+|                  | (1=all, 2=primaries, 3=secondaries)                  |
++------------------+------------------------------------------------------+
+
+* Particle names should be exactly as they are in Geant4 (case-sensitive). The
+  best way to find these out is to the run a single event with the desired physics
+  list and the executable option `--printPhysicsProcesses`. Also the input option
+  `option, physicsVerbose=1;` will show the primary particle and all physics processes
+  registered to it by name.
+* The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
+  the best way to find these names is to run a single event with the desired physics
+  list using the input option `option, physicsVerbose=1;` to see all the names of the
+  physics processes.
+* A special particle name "all" will bias all defined particles. (case-sensitive).
+* In the case of an **ion** beam, the particle name should be "GenericIon". The
+  biasing will apply to all ions, so the flag should be used to select primary
+  or secondary or all particles. This is because Geant4 uses the concept of a
+  generic ion as there are so many possible ions.
+* Examples can be found in :code:`bdsim/examples/features/processes/5_biasing`.
+* The option :code:`option, printPhysicsProcesses=1;` or executable option
+  :code:`--printPhysicsProcesses` will print out all particle names and all
+  the physics processes registered for each particle. This is useful to get
+  the exact particle names and process names. We recommend running one event
+  with the desired physics list, or a complete Geant4 one such as
+  :code:`option, physicsList="g4FTFP_BERT";` to see all particles and processes.
+
+Example::
+
+  biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
+  biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};
+
+The process can also be attached to a specific element using the keywords `biasVacuum` or
+`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
+vacuum respectively::
+
+  q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+  q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
+
+.. _physics-bias-importance-sampling:
+  
+Geometric Importance Sampling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To enable importance sampling, the user must provide both a mass world and a separate importance
+sampling world as external geometry files. The mass world file should contain the appropriate
+volumes as if you were conducting a standard simulation without importance sampling. The
+importance world file should contain the volumes that will be the importance cells only. A
+third text file must also be provided which contains a map of the physical volumes that form
+the importance cells and their corresponding importance volumes.
+
++------------------------------+-------------------------------------------------------------+
+| **Parameter**                | **Description**                                             |
++==============================+=============================================================+
+| worldGeometryFile            | Geometry file containing the mass world                     |
++------------------------------+-------------------------------------------------------------+
+| importanceWorldGeometryFile  | Geometry file containing the importance sampling world      |
++------------------------------+-------------------------------------------------------------+
+| importanceVolumeMap          | ASCII file containing a map of the importance world         |
+|                              | physical volumes and their corresponding importance values  |
++------------------------------+-------------------------------------------------------------+
+
+Example: ::
+
+  option, worldGeometryFile="gdml:shielding-world.gdml",
+          importanceWorldGeometryFile="gdml:importance-cell-world.gdml",
+          importanceVolumeMap="importanceValues.dat";
+
+An example of the world volume geometry (top), the importance sampling world geometry (middle), and
+an importance volume map (bottom) are shown below with an example beamline.
+
+In the output a new branch in the event tree calls "ElossWorldContents" is automatically added
+when using importance sampling. This is the global energy deposition hits from any volumes
+that were in the externally supplied world - such as shielding blocks. This distinguishes
+the energy deposition in the world volume itself (i.e. the air).
+
+.. figure:: figures/importanceSampling_massWorld.png
+	    :width: 90%
+	    :align: center
+
+.. figure:: figures/importanceSampling_importanceWorld.png
+	    :width: 90%
+	    :align: center
+
+.. figure:: figures/importanceSampling_VolumeMap.png
+	    :width: 90%
+	    :align: center
+
+		    
+* Both the mass world and importance sampling world must be the same size.
+* Both the mass world and importance sampling world must be large enough to encompass the machine
+  beamline. If not, BDSIM will exit.
+* It is down to the user to ensure the importance cells are correctly positioned.
+* If a importance cell volume exists in the importance world geometry and is not listed
+  in the ASCII map file with a importance value, BDSIM will exit.
+* The importance sampling world volume has an importance value of 1.
+
+	     
 .. _bend-tracking-behaviour:
 	    
 Bends
