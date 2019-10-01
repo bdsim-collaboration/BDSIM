@@ -54,7 +54,7 @@ const double        TREETOLERANCE = 0.05;
 const double OPTICSSIGMATOLERANCE = 10;
 const double   EVENTTREETOLERANCE = 1e-10;
 
-const int    EXPECTEDDATAVERSION  = 4;
+const int    EXPECTEDDATAVERSION  = 5;
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
