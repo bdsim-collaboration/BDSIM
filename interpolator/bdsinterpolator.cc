@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSIQuery.hh"
-
+#include "BDSException.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
       try
 	{field = BDSFieldLoader::Instance()->LoadMagField(*recipe);}
       catch (const BDSException& e)
-	{std::cerr << e << std::endl;} // continue anyway to next one
+	{std::cerr << e.what() << std::endl;} // continue anyway to next one
 
       if (!field)
 	{
