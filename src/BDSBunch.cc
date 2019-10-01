@@ -171,7 +171,7 @@ BDSParticleCoordsFull BDSBunch::GetNextParticleLocal()
 {
   BDSParticleCoordsFull local(X0,  Y0,  Z0,
 			      Xp0, Yp0, Zp0,
-			      S0, T0, E0, /*weight=*/1.0);
+			      T0, S0, E0, /*weight=*/1.0);
   return local;
 }
 
