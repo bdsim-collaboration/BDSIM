@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray2DCoords.hh"
 #include "BDSArray2DCoordsRQuad.hh"
 #include "BDSArray4D.hh"
+#include "BDSException.hh"
 #include "BDSFieldFormat.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
@@ -98,8 +99,12 @@ int main(int /*argc*/, char** /*argv*/)
 						 "square120x120_2mm.TXT",
 						 BDSFieldFormat::poisson2dquad,
 						 BDSInterpolatorType::nearest2d);
-  
-  BDSFieldMag* biNearest = BDSFieldLoader::Instance()->LoadMagField(*infoBiNearest);
+
+  BDSFieldMag* biNearest = nullptr;
+  try
+    {biNearest = BDSFieldLoader::Instance()->LoadMagField(*infoBiNearest);}
+  catch (const BDSException& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
 
   // 2D Linear
   BDSFieldInfo* infoBiLinear = new BDSFieldInfo(BDSFieldType::bmap2d,
