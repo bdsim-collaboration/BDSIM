@@ -130,8 +130,13 @@ BDSComponentFactory::~BDSComponentFactory()
 
   // Deleted here although not used directly here as new geometry can only be
   // created through this class.
-  delete BDSBeamPipeFactory::Instance();
-  delete BDSMagnetOuterFactory::Instance();
+  try
+    {//no exceptions in destructor
+      delete BDSBeamPipeFactory::Instance();
+      delete BDSMagnetOuterFactory::Instance();
+    }
+  catch (...)
+    {;}
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
