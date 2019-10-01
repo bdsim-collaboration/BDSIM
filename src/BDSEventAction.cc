@@ -108,7 +108,6 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventBDSIM         = globals->VerboseEventBDSIM();
   verboseEventStart         = globals->VerboseEventStart();
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
-  isBatch                   = globals->Batch();
   storeTrajectory           = globals->StoreTrajectory();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
   trajectoryCutZ            = globals->TrajCutGTZ();
