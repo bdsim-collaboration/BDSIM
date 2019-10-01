@@ -44,10 +44,10 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   storeTrajectoryLocal(storeTrajectoryLocalIn),
   storeTrajectoryLinks(storeTrajectoryLinksIn),
   storeTrajectoryIons(storeTrajectoryIonsIn),
-  fParent(nullptr),
-  fTrajIndex(0),
-  fParentIndex(0),
-  fParentStepIndex(0)
+  parent(nullptr),
+  trajIndex(0),
+  parentIndex(0),
+  parentStepIndex(0)
 {
   const G4VProcess* proc = aTrack->GetCreatorProcess();
   if (proc)
@@ -61,8 +61,8 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
       creatorProcessSubType = -1;
     }
   weight = aTrack->GetWeight();
-  
-  fParentIndex = -1;
+
+  parentIndex = -1;
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
   (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack,
