@@ -89,8 +89,11 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}
     }
-  temp->Reset();
-  temp->SetTitle(tempName.c_str());
+  if (temp)
+    {// technically, temp might be nullptr
+      temp->Reset();
+      temp->SetTitle(tempName.c_str());
+    }
   
   accumulator = new HistogramAccumulator(baseHist, nDimensions, histName, histName);
 }
