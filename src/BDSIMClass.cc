@@ -430,23 +430,28 @@ BDSIM::~BDSIM()
   G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
   delete bdsOutput;
-  
-  // order important here because of singletons relying on each other
-  delete BDSGeometryFactory::Instance();
-  delete BDSAcceleratorModel::Instance();
-  delete BDSTemporaryFiles::Instance();
-  delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials
-  delete BDSGlobalConstants::Instance();
-  delete BDSMaterials::Instance();
 
-  // instances not used in this file, but no other good location for deletion
-  if (initialisationResult < 2)
+  try
     {
-      delete BDSColours::Instance();
-      delete BDSFieldLoader::Instance();
-      delete BDSSDManager::Instance();
-      delete BDSSamplerRegistry::Instance();
+      // order important here because of singletons relying on each other
+      delete BDSGeometryFactory::Instance();
+      delete BDSAcceleratorModel::Instance();
+      delete BDSTemporaryFiles::Instance();
+      delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials
+      delete BDSGlobalConstants::Instance();
+      delete BDSMaterials::Instance();
+      
+      // instances not used in this file, but no other good location for deletion
+      if (initialisationResult < 2)
+	{
+	  delete BDSColours::Instance();
+	  delete BDSFieldLoader::Instance();
+	  delete BDSSDManager::Instance();
+	  delete BDSSamplerRegistry::Instance();
+	}
     }
+  catch (...)
+    {;} // ignore any exception as this is a destructor
       
   delete runManager;
   delete bdsBunch;

@@ -63,7 +63,11 @@ int main(int argc, char** argv)
 
       // We don't need to use the full interface of BDSFieldFactory to manufacture a complete
       // geant4 field - we only need the BDSFieldMag* instance.
-      BDSFieldMag* field = BDSFieldLoader::Instance()->LoadMagField(*recipe);
+      BDSFieldMag* field = nullptr;
+      try
+	{field = BDSFieldLoader::Instance()->LoadMagField(*recipe);}
+      catch (const BDSException& e)
+	{std::cerr << e << std::endl;} // continue anyway to next one
 
       if (!field)
 	{
