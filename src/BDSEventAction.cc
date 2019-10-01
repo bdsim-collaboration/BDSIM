@@ -309,7 +309,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (eCounterTunnelHits)
     {
       if (verboseThisEvent)
-	{G4cout << std::left << std::setw(nChar) << "Tunnel energy deposition hits: " << eCounterHits->entries() << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "Tunnel energy deposition hits: " << eCounterTunnelHits->entries() << G4endl;}
       if (eCounterTunnelHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
@@ -329,7 +329,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (eCounterWorldHits)
 	{G4cout << std::left << std::setw(nChar) << "World energy deposition hits: " << eCounterWorldHits->entries() << G4endl;}
       if (eCounterWorldContentsHits)
-	{G4cout << std::left << std::setw(nChar) << "World contents energy deposition hits: " << eCounterWorldHits->entries() << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "World contents energy deposition hits: " << eCounterWorldContentsHits->entries() << G4endl;}
       if (worldExitHits)
 	{G4cout << std::left << std::setw(nChar) << "World exit hits: " << worldExitHits->entries() << G4endl;}
       if (collimatorHits)
