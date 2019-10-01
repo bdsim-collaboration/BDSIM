@@ -96,10 +96,13 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   worldExitCollID(-1),
   collimatorCollID(-1),
   apertureCollID(-1),
+  thinThingCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
   stops(0),
+  cpuStartTime(std::clock_t()),
+  primaryAbsorbedInCollimator(false),
   seedStateAtStart(""),
   currentEventIndex(0),
   eventInfo(nullptr)

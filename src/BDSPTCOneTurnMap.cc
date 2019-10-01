@@ -36,7 +36,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
 				   const BDSParticleDefinition* designParticle):
-  beamOffsetS0(false)
+  initialPrimaryMomentum(0),
+  beamOffsetS0(false),
+  lastTurnNumber(0),
+  xLastTurn(0),
+  pxLastTurn(0),
+  yLastTurn(0),
+  pyLastTurn(0),
+  deltaPLastTurn(0)
 {
   referenceMomentum = designParticle->Momentum();
   mass = designParticle->Mass();
