@@ -165,16 +165,18 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
   c->chi2   = 0.0;
   int ndof = 0; 
-  for(int i=0;i < h1->GetNbinsX(); i++)
+  for (int i=0;i < h1->GetNbinsX(); i++)
     { 
       //    std::cout << h1->GetBinContent(i) << " " << h2->GetBinContent(i) << " " << h1->GetBinError(i) << std::endl;
-      if(h1->GetBinError(i) > 0)
+      if (h1->GetBinError(i) > 0)
 	{
 	  c->chi2 += std::pow(h1->GetBinContent(i)-h2->GetBinContent(i),2)/(std::pow(h1->GetBinError(i),2)+std::pow(h2->GetBinError(i),2));
 	  ndof++;
 	}
     }
   // chi2 per dof
+  if (!std::isnormal(ndof))
+    {ndof = 1;}
   c->chi2 /= ndof;
   
   c->passed = true;
