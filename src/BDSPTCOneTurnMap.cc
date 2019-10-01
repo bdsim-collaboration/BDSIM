@@ -107,15 +107,13 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
 						    G4bool beamOffsetS0In)
 {
   lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
-  initialPrimaryMomentum =
-      std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
+  initialPrimaryMomentum = std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
   // Converting to PTC Coordinates:
   xLastTurn  = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
   yLastTurn  = coords.local.y / CLHEP::m;
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
-  deltaPLastTurn =
-      (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
+  deltaPLastTurn = (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
 
   turnsScattered.clear();
 
@@ -132,12 +130,12 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
 				   G4double& pz,
 				   G4int turnsTaken)
 {
-  auto xOut = 0.0;
-  auto yOut = 0.0;
-  auto pxOut = 0.0;
-  auto pyOut = 0.0;
-  auto pzOut = 0.0;
-  auto deltaPOut = 0.0;
+  G4double xOut = 0.0;
+  G4double yOut = 0.0;
+  G4double pxOut = 0.0;
+  G4double pyOut = 0.0;
+  G4double pzOut = 0.0;
+  G4double deltaPOut = 0.0;
 
   // In short: lastTurnNumber exists to prevent the map being
   // applied multiple times in one turn.
@@ -223,8 +221,9 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
   pyOut *= referenceMomentum;
   // by defn the particle has the initial primary momentum, which we
   // used to calculate pz.
-  pzOut = std::sqrt(std::pow(initialPrimaryMomentum, 2) - std::pow(px, 2) -
-                    std::pow(py, 2));
+  pzOut = std::sqrt(std::pow(initialPrimaryMomentum, 2)
+		    - std::pow(px, 2)
+		    - std::pow(py, 2));
 
   // Now set output for arguments passed by reference.
   x  = xOut;
@@ -252,7 +251,7 @@ G4double BDSPTCOneTurnMap::Evaluate(std::vector<PTCMapTerm>& terms,
 				    G4double py,
                                     G4double deltaP) const
 {
-  auto result = 0.;
+  G4double result = 0;
   for (const auto& term : terms)
     {
       result += (term.coefficient
