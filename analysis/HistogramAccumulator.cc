@@ -49,6 +49,8 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
   terminated(false),
   resultHistName(resultHistNameIn),
   resultHistTitle(resultHistTitleIn),
+  mean(nullptr),
+  variance(nullptr),
   result(nullptr)
 {
   std::string meanName = resultHistName + "_Mean";
