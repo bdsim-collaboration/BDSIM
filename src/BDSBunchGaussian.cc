@@ -102,18 +102,9 @@ void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
   /// clear previous means
   for (auto& vec : coordinates)
     {vec->clear();}
+  iPartIteration = 0;
   
   PreGenerateEvents(numberOfEvents);
-}
-
-void BDSBunchGaussian::EndOfRunAction()
-{
-  if (!offsetSampleMean)
-    {return;}
-  /// clear previous means
-  for (auto& vec : coordinates)
-    {vec->clear();}
-  iPartIteration = 0;
 }
 
 CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
