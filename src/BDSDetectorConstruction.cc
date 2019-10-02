@@ -194,13 +194,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure - put everything in the world
   ComponentPlacement(worldPV);
   
-  if(verbose || debug)
+  if (verbose || debug)
     {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
-  if(verbose || debug) {G4cout << "Finished listing materials, returning physiWorld" << G4endl;} 
+  if (verbose || debug) {G4cout << "Finished listing materials, returning physiWorld" << G4endl;} 
 #endif
   return worldPV;
 }
@@ -857,7 +857,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
 
   const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
-  for(std::string const & bs : biasList)
+  for (std::string const & bs : biasList)
     {
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
@@ -880,7 +880,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       eg->AddParticle(pb.particle);
       
       // loop through all processes
-      for(unsigned int p = 0; p < pb.processList.size(); ++p)
+      for (unsigned int p = 0; p < pb.processList.size(); ++p)
 	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
@@ -893,7 +893,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 {
 #if G4VERSION_NUMBER > 1009
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
-  if(debug)
+  if (debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
 
 #if G4VERSION_NUMBER > 1039
@@ -950,13 +950,13 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{
 	  auto egMaterial = BuildCrossSectionBias(materialBiasList, defaultBiasMaterial, accName);
 	  auto allLVs     = accCom->GetAllBiasingVolumes();
-	  if(debug)
+	  if (debug)
 	    {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
 	  for (auto materialLV : allLVs)
 	    {
-	      if(materialLV != vacuumLV)
+	      if (materialLV != vacuumLV)
 		{
-		  if(debug)
+		  if (debug)
 		    {
 		      G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
 			     << " " << (materialLV)->GetName() << G4endl;
