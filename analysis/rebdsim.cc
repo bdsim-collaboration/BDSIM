@@ -81,7 +81,11 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  Config* config = Config::Instance();
+  Config* config = nullptr;
+  try
+    {config = Config::Instance();}
+  catch (const std::string& e)
+    {std::cerr << e << std::endl; exit(1);}
   
   bool allBranches = config->AllBranchesToBeActivated();
   const RBDS::BranchMap* branchesToActivate = &(config->BranchesToBeActivated());
