@@ -26,7 +26,7 @@ New Features
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
-* New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New beam loss monitors (BLMs) with :code:`blm` command (See :ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * New executable option :code:`--nturns` to control the number of turns in a circular machine.
@@ -38,7 +38,7 @@ New Features
 * `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
 * The beam particle may now be specified by its PDG integer ID rather than by name.
 * A new physics list called "all_particles" has been introduced to construct all particles
-  only but no physics processes. Useful for an exotic beam where only tracking is required.
+  only but no physics processes. Useful for an exotic beams where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
   are generated as an easy method to introduce coupling.  Note, this is in the beam command.
 * The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
@@ -268,6 +268,7 @@ Bug Fixes
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
+* Unitialised variables reported by Coverity.
 
 Output Changes
 --------------
