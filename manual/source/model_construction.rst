@@ -9,13 +9,39 @@ Model Construction
 ==================
 
 The following sections describe the basics of how to prepare a BDSIM model.
-    
+
+* :ref:`lattice-description`
 * :ref:`circular-machines`
 * :ref:`lattice-elements`
 * :ref:`offsets-and-tilts`
 * :ref:`lattice-sequence`
 * :ref:`multiple-beamlines`
  
+
+.. _lattice-description:
+
+Lattice Description
+-------------------
+
+A model of the accelerator is given to BDSIM via input text files in the :ref:`gmad-syntax`.
+The overall program structure should follow:
+
+1) Component definition (see :ref:`lattice-elements`)
+2) Sequence definition using defined components (see :ref:`lattice-sequence`)
+3) Which sequence to use (see :ref:`the-use-command`)
+4) Where to record output (see :ref:`sampler-output`)
+5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
+6) A beam definition (see :ref:`beam-parameters`)
+
+* Specifing and option or definition again, will overwrite the previous value.
+* The only **order specific** part is the **use** command (see :ref:`the-use-command`) as this
+  copied whatever sequence is *used* at that point, so any further updates to the component
+  definitions will not be observed.
+* Apart from this, all other parts can be defined or redefined in any order in the input.
+   
+These are described in the following sections. Aside from these standard parameters, more
+detail may be added to the model through customisation - see :ref:`model-customisation`.
+  
 .. _circular-machines:
 
 Circular Machines

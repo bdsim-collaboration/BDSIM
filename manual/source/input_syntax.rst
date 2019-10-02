@@ -8,37 +8,12 @@
 Input Syntax
 ============
 
-The following sections describe how to prepare a BDSIM model. These sections are
-provided in order of requirement.
+BDSIM is controlled by input text (ASCII) files that define the model, physics and
+options in its own GMAD syntax.
 
-* :ref:`lattice-description`
 * :ref:`gmad-syntax`
 * :ref:`mathematical-functions`
 * :ref:`coordinates-and-units`
-
-
-.. _lattice-description:
-
-Lattice Description
--------------------
-
-A model of the accelerator is given to BDSIM via input text files in the :ref:`gmad-syntax`.
-The overall program structure should follow:
-
-1) Component definition (see :ref:`lattice-elements`)
-2) Sequence definition using defined components (see :ref:`lattice-sequence`)
-3) Which sequence to use (see :ref:`the-use-command`)
-4) Where to record output (see :ref:`sampler-output`)
-5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
-6) A beam definition (see :ref:`beam-parameters`)
-
-These are described in the following sections. Aside from these standard parameters, more
-detail may be added to the model through:
-
- * :ref:`magnet-geometry-parameters`.
- * Custom :ref:`field-maps`.
- * Adding :ref:`externally-provided-geometry`.
- * :ref:`offsets-and-tilts`.
 
 .. _gmad-syntax:
 
@@ -111,10 +86,10 @@ The following is an example of a common mistake that's not easy to spot: ::
         energy=3*TeV;
 	E0=1*TeV;
 
-With this syntax we expect to create a design beam of 3 TeV electrons but the central energy of 1 TeV for the bunch. 3 TeV
-is used to calculate the magnet strengths and it's expected to fire a 1 TeV electron. However, the E0 parameter here just
-defines a variable called E0 that isn't used. The indentation (white-space) is ignored. The error is the semi-colon at the
-end of the second line. This is the correct version: ::
+With this syntax we expect to create a design beam of 3 TeV electrons but the central energy of 1 TeV for
+the bunch. 3 TeV is used to calculate the magnet strengths and it's expected to fire a 1 TeV electron.
+However, the E0 parameter here just defines a variable called E0 that isn't used. The indentation (white-space)
+is ignored. The error is the semi-colon at the end of the second line. This is the correct version: ::
 
   beam, particle="e-",
         energy=3*TeV,
