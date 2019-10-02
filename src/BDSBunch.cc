@@ -58,6 +58,7 @@ BDSBunch::BDSBunch():
   finiteSigmaT(true),
   generatePrimariesOnly(false),
   beamlineTransform(G4Transform3D()),
+  beamlineS(0),
   mass2(0.0),
   beamline(nullptr)
 {;}

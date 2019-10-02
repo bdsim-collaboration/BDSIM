@@ -55,7 +55,9 @@ BDSBunchGaussian::BDSBunchGaussian():
   BDSBunch(),
   meansGM(CLHEP::HepVector(6)),
   sigmaGM(CLHEP::HepSymMatrix(6)),
-  gaussMultiGen(nullptr)
+  gaussMultiGen(nullptr),
+  offsetSampleMean(false),
+  iPartIteration(0)
 {
   coordinates = {&x0_v, &xp_v, &y0_v, &yp_v, &z0_v, &zp_v, &E_v, &t_v, &weight_v};
 }
