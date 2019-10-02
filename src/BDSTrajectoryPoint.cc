@@ -227,6 +227,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other):
   preProcessSubType  = other.preProcessSubType;
   postProcessType    = other.postProcessType;
   postProcessSubType = other.postProcessSubType;
+  
   preWeight          = other.preWeight;
   postWeight         = other.postWeight;
   preEnergy          = other.preEnergy;
@@ -236,6 +237,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other):
   energy             = other.energy;
   preS               = other.preS;
   postS              = other.postS;
+  preGlobalTime      = other.preGlobalTime;
+  postGlobalTime     = other.postGlobalTime;
   beamlineIndex      = other.beamlineIndex;
   beamline           = other.beamline;
   prePosLocal        = other.prePosLocal;

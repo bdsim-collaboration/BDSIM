@@ -256,6 +256,7 @@ int BDSIM::Initialise()
       const G4int nToGenerate = globalConstants->NGenerate();
       const G4int printModulo = globalConstants->PrintModuloEvents();
       bdsBunch->BeginOfRunAction(nToGenerate);
+      auto flagsCache(G4cout.flags());
       for (G4int i = 0; i < nToGenerate; i++)
 	{
 	  if (i%printModulo == 0)
@@ -265,6 +266,7 @@ int BDSIM::Initialise()
 	  const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
 	  bdsOutput->FillEventPrimaryOnly(coords, pDef);
 	}
+      G4cout.flags(flagsCache); // restore cout flags
       // Write options now the file is open
       const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
       bdsOutput->FillOptions(ob);

@@ -103,7 +103,10 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 			  driftsAreTooBigBefore = true;
 			}
 		      if (keepGoing)
-			{availableLength += inspectedElement->GetChordLength();}
+			{
+			  availableLength += inspectedElement->GetChordLength();
+			  driftIsFirstItem = inspectedElement == firstItem;
+			}
 		    }
 		  else
 		    {
