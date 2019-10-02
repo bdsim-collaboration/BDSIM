@@ -220,6 +220,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
+  auto flagsCache(G4cout.flags());
   // Get event number information
   G4int event_number = evt->GetEventID();
   G4bool verboseThisEvent = verboseEventBDSIM && BDS::VerboseThisEvent(event_number, verboseEventStart, verboseEventStop);
@@ -302,7 +303,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (eCounterFullHits)
     {
       if (verboseThisEvent)
-	{G4cout << std::left << std::setw(nChar) << "Energy deposition full hits: " << eCounterHits->entries() << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "Energy deposition full hits: " << eCounterFullHits->entries() << G4endl;}
       if (eCounterFullHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
@@ -335,7 +336,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (collimatorHits)
 	{G4cout << std::left << std::setw(nChar) << "Collimator hits: " << collimatorHits->entries()  << G4endl;}
     }
-
   
   // primary hits and losses from
   const BDSTrajectoryPoint* primaryHit  = nullptr;
@@ -579,4 +579,5 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
       G4cout << "Trajectory point primary pool size: " << bdsTrajectoryPrimaryAllocator.GetAllocatedSize() << G4endl;
     }
+  G4cout.flags(flagsCache);
 }
