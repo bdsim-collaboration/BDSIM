@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSHitThinThing.hh"
+#include "BDSTrajectoryPoint.hh"
 
 #include "G4Allocator.hh"
 
@@ -33,7 +34,9 @@ BDSHitThinThing::BDSHitThinThing(G4int trackIDIn,
 {;}
 
 BDSHitThinThing::~BDSHitThinThing()
-{;}
+{
+  delete hit;
+}
 
 std::vector<const BDSTrajectoryPoint*> BDSHitThinThing::TrajectoryPointsFromHC(BDSHitsCollectionThinThing* hits)
 {

@@ -26,7 +26,7 @@ New Features
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
-* New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New beam loss monitors (BLMs) with :code:`blm` command (See :ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * New executable option :code:`--nturns` to control the number of turns in a circular machine.
@@ -38,7 +38,7 @@ New Features
 * `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
 * The beam particle may now be specified by its PDG integer ID rather than by name.
 * A new physics list called "all_particles" has been introduced to construct all particles
-  only but no physics processes. Useful for an exotic beam where only tracking is required.
+  only but no physics processes. Useful for an exotic beams where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
   are generated as an easy method to introduce coupling.  Note, this is in the beam command.
 * The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
@@ -89,6 +89,16 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
@@ -258,10 +268,13 @@ Bug Fixes
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
+* Unitialised variables reported by Coverity.
 
 Output Changes
 --------------
 
+* In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
+  what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
@@ -277,6 +290,50 @@ Output Changes
 * BDSOutputROOTEventCoords member variables are now all vectors instead of single numbers. This
   is to allow the possibility of more than one primary particle as is possible when loading a
   file from an event generator.
+* New BDSOutputROOTEventAperture class.
+
+Output Class Versions
+---------------------
+
+* Data Version 5.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | Y           | NA              | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | Y           | 1               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
 
 Utilities
 ---------

@@ -71,8 +71,9 @@ public:
   explicit BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
   virtual ~BDSDetectorConstruction();
 
-  /// Loop over beam line and work out maximum tolerable sampler radius.
-  void UpdateSamplerDiameter();
+  /// Loop over beam line and work out maximum tolerable sampler radius. Count all samplers
+  /// and set member nSamplers and the same time.
+  void UpdateSamplerDiameterAndCountSamplers();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.
@@ -205,8 +206,6 @@ private:
   BDSBeamline* placementBL; ///< Placement beam line.
   /// Particle definition all components are built w.r.t. Includes rigidity etc.
   const BDSParticleDefinition* designParticle;
-  G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
-  G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
 
   BDSComponentFactoryUser* userComponentFactory;

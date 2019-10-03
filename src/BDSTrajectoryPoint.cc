@@ -21,9 +21,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
-#include "BDSProcessMap.hh"
 #include "BDSStep.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSTrajectoryPointIon.hh"
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
+#include "BDSPhysicalConstants.hh"
+#include "BDSUtilities.hh"
+#ifdef BDSDEBUG_H
+#include "BDSProcessMap.hh"
+#endif
 
 #include "globals.hh"
 #include "G4Allocator.hh"
@@ -48,7 +55,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint():
   InitialiseVariables();
 }
 
-BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
+				       G4bool storeExtrasLocal,
+				       G4bool storeExtrasLink,
+				       G4bool storeExtrasIon):
   G4TrajectoryPoint(track->GetPosition())
 {
   InitialiseVariables();
@@ -84,7 +94,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
 						       1*CLHEP::nm,
 						       true);
   prePosLocal = localPosition.PreStepPoint();
-  postPosLocal = localPosition.PostStepPoint();
+  postPosLocal = prePosLocal;
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(localPosition.VolumeForTransform());
   if (info)
     {
@@ -93,11 +103,42 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
       postS            = sCentre + localPosition.PostStepPoint().z();
       beamlineIndex    = info->GetBeamlineMassWorldIndex();
       beamline         = info->GetBeamlineMassWorld();
-      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+    }
+
+  if (storeExtrasLocal)
+    {extraLocal = new BDSTrajectoryPointLocal(prePosLocal, localPosition.PostStepPoint());}
+  
+  if (storeExtrasLink)
+    {
+      const G4DynamicParticle* dynamicParticleDef = track->GetDynamicParticle();
+      G4double charge   = dynamicParticleDef->GetCharge();
+      G4double rigidity = 0;
+      if (BDS::IsFinite(charge))
+	{rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
+      extraLink = new BDSTrajectoryPointLink(charge,
+					     dynamicParticleDef->GetKineticEnergy(),
+					     BDSGlobalConstants::Instance()->TurnsTaken(),
+					     dynamicParticleDef->GetMass(),
+					     rigidity);
+    }
+  
+  if (storeExtrasIon)
+    {
+      const G4ParticleDefinition* particleDef        = track->GetParticleDefinition();
+      const G4DynamicParticle*    dynamicParticleDef = track->GetDynamicParticle();
+      const G4ElectronOccupancy*  eo = dynamicParticleDef->GetElectronOccupancy();
+      G4int nElectrons = eo ? eo->GetTotalOccupancy() : 0;
+      extraIon = new BDSTrajectoryPointIon(particleDef->IsGeneralIon(),
+					   particleDef->GetAtomicMass(),
+					   particleDef->GetAtomicNumber(),
+					   nElectrons);
     }
 }
 
-BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
+                                       G4bool storeExtrasLocal,
+                                       G4bool storeExtrasLink,
+                                       G4bool storeExtrasIon):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
   InitialiseVariables();
@@ -144,12 +185,72 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
       postS            = sCentre + localPosition.PostStepPoint().z();
       beamlineIndex    = info->GetBeamlineMassWorldIndex();
       beamline         = info->GetBeamlineMassWorld();
-      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+    }
+
+  if (storeExtrasLocal)
+    {extraLocal = new BDSTrajectoryPointLocal(prePosLocal, localPosition.PostStepPoint());}
+
+  G4Track* track = step->GetTrack();
+  if (storeExtrasLink)
+    {
+      G4double charge   = track->GetDynamicParticle()->GetCharge();
+      G4double rigidity = 0;
+      if (BDS::IsFinite(charge))
+	{rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
+      extraLink = new BDSTrajectoryPointLink(charge,
+					     prePoint->GetKineticEnergy(),
+					     BDSGlobalConstants::Instance()->TurnsTaken(),
+					     prePoint->GetMass(),
+					     rigidity);
+    }
+
+  if (storeExtrasIon)
+    {
+      const G4ParticleDefinition* particleDef        = track->GetParticleDefinition();
+      const G4DynamicParticle*    dynamicParticleDef = track->GetDynamicParticle();
+      const G4ElectronOccupancy*  eo = dynamicParticleDef->GetElectronOccupancy();
+      G4int nElectrons = eo ? eo->GetTotalOccupancy() : 0;
+      extraIon = new BDSTrajectoryPointIon(particleDef->IsGeneralIon(),
+					   particleDef->GetAtomicMass(),
+					   particleDef->GetAtomicNumber(),
+					   nElectrons);
     }
 }
 
+BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other):
+  G4TrajectoryPoint(static_cast<const G4TrajectoryPoint&>(other))
+{
+  extraLocal = other.extraLocal ? new BDSTrajectoryPointLocal(*other.extraLocal) : nullptr;
+  extraLink  = other.extraLink  ? new BDSTrajectoryPointLink(*other.extraLink)   : nullptr;
+  extraIon   = other.extraIon   ? new BDSTrajectoryPointIon(*other.extraIon)     : nullptr;
+  preProcessType     = other.preProcessType;
+  preProcessSubType  = other.preProcessSubType;
+  postProcessType    = other.postProcessType;
+  postProcessSubType = other.postProcessSubType;
+  
+  preWeight          = other.preWeight;
+  postWeight         = other.postWeight;
+  preEnergy          = other.preEnergy;
+  postEnergy         = other.postEnergy;
+  preMomentum        = other.preMomentum;
+  postMomentum       = other.postMomentum;
+  energy             = other.energy;
+  preS               = other.preS;
+  postS              = other.postS;
+  preGlobalTime      = other.preGlobalTime;
+  postGlobalTime     = other.postGlobalTime;
+  beamlineIndex      = other.beamlineIndex;
+  beamline           = other.beamline;
+  prePosLocal        = other.prePosLocal;
+  postPosLocal       = other.postPosLocal;
+}
+
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
-{;}
+{
+  delete extraLocal;
+  delete extraLink;
+  delete extraIon;
+}
 
 void BDSTrajectoryPoint::InitialiseVariables()
 {
@@ -166,11 +267,15 @@ void BDSTrajectoryPoint::InitialiseVariables()
   energy             = 0.0;
   preS               = -1000;
   postS              = -1000;
+  preGlobalTime      = 0;
+  postGlobalTime     = 0;
   beamlineIndex      = -1;
   beamline           = nullptr;
-  turnstaken         = 0;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
+  extraLocal         = nullptr;
+  extraLink          = nullptr;
+  extraIon           = nullptr;
 }
 
 G4bool BDSTrajectoryPoint::IsScatteringPoint() const

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
@@ -28,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
 #include <cmath>
@@ -591,4 +594,10 @@ G4bool BDS::VerboseThisEvent(G4int eventIndex,
 			     G4int eventStop)
 {
   return eventIndex >= eventStart && eventIndex < eventStop;
+}
+
+G4double BDS::Rigidity(G4double momentumMagnitude,
+		       G4double charge)
+{
+  return momentumMagnitude / CLHEP::GeV / BDS::cOverGeV / charge;
 }

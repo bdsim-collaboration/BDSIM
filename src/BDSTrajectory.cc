@@ -33,11 +33,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
-			     const G4bool&  interactiveIn,
-			     const G4bool&  suppressTransportationStepsIn):
+			     G4bool         interactiveIn,
+			     G4bool         suppressTransportationStepsIn,
+			     G4bool         storeTrajectoryLocalIn,
+			     G4bool         storeTrajectoryLinksIn,
+			     G4bool         storeTrajectoryIonsIn):
   G4Trajectory(aTrack),
   interactive(interactiveIn),
-  suppressTransportationSteps(suppressTransportationStepsIn)
+  suppressTransportationSteps(suppressTransportationStepsIn),
+  storeTrajectoryLocal(storeTrajectoryLocalIn),
+  storeTrajectoryLinks(storeTrajectoryLinksIn),
+  storeTrajectoryIons(storeTrajectoryIonsIn),
+  parent(nullptr),
+  trajIndex(0),
+  parentIndex(0),
+  parentStepIndex(0)
 {
   const G4VProcess* proc = aTrack->GetCreatorProcess();
   if (proc)
@@ -51,11 +61,14 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
       creatorProcessSubType = -1;
     }
   weight = aTrack->GetWeight();
-  
-  fParentIndex = -1;
+
+  parentIndex = -1;
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
-  (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack));
+  (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack,
+							   storeTrajectoryLocal,
+							   storeTrajectoryLinks,
+							   storeTrajectoryIons));
 }
 
 BDSTrajectory::~BDSTrajectory()
@@ -102,12 +115,20 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 	      preProcessType  != 10 /* parallel world */) ||
 	     (postProcessType != 1   /* transportation */ &&
 	      postProcessType != 10 /* parallel world */) )
-	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));}
+	    {
+	      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
+								     storeTrajectoryLocal,
+								     storeTrajectoryLinks,
+								     storeTrajectoryIons));
+	    }
 	}
     }
   else
     {
-      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
+      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
+							     storeTrajectoryLocal,
+							     storeTrajectoryLinks,
+							     storeTrajectoryIons));
     }
 }
 

@@ -18,9 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSOUTPUTROOTEVENTTRAJECTORY_H
 #define BDSOUTPUTROOTEVENTTRAJECTORY_H
-
 #include "Rtypes.h"
 #include "TVector3.h"
+
+#include "BDSOutputROOTEventTrajectoryPoint.hh"
 
 #include <map>
 #include <vector>
@@ -95,44 +96,6 @@ class BDSAuxiliaryNavigator;
   11 fPhonon,
   12 fUCN
 #endif
-  
-/**
- * @brief Structure to record a trajectory point.
- * 
- * @author Stewart Boogert
- */
-
-class BDSOutputROOTEventTrajectoryPoint: public TObject
-{
-public :
-  BDSOutputROOTEventTrajectoryPoint() :
-          partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
-          processType(-1), processSubType(-1), weight(-1.0), energy(-1.0),
-          position(0,0,0), momentum(0,0,0), model(-1), preTime(0) {};
-  BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
-                                    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
-                                    TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn) :
-          partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
-          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energy(energyIn),
-          position(positionIn), momentum(momentumIn), model(modelIn), preTime(preTimeIn) {}
-  virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
-
-  int partID;
-  int trackID;
-  int parentID;
-  int parentIndex;
-  int processType;
-  int processSubType;
-  double weight;
-  double energy;
-  TVector3 position;
-  TVector3 momentum;
-  int model;
-  double preTime;
-
-  ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
-};
-
 
 /**
  * @brief Structure to record a trajectory.
@@ -171,17 +134,37 @@ public:
 
   std::vector<std::vector<double>>   preWeights;
   std::vector<std::vector<double>>   postWeights;
-  std::vector<std::vector<double>>   energies;
+  std::vector<std::vector<double>>   energyDeposit;
 
-  std::vector<std::vector<TVector3>> trajectories;
-  std::vector<std::vector<double>>   trajectoriesS;
-  std::vector<std::vector<TVector3>> momenta;
-  std::vector<std::vector<double>>   preT;
+  std::vector<std::vector<TVector3>> XYZ;
+  std::vector<std::vector<double>>   S;
+  std::vector<std::vector<TVector3>> PXPYPZ;
+  std::vector<std::vector<double>>   T;
+
+  /// @{ Local coordinates.
+  std::vector<std::vector<TVector3>> xyz;
+  std::vector<std::vector<TVector3>> pxpypz;
+  /// @}
+
+  /// @{ Link trajectory information.
+  std::vector<std::vector<int>>      charge;
+  std::vector<std::vector<double>>   kineticEnergy;
+  std::vector<std::vector<int>>      turnsTaken;
+  std::vector<std::vector<double>>   mass;
+  std::vector<std::vector<double>>   rigidity;
+  /// @}
+
+  /// @{ Ion trajectory information.
+  std::vector<std::vector<bool>>     isIon;
+  std::vector<std::vector<int>>      ionA;
+  std::vector<std::vector<int>>      ionZ;
+  std::vector<std::vector<int>>      nElectrons;
+  /// @}
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;          // trackID to trackIndex 
-
+  std::map<int, int>                 trackID_trackIndex;// trackID to trackIndex
+  
   //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
   //  std::map<int, std::vector<int>>    modelIndex_trackIndex;       // modelIndex to track index map
@@ -190,13 +173,11 @@ public:
   std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
   BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
-
-  void printTrajectoryInfo(int trackID);
+  void                                           printTrajectoryInfo(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
-
+  
   ClassDef(BDSOutputROOTEventTrajectory,3);
 };
-
 
 #endif
