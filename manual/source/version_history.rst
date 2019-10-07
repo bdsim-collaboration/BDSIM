@@ -275,6 +275,8 @@ Output Changes
 
 * In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
   what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
+* In the analysis class :code:`analysis/Run.hh`, the member variables `Summary` and `Histos`
+  now start with capital letters to match the layout on file.
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
