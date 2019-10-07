@@ -159,7 +159,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 				     bp.blm4 * CLHEP::m,
 				     sd);
       BDSExtent blmExtent = blm->GetExtent();
-      G4double length = blmExtent.DZ();
+      G4double  length    = blmExtent.DZ();
+      if (!BDS::IsFinite(length))
+        {throw BDSException(__METHOD_NAME__, "BLM: " + bp.name + " has 0 extent");}
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
 							blm,
 							length);

@@ -337,14 +337,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 		 << optionName << "\" with value: \"" << optarg << "\"" << G4endl;
 	  exit(1);
 	}
-
-      break;
-
-    default:
-      G4cout << "Warning unknown returned character code " <<  c << G4endl;
-      break;
     }
-  }
   // there should be no remaining options
   if (OptionNumber < argc - 1)
     {
@@ -360,7 +353,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
       exit(1);
     }
   }
-
+}
+  
 void BDSExecOptions::Usage() const
 {
   G4cout<<"Usage: bdsim [options]"           << G4endl;
@@ -436,7 +430,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filename = " << fileName << G4endl;
 #endif
-  if(fullPath.empty())
+  if (fullPath.empty())
     {
       G4String inputFilepath = "";
       // get the path part of the supplied path to the main input file
