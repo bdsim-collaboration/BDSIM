@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
 
-#include "TROOT.h"
 #include "TChain.h"
 #include "TDirectory.h"
 #include "TFile.h"
@@ -42,7 +41,9 @@ EventAnalysis::EventAnalysis():
   event(nullptr),
   printModulo(1),
   processSamplers(false),
-  emittanceOnTheFly(false)
+  emittanceOnTheFly(false),
+  eventStart(0),
+  eventEnd(-1)
 {;}
 
 EventAnalysis::EventAnalysis(Event*   eventIn,

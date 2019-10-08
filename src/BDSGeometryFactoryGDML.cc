@@ -55,14 +55,15 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   G4String processedFile;
   G4bool preprocessGDML       = BDSGlobalConstants::Instance()->PreprocessGDML();
   G4bool preprocessGDMLSchema = BDSGlobalConstants::Instance()->PreprocessGDMLSchema();
-  if (preprocessGDML && preprocessGDMLSchema)
-    {processedFile = BDS::PreprocessGDML(fileName, componentName);} // use all in one method
-  else if (preprocessGDMLSchema)
+  if (preprocessGDML)
+    {processedFile = BDS::PreprocessGDML(fileName, componentName, preprocessGDMLSchema);} // use all in one method
+  else if (preprocessGDMLSchema) // generally don't process the file but process the schema to local copy only
     {processedFile = BDS::PreprocessGDMLSchemaOnly(fileName);} // use schema only method
-  else
+  else // no processing
     {processedFile = fileName;}
   
   G4GDMLParser* parser = new G4GDMLParser();
+  parser->SetOverlapCheck(BDSGlobalConstants::Instance()->CheckOverlaps());
   parser->Read(processedFile, /*validate=*/true);
 
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
@@ -159,4 +160,7 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
   fout.close();
 }
 
+#else
+// insert empty function to avoid no symbols warning
+void _SymbolToPreventWarningGeomFacGDML(){;}
 #endif

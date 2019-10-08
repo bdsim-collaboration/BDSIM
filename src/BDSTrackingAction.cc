@@ -19,9 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
@@ -32,49 +34,81 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4LogicalVolume;
 
-BDSTrackingAction::BDSTrackingAction(const G4bool& batchMode,
-				     const G4bool& storeTrajectoryIn,
-				     const G4bool& suppressTransportationStepsIn,
-				     BDSEventAction* eventActionIn):
+BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
+				     G4bool storeTrajectoryIn,
+				     G4bool storeTrajectoryLocalIn,
+				     G4bool storeTrajectoryLinksIn,
+				     G4bool storeTrajectoryIonsIn,
+				     G4bool suppressTransportationStepsIn,
+				     BDSEventAction* eventActionIn,
+				     G4int  verboseSteppingEventStartIn,
+				     G4int  verboseSteppingEventStopIn,
+				     G4bool verboseSteppingPrimaryOnlyIn,
+				     G4int  verboseSteppingLevelIn):
   interactive(!batchMode),
   storeTrajectory(storeTrajectoryIn),
+  storeTrajectoryLocal(storeTrajectoryLocalIn),
+  storeTrajectoryLinks(storeTrajectoryLinksIn),
+  storeTrajectoryIons(storeTrajectoryIonsIn),
   suppressTransportationSteps(suppressTransportationStepsIn),
-  eventAction(eventActionIn)
+  eventAction(eventActionIn),
+  verboseSteppingEventStart(verboseSteppingEventStartIn),
+  verboseSteppingEventStop(verboseSteppingEventStopIn),
+  verboseSteppingPrimaryOnly(verboseSteppingPrimaryOnlyIn),
+  verboseSteppingLevel(verboseSteppingLevelIn)
 {;}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  // if it's a primary track then we always store something
-  if (track->GetParentID() == 0)
-    {
-      // only store the actual trajectory points if we explicitly want
-      // trajectory points or we're using the visualiser.
-      G4bool storePoints = storeTrajectory || interactive;
-      auto traj = new BDSTrajectoryPrimary(track,
-					   interactive,
-					   suppressTransportationSteps,
-					   storePoints);
-      fpTrackingManager->SetStoreTrajectory(1);
-      fpTrackingManager->SetTrajectory(traj);
-    }
-  else
-    {
-      // not a primary - only store if we want to or interactive
+  G4int  eventIndex = eventAction->CurrentEventIndex();
+  G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);
+  G4bool primaryParticle  = track->GetParentID() == 0;
+
+  if (primaryParticle && verboseSteppingThisEvent)
+    {fpTrackingManager->GetSteppingManager()->SetVerboseLevel(verboseSteppingLevel);}
+  else if (!primaryParticle && verboseSteppingThisEvent && !verboseSteppingPrimaryOnly)
+    {fpTrackingManager->GetSteppingManager()->SetVerboseLevel(verboseSteppingLevel);}
+  
+  if (!primaryParticle)
+    {// ie secondary particle
+      // only store if we want to or interactive
       if (storeTrajectory || interactive)
 	{
 	  auto traj = new BDSTrajectory(track,
 					interactive,
-					suppressTransportationSteps);
+					suppressTransportationSteps,
+					storeTrajectoryLocal,
+					storeTrajectoryLinks,
+					storeTrajectoryIons);
 	  fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
       else // mark as don't store
 	{fpTrackingManager->SetStoreTrajectory(0);}
     }
+  else
+    {// it's a primary particle
+      // if it's a primary track then we always store something
+      // but only store the actual trajectory points if we explicitly want
+      // trajectory points or we're using the visualiser.
+      G4bool storePoints = storeTrajectory || interactive;
+      auto traj = new BDSTrajectoryPrimary(track,
+					   interactive,
+					   suppressTransportationSteps,
+					   storeTrajectoryLocal,
+					   storeTrajectoryLinks,
+					   storeTrajectoryIons,
+					   storePoints);
+      fpTrackingManager->SetStoreTrajectory(1);
+      fpTrackingManager->SetTrajectory(traj);
+    }
 }
 
 void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
 {
+  // turn off verbosity always as we selectiely turn it on in the start tracking option
+  fpTrackingManager->GetSteppingManager()->SetVerboseLevel(0);
+  
 #ifdef BDSDEBUG
   G4int trackID = track->GetTrackID();
   if (trackID < 100)

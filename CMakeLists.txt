@@ -15,6 +15,7 @@ set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
+message(STATUS "Installation prefix: ${CMAKE_INSTALL_PREFIX}")
 
 # add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
@@ -44,6 +45,13 @@ include(cmake/CompilerCheck.cmake)
 # Check AFS and OS
 include(cmake/SystemCheck.cmake)
 
+# Regression testing flag
+set(BDSIM_GENERATE_REGRESSION_DATA OFF CACHE BOOL "Whether to generate regression testing data from tests.")
+mark_as_advanced(BDSIM_GENERATE_REGRESSION_DATA)
+# Default prefix is test as we expect to be testing. Change to "ref" for reference results.
+set(BDSIM_REGRESSION_PREFIX "test" CACHE STRING "Prefix for regression file generation.")
+mark_as_advanced(BDSIM_REGRESSION_PREFIX)
+
 #################  
 # Find Packages #
 #################
@@ -69,6 +77,9 @@ if(USE_GDML)
     add_definitions("-DUSE_GDML")
     message(STATUS "GDML support ON")
 endif()
+
+# HEPMC3
+include(cmake/HepMC.cmake)
 
 # Field double precision (off by default)
 option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
@@ -96,7 +107,14 @@ include(rebdsim_test_macros)
 include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
-set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+if (USE_HEPMC3)
+  #TBC - need to test if we can just use this
+  #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib;${HEPMC3_ROOT_DIR}/lib")
+  #message(STATUS "rpath = ${CMAKE_INSTALL_RPATH}")
+else()
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+endif()
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(SYSCONFIG_INSTALL_DIR etc/bdsim/)
@@ -168,6 +186,9 @@ if (USE_GZSTREAM)
   #preprocessor flag
   add_definitions("-DUSE_GZSTREAM")
   target_link_libraries(${BDSIM_LIB_NAME} gzstream)
+endif()
+if (USE_HEPMC3)
+  target_link_libraries(${BDSIM_LIB_NAME} ${HEPMC3_LIBRARIES})
 endif()
 
 # link against ROOT
@@ -282,9 +303,10 @@ export(EXPORT BDSIMTargets
 )
 
 include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/BDSIMConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
+configure_package_config_file(cmake/BDSIMConfig.cmake.in
+			      ${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfig.cmake
 			      INSTALL_DESTINATION ${LIB_INSTALL_DIR}/bdsimcmake/cmake
-			      PATH_VARS INCLUDE_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
+			      PATH_VARS INCLUDE_INSTALL_DIR BIN_INSTALL_DIR SYSCONFIG_INSTALL_DIR)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/bdsimcmake/BDSIMConfigVersion.cmake
   VERSION ${BDSIM_VERSION}
   COMPATIBILITY AnyNewerVersion

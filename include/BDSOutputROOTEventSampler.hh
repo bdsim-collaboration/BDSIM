@@ -19,19 +19,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTSAMPLER_H
 #define BDSOUTPUTROOTEVENTSAMPLER_H
 
-#include "TROOT.h"
+#include "Rtypes.h"
+#include "TObject.h"
+
+#include <string>
 #include <vector>
 
 class BDSOutputROOTEventParticleData;
+class TTree;
 
 #ifndef __ROOTBUILD__ 
 #include "globals.hh"
 class BDSParticleCoordsFull;
 class BDSHitSampler;
+class BDSPrimaryVertexInformationV;
 #endif
-
-#include "TObject.h"
-#include "TTree.h"
 
 /**
  * @brief Information stored per sampler per event.
@@ -67,6 +69,7 @@ public:
   std::vector<U>     rp;
   std::vector<U>     phi;
   std::vector<U>     phip;
+  std::vector<U>     theta;
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
@@ -76,6 +79,7 @@ public:
   std::vector<bool>    isIon;
   std::vector<int>     ionA;
   std::vector<int>     ionZ;
+  std::vector<int>     nElectrons;
   /// @}
 
   /// @{ Function to calculate on the fly the parameters.
@@ -92,34 +96,38 @@ public:
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
   void Fill(const BDSHitSampler* hit,
-	    G4bool storeCharge = false,
-	    G4bool storePolarCoords = false);
+	    G4bool storeMass          = false,
+	    G4bool storeCharge        = false,
+	    G4bool storePolarCoords   = false,
+	    G4bool storeElectrons     = false,
+	    G4bool storeRigidity      = false,
+	    G4bool storeKineticEnergy = false);
+  /// Used for filling primary coordinates only.
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,
-	    const G4int pdgID,
-	    const G4int turnsTaken,
-	    const G4int beamlineIndex);
-  void FillPolarCoords(const BDSParticleCoordsFull& coords); ///< Calculate polar coords and fill.
+	    const G4int    pdgID,
+	    const G4int    turnsTaken,
+	    const G4int    beamlineIndex,
+	    const G4int    nElectronsIn,
+	    const G4double massIn,
+	    const G4double rigidityIn,
+	    G4bool fillIon = true);
+  void FillPolarCoords(const BDSParticleCoordsFull& coords);  ///< Calculate polar coords and fill.
+  void Fill(const BDSPrimaryVertexInformationV* vertexInfos,
+	    const G4int turnsTaken); ///< Fill a vertex directly.
 #endif
+  void Fill(const BDSOutputROOTEventSampler<U>* other);
 
   /// @{ Calculate and fill calculated variables.
-  inline void FillMass()     {mass     = getMass();}
-  inline void FillRigidity() {rigidity = getRigidity();}
-  inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
-  inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
+  inline void FillIon() {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
   /// @}
-
-  void FillMR();  ///< Calculate and fill mass and rigidity.
-  void FillMRK(); ///< Calculate and fill mass, rigidity, and kinetic energy.
-  void FillMRI(); ///< Calculate and fill mass, rigidity and ion properties.
-  void FillMRIK();///< Calculate and fill mass, rigidity, kinetic energy, and ion properties.
-
+  
   void SetBranchAddress(TTree *);
   virtual void Flush();  ///< Clean Sampler
 
   static BDSOutputROOTEventParticleData* particleTable;
 
-  ClassDef(BDSOutputROOTEventSampler,3);
+  ClassDef(BDSOutputROOTEventSampler,4);
 };
 
 #endif

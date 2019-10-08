@@ -218,6 +218,30 @@ namespace BDS
     typename std::map<K,V>::const_iterator it = m.find(key);
     return it == m.end() ? defaultValue : it->second;
   }
+
+  /// Calculate the event number to stop at given a start and number to do. Saturates
+  /// at the maximum number of an int.
+  G4int VerboseEventStop(G4int verboseEventStart,
+			 G4int verboseEventContinueFor);
+
+  /// Logic of whether this event should be verbose or not. Code here so it's not duplicated.
+  G4bool VerboseThisEvent(G4int eventIndex,
+			  G4int eventStart,
+			  G4int eventStop);
+
+  /// Calculate the rigidity for a total momentum and charge.
+  G4double Rigidity(G4double momentumMagnitude,
+		    G4double charge);
+
+  /// Return true if a string "expression" starts with "prefix".
+  inline G4bool StartsWith(const std::string& expression,
+			   const std::string& prefix) {return expression.size() >= prefix.size() &&
+      expression.rfind(prefix, 0) == 0;}
+
+  /// Return true if a string "expression" ends with "suffix".
+  inline G4bool EndsWith(const std::string& expression,
+			 const std::string& suffix) {return expression.size() >= suffix.size() &&
+      expression.compare(expression.size() - suffix.size(), suffix.size(), suffix) == 0;}
 }
 
 #endif

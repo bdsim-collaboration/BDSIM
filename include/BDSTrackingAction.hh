@@ -32,10 +32,17 @@ class G4Track;
 class BDSTrackingAction: public G4UserTrackingAction
 {
 public:
-  BDSTrackingAction(const G4bool& batchMode,
-		    const G4bool& storeTrajectoryIn,
-		    const G4bool& suppressTransportationStepsIn,
-		    BDSEventAction* eventActionIn);
+  BDSTrackingAction(G4bool batchMode,
+		    G4bool storeTrajectoryIn,
+		    G4bool storeTrajectoryLocalIn,
+		    G4bool storeTrajectoryLinksIn,
+		    G4bool storeTrajectoryIonsIn,
+		    G4bool suppressTransportationStepsIn,
+		    BDSEventAction* eventActionIn,
+		    G4int  verboseSteppingEventStartIn,
+		    G4int  verboseSteppingEventStopIn,
+		    G4bool verboseSteppingPrimaryOnlyIn,
+		    G4int  verboseSteppingLevelIn);
   
   virtual ~BDSTrackingAction(){;}
 
@@ -57,11 +64,22 @@ private:
   /// this from global constants at the beginning as it doesn't change.
   const G4bool storeTrajectory;
 
+  /// @{ Cache of trajectory options.
+  const G4bool storeTrajectoryLocal;
+  const G4bool storeTrajectoryLinks;
+  const G4bool storeTrajectoryIons;
+  /// @}
+  
   /// Cache of whether to suppress transportation steps in each trajectory.
   const G4bool suppressTransportationSteps;
 
   /// Cache of event action to communicate whether a primary stopped in a collimator or not.
   BDSEventAction* eventAction;
+
+  G4int  verboseSteppingEventStart;
+  G4int  verboseSteppingEventStop;
+  G4bool verboseSteppingPrimaryOnly;
+  G4int  verboseSteppingLevel;
 };
 
 #endif

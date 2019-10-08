@@ -25,30 +25,41 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSRandom.hh"
+#include "BDSUtilities.hh"
+
+#ifdef USE_HEPMC3
+#include "BDSHepMC3Reader.hh"
+#endif
+
+#include "parser/beam.h"
 
 #include "CLHEP/Random/Random.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
+#include "G4HEPEvtInterface.hh"
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
-						     BDSParticleDefinition* beamParticleIn):
-  beamParticle(beamParticleIn),
-  ionDefinition(beamParticleIn->IonDefinition()),
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
+						     const GMAD::Beam& beam):
   bunch(bunchIn),
   recreateFile(nullptr),
   eventOffset(0),
-  ionPrimary(beamParticleIn->IsAnIon()),
+  ionPrimary(bunchIn->BeamParticleIsAnIon()),
+  useEventGeneratorFile(false),
   ionCached(false),
-  particleCharge(beamParticleIn->Charge()), // always right even if ion
   oneTurnMap(nullptr)
+#ifdef USE_HEPMC3
+  ,
+  hepMC3Reader(nullptr)
+#endif
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -66,12 +77,29 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleTime(0);
+
+  BDSBunchType egf = BDSBunchType::eventgeneratorfile;
+  useEventGeneratorFile = G4String(beam.distrType).contains(egf.ToString());
+  if (useEventGeneratorFile)
+    {
+#ifdef USE_HEPMC3
+      G4String filename = BDS::GetFullPath(beam.distrFile);
+      hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, bunchIn);
+      if (recreate)
+        {hepMC3Reader->RecreateAdvanceToEvent(eventOffset);}
+#else
+      throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
+#endif
+    }
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
   delete recreateFile;
+#ifdef USE_HEPMC3
+  delete hepMC3Reader;
+#endif
 }
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -99,34 +127,28 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-  G4double mass = beamParticle->Mass();
+#ifdef USE_HEPMC3
+  if (useEventGeneratorFile)
+    {
+      hepMC3Reader->GeneratePrimaryVertex(anEvent);
+      return; // don't need any further steps
+    }
+#endif
 
-  // update particle definition if special case of an ion - can only be done here
-  // do this before call the bunch as it may use particle definition in globals
+  // update particle definition in the special case of an ion - can only be done here
+  // and not before due to Geant4 ion information availability only at run time
   if (ionPrimary && !ionCached)
     {
-      G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-      G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
-							      ionDefinition->A(),
-							      ionDefinition->ExcitationEnergy());
-      beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
+      bunch->UpdateIonDefinition();
       ionCached = true;
     }
 
-  // continue generating particles until positive finite kinetic energy.
-  G4int n = 0;
+  // generate set of coordinates - internally the bunch may try many times to generate
+  // coordinates with total energy above the rest mass and may throw an exception if
+  // it can't
   BDSParticleCoordsFullGlobal coords;
   try
-    {
-      while (n < 100) // prevent infinite loops
-	{
-	  ++n;
-	  coords = bunch->GetNextParticle();
-	  
-	  if ((coords.local.totalEnergy - mass) > 0)
-	    {break;}
-	}
-    }
+    {coords = bunch->GetNextParticleValid();}
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
       // could be because of user input file
@@ -138,41 +160,25 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   if (oneTurnMap)
     {
-      G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
+      G4bool offsetSAndOnFirstTurn = bunch->UseCurvilinearTransform();
       oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
     }
-
-  // set particle definition
-  // either from input bunch file, an ion, or regular beam particle
-  G4ParticleDefinition* particleDef = beamParticle->ParticleDefinition();
-  if (bunch->ParticleCanBeDifferentFromBeam())
-    {
-      const BDSParticleDefinition* particleToUse = bunch->ParticleDefinition();
-      if (particleToUse->IsAnIon())
-	{
-	  BDSIonDefinition* id = particleToUse->IonDefinition();
-	  G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-	  particleDef = ionTable->GetIon(id->Z(), id->A(), id->ExcitationEnergy());
-	}
-      else
-	{particleDef = particleToUse->ParticleDefinition();}
-      // update charge as always set explicitly with particleGun
-      // note for ions, this may be different from particleDef->GetPDGCharge
-      particleCharge = beamParticle->Charge();
-    }
-
-  particleGun->SetParticleDefinition(particleDef);
-
+  
+  particleGun->SetParticleDefinition(bunch->ParticleDefinition()->ParticleDefinition());
+  
   // always update the charge - ok for normal particles; fixes purposively specified ions.
-  particleGun->SetParticleCharge(particleCharge);
+  particleGun->SetParticleCharge(bunch->ParticleDefinition()->Charge());
 
   // check that kinetic energy is positive and finite anyway and abort if not.
-  G4double EK = coords.local.totalEnergy - particleDef->GetPDGMass();
-  if(EK <= 0)
+  // get the mass from the beamParticle as this takes into account any electrons
+  G4double EK = coords.local.totalEnergy - bunch->ParticleDefinition()->Mass();
+  if (EK <= 0)
     {
-      G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! "
+      G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
+	     << " - Particle kinetic energy smaller than 0! "
 	     << "This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
+      return;
     }
 
   // write initial particle position and momentum
@@ -213,7 +219,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, particleCharge));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
+							     bunch->ParticleDefinition()));
 
 #ifdef BDSDEBUG
   vertex->Print();

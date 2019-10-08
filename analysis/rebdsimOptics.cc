@@ -33,11 +33,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage()
 { 
-  std::cout << "usage: rebdsimOptics <dataFile> <outputfile> <--emittanceOnFly>" << std::endl;
-  std::cout << " <datafile>   - root file to operate on ie run1.root"            << std::endl;
-  std::cout << " <outputfile> - name of output file ie optics.dat"               << std::endl;
-  std::cout << " --emittanceOnFly - calculate emittance per sampler (optional)"  << std::endl;
-  std::cout << "Quotes should be used if * is used in the input file name."      << std::endl;
+  std::cout << "usage: rebdsimOptics <dataFile> <outputfile> <--emittanceOnFly>"    << std::endl;
+  std::cout << " <datafile>   - root file to operate on ie run1.root"               << std::endl;
+  std::cout << " <outputfile> - name of output file ie optics.dat"                  << std::endl;
+  std::cout << " --emittanceOnTheFly - calculate emittance per sampler (optional)"  << std::endl;
+  std::cout << "Quotes should be used if * is used in the input file name."         << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -56,15 +56,25 @@ int main(int argc, char* argv[])
   if (argc == 4)
     {
       std::string emittanceOnFlyS = std::string(argv[3]);
-      if (emittanceOnFlyS == "--emittanceOnFly")
+      if (emittanceOnFlyS == "--emittanceOnTheFly" || emittanceOnFlyS == "--emittanceOnFly")
 	{
 	  emittanceOnFly = true;
 	  std::cout << "Calculating emittance per sampler" << std::endl;
 	}
+      else
+	{
+	  std::cout << "Unknown option \"" << argv[3] << "\"" << std::endl;
+	  usage();
+	  exit(1);
+	}
     }
 
-  DataLoader dl = DataLoader(inputFileName, false, true);
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(),
+  DataLoader* dl = nullptr;
+  try
+    {dl = new DataLoader(inputFileName, false, true);}
+  catch (const std::string& e)
+    {std::cerr << e << std::endl; exit(1);}
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
 						 false, true, false, -1, emittanceOnFly);
   evtAnalysis->Execute();
 
@@ -84,12 +94,13 @@ int main(int argc, char* argv[])
   evtAnalysis->Write(outputFile);
 
   // clone model tree for nice built in optics plotting
-  auto modelTree = dl.GetModelTree();
+  auto modelTree = dl->GetModelTree();
   auto newTree   = modelTree->CloneTree();
   newTree->Write("", TObject::kOverwrite);
   
   outputFile->Close();
   delete outputFile;
+  delete dl;
   
   return 0;
 }

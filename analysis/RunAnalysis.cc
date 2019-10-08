@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramMeanFromFile.hh"
+#include "rebdsim.hh"  // for debug __METHOD_NAME__
+#include "Run.hh"
 #include "RunAnalysis.hh"
-#include "rebdsim.hh"
 
 #include "TChain.h"
 
@@ -53,9 +54,9 @@ void RunAnalysis::Process()
       chain->GetEntry(i);
       
       if (i == 0)
-	{histoSum = new HistogramMeanFromFile(run->histos);}
+	{histoSum = new HistogramMeanFromFile(run->Histos);}
       else
-	{histoSum->Accumulate(run->histos);}
+	{histoSum->Accumulate(run->Histos);}
 
       // per event histograms
       AccumulatePerEntryHistograms(i);

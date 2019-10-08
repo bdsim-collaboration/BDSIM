@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSUtilities.hh"
 
@@ -112,7 +113,7 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
   //  z += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
   z = 0;
 
-  while(true)
+  while (true)
   {
     G4double dx  = xMax  * (1 - 2 * flatGen->shoot());
     G4double dy  = yMax  * (1 - 2 * flatGen->shoot());
@@ -176,7 +177,7 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
 	G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
 #endif
 	// reject
-	if(flatGen->shoot() > wx && flatGen->shoot() > wy)
+	if (flatGen->shoot() > wx && flatGen->shoot() > wy)
 	  {continue;}
 	
 	// add to reference orbit 
@@ -203,9 +204,9 @@ void BDSBunchHalo::CheckParameters()
   BDSBunch::CheckParameters();
   
   if (emitX <= 0)
-    {G4cerr << __METHOD_NAME__ << "emitx must be finite!" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "emitx must be finite!");}
   if (emitY <= 0)
-    {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "emity must be finite!");}
   
   std::vector<G4String> weightFunctions = {"", "one", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
@@ -215,18 +216,18 @@ void BDSBunchHalo::CheckParameters()
       G4cout << "Available weight functions are:" << G4endl;
       for (const auto& w : weightFunctions)
         {G4cout << w << G4endl;}
-      exit(1);
+      throw BDSException(__METHOD_END__, "");
     }
   
   if (haloNSigmaXInner <= 0)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner <= 0" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
   
   if (haloNSigmaYInner <= 0)
-    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner <= 0" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "haloYSigmaXInner <= 0");}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner cannot be less than haloNSigmaXOuter");}
   
   if (haloNSigmaYInner > haloNSigmaYOuter)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);} 
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner cannot be less than haloNSigmaYOuter");} 
 }

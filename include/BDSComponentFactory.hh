@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
@@ -89,11 +90,12 @@ public:
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
-  BDSAcceleratorComponent* CreateTerminator();
+  BDSAcceleratorComponent* CreateTerminator(G4double witdth);
 
   /// Public creation for object that accounts for slight offset between ends of a ring.
   /// The z component of the delta three vector is used for the length of the teleporter.
   BDSAcceleratorComponent* CreateTeleporter(const G4double teleporterLength,
+					    const G4double teleporterWidth,
 					    const G4Transform3D transformIn);
 
   /// Create the tilt and offset information object by inspecting the parser element
@@ -235,11 +237,18 @@ private:
   BDSAcceleratorComponent* CreateRMatrix();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     const BDSMagnetStrength* stIn,
-					     G4String name);
+					     G4String name,
+					     BDSIntegratorType intType = BDSIntegratorType::rmatrixthin,
+					     BDSFieldType fieldType = BDSFieldType::rmatrix,
+					     G4double beamPipeRadius = 0);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     G4String name);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
+  BDSAcceleratorComponent* CreateCavityFringe(G4double angleIn,
+	                     const BDSMagnetStrength* stIn,
+	                     G4String name,
+	                     G4double irisRadius);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
@@ -287,11 +296,15 @@ private:
   /// Will always return a unique object that's not owned by this class.
   BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* el,
 						  G4double             frequency) const;
-  
-  /// Utility function to prepare field strength object for rf cavity.
-  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
-					   G4double currentArcLength) const;
 
+  /// Utility function to prepare field strength object for rf cavity. This takes a pointer
+  /// for both incoming and outgoing strengths that this function will allocate by reference.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
+					   G4double cavityLength,
+					   G4double currentArcLength,
+					   BDSMagnetStrength*& fringeIn,
+					   BDSMagnetStrength*& fringeOut) const;
+  
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.

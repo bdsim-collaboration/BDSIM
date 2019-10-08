@@ -172,6 +172,8 @@ int BDSOutputROOTEventParticleData::IonA(const int& pdgID) const
       else
 	{return 0;}
     }
+  else if (pdgID == 2212)
+    {return 1;}
   else
     {return 0;}
 }
@@ -186,6 +188,8 @@ int BDSOutputROOTEventParticleData::IonZ(const int& pdgID) const
       else
 	{return 0;}
     }
+  else if (pdgID == 2212)
+    {return 1;}
   else
     {return 0;}
 }

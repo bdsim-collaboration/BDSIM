@@ -30,6 +30,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+class BDSParticleCoordsFull;
+class BDSParticleCoordsFullGlobal;
+
 /**
  * @brief A bunch distribution that reads a user specified column file.
  * 
@@ -55,6 +58,12 @@ public:
   /// penalty is on the order of 1 minute for ~100k events.
   virtual void RecreateAdvanceToEvent(G4int eventOffset);
 
+  /// Override base class method to find valid particle over rest mass. For a bunch file
+  /// Just return one line each time. If it doesn't work as a particle, the event is
+  /// aborted and the user has a 1:1 representation of particle coordinates to events
+  /// in the output.
+  virtual BDSParticleCoordsFullGlobal GetNextParticleValid(G4int maxTries);
+
   /// Get the next particle.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   
@@ -62,9 +71,11 @@ private:
   G4String distrFile;     ///< Bunch file.
   G4String distrFilePath; ///< Bunch file including absolute path.
   G4String bunchFormat;   ///< Format of the file.
-  G4int    nlinesIgnore;  ///< Number of lines that will be ignored after each particle (default 0).
+  G4int    nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
+  G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
+  G4bool   printedOutFirstTime; ///< Whether we've printed out opening the file the first time.
 
   void ParseFileFormat(); ///< Parse the column tokens and units factors
   void OpenBunchFile();   ///< Open the file and check it's open.
@@ -91,18 +102,24 @@ private:
   /// List of variables to parse on each line.
   std::list<Doublet> fields;
 
-  /// @{ Utility function to parse variable and unit string.
+  template <typename U>
+  void CheckAndParseUnits(G4String name, G4String rest, U unitParser);
+
+  /// Print out warning we're looping and reopen file from beginning. Includes skipping
+  /// lines. Put in a function as used in multiple places.
+  void EndOfFileAction();
+
+  G4double ffact; ///< Cache of flip factor from global constants.
+};
+
+namespace BDS
+{
+  /// @{ Utility function to parse variable and unit string.  These
+  /// are meant for passing to CheckAndParseUnits.
   G4double ParseEnergyUnit(const G4String& fmt);
   G4double ParseLengthUnit(const G4String& fmt);
   G4double ParseAngleUnit(const G4String& fmt);
   G4double ParseTimeUnit(const G4String& fmt);
   /// @}
-  
-  /// Print out warning we're looping and reopen file from beginning. Includes skipping
-  /// lines. Put in a function as used in multiple places.
-  void EndOfFileAction();
-  
-  G4double ffact; ///< Cache of flip factor from global constants.
-};
-
+}
 #endif

@@ -171,9 +171,13 @@ set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend-nonvalid ${gmadBinary} extendnonvalid.gmad)
 set_tests_properties(gmad-extend-nonvalid PROPERTIES WILL_FAIL 1)
 
+# test units
+add_test(gmad-units ${gmadBinary} units.gmad)
+
 # test objects
 add_test(gmad-aperture           ${gmadBinary} aperture.gmad)
 add_test(gmad-atom               ${gmadBinary} atom.gmad)
+add_test(gmad-blm                ${gmadBinary} blm.gmad)
 add_test(gmad-cavitymodel        ${gmadBinary} cavitymodel.gmad)
 add_test(gmad-colour             ${gmadBinary} colour.gmad)
 add_test(gmad-crystal            ${gmadBinary} crystal.gmad)
@@ -189,6 +193,7 @@ add_test(gmad-tunnel             ${gmadBinary} tunnel.gmad)
 # test object extensions
 add_test(gmad-extend-aperture         ${gmadBinary} extendaperture.gmad)
 add_test(gmad-extend-atom             ${gmadBinary} extendatom.gmad)
+add_test(gmad-extend-blm              ${gmadBinary} extendblm.gmad)
 add_test(gmad-extend-cavitymodel      ${gmadBinary} extendcavitymodel.gmad)
 add_test(gmad-extend-colour           ${gmadBinary} extendcolour.gmad)
 add_test(gmad-extend-crystal          ${gmadBinary} extendcrystal.gmad)

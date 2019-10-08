@@ -44,6 +44,7 @@ namespace GMAD
     ///@{ Parameter for output format
     std::string outputFileName;
     std::string outputFormat;
+    bool        outputDoublePrecision;
     ///@}
   
     ///@{ Parameter for survey
@@ -52,18 +53,33 @@ namespace GMAD
     ///@}
   
     bool batch; ///< Flag for batch / interactive mode
-    
-    ///@{ Geant4 verbose levels
+
+    // verbosity here done in hierarchy of simulation - overall, run, event
+    // track, step
+    /// General verbosity.
     bool verbose;
-    bool verboseEvent;
-    bool verboseStep;
-    int  verboseEventNumber;
-    
+
+    /// Run level verbosity.
     int  verboseRunLevel;
-    int  verboseEventLevel;
-    int  verboseTrackingLevel;
-    int  verboseSteppingLevel;
-    ///@}
+
+    /// @{ Event level verbosity.
+    bool verboseEventBDSIM;      // for bdsim print out
+    int  verboseEventLevel;      // for geant4 print out
+    int  verboseEventStart;
+    int  verboseEventContinueFor;
+    /// @}
+    
+    int  verboseTrackingLevel;  ///< Tracking verbosity.
+
+    /// @{ Stepping level verbosity.
+    bool verboseSteppingBDSIM;  // for bdsim print out
+    int  verboseSteppingLevel;  // for geant4 print out
+    int  verboseSteppingEventStart;
+    int  verboseSteppingEventContinueFor;
+    bool verboseSteppingPrimaryOnly;
+    /// @}
+    
+    int  verboseImportanceSampling; ////< Verbosity about importance sampling.
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
@@ -146,6 +162,7 @@ namespace GMAD
 
     bool      yokeFields;
     bool        includeFringeFields;
+    bool        includeFringeFieldsCavities;
 
     ///@{ default beampipe parameters
     double      beampipeThickness;
@@ -164,6 +181,7 @@ namespace GMAD
     std::string worldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
+    // see verboseImportance
 
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
@@ -190,11 +208,6 @@ namespace GMAD
     
     // sampler options
     double   samplerDiameter;
-
-    ///BLM geometry
-    double   blmRad;
-    double   blmLength;
-    bool     sensitiveBLMs;
 
     ///@{ Physics processes
     bool     turnOnOpticalAbsorption;
@@ -258,9 +271,13 @@ namespace GMAD
     
     // output related options
     int         numberOfEventsPerNtuple;
-    
+
+    bool        storeApertureImpacts;
+    bool        storeApertureImpactsIons;
+    bool        storeApertureImpactsAll;
     bool        storeCollimatorInfo;
-    bool        storeCollimatorLinks;
+    bool        storeCollimatorHits;
+    bool        storeCollimatorHitsLinks;
     bool        storeCollimatorHitsIons;
     bool        storeCollimatorHitsAll;
     bool        storeEloss;
@@ -288,6 +305,11 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
+    bool        storeTrajectoryTransportationSteps;
+    bool        trajNoTransportation;  ///< kept only for backwards compatibility.
+    bool        storeTrajectoryLocal;
+    bool        storeTrajectoryLinks;
+    bool        storeTrajectoryIons;
 
     bool        storeSamplerAll;
     bool        storeSamplerPolarCoords;
@@ -300,7 +322,6 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
-    bool        trajNoTransportation;
 
     bool        writePrimaries;
     bool        storeModel;
@@ -311,6 +332,7 @@ namespace GMAD
 
     double   printFractionEvents;
     double   printFractionTurns;
+    bool     printPhysicsProcesses;
 
     // visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation

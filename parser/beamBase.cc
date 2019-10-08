@@ -35,6 +35,7 @@ BeamBase::BeamBase()
   distrFileFormat      = "";
   matchDistrFileLength = true;  
   nlinesIgnore         = 0;
+  nlinesSkip           = 0;
   
   X0  = 0.0;
   Y0  = 0.0;
@@ -45,6 +46,7 @@ BeamBase::BeamBase()
   Zp0 = 0.0;
   T0  = 0.0;
   E0  = 0.0;
+  tilt   = 0.0;
   sigmaT = 0.0;
   sigmaE = 0.0;
 

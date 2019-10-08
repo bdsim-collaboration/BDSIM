@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSixTrack.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
@@ -36,7 +37,7 @@ BDSBunchSixTrack::BDSBunchSixTrack()
 
 BDSBunchSixTrack::~BDSBunchSixTrack()
 {
-  for(auto i : sixtrackData)
+  for (auto i : sixtrackData)
     {delete i;}
 }
 
@@ -81,10 +82,7 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   std::ifstream infile(fileName.c_str());
 
   if (!infile)
-    {
-      G4cout << __METHOD_NAME__ << "\"" << fileName << "\" file doesn't exist - exiting as no input" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"" + fileName + "\" file doesn't exist - exiting as no input");}
   else
     {G4cout << __METHOD_NAME__ << "Reading as SixTrack input " << fileName << "\"" << G4endl;}
   
@@ -101,7 +99,7 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   double turns = 0.0;
 
   // read single line 
-  while(infile >> sixtrackParticleID >> turn >> s >> x >> xp >> y >> yp >> en >> type >> turns)
+  while (infile >> sixtrackParticleID >> turn >> s >> x >> xp >> y >> yp >> en >> type >> turns)
     {
       double* values =  new double[10];
     

@@ -126,6 +126,41 @@ consider the following points to reduce output data size:
 * :code:`sample ,all;` is convenient, especially at the start of a study, but you should only
   attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
 
+
+Collimator Specific Data
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Several options exist to allow extra collimator-specific information to be stored. Why collimators?
+These are usually the devices intended to first intercept the beam so it is highly useful to
+understand the history of each event with respect to the collimators. By default no extra collimator
+information is stored. The options allow for increasingly detailed information to be stored. These
+are listed in increasing amount of data below.
+
+0) No collimator information - the default option.
+
+1) :code:`option, storeCollimatorInfo=1;` is used. Collimator geometry information is stored in the Model
+   tree of the output. Per-collimator structures are created in the Event tree with a Boolean flag
+   called `primaryInteracted` and `primaryStopped` for that collimator for each event. Additionally,
+   the `totalEnergyDeposited` for that collimator (including weights) is filled. In the event
+   summary, the `nCollimatorsInteracted` and `primaryAbsorbedInCollimator` variables are also filled.
+   No collimator hits are stored.
+   
+2) :code:`option, storeCollimatorInfo=1, storeCollimatorHits=1;` is used. Similar to scenario 1 but in
+   addition 'hits' with the coordinates are created for each collimator for primary particles. Note,
+   that a primary particle can create more than one hit (which is a snapshot of a step in the collimator)
+   on a single pass, and in a circular model the primary may hit on many turns.
+   
+3) :code:`option, storeCollimatorInfo=1, storeCollimatorHitsIons=1;` is used. Similar to scenario 2 but hits
+   are generated for secondary ion fragments in addition to any primary particles. This is useful for
+   ion collimation where ion fragments may carry significant energy.
+   
+4) In combination with 1, 2 or 3, :code:`option, storeCollimatorHitsLinks=1;` may be used that stores the extra
+   variables `charge`, `mass`, `rigidity` and `kineticEnergy` per hit in the collimator. These are added
+   for whatever collimator hits are generated according to the other options.
+
+
+Generally, store as little as is required. This is why several options are given.
+
 Output Files
 ------------
 
@@ -580,10 +615,12 @@ different value per-event run in BDSIM.
 +---------------------------+----------------------------------+--------------------------------------------------+
 | **Branch Name**           | **Type**                         | **Description**                                  |
 +===========================+==================================+==================================================+
-| Summary (\+)              | BDSOutputROOTEventInfo           | Per-event summary information                    |
+| Summary (\+)              | BDSOutputROOTEventInfo           | Per-event summary information.                   |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | Primary                   | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
-|                           |                                  | simulation (before tracking)                     |
+|                           |                                  | simulation (before tracking). This includes all  |
+|                           |                                  | extra sampler variables irrespective of the      |
+|                           |                                  | options that control the optional variables.     |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | PrimaryGlobal             | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
 |                           |                                  | particle. These are the same as those in         |
@@ -594,10 +631,10 @@ different value per-event run in BDSIM.
 |                           |                                  | accelerator material.                            |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | ElossVacuum (\*)          | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
-|                           |                                  | accelerator vacuum only                          |
+|                           |                                  | accelerator vacuum only.                         |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | ElossTunnel (\*)          | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
-|                           |                                  | material                                         |
+|                           |                                  | material.                                        |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | ElossWorld (\*)           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
 |                           |                                  | volume - by default the air.                     |
@@ -612,17 +649,22 @@ different value per-event run in BDSIM.
 | PrimaryFirstHit           | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
 |                           |                                  | step on the primary trajectory that wasn't due   |
 |                           |                                  | to tracking, i.e. the first interaction where a  |
-|                           |                                  | physics process was induced                      |
+|                           |                                  | physics process was induced.                     |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | PrimaryLastHit            | BDSOutputROOTEventLoss           | The end point of the primary trajectory. If S    |
 |                           |                                  | is -1 (m) it means the particle finished away    |
 |                           |                                  | from the beam line where there was no            |
 |                           |                                  | curvilinear coordinate system present.           |
 +---------------------------+----------------------------------+--------------------------------------------------+
+| ApertureImpacts (\*\*\*)  | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
+|                           |                                  | particles (primry only by default) exit the      |
+|                           |                                  | aperture of the machine. Note, the same particle |
+|                           |                                  | can pass through the aperture multiple times.    |
++---------------------------+----------------------------------+--------------------------------------------------+
 | Trajectory                | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
 |                           |                                  | took and the associated physics processes        |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| Histos                    | BDSOutputROOTEventHistograms     | Per-event histograms in vectors                  |
+| Histos                    | BDSOutputROOTEventHistograms     | Per-event histograms in vectors.                 |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | xxxxx                     | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
 |                           |                                  | sampler (here named 'xxxxx') that contains a     |
@@ -641,7 +683,10 @@ different value per-event run in BDSIM.
   or importance sampling is used.
 * (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
   option :code:`storeElossWorld`.
-* (\*\*) COLL_xxxx is only added per collimator when the option :code:`storeCollimatorInfo` is used.
+* (\*\*) COLL_xxxx is only added per collimator when one of the options :code:`storeCollimatorInfo`,
+  :code:`storeCollimatorHits`, :code:`storeCollimatorHitsIons`, :code:`storeCollimatorHitsAll` is used.
+* (\*\*\*) ApertureImpacts is an optional branch that only exists in the output when the `storeApertureImpacts`
+  option is turned on.
 
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
@@ -652,6 +697,55 @@ The types and names of the contents of each class can be found in the header fil
 	     and the other samplers that use floating point precision numbers (unless the ROOTDOUBLE
 	     CMake option is used at compilation time for double precision in the samplers).
 
+
+BDSOutputROOTEventAperture
+**************************
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++------------------------+----------------------+-----------------------------------------------------------+
+|  **Variable**          | **Type**             |  **Description**                                          |
++========================+======================+===========================================================+
+| n                      | int                  | The number of aperture impacts for this event.            |
++------------------------+----------------------+-----------------------------------------------------------+
+| energy                 | std::vector<float>   | The total energy of each particle as it hit.              |
++------------------------+----------------------+-----------------------------------------------------------+
+| S                      | std::vector<double>  | The (global) curvilinear S position (m) of the hit.       |
++------------------------+----------------------+-----------------------------------------------------------+
+| weight                 | std::vector<float>   | The associated statistical weight.                        |
++------------------------+----------------------+-----------------------------------------------------------+
+| isPrimary              | std::vector<bool>    | Whether each hit for this event was caused by a primary.  |
++------------------------+----------------------+-----------------------------------------------------------+
+| firstPrimaryImpact     | std::vector<bool>    | Whether the hit is the first primary one for this event.  |
++------------------------+----------------------+-----------------------------------------------------------+
+| partID                 | std::vector<int>     | PDG particld ID of the particle.                          |
++------------------------+----------------------+-----------------------------------------------------------+
+| turn                   | std::vector<int>     | Turn number (1-counting) the hit happened on.             |
++------------------------+----------------------+-----------------------------------------------------------+
+| x                      | std::vector<float>   | Local x of hit (m).                                       |
++------------------------+----------------------+-----------------------------------------------------------+
+| y                      | std::vector<float>   | Local y of hit (m).                                       |
++------------------------+----------------------+-----------------------------------------------------------+
+| xp                     | std::vector<float>   | Local xp of hit (x component of unit momentum vector).    |
++------------------------+----------------------+-----------------------------------------------------------+
+| yp                     | std::vector<float>   | Local yp of hit (y component of unit momentum vector).    |
++------------------------+----------------------+-----------------------------------------------------------+
+| T                      | std::vector<float>   | Global time of hit (ns).                                  |
++------------------------+----------------------+-----------------------------------------------------------+
+| kineticEnergy          | std::vector<float>   | Kinetic energy of particle as it hit.                     |
++------------------------+----------------------+-----------------------------------------------------------+
+| isIon                  | std::vector<bool>    | Whether the hit is caused by an ion.                      |
++------------------------+----------------------+-----------------------------------------------------------+
+| ionA                   | std::vector<int>     | Ion atomic mass number.                                   |
++------------------------+----------------------+-----------------------------------------------------------+
+| ionZ                   | std::vector<int>     | Ion atomic number.                                        |
++------------------------+----------------------+-----------------------------------------------------------+
+| trackID                | std::vector<int>     | Track ID number of the particle that hit.                 |
++------------------------+----------------------+-----------------------------------------------------------+
+| parentID               | std::vector<int>     | Track ID number of the parent particle.                   |
++------------------------+----------------------+-----------------------------------------------------------+
+| modelID                | std::vector<int>     | Index in beam line of component hit (0-counting).         |
++------------------------+----------------------+-----------------------------------------------------------+
 
 BDSOutputROOTEventInfo
 **********************
@@ -665,7 +759,9 @@ BDSOutputROOTEventInfo
 +-----------------------------+-------------------+---------------------------------------------+
 | stopTime                    | time_t            | Time stamp at end of event                  |
 +-----------------------------+-------------------+---------------------------------------------+
-| duration                    | float             | Duration of event in seconds                |
+| duration                    | float             | Duration (wall time) of event in seconds    |
++-----------------------------+-------------------+---------------------------------------------+
+| cpuTime                     | float             | Duration (CPU time) of event in seconds     |
 +-----------------------------+-------------------+---------------------------------------------+
 | seedStateAtStart            | std::string       | State of random number generator at the     |
 |                             |                   | start of the event as provided by CLHEP     |
@@ -749,7 +845,7 @@ Extra information can be recorded but this typically dominates the output file s
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | energy               | std::vector<float>    | Vector of energy of each piece of energy deposition               |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| S                    | std::vector<float>    | Corresponding curvilinear S-position (m) of energy deposition     |
+| S                    | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition     |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | weight               | std::vector<float>    | Corresponding weight                                              |
 +----------------------+-----------------------+-------------------------------------------------------------------+
@@ -848,6 +944,23 @@ Each entry in the vectors in BDSOutputROOTEventTrajectory represents one step al
 particle trajectory with a 'pre-step' and 'post-step' point - information associated with
 the start and end of that step.
 
+* The outermost vector is a vector of trajectories for that event. i.e. a trajectory of a proton,
+  next a trajectory of a gamma
+* The innermost vector is a vector of the step points along that trajectory
+
+Examples: ::
+
+  energies[][0]
+
+(above) This is the total energy of the first point of all trajectories in this event.  ::
+
+  energies[0][]
+
+This is the first trajectory for each event and the total energy of all steps of that trajectory.
+
+* These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
+  :code:`[]` means `all`.
+
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -886,14 +999,50 @@ the start and end of that step.
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trajectories             | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
-|                          |                                     | from G4Track->GetPosition()                             |
+| XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
+|                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| momenta                  | std::vector<std::vector<TVector3>>  | Momentum of the track (GeV)                             |
+| S                        | std::vector<std::vector<double>>    | Curvilinear S of the trajectory point (m)               |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the track - global Cartesian (GeV)          |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| T                        | std::vector<std::vector<double>>    | Global time of the trajectory point (ns)                |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
+|                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle                                      |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle (GeV)                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle                                        |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| rigidity (\**)           | std::vector<std::vector<double>>    | Rigidity of the particle (Tm)                           |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| isIon (\***)             | std::vector<std::vector<bool>>      | Whether it's an ion or not                              |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| ionA (\***)              | std::vector<std::vector<int>>       | Atomic mass number. 0 for non-nuclei                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| ionZ (\***)              | std::vector<std::vector<int>>       | Atomic number. 0 for non-nuclei                         |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| nElectrons (\****)       | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element the trajectory is in|
 |                          |                                     | (-1 if not inside an accelerator component)             |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
+
+.. note:: (\*) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLocal=1;`
+	  as described in :ref:`bdsim-options-output`. Note, these may have default value (0 or -1) in some cases where
+	  the curvilinear coordinate system is not available - e.g. typically greater than 2.5m from the beam line.
+.. note:: (\**) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLinks=1;`
+	  as described in :ref:`bdsim-options-output`.
+.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIons=1;`
+	  as described in :ref:`bdsim-options-output`.
+
 
 In addition, some maps are stored to link the entries together conceptually.
 
@@ -991,6 +1140,13 @@ doubles the output file size.
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | rp (\*)         | std::vector<T>    | Vector of the radius calculated from xp and yp                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
+| phi (\*)        | std::vector<T>    | Vector of angle of x and y (calculated from arctan(y/x)                  |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| phip (\*)       | std::vector<T>    | Vector of angle of xp and yp (calcualted from arctan(yp/xp)              |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| theta (\*)      | std::vector<T>    | Vector of the angle of the particle from the local z axis (calculated    |
+|                 |                   | from arctan(rp/zp)                                                       |
++-----------------+-------------------+--------------------------------------------------------------------------+
 | charge (\*)     | std::vector<int>  | Vector of the PDG charge of the particle for each hit                    |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | mass (\*)       | std::vector<T>    | Vector of the PDG mass of the particle for each hit (GeV)                |
@@ -1002,6 +1158,8 @@ doubles the output file size.
 | ionA (\*)       | std::vector<int>  | Vector of the atomic mass number. 0 for non-nuclei.                      |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | ionZ (\*)       | std::vector<int>  | Vector of the atomic number. 0 for non-nuclei.                           |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| nElectrons(\*)  | std::vector<int>  | Number of bound electrons if an ion. 0 otherwise.                        |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 
 .. note:: (\*) These are not stored by default (i.e. the vectors exist but are empty). If these

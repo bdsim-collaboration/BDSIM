@@ -1,4 +1,4 @@
-/* 
+/*
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2019.
 
@@ -36,17 +36,34 @@ OptionsBase::OptionsBase()
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
+#ifdef __ROOTDOUBLE__
+  outputDoublePrecision = true;
+#else
+  outputDoublePrecision = false;
+#endif
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;
+  
   verbose               = false;
-  verboseEvent          = false;
-  verboseStep           = false;
-  verboseEventNumber    = -1;
+  
   verboseRunLevel       = 0;
-  verboseEventLevel     = 0;
+
+  verboseEventBDSIM       = false;
+  verboseEventLevel       = 0;
+  verboseEventStart       = -1;
+  verboseEventContinueFor = -1;
+  
   verboseTrackingLevel  = 0;
-  verboseSteppingLevel  = 0;
+  
+  verboseSteppingBDSIM            = false;
+  verboseSteppingLevel            = 0;
+  verboseSteppingEventStart       = -1;
+  verboseSteppingEventContinueFor = -1;
+  verboseSteppingPrimaryOnly      = false;
+  
+  verboseImportanceSampling = 0;
+  
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;
@@ -109,12 +126,13 @@ OptionsBase::OptionsBase()
   ignoreLocalMagnetGeometry  = 0;
 
   preprocessGDML       = true;
-  preprocessGDMLSchema = false;
+  preprocessGDMLSchema = true;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
   includeFringeFields  = true;
+  includeFringeFieldsCavities = true;
 
   yokeFields           = true;
   
@@ -158,11 +176,6 @@ OptionsBase::OptionsBase()
   
   // samplers
   samplerDiameter     = 5; // m
-
-  // beam loss monitors geometry
-  blmRad                   = 0.05;
-  blmLength                = 0.18;
-  sensitiveBLMs            = true;
 
   // physics processes
   turnOnOpticalAbsorption  = true;
@@ -224,9 +237,13 @@ OptionsBase::OptionsBase()
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  
+
+  storeApertureImpacts       = true;
+  storeApertureImpactsIons   = false;
+  storeApertureImpactsAll    = false;
   storeCollimatorInfo        = false;
-  storeCollimatorLinks       = false;
+  storeCollimatorHits        = false;
+  storeCollimatorHitsLinks   = false;
   storeCollimatorHitsIons    = false;
   storeCollimatorHitsAll     = false;
   storeEloss                 = true;
@@ -254,6 +271,11 @@ OptionsBase::OptionsBase()
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  storeTrajectoryTransportationSteps = true;
+  trajNoTransportation               = false;
+  storeTrajectoryLocal           = false;
+  storeTrajectoryLinks           = false;
+  storeTrajectoryIons            = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -266,7 +288,6 @@ OptionsBase::OptionsBase()
   trajCutGTZ               = 1e99;  // minimum z position, so large default value
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
-  trajNoTransportation     = false;
   
   writePrimaries           = true;
   storeModel               = true;
@@ -275,8 +296,9 @@ OptionsBase::OptionsBase()
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
 
-  printFractionEvents = 0.1;
-  printFractionTurns  = 0.2;
+  printFractionEvents   = 0.1;
+  printFractionTurns    = 0.2;
+  printPhysicsProcesses = false;
   
   // visualisation
   nSegmentsPerCircle       = 50;
@@ -285,12 +307,12 @@ OptionsBase::OptionsBase()
   nbinsx = 1;
   nbinsy = 1;
   nbinsz = 1;
-  xmin   = 0;
-  xmax   = 0;
-  ymin   = 0;
-  ymax   = 0;
+  xmin   = -0.5;
+  xmax   = 0.5;
+  ymin   = -0.5;
+  ymax   = 0.5;
   zmin   = 0;
-  zmax   = 0;
+  zmax   = 1;
   useScoringMap = false;
 }
 

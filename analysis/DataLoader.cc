@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Run.hh"
 
 #include "BDSDebug.hh"
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -52,7 +53,8 @@ DataLoader::DataLoader(std::string fileName,
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn),
   backwardsCompatible(backwardsCompatibleIn),
-  dataVersion(4)
+  g4dChain(nullptr),
+  dataVersion(5)
 {
   CommonCtor(fileName);
 }
@@ -60,6 +62,7 @@ DataLoader::DataLoader(std::string fileName,
 DataLoader::~DataLoader()
 {
   delete hea;
+  delete g4d;
   delete bea;
   delete opt;
   delete mod;
@@ -108,6 +111,7 @@ void DataLoader::CommonCtor(std::string fileName)
 #else
       BDSOutputROOTEventSampler<float>::particleTable = par->particleData;
       BDSOutputROOTEventCollimator::particleTable = par->particleData;
+      BDSOutputROOTEventAperture::particleTable = par->particleData;
 #endif
     }
 }
@@ -204,20 +208,16 @@ void DataLoader::BuildEventBranchNameList()
       std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
       exit(1);
     }
-
-  // We don't need to prepare a vector of samplers that will be set branch on
-  // if we're not going to process the samplers.
-  if (!processSamplers)
-    {return;}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
     {return;}
 
-  Model* modTemporary = new Model();
+  Model* modTemporary = new Model(false, dataVersion);
   modTemporary->SetBranchAddress(mt);
   mt->GetEntry(0);
-  samplerNames    = modTemporary->SamplerNames(); // copy sampler names out
+  if (processSamplers)
+    {samplerNames = modTemporary->SamplerNames();} // copy sampler names out
   // collimator names was only added in data version 4 - can leave as empty vector
   if (dataVersion > 3)
     {collimatorNames = modTemporary->CollimatorNames();}

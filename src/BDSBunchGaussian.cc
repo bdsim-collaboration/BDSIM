@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchGaussian.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "parser/beam.h"
@@ -54,7 +55,9 @@ BDSBunchGaussian::BDSBunchGaussian():
   BDSBunch(),
   meansGM(CLHEP::HepVector(6)),
   sigmaGM(CLHEP::HepSymMatrix(6)),
-  gaussMultiGen(nullptr)
+  gaussMultiGen(nullptr),
+  offsetSampleMean(false),
+  iPartIteration(0)
 {
   coordinates = {&x0_v, &xp_v, &y0_v, &yp_v, &z0_v, &zp_v, &E_v, &t_v, &weight_v};
 }
@@ -99,18 +102,9 @@ void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
   /// clear previous means
   for (auto& vec : coordinates)
     {vec->clear();}
+  iPartIteration = 0;
   
   PreGenerateEvents(numberOfEvents);
-}
-
-void BDSBunchGaussian::EndOfRunAction()
-{
-  if (!offsetSampleMean)
-    {return;}
-  /// clear previous means
-  for (auto& vec : coordinates)
-    {vec->clear();}
-  iPartIteration = 0;
 }
 
 CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
@@ -150,9 +144,8 @@ CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine
 	    }
 	  if (!isPositiveDefinite(sigma))
 	    {
-	      G4cout << __METHOD_NAME__ << "ERROR bunch generator sigma matrix is still not positive definite, giving up" << G4endl;
 	      G4cout << sigma << G4endl;
-	      exit(1);
+	      throw BDSException(__METHOD_NAME__, "bunch generator sigma matrix is still not positive definite, giving up");
 	    }
 	}
     }
@@ -219,7 +212,7 @@ void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
   t_a  = t_a  - T0;
 
   // Offset with different w.r.t. central value
-  for(G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
+  for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
       x0_v[iParticle] -= x_a;
       xp_v[iParticle] -= xp_a;

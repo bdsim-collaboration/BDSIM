@@ -38,8 +38,9 @@ namespace BDS
 /**
  * @brief Trajectory information for only the primary.
  *
- * Similar to BDSTrajectory but keeps a running track of the end point
- * as well as the first scattering point.
+ * Similar to BDSTrajectory but keeps two separate BDSTrajectoryPoints. One
+ * for the end of the trajectory (last hit), and one for the first scattering
+ * point (first 'hit').
  *
  * @author L. Nevay
  */
@@ -48,9 +49,12 @@ class BDSTrajectoryPrimary: public BDSTrajectory
 {
 public:
   BDSTrajectoryPrimary(const G4Track* aTrack,
-		       const G4bool& interactiveIn,
-		       const G4bool& suppressTransportationStepsIn,
-		       const G4bool& storeTrajectoryPoints);
+		       G4bool         interactive,
+		       G4bool         suppressTransportationSteps,
+		       G4bool         storeTrajectoryLocal,
+		       G4bool         storeTrajectoryLinks,
+		       G4bool         storeTrajectoryIons,
+		       G4bool         storeTrajectoryPointsIn);
   
   /// copy constructor is not needed
   BDSTrajectoryPrimary(BDSTrajectoryPrimary &) = delete;
@@ -81,7 +85,7 @@ public:
   G4bool HasHitSomething() const {return firstHit;}
 
   /// Whether this primary has scattered on this turn.  It should be
-  /// reset at the end of each turn.
+  /// reset at the end of each turn. This is static so it can be done externally.
   static G4bool hasScatteredThisTurn;
 
 protected:

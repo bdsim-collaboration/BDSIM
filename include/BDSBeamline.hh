@@ -122,7 +122,7 @@ public:
   inline const BDSBeamlineElement* GetLastItem() const {return back();}
 
   /// Get the ith placement of an element in the beam line. Returns null pointer if not found.
-  BDSBeamlineElement* GetElement(G4String acceleratorComponentName, G4int i = 0) const;
+  const BDSBeamlineElement* GetElement(G4String acceleratorComponentName, G4int i = 0) const;
 
   /// Get the transform to the centre of the ith placement of element by name.  Uses
   /// GetElement(). Exits if no such element found.
@@ -170,10 +170,17 @@ public:
   ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
-  iterator       begin()       {return beamline.begin();}
-  iterator       end()         {return beamline.end();}
-  const_iterator begin() const {return beamline.begin();}
-  const_iterator end()   const {return beamline.end();}
+  typedef BeamlineVector::reverse_iterator reverse_iterator;
+  typedef BeamlineVector::const_reverse_iterator const_reverse_iterator;
+  iterator               begin()        {return beamline.begin();}
+  iterator               end()          {return beamline.end();}
+  const_iterator         begin()  const {return beamline.begin();}
+  const_iterator         end()    const {return beamline.end();}
+  reverse_iterator       rbegin()       {return beamline.rbegin();}
+  reverse_iterator       rend()         {return beamline.rend();}
+  const_reverse_iterator rbegin() const {return beamline.rbegin();}
+  const_reverse_iterator rend()   const {return beamline.rend();}
+
   G4bool         empty() const {return beamline.empty();}
   ///@}
 

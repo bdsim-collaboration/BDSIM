@@ -22,13 +22,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 #include "TChain.h"
 
 #include "BDSOutputROOTEventSampler.hh"
 
 #include "RebdsimTypes.hh"
 
+class BDSOutputROOTEventAperture;
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCoords;
 class BDSOutputROOTEventHistograms;
@@ -82,12 +83,16 @@ public:
 #else
   BDSOutputROOTEventSampler<float>*  GetSampler(int index);
 #endif
+  BDSOutputROOTEventAperture*        GetAperture() {return ApertureImpacts;}
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
   BDSOutputROOTEventCollimator*      GetCollimator(int index);
   int                                DataVersion() const {return dataVersion;}
   const std::vector<std::string>&    GetSamplerNames() const {return samplerNames;}
   const std::vector<std::string>&    GetCollimatorNames() const {return collimatorNames;}
   /// @}
+
+  /// Copy data from another event into this event.
+  void Fill(Event* other);
 
   /// Whether there is primary data in the output file.
   inline bool UsePrimaries() const {return usePrimaries;}
@@ -132,6 +137,8 @@ public:
   /// @}
   BDSOutputROOTEventInfo*       Info;    ///< For backwards compatibility
 
+  BDSOutputROOTEventAperture*   ApertureImpacts;
+
   std::vector<std::string> samplerNames;
 #ifdef __ROOTDOUBLE__
   std::map<std::string, BDSOutputROOTEventSampler<double>* > samplerMap;
@@ -142,12 +149,23 @@ public:
   std::vector<std::string> collimatorNames;
   std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
 
+  /// @{ Utility method for interface building events.
+  void RegisterCollimator(std::string collimatorName);
+  void RegisterSampler(std::string samplerName);
+  /// @}
+
+  /// @{ Flushing functions.
+  void Flush();
+  void FlushSamplers();
+  void FlushCollimators();
+  /// @}
 private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,
 				   const RBDS::VectorString* collimatorNames);
   void SetBranchAddressCollimatorSingle(TTree* t,
-					const std::string& name);
+					const std::string& name,
+					int i);
   /// @}
   
   bool debug           = false;

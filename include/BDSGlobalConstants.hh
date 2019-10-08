@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
-#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -31,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-#include "parser/beam.h"
 #include "parser/options.h"
 
 #include <map>
@@ -70,8 +68,7 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  explicit BDSGlobalConstants(const GMAD::Options& opt,
-			      GMAD::Beam&          beamIn);
+  explicit BDSGlobalConstants(const GMAD::Options& opt);
 
 private:
   /// Singleton instance
@@ -79,9 +76,6 @@ private:
 
   /// Options instance that this is largely based on and extends
   const GMAD::Options& options;
-
-  /// Copy of beam definition. Can't be const as we may update the contents.
-  GMAD::Beam& beam;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
@@ -105,13 +99,18 @@ public:
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
   inline G4bool   Verbose()                const {return G4bool  (options.verbose);}
-  inline G4bool   VerboseEvent()           const {return G4bool  (options.verboseEvent);}
-  inline G4bool   VerboseStep()            const {return G4bool  (options.verboseStep);}
-  inline G4int    VerboseEventNumber()     const {return G4int   (options.verboseEventNumber);}
   inline G4int    VerboseRunLevel()        const {return G4int   (options.verboseRunLevel);}
+  inline G4bool   VerboseEventBDSIM()      const {return G4bool  (options.verboseEventBDSIM);}
   inline G4int    VerboseEventLevel()      const {return G4int   (options.verboseEventLevel);}
+  inline G4int    VerboseEventStart()      const {return G4int   (options.verboseEventStart);}
+  inline G4int    VerboseEventContinueFor()const {return G4int   (options.verboseEventContinueFor);}
   inline G4int    VerboseTrackingLevel()   const {return G4int   (options.verboseTrackingLevel);}
+  inline G4bool   VerboseSteppingBDSIM()   const {return G4bool  (options.verboseSteppingBDSIM);}
   inline G4int    VerboseSteppingLevel()   const {return G4int   (options.verboseSteppingLevel);}
+  inline G4int    VerboseSteppingEventStart()       const {return G4int (options.verboseSteppingEventStart);}
+  inline G4int    VerboseSteppingEventContinueFor() const {return G4int (options.verboseSteppingEventContinueFor);}
+  inline G4bool   VerboseSteppingPrimaryOnly()      const {return G4bool(options.verboseSteppingPrimaryOnly);}
+  inline G4int    VerboseImportanceSampling()       const {return G4int (options.verboseImportanceSampling);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
@@ -140,6 +139,7 @@ public:
   
   inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
   inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
+  inline G4bool   PrintPhysicsProcesses()    const {return G4bool  (options.printPhysicsProcesses);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double LengthSafetyLarge()        const {return G4double(options.lengthSafetyLarge*CLHEP::m);}
   inline G4double HorizontalWidth()          const {return G4double(options.horizontalWidth)*CLHEP::m;}
@@ -152,13 +152,12 @@ public:
   inline G4double TunnelOffsetX()            const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()            const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
   inline G4double ELossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
-  inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
-  inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}
   inline G4double ProdCutPhotons()           const {return G4double(options.prodCutPhotons)*CLHEP::m;}
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
   inline G4double ProdCutPositrons()         const {return G4double(options.prodCutPositrons)*CLHEP::m;}
   inline G4double ProdCutProtons()           const {return G4double(options.prodCutProtons)*CLHEP::m;}
+  inline G4bool   DefaultRangeCutsSet()      const {return G4bool  (options.HasBeenSet("defaultRangeCut"));}
   inline G4bool   ProdCutPhotonsSet()        const {return G4bool  (options.HasBeenSet("prodCutPhotons"));}
   inline G4bool   ProdCutElectronsSet()      const {return G4bool  (options.HasBeenSet("prodCutElectrons"));}
   inline G4bool   ProdCutPositronsSet()      const {return G4bool  (options.HasBeenSet("prodCutPositrons"));}
@@ -187,7 +186,6 @@ public:
   inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveOuter()           const {return G4bool  (options.sensitiveOuter);}
-  inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
 #if G4VERSION_NUMBER != 1030
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
 #else
@@ -197,8 +195,12 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
+  inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
+  inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
   inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
-  inline G4bool   StoreCollimatorLinks()     const {return G4bool  (options.storeCollimatorLinks);}
+  inline G4bool   StoreCollimatorHits()      const {return G4bool  (options.storeCollimatorHits);}
+  inline G4bool   StoreCollimatorHitsLinks() const {return G4bool  (options.storeCollimatorHitsLinks);}
   inline G4bool   StoreCollimatorHitsIons()  const {return G4bool  (options.storeCollimatorHitsIons);}
   inline G4bool   StoreCollimatorHitsAll()   const {return G4bool  (options.storeCollimatorHitsAll);}
   inline G4bool   StoreELoss()               const {return G4bool  (options.storeEloss);}
@@ -223,6 +225,9 @@ public:
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
+  inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
+  inline G4bool   StoreTrajectoryIons()      const {return G4bool  (options.storeTrajectoryIons);}
   inline std::vector<G4int>                          StoreTrajectorySamplerIDs()  const {return samplerIDs;}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
@@ -236,7 +241,6 @@ public:
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
-  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
   inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
@@ -261,6 +265,7 @@ public:
   inline G4bool   TurnOnOpticalSurface()     const {return G4bool  (options.turnOnOpticalSurface);}
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
+  inline G4bool   IncludeFringeFieldsCavities() const {return G4bool  (options.includeFringeFieldsCavities);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
   inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
   inline G4bool   HStyle()                   const {return G4bool  (options.hStyle);}
@@ -284,7 +289,11 @@ public:
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
-  
+
+  /// @{ options that require some implementation.
+  G4bool   StoreTrajectoryTransportationSteps() const;
+  /// @}
+
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}
@@ -301,7 +310,6 @@ public:
 
   /// @{ Setter
   inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
-  inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}

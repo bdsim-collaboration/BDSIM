@@ -25,12 +25,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
+class BDSSDApertureImpacts;
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSSDEnergyDepositionGlobal;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
+class BDSSDThinThing;
 class BDSSDVolumeExit;
 
 class G4VSDFilter;
@@ -100,13 +102,17 @@ public:
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
+  inline BDSSDApertureImpacts* ApertureImpacts() const {return apertureImpacts;}
+
 #if G4VERSION_NUMBER > 1029
   /// SD for multiple SDs for world - energy loss and exit.
-  inline G4VSensitiveDetector* WorldComplete() const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* WorldComplete()        const {return worldCompleteSD;}
+  inline G4VSensitiveDetector* ApertureComplete()     const {return apertureCompleteSD;}
 #else
   /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
   /// one SD for each logical volume.
-  inline G4VSensitiveDetector* WorldComplete() const {return energyDepositionWorld;}
+  inline G4VSensitiveDetector* WorldComplete()        const {return energyDepositionWorld;}
+  inline G4VSensitiveDetector* ApertureComplete()     const {return energyDeposition;}
 #endif
 
   /// SD for collimator impact locations.
@@ -114,6 +120,13 @@ public:
 
   /// SD for collimator impacts + energy deposition at the same time in order.
   inline BDSMultiSensitiveDetectorOrdered* CollimatorComplete() const {return collimatorCompleteSD;}
+
+  /// SD for generating primary hits for thin elements where discrete processes
+  /// may not work regularly.
+  inline BDSSDThinThing* ThinThing() const {return thinThingSD;}
+
+  /// SD for wire scanner wires that is a composite of thin things + energy deposition full.
+  inline BDSMultiSensitiveDetectorOrdered* WireComplete() const {return wireCompleteSD;}
 
 private:
   /// Private default constructor for singleton.
@@ -135,20 +148,26 @@ private:
   BDSSDEnergyDepositionGlobal* energyDepositionWorld;
   BDSSDEnergyDepositionGlobal* energyDepositionWorldContents;
   BDSSDVolumeExit*             worldExit;
+  BDSSDApertureImpacts*        apertureImpacts;
 #if G4VERSION_NUMBER > 1029
   G4VSensitiveDetector* worldCompleteSD;
+  G4VSensitiveDetector* apertureCompleteSD;
 #endif
   /// @}
-  BDSSDCollimator* collimatorSD;
+  BDSSDCollimator*                  collimatorSD;
   BDSMultiSensitiveDetectorOrdered* collimatorCompleteSD;
+  BDSSDThinThing*                   thinThingSD;
+  BDSMultiSensitiveDetectorOrdered* wireCompleteSD;
 
   /// Map of all filters used. This class owns a single instance of each.
   std::map<G4String, G4VSDFilter*> filters;
 
   /// @{ Cache of global constant option.
-  G4bool verbose;
   G4bool storeCollimatorHitsAll;
   G4bool storeCollimatorHitsIons;
+  G4bool generateApertureImpacts;
+  G4bool storeApertureImpactsAll;
+  G4bool storeApertureImpactsIons;
   G4bool generateELossHits;
   G4bool generateELossVacuumHits;
   G4bool generateELossTunnelHits;

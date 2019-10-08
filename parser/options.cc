@@ -154,17 +154,45 @@ void Options::PublishMembers()
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
+  publish("outputDoublePrecision", &Options::outputDoublePrecision);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
-  publish("verbose",               &Options::verbose);
-  publish("verboseEvent",          &Options::verboseEvent);
-  publish("verboseStep",           &Options::verboseStep);
-  publish("verboseEventNumber",    &Options::verboseEventNumber);
+  
+  publish("verbose",                 &Options::verbose);
+  
+  publish("verboseRunLevel",         &Options::verboseRunLevel);
+
+  publish("verboseEventBDSIM",       &Options::verboseEventBDSIM);
+  publish("verboseEvent",            &Options::verboseEventBDSIM);
+  publish("verbose_event",           &Options::verboseEventBDSIM); // to be compatible with exec options
+  publish("verboseEventLevel",       &Options::verboseEventLevel);
+  publish("verboseEventStart",       &Options::verboseEventStart);
+  publish("verboseEventContinueFor", &Options::verboseEventContinueFor);
+
+  // alternates
+  publish("verboseEventNumber",      &Options::verboseEventStart);
+  publish("verbose_event_num",       &Options::verboseEventStart); // to be compatible with exec options
+  
+  publish("verboseSteppingBDSIM",            &Options::verboseSteppingBDSIM);
+  publish("verboseSteppingLevel",            &Options::verboseSteppingLevel);
+  publish("verboseSteppingEventStart",       &Options::verboseSteppingEventStart);
+  publish("verboseSteppingEventContinueFor", &Options::verboseSteppingEventContinueFor);
+  publish("verboseSteppingPrimaryOnly",      &Options::verboseSteppingPrimaryOnly);
+  
+  // alternates
+  publish("verboseStep",                     &Options::verboseSteppingBDSIM);
+
   publish("batch",                 &Options::batch);
-  publish("verboseRunLevel",       &Options::verboseRunLevel);
+
+  publish("verbose_G4Run",         &Options::verboseRunLevel); // to be compatible with exec options
+  publish("verbose_G4run",         &Options::verboseRunLevel); // to just generally be consistent!
   publish("verboseEventLevel",     &Options::verboseEventLevel);
+  publish("verbose_G4event",       &Options::verboseEventLevel); // to be compatible with exec options
   publish("verboseTrackingLevel",  &Options::verboseTrackingLevel);
+  publish("verbose_G4tracking",    &Options::verboseTrackingLevel); // to be compatible with exec options
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
+  publish("verbose_G4stepping",    &Options::verboseSteppingLevel); // to be compatible with exec options
+  publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("recreate",              &Options::recreate);
@@ -225,6 +253,7 @@ void Options::PublishMembers()
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
+  publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);
   publish("beampipeThickness",    &Options::beampipeThickness);
   publish("apertureType",         &Options::apertureType);
@@ -274,10 +303,6 @@ void Options::PublishMembers()
 
   publish("samplerDiameter",&Options::samplerDiameter);
   
-  // options for beam loss monitor geometry
-  publish("blmRad",    &Options::blmRad);
-  publish("blmLength", &Options::blmLength);
-
   // physics processes
   publish("turnOnOpticalAbsorption",     &Options::turnOnOpticalAbsorption);
   publish("turnOnMieScattering",         &Options::turnOnMieScattering);
@@ -339,13 +364,17 @@ void Options::PublishMembers()
   publish("sensitiveBeampipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveTunnel",             &Options::storeElossTunnel);
   publish("tunnelSensitive",             &Options::storeElossTunnel);// backwards compatibility
-  publish("sensitiveBLMs",               &Options::sensitiveBLMs);
   
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
 
+  publish("storeApertureImpacts",           &Options::storeApertureImpacts);
+  publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
+  publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
-  publish("storeCollimatorLinks",           &Options::storeCollimatorLinks);
+  publish("storeCollimatorHits",            &Options::storeCollimatorHits);
+  publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
+  publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks);
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
   publish("storeCollimatorHitsAll",         &Options::storeCollimatorHitsAll);
   publish("storeEloss",                     &Options::storeEloss);
@@ -382,14 +411,19 @@ void Options::PublishMembers()
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeParticleData",              &Options::storeParticleData);
   
-  publish("storeTrajectory",                &Options::storeTrajectory);
-  publish("storeTrajectories",              &Options::storeTrajectory);
-  publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
-  publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
-  publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
-  publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
-  publish("storeTrajectorySamplerID",       &Options::storeTrajectorySamplerID);
-  publish("storeTrajectoryELossSRange",     &Options::storeTrajectoryELossSRange);
+  publish("storeTrajectory",                    &Options::storeTrajectory);
+  publish("storeTrajectories",                  &Options::storeTrajectory);
+  publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
+  publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
+  publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
+  publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
+  publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
+  publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
+  publish("trajNoTransportation",               &Options::trajNoTransportation);
+  publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
+  publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
+  publish("storeTrajectoryIons",                &Options::storeTrajectoryIons);
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
@@ -402,7 +436,6 @@ void Options::PublishMembers()
   publish("trajConnect",                    &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
-  publish("trajNoTransportation",           &Options::trajNoTransportation);
 
   publish("writePrimaries",                 &Options::writePrimaries);
   publish("storeModel",                     &Options::storeModel);
@@ -414,6 +447,7 @@ void Options::PublishMembers()
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+  publish("printPhysicsProcesses",    &Options::printPhysicsProcesses);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);

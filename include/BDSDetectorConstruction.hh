@@ -36,6 +36,7 @@ class G4Region;
 class G4VPhysicalVolume;
 
 namespace GMAD {
+  class BLMPlacement;
   struct Element;
   template<typename T> class FastList;
   class Placement;
@@ -70,8 +71,9 @@ public:
   explicit BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
   virtual ~BDSDetectorConstruction();
 
-  /// Loop over beam line and work out maximum tolerable sampler radius.
-  void UpdateSamplerDiameter();
+  /// Loop over beam line and work out maximum tolerable sampler radius. Count all samplers
+  /// and set member nSamplers and the same time.
+  void UpdateSamplerDiameterAndCountSamplers();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.
@@ -104,16 +106,29 @@ public:
 				   G4bool                checkOverlaps     = false,
 				   G4bool                setRegions        = false,
 				   G4bool                registerInfo      = false,
-				   G4bool                useCLPlacementTransform = false);
+				   G4bool                useCLPlacementTransform = false,
+				   G4bool                useIncrementalCopyNumbers = false);
 
-  /// Create a transform based on the information in the placement.
+  /// Create a transform based on the information in the placement. If S is supplied, it's
+  /// updated with the final S coordinate calculated.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
-						const BDSBeamline*     beamLine);
+						const BDSBeamline*     beamLine,
+						G4double*              S = nullptr);
 
   /// Create a sampler placement. Turns the sampler placement into a placement and uses
   /// the above function.
   static G4Transform3D CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-						const BDSBeamline*            bemaline);
+						const BDSBeamline*            bemaline,
+						G4double*                     S = nullptr);
+
+  /// Create a sampler placement from a blm plcement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+						const BDSBeamline*        bemaline,
+						G4double*                 S = nullptr);
+
+  /// Whether to build a sampler world or not. If we've counted more than one sampler we
+  /// should build the world in the end.
+  G4bool BuildSamplerWorld() const {return nSamplers > 0;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -191,11 +206,11 @@ private:
   BDSBeamline* placementBL; ///< Placement beam line.
   /// Particle definition all components are built w.r.t. Includes rigidity etc.
   const BDSParticleDefinition* designParticle;
-  G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
-  G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
 
   BDSComponentFactoryUser* userComponentFactory;
+
+  G4int nSamplers; ///< Count of number of samplers to be built.
 };
 
 #endif

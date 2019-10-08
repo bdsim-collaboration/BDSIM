@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
@@ -28,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
 #include <cmath>
@@ -327,23 +330,15 @@ G4bool BDS::Geant4EnvironmentIsSet()
 				     "G4PIIDATA",
 				     "G4SAIDXSDATA"};
 
+  // here we loop through all variables - ie don't break the loop
   G4bool result = true;
-  for (auto it = variables.begin(); it != variables.end(); ++it)
+  for (const auto& variable : variables)
     {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "testing for variable: " << *it;
-#endif
-      const char* env_p = std::getenv( (*it).c_str() );
+      const char* env_p = std::getenv( variable.c_str() );
       if (!env_p)
 	{
 	  result = false;
-#ifdef BDSDEBUG
-	  G4cout << " - not found" << G4endl;
-	}
-      else
-	{
-	  G4cout << " - found" << G4endl;
-#endif
+	  G4cerr << "Variable: \"" << variable << "\" not found." << G4endl;
 	}
     }
   return result;
@@ -538,7 +533,9 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
   if (defaultUL->GetMaxAllowedStep(t) > length)
     {// copy and change length in UL
       result = new G4UserLimits(*defaultUL);
-      result->SetMaxAllowedStep(length * fraction);
+      G4double lengthScale = length * fraction;
+      lengthScale = std::max(lengthScale, 1.0); // no smaller than 1mm limit
+      result->SetMaxAllowedStep(lengthScale);
     }
   else
     {result = defaultUL;} // stick with length in defaultUL
@@ -548,8 +545,19 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
 G4double BDS::GetMemoryUsage()
 {
   struct rusage r_usage;
-  G4double result = getrusage(RUSAGE_SELF,&r_usage);
-  return result;
+  int itWorked = getrusage(RUSAGE_SELF, &r_usage);
+  if (itWorked != 0)
+    {return 0;} // failed
+  else
+    {
+      G4double maxMemory = r_usage.ru_maxrss;
+#ifdef __APPLE__
+      maxMemory /= 1048*1048;
+#else
+      maxMemory /= 1048;
+#endif
+      return maxMemory;
+    }
 }
 
 std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
@@ -568,4 +576,28 @@ std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
       result[G4String(key)] = G4String(value);
     }
   return result;
+}
+
+G4int BDS::VerboseEventStop(G4int verboseEventStart,
+			    G4int verboseEventContinueFor)
+{
+  G4int verboseEventStop = 0;
+  if (verboseEventContinueFor < 1)
+    {verboseEventStop = std::numeric_limits<int>::max();}
+  else
+    {verboseEventStop = verboseEventStart + verboseEventContinueFor;}
+  return verboseEventStop;
+}
+
+G4bool BDS::VerboseThisEvent(G4int eventIndex,
+			     G4int eventStart,
+			     G4int eventStop)
+{
+  return eventIndex >= eventStart && eventIndex < eventStop;
+}
+
+G4double BDS::Rigidity(G4double momentumMagnitude,
+		       G4double charge)
+{
+  return momentumMagnitude / CLHEP::GeV / BDS::cOverGeV / charge;
 }

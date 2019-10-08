@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -66,30 +67,33 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
     {
     case 1:
       {
-	const HistogramDef1D* d = dynamic_cast<const HistogramDef1D*>(definition);
+	const HistogramDef1D* d = static_cast<const HistogramDef1D*>(definition);
 	baseHist = factory.CreateHistogram1D(d, baseName, baseName);
 	temp = dynamic_cast<TH1D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
     case 2:
       {
-	const HistogramDef2D* d = dynamic_cast<const HistogramDef2D*>(definition);
+	const HistogramDef2D* d = static_cast<const HistogramDef2D*>(definition);
 	baseHist = factory.CreateHistogram2D(d, baseName, baseName);
 	temp = dynamic_cast<TH2D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
       case 3:
       {
-	const HistogramDef3D* d = dynamic_cast<const HistogramDef3D*>(definition);
+	const HistogramDef3D* d = static_cast<const HistogramDef3D*>(definition);
 	baseHist = factory.CreateHistogram3D(d, baseName, baseName);
 	temp = dynamic_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
     default:
-      {break;}
+      {throw std::domain_error("Invalid number of dimensions"); break;}
     }
-  temp->Reset();
-  temp->SetTitle(tempName.c_str());
+  if (temp)
+    {// technically, temp might be nullptr
+      temp->Reset();
+      temp->SetTitle(tempName.c_str());
+    }
   
   accumulator = new HistogramAccumulator(baseHist, nDimensions, histName, histName);
 }

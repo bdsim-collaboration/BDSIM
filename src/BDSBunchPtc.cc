@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSUtilities.hh"
@@ -28,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <fstream>
 #include <regex>
+#include <string>
 
 BDSBunchPtc::BDSBunchPtc():
   matchDistrFileLength(false),
@@ -39,7 +41,7 @@ BDSBunchPtc::BDSBunchPtc():
 
 BDSBunchPtc::~BDSBunchPtc()
 {
-  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i)
+  for (std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i)
     {delete[] *i;}
 }
 
@@ -49,14 +51,11 @@ void BDSBunchPtc::LoadPtcFile()
   std::ifstream ifstr(fileName);
 
   if (!ifstr)
-    {
-      G4cout << __METHOD_NAME__ << "\"" << fileName << "\" file doesn't exist - exiting as no input" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"" + fileName + "\" file doesn't exist - exiting as no input");}
 
   std::string line; 
   // read single line 
-  while(std::getline(ifstr,line))
+  while (std::getline(ifstr,line))
     {
       int isComment = line.compare(0, 1, "!");
       if (isComment == 0)

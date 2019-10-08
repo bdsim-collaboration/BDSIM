@@ -31,9 +31,12 @@ If the analysis will be regularly used interactively, it is worth automating the
 loading in root by finding and editing the :code:`rootlogon.C` in your
 :code:`<root-install-dir>/macros/` directory.  Example text would be::
 
-  cout << "Loading rebdsim libraries" << endl;
-  gSystem->Load("librebdsim");
-  gSystem->Load("libbdsimRootEvent");
+  {
+    cout << "Loading rebdsim libraries" << endl;
+    gSystem->Load("librebdsim");
+    gSystem->Load("libbdsimRootEvent");
+  }
+
 
 .. note:: The file extension is omitted on purpose.
 
@@ -344,6 +347,19 @@ optical functions as well as beam sizes. It is run as follows::
 This creates a ROOT file called "optics.root" that contains the optical functions
 of the sampler data.
 
+This may also take the optional argument :code:`--emittanceOnTheFly` (exactly, case-sensitive)
+where the emittance is recalculated at each sampler. By default, we calculate the emittance
+**only** for the first sampler and use that as the assumed value for all other samplers. This
+does not affect sigmas but does affect :math:`\alpha` and :math:`beta` for the optical functions.
+
+If the central energy of the beam changes throughout the lattice, e.g. accelerating or deccelerating
+cavities are used, the the emittance on the fly option should be used.::
+  
+   rebdsimOptics output.root optics.root --emittanceOnTheFly
+
+
+* The order is not interchangeable.
+
 See :ref:`optical-validation` for more details.
 
 .. _output-analysis-efficiency:
@@ -435,7 +451,7 @@ file. This is numerically equivalent to analysing all the data in one execution 
 User Analysis
 =============
 
-Whilst `rebdsim` will cover the majority of anlayses, the user may desire a more
+Whilst `rebdsim` will cover the majority of analyses, the user may desire a more
 detailed or customised analysis. Methods to accomplish this are detailed here for
 interactive or compiled C++ with ROOT, or through Python.
 
@@ -474,8 +490,8 @@ automatically when any BDSIM output file is loaded using the ROOT libraries.
 IPython
 *******
 
-We recommend using iPython instead of pure Python to allow interactive exploration
-of the tools. After typing at the iPython prompt for example :code:`pybdsim.`, press
+We recommend using IPython instead of pure Python to allow interactive exploration
+of the tools. After typing at the IPython prompt for example :code:`pybdsim.`, press
 the tab key and all of the available functions and objects inside `pybdsim` (in this
 case) will be shown.
 
@@ -702,12 +718,12 @@ One may manually loop over the events in a macro::
     gSystem->Load("librebdsim");
     DataLoader* dl = new DataLoader("output.root");
     Event* evt = dl->GetEvent();
-    TTree* evtTree = dl->GetEventTree()
+    TTree* evtTree = dl->GetEventTree();
     int nentries = (int)evtTree->GetEntries();
     for (int i = 0; i < nentries; ++i)
       {
-        evtTree->GetEntry(i)
-	std::cout << evt->Eloss.n >> std::endl;
+        evtTree->GetEntry(i);
+        std::cout << evt->Eloss.n << std::endl;
       }
   }
 
@@ -755,7 +771,7 @@ The following classes are used for data loading and can be found in `bdsim/analy
 Numerical Methods
 =================
 
-Alogrithms used to accurately calculate quantities are described here. These are
+Algorithms used to accurately calculate quantities are described here. These are
 documented explicitly as a simple implementation of the mathematical formulae
 would result in an inaccurate answer in some cases.
 

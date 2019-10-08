@@ -52,15 +52,12 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if (!instance)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions(),
-				       BDSParser::Instance()->GetBeam());}
+    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
   return instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
-				       GMAD::Beam&          beamIn):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   options(opt),
-  beam(beamIn),
   turnsTaken(0)
 {
   ResetTurnNumber();
@@ -260,4 +257,13 @@ void BDSGlobalConstants::ProcessTrajectoryELossSRange()
       G4double rend   = std::stod(tok.substr(loc+1,tok.size()));
       elossSRange.emplace_back(rstart, rend);
     }
+}
+
+G4bool BDSGlobalConstants::StoreTrajectoryTransportationSteps() const
+{
+  // only if true we let this option take precedence
+  if (options.trajNoTransportation)
+    {return false;}
+  else
+    {return options.storeTrajectoryTransportationSteps;}
 }

@@ -52,7 +52,7 @@ int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
   // TODO : Better search using lower
   double dMin = 1e50;
   int iMin = -1;
-  for(int i=0; i < (int)midRefPos.size(); i++)
+  for (int i=0; i < (int)midRefPos.size(); i++)
     {
       const TVector3& vRef = midRefPos[i];
       double d = (vRef-vPoint).Mag();
@@ -271,17 +271,12 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
     endS.push_back((float &&) (*i)->GetSPositionEnd()    / CLHEP::m);
 
     // beam pipe
-    BDSBeamPipeInfo *beampipeinfo = (*i)->GetBeamPipeInfo();
-    beamPipeType.push_back(beampipeinfo ?
-			   beampipeinfo->beamPipeType.ToString() : "");
-    beamPipeAper1.push_back(beampipeinfo ?
-			    beampipeinfo->aper1 / CLHEP::m : 0);
-    beamPipeAper2.push_back(beampipeinfo ?
-			    beampipeinfo->aper2 / CLHEP::m : 0);
-    beamPipeAper3.push_back(beampipeinfo ?
-			    beampipeinfo->aper3 / CLHEP::m : 0);
-    beamPipeAper4.push_back(beampipeinfo ?
-			    beampipeinfo->aper4 / CLHEP::m : 0);
+    BDSBeamPipeInfo* beampipeinfo = (*i)->GetBeamPipeInfo();
+    beamPipeType.push_back(beampipeinfo  ? beampipeinfo->beamPipeType.ToString() : "");
+    beamPipeAper1.push_back(beampipeinfo ? beampipeinfo->aper1 / CLHEP::m : 0);
+    beamPipeAper2.push_back(beampipeinfo ? beampipeinfo->aper2 / CLHEP::m : 0);
+    beamPipeAper3.push_back(beampipeinfo ? beampipeinfo->aper3 / CLHEP::m : 0);
+    beamPipeAper4.push_back(beampipeinfo ? beampipeinfo->aper4 / CLHEP::m : 0);
 
     // associated material if any
     const auto accComp = (*i)->GetAcceleratorComponent();
@@ -336,15 +331,13 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
 	vkick.push_back((float)(*ms)["vkick"]/BDSMagnetStrength::Unit("vkick"));
 	bField.push_back((float)(*ms)["field"]/BDSMagnetStrength::Unit("field"));
 	eField.push_back((float)(*ms)["efield"]/BDSMagnetStrength::Unit("efield"));
-	
-	// these are mangled in BDSMagnetStrength so can't write them out just now
-	e1.push_back(0); // / CLHEP::rad
-	e2.push_back(0); // / CLHEP::rad
-	hgap.push_back(0); // / CLHEP::m
-	fint.push_back(0);
-	fintx.push_back(0);
-	fintk2.push_back(0);
-	fintxk2.push_back(0);
+	e1.push_back((float)(*ms)["e1"]/BDSMagnetStrength::Unit("e1"));
+	e2.push_back((float)(*ms)["e2"]/BDSMagnetStrength::Unit("e2"));
+	hgap.push_back((float)(*ms)["hgap"]/BDSMagnetStrength::Unit("hgap"));
+	fint.push_back((float)(*ms)["fint"]);
+	fintx.push_back((float)(*ms)["fintx"]);
+	fintk2.push_back((float)(*ms)["fintk2"]);
+	fintxk2.push_back((float)(*ms)["fintxk2"]);
       }
     else
       {// not a magnet

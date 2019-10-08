@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Event.hh"
 #include "RebdsimTypes.hh"
 
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHistograms.hh"
@@ -69,6 +70,7 @@ Event::~Event()
   delete Histos;
   delete Summary;
   delete Info;
+  delete ApertureImpacts;
   for (auto s : Samplers)
     {delete s;}
   for (auto c : collimators)
@@ -96,6 +98,7 @@ void Event::CommonCtor()
   Histos             = new BDSOutputROOTEventHistograms();
   Summary            = new BDSOutputROOTEventInfo();
   Info               = new BDSOutputROOTEventInfo();
+  ApertureImpacts    = new BDSOutputROOTEventAperture();
 }
 
 #ifdef __ROOTDOUBLE__
@@ -160,6 +163,9 @@ void Event::SetBranchAddress(TTree* t,
   // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
 
+  int nCollimatorsToTurnOn = 0;
+  int ithCollimator = 0;
+
   // turn on only what we need to speed up analysis as with more things
   // on, more data is loaded from the file for each GetEntry().
   // these objects are small - always load
@@ -212,9 +218,26 @@ void Event::SetBranchAddress(TTree* t,
 	  t->SetBranchAddress("ElossWorldExit.", &ElossWorldExit);
 	  SetBranchAddressCollimators(t, collimatorNamesIn);
 	}
+      if (dataVersion > 4)
+	{
+	  if (((*t).GetListOfBranches()->FindObject("ApertureImpacts.")) != nullptr)
+	    {t->SetBranchAddress("ApertureImpacts.",  &ApertureImpacts);}
+	}
     }
   else if (branchesToTurnOn)
     {
+      // pre-count the number of collimators at once (dynamically created local objects)
+      // we new them all at once and put the pointers in a vector at once. This way, the
+      // vector is never reallocated (can happen with repeated push_backs) as this would
+      // result in the vector being recopied somewhere else and the pointer pointers being
+      // invalid for SetBranchAddress.
+      for (const auto& name : *branchesToTurnOn)
+        {
+          if (name.substr(0,4) == "COLL")
+            {nCollimatorsToTurnOn++;}
+        }
+      collimators.resize(nCollimatorsToTurnOn); // reserve size of required vector to avoid recopying
+      
       for (const auto& name : *branchesToTurnOn)
 	{
 	  std::string nameStar = name + "*";
@@ -246,7 +269,10 @@ void Event::SetBranchAddress(TTree* t,
 	  else if (name == "Trajectory")
 	    {t->SetBranchAddress("Trajectory.", &Trajectory);}
 	  else if (name.substr(0,4) == "COLL")
-	    {SetBranchAddressCollimatorSingle(t, name);}
+	    {
+	      SetBranchAddressCollimatorSingle(t, name+".", ithCollimator);
+	      ithCollimator++;
+	    }
 	}
     }
 
@@ -291,28 +317,118 @@ void Event::SetBranchAddress(TTree* t,
     }
 }
 
+void Event::RegisterCollimator(std::string collimatorName)
+{
+  // be careful of push_back to collimators vector as this might invalidate
+  // any &pointers used with SetBranchAddress
+  BDSOutputROOTEventCollimator* collimator = new BDSOutputROOTEventCollimator();
+  collimatorNames.push_back(collimatorName);
+  collimators.push_back(collimator);
+  collimatorMap[collimatorName] = collimator;
+}
+
+void Event::RegisterSampler(std::string samplerName)
+{
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* sampler = new BDSOutputROOTEventSampler<double>();
+  samplerNames.push_back(samplerName);
+  Samplers.push_back(sampler);
+  samplerMap[samplerName] = sampler;
+#else
+  BDSOutputROOTEventSampler<float>* sampler = new BDSOutputROOTEventSampler<float>();
+  samplerNames.push_back(samplerName);
+  Samplers.push_back(sampler);
+  samplerMap[samplerName] = sampler;
+#endif
+}
+
 void Event::SetBranchAddressCollimators(TTree* t,
 					const RBDS::VectorString* collimatorNamesIn)
 {
   if (collimatorNamesIn)
     {
+      int i = 0;
       for (const auto& name : *collimatorNamesIn)
 	{
 	  collimators.resize((unsigned int)collimatorNamesIn->size());
-	  SetBranchAddressCollimatorSingle(t, name);
+	  SetBranchAddressCollimatorSingle(t, name, i);
+	  i++;
 	}
     }
 }
 
 void Event::SetBranchAddressCollimatorSingle(TTree* t,
-					     const std::string& name)
+					     const std::string& name,
+					     int i)
 {
-  BDSOutputROOTEventCollimator* col = new BDSOutputROOTEventCollimator();
-  collimators.push_back(col);
+  // we must not push_back to collimators (vector) as this might expand it
+  // and invalidate all addresses to pointers in that vector
+  collimators[i] = new BDSOutputROOTEventCollimator();
   collimatorNames.push_back(name);
-  collimatorMap[name] = col;
-
-  t->SetBranchAddress((name + ".").c_str(), &collimators.back());
+  collimatorMap[name] = collimators[i];
+  
+  t->SetBranchAddress(name.c_str(), &collimators[i]);
   if (debug)
-    {std::cout << "Event::SetBranchAddress> " << name << " " << col << std::endl;}
+    {std::cout << "Event::SetBranchAddress> " << name << " " << collimators[i] << std::endl;}
+}
+
+void Event::Fill(Event* other)
+{
+  Primary->Fill(other->Primary);
+  PrimaryGlobal->Fill(other->PrimaryGlobal);
+  Eloss->Fill(other->Eloss);
+  ElossVacuum->Fill(other->ElossVacuum);
+  ElossTunnel->Fill(other->ElossTunnel);
+  ElossWorld->Fill(other->ElossWorld);
+  ElossWorldContents->Fill(other->ElossWorldContents);
+  ElossWorldExit->Fill(other->ElossWorldExit);
+  PrimaryFirstHit->Fill(other->PrimaryFirstHit);
+  PrimaryLastHit->Fill(other->PrimaryLastHit);
+  TunnelHit->Fill(other->TunnelHit);
+  Trajectory->Fill(other->Trajectory);
+  Histos->FillSimple(other->Histos);
+  Summary->Fill(other->Summary);
+  Info->Fill(other->Info);
+  ApertureImpacts->Fill(other->ApertureImpacts);
+
+  for (unsigned long i = 0; i < Samplers.size(); i++)
+    {Samplers[i]->Fill(other->Samplers[i]);}
+
+  for (unsigned long i = 0; i < collimators.size(); i++)
+    {collimators[i]->Fill(other->collimators[i]);}
+}
+
+void Event::Flush()
+{
+  Primary->Flush();
+  PrimaryGlobal->Flush();
+  Eloss->Flush();
+  ElossVacuum->Flush();
+  ElossTunnel->Flush();
+  ElossWorld->Flush();
+  ElossWorldContents->Flush();
+  ElossWorldExit->Flush();
+  PrimaryFirstHit->Flush();
+  PrimaryLastHit->Flush();
+  TunnelHit->Flush();
+  Trajectory->Flush();
+  Histos->Flush();
+  Summary->Flush();
+  Info->Flush();
+  ApertureImpacts->Flush();
+  FlushCollimators();
+  FlushSamplers();
+}
+
+void Event::FlushSamplers()
+{
+  for (auto s : Samplers)
+    {s->Flush();}
+}
+
+void Event::FlushCollimators()
+{
+  for (auto c : collimators)
+    {c->Flush();}
+
 }

@@ -19,10 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ANALYSISPARTICLEDATA_H
 #define ANALYSISPARTICLEDATA_H
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 
-#include "BDSOutputROOTEventParticleData.hh"
-
+class BDSOutputROOTParticleData;
 class TTree;
 
 /**

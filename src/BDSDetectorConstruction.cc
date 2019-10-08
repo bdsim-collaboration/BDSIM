@@ -22,10 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineBLMBuilder.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -46,6 +48,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSRegion.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
@@ -54,11 +57,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 
+#include "parser/blmplacement.h"
 #include "parser/element.h"
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 #include "parser/placement.h"
+#include "parser/samplerplacement.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -88,7 +93,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userComponentFactoryIn):
   placementBL(nullptr),
   designParticle(nullptr),
-  userComponentFactory(userComponentFactoryIn)
+  userComponentFactory(userComponentFactoryIn),
+  nSamplers(0)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   verbose       = globals->Verbose();
@@ -109,15 +115,21 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
       canSampleAngledFaces = globals->SampleElementsWithPoleface();
     }
 
-  UpdateSamplerDiameter();
+  UpdateSamplerDiameterAndCountSamplers();
 }
 
-void BDSDetectorConstruction::UpdateSamplerDiameter()
+void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
 {
+  nSamplers = 0;
   auto beamline = BDSParser::Instance()->GetBeamline(); // main beam line
   G4double maxBendingRatio = 1e-9;
   for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
     {
+      // count number of samplers
+      auto st = BDS::DetermineSamplerType((*elementIt).samplerType);
+      if (st != BDSSamplerType::none)
+        {nSamplers++;}
+
       G4double length = elementIt->l;
       G4double angle  = elementIt->angle;
       if (!BDS::IsFinite(length))
@@ -142,6 +154,9 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
 	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
 	}
     }
+
+    // add number of sampler placements to count of samplers
+    nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -163,6 +178,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
 					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
+
+  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
+				     mainBeamLine);
+  if (blms)
+    {BDSAcceleratorModel::Instance()->RegisterBLMs(blms);} // Acc model owns it
   
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -174,13 +194,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure - put everything in the world
   ComponentPlacement(worldPV);
   
-  if(verbose || debug)
+  if (verbose || debug)
     {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
-  if(verbose || debug) {G4cout << "Finished listing materials, returning physiWorld" << G4endl;} 
+  if (verbose || debug) {G4cout << "Finished listing materials, returning physiWorld" << G4endl;} 
 #endif
   return worldPV;
 }
@@ -196,17 +216,14 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
 void BDSDetectorConstruction::InitialiseRegions()
 {
+  BDSRegion* defaultRegion = new BDSRegion("default");
   for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
     {
-      G4Region* region = new G4Region(G4String(r.name));
-      G4ProductionCuts* cuts = new G4ProductionCuts();
-      cuts->SetProductionCut(r.prodCutPhotons*CLHEP::m,   "gamma");
-      cuts->SetProductionCut(r.prodCutElectrons*CLHEP::m, "e-");
-      cuts->SetProductionCut(r.prodCutPositrons*CLHEP::m, "e+");
-      cuts->SetProductionCut(r.prodCutProtons*CLHEP::m,   "proton");
-      region->SetProductionCuts(cuts);
-      acceleratorModel->RegisterRegion(region, cuts);
+      BDSRegion* reg = new BDSRegion(r, defaultRegion);
+      G4cout << "New region defined: " << G4endl << *reg << G4endl;
+      acceleratorModel->RegisterRegion(reg);
     }
+  delete defaultRegion;
 }
 
 void BDSDetectorConstruction::InitialiseApertures()
@@ -248,11 +265,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 #endif
   
   if (mainBeamline.massWorld->empty())
-    {
-      G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
-	     << "to have at least one element" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element");}
 
   // print warning if beam line is approximately circular but flag isn't specified
   if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
@@ -310,14 +323,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model as the first element will " << G4endl << "overlap with the "
 		 << "teleporter and terminator - the necessary mechanics for a circular "
 		 << "model in Geant4" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "check construction for circular machine");
 	}
       if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
-        {
-          G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
-                 << "to have at least one element for a circular machine." << G4endl;
-          exit(1);
-        }
+        {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element for a circular machine.");}
     }  
 
   for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
@@ -362,13 +371,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
             {sType = BDSSamplerType::none;}
           if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
             {sType = BDSSamplerType::none;}
+          if (temp->GetType() == "dump") // don't sample after a dump as there'll be nothing
+            {sType = BDSSamplerType::none;}
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
     }
 
   // Special circular machine bits
-  // Add terminator to do ring turn counting logic
+  // Add terminator to do ring turn counting logic and kill particles
   // Add teleporter to account for slight ring offset
   if (beamlineIsCircular && !massWorld->empty())
     {
@@ -377,15 +388,27 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 #endif
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
+
+      auto hasBeamPipeInfo = [](BDSBeamlineElement* ble) {return ble->GetBeamPipeInfo() != nullptr;};
+      auto firstElementWithBPInfo = std::find_if(massWorld->begin(),  massWorld->end(),  hasBeamPipeInfo);
+      auto lastElementWithBPInfo  = std::find_if(massWorld->rbegin(), massWorld->rend(), hasBeamPipeInfo);
+
+      G4double firstbeamPipeMaxExtent = (*firstElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+      G4double lastbeamPipeMaxExtent  = (*lastElementWithBPInfo)->GetBeamPipeInfo()->Extent().MaximumAbsTransverse();
+
+      // the extent is a half width, so we double it - also the terminator width.
+      G4double teleporterHorizontalWidth = 2 * std::max(firstbeamPipeMaxExtent, lastbeamPipeMaxExtent);
       
-      auto terminator = theComponentFactory->CreateTerminator();
+      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
 	{
 	  terminator->Initialise();
 	  massWorld->AddComponent(terminator);
 	}
-      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
-							      teleporterTransform);
+      
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+										  teleporterHorizontalWidth,
+										  teleporterTransform);
       if (teleporter)
 	{
 	  teleporter->Initialise();
@@ -590,6 +613,15 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // during construction time
   PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
+  // Place BLMs. Similarly no sensitivity set here - done at construction time.
+  PlaceBeamlineInWorld(BDSAcceleratorModel::Instance()->BLMsBeamline(),
+		       worldPV,
+		       checkOverlaps,
+		       false,
+		       false,
+		       false,
+		       true); // use incremental copy nubmers 
+
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
     {// extras is map so iterator has first and second for key and value
@@ -604,11 +636,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 						   G4bool                checkOverlaps,
 						   G4bool                setRegions,
 						   G4bool                registerInfo,
-						   G4bool                useCLPlacementTransform)
+						   G4bool                useCLPlacementTransform,
+						   G4bool                useIncrementalCopyNumbers)
 {
   if (!beamline)
     {return;}
-  
+
+  G4int i = 0;
   for (auto element : *beamline)
     {
       // Do nothing for gap element
@@ -635,12 +669,13 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       if (useCLPlacementTransform)
 	{placementTransform = element->GetPlacementTransformCL();}
+      G4int copyNumber = useIncrementalCopyNumbers ? i : element->GetCopyNo();
       auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
 				  placementName,                        // placement name
 				  element->GetContainerLogicalVolume(), // volume to be placed
 				  containerPV,                          // volume to place it in
 				  false,                                // no boolean operation
-				  element->GetCopyNo(),                 // copy number
+				  copyNumber,                           // copy number
 				  checkOverlaps);                       // overlap checking
 
       if (registerInfo)
@@ -653,19 +688,31 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
+      i++; // for increuemental copy numbers
     }
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
-								const BDSBeamline*            beamline)
+								const BDSBeamline*            beamline,
+								G4double*                     S)
 {
   // convert a sampler placement to a general placement for generation of the transform.
   GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamline);
+  return CreatePlacementTransform(convertedPlacement, beamline, S);
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
+								const BDSBeamline*        beamline,
+								G4double*                 S)
+{
+  // convert a sampler placement to a general placement for generation of the transform.
+  GMAD::Placement convertedPlacement(blmPlacement); 
+  return CreatePlacementTransform(convertedPlacement, beamline, S);
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
-								const BDSBeamline*     beamLine)
+								const BDSBeamline*     beamLine,
+								G4double*              S)
 {
   G4Transform3D result;
 
@@ -701,7 +748,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
   // s and use as local 'z' in the transform.
   if (!placement.referenceElement.empty())
     {// scenario 3
-      BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
+      const BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
 							 placement.referenceElementNumber);
       if (!element)
 	{
@@ -711,11 +758,12 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
 	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "invalid element for placement");
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
-
+      if (S)
+	{*S = sCoordinate;}
       G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
 									 placement.x*CLHEP::m,
 									 placement.y*CLHEP::m);
@@ -729,6 +777,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 									  placement.y*CLHEP::m);
       G4Transform3D localRotation(rm, G4ThreeVector());
       result = beamlinePart * localRotation;
+      if (S)
+	{*S = placement.s*CLHEP::m;}
     }
   else
     {// scenario 1
@@ -738,6 +788,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       
       
       result = G4Transform3D(rm, translation);
+      if (S)
+	{*S = -1000;} // default
     }
   
   return result;
@@ -797,7 +849,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
 
   const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
-  for(std::string const & bs : biasList)
+  for (std::string const & bs : biasList)
     {
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
@@ -807,11 +859,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       
       auto result = biasObjectList.find(bias);
       if (result == biasObjectList.end())
-	{
-	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""
-		 << elementName << "\"" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException("Error: bias named \"" + bias + "\" not found for element named \"" + elementName + "\"");}
       const GMAD::PhysicsBiasing& pb = *result;
       
       if(debug)
@@ -820,7 +868,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       eg->AddParticle(pb.particle);
       
       // loop through all processes
-      for(unsigned int p = 0; p < pb.processList.size(); ++p)
+      for (unsigned int p = 0; p < pb.processList.size(); ++p)
 	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
@@ -833,8 +881,21 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 {
 #if G4VERSION_NUMBER > 1009
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
-  if(debug)
+  if (debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
+
+#if G4VERSION_NUMBER > 1039
+  // only available in 4.10.4 onwards
+  // crystal biasing necessary for implementation of variable density
+  std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
+  if (!crystals->empty())
+    {
+      G4cout << __METHOD_NAME__ << "Using crystal biasing: true" << G4endl; // to match print out style further down
+      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
+      for (auto crystal : *crystals)
+	{crystalBiasing->AttachTo(crystal);}
+    }
+#endif
 
   G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
   G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
@@ -877,13 +938,13 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{
 	  auto egMaterial = BuildCrossSectionBias(materialBiasList, defaultBiasMaterial, accName);
 	  auto allLVs     = accCom->GetAllBiasingVolumes();
-	  if(debug)
+	  if (debug)
 	    {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
 	  for (auto materialLV : allLVs)
 	    {
-	      if(materialLV != vacuumLV)
+	      if (materialLV != vacuumLV)
 		{
-		  if(debug)
+		  if (debug)
 		    {
 		      G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
 			     << " " << (materialLV)->GetName() << G4endl;
@@ -893,18 +954,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	    }
 	}
     }
-  
-#if G4VERSION_NUMBER > 1039
-  // only available in 4.10.4 onwards
-  // crystal biasing necessary for implementation of variable density
-  std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
-  if (!crystals->empty())
-    {
-      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
-      for (auto crystal : *crystals)
-	{crystalBiasing->AttachTo(crystal);}
-    }
-#endif
 #endif
 }
 

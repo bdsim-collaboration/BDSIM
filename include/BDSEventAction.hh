@@ -45,14 +45,15 @@ public:
   virtual void EndOfEventAction(const G4Event*);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
+  G4int CurrentEventIndex() const {return currentEventIndex;}
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
     
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
-  G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
-  G4int  verboseEventNumber; ///< Copy of BDSGlobalConstants::VerboseEventNumber()
-  G4bool isBatch;
+  G4bool verboseEventBDSIM;
+  G4int  verboseEventStart;
+  G4int  verboseEventStop;
   G4bool storeTrajectory;    ///< Cache of whether to store trajectories or not.
   G4int  printModulo;
 
@@ -66,12 +67,19 @@ private:
   G4int eCounterWorldContentsID;  ///< Collection ID for the world energy deposition hits.
   G4int worldExitCollID;          ///< Collection ID for the world exit hits.
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
-  
+  G4int apertureCollID;           ///< Collection ID for the aperture hits.
+  G4int thinThingCollID;          ///< Collection ID for the thin thing hits.
+
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
 
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
+
+  // Note that individual calls to std::clock have no meaning, only
+  // the differences between them, and therefore this should not be
+  // written to the output.
+  std::clock_t cpuStartTime; ///< CPU time at the start of the event.
 
   G4bool primaryAbsorbedInCollimator; ///< Whether primary stopped in a collimator.
 
@@ -89,6 +97,7 @@ private:
   /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
+  G4int currentEventIndex;
 
   /// A copy of the pointer to event info instance that is registered to the event. Geant4
   /// deletes this as necessary.

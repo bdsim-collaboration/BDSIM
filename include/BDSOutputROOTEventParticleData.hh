@@ -19,15 +19,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTPARTICLEDATA_H
 #define BDSOUTPUTROOTEVENTPARTICLEDATA_H
 
+#include "Rtypes.h"
 #include "TObject.h"
-#include "TROOT.h"
 
 #ifndef __ROOTBUILD__
 #include "globals.hh"
 #endif
 
+#include <cmath>
 #include <map>
 #include <limits>
+#include <string>
 
 /**
  * @brief Geant4 particle data for particles used in simulation

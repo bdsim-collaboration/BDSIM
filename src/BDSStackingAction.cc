@@ -60,14 +60,12 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
   G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
-  G4cout<<"N total tracks :     " << SM->GetNTotalTrack()     << G4endl;
-  G4cout<<"N waiting tracks :   " << SM->GetNWaitingTrack()   << G4endl;
-  G4cout<<"N urgent tracks :    " << SM->GetNUrgentTrack()    << G4endl;
-  G4cout<<"N postponed tracks : " << SM->GetNPostponedTrack() << G4endl;
-  G4cout<<"Events to process : "<<
-    BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()<<G4endl;
-  G4cout<<"Number of event : "<<
-    BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
+  G4cout<<"N total, waiting, urgent, postponed tracks: "
+	<< std::setw(6) << SM->GetNTotalTrack()    << " : "
+	<< std::setw(6) << SM->GetNWaitingTrack()  << " : "
+	<< std::setw(6) << SM->GetNUrgentTrack()   << " : "
+	<< std::setw(6) << SM->GetNPostponedTrack()
+	<< G4endl;
 #endif
 
   // If beyond max number of tracks, kill it
@@ -107,7 +105,16 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 		    {
 		      if (auto ecSD2 = dynamic_cast<BDSSDEnergyDeposition*>(mSD->GetSD(i)))
 			{ecSD2->ProcessHitsTrack(aTrack, nullptr);}
-		      // else another SD -> don't use
+		      else if (auto mSDO = dynamic_cast<BDSMultiSensitiveDetectorOrdered*>(sd))
+			{
+			  for (G4int j=0; j < (G4int)mSDO->GetSize(); ++j)
+			    {
+			      if (auto ecSD3 = dynamic_cast<BDSSDEnergyDeposition*>(mSDO->GetSD(j)))
+				{ecSD3->ProcessHitsTrack(aTrack, nullptr);}
+			      // else another SD -> don't use
+			    }
+			  // else another SD -> don't use
+			}
 		    }
 		}
 #endif

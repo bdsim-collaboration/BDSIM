@@ -37,11 +37,12 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 minimumRadiusOfCurvatureIn,
 						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  rho(std::abs(brhoIn)/(*strengthIn)["field"]),
+  rho(std::abs(brhoIn)/(*strengthIn)["field"] * (*strengthIn)["scaling"] ),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
-  finiteTilt(BDS::IsFinite(tiltIn))
+  finiteTilt(BDS::IsFinite(tiltIn)),
+  multipoleIntegrator(nullptr)
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
@@ -78,6 +79,11 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 
   bx = (*strengthIn)["bx"];
   by = (*strengthIn)["by"];
+}
+
+BDSIntegratorDipoleFringe::~BDSIntegratorDipoleFringe()
+{
+  delete multipoleIntegrator;
 }
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[6],

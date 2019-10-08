@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/options.h"
 #include "BDSDebug.hh"
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
@@ -54,8 +55,7 @@ BDSOutputROOT::BDSOutputROOT(G4String fileName,
 
 BDSOutputROOT::~BDSOutputROOT()
 {
-  if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write(0,TObject::kOverwrite);}
+  CloseFile();
 }
 
 void BDSOutputROOT::NewFile() 
@@ -63,7 +63,6 @@ void BDSOutputROOT::NewFile()
   G4String newFileName = GetNextFileName();
   
   theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
-
   if (theRootOutputFile->IsZombie())
     {
       G4cerr << __METHOD_NAME__ << "Unable to open output file: \"" << newFileName << "\"" << G4endl;
@@ -112,6 +111,8 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
+  if (storeApertureImpacts)
+    {theEventOutputTree->Branch("ApertureImpacts.", "BDSOutputROOTEventAperture", apertureImpacts, 4000, 1);}
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);
@@ -174,27 +175,36 @@ void BDSOutputROOT::WriteModel()
 
 void BDSOutputROOT::WriteFileEventLevel()
 {
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   theEventOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteFileRunLevel()
 {
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   theRunOutputTree->Fill();
-
-  if(theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
+  
+  if (theRootOutputFile)
+    {
+      if (theRootOutputFile->IsOpen())
+	{theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
+    }
 }
 
 void BDSOutputROOT::CloseFile()
 {
-  if(theRootOutputFile && theRootOutputFile->IsOpen())
-  {
-    theRootOutputFile->cd();
-    theRootOutputFile->Write(0,TObject::kOverwrite);
-    theRootOutputFile->Close();
-    delete theRootOutputFile;
-    theRootOutputFile = nullptr;
-  }
+  if (theRootOutputFile)
+      {
+	if (theRootOutputFile->IsOpen())
+	  {
+	    theRootOutputFile->cd();
+	    theRootOutputFile->Write(0,TObject::kOverwrite);
+	    G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
+	    theRootOutputFile->Close();
+	    delete theRootOutputFile;
+	    theRootOutputFile = nullptr;
+	  }
+      }
 }
