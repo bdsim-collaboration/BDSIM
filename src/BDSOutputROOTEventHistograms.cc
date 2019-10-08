@@ -37,6 +37,14 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
   Fill(&rhs);
 }
 
+BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
+							   std::vector<TH2D*>& histograms2DIn,
+							   std::vector<TH3D*>& histograms3DIn):
+  histograms1D(histograms1DIn),
+  histograms2D(histograms2DIn),
+  histograms3D(histograms3DIn)
+{;}
+
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 {;}
 

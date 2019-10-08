@@ -45,6 +45,9 @@ public:
   BDSOutputROOTEventHistograms();
   BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms &h);
   BDSOutputROOTEventHistograms& operator=(const BDSOutputROOTEventHistograms&) = delete;
+  BDSOutputROOTEventHistograms(std::vector<TH1D*>& histogram1DIn,
+			       std::vector<TH2D*>& histogram2DIn,
+			       std::vector<TH3D*>& histogram3DIn);
   virtual ~BDSOutputROOTEventHistograms();
 
   /// Interface function to create a 1D histogram using only standard types.

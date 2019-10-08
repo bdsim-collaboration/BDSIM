@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
   // initialise file map
   try
-    {f = new TFile(inputFiles[0].c_str());}
+    {f = new TFile(inputFiles[0].c_str(), "READ");}
   catch (const std::exception& e)
     {std::cerr << e.what() << std::endl; return 1;}
   HistogramMap* histMap = new HistogramMap(f, output); // map out first file
