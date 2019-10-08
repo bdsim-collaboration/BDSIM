@@ -277,11 +277,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 #endif
   
   if (mainBeamline.massWorld->empty())
-    {
-      G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
-	     << "to have at least one element" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element");}
 
   // print warning if beam line is approximately circular but flag isn't specified
   if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
@@ -339,14 +335,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model as the first element will " << G4endl << "overlap with the "
 		 << "teleporter and terminator - the necessary mechanics for a circular "
 		 << "model in Geant4" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "check construction for circular machine");
 	}
       if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
-        {
-          G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
-                 << "to have at least one element for a circular machine." << G4endl;
-          exit(1);
-        }
+        {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element for a circular machine.");}
     }  
 
   for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
@@ -976,11 +968,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       
       auto result = biasObjectList.find(bias);
       if (result == biasObjectList.end())
-	{
-	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""
-		 << elementName << "\"" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException("Error: bias named \"" + bias + "\" not found for element named \"" + elementName + "\"");}
       const GMAD::PhysicsBiasing& pb = *result;
       
       if(debug)

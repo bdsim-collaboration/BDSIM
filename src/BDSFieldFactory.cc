@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSExecOptions.hh"
@@ -273,7 +274,7 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
       G4cout << "Defined field specifiers are:" << G4endl;
       for (const auto& it : parserDefinitions)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "invalid field name");
     }
   return result->second;
 }
@@ -742,7 +743,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
 	};
 	for (auto type : types)
 	  {G4cout << type << G4endl;}
-	exit(1);
+	throw BDSException(__METHOD_NAME__, "invalid integrator type");
       }
     default:
       break; // returns nullptr;
