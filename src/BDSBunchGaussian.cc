@@ -102,18 +102,9 @@ void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
   /// clear previous means
   for (auto& vec : coordinates)
     {vec->clear();}
+  iPartIteration = 0;
   
   PreGenerateEvents(numberOfEvents);
-}
-
-void BDSBunchGaussian::EndOfRunAction()
-{
-  if (!offsetSampleMean)
-    {return;}
-  /// clear previous means
-  for (auto& vec : coordinates)
-    {vec->clear();}
-  iPartIteration = 0;
 }
 
 CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
@@ -221,7 +212,7 @@ void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
   t_a  = t_a  - T0;
 
   // Offset with different w.r.t. central value
-  for(G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
+  for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
       x0_v[iParticle] -= x_a;
       xp_v[iParticle] -= xp_a;

@@ -179,9 +179,6 @@ BDSParticleCoordsFull BDSBunch::GetNextParticleLocal()
 void BDSBunch::BeginOfRunAction(G4int /*numberOfEvents*/)
 {;}
 
-void BDSBunch::EndOfRunAction()
-{;}
-
 void BDSBunch::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
 {generatePrimariesOnly = generatePrimariesOnlyIn;}
 

@@ -366,7 +366,7 @@ int BDSIM::Initialise()
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
-  if(!bCloseGeometry)
+  if (!bCloseGeometry)
     { 
       G4cerr << __METHOD_NAME__ << "error - geometry not closed." << G4endl;
       return 1;
@@ -403,7 +403,7 @@ void BDSIM::BeamOn(int nGenerate)
   /// Run in either interactive or batch mode
   try
     {
-      if(!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
+      if (!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
 	{
 	  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
 						   BDSGlobalConstants::Instance()->Geant4MacroFileName());
