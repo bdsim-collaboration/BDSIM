@@ -72,7 +72,7 @@ void HistogramAccumulatorV<T>::Accumulate(BDSOutputROOTEventHistograms* oneEvent
 }
 
 template <class T>
-BDSOutputROOTEventHistograms* HistogramAccumulator<T>::Terminate()
+BDSOutputROOTEventHistograms* HistogramAccumulatorV<T>::Terminate()
 {
   std::vector<TH1D*> r1;
   for (auto a : accumulators1d)
