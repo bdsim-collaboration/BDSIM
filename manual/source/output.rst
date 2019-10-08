@@ -132,8 +132,7 @@ For `scorermesh`, the syntax is: ::
 Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
 example parameter and value pairs. The following parameters may be specified.
 
-
-.. tabularcolumns:: |p{5cm}|p{3cm}|[{8cm}|
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
 +-------------------------+---------------+------------------------------------------------+
 | **Parameter**           | **Required**  | **Description**                                |
@@ -159,12 +158,12 @@ example parameter and value pairs. The following parameters may be specified.
 |                         |               | with respect to if it used more than once in   |
 |                         |               | sequence - zero counting                       |
 +-------------------------+---------------+------------------------------------------------+
-| s                       | No            | Curvilinear s coordinate (global | local       |
+| s                       | No            | curvilinear s coordinate (global | local       |
 |                         |               | depending on parameters used                   |
 +-------------------------+---------------+------------------------------------------------+
-| x                       | No            | Offset in (global | local) x                   |
+| x                       | No            | Offset in (global or local) x                  |
 +-------------------------+---------------+------------------------------------------------+
-| y                       | No            | Offset in (global | local) y                   |
+| y                       | No            | Offset in (global or local) y                  |
 +-------------------------+---------------+------------------------------------------------+
 | z                       | No            | Offset in global z                             |
 +-------------------------+---------------+------------------------------------------------+
@@ -197,8 +196,8 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 
   name, scorer, parameter=value, parameter2=value;
 
-.. tabularcolumns:: |p{5cm}|p{3cm}|[{8cm}|
-  
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+		    
 +-------------------------+---------------+------------------------------------------------+
 | **Parameter**           | **Required**  | **Description**                                |
 +=========================+===============+================================================+
@@ -248,7 +247,7 @@ Below is an example contents: ::
 Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
 of 0.05 MeV.
 
-.. tabularcolumns:: |p{5cm}|p{8cm}|[{3cm}|
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
 +-------------------------+---------------------------------------------------+-------------+
 | **Scorer Type**         | **Description**                                   | **Units**   |
