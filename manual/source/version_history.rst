@@ -1,4 +1,20 @@
-V1.4 - 2019 / ?? / ??
+V1.5 - 2019 - Planned Development
+=================================
+
+Below is a brief list of planned developments for the next version. Please get in touch
+if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
+
+* Change run histograms to be per-event averages rather than simple histograms.
+* Interpolated aperture shapes between any two shapes.
+* Tapered aperture for all elements.
+* Beam pipe sections to fill gaps between changes in aperture.
+* Any aperture shape can be used for both the inside and the outside of a collimator.
+* Scoring meshes for dose maps etc.
+* Restructure code into proper C++ libraries rather than just analysis and bdsim.
+* Multiple beam line tracking.
+* Use sampler data from a BDSIM output file as input to another BDSIM simulation.
+
+V1.4 - 2019 / 10 / ??
 =====================
 
 Expected Changes To Results
@@ -6,7 +22,7 @@ Expected Changes To Results
 
 * Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
   their rotation angle. Not doing this will result in different angles and therefore results.
-* Fix for field maps with finite rotations (but not multiples of :math:`\pi/2`). The field will now be correct
+* Fix for field maps with rotations (multiples of :math:`\pi/2` were ok). The field will now be correct
   but this may be different from previous releases.
 * Field maps now pick up the tilt from the element, so a separate tilt isn't required in the field
   definition as was in the past to make the field align with a tilted element. In this case, the field
