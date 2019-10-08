@@ -285,6 +285,7 @@ Bug Fixes
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
 * Unitialised variables reported by Coverity.
+* Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 
 Output Changes
 --------------
