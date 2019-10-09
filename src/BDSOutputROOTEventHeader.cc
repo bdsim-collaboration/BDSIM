@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
-#include "BDSVersion.h"
-#include "BDSVersionData.h"
+#include "BDSVersion.hh"
+#include "BDSVersionData.hh"
 
 #include "G4Version.hh"
 
