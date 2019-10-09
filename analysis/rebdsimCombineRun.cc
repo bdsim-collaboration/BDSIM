@@ -22,8 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "FileMapper.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
+#include "HistogramAccumulatorV.hh"
+#include "Run.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
+#include "BDSOutputROOTEventHistograms.hh"
+#include "BDSVersionData.hh"
 
 #include "TDirectory.h"
 #include "TFile.h"
@@ -58,6 +62,11 @@ int main(int argc, char* argv[])
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
   headerTree->Fill();
   output->Write(nullptr,TObject::kOverwrite);
+
+  // setup output directory
+  std::string runDir = "Run/MergedHistograms";
+  output->mkdir(runDir.c_str());
+  output->cd(runDir.c_str());
   
   // build input file list
   std::vector<std::string> inputFiles;
@@ -76,19 +85,29 @@ int main(int argc, char* argv[])
   TH2::AddDirectory(true);
   TH3::AddDirectory(true);
 
-  TFile* f = nullptr; // temporary variable
-
   // initialise file map
+  TFile* f = nullptr;
   try
     {f = new TFile(inputFiles[0].c_str(), "READ");}
   catch (const std::exception& e)
     {std::cerr << e.what() << std::endl; return 1;}
-  HistogramMap* histMap = new HistogramMap(f, output); // map out first file
+  int* dataVersionOnFile = new int(0);
+  if (!RBDS::IsBDSIMOutputFile(f, dataVersionOnFile))
+    {std::cerr << "First file not a BDSIM output file - not proceeding" << std::endl; exit(1);}
+  Run*   runFirst     = new Run();
+  TTree* runFirstTree = static_cast<TTree*>(f->Get("Run"));
+  runFirst->SetBranchAddress(runFirstTree);
+  runFirstTree->GetEntry(0);
+  output->cd(runDir.c_str());
+  BDSOutputROOTEventHistograms* baseHistograms = new BDSOutputROOTEventHistograms(*runFirst->Histos);
   f->Close();
   delete f;
 
-  std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
-
+  typedef HistogramAccumulatorV<HistogramAccumulatorMerge> AccumulatorMerge;
+  output->cd(runDir.c_str());
+  AccumulatorMerge* accumulator = new AccumulatorMerge(baseHistograms);
+  delete baseHistograms;
+  
   // loop over files and accumulate
   for (const auto& file : inputFiles)
     {
@@ -96,29 +115,29 @@ int main(int argc, char* argv[])
       if (RBDS::IsBDSIMOutputFile(f))
 	{
 	  std::cout << "Accumulating> " << file << std::endl;
-	  for (const auto& hist : histograms)
+	  
+	  Run* runLocal = new Run();
+	  TTree* runTreeFile = static_cast<TTree*>(f->Get("Model"));
+	  if (!runTreeFile)
 	    {
-	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
-	      TH1* h = static_cast<TH1*>(f->Get(histPath.c_str()));
-	      if (!h)
-		{RBDS::WarningMissingHistogram(histPath, file); continue;}
-	      hist.accumulator->Accumulate(h);
+	      std::cerr << "No Run tree in file " << file << " -> skipping" << std::endl;
+	      delete runLocal;
 	    }
+	  runLocal->SetBranchAddress(runTreeFile);
+	  runTreeFile->GetEntry(0);
+	  accumulator->Accumulate(runLocal->Histos);
+	  delete runLocal;
 	}
       else
-	{std::cout << "Skipping " << file << " as not a rebdsim output file" << std::endl;}
+	{std::cout << "Skipping " << file << " as not a BDSIM output file" << std::endl;}
       f->Close();
       delete f;
     }
   
   // terminate and write output
-  for (const auto& hist : histograms)
-    {
-      TH1* result = hist.accumulator->Terminate();
-      result->SetDirectory(hist.outputDir);
-      hist.outputDir->Add(result);
-      delete hist.accumulator; // this removes temporary histograms from the file
-    }
+  BDSOutputROOTEventHistograms* result = accumulator->Terminate();
+
+  delete accumulator;
 
   output->Write(nullptr,TObject::kOverwrite);
   output->Close();
