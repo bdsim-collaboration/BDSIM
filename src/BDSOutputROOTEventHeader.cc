@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
-#include "version.h"
+#include "BDSVersion.h"
+#include "BDSVersionData.h"
 
 #include "G4Version.hh"
 
@@ -40,14 +41,13 @@ BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
 
 void BDSOutputROOTEventHeader::Flush()
 {
-  bdsimVersion  = std::string(GIT_VERSION);
+  bdsimVersion  = std::string(BDSIM_GIT_VERSION);
   geant4Version = G4Version;
   rootVersion   = std::string(gROOT->GetVersion());
   clhepVersion  = CLHEP::Version::String();
   timeStamp     = "";
   fileType      = "BDSIM";
-  dataVersion   = 5; // update analysis/DataLoader.cc default when this changes
-  // also in comparator/Compare.cc at top - EXPECTEDDATAVERSION
+  dataVersion   = BDSIM_DATA_VERSION;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;
