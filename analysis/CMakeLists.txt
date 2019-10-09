@@ -11,6 +11,7 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimHistoMerge
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombine.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombineRun.cc)
 
 if (NOT USE_EVENTDISPLAY)
   list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
@@ -78,6 +79,11 @@ add_executable(rebdsimCombineExec rebdsimCombine.cc)
 set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimCombineExec)
+
+add_executable(rebdsimCombineRunExec rebdsimCombineRun.cc)
+set_target_properties(rebdsimCombineRunExec PROPERTIES OUTPUT_NAME "rebdsimCombineRun" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimCombineRunExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimCombineRunExec)
 
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
