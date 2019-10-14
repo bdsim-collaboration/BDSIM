@@ -34,6 +34,7 @@ Expected Changes To Results
 New Features
 ------------
 
+* Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
 * `S0` for bunch offset in curvilinear frame now a documented feature of the bunch.
@@ -68,6 +69,9 @@ New Features
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
+  energy a particle must have for either an aperture impact or collimator hit respectively to
+  be generated.
 
 * New options:
 
@@ -76,6 +80,10 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
++------------------------------------+--------------------------------------------------------------------+
+| collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
++------------------------------------+--------------------------------------------------------------------+
 | includeFringeFieldsCavities        | Include thin fringe fields for RF cavities only, on by default.    |
 |                                    | Cavity fringes are not affected by the includeFringeFields option, |
 |                                    | includeFringeFieldsCavities must be explicitly turned off if no    |
