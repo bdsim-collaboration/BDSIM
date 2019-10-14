@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryPointLocal.hh"
 #include "BDSTrajectoryPointLink.hh"
 #include "BDSPhysicalConstants.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
 #ifdef BDSDEBUG_H
 #include "BDSProcessMap.hh"
@@ -126,9 +127,9 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
     {
       const G4ParticleDefinition* particleDef        = track->GetParticleDefinition();
       const G4DynamicParticle*    dynamicParticleDef = track->GetDynamicParticle();
-      const G4ElectronOccupancy*  eo = dynamicParticleDef->GetElectronOccupancy();
-      G4int nElectrons = eo ? eo->GetTotalOccupancy() : 0;
-      extraIon = new BDSTrajectoryPointIon(particleDef->IsGeneralIon(),
+      G4bool isIon = BDS::IsIon(dynamicParticleDef);
+      G4int nElectrons = dynamicParticleDef->GetTotalOccupancy();
+      extraIon = new BDSTrajectoryPointIon(isIon,
 					   particleDef->GetAtomicMass(),
 					   particleDef->GetAtomicNumber(),
 					   nElectrons);

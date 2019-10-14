@@ -1265,6 +1265,10 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Function**                                                       |
 +====================================+====================================================================+
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
++------------------------------------+--------------------------------------------------------------------+
+| collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
++------------------------------------+--------------------------------------------------------------------+
 | elossHistoBinWidth                 | The width of the histogram bins [m]                                |
 +------------------------------------+--------------------------------------------------------------------+
 | nperfile                           | Number of events to record per output file                         |

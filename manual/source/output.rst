@@ -344,6 +344,19 @@ A table of common particles is listed below:
 | muon positive    | -13          |
 +------------------+--------------+
 
+Ion Identification
+------------------
+
+Several parts of BDSIM output (samplers, aperture impacts, trajectories) have the variable `isIon`,
+which is a Boolean to identify whether the hit is an ion or not. This is true for:
+
+* All ions greater than Hydrogen
+* A Hydrogen ion - i.e. a proton with 1 or more bound electron.
+
+This is **note** true for just a proton, which is considered a separate particle. In Geant4,
+a proton is both a particle and also considered an ion, however there are different physics
+processes for each.
+
 
 Output Data Selection \& Reduction
 ----------------------------------
@@ -968,7 +981,7 @@ BDSOutputROOTEventAperture
 +------------------------+----------------------+-----------------------------------------------------------+
 | firstPrimaryImpact     | std::vector<bool>    | Whether the hit is the first primary one for this event.  |
 +------------------------+----------------------+-----------------------------------------------------------+
-| partID                 | std::vector<int>     | PDG particld ID of the particle.                          |
+| partID                 | std::vector<int>     | PDG particle ID of the particle.                          |
 +------------------------+----------------------+-----------------------------------------------------------+
 | turn                   | std::vector<int>     | Turn number (1-counting) the hit happened on.             |
 +------------------------+----------------------+-----------------------------------------------------------+
@@ -989,6 +1002,8 @@ BDSOutputROOTEventAperture
 | ionA                   | std::vector<int>     | Ion atomic mass number.                                   |
 +------------------------+----------------------+-----------------------------------------------------------+
 | ionZ                   | std::vector<int>     | Ion atomic number.                                        |
++------------------------+----------------------+-----------------------------------------------------------+
+| nElectrons             | std::vector<int>     | Number of bound electrons in case of an ion. 0 otherwise. |
 +------------------------+----------------------+-----------------------------------------------------------+
 | trackID                | std::vector<int>     | Track ID number of the particle that hit.                 |
 +------------------------+----------------------+-----------------------------------------------------------+

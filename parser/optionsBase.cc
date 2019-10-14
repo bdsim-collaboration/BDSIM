@@ -241,11 +241,13 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
   storeCollimatorHitsLinks   = false;
   storeCollimatorHitsIons    = false;
   storeCollimatorHitsAll     = false;
+  collimatorHitsMinimumKE    = 0;
   storeEloss                 = true;
   storeElossHistograms       = true;
   storeElossVacuum           = false;

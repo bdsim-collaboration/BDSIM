@@ -34,6 +34,7 @@ Expected Changes To Results
 New Features
 ------------
 
+* Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
 * `S0` for bunch offset in curvilinear frame now a documented feature of the bunch.
@@ -70,6 +71,9 @@ New Features
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
 * Added the ability to attach a BLM flush to the side of a component
   with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
+* New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
+  energy a particle must have for either an aperture impact or collimator hit respectively to
+  be generated.
 
 * New options:
 
@@ -78,6 +82,10 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
++------------------------------------+--------------------------------------------------------------------+
+| collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
++------------------------------------+--------------------------------------------------------------------+
 | includeFringeFieldsCavities        | Include thin fringe fields for RF cavities only, on by default.    |
 |                                    | Cavity fringes are not affected by the includeFringeFields option, |
 |                                    | includeFringeFieldsCavities must be explicitly turned off if no    |
@@ -315,6 +323,7 @@ Output Changes
   is to allow the possibility of more than one primary particle as is possible when loading a
   file from an event generator.
 * New BDSOutputROOTEventAperture class.
+* Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
 
 Output Class Versions
 ---------------------
