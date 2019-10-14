@@ -753,6 +753,8 @@ BDSOutputROOTEventAperture
 +------------------------+----------------------+-----------------------------------------------------------+
 | ionZ                   | std::vector<int>     | Ion atomic number.                                        |
 +------------------------+----------------------+-----------------------------------------------------------+
+| nElectrons             | std::vector<int>     | Number of bound electrons in case of an ion. 0 otherwise. |
++------------------------+----------------------+-----------------------------------------------------------+
 | trackID                | std::vector<int>     | Track ID number of the particle that hit.                 |
 +------------------------+----------------------+-----------------------------------------------------------+
 | parentID               | std::vector<int>     | Track ID number of the parent particle.                   |

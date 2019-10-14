@@ -310,6 +310,7 @@ Output Changes
   is to allow the possibility of more than one primary particle as is possible when loading a
   file from an event generator.
 * New BDSOutputROOTEventAperture class.
+* Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
 
 Output Class Versions
 ---------------------
