@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSSDFilterIon.hh"
-#include "BDSSDFilterKineticEnergy.hh"
 #include "BDSSDFilterOr.hh"
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
@@ -35,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDTerminator.hh"
 #include "BDSSDVolumeExit.hh"
 
+#include "G4SDKineticEnergyFilter.hh"
 #include "G4SDManager.hh"
 #include "G4Version.hh"
 
@@ -102,7 +102,7 @@ BDSSDManager::BDSSDManager()
   filters["primary_or_ion"] = primaryOrIon;
 
   // aperture impact specifc filters
-  filters["aper_min_ke"] = new BDSSDFilterKineticEnergy("aper_min_ke", apertureImpactsMinimumKE);
+  filters["aper_min_ke"] = new G4SDKineticEnergyFilter("aper_min_ke", apertureImpactsMinimumKE);
   BDSSDFilterOr* primaryIonAperMinKE = new BDSSDFilterOr("primary_or_ion_aper_min_ke");
   primaryIonAperMinKE->RegisterFilter(filters["primary_or_ion"]);
   primaryIonAperMinKE->RegisterFilter(filters["aper_min_ke"]);
@@ -112,7 +112,7 @@ BDSSDManager::BDSSDManager()
   primaryAperMinKE->RegisterFilter(filters["aper_min_ke"]);
 
   // collimator impact specific filters
-  filters["coll_min_ke"] = new BDSSDFilterKineticEnergy("coll_min_ke", collimatorHitsMinimumKE);
+  filters["coll_min_ke"] = new G4SDKineticEnergyFilter("coll_min_ke", collimatorHitsMinimumKE);
   BDSSDFilterOr* primaryIonCollMinKE = new BDSSDFilterOr("primary_or_ion_coll_min_ke");
   primaryIonCollMinKE->RegisterFilter(filters["primary_or_ion"]);
   primaryIonCollMinKE->RegisterFilter(filters["coll_min_ke"]);
