@@ -371,12 +371,14 @@ void Options::PublishMembers()
   publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
+  publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks);
   publish("storeCollimatorHitsIons",        &Options::storeCollimatorHitsIons);
   publish("storeCollimatorHitsAll",         &Options::storeCollimatorHitsAll);
+  publish("collimatorHitsMinimumKE",        &Options::collimatorHitsMinimumKE);
   publish("storeEloss",                     &Options::storeEloss);
   publish("storeELoss",                     &Options::storeEloss);
   publish("storeElossHistograms",           &Options::storeElossHistograms);
