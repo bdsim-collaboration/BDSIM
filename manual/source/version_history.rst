@@ -319,6 +319,8 @@ Output Changes
   file from an event generator.
 * New BDSOutputROOTEventAperture class.
 * Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
+* The variable :code:`duration` in Event.Summary and Run.Summary is now :code:`durationWall` to more
+  accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
 
 Output Class Versions
 ---------------------

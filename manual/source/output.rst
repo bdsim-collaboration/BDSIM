@@ -774,9 +774,9 @@ BDSOutputROOTEventInfo
 +-----------------------------+-------------------+---------------------------------------------+
 | stopTime                    | time_t            | Time stamp at end of event                  |
 +-----------------------------+-------------------+---------------------------------------------+
-| duration                    | float             | Duration (wall time) of event in seconds    |
+| durationWall                | float             | Duration (wall time) of event in seconds    |
 +-----------------------------+-------------------+---------------------------------------------+
-| cpuTime                     | float             | Duration (CPU time) of event in seconds     |
+| durationCPU                 | float             | Duration (CPU time) of event in seconds     |
 +-----------------------------+-------------------+---------------------------------------------+
 | seedStateAtStart            | std::string       | State of random number generator at the     |
 |                             |                   | start of the event as provided by CLHEP     |
