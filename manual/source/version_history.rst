@@ -321,6 +321,8 @@ Output Changes
 * Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
 * The variable :code:`duration` in Event.Summary and Run.Summary is now :code:`durationWall` to more
   accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
+* The header class BDSOutputROOTEventHeader now has variables that store which files were analysed
+  in the case of rebdsim and which files were combined in the case of rebdsimCombine.
 
 Output Class Versions
 ---------------------
@@ -340,7 +342,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 2               | 2               |
+| BDSOutputROOTEventHeader          | Y           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+

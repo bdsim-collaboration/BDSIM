@@ -318,29 +318,36 @@ is from BDSIM, rebdsim or rebdsimCombine.
 BDSOutputROOTEventHeader
 ************************
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.20\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+------------------------+----------------+---------------------------------------+
-| **Variable Name**      | **Type**       | **Description**                       |
-+========================+================+=======================================+
-| bdsimVersion           | std::string    | Version of BDSIM used                 |
-+------------------------+----------------+---------------------------------------+
-| geant4Version          | std::string    | Version of Geant4 used                |
-+------------------------+----------------+---------------------------------------+
-| rootVersion            | std::string    | Version of ROOT used                  |
-+------------------------+----------------+---------------------------------------+
-| clhepVersion           | std::string    | Version of CLHEP used                 |
-+------------------------+----------------+---------------------------------------+
-| timeStamp              | std::string    | Time and date file was created        |
-+------------------------+----------------+---------------------------------------+
-| fileType               | std::string    | String describing what stage of       |
-|                        |                | simulation the file came from         |
-+------------------------+----------------+---------------------------------------+
-| dataVersion            | int            | BDSIM data format version             |
-+------------------------+----------------+---------------------------------------+
-| doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
-|                        |                | double precision for output           |
-+------------------------+----------------+---------------------------------------+
++------------------------+--------------------------+---------------------------------------+
+| **Variable Name**      | **Type**                 | **Description**                       |
++========================+==========================+=======================================+
+| bdsimVersion           | std::string              | Version of BDSIM used                 |
++------------------------+--------------------------+---------------------------------------+
+| geant4Version          | std::string              | Version of Geant4 used                |
++------------------------+--------------------------+---------------------------------------+
+| rootVersion            | std::string              | Version of ROOT used                  |
++------------------------+--------------------------+---------------------------------------+
+| clhepVersion           | std::string              | Version of CLHEP used                 |
++------------------------+--------------------------+---------------------------------------+
+| timeStamp              | std::string              | Time and date file was created        |
++------------------------+--------------------------+---------------------------------------+
+| fileType               | std::string              | String describing what stage of       |
+|                        |                          | simulation the file came from         |
++------------------------+--------------------------+---------------------------------------+
+| dataVersion            | int                      | BDSIM data format version             |
++------------------------+--------------------------+---------------------------------------+
+| doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
+|                        |                          | double precision for output           |
++------------------------+--------------------------+---------------------------------------+
+| analysedFiles          | std::vector<std::string> | List of files anlaysed in the case of |
+|                        |                          | rebdsim, rebdsimHistoMerge,           |
+|                        |                          | rebdsimOptics and rebdsimOrbit        |
++------------------------+--------------------------+---------------------------------------+
+| combinedFiles          | std::vector<std::string> | List of files combined together in    |
+|                        |                          | rebdsimCombine                        |
++------------------------+--------------------------+---------------------------------------+
 
 Geant4Data Tree
 ^^^^^^^^^^^^^^^
