@@ -944,6 +944,26 @@ system so there are only global coordinates recorded.
 | turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 
+BDSOutputROOTEventRunInfo
+*************************
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++-----------------------------+-------------------+---------------------------------------------+
+|  **Variable**               | **Type**          |  **Description**                            |
++=============================+===================+=============================================+
+| startTime                   | time_t            | Time stamp at start of run                  |
++-----------------------------+-------------------+---------------------------------------------+
+| stopTime                    | time_t            | Time stamp at end of run                    |
++-----------------------------+-------------------+---------------------------------------------+
+| durationWall                | float             | Duration (wall time) of run in seconds      |
++-----------------------------+-------------------+---------------------------------------------+
+| durationCPU                 | float             | Duration (CPU time) of run in seconds       |
++-----------------------------+-------------------+---------------------------------------------+
+| seedStateAtStart            | std::string       | State of random number generator at the     |
+|                             |                   | start of the run as provided by CLHEP       |
++-----------------------------+-------------------+---------------------------------------------+
+
 
 BDSOutputROOTEventTrajectory
 ****************************
