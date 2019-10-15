@@ -30,6 +30,8 @@ Expected Changes To Results
 * PrimaryFirstHit location on wire scanners will now be more accurate, where it might have missed it before.
 * Default range cut from BDSIM will not be enforced if using a Geant4 physics list. It will only be set if
   specified in the user input.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
 
 New Features
 ------------
@@ -210,6 +212,8 @@ General
 * `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
   only the placement of the container volume of the loaded geometry was checked to see if it overlaps
   with any other geometry, but nothing internally.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
   
 Bug Fixes
 ---------
