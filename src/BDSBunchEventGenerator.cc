@@ -95,6 +95,20 @@ void BDSBunchEventGenerator::CheckParameters()
   BDSBunch::CheckParameters();
   if (eventGeneratorMinX >= eventGeneratorMaxX)
     {throw BDSException(__METHOD_NAME__, "eventGeneratorMinX >= eventGeneratorMaxX");}
+  if (eventGeneratorMinY >= eventGeneratorMaxY)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinY >= eventGeneratorMaxY");}
+  if (eventGeneratorMinZ >= eventGeneratorMaxZ)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinZ >= eventGeneratorMaxZ");}
+  if (eventGeneratorMinXp >= eventGeneratorMaxXp)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinXp >= eventGeneratorMaxXp");}
+  if (eventGeneratorMinYp >= eventGeneratorMaxYp)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinYp >= eventGeneratorMaxYp");}
+  if (eventGeneratorMinZp >= eventGeneratorMaxZp)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinZp >= eventGeneratorMaxZp");}
+  if (eventGeneratorMinT >= eventGeneratorMaxT)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinT >= eventGeneratorMaxT");}
+  if (eventGeneratorMinEK >= eventGeneratorMaxEK)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorMinEK >= eventGeneratorMaxEK");}
 }
 
 void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
