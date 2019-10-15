@@ -52,6 +52,7 @@ New Features
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
+* Filters for event generator particles loaded with HepMC3.
 * Ability to print out all particles and physics processes to be helpful for finding Geant4
   names for biasing. See new options below.
 * `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
