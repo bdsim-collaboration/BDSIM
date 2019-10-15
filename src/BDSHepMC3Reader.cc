@@ -195,6 +195,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
 #endif
+	  delete g4prim;
 	  nParticlesSkipped++;
 	  continue;
 	}
