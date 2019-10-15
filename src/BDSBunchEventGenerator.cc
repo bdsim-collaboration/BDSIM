@@ -175,7 +175,9 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
   G4bool t  = coords.T  > eventGeneratorMinT  && coords.T  < eventGeneratorMaxT;
   G4bool ek = kineticEnergy > eventGeneratorMinEK && kineticEnergy < eventGeneratorMaxEK;
   
-  G4bool allowedParticle = testOnParticleType ? std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID) : true;
+  G4bool allowedParticle = true;
+  if (testOnParticleType)
+    {allowedParticle = std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID);}
   
   return x && y && z && xp && yp && zp && t && ek && allowedParticle;
 }
