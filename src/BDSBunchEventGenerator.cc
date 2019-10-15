@@ -142,12 +142,16 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "not found in particle table");}
 	    }
 	  catch (const std::logic_error&) // else, usual way by string search
-	    {particleDef = particleTable->FindParticle(particleIDStr);}
-	  if (!particleDef)
 	    {
-	      BDS::PrintDefinedParticles();
-	      throw BDSException(__METHOD_NAME__, "Particle \"" + particleIDStr + "\" not found.");      
-	    }
+	      particleDef = particleTable->FindParticle(particleIDStr);
+	      if (!particleDef)
+		{
+		  BDS::PrintDefinedParticles();
+		  throw BDSException(__METHOD_NAME__, "Particle \"" + particleIDStr + "\" not found.");      
+		}
+	      else
+		{acceptedParticles.push_back(particleDef->GetPDGEncoding());}
+	    }	
 	}
       std::sort(acceptedParticles.begin(), acceptedParticles.end());
     }
