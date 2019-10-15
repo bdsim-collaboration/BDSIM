@@ -48,14 +48,19 @@ public:
 			  G4double                     beamlineS = 0);
   virtual void CheckParameters();
 
+  /// Return whether a particle is within the phase space cuts for an event
+  /// generator file particle.
   G4bool AcceptParticle(const BDSParticleCoordsFull& coords,
 			G4double kineticEnergy,
 			G4int    pdgID);
   
 protected:
+  /// Split on white space and try and find names and IDs in the G4ParticleTable.
+  /// Because it uses G4ParticleTable this should only be called once the particle table
+  /// is initialised.
   void ParseAcceptedParticleIDs();
 
-  
+  /// @{ Cache of limit.
   G4double eventGeneratorMinX;
   G4double eventGeneratorMaxX;
   G4double eventGeneratorMinY;
@@ -72,11 +77,15 @@ protected:
   G4double eventGeneratorMaxT;
   G4double eventGeneratorMinEK;
   G4double eventGeneratorMaxEK;
+  /// @}
+
+  /// Vector (sorted) of permitted particles.
   std::vector<G4int> acceptedParticles;
 
 private:
-  G4bool firstTime;
-  G4String acceptedParticlesString;
+  G4bool firstTime;                ///< Flag to prepare acceptedParticles on first call.
+  G4bool testOnParticleType;       ///< Flag whether to bother applying search.
+  G4String acceptedParticlesString;///< Cache of string for parsing on first query.
 };
 
 #endif

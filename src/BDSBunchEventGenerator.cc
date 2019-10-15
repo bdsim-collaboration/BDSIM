@@ -55,6 +55,8 @@ BDSBunchEventGenerator::BDSBunchEventGenerator():
   eventGeneratorMaxT(0),
   eventGeneratorMinEK(0),
   eventGeneratorMaxEK(0),
+  firstTime(true),
+  testOnParticleType(true),
   acceptedParticlesString("")
 {;}
 
@@ -71,20 +73,20 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
 
   eventGeneratorMinX  = beam.eventGeneratorMinX * CLHEP::m;
   eventGeneratorMaxX  = beam.eventGeneratorMaxX * CLHEP::m;
-  eventGeneratorMinY  = beam.eventGeneratorMaxY * CLHEP::m;
-  eventGeneratorMaxY  = beam.eventGeneratorMinY * CLHEP::m;
-  eventGeneratorMaxZ  = beam.eventGeneratorMinZ * CLHEP::m;
+  eventGeneratorMinY  = beam.eventGeneratorMinY * CLHEP::m;
+  eventGeneratorMaxY  = beam.eventGeneratorMaxY * CLHEP::m;
+  eventGeneratorMinZ  = beam.eventGeneratorMinZ * CLHEP::m;
   eventGeneratorMaxZ  = beam.eventGeneratorMaxZ * CLHEP::m;
-  eventGeneratorMinXp = beam.eventGeneratorMaxXp;
-  eventGeneratorMaxXp = beam.eventGeneratorMinXp;
-  eventGeneratorMaxYp = beam.eventGeneratorMinYp;
+  eventGeneratorMinXp = beam.eventGeneratorMinXp;
+  eventGeneratorMaxXp = beam.eventGeneratorMaxXp;
+  eventGeneratorMinYp = beam.eventGeneratorMinYp;
   eventGeneratorMaxYp = beam.eventGeneratorMaxYp;
   eventGeneratorMinZp = beam.eventGeneratorMinZp;
   eventGeneratorMaxZp = beam.eventGeneratorMaxZp;
-  eventGeneratorMaxT  = beam.eventGeneratorMinT * CLHEP::s;
+  eventGeneratorMinT  = beam.eventGeneratorMinT * CLHEP::s;
   eventGeneratorMaxT  = beam.eventGeneratorMaxT * CLHEP::s;
-  eventGeneratorMinEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
-  eventGeneratorMaxEK = beam.eventGeneratorMinEK * CLHEP::GeV;
+  eventGeneratorMinEK = beam.eventGeneratorMinEK * CLHEP::GeV;
+  eventGeneratorMaxEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
   acceptedParticlesString = beam.eventGeneratorParticles;
 }
 
@@ -135,6 +137,8 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 	}
       std::sort(acceptedParticles.begin(), acceptedParticles.end());
     }
+  else
+    {testOnParticleType = false;}
 }
 
 G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coords,
@@ -153,7 +157,7 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
   G4bool t  = coords.T  > eventGeneratorMinT  && coords.T  < eventGeneratorMaxT;
   G4bool ek = kineticEnergy > eventGeneratorMinEK && kineticEnergy < eventGeneratorMaxEK;
   
-  G4bool allowedParticle = std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID);
+  G4bool allowedParticle = testOnParticleType ? std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID) : true;
   
   return x && y && z && xp && yp && zp && t && ek && allowedParticle;
 }
