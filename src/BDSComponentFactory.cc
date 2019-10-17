@@ -1184,7 +1184,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {solenoidBodyLength -= thinElementLength;}
   if (buildOutgoingFringe)
     {solenoidBodyLength -= thinElementLength;}
-
+  
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = solenoidBodyLength / (element->l * CLHEP::m);
   G4double s = 0.5*(*st)["ks"] * lengthScaling; // already includes scaling
@@ -1218,7 +1218,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // there isn't an 'outerField' specified for the element
   G4bool externalOuterField = !(element->fieldOuter.empty());
   if (yokeFields && !externalOuterField)
-    {outerField = PrepareMagnetOuterFieldInfo(st, BDSFieldType::solenoid, bpInfo, outerInfo, fieldTrans);}
+    {
+      outerField = PrepareMagnetOuterFieldInfo(st,
+					       BDSFieldType::solenoid,
+					       bpInfo,
+					       outerInfo,
+					       fieldTrans,
+					       integratorSet,
+					       brho);
+    }
 
   auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
                          elementName + "_centre",
@@ -1779,7 +1787,15 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
   // there isn't an 'outerField' specified for the element
   G4bool externalOuterField = !(el->fieldOuter.empty());
   if (yokeFields && !externalOuterField)
-    {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
+    {
+      outerField = PrepareMagnetOuterFieldInfo(st,
+					       fieldType,
+					       bpInfo,
+					       outerInfo,
+					       fieldTrans,
+					       integratorSet,
+					       brho);
+    }
 
   return new BDSMagnet(magnetType,
 		       elementName + nameSuffix,
@@ -1842,7 +1858,9 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 							       const BDSFieldType&       fieldType,
 							       const BDSBeamPipeInfo*    bpInfo,
 							       const BDSMagnetOuterInfo* outerInfo,
-							       const G4Transform3D&      fieldTransform) const
+							       const G4Transform3D&      fieldTransform,
+							       const BDSIntegratorSet*   integratorSetIn,
+							       G4double                  brhoIn)
 {  
   BDSFieldType outerType;
   switch (fieldType.underlying())
@@ -1874,9 +1892,9 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     }
 
   BDSMagnetStrength* stCopy = new BDSMagnetStrength(*vacuumSt);
-  BDSIntegratorType intType = integratorSet->Integrator(outerType);
+  BDSIntegratorType intType = integratorSetIn->Integrator(outerType);
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
-					       brho,
+					       brhoIn,
 					       intType,
 					       stCopy,
 					       true,

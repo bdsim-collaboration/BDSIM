@@ -228,7 +228,7 @@ OptionsBase::OptionsBase()
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
-  killNeutrinos            = true;
+  killNeutrinos            = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
@@ -241,11 +241,13 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
   storeCollimatorHitsLinks   = false;
   storeCollimatorHitsIons    = false;
   storeCollimatorHitsAll     = false;
+  collimatorHitsMinimumKE    = 0;
   storeEloss                 = true;
   storeElossHistograms       = true;
   storeElossVacuum           = false;
