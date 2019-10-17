@@ -241,9 +241,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Calculate the elapsed CPU time for the event.
   auto cpuEndTime = std::clock();
-  auto cpuTime = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
-
-  eventInfo->SetCPUTime(cpuTime);
+  G4float durationCPU = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+  eventInfo->SetDurationCPU(durationCPU);
 
   // Get the current wall time
   stopTime = time(nullptr);
@@ -252,7 +251,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Timing information (wall)
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
-  eventInfo->SetDuration(G4float(stops - starts));
+  eventInfo->SetDurationWall(G4float(stops - starts));
 
   G4double memoryUsedMb = BDS::GetMemoryUsage();
   eventInfo->SetMemoryUsage(memoryUsedMb);

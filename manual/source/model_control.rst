@@ -2585,14 +2585,53 @@ The following parameters are used to control the use of an event generator file.
 
 .. tabularcolumns:: |p{3cm}|p{14cm}|
 
-+----------------+---------------------------------------------------------------------+
-| Option         | Description                                                         |
-+================+=====================================================================+
-| distrType      | This should be "eventgeneratorfile:format" where format is one of   |
-|                | the acceptable formats listed below.                                |
-+----------------+---------------------------------------------------------------------+
-| distrFile      | The path to the input file desired.                                 |
-+----------------+---------------------------------------------------------------------+
++-------------------------+-----------------------------------------------------------+
+| Option                  | Description                                               |
++=========================+===========================================================+
+| `distrType`             | This should be "eventgeneratorfile:format" where format   |
+|                         | one of the acceptable formats listed below.               |
++-------------------------+-----------------------------------------------------------+
+| `distrFile`             | The path to the input file desired.                       |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinX      | Minimum x coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxX      | Maximum x coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinY      | Minimum y coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxY      | Maximum y coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinZ      | Minimum z coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxZ      | Maximum z coordinate accepted (m)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinXp     | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxXp     | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinYp     | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxYp     | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinZp     | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxZp     | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinT      | Minimum T coordinate accepted (s)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxT      | Maximum T coordinate accepted (s)                         |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMinEK     | Minimum kinetic energy accepted (GeV)                     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxEK     | Maximum kinetic energy accepted (GeV)                     |
++-------------------------+-----------------------------------------------------------+
+| eventGeneratorParticles | PDG IDs or names (as per Geant4 exactly) for accepted     |
+|                         | particles. White space delimited. If empty all particles  |
+|                         | will be accepted, else only the ones specified will.      |
++-------------------------+-----------------------------------------------------------+
+
+* The filters are applied **before** any offset is added from the reference distribution, i.e.
+  in the original coorinates of the event generator file.
 
 .. warning:: Only particles available through the chosen physics list can be used otherwise they will
 	     not have the correct properties and will **not be** added to the primary vertex and are
@@ -2631,6 +2670,23 @@ examples: ::
         energy = 6.5*TeV,
 	distrType = "eventgeneratorfile:hepmc3",
 	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat";
+
+For only forward particles:  ::
+
+  beam, particle = "proton",
+        energy = 6.5*TeV,
+	distrType = "eventgeneratorfile:hepmc3",
+	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat",
+	eventGeneratorMinZp=0;
+
+For only pions: ::
+
+  beam, particle = "proton",
+        energy = 6.5*TeV,
+	distrType = "eventgeneratorfile:hepmc3",
+	distrFile = "/Users/nevay/physics/lhcip1/sample1.dat",
+	eventGeneratorParticles="111 211 -211";
+  
 
 sphere
 ^^^^^^

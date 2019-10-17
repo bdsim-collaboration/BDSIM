@@ -76,8 +76,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <set>
-#include <string> // for stoi
 #include <stdexcept>
+#include <string> // for stoi
 
 G4bool BDS::IsIon(const G4ParticleDefinition* particle)
 {

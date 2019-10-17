@@ -30,6 +30,8 @@ Expected Changes To Results
 * PrimaryFirstHit location on wire scanners will now be more accurate, where it might have missed it before.
 * Default range cut from BDSIM will not be enforced if using a Geant4 physics list. It will only be set if
   specified in the user input.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
 
 New Features
 ------------
@@ -50,6 +52,7 @@ New Features
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
+* Filters for event generator particles loaded with HepMC3.
 * Ability to print out all particles and physics processes to be helpful for finding Geant4
   names for biasing. See new options below.
 * `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
@@ -212,6 +215,8 @@ General
 * `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
   only the placement of the container volume of the loaded geometry was checked to see if it overlaps
   with any other geometry, but nothing internally.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
   
 Bug Fixes
 ---------
@@ -324,6 +329,10 @@ Output Changes
   file from an event generator.
 * New BDSOutputROOTEventAperture class.
 * Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
+* The variable :code:`duration` in Event.Summary and Run.Summary is now :code:`durationWall` to more
+  accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
+* The header class BDSOutputROOTEventHeader now has variables that store which files were analysed
+  in the case of rebdsim and which files were combined in the case of rebdsimCombine.
 
 Output Class Versions
 ---------------------
@@ -343,7 +352,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 2               | 2               |
+| BDSOutputROOTEventHeader          | Y           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -357,7 +366,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventOptions         | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventRunInfo         | N           | 2               | 2               |
+| BDSOutputROOTEventRunInfo         | Y           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventSampler         | Y           | 3               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+

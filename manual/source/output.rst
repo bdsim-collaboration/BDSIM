@@ -568,29 +568,36 @@ is from BDSIM, rebdsim or rebdsimCombine.
 BDSOutputROOTEventHeader
 ************************
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.20\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+------------------------+----------------+---------------------------------------+
-| **Variable Name**      | **Type**       | **Description**                       |
-+========================+================+=======================================+
-| bdsimVersion           | std::string    | Version of BDSIM used                 |
-+------------------------+----------------+---------------------------------------+
-| geant4Version          | std::string    | Version of Geant4 used                |
-+------------------------+----------------+---------------------------------------+
-| rootVersion            | std::string    | Version of ROOT used                  |
-+------------------------+----------------+---------------------------------------+
-| clhepVersion           | std::string    | Version of CLHEP used                 |
-+------------------------+----------------+---------------------------------------+
-| timeStamp              | std::string    | Time and date file was created        |
-+------------------------+----------------+---------------------------------------+
-| fileType               | std::string    | String describing what stage of       |
-|                        |                | simulation the file came from         |
-+------------------------+----------------+---------------------------------------+
-| dataVersion            | int            | BDSIM data format version             |
-+------------------------+----------------+---------------------------------------+
-| doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
-|                        |                | double precision for output           |
-+------------------------+----------------+---------------------------------------+
++------------------------+--------------------------+---------------------------------------+
+| **Variable Name**      | **Type**                 | **Description**                       |
++========================+==========================+=======================================+
+| bdsimVersion           | std::string              | Version of BDSIM used                 |
++------------------------+--------------------------+---------------------------------------+
+| geant4Version          | std::string              | Version of Geant4 used                |
++------------------------+--------------------------+---------------------------------------+
+| rootVersion            | std::string              | Version of ROOT used                  |
++------------------------+--------------------------+---------------------------------------+
+| clhepVersion           | std::string              | Version of CLHEP used                 |
++------------------------+--------------------------+---------------------------------------+
+| timeStamp              | std::string              | Time and date file was created        |
++------------------------+--------------------------+---------------------------------------+
+| fileType               | std::string              | String describing what stage of       |
+|                        |                          | simulation the file came from         |
++------------------------+--------------------------+---------------------------------------+
+| dataVersion            | int                      | BDSIM data format version             |
++------------------------+--------------------------+---------------------------------------+
+| doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
+|                        |                          | double precision for output           |
++------------------------+--------------------------+---------------------------------------+
+| analysedFiles          | std::vector<std::string> | List of files anlaysed in the case of |
+|                        |                          | rebdsim, rebdsimHistoMerge,           |
+|                        |                          | rebdsimOptics and rebdsimOrbit        |
++------------------------+--------------------------+---------------------------------------+
+| combinedFiles          | std::vector<std::string> | List of files combined together in    |
+|                        |                          | rebdsimCombine                        |
++------------------------+--------------------------+---------------------------------------+
 
 Geant4Data Tree
 ^^^^^^^^^^^^^^^
@@ -1024,9 +1031,9 @@ BDSOutputROOTEventInfo
 +-----------------------------+-------------------+---------------------------------------------+
 | stopTime                    | time_t            | Time stamp at end of event                  |
 +-----------------------------+-------------------+---------------------------------------------+
-| duration                    | float             | Duration (wall time) of event in seconds    |
+| durationWall                | float             | Duration (wall time) of event in seconds    |
 +-----------------------------+-------------------+---------------------------------------------+
-| cpuTime                     | float             | Duration (CPU time) of event in seconds     |
+| durationCPU                 | float             | Duration (CPU time) of event in seconds     |
 +-----------------------------+-------------------+---------------------------------------------+
 | seedStateAtStart            | std::string       | State of random number generator at the     |
 |                             |                   | start of the event as provided by CLHEP     |
@@ -1193,6 +1200,26 @@ system so there are only global coordinates recorded.
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 | turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
 +-----------------------+-----------------------+-------------------------------------------------------------------+
+
+BDSOutputROOTEventRunInfo
+*************************
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++-----------------------------+-------------------+---------------------------------------------+
+|  **Variable**               | **Type**          |  **Description**                            |
++=============================+===================+=============================================+
+| startTime                   | time_t            | Time stamp at start of run                  |
++-----------------------------+-------------------+---------------------------------------------+
+| stopTime                    | time_t            | Time stamp at end of run                    |
++-----------------------------+-------------------+---------------------------------------------+
+| durationWall                | float             | Duration (wall time) of run in seconds      |
++-----------------------------+-------------------+---------------------------------------------+
+| durationCPU                 | float             | Duration (CPU time) of run in seconds       |
++-----------------------------+-------------------+---------------------------------------------+
+| seedStateAtStart            | std::string       | State of random number generator at the     |
+|                             |                   | start of the run as provided by CLHEP       |
++-----------------------------+-------------------+---------------------------------------------+
 
 
 BDSOutputROOTEventTrajectory
