@@ -2605,17 +2605,17 @@ The following parameters are used to control the use of an event generator file.
 +-------------------------+-----------------------------------------------------------+
 | eventGeneratorMaxZ      | Maximum z coordinate accepted (m)                         |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinXp     | Minimum xp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMinXp     | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxXp     | Maximum xp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMaxXp     | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinYp     | Minimum yp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMinYp     | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxYp     | Maximum yp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMaxYp     | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinZp     | Minimum zp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMinZp     | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxZp     | Maximum zp coordinate accepted (unit momentum 0-1)        |
+| eventGeneratorMaxZp     | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
 +-------------------------+-----------------------------------------------------------+
 | eventGeneratorMinT      | Minimum T coordinate accepted (s)                         |
 +-------------------------+-----------------------------------------------------------+
