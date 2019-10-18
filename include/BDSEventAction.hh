@@ -1,14 +1,14 @@
-/*
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2019.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but
+BDSIM is distributed in the hope that it will be useful, but 
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -40,7 +40,7 @@ class BDSEventAction: public G4UserEventAction
 public:
   explicit BDSEventAction(BDSOutput* outputIn);
   virtual ~BDSEventAction();
-
+  
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
 
@@ -48,7 +48,7 @@ public:
   G4int CurrentEventIndex() const {return currentEventIndex;}
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
-
+    
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEventBDSIM;
@@ -106,3 +106,4 @@ private:
 };
 
 #endif
+

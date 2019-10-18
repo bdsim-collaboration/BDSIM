@@ -190,8 +190,6 @@ public:
   /// For convenience, s positions are converted to metres in this function.
   std::vector<G4double> GetEdgeSPositions() const;
 
-
-
   /// Return a pointer to the previous element. First this beamline is
   /// searched for the vector. If there is no such element or no previous
   /// element because it's the beginning, then a nullptr is returned. The
