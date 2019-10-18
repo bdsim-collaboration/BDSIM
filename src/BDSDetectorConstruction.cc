@@ -1071,7 +1071,7 @@ void BDSDetectorConstruction::ConstructSDandField()
   auto flds = BDSFieldBuilder::Instance()->CreateAndAttachAll(); // avoid shadowing 'fields'
   acceleratorModel->RegisterFields(flds);
 
-  ConstructMeshes();
+  ConstructScoringMeshes();
 }
 
 
@@ -1089,7 +1089,7 @@ G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Elem
     {return false;} // suitable
 }
 
-void BDSDetectorConstruction::ConstructMeshes()
+void BDSDetectorConstruction::ConstructScoringMeshes()
 {
   std::vector<GMAD::ScorerMesh> scoringMeshes = BDSParser::Instance()->GetScorerMesh();
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();

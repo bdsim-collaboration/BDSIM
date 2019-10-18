@@ -203,8 +203,8 @@ private:
 								 G4String defaultBias,
 								 G4String elementName);
 
-  /// Construct meshes
-  void ConstructMeshes();
+  /// Construct scoring meshes.
+  void ConstructScoringMeshes();
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
