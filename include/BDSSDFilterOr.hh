@@ -48,8 +48,10 @@ public:
   /// Register the filter.
   inline void RegisterFilter(G4VSDFilter* filterIn) {filters.push_back(filterIn);}
 
-  /// Accessor.
+  /// @{ Accessor.
   inline const std::vector<G4VSDFilter*>& Filters() const {return filters;}
+  inline const size_t                     size()    const {return filters.size();}
+  /// @}
 
 private:
   BDSSDFilterOr() = delete;
