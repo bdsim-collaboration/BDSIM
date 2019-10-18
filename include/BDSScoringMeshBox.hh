@@ -49,11 +49,6 @@ public:
                     const BDSScorerMeshInfo& recipe,
                     const G4Transform3D&     placementTransform);
 
-  /// Construct without size and divisions. Presumed these will be set later
-  /// after construction with methods.
-  BDSScoringMeshBox(const G4String&      name,
-                    const G4Transform3D& placementTransform);
-
   /// Separate constructor with objects that are assigned directly to
   /// protected base class members.
   BDSScoringMeshBox(const G4String&         name,

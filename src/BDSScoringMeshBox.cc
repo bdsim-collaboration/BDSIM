@@ -48,11 +48,6 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
 }
 
 BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
-                                     const G4Transform3D& placementTransform):
-    BDSScoringMeshBox(name, placementTransform.getTranslation(), placementTransform.getRotation())
-{;}
-
-BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
                                      const G4ThreeVector& translation,
                                      const G4RotationMatrix& rotation):
   G4ScoringBox(name),
