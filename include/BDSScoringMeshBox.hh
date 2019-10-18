@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSCORINGBOX_H
-#define BDSSCORINGBOX_H
+#ifndef BDSSCORINGMESHBOX_H
+#define BDSSCORINGMESHBOX_H
 
 #include "G4ScoringBox.hh"
 #include "G4String.hh"
@@ -40,29 +40,29 @@ class BDSScorerMeshInfo;
  * @author Laurie Nevay
  */
 
-class BDSScoringBox: public G4ScoringBox
+class BDSScoringMeshBox: public G4ScoringBox
 {
 public:
   /// Construct with size and divisions from recipe class. Retain full control
   /// over name of mesh.
-  BDSScoringBox(const G4String&          name,
-		const BDSScorerMeshInfo& recipe,
-		const G4Transform3D&     placementTransform);
+  BDSScoringMeshBox(const G4String&          name,
+                    const BDSScorerMeshInfo& recipe,
+                    const G4Transform3D&     placementTransform);
 
   /// Construct without size and divisions. Presumed these will be set later
   /// after construction with methods.
-  BDSScoringBox(const G4String&      name,
-		const G4Transform3D& placementTransform);
+  BDSScoringMeshBox(const G4String&      name,
+                    const G4Transform3D& placementTransform);
 
   /// Separate constructor with objects that are assigned directly to
   /// protected base class members.
-  BDSScoringBox(const G4String&         name,
-		const G4ThreeVector&    translation,
-		const G4RotationMatrix& rotation);
+  BDSScoringMeshBox(const G4String&         name,
+                    const G4ThreeVector&    translation,
+                    const G4RotationMatrix& rotation);
   
   const BDSHistBinMapper3D* Mapper() const;
 
-  virtual ~BDSScoringBox();
+  virtual ~BDSScoringMeshBox();
 
 protected:
   mutable BDSHistBinMapper3D* mapper;

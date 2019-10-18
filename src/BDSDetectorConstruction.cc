@@ -54,7 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerMeshInfo.hh"
-#include "BDSScoringBox.hh"
+#include "BDSScoringMeshBox.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDType.hh"
@@ -1123,7 +1123,7 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       G4Transform3D placement = CreatePlacementTransform(mesh, mbl);
       
       // create a scoring box
-      BDSScoringBox* scorerBox = new BDSScoringBox(meshName, meshRecipe, placement);
+      BDSScoringMeshBox* scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
       const BDSHistBinMapper3D* mapper = scorerBox->Mapper();
       
       // add the scorer(s) to the scoring mesh
