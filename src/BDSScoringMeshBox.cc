@@ -53,7 +53,7 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
   G4ScoringBox(name),
   mapper(nullptr)
 {
-  fRotationMatrix = new G4RotationMatrix(rotation);
+  fRotationMatrix = new G4RotationMatrix(rotation.inverse());
   fCenterPosition = translation;
 }
 
