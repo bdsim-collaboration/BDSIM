@@ -40,7 +40,7 @@ namespace GMAD
 class BDSScorerMeshInfo
 {
 public:
-  BDSScorerMeshInfo(const GMAD::ScorerMesh& scorer);
+  explicit BDSScorerMeshInfo(const GMAD::ScorerMesh& scorer);
 
   virtual ~BDSScorerMeshInfo(){;}
 
