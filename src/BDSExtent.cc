@@ -223,8 +223,10 @@ BDSExtent BDSExtent::ExpandTransverselyBy(G4double margin) const
   return result;
 }
 
-namespace BDS {
-  BDSExtent MaximumCombinedExtent(const BDSExtent& first, const BDSExtent& second)
+namespace BDS
+{
+  BDSExtent MaximumCombinedExtent(const BDSExtent& first,
+				  const BDSExtent& second)
   {
     return BDSExtent(std::min(first.XNeg(), second.XNeg()),
 		     std::max(first.XPos(), second.XPos()),

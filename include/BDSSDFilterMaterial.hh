@@ -44,7 +44,6 @@ public:
 
 private:
     std::vector<G4Material*> referenceMaterial;
-
 };
 
 #endif

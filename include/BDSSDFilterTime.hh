@@ -34,9 +34,9 @@ class BDSSDFilterTime: public G4VSDFilter
 {
 public:
   /// Constructor with default values.
-  BDSSDFilterTime(G4String name,
-		      G4double lowerLimitIn = 0.0,
-		      G4double upperLimitIn = 1*CLHEP::s);
+  explicit BDSSDFilterTime(G4String name,
+			   G4double lowerLimitIn = 0.0,
+			   G4double upperLimitIn = 1*CLHEP::s);
   
   virtual ~BDSSDFilterTime(){;}
 
