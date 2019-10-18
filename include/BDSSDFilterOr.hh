@@ -26,9 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 /**
- * @brief Filter that applies or to a vector of filters.
+ * @brief Filter that applies OR to a vector of filters.
  * 
- * Doesn't own the underlying filters.
+ * Can optionally own the filters. If the ownsTheFiltersIn argument
+ * is true, they'll be deleted afterwards.
  * 
  * @author Laurie Nevay
  */
@@ -36,10 +37,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSSDFilterOr: public G4VSDFilter
 {
 public:
-  BDSSDFilterOr(const G4String& name);
-  virtual ~BDSSDFilterOr(){;}
+  explicit BDSSDFilterOr(const G4String& name,
+			 G4bool ownsTheFiltersIn = false);
+  virtual ~BDSSDFilterOr();
 
-  /// Return true if the particle is a primary. If no filters are registered,
+  /// Return the logical OR of all filter's Accept() method. If no filters are registered,
   /// it will return false and not accept anything.
   virtual G4bool Accept(const G4Step* step) const;
 
@@ -52,7 +54,10 @@ public:
 private:
   BDSSDFilterOr() = delete;
 
-  /// Vector of all filters to be 'or'd'.
+  /// Whether to delete the filters or not at the end.
+  G4bool ownsTheFilters;
+  
+  /// Vector of all filters.
   std::vector<G4VSDFilter*> filters;
 };
 
