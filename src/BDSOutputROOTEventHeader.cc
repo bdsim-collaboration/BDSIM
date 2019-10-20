@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
+#include "BDSTrajectoryFilter.hh"       // no G4 types and for size of filters
 #include "version.h"
 
 #include "G4Version.hh"
@@ -51,6 +52,7 @@ void BDSOutputROOTEventHeader::Flush()
   // also in comparator/Compare.cc at top - EXPECTEDDATAVERSION
   analysedFiles.clear();
   combinedFiles.clear();
+  nTrajectoryFilters = BDS::NTrajectoryFilters;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;

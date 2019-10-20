@@ -48,6 +48,7 @@ public:
   bool        doublePrecisionOutput; ///< Whether using double precision output - assumed float if not
   std::vector<std::string> analysedFiles; ///< List of which files were analysed in case of a rebdsim output file.
   std::vector<std::string> combinedFiles; ///< List of which files were combined in case of a rebdsimCombine output file.
+  int         nTrajectoryFilters;    ///< Length of bitset used for trajectory filtering - compile time info.
 
   /// Update the file type.
   void SetFileType(std::string fileTypeIn) {fileType = fileTypeIn;}
