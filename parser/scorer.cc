@@ -38,7 +38,8 @@ void Scorer::clear()
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
-  material = "";
+  material             = "";
+  scoreWorldVolumeOnly = false;
 }
 
 void Scorer::PublishMembers()
@@ -53,22 +54,23 @@ void Scorer::PublishMembers()
   publish("maximumTime",          &Scorer::maximumTime);
   publish("conversionFactorFile", &Scorer::conversionFactorFile);
   publish("conversionFactorPath", &Scorer::conversionFactorPath);
-  publish("material",       &Scorer::material);
-
+  publish("material",             &Scorer::material);
+  publish("scoreWorldVolumeOnly", &Scorer::scoreWorldVolumeOnly);
 }
 
 void Scorer::print()const
 {
   std::cout << "field: "
-	    << "name "                  << name                << std::endl
-	    << "type "                  << type                << std::endl
-	    << "particleName "          << particleName        << std::endl
-	    << "particlePDGID "         << particlePDGID       << std::endl
-	    << "minimumEnergy "         << minimumEnergy       << std::endl
-	    << "maximumEnergy "         << maximumEnergy       << std::endl
-	    << "minimumTime "           << minimumTime       << std::endl
-        << "maximumTime "           << maximumTime       << std::endl
+	    << "name "                  << name                 << std::endl
+	    << "type "                  << type                 << std::endl
+	    << "particleName "          << particleName         << std::endl
+	    << "particlePDGID "         << particlePDGID        << std::endl
+	    << "minimumEnergy "         << minimumEnergy        << std::endl
+	    << "maximumEnergy "         << maximumEnergy        << std::endl
+	    << "minimumTime "           << minimumTime          << std::endl
+	    << "maximumTime "           << maximumTime          << std::endl
 	    << "conversionFactorFile "  << conversionFactorFile << std::endl
 	    << "conversionFactorPath "  << conversionFactorPath << std::endl
-	    << "material " << material  << std::endl;
+	    << "material "              << material             << std::endl
+	    << "scoreWorldVolumeOnly "  << scoreWorldVolumeOnly << std::endl;
 }

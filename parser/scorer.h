@@ -47,6 +47,7 @@ namespace GMAD
     std::string conversionFactorFile;
     std::string conversionFactorPath;
     std::string material;
+    bool        scoreWorldVolumeOnly;
     
     /// Constructor
     Scorer();

@@ -57,6 +57,7 @@ public:
   G4String      filename;            ///< Name of the conversion factor file
   G4String      pathname;            ///< Path of the conversion factor file (for ambient dose)
   G4String      material;            ///< Name of the material where to score
+  G4bool        worldVolumeOnly;     ///< Whether to score from the world volume only
 
 private:
   /// Pivate default constructor as unused.
