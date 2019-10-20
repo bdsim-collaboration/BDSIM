@@ -374,6 +374,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Save interesting trajectories
   std::map<BDSTrajectory*, bool> interestingTraj;
 
+
+
   if (storeTrajectory && trajCont)
     {
       TrajectoryVector* trajVec = trajCont->GetVector();
@@ -417,6 +419,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  if (parentID == 0)
 	    {
 	      interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
+          filterFlags[filterPostion::isPrimary]=true;
 	      continue;
 	    }
 	  
@@ -425,7 +428,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	      traj->GetInitialKineticEnergy() > trajectoryEnergyThreshold)
 	    {
 	      interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
-	      continue;
+          filterFlags[filterPostion::energyCut]=true;
+          continue;
 	    }
 	  
 	  // check on particle if not empty string
@@ -440,7 +444,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	      if ((found1 != std::string::npos) || found2)
 		{
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
-		continue;
+        filterFlags[filterPostion::notEmptyString]=true;
+        continue;
 		}
 	    }
 	  
@@ -448,7 +453,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  if (depthMap[traj] <= depth)
 	    {
 	      interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
-	      continue;
+          filterFlags[filterPostion::energyCut]=true;
+          continue;
 	    }
 	  
 	  // check on coordinates (and TODO momentum)

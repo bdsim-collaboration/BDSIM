@@ -48,7 +48,9 @@ public:
   G4int CurrentEventIndex() const {return currentEventIndex;}
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
-    
+
+  int GetFilterFlags(){return (int)filterFlags.to_ullong();}
+
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEventBDSIM;
@@ -57,6 +59,9 @@ private:
   G4bool isBatch;
   G4bool storeTrajectory;    ///< Cache of whether to store trajectories or not.
   G4int  printModulo;
+
+  enum filterPostion {isPrimary, energyCut, notEmptyString, depthCut};
+  std::bitset<8> filterFlags;
 
   G4int samplerCollID_plane;      ///< Collection ID for plane sampler hits.
   G4int samplerCollID_cylin;      ///< Collection ID for cylindrical sampler hits.
