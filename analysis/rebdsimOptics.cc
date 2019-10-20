@@ -69,8 +69,12 @@ int main(int argc, char* argv[])
 	}
     }
 
-  DataLoader dl = DataLoader(inputFileName, false, true);
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(),
+  DataLoader* dl = nullptr;
+  try
+    {dl = new DataLoader(inputFileName, false, true);}
+  catch (const std::string& e)
+    {std::cerr << e << std::endl; exit(1);}
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
 						 false, true, false, -1, emittanceOnFly);
   evtAnalysis->Execute();
 
@@ -79,7 +83,7 @@ int main(int argc, char* argv[])
   // add header for file type and version details
   outputFile->cd();
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(); // updates time stamp
+  headerOut->Fill(dl->GetFileNames()); // updates time stamp
   headerOut->SetFileType("REBDSIM");
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
@@ -90,12 +94,13 @@ int main(int argc, char* argv[])
   evtAnalysis->Write(outputFile);
 
   // clone model tree for nice built in optics plotting
-  auto modelTree = dl.GetModelTree();
+  auto modelTree = dl->GetModelTree();
   auto newTree   = modelTree->CloneTree();
   newTree->Write("", TObject::kOverwrite);
   
   outputFile->Close();
   delete outputFile;
+  delete dl;
   
   return 0;
 }

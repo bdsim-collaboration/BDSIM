@@ -44,6 +44,18 @@ int main(int argc, char* argv[])
       exit(1);
     }
 
+  // build input file list
+  std::vector<std::string> inputFiles;
+  for (int i = 2; i < argc; ++i)
+    {inputFiles.push_back(std::string(argv[i]));}
+
+  // checks
+  if (inputFiles.size() == 1)
+    {
+      std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
+      exit(1);
+    }
+
   std::string outputFile = std::string(argv[1]);
   // output file must be opened before histograms are created because root does
   // everything statically behind the scenes
@@ -52,24 +64,12 @@ int main(int argc, char* argv[])
   // add header for file type and version details
   output->cd();
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(); // updates time stamp
+  headerOut->Fill(std::vector<std::string>(), inputFiles); // updates time stamp
   headerOut->SetFileType("REBDSIMCOMBINE");
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
   headerTree->Fill();
   output->Write(nullptr,TObject::kOverwrite);
-  
-  // build input file list
-  std::vector<std::string> inputFiles;
-  for (int i = 2; i < argc; ++i)
-    {inputFiles.push_back(std::string(argv[i]));}
-  
-  // checks
-  if (inputFiles.size() == 1)
-    {
-      std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
-      exit(1);
-    }
 
   // ensure new histograms are written to file
   TH1::AddDirectory(true);
@@ -79,7 +79,10 @@ int main(int argc, char* argv[])
   TFile* f = nullptr; // temporary variable
 
   // initialise file map
-  f = new TFile(inputFiles[0].c_str());
+  try
+    {f = new TFile(inputFiles[0].c_str(), "READ");}
+  catch (const std::exception& e)
+    {std::cerr << e.what() << std::endl; return 1;}
   HistogramMap* histMap = new HistogramMap(f, output); // map out first file
   f->Close();
   delete f;

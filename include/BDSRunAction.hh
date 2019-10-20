@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4UserRunAction.hh"
 
+#include <chrono>
 #include <ctime>
 #include <string>
 
@@ -54,12 +55,13 @@ private:
   /// is private as using at the wrong time will result in Geant4 crashing.
   void PrintAllProcessesForAllParticles() const;
 
-  BDSOutput*    output;         ///< Cache of output instance. Not owned by this class.
+  BDSOutput*    output;           ///< Cache of output instance. Not owned by this class.
   time_t        starttime;
   std::string   seedStateAtStart; ///< Seed state at start of the run.
   BDSEventInfo* info;
   BDSBunch*     bunchGenerator;   ///< Cache of bunch generator.
   const G4bool  usingIons;        ///< Cache of whether ions are being used (for particle table writing out).
+  std::clock_t  cpuStartTime;     ///< Start time of run.
 };
 
 #endif

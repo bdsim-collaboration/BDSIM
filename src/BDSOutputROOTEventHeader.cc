@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ctime>
 #include <string>
+#include <vector>
 
 ClassImp(BDSOutputROOTEventHeader)
 
@@ -46,7 +47,10 @@ void BDSOutputROOTEventHeader::Flush()
   clhepVersion  = CLHEP::Version::String();
   timeStamp     = "";
   fileType      = "BDSIM";
-  dataVersion   = 4; // update analysis/DataLoader.cc default when this changes
+  dataVersion   = 5; // update analysis/DataLoader.cc default when this changes
+  // also in comparator/Compare.cc at top - EXPECTEDDATAVERSION
+  analysedFiles.clear();
+  combinedFiles.clear();
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;
@@ -55,10 +59,13 @@ void BDSOutputROOTEventHeader::Flush()
 #endif
 }
 
-void BDSOutputROOTEventHeader::Fill()
+void BDSOutputROOTEventHeader::Fill(const std::vector<std::string>& analysedFilesIn,
+				    const std::vector<std::string>& combinedFilesIn)
 {
   time_t rawtime;
   time(&rawtime);
   timeStamp = std::string(ctime(&rawtime));
+  analysedFiles = analysedFilesIn;
+  combinedFiles = combinedFilesIn;
 }
   

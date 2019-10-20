@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Random/Random.h"
 
+#include <chrono>
+#include <ctime>
 #include <sstream>
 #include <string>
 
@@ -54,7 +56,8 @@ BDSRunAction::BDSRunAction(BDSOutput*    outputIn,
   seedStateAtStart(""),
   info(nullptr),
   bunchGenerator(bunchGeneratorIn),
-  usingIons(usingIonsIn)
+  usingIons(usingIonsIn),
+  cpuStartTime(std::clock_t())
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -111,6 +114,8 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   BDS::FixGeant105ThreshholdsForParticle(G4Positron::Definition());
   BDS::FixGeant105ThreshholdsForParticle(G4Electron::Definition());
 #endif
+
+  cpuStartTime = std::clock();
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
@@ -120,10 +125,12 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   info->SetStopTime(stoptime);
   // Run duration
   G4float duration = difftime(stoptime, starttime);
-  info->SetDuration(G4double(duration));
+  info->SetDurationWall(G4double(duration));
 
-  // Possible end of run action - in some cases resets pregenerated coordinates
-  bunchGenerator->EndOfRunAction();
+  // Calculate the elapsed CPU time for the event.
+  auto cpuEndTime = std::clock();
+  G4double durationCPU = static_cast<G4double>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+  info->SetDurationCPU(durationCPU);
   
   // Output feedback
   G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()

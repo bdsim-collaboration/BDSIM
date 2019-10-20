@@ -94,6 +94,19 @@ A table of common particles is listed below:
 | muon positive    | -13          |
 +------------------+--------------+
 
+Ion Identification
+------------------
+
+Several parts of BDSIM output (samplers, aperture impacts, trajectories) have the variable `isIon`,
+which is a Boolean to identify whether the hit is an ion or not. This is true for:
+
+* All ions greater than Hydrogen
+* A Hydrogen ion - i.e. a proton with 1 or more bound electron.
+
+This is **note** true for just a proton, which is considered a separate particle. In Geant4,
+a proton is both a particle and also considered an ion, however there are different physics
+processes for each.
+
 
 Output Data Selection \& Reduction
 ----------------------------------
@@ -305,29 +318,36 @@ is from BDSIM, rebdsim or rebdsimCombine.
 BDSOutputROOTEventHeader
 ************************
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.20\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+------------------------+----------------+---------------------------------------+
-| **Variable Name**      | **Type**       | **Description**                       |
-+========================+================+=======================================+
-| bdsimVersion           | std::string    | Version of BDSIM used                 |
-+------------------------+----------------+---------------------------------------+
-| geant4Version          | std::string    | Version of Geant4 used                |
-+------------------------+----------------+---------------------------------------+
-| rootVersion            | std::string    | Version of ROOT used                  |
-+------------------------+----------------+---------------------------------------+
-| clhepVersion           | std::string    | Version of CLHEP used                 |
-+------------------------+----------------+---------------------------------------+
-| timeStamp              | std::string    | Time and date file was created        |
-+------------------------+----------------+---------------------------------------+
-| fileType               | std::string    | String describing what stage of       |
-|                        |                | simulation the file came from         |
-+------------------------+----------------+---------------------------------------+
-| dataVersion            | int            | BDSIM data format version             |
-+------------------------+----------------+---------------------------------------+
-| doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
-|                        |                | double precision for output           |
-+------------------------+----------------+---------------------------------------+
++------------------------+--------------------------+---------------------------------------+
+| **Variable Name**      | **Type**                 | **Description**                       |
++========================+==========================+=======================================+
+| bdsimVersion           | std::string              | Version of BDSIM used                 |
++------------------------+--------------------------+---------------------------------------+
+| geant4Version          | std::string              | Version of Geant4 used                |
++------------------------+--------------------------+---------------------------------------+
+| rootVersion            | std::string              | Version of ROOT used                  |
++------------------------+--------------------------+---------------------------------------+
+| clhepVersion           | std::string              | Version of CLHEP used                 |
++------------------------+--------------------------+---------------------------------------+
+| timeStamp              | std::string              | Time and date file was created        |
++------------------------+--------------------------+---------------------------------------+
+| fileType               | std::string              | String describing what stage of       |
+|                        |                          | simulation the file came from         |
++------------------------+--------------------------+---------------------------------------+
+| dataVersion            | int                      | BDSIM data format version             |
++------------------------+--------------------------+---------------------------------------+
+| doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
+|                        |                          | double precision for output           |
++------------------------+--------------------------+---------------------------------------+
+| analysedFiles          | std::vector<std::string> | List of files anlaysed in the case of |
+|                        |                          | rebdsim, rebdsimHistoMerge,           |
+|                        |                          | rebdsimOptics and rebdsimOrbit        |
++------------------------+--------------------------+---------------------------------------+
+| combinedFiles          | std::vector<std::string> | List of files combined together in    |
+|                        |                          | rebdsimCombine                        |
++------------------------+--------------------------+---------------------------------------+
 
 Geant4Data Tree
 ^^^^^^^^^^^^^^^
@@ -718,7 +738,7 @@ BDSOutputROOTEventAperture
 +------------------------+----------------------+-----------------------------------------------------------+
 | firstPrimaryImpact     | std::vector<bool>    | Whether the hit is the first primary one for this event.  |
 +------------------------+----------------------+-----------------------------------------------------------+
-| partID                 | std::vector<int>     | PDG particld ID of the particle.                          |
+| partID                 | std::vector<int>     | PDG particle ID of the particle.                          |
 +------------------------+----------------------+-----------------------------------------------------------+
 | turn                   | std::vector<int>     | Turn number (1-counting) the hit happened on.             |
 +------------------------+----------------------+-----------------------------------------------------------+
@@ -740,6 +760,8 @@ BDSOutputROOTEventAperture
 +------------------------+----------------------+-----------------------------------------------------------+
 | ionZ                   | std::vector<int>     | Ion atomic number.                                        |
 +------------------------+----------------------+-----------------------------------------------------------+
+| nElectrons             | std::vector<int>     | Number of bound electrons in case of an ion. 0 otherwise. |
++------------------------+----------------------+-----------------------------------------------------------+
 | trackID                | std::vector<int>     | Track ID number of the particle that hit.                 |
 +------------------------+----------------------+-----------------------------------------------------------+
 | parentID               | std::vector<int>     | Track ID number of the parent particle.                   |
@@ -759,9 +781,9 @@ BDSOutputROOTEventInfo
 +-----------------------------+-------------------+---------------------------------------------+
 | stopTime                    | time_t            | Time stamp at end of event                  |
 +-----------------------------+-------------------+---------------------------------------------+
-| duration                    | float             | Duration (wall time) of event in seconds    |
+| durationWall                | float             | Duration (wall time) of event in seconds    |
 +-----------------------------+-------------------+---------------------------------------------+
-| cpuTime                     | float             | Duration (CPU time) of event in seconds     |
+| durationCPU                 | float             | Duration (CPU time) of event in seconds     |
 +-----------------------------+-------------------+---------------------------------------------+
 | seedStateAtStart            | std::string       | State of random number generator at the     |
 |                             |                   | start of the event as provided by CLHEP     |
@@ -929,6 +951,26 @@ system so there are only global coordinates recorded.
 | turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 
+BDSOutputROOTEventRunInfo
+*************************
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++-----------------------------+-------------------+---------------------------------------------+
+|  **Variable**               | **Type**          |  **Description**                            |
++=============================+===================+=============================================+
+| startTime                   | time_t            | Time stamp at start of run                  |
++-----------------------------+-------------------+---------------------------------------------+
+| stopTime                    | time_t            | Time stamp at end of run                    |
++-----------------------------+-------------------+---------------------------------------------+
+| durationWall                | float             | Duration (wall time) of run in seconds      |
++-----------------------------+-------------------+---------------------------------------------+
+| durationCPU                 | float             | Duration (CPU time) of run in seconds       |
++-----------------------------+-------------------+---------------------------------------------+
+| seedStateAtStart            | std::string       | State of random number generator at the     |
+|                             |                   | start of the run as provided by CLHEP       |
++-----------------------------+-------------------+---------------------------------------------+
+
 
 BDSOutputROOTEventTrajectory
 ****************************
@@ -999,14 +1041,50 @@ This is the first trajectory for each event and the total energy of all steps of
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trajectories             | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
-|                          |                                     | from G4Track->GetPosition()                             |
+| XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
+|                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| momenta                  | std::vector<std::vector<TVector3>>  | Momentum of the track (GeV)                             |
+| S                        | std::vector<std::vector<double>>    | Curvilinear S of the trajectory point (m)               |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the track - global Cartesian (GeV)          |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| T                        | std::vector<std::vector<double>>    | Global time of the trajectory point (ns)                |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
+|                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle                                      |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle (GeV)                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle                                        |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| rigidity (\**)           | std::vector<std::vector<double>>    | Rigidity of the particle (Tm)                           |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| isIon (\***)             | std::vector<std::vector<bool>>      | Whether it's an ion or not                              |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| ionA (\***)              | std::vector<std::vector<int>>       | Atomic mass number. 0 for non-nuclei                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| ionZ (\***)              | std::vector<std::vector<int>>       | Atomic number. 0 for non-nuclei                         |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| nElectrons (\****)       | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element the trajectory is in|
 |                          |                                     | (-1 if not inside an accelerator component)             |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
+
+.. note:: (\*) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLocal=1;`
+	  as described in :ref:`bdsim-options-output`. Note, these may have default value (0 or -1) in some cases where
+	  the curvilinear coordinate system is not available - e.g. typically greater than 2.5m from the beam line.
+.. note:: (\**) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLinks=1;`
+	  as described in :ref:`bdsim-options-output`.
+.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIons=1;`
+	  as described in :ref:`bdsim-options-output`.
+
 
 In addition, some maps are stored to link the entries together conceptually.
 

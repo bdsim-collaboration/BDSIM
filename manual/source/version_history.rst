@@ -1,4 +1,20 @@
-V1.4 - 2019 / ?? / ??
+V1.5 - 2019 - Planned Development
+=================================
+
+Below is a brief list of planned developments for the next version. Please get in touch
+if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
+
+* Change run histograms to be per-event averages rather than simple histograms.
+* Interpolated aperture shapes between any two shapes.
+* Tapered aperture for all elements.
+* Beam pipe sections to fill gaps between changes in aperture.
+* Any aperture shape can be used for both the inside and the outside of a collimator.
+* Scoring meshes for dose maps etc.
+* Restructure code into proper C++ libraries rather than just analysis and bdsim.
+* Multiple beam line tracking.
+* Use sampler data from a BDSIM output file as input to another BDSIM simulation.
+
+V1.4 - 2019 / 10 / ??
 =====================
 
 Expected Changes To Results
@@ -6,7 +22,7 @@ Expected Changes To Results
 
 * Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
   their rotation angle. Not doing this will result in different angles and therefore results.
-* Fix for field maps with finite rotations (but not multiples of :math:`\pi/2`). The field will now be correct
+* Fix for field maps with rotations (multiples of :math:`\pi/2` were ok). The field will now be correct
   but this may be different from previous releases.
 * Field maps now pick up the tilt from the element, so a separate tilt isn't required in the field
   definition as was in the past to make the field align with a tilted element. In this case, the field
@@ -14,10 +30,13 @@ Expected Changes To Results
 * PrimaryFirstHit location on wire scanners will now be more accurate, where it might have missed it before.
 * Default range cut from BDSIM will not be enforced if using a Geant4 physics list. It will only be set if
   specified in the user input.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
 
 New Features
 ------------
 
+* Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
 * `S0` for bunch offset in curvilinear frame now a documented feature of the bunch.
@@ -26,19 +45,20 @@ New Features
 * BDSIM will now exit if invalid ranges and bins are specified for the single 3D
   energy deposition ('scoring') histogram that can be specified via options.
 * New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
-* New beam loss monitors (BLMs) with :code:`blm` command (See ref:`detectors-blms`).
+* New beam loss monitors (BLMs) with :code:`blm` command (See :ref:`detectors-blms`).
 * New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
   a distribution file.
 * New executable option :code:`--nturns` to control the number of turns in a circular machine.
 * Support for partially stripped ions in output samplers.
 * Optional linking to HepMC3 for event generator output file loading. Can load any format
   HepMC3 can load.
+* Filters for event generator particles loaded with HepMC3.
 * Ability to print out all particles and physics processes to be helpful for finding Geant4
   names for biasing. See new options below.
 * `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
 * The beam particle may now be specified by its PDG integer ID rather than by name.
 * A new physics list called "all_particles" has been introduced to construct all particles
-  only but no physics processes. Useful for an exotic beam where only tracking is required.
+  only but no physics processes. Useful for an exotic beams where only tracking is required.
 * New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
   are generated as an easy method to introduce coupling.  Note, this is in the beam command.
 * The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
@@ -52,6 +72,9 @@ New Features
 * New internal region class allows better setting of defaults when defining custom regions. Preivously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
+  energy a particle must have for either an aperture impact or collimator hit respectively to
+  be generated.
 
 * New options:
 
@@ -60,6 +83,10 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
++------------------------------------+--------------------------------------------------------------------+
+| collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
++------------------------------------+--------------------------------------------------------------------+
 | includeFringeFieldsCavities        | Include thin fringe fields for RF cavities only, on by default.    |
 |                                    | Cavity fringes are not affected by the includeFringeFields option, |
 |                                    | includeFringeFieldsCavities must be explicitly turned off if no    |
@@ -89,6 +116,16 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
@@ -176,6 +213,8 @@ General
 * `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
   only the placement of the container volume of the loaded geometry was checked to see if it overlaps
   with any other geometry, but nothing internally.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
   
 Bug Fixes
 ---------
@@ -258,10 +297,16 @@ Bug Fixes
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
+* Unitialised variables reported by Coverity.
+* Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 
 Output Changes
 --------------
 
+* In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
+  what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
+* In the analysis class :code:`analysis/Run.hh`, the member variables `Summary` and `Histos`
+  now start with capital letters to match the layout on file.
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
   partially stripped ion (if it is one) passing through the sampler. This is filled alongside
   the other ion information.
@@ -277,6 +322,55 @@ Output Changes
 * BDSOutputROOTEventCoords member variables are now all vectors instead of single numbers. This
   is to allow the possibility of more than one primary particle as is possible when loading a
   file from an event generator.
+* New BDSOutputROOTEventAperture class.
+* Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
+* The variable :code:`duration` in Event.Summary and Run.Summary is now :code:`durationWall` to more
+  accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
+* The header class BDSOutputROOTEventHeader now has variables that store which files were analysed
+  in the case of rebdsim and which files were combined in the case of rebdsimCombine.
+
+Output Class Versions
+---------------------
+
+* Data Version 5.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | Y           | NA              | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | Y           | 1               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | Y           | 3               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | Y           | 3               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
 
 Utilities
 ---------

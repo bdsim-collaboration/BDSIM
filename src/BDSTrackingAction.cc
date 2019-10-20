@@ -36,6 +36,9 @@ class G4LogicalVolume;
 
 BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     G4bool storeTrajectoryIn,
+				     G4bool storeTrajectoryLocalIn,
+				     G4bool storeTrajectoryLinksIn,
+				     G4bool storeTrajectoryIonsIn,
 				     G4bool suppressTransportationStepsIn,
 				     BDSEventAction* eventActionIn,
 				     G4int  verboseSteppingEventStartIn,
@@ -44,6 +47,9 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     G4int  verboseSteppingLevelIn):
   interactive(!batchMode),
   storeTrajectory(storeTrajectoryIn),
+  storeTrajectoryLocal(storeTrajectoryLocalIn),
+  storeTrajectoryLinks(storeTrajectoryLinksIn),
+  storeTrajectoryIons(storeTrajectoryIonsIn),
   suppressTransportationSteps(suppressTransportationStepsIn),
   eventAction(eventActionIn),
   verboseSteppingEventStart(verboseSteppingEventStartIn),
@@ -70,7 +76,10 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 	{
 	  auto traj = new BDSTrajectory(track,
 					interactive,
-					suppressTransportationSteps);
+					suppressTransportationSteps,
+					storeTrajectoryLocal,
+					storeTrajectoryLinks,
+					storeTrajectoryIons);
 	  fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
@@ -86,6 +95,9 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
       auto traj = new BDSTrajectoryPrimary(track,
 					   interactive,
 					   suppressTransportationSteps,
+					   storeTrajectoryLocal,
+					   storeTrajectoryLinks,
+					   storeTrajectoryIons,
 					   storePoints);
       fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);

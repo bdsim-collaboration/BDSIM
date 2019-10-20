@@ -18,13 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSTRAJECTORYPOINT_H
 #define BDSTRAJECTORYPOINT_H
+#include "BDSTrajectoryPointIon.hh"
+#include "BDSTrajectoryPointLocal.hh"
+#include "BDSTrajectoryPointLink.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
 #include "G4TrajectoryPoint.hh"
-#include "BDSTrajectoryPointLocal.hh"
-#include "BDSTrajectoryPointLink.hh"
-#include "BDSTrajectoryPointIon.hh"
 
 #include <ostream>
 
@@ -49,18 +49,18 @@ public:
   /// This constructor is used to construct a point from a step intended to
   /// be appended to a trajectory. It uses the post step point as the main position.
   BDSTrajectoryPoint(const G4Step* step,
-                              G4bool storeExtrasLocalIn,
-                              G4bool storeExtrasLinkIn,
-                              G4bool storeExtrasIonIn);
+		     G4bool storeExtrasLocalIn,
+		     G4bool storeExtrasLinkIn,
+		     G4bool storeExtrasIonIn);
   
   /// This constructor is required for the beginning of each track
   /// and produces the initial vertex point.
   BDSTrajectoryPoint(const G4Track* track,
-                              G4bool storeExtrasLocalIn,
-                              G4bool storeExtrasLinkIn,
-                              G4bool storeExtrasIonIn);
-
-    /// Implement copy constructor as we have pointers we own.
+		     G4bool storeExtrasLocalIn,
+		     G4bool storeExtrasLinkIn,
+		     G4bool storeExtrasIonIn);
+  
+  /// Implement copy constructor as we have pointers we own.
   BDSTrajectoryPoint(const BDSTrajectoryPoint& other);
 
   virtual ~BDSTrajectoryPoint();
@@ -104,7 +104,6 @@ public:
   inline G4double GetPostGlobalTime()          const {return postGlobalTime;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
   inline BDSBeamline* GetBeamLine()            const {return beamline;}
-  inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
 
@@ -114,11 +113,11 @@ public:
   /// @}
 
   /// @{ Accessor for the extra information links.
-  inline G4int      GetLinkCharge()         const {return extraLink ? extraLink->charge        : 0;}
-  inline G4double   GetLinkKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
-  inline G4int      GetLinkTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
-  inline G4double   GetLinkMass()           const {return extraLink ? extraLink->mass          : 0;}
-  inline G4double   GetLinkRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
+  inline G4int      GetCharge()         const {return extraLink ? extraLink->charge        : 0;}
+  inline G4double   GetKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
+  inline G4int      GetTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
+  inline G4double   GetMass()           const {return extraLink ? extraLink->mass          : 0;}
+  inline G4double   GetRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
   /// @}
 
   /// @{ Accessor for the extra information ions.
@@ -143,9 +142,6 @@ public:
   inline G4bool operator<=(const BDSTrajectoryPoint& other) const {return !((*this) > other);}
   inline G4bool operator>=(const BDSTrajectoryPoint& other) const {return !((*this) < other);}
   /// @}
-  G4bool storeExtrasLocal;
-  G4bool storeExtrasLink;
-  G4bool storeExtrasIon;
 
   BDSTrajectoryPointLocal* extraLocal;
   BDSTrajectoryPointLink*  extraLink;
@@ -155,6 +151,13 @@ private:
   /// Initialisation of variables in separate function to reduce duplication in
   /// multiple constructors.
   void InitialiseVariables();
+
+  /// Utility function to prepare and fill extra link variables.
+  void StoreExtrasLink(const G4Track* track,
+		       G4double       kineticEnergy);
+
+  /// Utility function to prepare and fill extra ion varaibles.
+  void StoreExtrasIon(const G4Track* track);
   
   G4int preProcessType;           ///< Process type of pre-step point
   G4int preProcessSubType;        ///< Process sub type of pre-step point
@@ -174,7 +177,6 @@ private:
   G4double postGlobalTime;        ///< Time since event started of post-step point.
   G4int    beamlineIndex;         ///< Index to beam line element in the mass world beam line.
   BDSBeamline* beamline;          ///< Beam line (if any) point belongs to (always mass world).
-  G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
 

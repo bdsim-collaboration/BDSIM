@@ -18,26 +18,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSOUTPUTROOTEVENTTRAJECTORY_H
 #define BDSOUTPUTROOTEVENTTRAJECTORY_H
-
 #include "Rtypes.h"
 #include "TVector3.h"
 
+#include "BDSOutputROOTEventTrajectoryPoint.hh"
 
 #include <map>
 #include <vector>
-
 
 #ifndef __ROOTBUILD__
 class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
-class BDSTrajectoryPointLocal;
-class BDSTrajectoryPointLink;
-class BDSTrajectoryPointIon;
-#include "BDSTrajectoryPointLocal.hh"
-#include "BDSTrajectoryPointLink.hh"
-#include "BDSTrajectoryPointIon.hh"
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -103,99 +96,6 @@ class BDSAuxiliaryNavigator;
   11 fPhonon,
   12 fUCN
 #endif
-  
-/**
- * @brief Structure to record a trajectory point.
- * 
- * @author Stewart Boogert
- */
-
-class BDSOutputROOTEventTrajectoryPoint: public TObject
-{
-public:
-  BDSOutputROOTEventTrajectoryPoint() :
-    partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
-    processType(-1), processSubType(-1), weight(-1.0), energyDeposited(-1.0),
-    position(0,0,0), momentum(0,0,0), model(-1), time(0), positionLocal(0,0,0),
-    momentumLocal(0,0,0), charge(0), kineticEnergy(0), turnsTaken(0),
-    rigidity(0), isIon(0), ionA(0), ionZ(0), nElectrons(0) {};
-  BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
-                                    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
-                                    TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn) :
-    partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
-    processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
-    position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn) {}
-  // override constructor for extra information
-/*
-#ifndef __ROOTBUILD__
-    BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
-                                    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
-                                    TVector3 positionIn, TVector3 momentumIn, int modelIn, double preTimeIn,
-                                    bool extraLocalIn, bool extraLinkIn, bool extraIonIn) :
-          partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
-          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energyDeposited(energyIn),
-          position(positionIn), momentum(momentumIn), model(modelIn), time(preTimeIn), extraLocal(extraLocalIn),
-          extraLink(extraLinkIn), extraIon(extraIonIn)
-    {
-     if(extraLocal)
-     {
-       TVector3 positionLocal(extraLocal->positionLocal.x(),extraLocal->positionLocal.y(),extraLocal->positionLocal.z());
-       TVector3 momentumLocal(extraLocal->momentumLocal.x(),extraLocal->momentumLocal.y(),extraLocal->momentumLocal.z());
-     }
-      if(extraLink)
-      {
-        turnsTaken=extraLink->turnsTaken;
-        charge=extraLink->charge;
-        kineticEnergy=extraLink->kineticEnergy;
-        mass=extraLink->mass;
-        rigidity=extraLink->rigidity;
-      }
-      if(extraIon)
-      {
-        isIon=extraIon->isIon;
-        ionA=extraIon->ionA;
-        ionZ=extraIon->ionZ;
-        nElectrons=extraIon->nElectrons;
-
-      }
-    }
-#endif
- */
-
-  virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
-
-  int      partID;
-  int      trackID;
-  int      parentID;
-  int      parentIndex;
-  int      processType;
-  int      processSubType;
-  double   weight;
-  double   energyDeposited;
-  TVector3 position;
-  TVector3 momentum;
-  int      model;
-  double   time;
-  TVector3 positionLocal;
-  TVector3 momentumLocal;
-  double   charge;
-  double   kineticEnergy;
-  int      turnsTaken;
-  double   rigidity;
-  double   mass;
-  bool     isIon;
-  int      ionA;
-  int      ionZ;
-  int      nElectrons;
-
-
-  bool extraLocal;
-  bool extraLink;
-  bool extraIon;
-
-ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
-};
-
 
 /**
  * @brief Structure to record a trajectory.
@@ -234,7 +134,7 @@ public:
 
   std::vector<std::vector<double>>   preWeights;
   std::vector<std::vector<double>>   postWeights;
-  std::vector<std::vector<double>>   energiesDeposit;
+  std::vector<std::vector<double>>   energyDeposit;
 
   std::vector<std::vector<TVector3>> XYZ;
   std::vector<std::vector<double>>   S;
@@ -248,7 +148,7 @@ public:
 
   /// @{ Link trajectory information.
   std::vector<std::vector<int>>      charge;
-  std::vector<std::vector<double>>   kineticEnergies;
+  std::vector<std::vector<double>>   kineticEnergy;
   std::vector<std::vector<int>>      turnsTaken;
   std::vector<std::vector<double>>   mass;
   std::vector<std::vector<double>>   rigidity;
@@ -276,14 +176,6 @@ public:
   void                                           printTrajectoryInfo(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
-
-
-
-#ifndef __ROOTBUILD__
-    BDSTrajectoryPointLocal* pointLocal;
-    BDSTrajectoryPointLink* pointLink;
-    BDSTrajectoryPointIon* pointIon;
-#endif
   
   ClassDef(BDSOutputROOTEventTrajectory,3);
 };
