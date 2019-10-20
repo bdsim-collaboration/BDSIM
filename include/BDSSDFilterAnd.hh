@@ -50,7 +50,7 @@ public:
 
   /// @{ Accessor.
   inline const std::vector<G4VSDFilter*>& Filters() const {return filters;}
-  inline const size_t                     size()    const {return filters.size();}
+  inline size_t                           size()    const {return filters.size();}
   /// @}
 
 private:
