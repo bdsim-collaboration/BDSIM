@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHistBinMapper3D;
 class BDSScorer;
 class BDSScorerInfo;
+class BDSSDFilterAnd;
 class G4VPrimitiveScorer;
 
 class G4Material;
@@ -61,6 +62,9 @@ private:
 					   G4String                  pathname,
 					   const BDSHistBinMapper3D* mapper,
 					   G4double*                 unit = nullptr);
+
+  BDSSDFilterAnd* CreateFilter(G4String name,
+			       const BDSScorerInfo* info) const;
 };
 
 #endif

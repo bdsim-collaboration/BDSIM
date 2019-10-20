@@ -18,12 +18,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSMaterials.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerAmbientDose3D.hh"
 #include "BDSScorerQuantity3D.hh"
+#include "BDSSDFilterAnd.hh"
+#include "BDSSDFilterMaterial.hh"
 #include "BDSSDFilterScorer3D.hh"
+#include "BDSSDFilterTime.hh"
 #include "BDSScorerType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4PSCellCharge.hh"
@@ -54,8 +59,11 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     mapper,
 							     unit);
 
-  BDSSDFilterScorer3D* filter = new BDSSDFilterScorer3D("filter", info);
-  primitiveScorer->SetFilter(filter);
+  BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info);
+  if (filter)
+    {primitiveScorer->SetFilter(filter);}
+  //BDSSDFilterScorer3D* filter = new BDSSDFilterScorer3D("filter", info);
+  //primitiveScorer->SetFilter(filter);
 
   return primitiveScorer;
 }
@@ -108,5 +116,49 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
     }
   if (unit)
     {*unit = result->GetUnitValue();}
+  return result;
+}
+
+BDSSDFilterAnd* BDSScorerFactory::CreateFilter(G4String name,
+					       const BDSScorerInfo* info) const
+{
+  BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
+
+  if (info->particle)
+    {
+      G4String particleName = info->particle->GetParticleName();
+      auto particleWithKineticEnergyFilter = new G4SDParticleWithEnergyFilter("particle_filter",
+									      info->minimumEnergy,
+									      info->maximumEnergy);
+      particleWithKineticEnergyFilter->add(particleName);
+      result->RegisterFilter(particleWithKineticEnergyFilter);
+    }
+
+  if (BDS::IsFinite(info->maximumTime) || BDS::IsFinite(info->minimumTime))
+    {
+      auto timeFilter = new BDSSDFilterTime("time_filter",
+					    info->minimumTime,
+					    info->maximumTime);
+      result->RegisterFilter(timeFilter);
+    }
+
+  if (!(info->material.empty()))
+    {
+      // If we have multiple materials, put everything in a vector.
+      std::vector<G4Material*> materialVector;
+      std::istringstream ss(info->material);
+
+      G4String word;
+      while (ss >> word)
+	{materialVector.push_back(BDSMaterials::Instance()->GetMaterial(word));}
+      
+      auto materialFilter = new BDSSDFilterMaterial("material_filter",
+						    materialVector);
+      result->RegisterFilter(materialFilter);
+    }
+
+  // if we didn't register any filters, just delete it
+  if (result->size() == 0)
+    {delete result; result = nullptr;}
   return result;
 }
