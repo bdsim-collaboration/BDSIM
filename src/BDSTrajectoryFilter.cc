@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // dictionary for BDSTrajectoryFilter
 template<>
-std::map<BDSTrajectoryFilterType, std::string>* BDSTrajectoryFilter::dictionary =
+std::map<BDSTrajectoryFilter, std::string>* BDSTrajectoryFilter::dictionary =
   new std::map<BDSTrajectoryFilter, std::string> ({
    {BDSTrajectoryFilter::primary,         "primary"},
    {BDSTrajectoryFilter::depth,           "depth"},
