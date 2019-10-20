@@ -19,6 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSEVENTACTION_H
 #define BDSEVENTACTION_H
 
+#include "BDSHitEnergyDeposition.hh"
+#include "BDSHitSampler.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4UserEventAction.hh"
 
@@ -28,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSEventInfo;
 class BDSOutput;
+class BDSTrajectoriesToStore;
 class G4Event;
 class G4PrimaryVertex;
 
@@ -49,7 +53,14 @@ public:
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
 
-  int GetFilterFlags(){return (int)filterFlags.to_ullong();}
+protected:
+
+  /// Sift through all trajectories (if any) and mark for storage.
+  BDSTrajectoriesToStore IdentifyTrajectoriesForStorage(const G4Event* evt,
+							G4bool verboseThisEvent,
+							BDSHitsCollectionEnergyDeposition* eCounterHits,
+							BDSHitsCollectionEnergyDeposition* eCounterFullHits,
+							BDSHitsCollectionSampler*          SampHC) const;
 
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
@@ -58,9 +69,6 @@ private:
   G4int  verboseEventStop;
   G4bool storeTrajectory;    ///< Cache of whether to store trajectories or not.
   G4int  printModulo;
-
-  enum filterPostion {isPrimary, energyCut, notEmptyString, depthCut};
-  std::bitset<8> filterFlags;
 
   G4int samplerCollID_plane;      ///< Collection ID for plane sampler hits.
   G4int samplerCollID_cylin;      ///< Collection ID for cylindrical sampler hits.
