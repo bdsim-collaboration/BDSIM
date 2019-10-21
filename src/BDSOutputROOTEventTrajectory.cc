@@ -58,7 +58,7 @@ int findPrimaryStepIndex(BDSTrajectory* traj)
     {return findPrimaryStepIndex(traj->GetParent());}
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& trajMap)
+void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectories)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajMap.size() << G4endl;
@@ -70,7 +70,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
 
   // assign trajectory indicies
   int idx = 0;
-  for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
+  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
     {
       BDSTrajectory* traj = (*iT).first;
       if ((*iT).second) // ie we want to save this trajectory
@@ -83,7 +83,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
     }
 
   // assign parent (and step) indicies
-  for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
+  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
     {
       BDSTrajectory* traj   = (*iT).first;
       BDSTrajectory* parent = traj->GetParent();
@@ -113,7 +113,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool>& tr
     }
 
   n = 0;
-  for (auto iT = trajMap.begin(); iT != trajMap.end(); ++iT)
+  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
     {
       BDSTrajectory* traj = (*iT).first;
 

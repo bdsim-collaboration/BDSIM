@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSOutputROOTEventTrajectoryPoint.hh"
 #include "BDSTrajectoryFilter.hh"
+#include "BDSTrajectoriesToStore.hh"
 
 #include <map>
 #include <vector>
@@ -110,7 +111,7 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(const std::map<BDSTrajectory*, bool> &trajectory);
+  void Fill(const BDSTrajectoriesToStore* t);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 #endif
 

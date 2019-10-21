@@ -377,11 +377,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   BDSTrajectoriesToStore interestingTrajectories = IdentifyTrajectoriesForStorage(evt,
-										  verboseThisEvent,
-										  eCounterHits,
-										  eCounterFullHits,
-										  SampHC);
-  
+                                                                                  verboseThisEvent,
+                                                                                  eCounterHits,
+                                                                                  eCounterFullHits,
+                                                                                  SampHC);
+
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
 		    SampHC,
@@ -395,7 +395,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,
-		    interestingTrajectories.trajectories,
+		    &interestingTrajectories,
 		    collimatorHits,
 		    apertureImpactHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
