@@ -40,7 +40,7 @@ BDSOutputROOTEventHeader::BDSOutputROOTEventHeader()
 BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
 {;}
 
-void BDSOutputROOTEventHeader::Flush()
+void BDSOutputROOTEventHeader::FlushLocal()
 {
   bdsimVersion  = std::string(GIT_VERSION);
   geant4Version = G4Version;

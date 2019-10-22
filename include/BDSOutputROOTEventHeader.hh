@@ -36,7 +36,10 @@ class BDSOutputROOTEventHeader: public TObject
 public:
   BDSOutputROOTEventHeader();
   virtual ~BDSOutputROOTEventHeader();
-  void Flush();
+  virtual void Flush(){FlushLocal();}
+
+  /// We have a non-virtual version as it's bad to call this from a constructor.
+  void FlushLocal();
   
   std::string bdsimVersion;
   std::string geant4Version;
