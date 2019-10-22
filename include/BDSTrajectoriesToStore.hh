@@ -35,10 +35,7 @@ public:
     filtersMatched(filtersMatchedIn)
   {;}
   ~BDSTrajectoriesToStore(){;}
-
-  std::map<BDSTrajectory*, bool> GetTrajectoriesMap() const {return trajectories;}
-
-
+  
   std::map<BDSTrajectory*, bool> trajectories;
   std::map<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> > filtersMatched;
 

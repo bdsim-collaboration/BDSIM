@@ -70,10 +70,10 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 
   // assign trajectory indicies
   int idx = 0;
-  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
+  for (auto trajFlag : trajectories->trajectories)
     {
-      BDSTrajectory* traj = (*iT).first;
-      if ((*iT).second) // ie we want to save this trajectory
+      BDSTrajectory* traj = trajFlag.first;
+      if (trajFlag.second) // ie we want to save this trajectory
 	{
 	  traj->SetTrajIndex(idx);
 	  idx++;
@@ -83,11 +83,11 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
     }
 
   // assign parent (and step) indicies
-  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
+  for (auto trajFlag : trajectories->trajectories)
     {
-      BDSTrajectory* traj   = (*iT).first;
+      BDSTrajectory* traj   = trajFlag.first;
       BDSTrajectory* parent = traj->GetParent();
-      if ((*iT).second && parent)
+      if (trajFlag.second && parent)
 	{ // to store and not primary
 	  traj->SetParentIndex(parent->GetTrajIndex());
 
@@ -113,12 +113,12 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
     }
 
   n = 0;
-  for (auto iT = trajectories->GetTrajectoriesMap().begin(); iT != trajectories->GetTrajectoriesMap().end(); ++iT)
+  for (auto trajFlag : trajectories->trajectories)
     {
-      BDSTrajectory* traj = (*iT).first;
+      BDSTrajectory* traj = trajFlag.first;
 
       // check if the trajectory is to be stored
-      if(!(*iT).second)
+      if (trajFlag.second)
 	{continue;}
 
       partID.push_back((int &&) traj->GetPDGEncoding());
