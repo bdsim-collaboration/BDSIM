@@ -222,6 +222,9 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	      tnElectrons.push_back(point->GetNElectrons());
 	    }	  
 	}
+
+      // record the filters that were matched for this trajectory
+      filters.push_back(trajectories->filtersMatched.at(traj));
       
       XYZ.push_back(tXYZ);
       modelIndicies.push_back(tmodelIndex);
