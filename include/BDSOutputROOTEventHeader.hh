@@ -49,7 +49,8 @@ public:
   std::vector<std::string> analysedFiles; ///< List of which files were analysed in case of a rebdsim output file.
   std::vector<std::string> combinedFiles; ///< List of which files were combined in case of a rebdsimCombine output file.
   int         nTrajectoryFilters;    ///< Length of bitset used for trajectory filtering - compile time info.
-
+  std::vector<std::string> trajectoryFilters; ///< Names of filters.
+  
   /// Update the file type.
   void SetFileType(std::string fileTypeIn) {fileType = fileTypeIn;}
   
@@ -59,6 +60,11 @@ public:
   /// file, we break that convention.
   void Fill(const std::vector<std::string>& analysedFilesIn = std::vector<std::string>(),
 	    const std::vector<std::string>& combinedFilesIn = std::vector<std::string>());
+
+#ifndef __ROOTBUILD__
+  /// Fill with information from Geant4 side of things.
+  void FillGeant4Side();
+#endif
 
   ClassDef(BDSOutputROOTEventHeader,3);
 };

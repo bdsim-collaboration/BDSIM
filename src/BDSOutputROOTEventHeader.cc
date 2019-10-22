@@ -53,6 +53,7 @@ void BDSOutputROOTEventHeader::Flush()
   analysedFiles.clear();
   combinedFiles.clear();
   nTrajectoryFilters = BDS::NTrajectoryFilters;
+  trajectoryFilters.clear();
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;
@@ -70,4 +71,11 @@ void BDSOutputROOTEventHeader::Fill(const std::vector<std::string>& analysedFile
   analysedFiles = analysedFilesIn;
   combinedFiles = combinedFilesIn;
 }
-  
+
+#ifndef __ROOTBUILD__
+void BDSOutputROOTEventHeader::FillGeant4Side()
+{
+  for (int i = 0; i < nTrajectoryFilters; i++)
+    {trajectoryFilters.push_back(BDS::BDSTrajectoryFilterEnumOfIndex(i).ToString());}
+}
+#endif

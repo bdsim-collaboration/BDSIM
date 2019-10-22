@@ -42,4 +42,9 @@ struct trajectoryfiltertypes_def
 
 typedef BDSTypeSafeEnum<trajectoryfiltertypes_def,int> BDSTrajectoryFilter;
 
+namespace BDS
+{
+  BDSTrajectoryFilter BDSTrajectoryFilterEnumOfIndex(int i);
+}
+
 #endif

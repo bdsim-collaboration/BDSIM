@@ -155,6 +155,7 @@ void BDSOutput::FillHeader()
 {
   headerOutput->Flush();
   headerOutput->Fill(); // updates time stamp
+  headerOutput->FillGeant4Side();
   WriteHeader();
   ClearStructuresHeader();
 }

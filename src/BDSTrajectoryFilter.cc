@@ -35,3 +35,9 @@ std::map<BDSTrajectoryFilter, std::string>* BDSTrajectoryFilter::dictionary =
    {BDSTrajectoryFilter::minimumZ,        "minimumZ"},
    {BDSTrajectoryFilter::maximumR,        "maximumR"}
 });
+
+namespace BDS
+{
+  BDSTrajectoryFilter BDSTrajectoryFilterEnumOfIndex(int i)
+  {return static_cast<BDSTrajectoryFilter>(i);}
+}
