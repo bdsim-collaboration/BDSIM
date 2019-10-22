@@ -318,6 +318,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition*
 void BDSOutputROOTEventTrajectory::Flush()
 {
   n = 0;
+  filters.clear();
   partID.clear();
   trackID.clear();
   parentID.clear();
@@ -361,6 +362,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
     {return;}
 
   n = 0;
+  filters             = other->filters;
   partID              = other->partID;
   trackID             = other->trackID;
   parentID            = other->parentID;
