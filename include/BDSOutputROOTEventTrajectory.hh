@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTTRAJECTORY_H
 #define BDSOUTPUTROOTEVENTTRAJECTORY_H
 #include "Rtypes.h"
+#include "TBits.h"
 #include "TVector3.h"
 
 #include "BDSOutputROOTEventTrajectoryPoint.hh"
@@ -122,7 +123,7 @@ public:
   void Fill(const BDSOutputROOTEventTrajectory* other);
 
   int n;
-  std::vector<std::bitset<BDS::NTrajectoryFilters> > filters;
+  std::vector<TBits>                 filters;
   std::vector<int>                   partID;
   std::vector<unsigned int>          trackID;
   std::vector<int>                   parentID;

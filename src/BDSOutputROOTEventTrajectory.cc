@@ -224,7 +224,11 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	}
 
       // record the filters that were matched for this trajectory
-      filters.push_back(trajectories->filtersMatched.at(traj));
+      TBits tb(BDS::NTrajectoryFilters);
+      auto fm = trajectories->filtersMatched.at(traj);
+      for (int i = 0; i < BDS::NTrajectoryFilters; i++)
+	{tb[i] = fm[i];}
+      filters.push_back(tb);
       
       XYZ.push_back(tXYZ);
       modelIndicies.push_back(tmodelIndex);
