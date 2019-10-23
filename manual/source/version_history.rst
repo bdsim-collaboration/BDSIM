@@ -299,6 +299,8 @@ Bug Fixes
 * Small memory leaks reported by Coverity.
 * Unitialised variables reported by Coverity.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
+* Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
+  instead of all of it. The beam pipe thickness was also not taken into account and now is.
 
 Output Changes
 --------------
