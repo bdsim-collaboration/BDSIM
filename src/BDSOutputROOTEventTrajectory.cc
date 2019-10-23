@@ -118,7 +118,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       BDSTrajectory* traj = trajFlag.first;
 
       // check if the trajectory is to be stored
-      if (trajFlag.second)
+      if (!trajFlag.second) // ie false, then continue and don't store
 	{continue;}
 
       partID.push_back((int &&) traj->GetPDGEncoding());
