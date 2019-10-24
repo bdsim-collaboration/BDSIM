@@ -54,14 +54,13 @@ public:
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
 
 protected:
-
   /// Sift through all trajectories (if any) and mark for storage.
-  BDSTrajectoriesToStore IdentifyTrajectoriesForStorage(const G4Event* evt,
-							G4bool verboseThisEvent,
-							BDSHitsCollectionEnergyDeposition* eCounterHits,
-							BDSHitsCollectionEnergyDeposition* eCounterFullHits,
-							BDSHitsCollectionSampler*          SampHC) const;
-
+  BDSTrajectoriesToStore* IdentifyTrajectoriesForStorage(const G4Event* evt,
+							 G4bool verboseThisEvent,
+							 BDSHitsCollectionEnergyDeposition* eCounterHits,
+							 BDSHitsCollectionEnergyDeposition* eCounterFullHits,
+							 BDSHitsCollectionSampler*          SampHC) const;
+  
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEventBDSIM;

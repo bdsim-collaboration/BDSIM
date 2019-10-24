@@ -376,11 +376,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	}
     }
 
-  BDSTrajectoriesToStore interestingTrajectories = IdentifyTrajectoriesForStorage(evt,
-                                                                                  verboseThisEvent,
-                                                                                  eCounterHits,
-                                                                                  eCounterFullHits,
-                                                                                  SampHC);
+  BDSTrajectoriesToStore* interestingTrajectories = IdentifyTrajectoriesForStorage(evt,
+										   verboseThisEvent,
+										   eCounterHits,
+										   eCounterFullHits,
+										   SampHC);
 
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
@@ -395,7 +395,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,
-		    &interestingTrajectories,
+		    interestingTrajectories,
 		    collimatorHits,
 		    apertureImpactHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
@@ -425,14 +425,17 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
       G4cout << "Trajectory point primary pool size: " << bdsTrajectoryPrimaryAllocator.GetAllocatedSize() << G4endl;
     }
+
+  delete interestingTrajectories;
+  
   G4cout.flags(flagsCache);
 }
 
-BDSTrajectoriesToStore BDSEventAction::IdentifyTrajectoriesForStorage(const G4Event* evt,
-								      G4bool verboseThisEvent,
-								      BDSHitsCollectionEnergyDeposition* eCounterHits,
-								      BDSHitsCollectionEnergyDeposition* eCounterFullHits,
-								      BDSHitsCollectionSampler* SampHC) const
+BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4Event* evt,
+								       G4bool verboseThisEvent,
+								       BDSHitsCollectionEnergyDeposition* eCounterHits,
+								       BDSHitsCollectionEnergyDeposition* eCounterFullHits,
+								       BDSHitsCollectionSampler* SampHC) const
 {
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   
@@ -599,5 +602,5 @@ BDSTrajectoriesToStore BDSEventAction::IdentifyTrajectoriesForStorage(const G4Ev
   if (verboseThisEvent)
     {G4cout << "Trajectories for storage: " << interestingTraj.size() << G4endl;}
 
-  return BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
+  return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
 }
