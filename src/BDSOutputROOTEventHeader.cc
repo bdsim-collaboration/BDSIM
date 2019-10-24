@@ -70,6 +70,9 @@ void BDSOutputROOTEventHeader::Fill(const std::vector<std::string>& analysedFile
   timeStamp = std::string(ctime(&rawtime));
   analysedFiles = analysedFilesIn;
   combinedFiles = combinedFilesIn;
+#ifndef __ROOTBUILD__
+  FillGeant4Side();
+#endif
 }
 
 #ifndef __ROOTBUILD__
