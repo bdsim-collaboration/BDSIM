@@ -146,7 +146,7 @@ The user may place a sampler anywhere in the model with any orientation. This is
 square) shape and be placed with any orientation. A `samplerplacement` will record all
 particles travelling in any direction through it. A branch in the Event output will be
 create with the name of the `samplerplacement`. The user may define an arbitrary number of
-`samplerplacement`s.  A `samplerplacement` is defined with the following syntax::
+`samplerplacement` s.  A `samplerplacement` is defined with the following syntax::
 
   s1: samplerplacement, referenceElement="d1",
                         referenceElementNumber=1,
