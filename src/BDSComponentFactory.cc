@@ -740,7 +740,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	// element->kick will be ignored
 	if (BDS::IsFinite(element->kick))
 	  {
-	    G4cout << __METHOD_NAME__ << "Warning: 'kick' defined in element"
+	    G4cout << __METHOD_NAME__ << "WARNING: 'kick' defined in element"
 		   << "\"" << elementName << "\" but will be ignored as general kicker"
 		   << G4endl;
 	  }
@@ -816,7 +816,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           // only print warning if a poleface or fringe field effect was specified
           if (buildEntranceFringe || buildExitFringe)
             {
-              G4cout << __METHOD_NAME__ << "Warning - finite B field required for kicker pole face and fringe fields,"
+              G4cout << __METHOD_NAME__ << "WARNING - finite B field required for kicker pole face and fringe fields,"
                         " effects are unavailable for element ""\"" << elementName << "\"." << G4endl;
             }
         }

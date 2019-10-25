@@ -347,7 +347,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  }
 	default:
 	  {
-	    G4cout << "Warning unknown returned character code " <<  c << G4endl;
+	    G4cout << "WARNING unknown returned character code " <<  c << G4endl;
 	    break;
 	  }
 	}
