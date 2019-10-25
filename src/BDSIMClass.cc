@@ -472,7 +472,7 @@ void BDSIM::RegisterUserComponent(G4String componentTypeName,
 {
   if (initialised)
     {
-      G4cout << __METHOD_NAME__ << "warning - BDSIM kernel already initialised - "
+      G4cout << __METHOD_NAME__ << "WARNING - BDSIM kernel already initialised - "
 	     << "this component will not be available" << G4endl;
     }
   if (!userComponentFactory)
