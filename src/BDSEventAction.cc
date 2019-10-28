@@ -115,6 +115,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventStart         = globals->VerboseEventStart();
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   storeTrajectory           = globals->StoreTrajectory();
+  storeTrajectoryAll        = globals->StoreTrajectoryAll();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
   trajectoryCutZ            = globals->TrajCutGTZ();
   trajectoryCutR            = globals->TrajCutLTR();
@@ -510,7 +511,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    }
 	  
 	  // check on trajectory tree depth (depth = 0 means only primaries)
-	  if (depthMap[traj] <= depth)
+	  if (depthMap[traj] <= depth || storeTrajectoryAll) // all means to infinite depth really
 	    {filters[BDSTrajectoryFilter::depth] = true;}
 	  
 	  // check on coordinates (and TODO momentum)
