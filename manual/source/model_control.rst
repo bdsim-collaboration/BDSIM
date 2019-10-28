@@ -1421,8 +1421,10 @@ with the following options.
 | storeSamplerIon                    | Stores A, Z and Boolean whether the entry is an ion or not as well |
 |                                    | as the `nElectrons` variable for possible number of electrons.     |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectory                    | Whether to store trajectories. If turned on, all trajectories are  |
-|                                    | stored. This must be turned on to store any trajectories at all.   |
+| storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
+|                                    | particle(s) trajectory(ies) are stored by default. This is         |
+|                                    | required for the storage of any other trajectories at all. Note    |
+|                                    | the combination of all filters along with this is logical OR.      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
@@ -1436,8 +1438,9 @@ with the following options.
 | storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
 |                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to  0 is  |
-|                                    | the primary, 1 is the first generation of secondaries, etc.        |
+| storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to. 0 is  |
+|                                    | the primary, 1 is the first generation of secondaries, etc. -1     |
+|                                    | can be used to store all (i.e. to infinite depth).                 |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryELossSRange         | Ranges in curvilinear S coordinate that if a particular track      |
 |                                    | causes energy deposition in this range, its trajectory will be     |
@@ -1451,15 +1454,17 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryParticleID          | The PDG ID of the particle(s) to only store trajectories for.      |
 |                                    | Multiple particle IDs can be supplied with a space between them.   |
-|                                    | e.g. "11 12 22 13".                                                |
+|                                    | e.g. "11 12 22 13". Note, the anti-particles must be individually  |
+|                                    | specified.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryEnergyThreshold     | The threshold energy for storing trajectories. Trajectories for    |
-|                                    | any particles with energy less than this amount (in GeV) will not  |
-|                                    | be stored.                                                         |
+| storeTrajectoryEnergyThreshold     | The threshold **kinetic** energy for storing trajectories.         |
+|                                    | Only particles starting with a kinetic energy greater than this    |
+|                                    | will have trajectories stored for them. (GeV)                      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
-|                                    | string such as "cd1 qf32x".                                        |
+|                                    | string such as "cd1 qf32x". If the same element exists multiple    |
+|                                    | times, all matches wil be stored.                                  |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryTransportationSteps | On by default. If true, include steps in the trajectories that     |
 |                                    | are created by transportation only. When a particle crosses a      |
