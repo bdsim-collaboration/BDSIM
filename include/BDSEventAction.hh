@@ -51,6 +51,7 @@ public:
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
   G4int CurrentEventIndex() const {return currentEventIndex;}
 
+  /// Flag that the primary was absorbed in a collimator - can be done externally to this class.
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
 
   /// Update the vector of sampler IDs to match for trajectories.

@@ -201,7 +201,7 @@ void BDSRunAction::SetTrajectorySamplerIDs() const
 	  i++;
         }
       if (!found)
-	{throw BDSException(__METHOD_NAME__, "sampler \"" + tok + "\" named in storeTrajectorySamplerID was not found");}
+	{throw BDSException(__METHOD_NAME__, "Error: sampler \"" + tok + "\" named in the option storeTrajectorySamplerID was not found.");}
     }
 
   eventAction->SetSamplerIDsForTrajectories(samplerIDs);
