@@ -70,9 +70,9 @@ New Features
   they weren't before.
 * RF cavity fringe fields have been implemented and are on by default. They are controlled with
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
-* Revised executable options for verbosity. These are now the exact same as the intput options. Old
+* Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
-* New internal region class allows better setting of defaults when defining custom regions. Preivously,
+* New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
 * New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
@@ -86,7 +86,7 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
-| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generated (GeV)|
 +------------------------------------+--------------------------------------------------------------------+
 | collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
 +------------------------------------+--------------------------------------------------------------------+
@@ -207,7 +207,7 @@ General
 * Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
-* The generic beam line "element" will now be inspected for end piece coil placement on the edge of mangets
+* The generic beam line "element" will now be inspected for end piece coil placement on the edge of magnets
   and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
   placed if (strictly) drifts were on either side of the magnet.
 * When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
@@ -300,7 +300,7 @@ Bug Fixes
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
-* Unitialised variables reported by Coverity.
+* Unintialised variables reported by Coverity.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
