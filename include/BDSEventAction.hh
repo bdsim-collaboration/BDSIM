@@ -59,7 +59,8 @@ protected:
 							 G4bool verboseThisEvent,
 							 BDSHitsCollectionEnergyDeposition* eCounterHits,
 							 BDSHitsCollectionEnergyDeposition* eCounterFullHits,
-							 BDSHitsCollectionSampler*          SampHC) const;
+							 BDSHitsCollectionSampler*          SampHC,
+							 G4int                              nChar = 50) const;
   
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.

@@ -347,7 +347,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (trajCont)
     {
       if (verboseThisEvent)
-	{G4cout << "Trajectories: " << trajCont->size() << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "Trajectories: " << trajCont->size() << G4endl;}
       BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
       primaryHit  = primary->FirstHit();
       primaryLoss = primary->LastPoint();
@@ -381,7 +381,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 										   verboseEventBDSIM || verboseThisEvent,
 										   eCounterHits,
 										   eCounterFullHits,
-										   SampHC);
+										   SampHC,
+										   nChar);
 
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
@@ -436,7 +437,8 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 								       G4bool verbose,
 								       BDSHitsCollectionEnergyDeposition* eCounterHits,
 								       BDSHitsCollectionEnergyDeposition* eCounterFullHits,
-								       BDSHitsCollectionSampler* SampHC) const
+								       BDSHitsCollectionSampler* SampHC,
+								       G4int                     nChar) const
 {
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   
@@ -447,11 +449,6 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
   if (storeTrajectory && trajCont)
     {
       TrajectoryVector* trajVec = trajCont->GetVector();
-      if (verbose)
-	{
-	  G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size()
-		 << " storeTrajectoryEnergyThreshold=" << trajectoryEnergyThreshold << G4endl;
-	}
       
       // build trackID map, depth map
       std::map<int, BDSTrajectory*> trackIDMap;
@@ -617,7 +614,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	}
       // Output interesting trajectories
       if (verbose)
-	{G4cout << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
   
   return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
