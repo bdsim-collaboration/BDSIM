@@ -294,7 +294,7 @@ public:
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
 
   /// @{ options that require some implementation.
-  G4bool   StoreTrajectoryTransportationSteps() const;
+  G4bool StoreTrajectoryTransportationSteps() const;
   /// @}
 
   // options that require members in this class (for value checking or because they're from another class)
