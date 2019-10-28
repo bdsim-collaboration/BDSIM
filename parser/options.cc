@@ -436,6 +436,7 @@ void Options::PublishMembers()
   publish("storeSamplerIon",                &Options::storeSamplerIon);
 
   publish("trajConnect",                    &Options::trajConnect);
+  publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
 

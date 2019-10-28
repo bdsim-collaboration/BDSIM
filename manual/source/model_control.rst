@@ -1472,7 +1472,7 @@ with the following options.
 |                                    | trajectory point. Legacy option is :code:`trajNoTransportation`    |
 |                                    | that is opposite to this option.                                   |
 +------------------------------------+--------------------------------------------------------------------+
-| trajConnect                        | Stores all the trajectories that connect a trajectory to be        |
+| trajectoryConnect                  | Stores all the trajectories that connect a trajectory to be        |
 |                                    | stored all the way to the primary particle. For example, if the    |
 |                                    | filters from other trajectory options are to store only muons      |
 |                                    | with an energy greater than 10 GeV, the few trajectories stored    |
