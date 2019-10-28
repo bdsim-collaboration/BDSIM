@@ -117,8 +117,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   InitialiseBeamlineTransform();
 
   BDSSamplerPlane::chordLength = LengthSafety();
-
-  ProcessTrajectorySamplerIDs();
+  
   ProcessTrajectoryELossSRange();
 }
 
@@ -223,25 +222,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete visibleDebugVisAttr;
 
   instance = nullptr;
-}
-
-void BDSGlobalConstants::ProcessTrajectorySamplerIDs()
-{
-  if (options.storeTrajectorySamplerID.empty())
-    {return;}
-  std::istringstream is(options.storeTrajectorySamplerID);
-  G4String tok;
-  while (is >> tok)
-    {
-      BDSSamplerRegistry* samplerRegistry = BDSSamplerRegistry::Instance();
-      G4int i = 0;
-      for (const auto& info : *samplerRegistry)
-        {
-          if (info.UniqueName() == tok)
-            {samplerIDs.push_back(i);}
-	  i++;
-        }
-    }
 }
 
 void BDSGlobalConstants::ProcessTrajectoryELossSRange()

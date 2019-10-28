@@ -53,6 +53,9 @@ public:
 
   void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
 
+  /// Update the vector of sampler IDs to match for trajectories.
+  void SetSamplerIDsForTrajectories(const std::vector<G4int>& samplerIDsIn) {trajectorySamplerID = samplerIDsIn;}
+
 protected:
   /// Sift through all trajectories (if any) and mark for storage.
   BDSTrajectoriesToStore* IdentifyTrajectoriesForStorage(const G4Event* evt,
@@ -106,7 +109,7 @@ private:
   G4String particleIDToStore;
   std::vector<int> particleIDIntToStore;
   G4int    depth;
-  std::vector<int> samplerIDsToStore;
+  std::vector<int> trajectorySamplerID;
   std::vector<std::pair<double,double>> sRangeToStore;
   /// @}
 

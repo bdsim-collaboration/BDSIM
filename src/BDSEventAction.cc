@@ -123,7 +123,6 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   particleToStore           = globals->StoreTrajectoryParticle();
   particleIDToStore         = globals->StoreTrajectoryParticleID(); 
   depth                     = globals->StoreTrajectoryDepth();
-  samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
   sRangeToStore             = globals->StoreTrajectoryELossSRange();
   printModulo               = globals->PrintModuloEvents();
 
@@ -145,10 +144,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
   currentEventIndex = evt->GetEventID();
-  
-  // set samplers for trajectory (cannot be done in contructor)
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
@@ -584,14 +579,14 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	}
       
       // loop over samplers to connect trajectories
-      if (samplerIDsToStore.size() != 0 && SampHC)
+      if (!trajectorySamplerID.empty() && SampHC)
 	{
 	  G4int nHits = SampHC->entries();
 	  for (G4int i = 0; i < nHits; i++)
 	    {
 	      G4int samplerIndex = (*SampHC)[i]->samplerID;
 	      BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
-	      if (std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(), samplerIndex) != samplerIDsToStore.end())
+	      if (std::find(trajectorySamplerID.begin(), trajectorySamplerID.end(), samplerIndex) != trajectorySamplerID.end())
 		{
 		  BDSTrajectory* trajToStore = trackIDMap[(*SampHC)[i]->trackID];
 		  if (!interestingTraj[trajToStore])
