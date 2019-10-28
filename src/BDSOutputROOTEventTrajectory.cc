@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <algorithm>
+#include <bitset>
 #include <iostream>
 #include <iomanip>
 
@@ -224,11 +225,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	}
 
       // record the filters that were matched for this trajectory
-      TBits tb(BDS::NTrajectoryFilters);
-      auto fm = trajectories->filtersMatched.at(traj);
-      for (int i = 0; i < BDS::NTrajectoryFilters; i++)
-	{tb[i] = fm[i];}
-      filters.push_back(tb);
+      filters.push_back(trajectories->filtersMatched.at(traj));
       
       XYZ.push_back(tXYZ);
       modelIndicies.push_back(tmodelIndex);
