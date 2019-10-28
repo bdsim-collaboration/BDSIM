@@ -50,9 +50,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryVertexInformationV.hh"
 #include "BDSHitSampler.hh"
 #include "BDSStackingAction.hh"
+#include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
-#include "BDSTrajectoriesToStore.hh"
 
 #include "globals.hh"
 #include "G4ParticleDefinition.hh"
@@ -255,7 +255,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 			  const BDSTrajectoryPoint*                      primaryHit,
 			  const BDSTrajectoryPoint*                      primaryLoss,
-			  const BDSTrajectoriesToStore*                   trajectories,
+			  const BDSTrajectoriesToStore*                  trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
 			  const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 			  const G4int                                    turnsTaken)
