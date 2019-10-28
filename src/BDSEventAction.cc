@@ -378,7 +378,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   BDSTrajectoriesToStore* interestingTrajectories = IdentifyTrajectoriesForStorage(evt,
-										   verboseThisEvent,
+										   verboseEventBDSIM || verboseThisEvent,
 										   eCounterHits,
 										   eCounterFullHits,
 										   SampHC);
@@ -433,7 +433,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 }
 
 BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4Event* evt,
-								       G4bool verboseThisEvent,
+								       G4bool verbose,
 								       BDSHitsCollectionEnergyDeposition* eCounterHits,
 								       BDSHitsCollectionEnergyDeposition* eCounterFullHits,
 								       BDSHitsCollectionSampler* SampHC) const
@@ -447,7 +447,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
   if (storeTrajectory && trajCont)
     {
       TrajectoryVector* trajVec = trajCont->GetVector();
-      if (verboseThisEvent)
+      if (verbose)
 	{
 	  G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size()
 		 << " storeTrajectoryEnergyThreshold=" << trajectoryEnergyThreshold << G4endl;
@@ -616,7 +616,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	      {connectTraj(interestingTraj, i.first);}
 	}
       // Output interesting trajectories
-      if (verboseThisEvent)
+      if (verbose)
 	{G4cout << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
   
