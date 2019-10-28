@@ -1446,7 +1446,7 @@ with the following options.
 |                                    | causes energy deposition in this range, its trajectory will be     |
 |                                    | stored. The value should be a string inside which are pairs of     |
 |                                    | numbers separated by a colon and ranges separated by whitespace    |
-|                                    | such as "0.3:1.23 45.6:47.6".                                      |
+|                                    | such as "0.3:1.23 45.6:47.6". (m)                                  |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryEnergyThreshold     | The threshold **kinetic** energy for storing trajectories.         |
 |                                    | Only particles starting with a kinetic energy greater than this    |

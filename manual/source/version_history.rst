@@ -34,6 +34,7 @@ Expected Changes To Results
   the option :code:`option, killNeutrinos=1;`.
 * The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
   which will vastly reduce the data size. See output changes below for further details.
+* Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
 
 New Features
 ------------
