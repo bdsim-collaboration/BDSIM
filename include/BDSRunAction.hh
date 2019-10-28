@@ -66,6 +66,10 @@ private:
   /// it depends on the construction of the geometry being complete.
   void SetTrajectorySamplerIDs() const;
 
+  /// Check whether various trajectory options that are geometry dependent make
+  /// sense and warn if not. Done now because geometry is built before run.
+  void CheckTrajectoryOptions() const;
+  
   BDSOutput*    output;           ///< Cache of output instance. Not owned by this class.
   time_t        starttime;
   std::string   seedStateAtStart; ///< Seed state at start of the run.

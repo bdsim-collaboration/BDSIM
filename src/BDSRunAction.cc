@@ -16,7 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
@@ -85,6 +87,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed());
 
   SetTrajectorySamplerIDs();
+  CheckTrajectoryOptions();
   
   info = new BDSEventInfo();
   
@@ -205,4 +208,16 @@ void BDSRunAction::SetTrajectorySamplerIDs() const
     }
 
   eventAction->SetSamplerIDsForTrajectories(samplerIDs);
+}
+
+void BDSRunAction::CheckTrajectoryOptions() const
+{
+  // TBC - with multiple beam lines this will have to check for the maximum S coordinate
+  G4double maxS = BDSAcceleratorModel::Instance()->BeamlineMain()->GetTotalArcLength() + 1*CLHEP::m; // 1m for margin
+  std::vector<std::pair<double,double>> sRangeToStore = BDSGlobalConstants::Instance()->StoreTrajectoryELossSRange();
+  for (const auto& range : sRangeToStore)
+    {
+      if (range.first > maxS)
+	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
+    }
 }
