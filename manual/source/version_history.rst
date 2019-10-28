@@ -32,6 +32,8 @@ Expected Changes To Results
   specified in the user input.
 * Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
   the option :code:`option, killNeutrinos=1;`.
+* The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
+  which will vastly reduce the data size. See output changes below for further details.
 
 New Features
 ------------
@@ -307,6 +309,14 @@ Output Changes
 
 * In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
   what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
+* The default behaviour with `option, storeTrajectories=1;` is now to **only** store the primary
+  trajectory whereas it was all before. This vastly reduces the data size.
+* The default option :code:`storeTrajectoryDepth` is now 0, representing only the primary whereas
+  this was 1e5 before. -1 will mean 'all'. This in effect fixes a misunderstanding where trajectory
+  options would not appear to have any effect unless the depth was set to 0.
+* A new data member "filters" has been added to the Trajectory branch of the Event tree. This has
+  bits (std::bitset<N>) that are 1 or 0 representing whether an individual trajectory matched each
+  filter. This allows a mix of trajectories to be disentangled.
 * In the analysis class :code:`analysis/Run.hh`, the member variables `Summary` and `Histos`
   now start with capital letters to match the layout on file.
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
