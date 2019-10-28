@@ -548,10 +548,10 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 			{
 			  BDSTrajectory* trajToStore = trackIDMap[hit->GetTrackID()];
 			  if (!interestingTraj[trajToStore])
-                {// was marked as not storing - update counters
-                  nYes++;
-                  nNo--;
-                }
+			    {// was marked as not storing - update counters
+			      nYes++;
+			      nNo--;
+			    }
 			  interestingTraj[trajToStore] = true;
 			  trajectoryFilters[trajToStore][BDSTrajectoryFilter::elossSRange] = true;
 			  break;
@@ -572,11 +572,11 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		      if ( dS >= v.first && dS <= v.second) 
 			{
 			  BDSTrajectory* trajToStore = trackIDMap[hit->GetTrackID()];
-              if (!interestingTraj[trajToStore])
-                {// was marked as not storing - update counters
-                  nYes++;
-                  nNo--;
-                }
+			  if (!interestingTraj[trajToStore])
+			    {// was marked as not storing - update counters
+			      nYes++;
+			      nNo--;
+			    }
 			  interestingTraj[trajToStore] = true;
 			  trajectoryFilters[trajToStore][BDSTrajectoryFilter::elossSRange] = true;
 			  break;
@@ -597,11 +597,11 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	      if (std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(), samplerIndex) != samplerIDsToStore.end())
 		{
 		  BDSTrajectory* trajToStore = trackIDMap[(*SampHC)[i]->trackID];
-          if (!interestingTraj[trajToStore])
-            {// was marked as not storing - update counters
-              nYes++;
-              nNo--;
-            }
+		  if (!interestingTraj[trajToStore])
+		    {// was marked as not storing - update counters
+		      nYes++;
+		      nNo--;
+		    }
 		  interestingTraj[trajToStore] = true;
 		  trajectoryFilters[trajToStore][BDSTrajectoryFilter::sampler] = true;
 		}
@@ -612,13 +612,13 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
       if (trajConnect && trackIDMap.size() > 1)
 	{
 	  for (auto i : interestingTraj)
-	    if(i.second) 
+	    if (i.second) 
 	      {connectTraj(interestingTraj, i.first);}
 	}
-    // Output interesting trajectories
-    if (verboseThisEvent)
-      {G4cout << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
+      // Output interesting trajectories
+      if (verboseThisEvent)
+	{G4cout << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
-
+  
   return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
 }
