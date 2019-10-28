@@ -1448,6 +1448,10 @@ with the following options.
 |                                    | numbers separated by a colon and ranges separated by whitespace    |
 |                                    | such as "0.3:1.23 45.6:47.6".                                      |
 +------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryEnergyThreshold     | The threshold **kinetic** energy for storing trajectories.         |
+|                                    | Only particles starting with a kinetic energy greater than this    |
+|                                    | will have trajectories stored for them. (GeV)                      |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryParticle            | The Geant4 name of particle(s) to only store trajectories for.     |
 |                                    | This is case sensitive. Multiple particle names can be used with   |
 |                                    | a space between them. e.g. "proton pi-".                           |
@@ -1456,10 +1460,6 @@ with the following options.
 |                                    | Multiple particle IDs can be supplied with a space between them.   |
 |                                    | e.g. "11 12 22 13". Note, the anti-particles must be individually  |
 |                                    | specified.                                                         |
-+------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryEnergyThreshold     | The threshold **kinetic** energy for storing trajectories.         |
-|                                    | Only particles starting with a kinetic energy greater than this    |
-|                                    | will have trajectories stored for them. (GeV)                      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
