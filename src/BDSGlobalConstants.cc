@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
@@ -44,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -232,10 +234,28 @@ void BDSGlobalConstants::ProcessTrajectoryELossSRange()
   std::string tok;
   while (is >> tok)
     {
-      G4int loc = tok.find(":",0);
-      G4double rstart = std::stod(tok.substr(0, loc));
-      G4double rend   = std::stod(tok.substr(loc+1,tok.size()));
-      elossSRange.emplace_back(rstart, rend);
+      std::size_t loc = tok.find(":",0);
+      if (loc == std::string::npos)
+	{throw BDSException(__METHOD_NAME__, "Error: no ':' character found in option storeTrajectoryELossSRange \"" + options.storeTrajectoryELossSRange + "\" - invalid range.");}
+      G4double rstart = 0;
+      G4double rend   = 0;
+      try
+	{
+	  rstart = std::stod(tok.substr(0, loc));
+	  rend   = std::stod(tok.substr(loc+1,tok.size()));
+	}
+      catch (const std::invalid_argument& e)
+	{
+	  G4cerr << "Invalid value \"" << tok << "\" in option storeTrajectoryELossSRange." << G4endl;
+	  throw BDSException(__METHOD_NAME__, "Error: can't convert string to number for option storeTrajectoryELossSRange.");
+	}
+      if (rend < rstart)
+	{
+	  G4String message = "Error in option storeTrajectoryElossSRange - end point "
+	    + std::to_string(rend) + " is less than beginning " + std::to_string(rstart) + ".";
+	  throw BDSException(__METHOD_NAME__, message);
+	}
+      elossSRange.emplace_back(rstart*CLHEP::m, rend*CLHEP::m);
     }
 }
 
