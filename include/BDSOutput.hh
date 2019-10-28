@@ -119,7 +119,7 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 		 const BDSTrajectoryPoint*                      primaryHit,
 		 const BDSTrajectoryPoint*                      primaryLoss,
-		 const BDSTrajectoriesToStore*                   trajectories,
+		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
 		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 		 const G4int                                    turnsTaken);
