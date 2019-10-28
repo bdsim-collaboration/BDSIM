@@ -526,10 +526,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  if (trajEndPoint->PostPosR() < trajectoryCutR)
 	    {filters[BDSTrajectoryFilter::maximumR] = true;}
 	  
-      if (filters.any())
-        {nYes++;}
-      else
-        {nNo++;}
+	  filters.any() ? nYes++ : nNo++;
 	  interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, filters.any()));
 	  trajectoryFilters.insert(std::pair<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> >(traj, filters)); 
 	}
