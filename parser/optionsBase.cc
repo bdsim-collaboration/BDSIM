@@ -274,7 +274,7 @@ OptionsBase::OptionsBase()
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
   storeTrajectoryTransportationSteps = true;
-  trajNoTransportation               = false;
+  trajNoTransportation               = false; ///< kept only for backwards compatibility.
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
   storeTrajectoryIons            = false;
