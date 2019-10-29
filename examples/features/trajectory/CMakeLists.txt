@@ -22,6 +22,7 @@ simple_testing(trajectory-energy-threshold-100mev   "--file=trajectory-energy-th
 simple_testing(trajectory-connect                   "--file=trajectory-connect.gmad"                   "")
 simple_testing(trajectory-no-transportation         "--file=trajectory-no-transportation.gmad"         "")
 simple_testing(trajectory-eloss-s-range             "--file=trajectory-eloss-s-range.gmad"             "")
+simple_testing(trajectory-eloss-s-range-full-hits   "--file=trajectory-eloss-s-range-full-hits.gmad"   "")
 simple_testing(trajectory-samplerid                 "--file=trajectory-samplerid.gmad"                 "")
 simple_testing(trajectory-multiple-options          "--file=trajectory-multiple-options.gmad"          "")
 
