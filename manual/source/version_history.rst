@@ -218,6 +218,9 @@ General
   with any other geometry, but nothing internally.
 * Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
   the option :code:`option, killNeutrinos=1;`.
+* Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
+  where the parameters result in this. This makes therefore a marginally simpler model and avoids
+  abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
   
 Bug Fixes
 ---------
