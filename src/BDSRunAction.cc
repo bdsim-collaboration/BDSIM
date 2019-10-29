@@ -16,14 +16,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
 #include "BDSParser.hh"
 #include "BDSRunAction.hh"
+#include "BDSSamplerInfo.hh"
+#include "BDSSamplerRegistry.hh"
 
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
@@ -41,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ctime>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #if G4VERSION_NUMBER > 1049
 #include "BDSPhysicsUtilities.hh"
@@ -48,16 +55,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Electron.hh"
 #endif
 
-BDSRunAction::BDSRunAction(BDSOutput*    outputIn,
-                           BDSBunch*     bunchGeneratorIn,
-			   const G4bool& usingIonsIn):
+BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
+                           BDSBunch*       bunchGeneratorIn,
+			   G4bool          usingIonsIn,
+			   BDSEventAction* eventActionIn,
+			   G4String        trajectorySamplerIDIn):
   output(outputIn),
   starttime(time(nullptr)),
   seedStateAtStart(""),
   info(nullptr),
   bunchGenerator(bunchGeneratorIn),
   usingIons(usingIonsIn),
-  cpuStartTime(std::clock_t())
+  cpuStartTime(std::clock_t()),
+  eventAction(eventActionIn),
+  trajectorySamplerID(trajectorySamplerIDIn)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -74,6 +85,9 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   
   // Bunch generator beginning of run action (optional mean subtraction).
   bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed());
+
+  SetTrajectorySamplerIDs();
+  CheckTrajectoryOptions();
   
   info = new BDSEventInfo();
   
@@ -163,5 +177,47 @@ void BDSRunAction::PrintAllProcessesForAllParticles() const
       for (G4int i = 0; i < processList->size(); i++)
         {G4cout << "\"" << (*processList)[i]->GetProcessName() << "\"" << G4endl;}
       G4cout << G4endl;
+    }
+}
+
+void BDSRunAction::SetTrajectorySamplerIDs() const
+{
+  if (trajectorySamplerID.empty())
+    {return;}
+
+  std::vector<G4int> samplerIDs;
+  std::istringstream is(trajectorySamplerID);
+  G4String tok;
+  while (is >> tok)
+    {
+      BDSSamplerRegistry* samplerRegistry = BDSSamplerRegistry::Instance();
+      G4int i = 0;
+      G4bool found = false;
+      for (const auto& samplerInfo : *samplerRegistry)
+        {
+          if (samplerInfo.UniqueName() == tok)
+            {
+	      samplerIDs.push_back(i);
+	      found = true;
+	      break;
+	    }
+	  i++;
+        }
+      if (!found)
+	{throw BDSException(__METHOD_NAME__, "Error: sampler \"" + tok + "\" named in the option storeTrajectorySamplerID was not found.");}
+    }
+
+  eventAction->SetSamplerIDsForTrajectories(samplerIDs);
+}
+
+void BDSRunAction::CheckTrajectoryOptions() const
+{
+  // TBC - with multiple beam lines this will have to check for the maximum S coordinate
+  G4double maxS = BDSAcceleratorModel::Instance()->BeamlineMain()->GetTotalArcLength() + 1*CLHEP::m; // 1m for margin
+  std::vector<std::pair<double,double>> sRangeToStore = BDSGlobalConstants::Instance()->StoreTrajectoryELossSRange();
+  for (const auto& range : sRangeToStore)
+    {
+      if (range.first > maxS)
+	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
     }
 }

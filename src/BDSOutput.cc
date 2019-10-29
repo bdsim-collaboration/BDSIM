@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerHistogramDef.hh"
 #include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
+#include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 
@@ -263,7 +264,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 			  const BDSTrajectoryPoint*                      primaryHit,
 			  const BDSTrajectoryPoint*                      primaryLoss,
-			  const std::map<BDSTrajectory*,bool>&           trajectories,
+			  const BDSTrajectoriesToStore*                  trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
 			  const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 			  const std::map<G4String, G4THitsMap<G4double>*>& scorerHits,
@@ -803,7 +804,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
     {CopyFromHistToHist1D("PlossPE", "CollPlossPE", collimatorIndices);}
 }
 
-void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)
+void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 {
   traj->Fill(trajectories);
 }

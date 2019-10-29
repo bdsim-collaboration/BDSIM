@@ -422,7 +422,7 @@ void Options::PublishMembers()
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
-  publish("trajNoTransportation",               &Options::trajNoTransportation);
+  publish("trajNoTransportation",               &Options::trajNoTransportation); ///< kept only for backwards compatibility.
   publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
   publish("storeTrajectoryIons",                &Options::storeTrajectoryIons);
@@ -436,6 +436,7 @@ void Options::PublishMembers()
   publish("storeSamplerIon",                &Options::storeSamplerIon);
 
   publish("trajConnect",                    &Options::trajConnect);
+  publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
 

@@ -758,6 +758,12 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
 	  throw BDSException("Error in placement.");
 	}
+      // in this case we should use s for longitudinal offset - warn user if mistakenly using z
+      if (BDS::IsFinite(placement.z))
+	{
+	  G4cout << "WARNING: placement \"" << placement.name << "\" is placed using a referenceElement but the z offset is" << G4endl;
+	  G4cout << "non zero. Note, s should be used to offset the placement in this case and z will have no effect." << G4endl << G4endl;
+	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
       if (S)

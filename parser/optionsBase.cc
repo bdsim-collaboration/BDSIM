@@ -267,14 +267,14 @@ OptionsBase::OptionsBase()
   storeGeant4Data            = true;
   
   storeTrajectory                = false;
-  storeTrajectoryDepth           = 1000000;
+  storeTrajectoryDepth           = 0;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
   storeTrajectoryTransportationSteps = true;
-  trajNoTransportation               = false;
+  trajNoTransportation               = false; ///< kept only for backwards compatibility.
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
   storeTrajectoryIons            = false;
