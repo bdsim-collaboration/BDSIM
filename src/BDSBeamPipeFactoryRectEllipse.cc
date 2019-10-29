@@ -34,8 +34,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 #include <set>
+#include <string>
 #include <utility>                         // for std::pair
 
 BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
@@ -256,6 +259,12 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
 
   //beampipe cylindrical solid (circular cross-section)
   //beampipe inner edge for subtraction (actually just like vacuum + lengthSafety)
+  if (beamPipeThicknessIn <= lengthSafetyLarge)
+    {
+      G4String message = "beam pipe thickness in element \"" + nameIn
+                         + "\" is thinner than minimum " + std::to_string(lengthSafetyLarge / CLHEP::mm) + "mm.";
+      throw BDSException(__METHOD_NAME__, message);
+    }
   G4VSolid* bpInnerCylSolid = new G4EllipticalTube(nameIn + "_pipe_inner_ellipsoid", // name
 						   aper3In + lengthSafetyLarge,      // horizontal semi-axis
 						   aper4In + lengthSafetyLarge,      // vertical semi-axis
