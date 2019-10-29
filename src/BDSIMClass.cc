@@ -290,15 +290,19 @@ int BDSIM::Initialise()
     }
   /// Set user action classes
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, bdsBunch->ParticleDefinition()->IsAnIon()));
-
-#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
 #endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
+
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
+#endif
+  runManager->SetUserAction(new BDSRunAction(bdsOutput,
+					     bdsBunch,
+					     bdsBunch->ParticleDefinition()->IsAnIon(),
+					     eventAction,
+					     globalConstants->StoreTrajectorySamplerID()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;

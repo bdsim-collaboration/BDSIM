@@ -32,6 +32,9 @@ Expected Changes To Results
   specified in the user input.
 * Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
   the option :code:`option, killNeutrinos=1;`.
+* The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
+  which will vastly reduce the data size. See output changes below for further details.
+* Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
 
 New Features
 ------------
@@ -67,9 +70,9 @@ New Features
   they weren't before.
 * RF cavity fringe fields have been implemented and are on by default. They are controlled with
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
-* Revised executable options for verbosity. These are now the exact same as the intput options. Old
+* Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
-* New internal region class allows better setting of defaults when defining custom regions. Preivously,
+* New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
 * Added the ability to attach a BLM flush to the side of a component
@@ -85,7 +88,7 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
-| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generated (GeV)|
 +------------------------------------+--------------------------------------------------------------------+
 | collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
 +------------------------------------+--------------------------------------------------------------------+
@@ -206,7 +209,7 @@ General
 * Remove use of exit(1) throughout the code.
 * Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
   element definition from now on.
-* The generic beam line "element" will now be inspected for end piece coil placement on the edge of mangets
+* The generic beam line "element" will now be inspected for end piece coil placement on the edge of magnets
   and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
   placed if (strictly) drifts were on either side of the magnet.
 * When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
@@ -302,7 +305,7 @@ Bug Fixes
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
-* Unitialised variables reported by Coverity.
+* Unintialised variables reported by Coverity.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
@@ -312,6 +315,14 @@ Output Changes
 
 * In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
   what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
+* The default behaviour with `option, storeTrajectories=1;` is now to **only** store the primary
+  trajectory whereas it was all before. This vastly reduces the data size.
+* The default option :code:`storeTrajectoryDepth` is now 0, representing only the primary whereas
+  this was 1e5 before. -1 will mean 'all'. This in effect fixes a misunderstanding where trajectory
+  options would not appear to have any effect unless the depth was set to 0.
+* A new data member "filters" has been added to the Trajectory branch of the Event tree. This has
+  bits (std::bitset<N>) that are 1 or 0 representing whether an individual trajectory matched each
+  filter. This allows a mix of trajectories to be disentangled.
 * In the analysis class :code:`analysis/Run.hh`, the member variables `Summary` and `Histos`
   now start with capital letters to match the layout on file.
 * Samplers now have a new variable called `nElectrons` that is the number of electrons on a
