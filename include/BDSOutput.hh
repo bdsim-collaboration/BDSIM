@@ -46,6 +46,7 @@ class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
+class BDSTrajectoriesToStore;
 
 class TRKBunch;
 
@@ -121,7 +122,7 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 		 const BDSTrajectoryPoint*                      primaryHit,
 		 const BDSTrajectoryPoint*                      primaryLoss,
-		 const std::map<BDSTrajectory*, bool>&          trajectories,
+		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
 		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 		 const G4int                                    turnsTaken);
@@ -225,7 +226,7 @@ private:
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
 
   /// Copy a set of trajectories to the output structure.
-  void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
+  void FillTrajectories(const BDSTrajectoriesToStore* trajectories);
 
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,

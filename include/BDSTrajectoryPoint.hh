@@ -151,6 +151,13 @@ private:
   /// Initialisation of variables in separate function to reduce duplication in
   /// multiple constructors.
   void InitialiseVariables();
+
+  /// Utility function to prepare and fill extra link variables.
+  void StoreExtrasLink(const G4Track* track,
+		       G4double       kineticEnergy);
+
+  /// Utility function to prepare and fill extra ion varaibles.
+  void StoreExtrasIon(const G4Track* track);
   
   G4int preProcessType;           ///< Process type of pre-step point
   G4int preProcessSubType;        ///< Process sub type of pre-step point
