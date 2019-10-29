@@ -158,8 +158,8 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String      nameIn,
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
 
-  G4double width  = std::max(aper1In,aper3In) + beamPipeThicknessIn + lengthSafety;
-  G4double height = std::max(aper2In,aper4In) + beamPipeThicknessIn + lengthSafety;
+  G4double width  = std::max(aper1In,aper3In) + beamPipeThicknessIn + lengthSafetyLarge;
+  G4double height = std::max(aper2In,aper4In) + beamPipeThicknessIn + lengthSafetyLarge;
   
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, aper4In,
 			    beamPipeThicknessIn, inputFaceNormal, outputFaceNormal);

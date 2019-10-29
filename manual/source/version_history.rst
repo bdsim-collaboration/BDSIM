@@ -268,6 +268,7 @@ Bug Fixes
 * Fix for default value of "energy" (actually energy loss) in the trajectory branch of the Event tree
   where the default value was -1 whereas it should be 0.
 * Fix missing geometrical margins in undulator.
+* Fix small occasional overlap with rectellipse beam pipe with yoke of magnets.
 * Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
   input text file.
 * Fix a bug where the PrimaryFirstHit or PrimayrLastHit S coordinate may appear to jump back and forth
