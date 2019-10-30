@@ -76,9 +76,6 @@ public:
   G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
   G4Colour*             colour;
-
-  /// Output stream operator implementation.
-  friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
 };
 
 #endif
