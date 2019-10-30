@@ -56,7 +56,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4bool                buildEndPiecesIn,
 				       G4double              coilWidthFractionIn,
 				       G4double              coilHeightFractionIn,
-				       G4String              geometryTypeAndPathIn,
+				       const G4String&       geometryTypeAndPathIn,
 				       G4Colour*             colourIn):
   name(nameIn),
   geometryType(geometryTypeIn),

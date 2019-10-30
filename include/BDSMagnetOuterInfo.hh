@@ -58,7 +58,7 @@ public:
 		     G4bool                buildEndPiecesIn      = true,
 		     G4double              coilWidthFractionIn   = 0.65,
 		     G4double              coilHeightFractionIn  = 0.8,
-		     G4String              geometryTypeAndPathIn = "",
+		     const G4String&       geometryTypeAndPathIn = "",
 		     G4Colour*             colourIn              = nullptr);
 
   G4String              name;
