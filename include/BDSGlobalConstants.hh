@@ -223,6 +223,7 @@ public:
   inline G4bool   StoreELossModelID()        const {return G4bool  (options.storeElossModelID);}
   inline G4bool   StoreGeant4Data()          const {return G4bool  (options.storeGeant4Data);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
+  inline G4bool   StoreTrajectoryAll()       const {return          options.storeTrajectoryDepth == -1;}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
@@ -230,7 +231,7 @@ public:
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
   inline G4bool   StoreTrajectoryIons()      const {return G4bool  (options.storeTrajectoryIons);}
-  inline std::vector<G4int>                          StoreTrajectorySamplerIDs()  const {return samplerIDs;}
+  inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
   inline G4bool   StoreSamplerPolarCoords()  const {return G4bool  (options.storeSamplerPolarCoords);}
@@ -293,7 +294,7 @@ public:
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
 
   /// @{ options that require some implementation.
-  G4bool   StoreTrajectoryTransportationSteps() const;
+  G4bool StoreTrajectoryTransportationSteps() const;
   /// @}
 
   // options that require members in this class (for value checking or because they're from another class)
@@ -372,13 +373,7 @@ private:
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
-
-  /// Process the option string and fill the below vector.
-  void ProcessTrajectorySamplerIDs();
-
-  /// IDs of samplers to link trajectories from.
-  std::vector<G4int> samplerIDs;
-
+  
   /// Process the option string and fill the below vector.
   void ProcessTrajectoryELossSRange();
   

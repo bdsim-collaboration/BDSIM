@@ -31,28 +31,100 @@ Output Information
 
 The following extra information can be **optionally** recorded from a BDSIM simulation:
 
-- Particle coordinates at a plane after each element - 'sampler' information.
-- Particle coordinates at a plane that is placed in the world by the user - 'samplerplacement'
-  (see :ref:`user-sampler-placement`).
-- Energy deposition 'hits' from any component, the air or the beam pipe vacuum.
-- Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
-- Detailed information from hits in a collimator - see :ref:`bdsim-options-output`.
-- A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
+1) Particle coordinates at a plane after each element - 'sampler' information (see :ref:`sampler-output`).
+2) Particle coordinates at a plane that is placed anywhere in the world by the user - 'samplerplacement' (see :ref:`user-sampler-placement`).
+3) Energy deposition 'hits' from any component, the beam pipe vacuum, or the surrounding air.
+4) Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
+5) Detailed information from hits in a collimator - see :ref:`bdsim-options-output`.
+6) A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
+
+These are described in more detail below.
+
+1) Samplers
+^^^^^^^^^^^
 
 Samplers are 'attached' to a beam line element by using the sample command::
 
   sample, range=<element_name>;
 
-See :ref:`sampler-output` for more details.
+See :ref:`sampler-output` for more details.  Note they record the passage of particles both
+backwards and forwards through the plane and are effectively passive with no material.
 
-All components are sensitive to energy deposition by default. Any energy deposition
-will therefore be recorded in the output as well as stored in pre-made energy deposition
-histograms per event.
+2) Sampler Placements
+^^^^^^^^^^^^^^^^^^^^^
 
-Trajectories are vectors of trajectory points that record the information about a particle
-at each step in the simulation. This records information, such as: all coordinates, particle
-type, state and the physics process that determined that step.
+These are the same as samplers but can be placed anywhere in the world and may overlap with
+any other geometry. Care however, should be taken to avoid co-planar faces as Geant4 cannot
+handle this type of overlap. See :ref:`user-sampler-placement` for the syntax.
 
+3) Energy Deposition
+^^^^^^^^^^^^^^^^^^^^
+
+BDSIM by default records energy deposition from the beam pipe and magnet geometries. However,
+the energy deposition in the vacuum and surrounding air is not normally recorded to minimise
+the output file size. This can optionally be turned on. Note, the 'vacuum' is not a perfect
+vacuum as there is no such thing in Geant4. The vacuum in BDSIM is the typical vacuum of the
+warm section of the LHC at CERN.
+
+See :ref:`bdsim-options-output` with options beginning with :code:`storeEloss`.
+
+4) Trajectories
+^^^^^^^^^^^^^^^
+
+Trajectories are a list of all the steps of a particle along it's path through the model. There
+is typically a step for every particle as it enters or leaves a boundary as well as where a physics
+process is invoked. At each trajectory step point, the coordinates, momentum, total energy, particle
+type and last physics process are recorded as a snapshot of the particle at that point.
+
+* One "trajectory" is the record of one particle track.
+* A "parent" is the particle / track / trajectory that created the current one.
+* A "daughter" particle / track / trajectory is one that came from another "parent" one.
+* In reality this is a big tree of information, but in the output each particle / track / trajectory
+  is stored one after another in a vector. Each has a unique index (name). The parent index is recorded
+  with each trajectory as well as its index in the output vector so we can effectively navigate the
+  particle physics history tree from any particle up to the primary.
+
+We don't store this information by default because it is an **incredible** amount of information and
+hard to deal with sensibly. Turning on trajectory storage in the options will store by default,
+**only** the primary particle(s) trajectory(ies). We then use some options to include a set of
+particles we're interested in and whether to also store the trajectories that connect these particles
+back to the primary.
+
+* The trajectory filters are combined with a logical OR. So, if two filters are used, a trajectory
+  will be stored if it matches either one OR the other. In analysis, the variable `filters` has
+  Booleans stored for which filters a particular trajectory matched and can be used to disentangle
+  them.
+
+This trajectory information is highly useful for more involved anlayses. It can also answer relatively
+simple questions like, "where are muons produced that reach my detector (sampler)?". This would correspond
+to storing muon trajectories with the option that links them to a particular sampler and we would
+histogram the first point in each trajectory afterwards.
+
+See :ref:`bdsim-options-output` with options beginning with :code:`storeTrajectory` and :code:`traj`.
+
+5) Collimator Hits
+^^^^^^^^^^^^^^^^^^
+
+Collimators are often expected to intercept the beam before other parts of the machine. Therefore,
+some special information can be recorded summarising all collimators as well as per-collimator hit
+information. This is optional and creates extra sampler-like structures in the output that summarise
+the hits on that collimator.
+
+By default, the collimator hits are only generated for primary particles, but ion fragments can optionally
+be included, and also, optionally all particles.
+
+See :ref:`bdsim-options-output` with options beginning with :code:`storeCollimator`.
+
+6) Single 3D Energy Deposition Histogram
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is a single 3D histogram created from whatever energy deposition are generated according to
+the general options. This is historically called a "scoring map" but is not a scoring mesh or map
+in the usual Geant4 sense.
+
+See :ref:`scoring-map-description` for syntax.
+		       
+  
 Particle Identification
 -----------------------
 
@@ -347,6 +419,12 @@ BDSOutputROOTEventHeader
 +------------------------+--------------------------+---------------------------------------+
 | combinedFiles          | std::vector<std::string> | List of files combined together in    |
 |                        |                          | rebdsimCombine                        |
++------------------------+--------------------------+---------------------------------------+
+| nTrajectoryFilters     | int                      | The total number of trajectory filters|
+|                        |                          | and therefore the number of bits in   |
+|                        |                          | Event.Trajectory.filters.             |
++------------------------+--------------------------+---------------------------------------+
+| trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
 +------------------------+--------------------------+---------------------------------------+
 
 Geant4Data Tree
@@ -1009,6 +1087,9 @@ This is the first trajectory for each event and the total energy of all steps of
 |  **Variable**            | **Type**                            |  **Description**                                        |
 +==========================+=====================================+=========================================================+
 | n                        | int                                 | The number of trajectories stored for this event        |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this particlar |
+|                          |                                     | trajectory matched. See header for their description.   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | partID                   | std::vector<int>                    | The PDG ID for the particle in each trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
