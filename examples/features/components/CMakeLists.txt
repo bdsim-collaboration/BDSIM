@@ -54,6 +54,7 @@ endif()
 
 # ones requiring special options / falgs
 if(USE_GDML)
+  simple_fail(component-element-too-short    "--file=element-too-short.gmad" ${OVERLAP_CHECK})
   simple_testing(component-gdml              "--file=gdml.gmad"              ${OVERLAP_CHECK})
   simple_testing(component-gdml-nopreprocess "--file=gdml_nopreprocess.gmad" ${OVERLAP_CHECK})
 endif()
