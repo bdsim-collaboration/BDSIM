@@ -176,7 +176,7 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
       throw BDSException(__METHOD_NAME__, messageSS.str());
     }
   catch (...)
-    {throw BDSException(__METHOD_NAME__, "Unexpected Exception");}
+    {throw BDSException(__METHOD_NAME__, "Unexpected Exception - possibly malformed GDML file: " + filename);}
   
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
