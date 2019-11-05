@@ -71,6 +71,7 @@ private:
 					       G4double aper4,
 					       G4double beamPipeThickness);
 
+  /// Append 2D points on an octagon in a clockwise direction into the vector argument.
   void GenerateOctagonal(std::vector<G4TwoVector>& vec,
 			 G4double x1,
 			 G4double y1,
