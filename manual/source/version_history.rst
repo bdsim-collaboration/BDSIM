@@ -221,6 +221,8 @@ General
 * Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
   where the parameters result in this. This makes therefore a marginally simpler model and avoids
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
+* Revised calcualtion of octagonal beam pipe points such that each side is uniformly thick exactly
+  equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
   
 Bug Fixes
 ---------
@@ -308,6 +310,8 @@ Bug Fixes
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
+* Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
+  required for the magnet poles to not hit the beam pipe.
 
 Output Changes
 --------------
