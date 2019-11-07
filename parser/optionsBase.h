@@ -312,6 +312,7 @@ namespace GMAD
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIons;
+    bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
     bool        storeSamplerPolarCoords;
