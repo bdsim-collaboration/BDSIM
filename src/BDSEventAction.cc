@@ -122,8 +122,8 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajConnect               = globals->TrajConnect();
   trajParticleNameToStore   = globals->StoreTrajectoryParticle();
   trajParticleIDToStore     = globals->StoreTrajectoryParticleID();
-  depth                     = globals->StoreTrajectoryDepth();
-  sRangeToStore             = globals->StoreTrajectoryELossSRange();
+  trajDepth                 = globals->StoreTrajectoryDepth();
+  trajSRangeToStore         = globals->StoreTrajectoryELossSRange();
   printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
@@ -502,8 +502,8 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		{filters[BDSTrajectoryFilter::particle] = true;}
 	    }
 	  
-	  // check on trajectory tree depth (depth = 0 means only primaries)
-	  if (depthMap[traj] <= depth || storeTrajectoryAll) // all means to infinite depth really
+	  // check on trajectory tree depth (trajDepth = 0 means only primaries)
+	  if (depthMap[traj] <= trajDepth || storeTrajectoryAll) // all means to infinite trajDepth really
 	    {filters[BDSTrajectoryFilter::depth] = true;}
 	  
 	  // check on coordinates (and TODO momentum)
@@ -524,7 +524,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	}
       
       // loop over energy hits to connect trajectories
-      if (sRangeToStore.size() != 0)
+      if (trajSRangeToStore.size() != 0)
 	{
 	  if (eCounterHits)
 	    {
@@ -534,7 +534,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		{
 		  hit = (*eCounterHits)[i];
 		  double dS = hit->GetSHit();
-		  for (const auto& v : sRangeToStore)
+		  for (const auto& v : trajSRangeToStore)
 		    {		
 		      if ( dS >= v.first && dS <= v.second) 
 			{
@@ -559,7 +559,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		{
 		  hit = (*eCounterFullHits)[i];
 		  double dS = hit->GetSHit();
-		  for (const auto& v : sRangeToStore)
+		  for (const auto& v : trajSRangeToStore)
 		    {		
 		      if ( dS >= v.first && dS <= v.second) 
 			{

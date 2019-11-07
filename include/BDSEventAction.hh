@@ -109,9 +109,9 @@ private:
   G4String trajParticleNameToStore;
   G4String trajParticleIDToStore;
   std::vector<int> trajParticleIDIntToStore;
-  G4int            depth;
+  G4int            trajDepth;
   std::vector<int> trajectorySamplerID;
-  std::vector<std::pair<double,double>> sRangeToStore;
+  std::vector<std::pair<double,double>> trajSRangeToStore;
   /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
