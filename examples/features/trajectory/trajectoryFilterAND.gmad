@@ -1,0 +1,3 @@
+include trajectoryFilter.gmad;
+
+option, trajectoryFilterLogicAND=1;
