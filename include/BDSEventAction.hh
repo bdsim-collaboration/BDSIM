@@ -106,10 +106,10 @@ private:
   G4double trajectoryCutZ;
   G4double trajectoryCutR;
   G4bool   trajConnect;
-  G4String particleToStore;
-  G4String particleIDToStore;
-  std::vector<int> particleIDIntToStore;
-  G4int    depth;
+  G4String trajParticleNameToStore;
+  G4String trajParticleIDToStore;
+  std::vector<int> trajParticleIDIntToStore;
+  G4int            depth;
   std::vector<int> trajectorySamplerID;
   std::vector<std::pair<double,double>> sRangeToStore;
   /// @}

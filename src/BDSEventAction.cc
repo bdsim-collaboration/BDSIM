@@ -120,17 +120,17 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajectoryCutZ            = globals->TrajCutGTZ();
   trajectoryCutR            = globals->TrajCutLTR();
   trajConnect               = globals->TrajConnect();
-  particleToStore           = globals->StoreTrajectoryParticle();
-  particleIDToStore         = globals->StoreTrajectoryParticleID(); 
+  trajParticleNameToStore   = globals->StoreTrajectoryParticle();
+  trajParticleIDToStore     = globals->StoreTrajectoryParticleID();
   depth                     = globals->StoreTrajectoryDepth();
   sRangeToStore             = globals->StoreTrajectoryELossSRange();
   printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
-  std::stringstream iss(particleIDToStore);
+  std::stringstream iss(trajParticleIDToStore);
   G4int i;
   while (iss >> i)
-    {particleIDIntToStore.push_back(i);}
+    {trajParticleIDIntToStore.push_back(i);}
 }
 
 BDSEventAction::~BDSEventAction()
@@ -490,14 +490,14 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    {filters[BDSTrajectoryFilter::energyThreshold] = true;}
 	  
 	  // check on particle if not empty string
-	  if (!particleToStore.empty() || !particleIDToStore.empty())
+	  if (!trajParticleNameToStore.empty() || !trajParticleIDToStore.empty())
 	    {
 	      G4String particleName  = traj->GetParticleName();
 	      G4int particleID       = traj->GetPDGEncoding();
 	      G4String particleIDStr = G4String(std::to_string(particleID));
-	      std::size_t found1     = particleToStore.find(particleName);
-	      bool        found2     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) 
-					!= particleIDIntToStore.end());
+	      std::size_t found1     = trajParticleNameToStore.find(particleName);
+	      bool        found2     = (std::find(trajParticleIDIntToStore.begin(), trajParticleIDIntToStore.end(), particleID)
+                                    != trajParticleIDIntToStore.end());
 	      if ((found1 != std::string::npos) || found2)
 		{filters[BDSTrajectoryFilter::particle] = true;}
 	    }
