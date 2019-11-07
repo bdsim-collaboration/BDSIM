@@ -81,11 +81,11 @@ void BDSBeamPipeFactoryOctagonal::GeneratePoints(G4double aper1,
   GenerateOctagonal(vacuumEdge, aper1, aper2, aper3, aper4);
   BDS::FourPoints ai = ExpandOctagon(aper1, aper2, aper3, aper4, lengthSafetyLarge);
   GenerateOctagonal(beamPipeInnerEdge, ai.aper1, ai.aper2, ai.aper3, ai.aper4);
-  BDS::FourPoints ao = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness);
+  BDS::FourPoints ao = ExpandOctagon(aper1, aper2, aper3, aper4, lengthSafetyLarge + beamPipeThickness);
   GenerateOctagonal(beamPipeOuterEdge, ao.aper1, ao.aper2, ao.aper3, ao.aper4);
-  BDS::FourPoints ac = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness + lengthSafetyLarge);
+  BDS::FourPoints ac = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness + 2*lengthSafetyLarge);
   GenerateOctagonal(containerEdge, ac.aper1, ac.aper2, ac.aper3, ac.aper4);
-  BDS::FourPoints acs = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness + 2*lengthSafetyLarge);
+  BDS::FourPoints acs = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness + 3*lengthSafetyLarge);
   GenerateOctagonal(containerSubtractionEdge, acs.aper1, acs.aper2, acs.aper3, acs.aper4);
 
   extentX = acs.aper1;
