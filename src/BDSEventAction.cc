@@ -75,7 +75,7 @@ namespace {
   // Function to recursively connect t
   void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
   {
-    BDSTrajectory *t2 = t->GetParent();
+    BDSTrajectory* t2 = t->GetParent();
     if (t2)
       {
 	interestingTraj[t2] = true;
@@ -116,6 +116,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   storeTrajectory           = globals->StoreTrajectory();
   storeTrajectoryAll        = globals->StoreTrajectoryAll();
+  trajectoryFilterLogicAND  = globals->TrajectoryFilterLogicAND();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
   trajectoryCutZ            = globals->TrajCutGTZ();
   trajectoryCutR            = globals->TrajCutLTR();
@@ -124,6 +125,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajParticleIDToStore     = globals->StoreTrajectoryParticleID();
   trajDepth                 = globals->StoreTrajectoryDepth();
   trajSRangeToStore         = globals->StoreTrajectoryELossSRange();
+  trajFiltersSet            = globals->TrajectoryFiltersSet();
   printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
@@ -599,6 +601,33 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		}
 	    }
 	}
+
+	// If we're using AND logic (default OR) with the filters, loop over and update whether
+	// we should really store the trajectory or not. Importantly, we do this before the connect
+	// trajectory step as that flags yet more trajectories (that connect each one) back to the
+	// primary
+	if (trajectoryFilterLogicAND)
+      {
+        for (auto& trajFlag : interestingTraj)
+          {
+            if (trajFlag.second) // if we're going to store it check the logic
+              {
+                // use bit-wise AND filters matched for this trajectory with filters set
+                // if count of 1s the same, then trajectory should be stored, therefore if
+                // not the same, it should be set to false.
+                auto varA = trajectoryFilters[trajFlag.first];
+                auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
+                if (filterMatch.count() != trajFiltersSet.count())
+                  {trajFlag.second = false;}
+                else
+                  {
+                    G4cout << "filters set : " << trajFiltersSet << G4endl;
+                    G4cout << "filters t:    " << varA << G4endl << G4endl;
+                  }
+              }
+          }
+
+      }
       
       // Connect trajectory graphs
       if (trajConnect && trackIDMap.size() > 1)
