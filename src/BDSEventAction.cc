@@ -615,15 +615,9 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
                 // use bit-wise AND filters matched for this trajectory with filters set
                 // if count of 1s the same, then trajectory should be stored, therefore if
                 // not the same, it should be set to false.
-                auto varA = trajectoryFilters[trajFlag.first];
                 auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
                 if (filterMatch.count() != trajFiltersSet.count())
                   {trajFlag.second = false;}
-                else
-                  {
-                    G4cout << "filters set : " << trajFiltersSet << G4endl;
-                    G4cout << "filters t:    " << varA << G4endl << G4endl;
-                  }
               }
           }
 
