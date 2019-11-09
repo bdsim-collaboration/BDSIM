@@ -19,7 +19,7 @@ beam, particle="e-",
 option, physicsList="g4FTFP_BERT",
 	minimumKineticEnergy=0.1*GeV,
 	storeTrajectories=1,
-	storeTrajectoryParticleID="12 -12 13 -13 14 -14",
+	storeTrajectoryParticleID="22 12 -12 13 -13 14 -14",
 	storeTrajectorySamplerID="detector";
 
 option, seed=123;

@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSHitSampler.hh"
+#include "BDSTrajectoryFilter.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4UserEventAction.hh"
@@ -103,16 +104,18 @@ private:
   G4bool primaryAbsorbedInCollimator; ///< Whether primary stopped in a collimator.
 
   /// @{ Cache of variable from global constants.
+  G4bool   trajectoryFilterLogicAND;
   G4double trajectoryEnergyThreshold;
   G4double trajectoryCutZ;
   G4double trajectoryCutR;
   G4bool   trajConnect;
-  G4String particleToStore;
-  G4String particleIDToStore;
-  std::vector<int> particleIDIntToStore;
-  G4int    depth;
+  G4String trajParticleNameToStore;
+  G4String trajParticleIDToStore;
+  std::vector<int> trajParticleIDIntToStore;
+  G4int            trajDepth;
   std::vector<int> trajectorySamplerID;
-  std::vector<std::pair<double,double>> sRangeToStore;
+  std::vector<std::pair<double,double>> trajSRangeToStore;
+  std::bitset<BDS::NTrajectoryFilters>  trajFiltersSet;
   /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.

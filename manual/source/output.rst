@@ -77,29 +77,39 @@ is typically a step for every particle as it enters or leaves a boundary as well
 process is invoked. At each trajectory step point, the coordinates, momentum, total energy, particle
 type and last physics process are recorded as a snapshot of the particle at that point.
 
-* One "trajectory" is the record of one particle track.
+* One "trajectory" is the record of one particle.
 * A "parent" is the particle / track / trajectory that created the current one.
 * A "daughter" particle / track / trajectory is one that came from another "parent" one.
 * In reality this is a big tree of information, but in the output each particle / track / trajectory
-  is stored one after another in a vector. Each has a unique index (name). The parent index is recorded
+  is stored one after another in a vector. Each has a unique index (ID). The parent index is recorded
   with each trajectory as well as its index in the output vector so we can effectively navigate the
   particle physics history tree from any particle up to the primary.
 
-We don't store this information by default because it is an **incredible** amount of information and
+We don't store trajectory information by default because it is an **incredible** amount of information and
 hard to deal with sensibly. Turning on trajectory storage in the options will store by default,
 **only** the primary particle(s) trajectory(ies). We then use some options to include a set of
 particles we're interested in and whether to also store the trajectories that connect these particles
 back to the primary.
 
-* The trajectory filters are combined with a logical OR. So, if two filters are used, a trajectory
+* The trajectory filters are combined with a **logical OR**. So, if two filters are used, a trajectory
   will be stored if it matches either one OR the other. In analysis, the variable `filters` has
   Booleans stored for which filters a particular trajectory matched and can be used to disentangle
   them.
-
-This trajectory information is highly useful for more involved anlayses. It can also answer relatively
-simple questions like, "where are muons produced that reach my detector (sampler)?". This would correspond
+* This logic can be changed by specifying :code:`option, trajectoryFilterLogicAND=1;` in the input
+  GMAD where the more exclusive (i.e. less inclusive) AND logic will be applied. Therefore, only
+  trajectories that meet all of the filters specified will be stored. This is useful to further
+  reduce the data size and simplify analysis because the trajectories may not need to be filtered
+  in analysis.
+  
+This trajectory information is highly useful for more involved analyses. It can also answer relatively
+simple questions like, "where are muons produced that reach my detector (i.e. sampler)?". This would correspond
 to storing muon trajectories with the option that links them to a particular sampler and we would
-histogram the first point in each trajectory afterwards.
+histogram the first point in each trajectory afterwards.  e.g. ::
+
+  option, storeTrajectories=1,
+          storeTrajectoryParticleID="13 -13",
+	  storeTrajectorySamplerID="samplername",
+	  trajectoryFilterLogicAND=1;
 
 See :ref:`bdsim-options-output` with options beginning with :code:`storeTrajectory` and :code:`traj`.
 

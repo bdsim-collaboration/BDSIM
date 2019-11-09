@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
+#include "BDSTrajectoryFilter.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -32,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/options.h"
 
+#include <bitset>
 #include <map>
 #include <utility>
 #include <vector>
@@ -233,6 +235,8 @@ public:
   inline G4bool   StoreTrajectoryIons()      const {return G4bool  (options.storeTrajectoryIons);}
   inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
+  inline G4bool   TrajectoryFilterLogicAND() const {return G4bool  (options.trajectoryFilterLogicAND);}
+  inline std::bitset<BDS::NTrajectoryFilters> TrajectoryFiltersSet() const {return trajectoryFiltersSet;}
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
   inline G4bool   StoreSamplerPolarCoords()  const {return G4bool  (options.storeSamplerPolarCoords);}
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
@@ -373,6 +377,8 @@ private:
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
+
+  std::bitset<BDS::NTrajectoryFilters> trajectoryFiltersSet; ///< Which filters were used in the options.
   
   /// Process the option string and fill the below vector.
   void ProcessTrajectoryELossSRange();
