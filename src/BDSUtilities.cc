@@ -409,6 +409,20 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
   return value;
 }
 
+std::vector<G4String> BDS::GetWordsFromString(const G4String& input)
+{
+  std::vector<G4String> result;
+  if (input.empty())
+    {return result;}
+  
+  std::istringstream ss(input);
+
+  G4String word;
+  while (ss >> word)
+    {result.push_back(word);}
+  return result;
+}
+
 G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
 {
   G4double xp = vec.x()*std::cos(angle) - vec.y()*std::sin(angle);
