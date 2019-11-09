@@ -139,19 +139,20 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(G4String name,
       result->RegisterFilter(timeFilter);
     }
 
-  if (!(info->material.empty()))
+  if (!(info->materialsToInclude.empty()))
     {
-      // If we have multiple materials, put everything in a vector.
-      std::vector<G4Material*> materialVector;
-      std::istringstream ss(info->material);
-
-      G4String word;
-      while (ss >> word)
-	{materialVector.push_back(BDSMaterials::Instance()->GetMaterial(word));}
-      
-      auto materialFilter = new BDSSDFilterMaterial("material_filter",
-						    materialVector);
-      result->RegisterFilter(materialFilter);
+      auto materialFilterInc = new BDSSDFilterMaterial("material_filter_include",
+						       info->materialsToInclude,
+						       /*inclusive*/true);
+      result->RegisterFilter(materialFilterInc);
+    }
+  
+  if (!(info->materialsToExclude.empty()))
+    {
+      auto materialFilterExc = new BDSSDFilterMaterial("material_filter_exclude",
+						       info->materialsToExclude,
+						       /*inclusive*/false);
+      result->RegisterFilter(materialFilterExc);
     }
 
   // if we didn't register any filters, just delete it

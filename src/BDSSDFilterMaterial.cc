@@ -26,10 +26,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSDFilterMaterial::BDSSDFilterMaterial(G4String    name,
-                                         std::vector<G4Material*> referenceMaterialIn):
-
-  G4VSDFilter(name),referenceMaterial(referenceMaterialIn)
+BDSSDFilterMaterial::BDSSDFilterMaterial(G4String name,
+                                         const std::vector<G4Material*>& materialsIn,
+					 G4bool   inclusiveIn):
+  G4VSDFilter(name),
+  materials(materialsIn),
+  inclusive(inclusiveIn)
 {;}
 
 BDSSDFilterMaterial::~BDSSDFilterMaterial()
@@ -44,6 +46,6 @@ G4bool BDSSDFilterMaterial::Accept(const G4Step* aStep) const
   G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
   G4Material* stepMaterial = stepLV->GetMaterial();
 
-  return std::find(referenceMaterial.begin(),referenceMaterial.end(), stepMaterial) != referenceMaterial.end();
-
+  G4bool found = std::find(materials.begin(), materials.end(), stepMaterial) != materials.end();
+  return inclusive ? found : !found;
 }
