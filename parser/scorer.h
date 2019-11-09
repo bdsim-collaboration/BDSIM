@@ -46,7 +46,8 @@ namespace GMAD
     double      maximumTime;
     std::string conversionFactorFile;
     std::string conversionFactorPath;
-    std::string material;
+    std::string materialToInclude;
+    std::string materialToExclude;
     bool        scoreWorldVolumeOnly;
     
     /// Constructor

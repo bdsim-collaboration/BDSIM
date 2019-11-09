@@ -38,7 +38,8 @@ void Scorer::clear()
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
-  material             = "";
+  materialToInclude    = "";
+  materialToExclude    = "";
   scoreWorldVolumeOnly = false;
 }
 
@@ -54,7 +55,8 @@ void Scorer::PublishMembers()
   publish("maximumTime",          &Scorer::maximumTime);
   publish("conversionFactorFile", &Scorer::conversionFactorFile);
   publish("conversionFactorPath", &Scorer::conversionFactorPath);
-  publish("material",             &Scorer::material);
+  publish("materialToInclude",    &Scorer::materialToInclude);
+  publish("materialToExclude",    &Scorer::materialToExclude);
   publish("scoreWorldVolumeOnly", &Scorer::scoreWorldVolumeOnly);
 }
 
@@ -71,6 +73,7 @@ void Scorer::print()const
 	    << "maximumTime "           << maximumTime          << std::endl
 	    << "conversionFactorFile "  << conversionFactorFile << std::endl
 	    << "conversionFactorPath "  << conversionFactorPath << std::endl
-	    << "material "              << material             << std::endl
+	    << "materialToInclude "     << materialToInclude    << std::endl
+	    << "materialToExclude "     << materialToExclude    << std::endl
 	    << "scoreWorldVolumeOnly "  << scoreWorldVolumeOnly << std::endl;
 }
