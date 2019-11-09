@@ -343,7 +343,7 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
 #endif
       }
     case BDSSDType::thinthing:
-      {return thinThingSD; break;}
+      {result = thinThingSD; break;}
     case BDSSDType::wirecomplete:
       {
 	if (applyOptions)

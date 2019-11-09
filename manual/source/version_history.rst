@@ -135,6 +135,11 @@ New Features
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
 +------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | of the specified filters will be stored. This is opposite to the   |
+|                                    | more inclusive OR logic used where a trajectory will be stored if  |
+|                                    | matches any of the specified filters.                              |
++------------------------------------+--------------------------------------------------------------------+
 | verboseRunLevel                    | (0-5) level of Geant4 run level print out. The same as             |
 |                                    | `-\\-verboseRun=X` executable option.                              |
 +------------------------------------+--------------------------------------------------------------------+
@@ -220,6 +225,11 @@ General
   with any other geometry, but nothing internally.
 * Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
   the option :code:`option, killNeutrinos=1;`.
+* Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
+  where the parameters result in this. This makes therefore a marginally simpler model and avoids
+  abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
+* Revised calcualtion of octagonal beam pipe points such that each side is uniformly thick exactly
+  equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
   
 Bug Fixes
 ---------
@@ -272,6 +282,7 @@ Bug Fixes
 * Fix for default value of "energy" (actually energy loss) in the trajectory branch of the Event tree
   where the default value was -1 whereas it should be 0.
 * Fix missing geometrical margins in undulator.
+* Fix small occasional overlap with rectellipse beam pipe with yoke of magnets.
 * Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
   input text file.
 * Fix a bug where the PrimaryFirstHit or PrimayrLastHit S coordinate may appear to jump back and forth
@@ -309,6 +320,8 @@ Bug Fixes
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
+* Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
+  required for the magnet poles to not hit the beam pipe.
 
 Output Changes
 --------------

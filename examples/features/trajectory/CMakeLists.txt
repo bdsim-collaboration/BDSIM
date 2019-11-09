@@ -25,6 +25,8 @@ simple_testing(trajectory-eloss-s-range             "--file=trajectory-eloss-s-r
 simple_testing(trajectory-eloss-s-range-full-hits   "--file=trajectory-eloss-s-range-full-hits.gmad"   "")
 simple_testing(trajectory-samplerid                 "--file=trajectory-samplerid.gmad"                 "")
 simple_testing(trajectory-multiple-options          "--file=trajectory-multiple-options.gmad"          "")
+simple_testing(trajectory-filter                    "--file=trajectoryFilter.gmad"                     "")
+simple_testing(trajectory-filter-and                "--file=trajectoryFilterAND.gmad"                  "")
 
 simple_fail(trajectory-eloss-s-range-bad            "--file=trajectory-eloss-s-range-bad.gmad"         "")
 simple_fail(trajectory-eloss-s-range-bad2           "--file=trajectory-eloss-s-range-bad2.gmad"        "")
