@@ -23,10 +23,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"         // geant4 types / globals
 
+#include <vector>
+
 namespace GMAD
 {
   class Scorer;
 }
+class G4Material;
 class G4ParticleDefinition;
 
 /**
@@ -56,7 +59,8 @@ public:
   G4double      maximumTime;         ///< Maximum time
   G4String      filename;            ///< Name of the conversion factor file
   G4String      pathname;            ///< Path of the conversion factor file (for ambient dose)
-  G4String      material;            ///< Name of the material where to score
+  std::vector<G4Material*> materialsToInclude; /// Which materials to include for scoring.
+  std::vector<G4Material*> materialsToExclude; /// Which materials to exclude for scoring.
   G4bool        worldVolumeOnly;     ///< Whether to score from the world volume only
 
 private:

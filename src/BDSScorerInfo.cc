@@ -18,8 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSMaterials.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerType.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/scorer.h"
 
@@ -30,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <string>
+#include <vector>
 
 BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 			     G4bool upgradeTo3D):
@@ -58,8 +61,7 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   pathname      = scorer.conversionFactorPath;
   minimumTime   = scorer.minimumTime*CLHEP::second;
   maximumTime   = scorer.maximumTime*CLHEP::second;
-  material      = scorer.material;
-  worldVolumeOnly = scorer.scoreWorldVolumeOnly;
+  worldVolumeOnly   = scorer.scoreWorldVolumeOnly;
 
   if (scorer.particlePDGID != 0)
     {
@@ -74,6 +76,12 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
       particle = particleTable->FindParticle(scorer.particleName);
       CheckParticle(particle, scorer.name);
     }
+
+  for (const auto& mi : BDS::GetWordsFromString(scorer.materialToInclude))
+    {materialsToInclude.push_back(BDSMaterials::Instance()->GetMaterial(mi));}
+
+  for (const auto& me : BDS::GetWordsFromString(scorer.materialToExclude))
+    {materialsToExclude.push_back(BDSMaterials::Instance()->GetMaterial(me));} 
 }
 
 void BDSScorerInfo::CheckParticle(G4ParticleDefinition* particleIn, G4String nameIn)
