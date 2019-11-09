@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSTrajectoryFilter.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -121,6 +122,17 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   BDSSamplerPlane::chordLength = LengthSafety();
   
   ProcessTrajectoryELossSRange();
+
+  // mark which trajectory filters have been set
+  trajectoryFiltersSet[BDSTrajectoryFilter::depth]           = options.HasBeenSet("storeTrajectoryDepth");
+  trajectoryFiltersSet[BDSTrajectoryFilter::particle]        = options.HasBeenSet("storeTrajectoryParticle") ||
+    options.HasBeenSet("storeTrajectoryParticleID");
+  trajectoryFiltersSet[BDSTrajectoryFilter::energyThreshold] = options.HasBeenSet("storeTrajectoryEnergyThreshold");
+  trajectoryFiltersSet[BDSTrajectoryFilter::sampler]         = options.HasBeenSet("storeTrajectorySamplerID");
+  trajectoryFiltersSet[BDSTrajectoryFilter::elossSRange]     = options.HasBeenSet("storeTrajectoryElossSRange");
+  trajectoryFiltersSet[BDSTrajectoryFilter::transportation]  = options.HasBeenSet("storeTrajectoryTransportationSteps");
+  trajectoryFiltersSet[BDSTrajectoryFilter::minimumZ]        = options.HasBeenSet("trajCutGTZ");
+  trajectoryFiltersSet[BDSTrajectoryFilter::maximumR]        = options.HasBeenSet("trajCutLTR");
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
