@@ -34,7 +34,7 @@ void Scorer::clear()
   particleName         = "";
   particlePDGID        = 0;
   minimumEnergy        = 0;
-  maximumEnergy        = 100000;
+  maximumEnergy        = 1e8; // 100 PeV - well beyond G4 physics for now
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
