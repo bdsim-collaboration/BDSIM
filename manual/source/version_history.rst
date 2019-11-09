@@ -133,6 +133,11 @@ New Features
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
 +------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | of the specified filters will be stored. This is opposite to the   |
+|                                    | more inclusive OR logic used where a trajectory will be stored if  |
+|                                    | matches any of the specified filters.                              |
++------------------------------------+--------------------------------------------------------------------+
 | verboseRunLevel                    | (0-5) level of Geant4 run level print out. The same as             |
 |                                    | `-\\-verboseRun=X` executable option.                              |
 +------------------------------------+--------------------------------------------------------------------+
