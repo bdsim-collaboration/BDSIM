@@ -50,7 +50,7 @@ public:
 				   G4double*                 unit = nullptr);
   
 private:  
-  ///@{ Unused default constructors
+  ///@{ Unused default constructors.
   BDSScorerFactory(const BDSScorerFactory&) = delete;
   BDSScorerFactory& operator=(const BDSScorerFactory&) = delete;
   ///@}
@@ -63,6 +63,7 @@ private:
 					   const BDSHistBinMapper3D* mapper,
 					   G4double*                 unit = nullptr);
 
+  /// Create a combined filter with AND logic for the scorer.
   BDSSDFilterAnd* CreateFilter(G4String name,
 			       const BDSScorerInfo* info) const;
 };
