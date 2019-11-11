@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserEventAction.hh"
 
 #include <ctime>
+#include <bitset>
 #include <string>
 #include <vector>
 
