@@ -42,7 +42,7 @@ BDSSDFilterAnd::~BDSSDFilterAnd()
 
 G4bool BDSSDFilterAnd::Accept(const G4Step* step) const
 {
-  G4bool result = false;
+  G4bool result = true;
   for (const auto filter : filters)
     {result &= filter->Accept(step);}
   return result;
