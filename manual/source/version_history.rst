@@ -234,6 +234,8 @@ General
 Bug Fixes
 ---------
 
+* Fixed formula in manual for standard error on the mean calculation. The implementation in code
+  was correct and has not changed.
 * Fix thick multipole element where the field was 1M times too strong because of the omission of units.
 * Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
   updated when multiple different particles were used for a `userfile` distribution.
