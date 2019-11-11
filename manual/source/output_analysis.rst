@@ -784,7 +784,7 @@ To calculate the mean in the per-entry histograms as well as the associated erro
 .. math::
 
    \bar{x} &= \sum_{i = 0}^{n} x_{i}\\
-   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
+   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n-1}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
 
 These equations are however problematic to implement computationally. The formula above
 for the variance requires two passes through the data to first calculate the mean,
@@ -822,8 +822,8 @@ After processing all entries, the variance is used to calculate the standard err
 with:
 
 .. math::
-
-   \sigma_{\bar{x}} = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{\sqrt{n-1}} Var\,(x)}
+   
+   \sigma_{\bar{x}} = \sqrt{\frac{1}{n(n-1)} Var\,(x)}
 
 
 Merging Histograms
