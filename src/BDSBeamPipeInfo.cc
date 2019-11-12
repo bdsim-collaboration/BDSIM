@@ -305,7 +305,7 @@ void BDSBeamPipeInfo::InfoOKForRectEllipse()
 {
   CheckRequiredParametersSet(true, true, true, true);
 
-  // TBC
+  // TODO
   
   /*
   //treat rectangle as point coordinates.  If this point is inside ellipse,

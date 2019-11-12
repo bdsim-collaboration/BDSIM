@@ -1958,7 +1958,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   // horizontal width
   info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
-  // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
+  // inner radius of magnet geometry - TODO when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
 
   // outer material
