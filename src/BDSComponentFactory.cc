@@ -2402,8 +2402,6 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 					      BDSAcceleratorComponent* component) const
 {
   // Test for a line. And if so apply to each sub-component.
-  // TBC - for a sbend split into segments, a BDSLine would be used - how would setting
-  // an outer magnetic field work for this??
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
