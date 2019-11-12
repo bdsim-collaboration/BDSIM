@@ -464,7 +464,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
 	}
       
-      // fill parent pointer (TODO can this be merged with previous loop?)
+      // fill parent pointer - this can only be done once the map in the previous loop has been made
       for (auto iT1 : *trajVec) 
 	{
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);	
