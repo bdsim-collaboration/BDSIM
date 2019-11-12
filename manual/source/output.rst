@@ -29,6 +29,19 @@ File Writing Policy
 Output Information
 ------------------
 
+The following information is recorded by default.
+
+* Header including software versions
+* The options and beam parameters that were used
+* A summary of the model
+* Run level summary information and histograms
+* Event level summary, primary coordinates, primary first hit (first physics point), last hit,
+  energy deposition in the beam line, energy deposition histograms, and aperture impacts.
+
+Although recorded by default, the :ref:`bdsim-options-output` allow control over these and parts
+can be turned off to reduce the output file size if required. The exact structure of the output
+is described in the following sections.
+
 The following extra information can be **optionally** recorded from a BDSIM simulation:
 
 1) Particle coordinates at a plane after each element - 'sampler' information (see :ref:`sampler-output`).
@@ -36,7 +49,8 @@ The following extra information can be **optionally** recorded from a BDSIM simu
 3) Energy deposition 'hits' from any component, the beam pipe vacuum, or the surrounding air.
 4) Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
 5) Detailed information from hits in a collimator - see :ref:`bdsim-options-output`.
-6) A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
+6) Aperture impacts of various particles including primaries.
+7) A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
 
 These are described in more detail below.
 
@@ -125,7 +139,22 @@ be included, and also, optionally all particles.
 
 See :ref:`bdsim-options-output` with options beginning with :code:`storeCollimator`.
 
-6) Single 3D Energy Deposition Histogram
+6) Aperture Impacts
+^^^^^^^^^^^^^^^^^^^
+
+Aperture impacts are the location a particle hits the inside of the aperture (identified as a particle
+going away from the beam axis in the beam pipe). By default, this information is turned **on** but
+only for the primary particle(s) as this is a relatively small but useful piece of information. This
+information can be provided for not just the primary but for all ions with the option
+:code:`storeApertureImpactsIons=1`, or for all particles with the option :code:`storeApertureImpactsAll=1`.
+
+* The aperture impacts can be turned off with :code:`option, storeApertureImpacts=0;`.
+* There are currently no walls between beam pipes with large aperture changes so particles may
+  not register as impacting here (being developed).
+* Even for 1 primary particle, there may be more than 1 aperture impact (per event) because
+  the primary may leave and re-enter the beam pipe.
+
+7) Single 3D Energy Deposition Histogram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a single 3D histogram created from whatever energy deposition are generated according to
