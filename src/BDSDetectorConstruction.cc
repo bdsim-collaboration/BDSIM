@@ -1144,7 +1144,7 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	  if (search == scorerRecipes.end())
 	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-      G4double psUnit = 1.0;
+	  G4double psUnit = 1.0;
 	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit);
 	  // The mesh internally creates a multifunctional detector which is an SD and has
 	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
