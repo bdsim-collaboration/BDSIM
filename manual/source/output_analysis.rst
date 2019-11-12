@@ -838,7 +838,7 @@ with:
 
 .. math::
    
-   \sigma_{\bar{x}} = \sqrt{\frac{1}{n(n-1)} Var\,(x)}
+   \sigma_{\bar{x}} = \sqrt{\frac{1}{n}}\sqrt{\frac{1}{(n-1)} Var\,(x)}
 
 
 Merging Histograms

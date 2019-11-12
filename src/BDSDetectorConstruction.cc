@@ -300,7 +300,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 
       // determine offset in world for extra beam line
       const BDSBeamline* mbl = mainBeamline.massWorld;
-      // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
+      // TODO - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
       // but this could be any beam line in future if we find the right beam line to pass in.
       G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
       G4double      startS         = mbl->back()->GetSPositionEnd(); 

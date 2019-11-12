@@ -317,7 +317,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    else if ( !strcmp(optionName, "ignoresigint") )
 	      {ignoreSIGINT = true;}
 	    else if ( !strcmp(optionName, "exportGeometryTo") )
-	      {// TBC - this should be put into geometry classes
+	      {// TODO - this should be put into geometry classes
 		std::string fn = optarg;
 		if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 		  {

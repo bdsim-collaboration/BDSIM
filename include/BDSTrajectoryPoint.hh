@@ -203,7 +203,7 @@ inline G4bool BDSTrajectoryPoint::operator< (const BDSTrajectoryPoint& other) co
 {
   // can't test position without knowledge of beam line direction etc - too difficult / inaccurate
   // for now, this is simplistic
-  // TBC deal with multiple beam lines and s coordinate change at join point
+  // TODO deal with multiple beam lines and s coordinate change at join point
   return (preS < other.preS) && (preGlobalTime < other.preGlobalTime);
 }
 
