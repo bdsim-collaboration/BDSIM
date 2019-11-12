@@ -75,7 +75,7 @@ namespace {
   // Function to recursively connect t
   void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
   {
-    BDSTrajectory *t2 = t->GetParent();
+    BDSTrajectory* t2 = t->GetParent();
     if (t2)
       {
 	interestingTraj[t2] = true;
@@ -116,21 +116,23 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   storeTrajectory           = globals->StoreTrajectory();
   storeTrajectoryAll        = globals->StoreTrajectoryAll();
+  trajectoryFilterLogicAND  = globals->TrajectoryFilterLogicAND();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
   trajectoryCutZ            = globals->TrajCutGTZ();
   trajectoryCutR            = globals->TrajCutLTR();
   trajConnect               = globals->TrajConnect();
-  particleToStore           = globals->StoreTrajectoryParticle();
-  particleIDToStore         = globals->StoreTrajectoryParticleID(); 
-  depth                     = globals->StoreTrajectoryDepth();
-  sRangeToStore             = globals->StoreTrajectoryELossSRange();
+  trajParticleNameToStore   = globals->StoreTrajectoryParticle();
+  trajParticleIDToStore     = globals->StoreTrajectoryParticleID();
+  trajDepth                 = globals->StoreTrajectoryDepth();
+  trajSRangeToStore         = globals->StoreTrajectoryELossSRange();
+  trajFiltersSet            = globals->TrajectoryFiltersSet();
   printModulo               = globals->PrintModuloEvents();
 
   // particleID to store in integer vector
-  std::stringstream iss(particleIDToStore);
+  std::stringstream iss(trajParticleIDToStore);
   G4int i;
   while (iss >> i)
-    {particleIDIntToStore.push_back(i);}
+    {trajParticleIDIntToStore.push_back(i);}
 }
 
 BDSEventAction::~BDSEventAction()
@@ -462,7 +464,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
 	}
       
-      // fill parent pointer (TODO can this be merged with previous loop?)
+      // fill parent pointer - this can only be done once the map in the previous loop has been made
       for (auto iT1 : *trajVec) 
 	{
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);	
@@ -490,20 +492,20 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    {filters[BDSTrajectoryFilter::energyThreshold] = true;}
 	  
 	  // check on particle if not empty string
-	  if (!particleToStore.empty() || !particleIDToStore.empty())
+	  if (!trajParticleNameToStore.empty() || !trajParticleIDToStore.empty())
 	    {
 	      G4String particleName  = traj->GetParticleName();
 	      G4int particleID       = traj->GetPDGEncoding();
 	      G4String particleIDStr = G4String(std::to_string(particleID));
-	      std::size_t found1     = particleToStore.find(particleName);
-	      bool        found2     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) 
-					!= particleIDIntToStore.end());
+	      std::size_t found1     = trajParticleNameToStore.find(particleName);
+	      bool        found2     = (std::find(trajParticleIDIntToStore.begin(), trajParticleIDIntToStore.end(), particleID)
+                                    != trajParticleIDIntToStore.end());
 	      if ((found1 != std::string::npos) || found2)
 		{filters[BDSTrajectoryFilter::particle] = true;}
 	    }
 	  
-	  // check on trajectory tree depth (depth = 0 means only primaries)
-	  if (depthMap[traj] <= depth || storeTrajectoryAll) // all means to infinite depth really
+	  // check on trajectory tree depth (trajDepth = 0 means only primaries)
+	  if (depthMap[traj] <= trajDepth || storeTrajectoryAll) // all means to infinite trajDepth really
 	    {filters[BDSTrajectoryFilter::depth] = true;}
 	  
 	  // check on coordinates (and TODO momentum)
@@ -524,7 +526,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	}
       
       // loop over energy hits to connect trajectories
-      if (sRangeToStore.size() != 0)
+      if (trajSRangeToStore.size() != 0)
 	{
 	  if (eCounterHits)
 	    {
@@ -534,7 +536,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		{
 		  hit = (*eCounterHits)[i];
 		  double dS = hit->GetSHit();
-		  for (const auto& v : sRangeToStore)
+		  for (const auto& v : trajSRangeToStore)
 		    {		
 		      if ( dS >= v.first && dS <= v.second) 
 			{
@@ -559,7 +561,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		{
 		  hit = (*eCounterFullHits)[i];
 		  double dS = hit->GetSHit();
-		  for (const auto& v : sRangeToStore)
+		  for (const auto& v : trajSRangeToStore)
 		    {		
 		      if ( dS >= v.first && dS <= v.second) 
 			{
@@ -599,6 +601,27 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		}
 	    }
 	}
+
+	// If we're using AND logic (default OR) with the filters, loop over and update whether
+	// we should really store the trajectory or not. Importantly, we do this before the connect
+	// trajectory step as that flags yet more trajectories (that connect each one) back to the
+	// primary
+	if (trajectoryFilterLogicAND)
+      {
+        for (auto& trajFlag : interestingTraj)
+          {
+            if (trajFlag.second) // if we're going to store it check the logic
+              {
+                // use bit-wise AND filters matched for this trajectory with filters set
+                // if count of 1s the same, then trajectory should be stored, therefore if
+                // not the same, it should be set to false.
+                auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
+                if (filterMatch.count() != trajFiltersSet.count())
+                  {trajFlag.second = false;}
+              }
+          }
+
+      }
       
       // Connect trajectory graphs
       if (trajConnect && trackIDMap.size() > 1)

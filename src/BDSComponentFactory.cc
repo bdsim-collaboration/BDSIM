@@ -1958,7 +1958,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   // horizontal width
   info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
-  // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
+  // inner radius of magnet geometry - TODO when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
 
   // outer material
@@ -2402,8 +2402,6 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 					      BDSAcceleratorComponent* component) const
 {
   // Test for a line. And if so apply to each sub-component.
-  // TBC - for a sbend split into segments, a BDSLine would be used - how would setting
-  // an outer magnetic field work for this??
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {

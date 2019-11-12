@@ -133,6 +133,11 @@ New Features
 | storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
 |                                    | `trajNoTransportation` option.                                     |
 +------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | of the specified filters will be stored. This is opposite to the   |
+|                                    | more inclusive OR logic used where a trajectory will be stored if  |
+|                                    | matches any of the specified filters.                              |
++------------------------------------+--------------------------------------------------------------------+
 | verboseRunLevel                    | (0-5) level of Geant4 run level print out. The same as             |
 |                                    | `-\\-verboseRun=X` executable option.                              |
 +------------------------------------+--------------------------------------------------------------------+
@@ -221,10 +226,14 @@ General
 * Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
   where the parameters result in this. This makes therefore a marginally simpler model and avoids
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
+* Revised calcualtion of octagonal beam pipe points such that each side is uniformly thick exactly
+  equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
   
 Bug Fixes
 ---------
 
+* Fixed formula in manual for standard error on the mean calculation. The implementation in code
+  was correct and has not changed.
 * Fix thick multipole element where the field was 1M times too strong because of the omission of units.
 * Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
   updated when multiple different particles were used for a `userfile` distribution.
@@ -308,6 +317,8 @@ Bug Fixes
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
+* Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
+  required for the magnet poles to not hit the beam pipe.
 
 Output Changes
 --------------

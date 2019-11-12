@@ -1486,6 +1486,12 @@ with the following options.
 | trajCutLTR                         | Only stores trajectories whose *global* radius is from the start   |
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | of the specified filters will be stored. This is opposite to the   |
+|                                    | more inclusive OR logic used where a trajectory will be stored if  |
+|                                    | matches any of the specified filters.                              |
++------------------------------------+--------------------------------------------------------------------+
+
 
 .. _bdsim-options-verbosity:
 
