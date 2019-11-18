@@ -281,11 +281,11 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | conversionFactorFile    | No            | File name of conversion factor file to be used |
 |                         |               | in calculation                                 |
 +-------------------------+---------------+------------------------------------------------+
-| materialsToInclude      | No            | A space separated list of materials to be      |
+| materialToInclude       | No            | A space separated list of materials to be      |
 |                         |               | scored. Any materials not matching this will   |
 |                         |               | be ignored. (string, case sensitive).          |
 +-------------------------+---------------+------------------------------------------------+
-| materialsToExclude      | No            | A space separated list of materials to be      |
+| materialToExclude       | No            | A space separated list of materials to be      |
 |                         |               | excluded from scoring. (string, case           |
 |                         |               | sensitive).                                    |
 +-------------------------+---------------+------------------------------------------------+
