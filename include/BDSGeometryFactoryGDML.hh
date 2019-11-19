@@ -49,9 +49,10 @@ public:
   /// optional colour mapping.
   virtual BDSGeometryExternal* Build(G4String componentName,
 				     G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
-				     G4double suggestedLength          = 0,
-				     G4double suggestedHorizontalWidth = 0);
+				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+				     G4double               suggestedLength          = 0,
+				     G4double               suggestedHorizontalWidth = 0,
+				     std::vector<G4String>* namedVacuumVolumes       = nullptr);
 
 private:
   /// Create a temporary file in the current working directory (even though the geometry file

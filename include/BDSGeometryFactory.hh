@@ -56,11 +56,12 @@ public:
   /// every volume recursively.
   BDSGeometryExternal* BuildGeometry(G4String componentName,
 				     G4String formatAndFilePath,
-				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
-				     G4double suggestedLength          = 0,
-				     G4double suggestedHorizontalWidth = 0,
-				     G4bool   makeSensitive            = true,
-				     BDSSDType sensitivityType         = BDSSDType::energydep);
+				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+				     G4double               suggestedLength          = 0,
+				     G4double               suggestedHorizontalWidth = 0,
+				     std::vector<G4String>* namedVacuumVolumes       = nullptr,
+				     G4bool                 makeSensitive            = true,
+				     BDSSDType              sensitivityType          = BDSSDType::energydep);
  
 private:
   /// Private accessor as singleton

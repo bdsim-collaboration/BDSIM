@@ -503,7 +503,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
 										nullptr,
-										0, 0, true, BDSSDType::energydepworldcontents);
+										0, 0,
+										nullptr,
+										true,
+										BDSSDType::energydepworldcontents);
       worldExtent = geom->GetExtent();
 
       BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());

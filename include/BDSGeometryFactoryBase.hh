@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <set>
+#include <vector>
 
 class G4Colour;
 class G4LogicalVolume;
@@ -52,9 +53,10 @@ public:
   /// Main method to load and construct geometry.
   virtual BDSGeometryExternal* Build(G4String componentName,
 				     G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
-				     G4double suggestedLength          = 0,
-				     G4double suggestedHorizontalWidth = 0) = 0;
+				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+				     G4double               suggestedLength          = 0,
+				     G4double               suggestedHorizontalWidth = 0,
+				     std::vector<G4String>* vacuumBiasVolumeNames    = nullptr) = 0;
 
 
   /// Apply a colour mapping to a set of logical volumes.  This applies a colour from the map

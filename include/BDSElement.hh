@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <vector>
+
 /**
  * @brief A class for a generic piece of external geometry.
  * 
@@ -38,7 +40,8 @@ public:
 	     G4double arcLength,
 	     G4double horizontalWidthIn,
 	     G4String geometry,
-	     G4double angle       = 0);
+	     G4double angle                              = 0,
+	     std::vector<G4String>* namedVacuumVolumesIn = nullptr);
   virtual ~BDSElement(){;}
    
 private:
@@ -56,6 +59,7 @@ private:
 
   G4double horizontalWidth;
   G4String geometryFileName;
+  std::vector<G4String> namedVacuumVolumes;
 };
 
 #endif

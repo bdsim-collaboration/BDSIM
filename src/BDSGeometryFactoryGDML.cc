@@ -45,8 +45,9 @@ BDSGeometryFactoryGDML::BDSGeometryFactoryGDML()
 BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
-						   G4double /*suggestedLength*/,
-						   G4double /*suggestedHorizontalWidth*/)
+						   G4double             /*suggestedLength*/,
+						   G4double             /*suggestedHorizontalWidth*/,
+						   std::vector<G4String>* namedVacuumVolumes)
 {
   CleanUp();
 
