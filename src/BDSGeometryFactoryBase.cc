@@ -42,7 +42,7 @@ BDSGeometryFactoryBase::~BDSGeometryFactoryBase()
 {;}
 
 std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G4LogicalVolume*>&    lvsIn,
-									 std::map<G4String, G4Colour*>* mapping)
+								      std::map<G4String, G4Colour*>* mapping)
 {
   std::set<G4VisAttributes*> visAttributes; // empty set
 
