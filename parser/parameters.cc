@@ -145,6 +145,7 @@ Parameters::Parameters()
 
   setMap["geometryFile"]   = false;
   setMap["material"]       = false;
+  setMap["namedVacuumVolumes"] = false;
   setMap["scintmaterial"]  = false;
   setMap["windowmaterial"] = false;
   setMap["mountmaterial"]  = false;

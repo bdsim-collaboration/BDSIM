@@ -194,7 +194,7 @@ void Element::PublishMembers()
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
-
+  publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -511,7 +511,8 @@ void Element::flush()
   fieldAll    = "";
 
   geometryFile ="";
-  material="";  
+  material="";
+  namedVacuumVolumes = "";
   windowmaterial = "vacuum";
   mountmaterial="";
   scintmaterial = "";
