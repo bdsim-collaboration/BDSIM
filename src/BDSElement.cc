@@ -58,6 +58,10 @@ void BDSElement::BuildContainerLogicalVolume()
   containerLogicalVolume = geom->GetContainerLogicalVolume();
   containerSolid         = geom->GetContainerSolid();
 
+  std::set<G4LogicalVolume*> namedVacuumLVs = geom->VacuumVolumes();
+  if (!namedVacuumLVs.empty())
+    {SetAcceleratorVacuumLogicalVolume(*namedVacuumLVs.begin());}
+
   // set placement offset from geom so it's placed correctly in the beam line
   SetPlacementOffset(geom->GetPlacementOffset());
   
