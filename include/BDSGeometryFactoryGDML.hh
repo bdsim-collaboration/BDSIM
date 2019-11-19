@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <set>
+#include <vector>
 
 class BDSGeometryExternal;
 class G4Colour;
@@ -54,6 +55,11 @@ public:
 				     G4double               suggestedHorizontalWidth = 0,
 				     std::vector<G4String>* namedVacuumVolumes       = nullptr);
 
+protected:
+  /// Use the GDML preprocessing scheme to prepare the preprocesseed volume names.
+  virtual G4String PreprocessedName(const G4String& objectName,
+				    const G4String& acceleratorComponentName) const;
+  
 private:
   /// Create a temporary file in the current working directory (even though the geometry file
   /// may not exist there) and create a copy of the input geometry file line by line, but replacing

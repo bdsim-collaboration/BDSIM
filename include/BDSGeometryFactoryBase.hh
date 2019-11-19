@@ -75,6 +75,18 @@ public:
 protected:
   /// Virtual clean up that derived classes can override that calls CleanUpBase().
   virtual void CleanUp();
+
+  /// Provide the preprocessed object (such as volume) names in case they're processed
+  /// whilst loading from external formats. By default, no action.
+  virtual G4String PreprocessedName(const G4String& objectName,
+				    const G4String& acceleratorComponentName) const;
+
+  /// Get the volumes that match the name. Volume names are matched exactly and are case sensitive.
+  std::set<G4LogicalVolume*> GetVolumes(const std::set<G4LogicalVolume*>& allLVs,
+					std::vector<G4String>*            volumeNames,
+					G4bool                            preprocessGDML,
+					const G4String&                   componentName) const;
+  
   
   /// Initialise variables - used to reset variables before each use of the factory.
   /// Non-virtual as used in constructor.

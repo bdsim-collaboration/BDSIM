@@ -98,10 +98,15 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterLogicalVolume(lvsGDML);
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
-
+  result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
+  
   delete parser;
   return result;
 }
+
+G4String BDSGeometryFactoryGDML::PreprocessedName(const G4String& objectName,
+						  const G4String& acceleratorComponentName) const
+{return BDSGDMLPreprocessor::ProcessedNodeName(objectName, acceleratorComponentName);}
 
 void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*      volume,
 						      std::set<G4VPhysicalVolume*>& pvsIn,
