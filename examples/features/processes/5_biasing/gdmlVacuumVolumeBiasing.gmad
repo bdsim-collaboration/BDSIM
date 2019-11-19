@@ -1,0 +1,17 @@
+biasDef0: xsecBias, particle="e-",
+	  	    proc="eBrem",
+		    xsecfact={1e9},
+		    flag={1};
+
+d1: drift, l=20*cm;
+g1: element, l=30*cm, geometryFile="gdml:quad4.gdml", namedVacuumVolumes="q1_bp_vacuum_lv q1_coil_left_lv", biasVacuum="biasDef0";
+du: dump, l=1*mm;
+
+l1: line=(d1,g1,d1,du);
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, physicsList="em",
+	minimumKineticEnergy=20*MeV;
