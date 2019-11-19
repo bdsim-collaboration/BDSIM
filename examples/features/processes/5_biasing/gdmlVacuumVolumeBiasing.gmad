@@ -1,6 +1,6 @@
-biasDef0: xsecBias, particle="e-",
-	  	    proc="eBrem",
-		    xsecfact={1e9},
+biasDef0: xsecBias, particle="proton",
+	  	    proc="protonInelastic",
+		    xsecfact={1e15},
 		    flag={1};
 
 d1: drift, l=20*cm;
@@ -10,8 +10,7 @@ du: dump, l=1*mm;
 l1: line=(d1,g1,d1,du);
 use, l1;
 
-beam, particle="e-",
-      energy=1*GeV;
+beam, particle="proton",
+      energy=1*TeV;
 
-option, physicsList="em",
-	minimumKineticEnergy=20*MeV;
+option, physicsList="g4FTFP_BERT";

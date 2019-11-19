@@ -131,7 +131,7 @@ OperationApplied(const G4BiasingProcessInterface*               callingProcess,
   // -- count number of biased interactions:
   fnInteractions++;
   
-  // -- inform the underneath biasing operator that a biased interaction occured:
+  // -- inform the underneath biasing operator that a biased interaction occurred:
   if (fCurrentOperator)
     {
       fCurrentOperator->ReportOperationApplied(callingProcess,
