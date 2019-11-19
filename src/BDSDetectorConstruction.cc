@@ -927,6 +927,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       
       // Build vacuum bias object based on vacuum bias list in the component
       auto vacuumBiasList = accCom->GetBiasVacuumList();
+      if (!vacuumBiasList.empty() && !vacuumLV)
+	{
+	  G4cout << G4endl << "biasVacuum set for component \"" << accName
+		 << "\" but there's no 'vacuum' volume for it and it can't be biased."<< G4endl
+		 << "Remove biasVacuum or fix it." << G4endl << G4endl;
+	}
       if (!vacuumBiasList.empty() && vacuumLV)
         {
           auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
