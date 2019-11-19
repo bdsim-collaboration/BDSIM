@@ -319,6 +319,9 @@ Bug Fixes
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
 * Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
   required for the magnet poles to not hit the beam pipe.
+* Fixed naming bug in magnets where the beam pipe container, magnet outer container and overal container
+  logical volumes would have the same name. This would cause problems when exporting BDSIM geometry to
+  GDML and then trying to reload it somewhere. Each are now named uniquely.
 
 Output Changes
 --------------
