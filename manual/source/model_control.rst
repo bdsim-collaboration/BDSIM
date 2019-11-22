@@ -2820,6 +2820,9 @@ only one proton definition.
 
 .. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
+1) Define a bias object with parameters in following table.
+2) Use :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
+
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
 +==================+======================================================+
@@ -2837,12 +2840,12 @@ only one proton definition.
 
 * Particle names should be exactly as they are in Geant4 (case-sensitive). The
   best way to find these out is to the run a single event with the desired physics
-  list and the executable option `--printPhysicsProcesses`. Also the input option
-  `option, physicsVerbose=1;` will show the primary particle and all physics processes
+  list and the executable option :code:`--printPhysicsProcesses`. Also the input option
+  :code:`option, physicsVerbose=1;` will show the primary particle and all physics processes
   registered to it by name.
 * The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
   the best way to find these names is to run a single event with the desired physics
-  list using the input option `option, physicsVerbose=1;` to see all the names of the
+  list using the input option :code:`option, physicsVerbose=1;` to see all the names of the
   physics processes.
 * A special particle name "all" will bias all defined particles. (case-sensitive).
 * In the case of an **ion** beam, the particle name should be "GenericIon". The
@@ -2862,12 +2865,22 @@ Example::
   biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
   biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};
 
-The process can also be attached to a specific element using the keywords `biasVacuum` or
-`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
+The process can also be attached to a specific element using the keywords :code:`biasVacuum` or
+:code:`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
 vacuum respectively::
 
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
+
+* :code:`biasVacuum` applies to "vacuum" parts of beam line elements, i.e. the
+  inner volume of a beam pipe only in each component.
+* :code:`biasMaterial` applies to all volumes that are not the vacuum. This includes
+  the beam pipe itself.
+* The "vacuum" here is conceptual, it is not labelled based on material, e.g. you
+  could set `beampipeMaterial` to "G4_WATER" to have a water filled beam pipe,
+  but :code:`biasVaccum` would apply to this volume.
+* If externally provided geometry is used, the 'vacuum' volumes can be labelled as
+  such with :code:`namedVacuumVolumes` in the individual beam line element definition.
 
 .. _physics-bias-importance-sampling:
   

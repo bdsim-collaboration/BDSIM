@@ -161,7 +161,7 @@ namespace BDS
 
   /// Split a string on whitespace and return a vector of these 'words'.
   std::vector<G4String> GetWordsFromString(const G4String& input);
-
+  
   /// Rotate a two vector in polar coordinates by an angle.
   G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
 
