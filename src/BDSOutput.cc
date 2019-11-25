@@ -386,6 +386,9 @@ void BDSOutput::CalculateHistogramParameters()
     }
   else
     {nbins = 1;} // can happen for generate primaries only
+
+  if (nbins == 0)
+    {nbins = 1;}
   
   sMaxHistograms = nbins * binWidth;
 }
