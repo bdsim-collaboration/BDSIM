@@ -263,9 +263,6 @@ void BDSDetectorConstruction::BuildBeamlines()
 	 << BDSParser::Instance()->GetBeamline().size() << G4endl;
   BDSAcceleratorComponentRegistry::Instance()->PrintNumberOfEachType();
 #endif
-  
-  if (mainBeamline.massWorld->empty())
-    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element");}
 
   // print warning if beam line is approximately circular but flag isn't specified
   if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
