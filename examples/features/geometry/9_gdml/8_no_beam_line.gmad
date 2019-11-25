@@ -1,0 +1,6 @@
+p1: placement, geometryFile="gdml:atf2_tunnel.gdml",
+    	       x=3*m,
+	       z=50*m;
+
+beam, particle="e-",
+      energy=1.3*GeV;
