@@ -805,7 +805,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 
 void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
 {
-  if (!storeApertureImpacts)
+  if (!storeApertureImpacts || !hits)
     {return;}
 
   G4int nPrimaryImpacts = 0;
