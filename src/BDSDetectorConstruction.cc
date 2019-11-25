@@ -306,6 +306,9 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular)
 {
+  if (beamLine.empty())
+    {return BDSBeamlineSet();}
+
   if (userComponentFactory)
     {userComponentFactory->SetDesignParticle(designParticle);}
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
