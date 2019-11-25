@@ -309,7 +309,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular)
 {
-  if (beamLine.empty())
+  if (beamLine.empty()) // note a line always has a 'line' element first so an empty line will not be 'empty'
     {return BDSBeamlineSet();}
 
   if (userComponentFactory)
@@ -328,9 +328,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model in Geant4" << G4endl;
 	  throw BDSException(__METHOD_NAME__, "check construction for circular machine");
 	}
-      if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
-        {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element for a circular machine.");}
-    }  
+    }
+
+  if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
+    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element.");}
 
   for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
