@@ -39,6 +39,7 @@ Expected Changes To Results
 New Features
 ------------
 
+* BDSIM no longer requires a beam line to be built! You can simply make a placment or even an empty world.
 * Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
