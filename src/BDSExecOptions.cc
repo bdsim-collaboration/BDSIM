@@ -430,9 +430,10 @@ void BDSExecOptions::Usage() const
 
 void BDSExecOptions::Print() const
 {
-  std::vector<std::string> setKeys = options.KeysOfSetValues();
-  for (const auto& key : setKeys)
+  for (const auto& key : options.KeysOfSetValues())
     {G4cout << "Executable option> " << std::setw(27) << std::left << key << ": " << std::setw(15) << std::left << options.get_value_string(key) << G4endl;}
+  for (const auto& key : beam.KeysOfSetValues())
+    {G4cout << "Executable option> " << std::setw(27) << std::left << key << ": " << std::setw(15) << std::left << beam.get_value_string(key)    << G4endl;}
 }
 
 G4String BDSExecOptions::GetPath(G4String fileName)
