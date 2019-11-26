@@ -2455,7 +2455,7 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
-* tar + gz will not work. The file must be a single file compressed through gzip only.
+* **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Lines starting with `#` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
