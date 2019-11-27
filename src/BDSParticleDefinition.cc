@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicalConstants.hh"
@@ -24,12 +25,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4ParticleDefinition.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 #include <iomanip>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
-
+#include <string>
 
 BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 					     G4double              totalEnergyIn,
@@ -72,6 +75,12 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
   beta(1.0),
   brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
 {
+  if (totalEnergy < mass)
+    {
+      throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergy/CLHEP::GeV)
+			 +" GeV) is less than the mass (" + std::to_string(mass/CLHEP::GeV)
+			 +" GeV) of particle");
+    }
   kineticEnergy = totalEnergy - mass;
 
   CalculateMomentum();

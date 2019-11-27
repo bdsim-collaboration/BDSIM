@@ -99,6 +99,9 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
 
+  if ((particleDefinition->TotalEnergy() + E0) <= 0)
+    {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
+
   P0 = particleDefinition->Momentum();
   sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
