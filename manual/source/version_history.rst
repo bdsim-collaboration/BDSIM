@@ -35,6 +35,8 @@ Expected Changes To Results
 * The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
   which will vastly reduce the data size. See output changes below for further details.
 * Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
+* Reference coordinates `X0`, `Y0`, `Z0`, `Xp`, `Yp` are now added to the userfile distribution
+  coordinates if specified. (`Zp` was already added).
 
 New Features
 ------------
@@ -322,6 +324,8 @@ Bug Fixes
 * Fixed naming bug in magnets where the beam pipe container, magnet outer container and overal container
   logical volumes would have the same name. This would cause problems when exporting BDSIM geometry to
   GDML and then trying to reload it somewhere. Each are now named uniquely.
+* Fix potential compilation problem with some compilers for "ambiguous overload of abs".
+* Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
 
 Output Changes
 --------------
