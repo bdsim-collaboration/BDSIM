@@ -92,8 +92,9 @@ void BDSParallelWorldImportance::BuildWorld()
   // GDML preprocessing turned on.
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(componentName,
                                                                             imGeomFile,
-                                                                            nullptr,   // colour ampping
+                                                                            nullptr,   // colour mapping
                                                                             0, 0,      // suggested dimensions
+                                                                            nullptr,   // vacuum volumes
                                                                             false);    // sensitive
 
   // clone mass world for parallel world PV
