@@ -18,7 +18,18 @@ if(SPHINX_FOUND AND PY_SPHINX_RTD_THEME)
   # LATEX output directory
   set(SPHINX_LATEX_DIR "${CMAKE_CURRENT_BINARY_DIR}/latex")
   # Add directory to be able to add manual-pdf command in one go (hack)
-  file(MAKE_DIRECTORY ${SPHINX_LATEX_DIR}) 
+  file(MAKE_DIRECTORY ${SPHINX_LATEX_DIR})
+
+  # ability to change includes in manual/source/conf.py.in
+  # the sphinxcontrib.googleanalytics packages is broken, but it's a 1 line
+  # local fix I have in mine and we want google analytics in the website
+  # but give ability to turn off so most people can build the manual locally
+  option( USE_SPHINX_GOOGLE "Use google analytics in sphinx." OFF)
+  if (USE_SPHINX_GOOGLE)
+    set(BDSIM_USE_SPHINX_GOOGLE, ",\n'sphinxcontrib.googleanalytics'")
+  else()
+    set(BDSIM_USE_SPHINX_GOOGLE, "")
+  endif()
 
   configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/source/conf.py.in"
