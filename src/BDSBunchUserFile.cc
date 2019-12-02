@@ -56,9 +56,9 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
 template<class T>
 void BDSBunchUserFile<T>::CheckParameters()
 {
-  BDSBunch::CheckParameters();
   if (distrFile.empty())
-    {throw BDSException(__METHOD_NAME__, "No input file specified for distribution");}
+    {throw BDSException("BDSBunchUserFile::CheckParameters", "No input file specified for userfile distribution");}
+  BDSBunch::CheckParameters();
 }
 
 template<class T>
