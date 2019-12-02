@@ -201,6 +201,7 @@ namespace GMAD
     
     std::string geometryFile; ///< for Element, file for external geometry
     std::string material;
+    std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
     std::string windowmaterial; ///< for AWAKE
     std::string scintmaterial;  ///< for AWAKE
     std::string mountmaterial;  ///< for AWAKE spectrometer

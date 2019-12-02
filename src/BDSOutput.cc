@@ -397,6 +397,9 @@ void BDSOutput::CalculateHistogramParameters()
     }
   else
     {nbins = 1;} // can happen for generate primaries only
+
+  if (nbins == 0)
+    {nbins = 1;}
   
   sMaxHistograms = nbins * binWidth;
 }
@@ -870,7 +873,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 
 void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
 {
-  if (!storeApertureImpacts)
+  if (!storeApertureImpacts || !hits)
     {return;}
 
   G4int nPrimaryImpacts = 0;

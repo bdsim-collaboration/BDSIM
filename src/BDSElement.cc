@@ -26,15 +26,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 globals / types
 
 #include <iomanip>
+#include <set>
 
 BDSElement::BDSElement(G4String nameIn,
 		       G4double arcLengthIn,
 		       G4double horizontalWidthIn,
 		       G4String geometryIn,
-		       G4double angleIn):
+		       G4double angleIn,
+		       std::vector<G4String>* namedVacuumVolumesIn):
   BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, "element"),
   horizontalWidth(horizontalWidthIn),
-  geometryFileName(geometryIn)
+  geometryFileName(geometryIn),
+  namedVacuumVolumes(*namedVacuumVolumesIn)
 {;}
 
 void BDSElement::BuildContainerLogicalVolume()
@@ -42,7 +45,8 @@ void BDSElement::BuildContainerLogicalVolume()
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
   // differently.
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
-									    chordLength, horizontalWidth);
+									    chordLength, horizontalWidth,
+									    &namedVacuumVolumes);
   
   if (!geom)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}
@@ -53,6 +57,10 @@ void BDSElement::BuildContainerLogicalVolume()
   // make the beam pipe container, this object's container
   containerLogicalVolume = geom->GetContainerLogicalVolume();
   containerSolid         = geom->GetContainerSolid();
+
+  std::set<G4LogicalVolume*> namedVacuumLVs = geom->VacuumVolumes();
+  if (!namedVacuumLVs.empty())
+    {SetAcceleratorVacuumLogicalVolume(*namedVacuumLVs.begin());}
 
   // set placement offset from geom so it's placed correctly in the beam line
   SetPlacementOffset(geom->GetPlacementOffset());

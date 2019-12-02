@@ -908,6 +908,8 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
   sPos.push_back(0.0);
   for (auto element : beamline)
     {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
+    if (sPos.size() == 1)
+      {sPos.push_back(1*CLHEP::m);}
   return sPos;
 }
 

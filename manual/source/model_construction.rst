@@ -39,6 +39,7 @@ The overall program structure should follow:
   copied whatever sequence is *used* at that point, so any further updates to the component
   definitions will not be observed.
 * Apart from this, all other parts can be defined or redefined in any order in the input.
+* A beam line (using a sequence / line and the :code:`use` command are optional.
    
 These are described in the following sections. Aside from these standard parameters, more
 detail may be added to the model through customisation - see :ref:`model-customisation`.
@@ -1606,7 +1607,7 @@ use - Defining which Line to Use
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once all elements and at least one `line` is defined, the main sequence of the
-beam line can be defined. This must be defined using the following syntax::
+beam line can be defined. This is defined using the following syntax::
 
   use, period=<line_name>
 
@@ -1622,6 +1623,10 @@ The beam line is placed in the world volume (the outermost coordinate system) st
 at position (0,0,0) with direction (0,0,1) - i.e. pointing in positive `z`. The user
 may specify an initial offset and rotation for the beam line with respect to the world
 volume using the options described in :ref:`beamline-offset`.
+
+.. warning:: When the :code:`use` command is called, the elements are copied internally,
+	     so their definition is fixed. Any element parameter adjustmments or redefinitions
+	     after the :code:`use` command will therefore not be observed.
 
 Multiple beam lines may also be visualised - but only visualised (not suitable for
 simulations currently).  Details are provided in :ref:`multiple-beamlines`.

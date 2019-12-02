@@ -419,7 +419,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       particleDefinitionHasBeenUpdated = true;
     }
 
-  return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);
+  return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,Xp0+xp,Yp0+yp,Zp0+zp,T0+t,S0+z,E,weight);
 }
 
 template <class T>
