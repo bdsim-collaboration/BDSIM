@@ -238,6 +238,11 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
   ParseFileFormat();
+}
+
+template<class T>
+void BDSBunchUserFile<T>::Initialise()
+{
   OpenBunchFile();
   SkipLines();
 }
