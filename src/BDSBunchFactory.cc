@@ -137,6 +137,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
   bdsBunch->SetOptions(beamParticle, beam, distrType, beamlineTransform, beamlineS);
   bdsBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
   bdsBunch->CheckParameters();
-  
+  bdsBunch->Initialise();
+
   return bdsBunch;
 }

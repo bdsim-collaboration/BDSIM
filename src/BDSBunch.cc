@@ -128,6 +128,9 @@ void BDSBunch::CheckParameters()
     {throw BDSException(__METHOD_NAME__, "sigmaT " + std::to_string(sigmaT) + " < 0!");}
 }
 
+void BDSBunch::Initialise()
+{;}
+
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
 {
   particleDefinitionHasBeenUpdated = false; // reset flag for this call
