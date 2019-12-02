@@ -31,8 +31,6 @@ if(SPHINX_FOUND AND PY_SPHINX_RTD_THEME)
     set(BDSIM_USE_SPHINX_GOOGLE ",\n    'sphinxcontrib.googleanalytics'")
     message(STATUS "Using sphinx google extension")
   endif()
-  # enforce update
-  file(TOUCH "${CMAKE_CURRENT_SOURCE_DIR}/source/conf.py.in")
 
   configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/source/conf.py.in"
