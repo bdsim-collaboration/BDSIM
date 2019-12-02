@@ -150,7 +150,7 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 
   s1: samplerplacement, referenceElement="d1",
                         referenceElementNumber=1,
-			x=20*cm, y=-1*cm, z=30*cm,
+			x=20*cm, y=-1*cm, s=30*cm,
 			axisAngle=1, axisY=1, angle=pi/4,
 			aper1=10*cm;
 
@@ -163,9 +163,9 @@ Placement
 
 A `samplerplacement` may be placed in 3 ways.
 
-1) In global Cartesian coordinates.
-2) In curvilinear coordinates.
-3) In curvilinear coordinates with respect to a beam line element by name.
+1) In global Cartesian coordinates (x,y,z + rotation).
+2) In curvilinear coordinates (s,x,y + rotation).
+3) In curvilinear coordinates with respect to a beam line element by name (s,x,y + rotation).
 
 The strategy is automatically determined based on the parameters set. The full list of
 parameters is described below, but the required ones for each scenario are described in
@@ -252,13 +252,13 @@ The following are examples of `samplerplacement`::
 
    s1: samplerplacement, referenceElement="d1",
                          referenceElementNumber=1,
-			 x=20*cm, y=-1*cm, z=30*cm,
+			 x=20*cm, y=-1*cm, s=30*cm,
     			 axisAngle=1, axisY=1, angle=pi/4,
 			 aper1=10*cm;
 
 
 This places a circular sampler called "s1" with respect to the 2nd instance of the beam line
-element "d1". The x,y,z are offsets from the centre of this element along the direction of
+element "d1". The x,y,s are offsets from the centre of this element along the direction of
 travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
 centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
 be circular (by default) with a radius of 10 cm. ::
