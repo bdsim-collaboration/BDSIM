@@ -269,10 +269,7 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (!circular && mainBeamline.massWorld)
     {
       if (mainBeamline.massWorld->ElementAnglesSumToCircle())
-	{
-	  G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
-		 << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
-	}
+	{BDS::Warning("Total sum of all element angles is approximately 2*pi but the circular option was not specified, this simulation may run indefinitely");}
     }
   
   // register the beam line in the holder class for the full model

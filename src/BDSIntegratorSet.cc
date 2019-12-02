@@ -46,7 +46,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType rmatrixThinIn,
 				   BDSIntegratorType parallelTransporterIn,
 				   BDSIntegratorType undulatorIn,
-                   BDSIntegratorType cavityFringeIn):
+				   BDSIntegratorType cavityFringeIn):
   solenoid(solenoidIn),
   dipole(dipoleIn),
   dipoleQuadrupole(dipoleQuadrupoleIn),

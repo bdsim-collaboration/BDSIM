@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDType.hh"
 #include "BDSUndulator.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
@@ -56,9 +57,9 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
   undulatorGap(undulatorGapIn),
   numMagnets(0)
 {
-  if (materialIn == "")
+  if (materialIn.empty())
     {
-      G4cout << __METHOD_NAME__ << "WARNING - no material set for undulator magnet - using iron" << G4endl;
+      BDS::Warning(__METHOD_NAME__, "element \"" + name + "\" no material set for undulator magnet - using iron");
       material = "iron";
     }
   else
