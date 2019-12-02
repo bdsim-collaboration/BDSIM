@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
@@ -77,36 +78,27 @@ void BDSUndulator::BuildContainerLogicalVolume()
   // input Checks
   BDSExtent bp = beamPipeInfo->Extent();
   if (!BDS::IsFinite(undulatorPeriod))
-    {
-      G4cerr << __METHOD_NAME__ << "Undulator period is 0, period must be finite" <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "undulator period is 0, period must be finite.");}
+  
   // check if the undulator period is an integer factor of the element length
   if (BDS::IsFinite(std::fmod(chordLength, undulatorPeriod)))
-    {
-      G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "
-              "undulator periods (length \"undulatorPeriod\"" <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "undulator length \"arcLength\" does not divide into an integer number of\n undulator periods (length \"undulatorPeriod\".");}
+  
   // can now cast num magnets to integer as above check should catch if it isnt an integer.
   numMagnets = (G4int) 2*chordLength/undulatorPeriod;
 
   G4double beampipeThickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->beamPipeThickness;
   if (!BDS::IsFinite(undulatorGap))
     {
-      G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height" << G4endl;
+      G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height." << G4endl;
       undulatorGap = 2*(bp.DY() +  2*beampipeThickness);
     }
   if (undulatorGap < (bp.DY() + 2*beampipeThickness + lengthSafetyLarge))
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorGap\" smaller than beam pipe aperture " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorGap\" for element: \"" + name + "\" smaller than beam pipe aperture.");}
+  
   if (undulatorGap >= horizontalWidth)
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorGap\" larger than horizontalWidth " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorGap\" for element: \"" + name + "\" larger than horizontalWidth.");}
+  
   if (!BDS::IsFinite(undulatorMagnetHeight))
     {
       // update single magnet box height in case of undulator gap change.
