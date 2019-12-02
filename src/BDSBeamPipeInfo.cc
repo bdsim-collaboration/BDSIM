@@ -306,22 +306,6 @@ void BDSBeamPipeInfo::InfoOKForRectEllipse()
   CheckRequiredParametersSet(true, true, true, true);
 
   // TODO
-  
-  /*
-  //treat rectangle as point coordinates.  If this point is inside ellipse,
-  //rectangle is too small -> error should just use elliptical aperture
-  G4double test = std::hypot((aper1/aper3),(aper2/aper4));
-  if (test < 1)
-    {
-      //rectangle too small
-      G4cerr << __METHOD_NAME__ << "WARNING - combination of \"aper1\" and \"aper2\" too small"
-	     << " rectangle is entirely inside ellipse - simply use elliptical aperture" << G4endl;
-      throw BDSException(__METHOD_NAME__, "");
-    }
-  */
-  //check if ellipse is b
-  //if ((aper1 > aper3) && (aper2 > aper4))
-  //  {;}
 }
 
 void BDSBeamPipeInfo::InfoOKForRaceTrack()
