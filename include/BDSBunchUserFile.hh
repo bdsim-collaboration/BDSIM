@@ -105,6 +105,9 @@ private:
   template <typename U>
   void CheckAndParseUnits(G4String name, G4String rest, U unitParser);
 
+  /// Open the file and skip lines.
+  virtual void Initialise();
+
   /// Print out warning we're looping and reopen file from beginning. Includes skipping
   /// lines. Put in a function as used in multiple places.
   void EndOfFileAction();

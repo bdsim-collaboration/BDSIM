@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTransform3D.hh"
 #include "BDSWireScanner.hh"
 #include "BDSUndulator.hh"
+#include "BDSWarning.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -739,11 +740,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	vkick = element->vkick;
 	// element->kick will be ignored
 	if (BDS::IsFinite(element->kick))
-	  {
-	    G4cout << __METHOD_NAME__ << "WARNING: 'kick' defined in element"
-		   << "\"" << elementName << "\" but will be ignored as general kicker"
-		   << G4endl;
-	  }
+	  {BDS::Warning(__METHOD_NAME__, "'kick' parameter defined in element \"" + elementName + "\" but will be ignored as general kicker.");}
       }
     default:
       {break;}
@@ -1123,11 +1120,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 
   // we don't specify the field explicitly here - this is done generically
   // in the main CreateComponent method with SetFieldDefinitions.
+  std::vector<G4String> vacuumBiasVolumeNames = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
-			 element->angle * CLHEP::rad));
+			 element->angle * CLHEP::rad,
+			 &vacuumBiasVolumeNames));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()

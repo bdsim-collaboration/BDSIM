@@ -150,7 +150,7 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 
   s1: samplerplacement, referenceElement="d1",
                         referenceElementNumber=1,
-			x=20*cm, y=-1*cm, z=30*cm,
+			x=20*cm, y=-1*cm, s=30*cm,
 			axisAngle=1, axisY=1, angle=pi/4,
 			aper1=10*cm;
 
@@ -163,9 +163,9 @@ Placement
 
 A `samplerplacement` may be placed in 3 ways.
 
-1) In global Cartesian coordinates.
-2) In curvilinear coordinates.
-3) In curvilinear coordinates with respect to a beam line element by name.
+1) In global Cartesian coordinates (x,y,z + rotation).
+2) In curvilinear coordinates (s,x,y + rotation).
+3) In curvilinear coordinates with respect to a beam line element by name (s,x,y + rotation).
 
 The strategy is automatically determined based on the parameters set. The full list of
 parameters is described below, but the required ones for each scenario are described in
@@ -252,13 +252,13 @@ The following are examples of `samplerplacement`::
 
    s1: samplerplacement, referenceElement="d1",
                          referenceElementNumber=1,
-			 x=20*cm, y=-1*cm, z=30*cm,
+			 x=20*cm, y=-1*cm, s=30*cm,
     			 axisAngle=1, axisY=1, angle=pi/4,
 			 aper1=10*cm;
 
 
 This places a circular sampler called "s1" with respect to the 2nd instance of the beam line
-element "d1". The x,y,z are offsets from the centre of this element along the direction of
+element "d1". The x,y,s are offsets from the centre of this element along the direction of
 travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
 centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
 be circular (by default) with a radius of 10 cm. ::
@@ -2455,7 +2455,7 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
-* tar + gz will not work. The file must be a single file compressed through gzip only.
+* **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Lines starting with `#` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
@@ -2820,6 +2820,9 @@ only one proton definition.
 
 .. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
+1) Define a bias object with parameters in following table.
+2) Use :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
+
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
 +==================+======================================================+
@@ -2837,12 +2840,12 @@ only one proton definition.
 
 * Particle names should be exactly as they are in Geant4 (case-sensitive). The
   best way to find these out is to the run a single event with the desired physics
-  list and the executable option `--printPhysicsProcesses`. Also the input option
-  `option, physicsVerbose=1;` will show the primary particle and all physics processes
+  list and the executable option :code:`--printPhysicsProcesses`. Also the input option
+  :code:`option, physicsVerbose=1;` will show the primary particle and all physics processes
   registered to it by name.
 * The process name should be exactly as they are in Geant4 (case-sensitive). Similarly,
   the best way to find these names is to run a single event with the desired physics
-  list using the input option `option, physicsVerbose=1;` to see all the names of the
+  list using the input option :code:`option, physicsVerbose=1;` to see all the names of the
   physics processes.
 * A special particle name "all" will bias all defined particles. (case-sensitive).
 * In the case of an **ion** beam, the particle name should be "GenericIon". The
@@ -2862,12 +2865,22 @@ Example::
   biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
   biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};
 
-The process can also be attached to a specific element using the keywords `biasVacuum` or
-`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
+The process can also be attached to a specific element using the keywords :code:`biasVacuum` or
+:code:`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
 vacuum respectively::
 
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
+
+* :code:`biasVacuum` applies to "vacuum" parts of beam line elements, i.e. the
+  inner volume of a beam pipe only in each component.
+* :code:`biasMaterial` applies to all volumes that are not the vacuum. This includes
+  the beam pipe itself.
+* The "vacuum" here is conceptual, it is not labelled based on material, e.g. you
+  could set `beampipeMaterial` to "G4_WATER" to have a water filled beam pipe,
+  but :code:`biasVaccum` would apply to this volume.
+* If externally provided geometry is used, the 'vacuum' volumes can be labelled as
+  such with :code:`namedVacuumVolumes` in the individual beam line element definition.
 
 .. _physics-bias-importance-sampling:
   

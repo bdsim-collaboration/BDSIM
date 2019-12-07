@@ -225,10 +225,10 @@ void BDSApertureInfo::InfoOKForLHC()
   CheckRequiredParametersSet(true, true, true, false);
 
   if ((aper3 > aper1) && (aper2 < aper3))
-    {throw BDSException("WARNING - \"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
+    {throw BDSException("\"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 
   if ((aper3 > aper2) && (aper1 < aper3))
-    {throw BDSException("WARNING - \"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
+    {throw BDSException("\"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 }
 
 void BDSApertureInfo::InfoOKForLHCDetailed()

@@ -58,7 +58,7 @@ void BDSBunchUserFile<T>::CheckParameters()
 {
   BDSBunch::CheckParameters();
   if (distrFile.empty())
-    {throw BDSException(__METHOD_NAME__, "No input file specified for distribution");}
+    {throw BDSException("BDSBunchUserFile::CheckParameters", "No input file specified for userfile distribution");}
 }
 
 template<class T>
@@ -238,6 +238,11 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
   ParseFileFormat();
+}
+
+template<class T>
+void BDSBunchUserFile<T>::Initialise()
+{
   OpenBunchFile();
   SkipLines();
 }
@@ -419,7 +424,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       particleDefinitionHasBeenUpdated = true;
     }
 
-  return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);
+  return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,Xp0+xp,Yp0+yp,Zp0+zp,T0+t,S0+z,E,weight);
 }
 
 template <class T>
