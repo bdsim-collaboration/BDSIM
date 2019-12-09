@@ -41,7 +41,7 @@ Expected Changes To Results
 New Features
 ------------
 
-* BDSIM no longer requires a beam line to be built! You can simply make a placment or even an empty world.
+* BDSIM no longer requires a beam line to be built! You can simply make a placement or even an empty world.
 * Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
@@ -231,7 +231,7 @@ General
 * Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
   where the parameters result in this. This makes therefore a marginally simpler model and avoids
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
-* Revised calcualtion of octagonal beam pipe points such that each side is uniformly thick exactly
+* Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
   equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
   
 Bug Fixes
@@ -327,11 +327,13 @@ Bug Fixes
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
 * Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
   required for the magnet poles to not hit the beam pipe.
-* Fixed naming bug in magnets where the beam pipe container, magnet outer container and overal container
+* Fixed naming bug in magnets where the beam pipe container, magnet outer container and overall container
   logical volumes would have the same name. This would cause problems when exporting BDSIM geometry to
   GDML and then trying to reload it somewhere. Each are now named uniquely.
 * Fix potential compilation problem with some compilers for "ambiguous overload of abs".
 * Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
+* Fix print out for biasing that would incorrectly say "all particles" for biasing primary particles only.
+  The message has also changed so as not to be confused with particle species.
 
 Output Changes
 --------------
