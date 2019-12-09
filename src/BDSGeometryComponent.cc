@@ -59,15 +59,11 @@ BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component
   innerExtent(component.innerExtent),
   overrideSensitivity(component.overrideSensitivity),
   placementOffset(component.placementOffset),
-  placementRotation(component.placementRotation)
+  placementRotation(component.placementRotation),
+  allBiasingVolumes(nullptr)
 {
-  if (component.allBiasingVolumes)
-    {// create new vector<>*
-      allBiasingVolumes = new std::set<G4LogicalVolume*>(*component.allBiasingVolumes);
-    }
-  else
-    {allBiasingVolumes = component.allBiasingVolumes;} // nullptr
-
+  if (component.allBiasingVolumes) // create new vector<>*
+    {allBiasingVolumes = new std::set<G4LogicalVolume*>(*component.allBiasingVolumes);}
 }
 
 BDSGeometryComponent::~BDSGeometryComponent()
@@ -203,7 +199,7 @@ std::set<G4LogicalVolume*> BDSGeometryComponent::GetAllBiasingVolumes() const
   else
     {result = std::set<G4LogicalVolume*>(*allBiasingVolumes);}
 
-  for (auto it : allDaughters) // do the same recusively for daughters
+  for (auto it : allDaughters) // do the same recursively for daughters
     {
       auto dLVs = it->GetAllBiasingVolumes();
       result.insert(dLVs.begin(), dLVs.end());
