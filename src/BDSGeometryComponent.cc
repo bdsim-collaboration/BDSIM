@@ -49,7 +49,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
   innerExtent(innerExtentIn),
   overrideSensitivity(false),
   placementOffset(placementOffsetIn),
-  placementRotation(placementRotationIn)
+  placementRotation(placementRotationIn),
+  lvsExcludedFromBiasing(nullptr)
 {;}
 
 BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component):
@@ -59,7 +60,8 @@ BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component
   innerExtent(component.innerExtent),
   overrideSensitivity(component.overrideSensitivity),
   placementOffset(component.placementOffset),
-  placementRotation(component.placementRotation)
+  placementRotation(component.placementRotation),
+  lvsExcludedFromBiasing(nullptr)
 {;}
 
 BDSGeometryComponent::~BDSGeometryComponent()
