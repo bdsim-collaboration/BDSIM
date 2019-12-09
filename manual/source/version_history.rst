@@ -327,6 +327,8 @@ Bug Fixes
   GDML and then trying to reload it somewhere. Each are now named uniquely.
 * Fix potential compilation problem with some compilers for "ambiguous overload of abs".
 * Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
+* Fix print out for biasing that would incorrectly say "all particles" for biasing primary particles only.
+  The message has also changed so as not to be confused with particle species.
 
 Output Changes
 --------------
