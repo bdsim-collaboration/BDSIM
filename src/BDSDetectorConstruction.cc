@@ -1037,16 +1037,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
         {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
       BDSAcceleratorComponent* accCom = item.second;
       G4String accName = accCom->GetName();
-      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
+      G4LogicalVolume* vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
       
       // Build vacuum bias object based on vacuum bias list in the component
       auto vacuumBiasList = accCom->GetBiasVacuumList();
       if (!vacuumBiasList.empty() && !vacuumLV)
-	{
-	  G4cout << G4endl << "biasVacuum set for component \"" << accName
-		 << "\" but there's no 'vacuum' volume for it and it can't be biased."<< G4endl
-		 << "Remove biasVacuum or fix it." << G4endl << G4endl;
-	}
+	{BDS::Warning("biasVacuum set for component \"" + accName + "\" but there's no 'vacuum' volume for it and it can't be biased.\nRemove biasVacuum or name it with the namedVacuumVolumes parameter.");}
       if (!vacuumBiasList.empty() && vacuumLV)
         {
           auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
