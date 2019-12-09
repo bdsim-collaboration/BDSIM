@@ -93,12 +93,12 @@ public:
   inline std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtent.ExtentX();}   
   inline std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtent.ExtentY();}
   inline std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtent.ExtentZ();}
-  inline std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
-  inline std::set<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
-  inline std::set<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
-  inline std::set<G4UserLimits*>      GetAllUserLimits()       const {return allUserLimits;}
-  inline std::set<BDSGeometryComponent*> GetAllDaughters()     const {return allDaughters;};
-  inline std::set<G4VSolid*>          GetAllSolids()           const {return allSolids;};
+  virtual std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
+  virtual std::set<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
+  virtual std::set<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
+  virtual std::set<G4UserLimits*>      GetAllUserLimits()       const {return allUserLimits;}
+  virtual std::set<BDSGeometryComponent*> GetAllDaughters()     const {return allDaughters;}
+  virtual std::set<G4VSolid*>          GetAllSolids()           const {return allSolids;}
   /// @}
   
   /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
@@ -185,7 +185,7 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all logical volumes belonging to this component
-  std::set<G4LogicalVolume*> GetAllLogicalVolumes() const;
+  virtual std::set<G4LogicalVolume*> GetAllLogicalVolumes() const;
 
   /// Return all logical volumes that should be used for biasing minus any that are excluded.
   virtual std::set<G4LogicalVolume*> GetAllBiasingVolumes() const;
@@ -202,7 +202,7 @@ public:
 
   /// Remove a particular logical volume from the logical volumes that will be
   /// returned for biasing.
-  void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
+  virtual void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
 
 protected:
   
