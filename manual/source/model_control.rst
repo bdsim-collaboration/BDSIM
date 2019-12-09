@@ -761,7 +761,7 @@ only one proton definition.
 .. note:: This only works with Geant4 version 10.1 or higher. It does not work Geant4.10.3.X series.
 
 1) Define a bias object with parameters in following table.
-2) Use :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
+2) Use :code:`bias`, :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
 
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
@@ -789,7 +789,7 @@ only one proton definition.
   physics processes.
 * A special particle name "all" will bias all defined particles. (case-sensitive).
 * In the case of an **ion** beam, the particle name should be "GenericIon". The
-  biasing will apply to all ions, so the flag should be used to select primary
+  biasing will apply to all ions, so the flag should be used to carefully select primary
   or secondary or all particles. This is because Geant4 uses the concept of a
   generic ion as there are so many possible ions.
 * Examples can be found in :code:`bdsim/examples/features/processes/5_biasing`.
@@ -811,11 +811,15 @@ vacuum respectively::
 
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
+  q3: quadrupole, l=20*cm, k1=0.25, bias="biasDef1";
 
 * :code:`biasVacuum` applies to "vacuum" parts of beam line elements, i.e. the
   inner volume of a beam pipe only in each component.
 * :code:`biasMaterial` applies to all volumes that are not the vacuum. This includes
   the beam pipe itself.
+* :code:`bias` applies to both the bias vacuum and material parts.
+* If both :code:`bias` and one or both of :code:`biasVacuum` and :code:`biasMaterial` are used
+  then the effect is cumulative. :code:`bias` is just a way to add to both vacuum and material.
 * The "vacuum" here is conceptual, it is not labelled based on material, e.g. you
   could set `beampipeMaterial` to "G4_WATER" to have a water filled beam pipe,
   but :code:`biasVaccum` would apply to this volume.
