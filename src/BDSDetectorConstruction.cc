@@ -61,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
+#include "BDSWarning.hh"
 
 #include "parser/blmplacement.h"
 #include "parser/element.h"
@@ -280,10 +281,7 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (!circular && mainBeamline.massWorld)
     {
       if (mainBeamline.massWorld->ElementAnglesSumToCircle())
-	{
-	  G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
-		 << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
-	}
+	{BDS::Warning("Total sum of all element angles is approximately 2*pi but the circular option was not specified, this simulation may run indefinitely");}
     }
   
   // register the beam line in the holder class for the full model
@@ -768,8 +766,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       // in this case we should use s for longitudinal offset - warn user if mistakenly using z
       if (BDS::IsFinite(placement.z))
 	{
-	  G4cout << "WARNING: placement \"" << placement.name << "\" is placed using a referenceElement but the z offset is" << G4endl;
-	  G4cout << "non zero. Note, s should be used to offset the placement in this case and z will have no effect." << G4endl << G4endl;
+	  G4String message = "placement \"" + placement.name + "\" is placed using a referenceElement but the z offset is\n non zero. Note, s should be used to offset the placement in this case and z will\n have no effect.";
+	  BDS::Warning(message);
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement

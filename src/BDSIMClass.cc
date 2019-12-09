@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
+#include "BDSWarning.hh"
 
 BDSIM::BDSIM():
   ignoreSIGINT(false),
@@ -475,10 +476,7 @@ void BDSIM::RegisterUserComponent(G4String componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
-    {
-      G4cout << __METHOD_NAME__ << "WARNING - BDSIM kernel already initialised - "
-	     << "this component will not be available" << G4endl;
-    }
+    {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
   if (!userComponentFactory)
     {userComponentFactory = new BDSComponentFactoryUser();}
 
