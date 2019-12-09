@@ -687,7 +687,7 @@ Examples: ::
   option, physicsList="g4QBBC_EMV";
 
   option, physicsList="g4FTFP_BERT_PEN",
-          g4PhysicsUSeBDSIMCutsAndLimits=0;
+          g4PhysicsUseBDSIMCutsAndLimits=0;
 
 This last example turns off the minimum kinetic energy and also the maximum step length
 limit which is by default 110% the length of the element. If bad tracking behaviour
