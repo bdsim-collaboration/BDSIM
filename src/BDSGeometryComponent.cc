@@ -233,8 +233,7 @@ void BDSGeometryComponent::ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv)
   // if we haven't excluded anything yet, there isn't a separate copy of the logical volumes
   // so create a copy then remove it from the biasing list of lvs.
   if (!allBiasingVolumes)
-    {allBiasingVolumes = new std::set<G4LogicalVolume*>();}
+    {allBiasingVolumes = new std::set<G4LogicalVolume*>(allLogicalVolumes);}
 
-  auto v = allBiasingVolumes;
-  v->erase(lv);
+  allBiasingVolumes->erase(lv);
 }
