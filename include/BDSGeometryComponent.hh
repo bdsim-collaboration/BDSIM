@@ -252,10 +252,8 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 
-  /// Volumes to use for biasing. By default this is nullptr and the accessor returns
-  /// allLogicalVolumes. However, if ExcludeLogicalVolumeFromBiasing is used, the set
-  /// is copied and this pointer set to that set. This is memory efficient solution.
-  std::set<G4LogicalVolume*>* allBiasingVolumes;
+  /// Volumes that should not be included when return GetAllBiasingVolumes().
+  std::set<G4LogicalVolume*>* lvsExcludedFromBiasing;
 };
 
 inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const
