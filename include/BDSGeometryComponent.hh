@@ -206,10 +206,10 @@ public:
 
 protected:
   
-  G4VSolid*                 containerSolid;
-  G4LogicalVolume*          containerLogicalVolume;
-  BDSExtent outerExtent;
-  BDSExtent innerExtent;
+  G4VSolid*        containerSolid;
+  G4LogicalVolume* containerLogicalVolume;
+  BDSExtent        outerExtent;
+  BDSExtent        innerExtent;
   
   /// registry of all daughter geometry components
   std::set<BDSGeometryComponent*> allDaughters;

@@ -53,8 +53,7 @@ private:
   BDSElement(BDSElement&) = delete;
   /// @}
   
-  /// This does the full construction.  Loads the external geometry and field if there is
-  /// one.
+  /// This does the full construction.  Loads the external geometry and field if there is one.
   virtual void BuildContainerLogicalVolume();
 
   G4double horizontalWidth;

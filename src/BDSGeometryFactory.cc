@@ -82,7 +82,6 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
       {
 	G4cout << "Unsupported factory type " << type;
 	return nullptr;
-	break;
       }
     }
 }
