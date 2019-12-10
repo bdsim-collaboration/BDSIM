@@ -32,6 +32,6 @@ namespace BDS
   void Warning(const G4String& message);
   void Warning(const G4String& methodName,
 	       const G4String& message);
-};
+}
 
 #endif
