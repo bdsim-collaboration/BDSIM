@@ -54,7 +54,7 @@ namespace GMAD
       void set(C* instance, const std::string& name, double value);
       void set(C* instance, const std::string& name, GMAD::Array* const& value);
       template<typename T>
-        void set(C* instance, const std::string& name, const T& value);
+      void set(C* instance, const std::string& name, const T& value);
       ///@}
 
       /// Set member with name of class instance to value of second instance
