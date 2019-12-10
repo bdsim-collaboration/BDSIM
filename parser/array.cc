@@ -140,3 +140,11 @@ void Array::Print()
     }
   std::cout << std::endl;
 }
+
+std::list<double> Array::GetDataList() const
+{
+  std::list<double> r;
+  for (double d : data)
+    {r.push_back(d);}
+  return r;
+}

@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define ARRAY_H
 
 #include <iostream>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -72,6 +73,7 @@ namespace GMAD
     /// Access
     const std::vector<std::string>& GetSymbols()const{return symbols;}
     const std::vector<double>&      GetData()   const{return data;}
+    std::list<double>               GetDataList() const;
     
     /// Clear data
     void Clear();
