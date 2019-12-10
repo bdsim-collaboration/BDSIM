@@ -329,6 +329,8 @@ Bug Fixes
 * Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
 * Fix print out for biasing that would incorrectly say "all particles" for biasing primary particles only.
   The message has also changed so as not to be confused with particle species.
+* Fix the extension of any list type parameters in beam line elements when they're extended or redefined -
+  such as updating the `knl` parameter of a multipole. Previously the parser would not understand this syntax.
 
 Output Changes
 --------------
