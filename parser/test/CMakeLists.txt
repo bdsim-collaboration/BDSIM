@@ -167,6 +167,9 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
+# test extending a multipole with list syntax
+add_test(gmad-extend-list ${gmadBinary} extendlist.gmad)
+
 # test non valid extension
 add_test(gmad-extend-nonvalid ${gmadBinary} extendnonvalid.gmad)
 set_tests_properties(gmad-extend-nonvalid PROPERTIES WILL_FAIL 1)
