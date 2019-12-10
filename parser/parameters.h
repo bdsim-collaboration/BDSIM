@@ -56,9 +56,6 @@ namespace GMAD
     /// Set method by property name and value
     template <typename T>
     void set_value(std::string property, T value);
-    // Template overloading for Array pointers
-    /// Set method for lists
-    void set_value(std::string property, Array* value);
 
     /// Constructor
     Parameters();
