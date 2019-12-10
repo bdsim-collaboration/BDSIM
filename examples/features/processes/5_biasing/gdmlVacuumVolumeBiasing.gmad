@@ -17,3 +17,5 @@ beam, particle="proton",
 ! full but fast physics
 option, physicsList="g4FTFP_BERT",
 	minimumKineticEnergy=100*GeV;
+
+option, ngenerate=3;
