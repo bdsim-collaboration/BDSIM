@@ -2608,9 +2608,9 @@ If the number of particles to be generated with ngenerate is greater than the nu
 particles defined in the file, the bunch generation will reload the file and read the
 particle coordinates from the beginning. A warning will be printed out in this case.
 
-This distribution reads lines at the start of each event to be memory efficient. However,
-this prevents reading a whole file by the number of lines in the file unlike the :code:`ptc`
-distribution that loads all lines and can use the beam option :code:`matchDistrFileLength`.
+This distribution reads one line at a time at the start of each event to be memory efficient.
+However, this prevents knowing the number of lines in the file (unlike the :code:`ptc`
+distribution that loads all lines and can use the beam option :code:`matchDistrFileLength`).
 
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
@@ -2620,7 +2620,10 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
   in `distrFileFormat` and the event aborted - the simulation safely proceeds to the next event.
-
+* In the beam command, `X0`, `Y0`, `Z0`, `Xp0`, `Yp0`, `S0` may be used for offsets.
+  In the case of `Xp0` and `Yp0`, these must be relatively small such that
+  :math:`((Xp0 + xp)^2 + (Yp0 + yp)^2) < 1)`.
+  
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+

@@ -13,6 +13,7 @@ simple_testing(bunch-userfile-recreate         "--file=userfile-recreate.gmad"  
 simple_testing(bunch-userfile-unknown-particle "--file=userfile-unknown-particle.gmad" "")
 simple_testing(bunch-userfile-s                "--file=userfile-s.gmad"                "")
 simple_testing(bunch-userfile-all-columns      "--file=userfile-all-columns.gmad"      "")
+simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
