@@ -82,7 +82,6 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
       {
 	G4cout << "Unsupported factory type " << type;
 	return nullptr;
-	break;
       }
     }
 }
@@ -124,7 +123,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 	{result->MakeAllVolumesSensitive(sensitivityType);}
       
       registry[(std::string)fileName] = result;
-      storage.push_back(result);
+      storage.insert(result);
     }
   
   return result;
