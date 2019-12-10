@@ -6,4 +6,4 @@ simple_testing(beamline-transform              "--file=5_beamline_transform.gmad
 simple_testing(beamline-none-specified         "--file=noBeamLine.gmad"                 "")
 simple_fail(beamline-empty                     "--file=emptyBeamLine.gmad"              "")
 simple_fail(beamline-empty-circular            "--file=emptyCircularBeamLine.gmad"      "")
-simple_fail(beamline-zero                      "--file=zeroBeamLine.gmad"               "")
+simple_testing(beamline-zero                   "--file=zeroBeamLine.gmad"               "")
