@@ -7,5 +7,5 @@ simple_testing(physics-biasing-vacuum               "--file=biasing-vacuum.gmad"
 simple_testing(physics-biasing-repeated             "--file=biasing-repeated.gmad"   "")
 simple_testing(physics-biasing-repeated2            "--file=biasing-repeated2.gmad"  "")
 if (USE_GDML)
-  simple_testing(physics-biasing-gdml-named-vacuum    "--file=gdmlVacuumVolumebiasing.gmad" "")
+  simple_testing(physics-biasing-gdml-named-vacuum    "--file=gdmlVacuumVolumeBiasing.gmad" "")
 endif()
