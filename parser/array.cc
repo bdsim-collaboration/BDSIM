@@ -141,6 +141,14 @@ void Array::Print()
   std::cout << std::endl;
 }
 
+std::list<std::string> Array::GetSymbolsList() const
+{
+  std::list<std::string> r;
+  for (const std::string& s : symbols)
+    {r.push_back(s);}
+  return r;
+}
+
 std::list<double> Array::GetDataList() const
 {
   std::list<double> r;
