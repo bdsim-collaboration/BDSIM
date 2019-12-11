@@ -76,7 +76,7 @@ namespace GMAD
 	if (property == "harmon" || property == "lag" || property == "volt")
 	  {return;}
 	
-	std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
+	std::cerr << "Error: element> unknown parameter \"" << property << "\" with value " << value  << std::endl;
 	// don't exit here, but flag willExit instead
 	//exit(1);
 	willExit = true;
