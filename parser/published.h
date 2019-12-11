@@ -143,8 +143,18 @@ namespace GMAD
 	(instance)->*mp = valueNew;
       }
     catch (const std::runtime_error&)
-      {// if not found throw error
-	throw std::runtime_error("Unknown member " + name);
+      {
+        try
+          {
+            std::list<std::string> valueNew = value->GetSymbolsList();
+            std::list<std::string> C::* mp = member<std::list<std::string>>(name);
+            (instance)->*mp = valueNew;
+          }
+        catch (const std::runtime_error &)
+          {
+            // if not found throw error
+            throw std::runtime_error("Unknown member " + name);
+          }
       }
   }
 
