@@ -2,7 +2,7 @@ option, ngenerate=1,
 	physicsList="em";
 	
 beam, particle="e-",
-      energy=10.0*GeV;
+      energy=1.0*GeV;
 
 ! make only a sampler placement - test of code with no beam line
 s1: samplerplacement, x=20*cm, y=-1*cm, z=30*cm,
