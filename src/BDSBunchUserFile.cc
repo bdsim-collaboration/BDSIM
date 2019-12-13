@@ -402,6 +402,8 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
     {E = E0;}
   
   // compute zp from xp and yp if it hasn't been read from file
+  xp += Xp0;
+  yp += Yp0;
   if (!zpdef)
     {zp = CalculateZp(xp,yp,1);}
   // compute t from z if it hasn't been read from file
@@ -424,7 +426,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       particleDefinitionHasBeenUpdated = true;
     }
 
-  return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,Xp0+xp,Yp0+yp,Zp0+zp,T0+t,S0+z,E,weight);
+  return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,xp,yp,zp,t,z,E,weight);
 }
 
 template <class T>

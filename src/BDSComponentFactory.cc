@@ -1812,10 +1812,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
   if (el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
-	{
-	  G4cerr << "---> NOT creating element \"" << el->name << "\""
-		 << " LENGTH TOO SHORT:" << " l = " << el->l << "m" << G4endl; // already in m
-	}
+	{BDS::Warning("---> NOT creating element \"" + el->name + "\" -> l < 1e-7 m: l = " + std::to_string(el->l) + " m");} // already in m
       return false;
     }
   else

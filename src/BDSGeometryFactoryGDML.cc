@@ -82,6 +82,9 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   std::set<G4LogicalVolume*>   lvsGDML;
   GetAllLogicalAndPhysical(containerPV, pvsGDML, lvsGDML);
 
+  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
+
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
@@ -114,7 +117,7 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
 {
   const auto& lv = volume->GetLogicalVolume();
   lvsIn.insert(lv);
-  for (G4int i = 0; i < lv->GetNoDaughters(); i++)
+  for (G4int i = 0; i < (G4int)lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
       pvsIn.insert(pv);

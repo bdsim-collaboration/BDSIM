@@ -1456,23 +1456,29 @@ with the placement as required.
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
-+-------------------+----------------------------------+--------------+---------------+
-| **Parameter**     | **Description**                  | **Default**  | **Required**  |
-+===================+==================================+==============+===============+
-| `geometryFile`    | Filename of geometry             | NA           | Yes           |
-+-------------------+----------------------------------+--------------+---------------+
-| `l`               | Length. Arc length in case of a  | NA           | Yes           |
-|                   | finite angle.                    |              |               |
-+-------------------+----------------------------------+--------------+---------------+
-| `horizontalWidth` | Diameter of component [m]        | NA           | Yes           |
-+-------------------+----------------------------------+--------------+---------------+
-| `fieldAll`        | Name of field object to use      | NA           | No            |
-+-------------------+----------------------------------+--------------+---------------+
-| `angle`           | Angle the component bends the    | 0            | No            |
-|                   | beam line.                       |              |               |
-+-------------------+----------------------------------+--------------+---------------+
-| `tilt`            | Tilt of the whole component.     | 0            | No            |
-+-------------------+----------------------------------+--------------+---------------+
++----------------------+----------------------------------+--------------+---------------+
+| **Parameter**        | **Description**                  | **Default**  | **Required**  |
++======================+==================================+==============+===============+
+| `geometryFile`       | Filename of geometry             | NA           | Yes           |
++----------------------+----------------------------------+--------------+---------------+
+| `l`                  | Length. Arc length in case of a  | NA           | Yes           |
+|                      | finite angle.                    |              |               |
++----------------------+----------------------------------+--------------+---------------+
+| `horizontalWidth`    | Diameter of component [m]        | NA           | Yes           |
++----------------------+----------------------------------+--------------+---------------+
+| `fieldAll`           | Name of field object to use      | NA           | No            |
++----------------------+----------------------------------+--------------+---------------+
+| `angle`              | Angle the component bends the    | 0            | No            |
+|                      | beam line.                       |              |               |
++----------------------+----------------------------------+--------------+---------------+
+| `tilt`               | Tilt of the whole component.     | 0            | No            |
++----------------------+----------------------------------+--------------+---------------+
+| `namedVacuumVolumes` | String with space separated list | ""           | No            |
+|                      | of logical volume names in the   |              |               |
+|                      | geometry file that should be     |              |               |
+|                      | considered 'vacuum' for biasing  |              |               |
+|                      | purposes.                        |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry

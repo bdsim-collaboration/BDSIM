@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -71,13 +72,13 @@ private:
   static BDSGeometryFactory* instance;
 
   /// A registry of all previously constructed components. We must use an
-  /// std::string (which G4String inherits from) so provide implicit hasher
+  /// std::string (which G4String inherits from) so we provide implicit hasher
   /// for the storage in the unordered map (which isn't provided for G4String).
   std::unordered_map<std::string, BDSGeometryExternal*> registry;
 
-  /// This is where the geometry components are stored. By storing the
-  /// pointers in a vector, they may be more efficiently iterated over.
-  std::vector<BDSGeometryExternal*> storage;
+  /// This is where the geometry components are stored and used to manage
+  /// the associated memory of the pieces of geometry.
+  std::set<BDSGeometryExternal*> storage;
 
   /// Get the appropriate geometry factory
   BDSGeometryFactoryBase* GetAppropriateFactory(BDSGeometryType type);
