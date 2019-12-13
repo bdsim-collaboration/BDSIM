@@ -304,7 +304,7 @@ void BDS::PrintPrimaryParticleProcesses(const G4String& primaryParticleName)
       return;
     }
   auto pl = particle->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
+  for (G4int i = 0; i < (G4int)pl->length(); i++)
     {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
