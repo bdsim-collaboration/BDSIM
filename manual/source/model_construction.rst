@@ -1474,8 +1474,8 @@ and make a placement at the appropriate point in global coordinates.
 | `tilt`               | Tilt of the whole component.     | 0            | No            |
 +----------------------+----------------------------------+--------------+---------------+
 | `namedVacuumVolumes` | String with space separated list | ""           | No            |
-|                      | of logical volume names in the   |              |               |
-|                      | geometry file that should be     |              |               |
+|                      | of **logical** volume names in   |              |               |
+|                      | the geometry file that should be |              |               |
 |                      | considered 'vacuum' for biasing  |              |               |
 |                      | purposes.                        |              |               |
 +----------------------+----------------------------------+--------------+---------------+

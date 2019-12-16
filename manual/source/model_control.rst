@@ -824,8 +824,8 @@ vacuum respectively::
   could set `beampipeMaterial` to "G4_WATER" to have a water filled beam pipe,
   but :code:`biasVaccum` would apply to this volume.
 * If externally provided geometry is used with an `element` beam line element, the 'vacuum'
-  volumes can be labelled as such with :code:`namedVacuumVolumes` in the individual beam
-  line element definition.
+  **logical** volumes can be labelled as such with :code:`namedVacuumVolumes` in the individual beam
+  line element definition. See :ref:`element` for more details.
 
 .. _physics-bias-importance-sampling:
   
