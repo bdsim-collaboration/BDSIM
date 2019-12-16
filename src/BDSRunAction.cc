@@ -174,7 +174,7 @@ void BDSRunAction::PrintAllProcessesForAllParticles() const
       G4ProcessVector* processList = pManager->GetProcessList();
       if (!processList)
 	{continue;}
-      for (G4int i = 0; i < processList->size(); i++)
+      for (G4int i = 0; i < (G4int)processList->size(); i++)
         {G4cout << "\"" << (*processList)[i]->GetProcessName() << "\"" << G4endl;}
       G4cout << G4endl;
     }
