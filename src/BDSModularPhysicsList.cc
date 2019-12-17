@@ -929,6 +929,9 @@ void BDSModularPhysicsList::QGSPBICHP()
 
 void BDSModularPhysicsList::Shielding()
 {
+#if G4VERSION_NUMBER > 1059
+  AllParticles();
+#endif
   if (!physicsActivated["shielding"])
     {
       constructors.push_back(new G4HadronPhysicsShielding());
