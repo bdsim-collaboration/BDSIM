@@ -1673,7 +1673,7 @@ beam line is produced by declaring a placement. The placement definition (see
 | sequence               | Name of the sequence (with `line`) to use for the secondary   |
 |                        | beam line                                                     |
 +------------------------+---------------------------------------------------------------+
-| referemeceElement      | The element in the sequence with respect to which the beam    |
+| referenceElement       | The element in the sequence with respect to which the beam    |
 |                        | line will be placed                                           |
 +------------------------+---------------------------------------------------------------+
 | referenceElementNumber | The *i* th instance of the element in the sequence (zero      |
