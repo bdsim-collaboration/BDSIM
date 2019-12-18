@@ -4,6 +4,7 @@ add_subdirectory(userfile)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
+simple_testing(bunch-beam-momentum            "--file=beam-by-momentum.gmad"        "")
 simple_testing(bunch-circle                   "--file=circle.gmad"                  "")
 simple_testing(bunch-composite                "--file=composite.gmad"               "")
 simple_testing(bunch-composite-w-gauss        "--file=composite-w-gauss.gmad"       "")
