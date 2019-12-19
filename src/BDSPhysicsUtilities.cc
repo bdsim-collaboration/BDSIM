@@ -196,6 +196,9 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
 					 BDSParticleDefinition*& beamParticle,
 					 G4bool& beamDifferentFromDesignParticle)
 {
+  if (beamDefinition.particle.empty())
+    {throw BDSException("Beam> no \"particle\" specified (required).");}
+
   // check only one of the following has been set - ie no conflicting information
   std::set<std::string> keysDesign = {"energy", "momentum", "kineticEnergy"};
   G4int nSetDesign = BDS::NBeamParametersSet(beamDefinition, keysDesign);
