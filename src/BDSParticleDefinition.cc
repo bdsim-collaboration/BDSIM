@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 					     G4double              totalEnergyIn,
+					     G4double              kineticEnergyIn,
+					     G4double              momentumIn,
 					     G4double              ffact,
 					     BDSIonDefinition*     ionDefinitionIn):
   particle(particleIn),
