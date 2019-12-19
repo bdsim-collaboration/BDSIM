@@ -287,7 +287,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (InputBunchFile.eof())
     {EndOfFileAction();}
 
-  G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
+  G4double E = 0, Ek = 0, P = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
   G4double weight = 1;
   G4int type = 0;
   
@@ -349,25 +349,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
-	{
-	  G4double kineticEnergy = 0;
-	  ReadValue(ss, kineticEnergy);
-	  kineticEnergy *= (CLHEP::GeV * it->unit);
-	  E = kineticEnergy + particleMass;
-	}
+	{ReadValue(ss, Ek); Ek *= (CLHEP::GeV * it->unit);}
       else if(it->name=="E")
-	{
-	  ReadValue(ss, E);
-	  E *= (CLHEP::GeV * it->unit);
-	}
+	{ReadValue(ss, E); E *= (CLHEP::GeV * it->unit);}
       else if(it->name=="P")
-	{ 
-	  G4double P = 0;
-	  ReadValue(ss, P);
-	  P *= (CLHEP::GeV * it->unit);
-	  G4double totalEnergy = std::hypot(P,particleMass);
-	  E = totalEnergy;
-	}
+	{ReadValue(ss, P); P *= (CLHEP::GeV * it->unit);}
       else if(it->name=="t")
 	{ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
@@ -421,7 +407,14 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       // Wrap in our class that calculates momentum and kinetic energy.
       // Requires that total energy 'E' already be set.
       delete particleDefinition;
-      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
+      try
+        {particleDefinition = new BDSParticleDefinition(particleDef, E, Ek, P, ffact);} // update member
+      catch (const BDSException& e)
+	{// if we throw an exception the object is invalid for the delete on the next loop
+	  particleDefinition       = nullptr; // reset back to nullptr for safe delete
+	  updateParticleDefinition = true;    // flag we should update next time
+	  throw e;                            // rethrow
+	}
       updateParticleDefinition = false; // reset flag back to false
       particleDefinitionHasBeenUpdated = true;
     }
