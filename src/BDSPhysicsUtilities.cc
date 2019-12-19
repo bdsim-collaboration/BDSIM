@@ -205,11 +205,11 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
   BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysDesign, nSetDesign);
   std::set<std::string> keysParticle = {"E0", "P0", "Ek0"};
   G4int nSetParticle = BDS::NBeamParametersSet(beamDefinition, keysParticle);
-
-  designParticle = BDS::ConstructParticleDefinition(G4String(beamDefinition.particle),
-                                                    G4double(beamDefinition.beamEnergy)*CLHEP::GeV,
-                                                    G4double(beamDefinition.beamKineticEnergy)*CLHEP::GeV,
-                                                    G4double(beamDefinition.beamMomentum)*CLHEP::GeV,
+  
+  designParticle = BDS::ConstructParticleDefinition(beamDefinition.particle,
+                                                    beamDefinition.beamEnergy        * CLHEP::GeV,
+                                                    beamDefinition.beamKineticEnergy * CLHEP::GeV,
+                                                    beamDefinition.beamMomentum      * CLHEP::GeV,
                                                     ffact);
 
   // ensure a default
@@ -219,17 +219,17 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
     {// at least one specified so use all of the bema particle ones
       BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysParticle, nSetParticle);
       beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
-						      G4double(beamDefinition.E0)*CLHEP::GeV,
-						      G4double(beamDefinition.Ek0)*CLHEP::GeV,
-						      G4double(beamDefinition.P0)*CLHEP::GeV,
+						      beamDefinition.E0  * CLHEP::GeV,
+						      beamDefinition.Ek0 * CLHEP::GeV,
+						      beamDefinition.P0  * CLHEP::GeV,
 						      ffact);
     }
   else if (beamDefinition.beamParticleName != beamDefinition.particle && !beamDefinition.beamParticleName.empty())
     {// different particle name but no extra E0, Ek0 or P0 -> therefore use general beam defaults
       beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
-						      G4double(beamDefinition.beamEnergy)*CLHEP::GeV,
-						      G4double(beamDefinition.beamKineticEnergy)*CLHEP::GeV,
-						      G4double(beamDefinition.beamMomentum)*CLHEP::GeV,
+						      beamDefinition.beamEnergy        * CLHEP::GeV,
+						      beamDefinition.beamKineticEnergy * CLHEP::GeV,
+						      beamDefinition.beamMomentum      * CLHEP::GeV,
 						      ffact);
     }
   else
