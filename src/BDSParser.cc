@@ -81,20 +81,6 @@ void BDSParser::CheckOptions()
 {
   if (options.nGenerate <= 0) // run at least 1 event!
     {options.nGenerate = 1;}
-  
-  if (beam.beamEnergy <= 0)
-    {
-      std::cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" << std::endl;
-      exit(1);
-    }
-
-  // if no explicit E0 is specified, copy the design total energy to the variable
-  if (!BDS::IsFinite(beam.E0))
-    {beam.E0 = beam.beamEnergy;}
-
-  // if no different beam particle is specified, use the design particle
-  if (beam.beamParticleName.empty())
-    {beam.beamParticleName = beam.particle;}
 
   if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
@@ -105,9 +91,9 @@ void BDSParser::CheckOptions()
       exit(1);
     }
 
-  if(options.nturns < 1)
+  if (options.nturns < 1)
     {options.nturns = 1;}
 
-  if(BDS::IsFinite(options.beamlineS) && beam.S0 == 0) 
+  if (BDS::IsFinite(options.beamlineS) && beam.S0 == 0) 
     {beam.S0 = beam.S0 + options.beamlineS;}
 }
