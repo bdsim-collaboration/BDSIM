@@ -45,6 +45,8 @@ public:
   /// typically 1 or -1 to flip the rigidity for convention.
   BDSParticleDefinition(G4ParticleDefinition* particleIn,
 			G4double              totalEnergyIn,
+			G4double              kineticEnergyIn,
+			G4double              momentumIn,
 			G4double              ffact,
 			BDSIonDefinition*     ionDefinitionIn = nullptr);
 
@@ -56,6 +58,8 @@ public:
 			G4double          massIn,
 			G4double          chargeIn,
 			G4double          totalEnergyIn,
+			G4double          kineticEnergyIn,
+			G4double          momentumIn,
 			G4double          ffact,
 		       	BDSIonDefinition* ionDefinitionIn = nullptr);
 
@@ -63,6 +67,14 @@ public:
   BDSParticleDefinition(const BDSParticleDefinition& other);
   
   ~BDSParticleDefinition();
+
+  /// Check in order whether totalEnergy, kineticEnergy or momentum are specified and
+  /// copy that parameter to the member varible. Then calculate the other two and set
+  /// them to the member variables.
+  void SetEnergies(G4double totalEnergyIn,
+		   G4double kineticEnergyIn,
+		   G4double momentumIn);
+  
 
   /// Update the G4 particle definition member. Developer responsibility to ensure
   /// this matches the contents of the class.

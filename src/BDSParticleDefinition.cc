@@ -51,10 +51,8 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
       if (ionDefinition->OverrideCharge()) // if override for ions
 	{charge = ionDefinition->Charge();}
     }
-  
-  kineticEnergy = totalEnergy - mass;
 
-  CalculateMomentum();
+  SetEnergies(totalEnergyIn, kineticEnergyIn, momentumIn);
   CalculateRigidity(ffact);
   CalculateLorentzFactors();
 }
@@ -63,6 +61,8 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
 					     G4double          massIn,
 					     G4double          chargeIn,
 					     G4double          totalEnergyIn,
+					     G4double          kineticEnergyIn,
+					     G4double          momentumIn,
 					     G4double          ffact,
 					     BDSIonDefinition* ionDefinitionIn):
   particle(nullptr),
@@ -75,17 +75,53 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
   beta(1.0),
   brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
 {
-  if (totalEnergy < mass)
-    {
-      throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergy/CLHEP::GeV)
-			 +" GeV) is less than the mass (" + std::to_string(mass/CLHEP::GeV)
-			 +" GeV) of particle");
-    }
-  kineticEnergy = totalEnergy - mass;
-
-  CalculateMomentum();
+  SetEnergies(totalEnergyIn, kineticEnergyIn, momentumIn);
   CalculateRigidity(ffact);
   CalculateLorentzFactors();
+}
+
+void BDSParticleDefinition::SetEnergies(G4double totalEnergyIn,
+					G4double kineticEnergyIn,
+					G4double momentumIn)
+{
+  if (BDS::IsFinite(totalEnergyIn))
+    {
+      if (totalEnergyIn <= mass)
+        {
+          throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergyIn / CLHEP::GeV)
+                                              + " GeV) is less than or equal to the mass (" + std::to_string(mass / CLHEP::GeV)
+                                              + " GeV) of the particle \"" + name + "\"");
+        }
+      totalEnergy   = totalEnergyIn;
+      kineticEnergy = totalEnergy - mass;
+      CalculateMomentum();
+    }
+  else if (BDS::IsFinite(kineticEnergyIn))
+    {
+      if (kineticEnergyIn <= 0)
+        {
+          throw BDSException(__METHOD_NAME__, "kinetic energy (" + std::to_string(kineticEnergyIn/CLHEP::GeV)
+                                              + " GeV) must be > 0");
+        }
+      kineticEnergy = kineticEnergyIn;
+      totalEnergy   = mass + kineticEnergyIn;
+      CalculateMomentum();
+    }
+  else if (BDS::IsFinite(momentumIn))
+    {
+      if (momentumIn <= 0)
+        {
+          throw BDSException(__METHOD_NAME__, "momentum (" + std::to_string(momentumIn/CLHEP::GeV)
+                                              + " GeV) must be > 0");
+        }
+      momentum    = momentumIn;
+      totalEnergy = std::hypot(momentumIn, mass);
+      if (std::isnan(totalEnergy))
+        {throw BDSException(__METHOD_NAME__, "sqrt(-ve) encountered in calculating total energy");}
+      kineticEnergy = totalEnergy - mass;
+    }
+  else
+    {throw BDSException(__METHOD_NAME__, "total energy, kinetic energy and momentum 0 - one must be non-zero.");}
 }
 
 BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other):
