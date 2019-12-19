@@ -70,10 +70,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FTFP_BERT.hh"
 
-#include "parser/beamBase.h"
+#include "parser/beam.h"
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
 
+#include <iomanip>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -160,35 +161,85 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
   return result;
 }
 
+G4int BDS::NBeamParametersSet(const GMAD::Beam&            beamDefinition,
+                              const std::set<std::string>& keys)
+{
+  G4int nSet = 0;
+  for (const auto& k : keys)
+    {nSet += beamDefinition.HasBeenSet(k) ? 1 : 0;}
+  return nSet;
+}
+
+void BDS::EnergyKineticEnergyMomentumOK(const GMAD::Beam&            beamDefinition,
+					const std::set<std::string>& keys,
+					G4int                        nSet)
+{
+  if (nSet > 1)
+    {
+      G4cerr << "Beam> More than one parameter set for beam energy - should only be one" << G4endl;
+      for (const auto& k : keys)
+        {G4cerr << std::setw(14) << std::left << k << ": " << std::setw(7) << std::right << beamDefinition.get_value(k) << " GeV" << G4endl;}
+      throw BDSException(__METHOD_NAME__, "conflicting parameters set");
+    }
+  else if (nSet == 0)
+    {
+      G4cerr << "Beam> One of the following required to be set" << G4endl;
+      for (const auto &k : keys)
+        {G4cerr << std::setw(14) << std::left << k << ": " << std::setw(7) << std::right << beamDefinition.get_value(k) << " GeV" << G4endl;}
+      throw BDSException(__METHOD_NAME__, "insufficient parameters set");
+    }
+}
+
 void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
 					 G4double ffact,
 					 BDSParticleDefinition*& designParticle,
 					 BDSParticleDefinition*& beamParticle,
 					 G4bool& beamDifferentFromDesignParticle)
 {
-  G4String designParticleName = G4String(beamDefinition.particle);
-  G4double designTotalEnergy = G4double(beamDefinition.beamEnergy)*CLHEP::GeV;
-  designParticle = BDS::ConstructParticleDefinition(designParticleName, designTotalEnergy, ffact);
-  if ((beamDefinition.particle == beamDefinition.beamParticleName) &&
-      (beamDefinition.beamEnergy == beamDefinition.E0))
-    {// copy definition
-      beamParticle = new BDSParticleDefinition(*designParticle);
-      beamDifferentFromDesignParticle = false;
+  // check only one of the following has been set - ie no conflicting information
+  std::set<std::string> keysDesign = {"energy", "momentum", "kineticEnergy"};
+  G4int nSetDesign = BDS::NBeamParametersSet(beamDefinition, keysDesign);
+  BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysDesign, nSetDesign);
+  std::set<std::string> keysParticle = {"E0", "P0", "Ek0"};
+  G4int nSetParticle = BDS::NBeamParametersSet(beamDefinition, keysParticle);
+
+  designParticle = BDS::ConstructParticleDefinition(G4String(beamDefinition.particle),
+                                                    G4double(beamDefinition.beamEnergy)*CLHEP::GeV,
+                                                    G4double(beamDefinition.beamKineticEnergy)*CLHEP::GeV,
+                                                    G4double(beamDefinition.beamMomentum)*CLHEP::GeV,
+                                                    ffact);
+
+  // ensure a default
+  std::string beamParticleName = beamDefinition.beamParticleName.empty() ? beamDefinition.particle : beamDefinition.beamParticleName;
+  beamDifferentFromDesignParticle = nSetParticle > 0 || beamParticleName != beamDefinition.particle;
+  if (nSetParticle > 0)
+    {// at least one specified so use all of the bema particle ones
+      BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysParticle, nSetParticle);
+      beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
+						      G4double(beamDefinition.E0)*CLHEP::GeV,
+						      G4double(beamDefinition.Ek0)*CLHEP::GeV,
+						      G4double(beamDefinition.P0)*CLHEP::GeV,
+						      ffact);
+    }
+  else if (beamDefinition.beamParticleName != beamDefinition.particle && !beamDefinition.beamParticleName.empty())
+    {// different particle name but no extra E0, Ek0 or P0 -> therefore use general beam defaults
+      beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
+						      G4double(beamDefinition.beamEnergy)*CLHEP::GeV,
+						      G4double(beamDefinition.beamKineticEnergy)*CLHEP::GeV,
+						      G4double(beamDefinition.beamMomentum)*CLHEP::GeV,
+						      ffact);
     }
   else
     {
-      G4String beamParticleName = G4String(beamDefinition.beamParticleName);
-      G4double beamTotalEnergy  = G4double(beamDefinition.E0)*CLHEP::GeV;
-      beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
-						      beamTotalEnergy,
-						      ffact);
-      beamDifferentFromDesignParticle = true;
+      beamParticle = new BDSParticleDefinition(*designParticle);
     }
 }
 
-BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
-							G4double totalEnergy,
-							G4double ffact)
+BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particleNameIn,
+                                                        G4double totalEnergyIn,
+                                                        G4double kineticEnergyIn,
+                                                        G4double momentumIn,
+                                                        G4double ffact)
 {
   BDSParticleDefinition* particleDefB = nullptr; // result
   G4String particleName = particleNameIn; // copy the name
@@ -205,7 +256,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
       mass += ionDef->NElectrons()*G4Electron::Definition()->GetPDGMass();
       G4double charge = ionDef->Charge(); // correct even if overridden
       particleDefB = new BDSParticleDefinition(particleName, mass, charge,
-					       totalEnergy, ffact, ionDef);
+					       totalEnergyIn, kineticEnergyIn, momentumIn, ffact, ionDef);
       // this particle definition takes ownership of the ion definition
     }
   else
@@ -235,7 +286,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(G4String particleNameIn,
 	  BDS::PrintDefinedParticles();
 	  throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found.");
 	}
-      particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
+      particleDefB = new BDSParticleDefinition(particleDef, totalEnergyIn, kineticEnergyIn, momentumIn, ffact);
     }
   return particleDefB;
 }
