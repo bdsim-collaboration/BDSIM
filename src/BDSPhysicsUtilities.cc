@@ -160,7 +160,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
   return result;
 }
 
-void BDS::ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
 					 G4double ffact,
 					 BDSParticleDefinition*& designParticle,
 					 BDSParticleDefinition*& beamParticle,

@@ -40,7 +40,7 @@ class G4Transportation;
 
 namespace GMAD
 {
-  class BeamBase;
+  class Beam;
 }
 
 namespace BDS
@@ -60,7 +60,7 @@ namespace BDS
   /// reference that will be updated with the allocated objects. The Boolean by reference
   /// argument is to tell whether they definitions (although unique objects) define the same
   /// particle.
-  void ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+  void ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
 				      G4double ffact,
 				      BDSParticleDefinition*& designParticle,
 				      BDSParticleDefinition*& beamParticle,
