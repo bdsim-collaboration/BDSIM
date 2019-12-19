@@ -174,10 +174,7 @@ void BDSParticleDefinition::CalculateMomentum()
   try
     {momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));}
   catch (const std::domain_error&) // sqrt(-ve)
-    {
-      G4cerr << __METHOD_NAME__ << "Total energy insufficient to include mass or particle" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Total energy insufficient to include mass or particle");}
 }
 
 void BDSParticleDefinition::CalculateRigidity(const G4double& ffact)
