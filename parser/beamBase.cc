@@ -26,7 +26,9 @@ BeamBase::BeamBase()
 {
   particle             = "";
   beamParticleName     = "";
-  beamEnergy           = 0.0;
+  beamEnergy           = 0;
+  beamKineticEnergy    = 0;
+  beamMomentum         = 0;
   distrType            = "reference";
   xDistrType           = "";
   yDistrType           = "";
@@ -46,6 +48,8 @@ BeamBase::BeamBase()
   Zp0 = 0.0;
   T0  = 0.0;
   E0  = 0.0;
+  Ek0 = 0.0;
+  P0  = 0.0;
   tilt   = 0.0;
   sigmaT = 0.0;
   sigmaE = 0.0;
