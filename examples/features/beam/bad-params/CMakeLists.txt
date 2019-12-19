@@ -14,6 +14,7 @@ simple_fail(bunch-ion-bad-az-float            "--file=ion-bad-az-float.gmad"    
 simple_fail(bunch-multiple-energy-momentum    "--file=multiple-energy-momentum.gmad" "")
 simple_fail(bunch-multiple-e0-ek0             "--file=multiple-energy-momentum-central.gmad" "")
 simple_fail(bunch-reference-bad-params        "--file=reference-bad.gmad"            "")
+simple_fail(bunch-bad-no-energy               "--file=no-energy.gmad"                "")
 simple_fail(bunch-ptc-bad-parms               "--file=ptc-bad.gmad"                  "")
 simple_fail(bunch-ring-bad-parms              "--file=ring-bad.gmad"                 "")
 simple_fail(bunch-sixtrack-bad-parms          "--file=sixtrack-bad.gmad"             "")
