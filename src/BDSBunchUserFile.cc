@@ -49,7 +49,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   particleMass(0),
   lineCounter(0),
   printedOutFirstTime(false),
-  anEnergyCoordinateInUse(false)
+  anEnergyCoordinateInUse(false),
+  changingParticleType(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -152,6 +153,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	}
       else if(token.substr(0,2)=="pt")
 	{
+	  changingParticleType = true;
 	  sd.name="pt";
 	  sd.unit=1;
 	  fields.push_back(sd);
@@ -385,8 +387,15 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
     }
 
   // coordinate checks
-  // If energy isn't specified, use the central beam energy (kinetic for Geant4)
-  if (!anEnergyCoordinateInUse)
+  if (anEnergyCoordinateInUse)
+    {
+      if (particleDefinition)
+        {
+          particleDefinition->SetEnergies(E, Ek, P);
+          E = particleDefinition->TotalEnergy();
+        }
+    }
+  else // If energy isn't specified, use the central beam energy
     {E = E0;}
   
   // compute zp from xp and yp if it hasn't been read from file
@@ -398,7 +407,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (!tdef)
     {t=0;}
   
-  if (updateParticleDefinition)
+  if (updateParticleDefinition || changingParticleType)
     {
       // type is an int so FindParticle(int) is used here
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -410,7 +419,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       // Requires that total energy 'E' already be set.
       delete particleDefinition;
       try
-        {particleDefinition = new BDSParticleDefinition(particleDef, E, Ek, P, ffact);} // update member
+        {
+          particleDefinition = new BDSParticleDefinition(particleDef, E, Ek, P, ffact);
+          E = particleDefinition->TotalEnergy();
+        }
       catch (const BDSException& e)
 	{// if we throw an exception the object is invalid for the delete on the next loop
 	  particleDefinition       = nullptr; // reset back to nullptr for safe delete
