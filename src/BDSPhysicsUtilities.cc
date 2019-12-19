@@ -176,7 +176,7 @@ void BDS::EnergyKineticEnergyMomentumOK(const GMAD::Beam&            beamDefinit
 {
   if (nSet > 1)
     {
-      G4cerr << "Beam> More than one parameter set for beam energy - should only be one" << G4endl;
+      G4cerr << "Beam> More than one parameter set for beam energy - there should only be one" << G4endl;
       for (const auto& k : keys)
         {G4cerr << std::setw(14) << std::left << k << ": " << std::setw(7) << std::right << beamDefinition.get_value(k) << " GeV" << G4endl;}
       throw BDSException(__METHOD_NAME__, "conflicting parameters set");
