@@ -48,7 +48,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   nlinesSkip(0),
   particleMass(0),
   lineCounter(0),
-  printedOutFirstTime(false)
+  printedOutFirstTime(false),
+  anEnergyCoordinateInUse(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -106,6 +107,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
     {
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
 	{
+	  anEnergyCoordinateInUse = true;
 	  G4String name,rest;
 	  if(token.substr(0,2)=="Ek")
 	    {//Kinetic energy (longer name).
@@ -384,7 +386,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 
   // coordinate checks
   // If energy isn't specified, use the central beam energy (kinetic for Geant4)
-  if (!BDS::IsFinite(E))
+  if (!anEnergyCoordinateInUse)
     {E = E0;}
   
   // compute zp from xp and yp if it hasn't been read from file

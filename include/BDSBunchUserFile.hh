@@ -76,6 +76,7 @@ private:
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
   G4bool   printedOutFirstTime; ///< Whether we've printed out opening the file the first time.
+  G4bool   anEnergyCoordinateInUse;///< Wether Et, Ek or P are in the columns.
 
   void ParseFileFormat(); ///< Parse the column tokens and units factors
   void OpenBunchFile();   ///< Open the file and check it's open.
