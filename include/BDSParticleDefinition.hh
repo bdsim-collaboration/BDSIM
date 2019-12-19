@@ -77,7 +77,6 @@ public:
   void SetEnergies(G4double totalEnergyIn,
 		   G4double kineticEnergyIn,
 		   G4double momentumIn);
-  
 
   /// Update the G4 particle definition member. Developer responsibility to ensure
   /// this matches the contents of the class.
@@ -95,6 +94,7 @@ public:
   inline G4double Gamma()         const {return gamma;}
   inline G4double Beta()          const {return beta;}
   inline G4double BRho()          const {return brho;}
+  inline G4double FFact()         const {return ffact;}
   inline G4bool   IsAnIon()       const {return ionDefinition != nullptr;}
   inline G4bool   NElectrons()    const {return ionDefinition != nullptr ? ionDefinition->NElectrons() : 0;}
   /// @}
@@ -110,7 +110,7 @@ private:
   void CalculateMomentum();
 
   /// Calculate and set rigidity based on charge and momentum.
-  void CalculateRigidity(const G4double& ffact);
+  void CalculateRigidity(const G4double& ffactIn);
 
   /// Calculate and set lorentz factors.
   void CalculateLorentzFactors();
@@ -127,6 +127,7 @@ private:
   G4double gamma;          ///< Relativistic gamma.
   G4double beta;           ///< Relativistic beta.
   G4double brho;           ///< Particle rigidity.
+  G4double ffact;          ///< Flip factor.
 };
 
 #endif
