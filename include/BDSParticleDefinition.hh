@@ -32,16 +32,18 @@ class G4ParticleDefinition;
  * Used to calculate momentum and kinetic energy and associate any other information
  * required along with a G4ParticleDefinition instance.
  *
+ * Bad construction can throw a BDSException.
+ *
  * @author Laurie Nevay
  */
 
 class BDSParticleDefinition
 {
 public:
-  /// Constructor requires G4 particle definition as well as user specified
-  /// total energy. From this the momentum and kinetic energy are calculated
-  /// and checked to be valid - ie sufficient total energy. The optional ion
-  /// definition may be supplied to override the charge of the ion. ffact is
+  /// Constructor requires G4 particle definition as well as one of total energy,
+  /// kineticEnergy or momentum. Only 1 of these can be non-zero (will throw
+  /// exception otherwise). The others are calculated using the mass. The optional
+  /// ion definition may be supplied to override the charge of the ion. ffact is
   /// typically 1 or -1 to flip the rigidity for convention.
   BDSParticleDefinition(G4ParticleDefinition* particleIn,
 			G4double              totalEnergyIn,
@@ -49,11 +51,12 @@ public:
 			G4double              momentumIn,
 			G4double              ffact,
 			BDSIonDefinition*     ionDefinitionIn = nullptr);
-
+  
   /// Alternative constructor for when we don't have access to the particle table
   /// information. G4ParticleDefinition can be updated later. Developer
   /// responsibility to ensure this matches the contents of this class.
-  /// ffact is typically 1 or -1 to flip the rigidity for convention.
+  /// ffact is typically 1 or -1 to flip the rigidity for convention. As before
+  /// only one of totalEnergy, kineticEnergy or momentum should be specified.
   BDSParticleDefinition(G4String          nameIn,
 			G4double          massIn,
 			G4double          chargeIn,
@@ -61,7 +64,7 @@ public:
 			G4double          kineticEnergyIn,
 			G4double          momentumIn,
 			G4double          ffact,
-		       	BDSIonDefinition* ionDefinitionIn = nullptr);
+			BDSIonDefinition* ionDefinitionIn = nullptr);
 
   /// Copy constructor specified as we have to copy the ionDefinition if it exists.
   BDSParticleDefinition(const BDSParticleDefinition& other);

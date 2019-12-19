@@ -152,7 +152,7 @@ std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
   G4int pre = 12;
   out << "Particle:       \""<< def.name << "\"" << G4endl;
   out << "Mass:            " << std::setprecision(pre) << def.mass/CLHEP::GeV              << " GeV" << G4endl;
-  out << "Charge:          " << def.charge                       << " e"   << G4endl;
+  out << "Charge:          " << def.charge             << " e" << G4endl;
   out << "Total Energy:    " << std::setprecision(pre) << def.totalEnergy/CLHEP::GeV       << " GeV" << G4endl;
   out << "Kinetic Energy:  " << std::setprecision(pre) << def.kineticEnergy/CLHEP::GeV     << " GeV" << G4endl;
   out << "Momentum:        " << std::setprecision(pre) << def.momentum/CLHEP::GeV          << " GeV" << G4endl;
