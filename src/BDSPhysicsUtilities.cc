@@ -323,7 +323,10 @@ void BDS::ConstructBeamParticleG4(G4String name)
   else if (name == "kaon0L")
     {G4KaonZeroLong::KaonZeroLongDefinition();}
   else
-    {G4cout << "Unknown common particle type \"" << name << "\"" << G4endl;}
+    {
+      G4cout << "Unknown common particle type \"" << name
+             << "\" - if it doesn't work, include all \"all_particles\" in the physicsList option." << G4endl;
+    }
 }
 
 void BDS::ConstructMinimumParticleSet()
