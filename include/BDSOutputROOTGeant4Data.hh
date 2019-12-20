@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #endif
 
+#include <cstdlib>  // for std::abs(int)
 #include <cmath>
 #include <map>
 #include <limits>

@@ -278,6 +278,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
   storeTrajectoryIons            = false;
+  trajectoryFilterLogicAND       = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;

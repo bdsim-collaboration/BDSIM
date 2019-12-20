@@ -201,6 +201,7 @@ namespace GMAD
     
     std::string geometryFile; ///< for Element, file for external geometry
     std::string material;
+    std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
     std::string windowmaterial; ///< for AWAKE
     std::string scintmaterial;  ///< for AWAKE
     std::string mountmaterial;  ///< for AWAKE spectrometer
@@ -245,7 +246,7 @@ namespace GMAD
     ///@}
     /// Set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+    void set_value(std::string property, T value);
  
     /// constructor
     Element();
@@ -272,7 +273,7 @@ namespace GMAD
         Published<Element>::set(this,property,value);
       }
       catch(const std::runtime_error&) {
-        std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
+        std::cerr << "Error: element> unknown property \"" << property << "\" with value " << value  << std::endl;
         exit(1);
       }
     }

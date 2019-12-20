@@ -70,6 +70,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
   beamPipePlacementTransform(G4Transform3D()),
   isThin(isThinIn)
 {
+  magnetOuterInfo->name += "_outer";
   horizontalWidth = magnetOuterInfoIn->horizontalWidth;
   containerRadius = 0.5*horizontalWidth;
   
@@ -151,7 +152,7 @@ void BDSMagnet::Build()
 
 void BDSMagnet::BuildBeampipe()
 {
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
 							    chordLength - 2*lengthSafety,
 							    beamPipeInfo);
 

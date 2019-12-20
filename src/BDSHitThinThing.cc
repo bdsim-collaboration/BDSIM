@@ -45,7 +45,7 @@ std::vector<const BDSTrajectoryPoint*> BDSHitThinThing::TrajectoryPointsFromHC(B
     {return result;}
   else
     {
-      for (G4int i = 0; i < hits->entries(); i++)
+      for (G4int i = 0; i < (G4int)hits->entries(); i++)
 	{result.push_back((*hits)[i]->hit);}
       return result;
     }

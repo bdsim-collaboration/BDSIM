@@ -386,6 +386,9 @@ void BDSOutput::CalculateHistogramParameters()
     }
   else
     {nbins = 1;} // can happen for generate primaries only
+
+  if (nbins == 0)
+    {nbins = 1;}
   
   sMaxHistograms = nbins * binWidth;
 }
@@ -500,10 +503,10 @@ void BDSOutput::CreateHistograms()
   G4int nBLMs = BDSBLMRegistry::Instance()->NBLMs();
   if (nBLMs > 0)
     {
-      G4int nBLMScorers = 1; // number of hits maps / quantities scored for the blms - TBC
+      G4int nBLMScorers = 1; // number of hits maps / quantities scored for the blms - TODO
       for (G4int i = 0; i < nBLMScorers; i++)
 	{
-	  G4String scorerName = "scorer"; // TBC
+	  G4String scorerName = "scorer"; // TODO
 	  G4String blmHistName = "BLM_" + scorerName;
 	  histIndices1D[blmHistName] = Create1DHistogram(blmHistName, blmHistName,nBLMs, 0, nBLMs);
 	}
@@ -550,10 +553,10 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
   // structures are based on this and cylinder output is no different from
   // plane output and indices will match.
 
-  // TBC - cylinder output will have all the same z and S, which is wrong!
+  // TODO - cylinder output will have all the same z and S, which is wrong!
   if (!(hits->entries() > 0))
     {return;}
-  for (int i = 0; i < hits->entries(); i++)
+  for (int i = 0; i < (int)hits->entries(); i++)
     {
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
@@ -811,7 +814,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 
 void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
 {
-  if (!storeApertureImpacts)
+  if (!storeApertureImpacts || !hits)
     {return;}
 
   G4int nPrimaryImpacts = 0;
