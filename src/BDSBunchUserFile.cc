@@ -394,6 +394,8 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
           particleDefinition->SetEnergies(E, Ek, P);
           E = particleDefinition->TotalEnergy();
         }
+      else // we must update this call of this function to ensure valid particle definition
+        {updateParticleDefinition = true;}
     }
   else // If energy isn't specified, use the central beam energy
     {E = E0;}
