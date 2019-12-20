@@ -2187,7 +2187,13 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
+| `Ek0`                            | Central kinetic energy of bunch distribution (GeV)    | \*       |
++----------------------------------+-------------------------------------------------------+----------+
+| `P0`                             | Central momentum of bunch distribution (GeV)          | \*       |
++----------------------------------+-------------------------------------------------------+----------+
 
+* \* Only one of :code:`E0`, :code:`Ek0` and :code:`P0` can be set. The others are calculated from
+  that value.
 * `S0` allows the beam to be translated to a certain point in the beam line, where the beam
   coordinates are with respect to the curvilinear frame at that point in the beam line.
 * `S0` and `Z0` cannot both be set - BDSIM will exit with a warning if this conflicting input is given.
@@ -2258,7 +2264,7 @@ gauss
 
 Uses the `gaussmatrix`_ beam generator but with simplified input parameters, as opposed to a complete
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for
-correlations between phase space coordinates, so
+correlations between phase space coordinates, so:
 
 .. math::
    \sigma_{11} & =  \sigma_x^2   \\
@@ -2270,6 +2276,14 @@ correlations between phase space coordinates, so
 
 * The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
 * All parameters from `reference`_ distribution are used as centroids.
+* Either :code:`sigmaE` or :code:`sigmaP` can be specified, but not both.
+
+In the case :code:`sigmaP` is specified, :code:`sigmaE` is calculated as follows:
+
+.. math::
+   \frac{dE}{E} = (\beta_{Lorentz}^2) \frac{dP}{P}
+
+for the beam particle.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2285,6 +2299,8 @@ correlations between phase space coordinates, so
 | `sigmaYp`        | Sigma of the vertical canonical momentum           |
 +------------------+----------------------------------------------------+
 | `sigmaE`         | Relative energy spread :math:`\sigma_{E}/E`        |
++------------------+----------------------------------------------------+
+| `sigmaP`         | Relative momentum spread :math:`\sigma_{P}/P`      |
 +------------------+----------------------------------------------------+
 | `sigmaT`         | Sigma of the temporal distribution [s]             |
 +------------------+----------------------------------------------------+
@@ -2326,7 +2342,8 @@ is calculated, using the following equations:
    \sigma_{66} & =  \sigma_{E}^2
 
 * All parameters from `reference`_ distribution are used as centroids.
-* Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
+* Longitudinal parameters :math:`\sigma_{E}`, :math:`\sigma_{P}` and :math:`\sigma_{T}`
+  can be used as defined in `gauss`_ .
 
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -2460,9 +2477,13 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
 | `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
-|                                  | distributed between $\pm$ `sigmaE`.                                |
+|                                  | distributed between :math:`\pm` `sigmaE`.                          |
++----------------------------------+--------------------------------------------------------------------+
+| `sigmaP`                         | Extent of energy spread in fractional momentum. Uniformly          |
+|                                  | distributed between :math:`\pm` `sigmaP`.                          |
 +----------------------------------+--------------------------------------------------------------------+
 
+* Only one of :code:`sigmaE` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
 
 .. _beam-halo-distribution:
