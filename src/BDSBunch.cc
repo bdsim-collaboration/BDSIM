@@ -95,17 +95,28 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   tilt   = beam.tilt * CLHEP::rad;
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
+  sigmaP = beam.sigmaP;
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
 
+  if (finiteSigmaE && BDS::IsFinite(sigmaP))
+    {throw BDSException(__METHOD_NAME__, "both \"sigmaE\" and \"sigmaP\" set in beam definition - conflicting information - set only 1.");}
+
   if ((particleDefinition->TotalEnergy() + E0) <= 0)
     {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
 
-  sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
-    {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
+    {
+      sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
+      G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;
+    }
+  else
+    {
+      sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
+      G4cout << __METHOD_NAME__ << "sigmaP = " << sigmaP << " -> sigmaE = " << sigmaE << G4endl;
+    }
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
