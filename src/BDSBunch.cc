@@ -100,8 +100,9 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
+  G4bool finiteSigmaP = BDS::IsFinite(sigmaP);
 
-  if (finiteSigmaE && BDS::IsFinite(sigmaP))
+  if (finiteSigmaE && finiteSigmaP)
     {throw BDSException(__METHOD_NAME__, "both \"sigmaE\" and \"sigmaP\" set in beam definition - conflicting information - set only 1.");}
 
   if (finiteSigmaE)
@@ -114,6 +115,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
       sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
       G4cout << __METHOD_NAME__ << "sigmaP = " << sigmaP << " -> sigmaE = " << sigmaE << G4endl;
     }
+  finiteSigmaE = finiteSigmaE || finiteSigmaP; // finiteSigmaE used to know whether any variation in other classes
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
