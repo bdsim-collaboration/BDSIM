@@ -424,15 +424,13 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
         {
           particleDefinition = new BDSParticleDefinition(particleDef, E, Ek, P, ffact);
           E = particleDefinition->TotalEnergy();
+          particleDefinitionHasBeenUpdated = true;
         }
       catch (const BDSException& e)
-	{// if we throw an exception the object is invalid for the delete on the next loop
-	  particleDefinition       = nullptr; // reset back to nullptr for safe delete
-	  updateParticleDefinition = true;    // flag we should update next time
-	  throw e;                            // rethrow
-	}
-      updateParticleDefinition = false; // reset flag back to false
-      particleDefinitionHasBeenUpdated = true;
+	    {// if we throw an exception the object is invalid for the delete on the next loop
+	      particleDefinition = nullptr; // reset back to nullptr for safe delete
+	      throw e;                      // rethrow
+        }
     }
 
   return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,xp,yp,zp,t,z,E,weight);
