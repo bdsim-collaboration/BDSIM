@@ -16,6 +16,7 @@ simple_fail(bunch-multiple-e0-ek0             "--file=multiple-energy-momentum-c
 simple_fail(bunch-reference-bad-params        "--file=reference-bad.gmad"            "")
 simple_fail(bunch-bad-no-beam                 "--file=no-beam.gmad"                  "")
 simple_fail(bunch-bad-no-energy               "--file=no-energy.gmad"                "")
+simple_fail(bunch-bad-sigmaE-and-sigmaP       "--file=sigmaE-and-sigmaP.gmad"        "")
 simple_fail(bunch-ptc-bad-parms               "--file=ptc-bad.gmad"                  "")
 simple_fail(bunch-ring-bad-parms              "--file=ring-bad.gmad"                 "")
 simple_fail(bunch-sixtrack-bad-parms          "--file=sixtrack-bad.gmad"             "")

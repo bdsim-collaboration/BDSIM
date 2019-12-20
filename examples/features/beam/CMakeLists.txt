@@ -15,6 +15,7 @@ simple_testing(bunch-exotic-particle-pdgid    "--file=exotic-particle-pdgid.gmad
 simple_testing(bunch-eshell                   "--file=eshell.gmad"                  "")
 simple_testing(bunch-eshell-width             "--file=eshell-width.gmad"            "")
 simple_testing(bunch-gauss                    "--file=gauss.gmad"                   "")
+simple_testing(bunch-gauss-sigmaP             "--file=gauss-sigmaP.gmad"            "")
 simple_testing(bunch-gauss-below-rest-mass    "--file=gauss-below-rest-mass.gmad"   "")
 simple_testing(bunch-gauss-with-s             "--file=gauss-with-s.gmad"            "")
 simple_testing(bunch-gaussmatrix              "--file=gaussmatrix.gmad"             "")
