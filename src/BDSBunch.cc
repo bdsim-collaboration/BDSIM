@@ -90,7 +90,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   T0     = beam.T0 * CLHEP::s;
   Xp0    = beam.Xp0 * CLHEP::rad;
   Yp0    = beam.Yp0 * CLHEP::rad;
-  E0     = beam.E0  * CLHEP::GeV;
+  E0     = particleDefinition->TotalEnergy(); // already calculated and set earlier depending on available parameters
+  P0     = particleDefinition->Momentum();
   tilt   = beam.tilt * CLHEP::rad;
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
@@ -102,9 +103,6 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   if ((particleDefinition->TotalEnergy() + E0) <= 0)
     {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
 
-  if (!BDS::IsFinite(E0))
-    {E0 = particleDefinition->TotalEnergy();}
-  P0 = particleDefinition->Momentum();
   sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
     {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
