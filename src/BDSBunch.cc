@@ -74,7 +74,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  G4Transform3D beamlineTransformIn,
 			  G4double beamlineSIn)
 {
-  particleDefinition = new BDSParticleDefinition(*beamParticle);
+  particleDefinition = new BDSParticleDefinition(*beamParticle); // copy it so this instance owns it
 
   // back the starting point up by length safety to avoid starting on a boundary
   G4ThreeVector unitZBeamline = G4ThreeVector(0,0,-1).transform(beamlineTransformIn.getRotation());
@@ -103,9 +103,6 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 
   if (finiteSigmaE && BDS::IsFinite(sigmaP))
     {throw BDSException(__METHOD_NAME__, "both \"sigmaE\" and \"sigmaP\" set in beam definition - conflicting information - set only 1.");}
-
-  if ((particleDefinition->TotalEnergy() + E0) <= 0)
-    {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
 
   if (finiteSigmaE)
     {
