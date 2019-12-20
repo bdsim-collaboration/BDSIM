@@ -53,6 +53,7 @@ BeamBase::BeamBase()
   tilt   = 0.0;
   sigmaT = 0.0;
   sigmaE = 0.0;
+  sigmaP = 0.0;
 
   betx    = 0.0;
   bety    = 0.0;

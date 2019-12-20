@@ -69,6 +69,7 @@ namespace GMAD
 
       /// for the gaussian, elliptic shell, ring distributions
       double sigmaE;
+      double sigmaP;
       
       ///@{ initial twiss parameters
       double betx, bety, alfx, alfy, emitx, emity, dispx, dispy, dispxp, dispyp;
