@@ -298,10 +298,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   G4bool zpdef = false; //keeps record whether zp has been read from file
   G4bool tdef  = false; //keeps record whether t has been read from file
 
-  // we only update the particle definition at the end so we continue to read
-  // the rest of the line bit by bit - could be improved and read the whole line
-  // at once for safety and robustness of moving on to the next event.
+  // flag whether we're going to update the particle definition
   G4bool updateParticleDefinition = false;
+
+  // read a whole line at a time for safety - no partially read lines
   std::string line;
   std::getline(InputBunchFile, line);
   lineCounter++;
@@ -413,10 +413,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
       if (!particleDef)
-	{throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
+	    {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
 	      
       // Wrap in our class that calculates momentum and kinetic energy.
-      // Requires that total energy 'E' already be set.
+      // Requires that one of E, Ek, P be non-zero (only one).
       delete particleDefinition;
       try
         {
