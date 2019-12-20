@@ -25,8 +25,7 @@ For each submodule:
 5. If the data format has changed increment the data version in output
    header structure.
    
-   * Check data version in analysis.
-   * Check data version in :code:`analysis/DataLoader.cc` initialiser list.
+   * Check data version in :code:`configuration/BDSVersionData.hh`.
    * Regenerate data samples in :code:`examples/features/data/`.
    * Regenerate data sample :code:`examples/features/beam/userfile-sample.root`.
 
