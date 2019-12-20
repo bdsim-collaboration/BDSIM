@@ -46,7 +46,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType rmatrixThinIn,
 				   BDSIntegratorType parallelTransporterIn,
 				   BDSIntegratorType undulatorIn,
-                   BDSIntegratorType cavityFringeIn):
+				   BDSIntegratorType cavityFringeIn):
   solenoid(solenoidIn),
   dipole(dipoleIn),
   dipoleQuadrupole(dipoleQuadrupoleIn),
@@ -278,7 +278,7 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::emap4d:
     case BDSFieldType::mokka:
       {
-	G4cout << __METHOD_NAME__ << "Warning - this is overriding the specified field maps integrator" << G4endl;
+	G4cout << __METHOD_NAME__ << "WARNING - this is overriding the specified field maps integrator" << G4endl;
 	return general;
 	break;
       }

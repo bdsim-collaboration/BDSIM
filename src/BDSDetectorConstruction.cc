@@ -56,6 +56,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
+#include "BDSWarning.hh"
 
 #include "parser/blmplacement.h"
 #include "parser/element.h"
@@ -263,17 +264,14 @@ void BDSDetectorConstruction::BuildBeamlines()
 	 << BDSParser::Instance()->GetBeamline().size() << G4endl;
   BDSAcceleratorComponentRegistry::Instance()->PrintNumberOfEachType();
 #endif
-  
-  if (mainBeamline.massWorld->empty())
-    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element");}
 
   // print warning if beam line is approximately circular but flag isn't specified
-  if (!circular && mainBeamline.massWorld->ElementAnglesSumToCircle())
+  if (!circular && mainBeamline.massWorld)
     {
-      G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
-             << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
+      if (mainBeamline.massWorld->ElementAnglesSumToCircle())
+	{BDS::Warning("Total sum of all element angles is approximately 2*pi but the circular option was not specified, this simulation may run indefinitely");}
     }
-
+  
   // register the beam line in the holder class for the full model
   acceleratorModel->RegisterBeamlineSetMain(mainBeamline);
 
@@ -288,7 +286,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 
       // determine offset in world for extra beam line
       const BDSBeamline* mbl = mainBeamline.massWorld;
-      // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
+      // TODO - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
       // but this could be any beam line in future if we find the right beam line to pass in.
       G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
       G4double      startS         = mbl->back()->GetSPositionEnd(); 
@@ -309,6 +307,9 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular)
 {
+  if (beamLine.empty()) // note a line always has a 'line' element first so an empty line will not be 'empty'
+    {return BDSBeamlineSet();}
+
   if (userComponentFactory)
     {userComponentFactory->SetDesignParticle(designParticle);}
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
@@ -325,9 +326,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model in Geant4" << G4endl;
 	  throw BDSException(__METHOD_NAME__, "check construction for circular machine");
 	}
-      if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
-        {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element for a circular machine.");}
-    }  
+    }
+
+  if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
+    {throw BDSException(__METHOD_NAME__, "BDSIM requires the sequence defined with the use command to have at least one element.");}
 
   for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
@@ -503,7 +505,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
 										nullptr,
-										0, 0, true, BDSSDType::energydepworldcontents);
+										0, 0,
+										nullptr,
+										true,
+										BDSSDType::energydepworldcontents);
       worldExtent = geom->GetExtent();
 
       BDSExtentGlobal worldExtentGlobal = BDSExtentGlobal(worldExtent, G4Transform3D());
@@ -760,6 +765,12 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
 	  throw BDSException(__METHOD_NAME__, "invalid element for placement");
 	}
+      // in this case we should use s for longitudinal offset - warn user if mistakenly using z
+      if (BDS::IsFinite(placement.z))
+	{
+	  G4String message = "placement \"" + placement.name + "\" is placed using a referenceElement but the z offset is\n non zero. Note, s should be used to offset the placement in this case and z will\n have no effect.";
+	  BDS::Warning(message);
+	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
       sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
       if (S)
@@ -917,10 +928,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
         {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
       BDSAcceleratorComponent* accCom = item.second;
       G4String accName = accCom->GetName();
-      auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
+      G4LogicalVolume* vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
       
       // Build vacuum bias object based on vacuum bias list in the component
       auto vacuumBiasList = accCom->GetBiasVacuumList();
+      if (!vacuumBiasList.empty() && !vacuumLV)
+	{BDS::Warning("biasVacuum set for component \"" + accName + "\" but there's no 'vacuum' volume for it and it can't be biased.\nRemove biasVacuum or name it with the namedVacuumVolumes parameter.");}
       if (!vacuumBiasList.empty() && vacuumLV)
         {
           auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);

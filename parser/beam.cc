@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 using namespace GMAD;
 
@@ -57,6 +58,40 @@ double Beam::get_value(std::string property_name) const
 	}
     }
   return value;
+}
+
+std::string Beam::get_value_string(std::string property_name) const
+{
+  try {
+      double value = get<double>(this, property_name);
+      std::ostringstream strs;
+      strs << value;
+      return strs.str();
+    }
+  catch (...) {
+      try {
+          int value = get<int>(this, property_name);
+          std::ostringstream strs;
+          strs << value;
+          return strs.str();
+        }
+      catch (...) {
+          try {
+              std::string value = get<std::string>(this, property_name);
+              return value;
+            }
+          catch (...) {
+              try {
+                  bool value = get<bool>(this, property_name);
+                  std::ostringstream strs;
+                  strs << std::boolalpha << value;
+                  return strs.str();
+                }
+              catch (...)
+                {std::cerr << "Error " << property_name << std::endl; exit(1);}
+            }
+        }
+    }
 }
 
 void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
@@ -241,4 +276,22 @@ void Beam::PublishMembers()
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 
   publish("offsetSampleMean",      &Beam::offsetSampleMean);
+
+  publish("eventGeneratorMinX",      &Beam::eventGeneratorMinX);
+  publish("eventGeneratorMaxX",      &Beam::eventGeneratorMaxX);
+  publish("eventGeneratorMinY",      &Beam::eventGeneratorMinY);
+  publish("eventGeneratorMaxY",      &Beam::eventGeneratorMaxY);
+  publish("eventGeneratorMinZ",      &Beam::eventGeneratorMinZ);
+  publish("eventGeneratorMaxZ",      &Beam::eventGeneratorMaxZ);
+  publish("eventGeneratorMinXp",     &Beam::eventGeneratorMinXp);
+  publish("eventGeneratorMaxXp",     &Beam::eventGeneratorMaxXp);
+  publish("eventGeneratorMinYp",     &Beam::eventGeneratorMinYp);
+  publish("eventGeneratorMaxYp",     &Beam::eventGeneratorMaxYp);
+  publish("eventGeneratorMinZp",     &Beam::eventGeneratorMinZp);
+  publish("eventGeneratorMaxZp",     &Beam::eventGeneratorMaxZp);
+  publish("eventGeneratorMinT",      &Beam::eventGeneratorMinT);
+  publish("eventGeneratorMaxT",      &Beam::eventGeneratorMinT);
+  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK);
+  publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK);
+  publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
 }

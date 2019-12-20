@@ -929,6 +929,9 @@ void BDSModularPhysicsList::QGSPBICHP()
 
 void BDSModularPhysicsList::Shielding()
 {
+#if G4VERSION_NUMBER > 1059
+  AllParticles();
+#endif
   if (!physicsActivated["shielding"])
     {
       constructors.push_back(new G4HadronPhysicsShielding());
@@ -1002,6 +1005,9 @@ void BDSModularPhysicsList::IonPHP()
 void BDSModularPhysicsList::DecayMuonicAtom()
 {
   ConstructAllLeptons();
+#if G4VERSION_NUMBER > 1059
+  ConstructAllIons();
+#endif
   if (!physicsActivated["decay_muonic_atom"])
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());

@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
+#include "BDSWarning.hh"
 
 BDSIM::BDSIM():
   ignoreSIGINT(false),
@@ -290,15 +291,19 @@ int BDSIM::Initialise()
     }
   /// Set user action classes
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, bdsBunch->ParticleDefinition()->IsAnIon()));
-
-#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
 #endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
+
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
+#endif
+  runManager->SetUserAction(new BDSRunAction(bdsOutput,
+					     bdsBunch,
+					     bdsBunch->ParticleDefinition()->IsAnIon(),
+					     eventAction,
+					     globalConstants->StoreTrajectorySamplerID()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
@@ -471,10 +476,7 @@ void BDSIM::RegisterUserComponent(G4String componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
-    {
-      G4cout << __METHOD_NAME__ << "warning - BDSIM kernel already initialised - "
-	     << "this component will not be available" << G4endl;
-    }
+    {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
   if (!userComponentFactory)
     {userComponentFactory = new BDSComponentFactoryUser();}
 

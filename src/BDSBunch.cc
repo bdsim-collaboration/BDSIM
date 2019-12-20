@@ -98,13 +98,11 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
-  
-  // calculate momentum - used by some bunch distributions
-  G4double mass = beamParticle->Mass();
-  mass2 = std::pow(mass,2);
-  if (E0 <= mass)
-    {throw BDSException(__METHOD_NAME__, "E0 (central total energy) " + std::to_string(E0) + " MeV lower than mass of particle! " + std::to_string(mass) + " MeV");}
-  P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
+
+  if ((particleDefinition->TotalEnergy() + E0) <= 0)
+    {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
+
+  P0 = particleDefinition->Momentum();
   sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
     {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
@@ -129,6 +127,9 @@ void BDSBunch::CheckParameters()
   if (sigmaT < 0)
     {throw BDSException(__METHOD_NAME__, "sigmaT " + std::to_string(sigmaT) + " < 0!");}
 }
+
+void BDSBunch::Initialise()
+{;}
 
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
 {

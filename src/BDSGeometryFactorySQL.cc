@@ -144,8 +144,9 @@ void BDSGeometryFactorySQL::CleanUpSQL()
 BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
 						  G4String fileName,
 						  std::map<G4String, G4Colour*>* colourMapping,
-						  G4double suggestedLength,
-						  G4double suggestedHorizontalWidth)
+						  G4double                 suggestedLength,
+						  G4double                 suggestedHorizontalWidth,
+						  std::vector<G4String>* /*vacuumBiasVolumeNames*/)
 {
   CleanUp();
   
@@ -367,7 +368,7 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
   AssignVariable(aSQLTable,k,"INHERITSTYLE",InheritStyle);
   AssignVariable(aSQLTable,k,"PARAMETERISATION",Parameterisation);
 
-  // TBC
+  // TODO
   //if(PARENTNAME=="")
   //  {PosZ-=Length()/2.0;} //Move position to beginning of element
 
