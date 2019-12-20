@@ -57,6 +57,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 								placement.geometryFile,
 								nullptr,
 								0, 0,
+								nullptr,
 								placement.sensitive);
 
       G4double length = geom->GetExtent().DZ();

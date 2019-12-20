@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 class BDSExtent;
 
@@ -158,6 +159,9 @@ namespace BDS
   G4int    GetParameterValueInt(G4String spec, G4String name);
   ///@}
 
+  /// Split a string on whitespace and return a vector of these 'words'.
+  std::vector<G4String> GetWordsFromString(const G4String& input);
+  
   /// Rotate a two vector in polar coordinates by an angle.
   G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
 

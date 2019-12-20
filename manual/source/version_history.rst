@@ -35,10 +35,13 @@ Expected Changes To Results
 * The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
   which will vastly reduce the data size. See output changes below for further details.
 * Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
+* Reference coordinates `X0`, `Y0`, `Z0`, `Xp`, `Yp` are now added to the userfile distribution
+  coordinates if specified. (`Zp` was already added).
 
 New Features
 ------------
 
+* BDSIM no longer requires a beam line to be built! You can simply make a placement or even an empty world.
 * Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
 * New units: `twopi`, `halfpi` and `PeV`.
 * New bunch distribution `sphere` to generate random directions at a given point.
@@ -226,12 +229,14 @@ General
 * Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
   where the parameters result in this. This makes therefore a marginally simpler model and avoids
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
-* Revised calcualtion of octagonal beam pipe points such that each side is uniformly thick exactly
+* Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
   equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
   
 Bug Fixes
 ---------
 
+* Fixed formula in manual for standard error on the mean calculation. The implementation in code
+  was correct and has not changed.
 * Fix thick multipole element where the field was 1M times too strong because of the omission of units.
 * Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
   updated when multiple different particles were used for a `userfile` distribution.
@@ -317,6 +322,15 @@ Bug Fixes
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
 * Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
   required for the magnet poles to not hit the beam pipe.
+* Fixed naming bug in magnets where the beam pipe container, magnet outer container and overall container
+  logical volumes would have the same name. This would cause problems when exporting BDSIM geometry to
+  GDML and then trying to reload it somewhere. Each are now named uniquely.
+* Fix potential compilation problem with some compilers for "ambiguous overload of abs".
+* Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
+* Fix print out for biasing that would incorrectly say "all particles" for biasing primary particles only.
+  The message has also changed so as not to be confused with particle species.
+* Fix the extension of any list type parameters in beam line elements when they're extended or redefined -
+  such as updating the `knl` parameter of a multipole. Previously the parser would not understand this syntax.
 
 Output Changes
 --------------

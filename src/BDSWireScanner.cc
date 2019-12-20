@@ -54,17 +54,10 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   wireOffset(wireOffsetIn)
 {
   if (wireDiameter <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wireDiameter for \"" << name
-	     << "\" is not defined or must be greater than 0" <<  G4endl;
-      exit(1);
-    }
-
+    {throw BDSException(__METHOD_NAME__, "Error: wireDiameter for \"" + name + "\" is not defined or must be greater than 0");}
+  
   if (wireLength <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name << "\" must be > 0." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Error: wire for \"" + name + "\" must be > 0.");}
 
   // check whether the beam pipe will fit transversely (ignores presumably very small
   // wire diameter). work out end points off wire including length and offset in x,y.

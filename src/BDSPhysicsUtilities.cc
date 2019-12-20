@@ -124,7 +124,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
 	    {
 	      G4cout << "\nWARNING - adding cuts and limits physics process to Geant4 reference physics list" << G4endl;
 	      G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
-	      G4cout << "This can be turned off by setting option, g4PhysicsUsesBDSIMCutsAndLimits=0;\n" << G4endl;
+	      G4cout << "This can be turned off by setting option, g4PhysicsUseBDSIMCutsAndLimits=0;\n" << G4endl;
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
 	}
@@ -304,7 +304,7 @@ void BDS::PrintPrimaryParticleProcesses(const G4String& primaryParticleName)
       return;
     }
   auto pl = particle->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
+  for (G4int i = 0; i < (G4int)pl->length(); i++)
     {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
@@ -376,22 +376,34 @@ void BDS::SetRangeCuts(G4VModularPhysicsList* physicsList)
 
   // overwrite when explicitly set in options
   if (globals->DefaultRangeCutsSet())
-    {physicsList->SetDefaultCutValue(globals->DefaultRangeCut());}
+    {
+      G4cout << __METHOD_NAME__ << "Default production range cut  " << physicsList->GetDefaultCutValue()  << " mm" << G4endl;
+      physicsList->SetDefaultCutValue(globals->DefaultRangeCut());
+    }
   if (globals->ProdCutPhotonsSet())
-    {physicsList->SetCutValue(globals->ProdCutPhotons(),  "gamma");}
+    {
+      G4cout << __METHOD_NAME__ << "Photon production range cut   " << physicsList->GetCutValue("gamma")  << " mm" << G4endl;
+      physicsList->SetCutValue(globals->ProdCutPhotons(),  "gamma");
+    }
   if (globals->ProdCutElectronsSet())
-    {physicsList->SetCutValue(globals->ProdCutElectrons(),"e-");}
+    {
+      G4cout << __METHOD_NAME__ << "Electron production range cut " << physicsList->GetCutValue("e-")     << " mm" << G4endl;
+      physicsList->SetCutValue(globals->ProdCutElectrons(),"e-");
+    }
   if (globals->ProdCutPositronsSet())
-    {physicsList->SetCutValue(globals->ProdCutPositrons(),"e+");}
+    {
+      G4cout << __METHOD_NAME__ << "Positron production range cut " << physicsList->GetCutValue("e+")     << " mm" << G4endl;
+      physicsList->SetCutValue(globals->ProdCutPositrons(),"e+");
+    }
   if (globals->ProdCutProtonsSet())
-    {physicsList->SetCutValue(globals->ProdCutProtons(),  "proton");}
+    {
+      G4cout << __METHOD_NAME__ << "Proton production range cut   " << physicsList->GetCutValue("proton") << " mm" << G4endl;
+      physicsList->SetCutValue(globals->ProdCutProtons(),  "proton");
+    }
 
+  // inspection of the physics list doesn't work at this point and seems to always return 0 apart from the default
   G4cout << __METHOD_NAME__ << "Range cuts from inspection of the physics list" << G4endl;
   G4cout << __METHOD_NAME__ << "Default production range cut  " << physicsList->GetDefaultCutValue()  << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Photon production range cut   " << physicsList->GetCutValue("gamma")  << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Electron production range cut " << physicsList->GetCutValue("e-")     << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Positron production range cut " << physicsList->GetCutValue("e+")     << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Proton production range cut   " << physicsList->GetCutValue("proton") << " mm" << G4endl;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "List of all constructed particles by physics lists" << G4endl;
