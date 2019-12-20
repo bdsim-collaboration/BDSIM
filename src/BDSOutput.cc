@@ -614,7 +614,7 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
   // TODO - cylinder output will have all the same z and S, which is wrong!
   if (!(hits->entries() > 0))
     {return;}
-  for (int i = 0; i < hits->entries(); i++)
+  for (int i = 0; i < (int)hits->entries(); i++)
     {
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;

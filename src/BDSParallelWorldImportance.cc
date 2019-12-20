@@ -113,7 +113,7 @@ void BDSParallelWorldImportance::BuildWorld()
   G4LogicalVolume* container = geom->GetContainerLogicalVolume();
 
   // Set motherLV for all daughters to be world LV, and add geometry cell
-  for (G4int i = 0; i < container->GetNoDaughters(); i++)
+  for (G4int i = 0; i < (G4int)container->GetNoDaughters(); i++)
     {
       G4VPhysicalVolume* daughter = container->GetDaughter(i);
       daughter->SetMotherLogical(worldLV);

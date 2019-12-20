@@ -369,6 +369,9 @@ A few points about rbends:
 10) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
     we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an rbend with a
     positive bending angle will produce a vertical bend where the beam is bent downwards.
+11) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
+    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
+    furthest from the centre of curvature.
 
 Examples: ::
 
@@ -498,6 +501,9 @@ A few points about sbends:
 9) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
    positive bending angle will produce a vertical bend where the beam is bent downwards.
+10) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
+    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
+    furthest from the centre of curvature.
 
 Examples: ::
 
@@ -1474,8 +1480,8 @@ and make a placement at the appropriate point in global coordinates.
 | `tilt`               | Tilt of the whole component.     | 0            | No            |
 +----------------------+----------------------------------+--------------+---------------+
 | `namedVacuumVolumes` | String with space separated list | ""           | No            |
-|                      | of logical volume names in the   |              |               |
-|                      | geometry file that should be     |              |               |
+|                      | of **logical** volume names in   |              |               |
+|                      | the geometry file that should be |              |               |
 |                      | considered 'vacuum' for biasing  |              |               |
 |                      | purposes.                        |              |               |
 +----------------------+----------------------------------+--------------+---------------+
@@ -1667,7 +1673,7 @@ beam line is produced by declaring a placement. The placement definition (see
 | sequence               | Name of the sequence (with `line`) to use for the secondary   |
 |                        | beam line                                                     |
 +------------------------+---------------------------------------------------------------+
-| referemeceElement      | The element in the sequence with respect to which the beam    |
+| referenceElement       | The element in the sequence with respect to which the beam    |
 |                        | line will be placed                                           |
 +------------------------+---------------------------------------------------------------+
 | referenceElementNumber | The *i* th instance of the element in the sequence (zero      |
