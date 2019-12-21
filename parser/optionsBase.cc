@@ -18,9 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "optionsBase.h"
 
-// include git commit version.
-#include "version.h"
-
 #include <iostream>
 
 using namespace GMAD;
