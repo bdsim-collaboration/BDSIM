@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSTrajectoryFilter.hh"       // no G4 types and for size of filters
-#include "version.h"
+#include "BDSVersion.hh"
 
 #include "G4Version.hh"
 
@@ -42,7 +42,7 @@ BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
 
 void BDSOutputROOTEventHeader::FlushLocal()
 {
-  bdsimVersion  = std::string(GIT_VERSION);
+  bdsimVersion  = std::string(BDSIM_GIT_VERSION);
   geant4Version = G4Version;
   rootVersion   = std::string(gROOT->GetVersion());
   clhepVersion  = CLHEP::Version::String();
