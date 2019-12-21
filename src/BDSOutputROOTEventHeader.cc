@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSTrajectoryFilter.hh"       // no G4 types and for size of filters
-#include "version.h"
 #include "BDSVersion.hh"
 #include "BDSVersionData.hh"
 
