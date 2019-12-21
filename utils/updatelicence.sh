@@ -51,7 +51,7 @@ function add_copyright {
 
 echo "Inserting "$LICENCEFILE" into .cc and .hh files."
 #for file in $(find . -name "*.h" -or -name "*.cc"); do
-for file in $(find . -not -path "*src-external*" -name "*.h" -or -name "*.cc" -or -name "*.hh"); do
+for file in $(find . -not -path "*src-external*" -name "*.h" -or -name "*.cc" -or -name "*.hh" -or -name "*.y" -or -name "*.l"); do
     echo "Working on file $file"
     if grep -q 'Copyright' "$file"; then
         remove_copyright "$file"
