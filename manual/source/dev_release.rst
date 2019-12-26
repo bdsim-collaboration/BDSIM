@@ -46,3 +46,11 @@ For each submodule:
 11. Merge release candidate branch into master then delete.
 12. Check all tests complete locally given merge before pushing.
 13. Tag master branch for version number.
+
+
+Change Of Year or Licence
+*************************
+
+1. Update LICENCE.txt in bdsim root directory.
+2. From BDSIM root directory, :code:`source utils/updatelicence.sh`
+3. Manually update year in `manual/source/conf.py.in`
