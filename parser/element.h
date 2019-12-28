@@ -101,6 +101,7 @@ namespace GMAD
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
+    std::list<double> aperture;
     double aper1;
     double aper2;
     double aper3;

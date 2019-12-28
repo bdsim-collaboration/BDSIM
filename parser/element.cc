@@ -105,11 +105,10 @@ void Element::PublishMembers()
   publish("rmat44",     &Element::rmat44);
 
   publish("beampipeThickness",&Element::beampipeThickness);
+  publish("aperture",         &Element::aperture);
   publish("aper1",            &Element::aper1);
   publish("aper",             &Element::aper1);
   alternativeNames["aper"] = "aper1";
-  publish("aperture",         &Element::aper1);
-  alternativeNames["aperture"] = "aper1";
   publish("aperture1",        &Element::aper1);
   alternativeNames["aperture1"] = "aper1";
   publish("beampipeRadius",   &Element::aper1);

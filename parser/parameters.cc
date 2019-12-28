@@ -85,6 +85,7 @@ Parameters::Parameters()
   setMap["rmat44"]     = false;
 
   setMap["beampipeThickness"]  = false;
+  setMap["aperture"]           = false;
   setMap["aper1"]              = false;
   setMap["aper2"]              = false;
   setMap["aper3"]              = false;
