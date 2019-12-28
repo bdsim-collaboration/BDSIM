@@ -43,7 +43,7 @@ BDSApertureFactory::BDSApertureFactory():
 BDSApertureFactory::~BDSApertureFactory()
 {;}
 
-G4VSolid* CreateAperture(G4String name,
+G4VSolid* BDSApertureFactory::CreateAperture(G4String name,
 			 G4double length,
 			 BDSApertureInfo* shapeIn,
 			 BDSApertureInfo* shapeOut,
@@ -57,7 +57,7 @@ G4VSolid* CreateAperture(G4String name,
   productName        = name;
   productLength      = length;
   productShapeIn     = shapeIn;
-  productSahpeOut    = shapeOut;
+  productShapeOut    = shapeOut;
   productLengthExtra = lengthExtraForBoolean;
   productNormalIn    = G4ThreeVector();
   productNormalOut   = G4ThreeVector();
@@ -124,7 +124,7 @@ G4VSolid* BDSApertureFactory::CreateCircular() const
   if (!angledFaces)
     {
       G4VSolid* product = new G4Tubs(productName,
-				     0
+				     0,
 				     productShapeIn->aper1,
 				     0.5 * productLength + productLengthExtra,
 				     0,
@@ -151,7 +151,7 @@ G4VSolid* BDSApertureFactory::CreateRectangular() const
     {
       G4VSolid* product = new G4Box(productName,
 				    productShapeIn->aper1,
-				    prodcutShapeIn->aper2,
+				    productShapeIn->aper2,
 				    0.5 * productLength + productLengthExtra);
       return product;
     }

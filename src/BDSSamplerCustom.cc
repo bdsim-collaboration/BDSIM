@@ -46,7 +46,6 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
   switch (shape.apertureType.underlying())
     {
     case BDSApertureType::circular:
-    case BDSApertureType::circularvacuum:
       {
 	containerSolid = new G4Tubs(name + "_solid",
 				    0,

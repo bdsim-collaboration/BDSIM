@@ -104,8 +104,6 @@ void BDSApertureInfo::CheckApertureInfo(const G4String& nameForError)
 	  {InfoOKForRectangular(); break;}
 	case BDSApertureType::lhc:
 	  {InfoOKForLHC();         break;}
-	case BDSApertureType::lhcdetailed:
-	  {InfoOKForLHCDetailed(); break;}
 	case BDSApertureType::rectellipse:
 	  {InfoOKForRectEllipse(); break;}
 	case BDSApertureType::racetrack:
@@ -132,7 +130,6 @@ BDSExtent BDSApertureInfo::Extent() const
   switch (apertureType.underlying())
     {
     case BDSApertureType::circular:
-    case BDSApertureType::circularvacuum:
       {
 	extX = aper1;
 	extY = aper1;
@@ -147,7 +144,7 @@ BDSExtent BDSApertureInfo::Extent() const
 	break;
       }
     case BDSApertureType::lhc:
-    case BDSApertureType::lhcdetailed:
+      //case BDSApertureType::lhcdetailed:
     case BDSApertureType::rectellipse:
       {
 	extX = std::min(aper1, aper3);
