@@ -19,7 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSAPERTUREFACTORY_H
 #define BDSAPERTUREFACTORY_H
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
+#include "G4Types.hh"
 
 class BDSApertureInfo;
 class G4VSolid;
