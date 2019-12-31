@@ -25,23 +25,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
-BDSAperture::BDSAperture(BDSApertureType apertureTypeIn,
-			 G4double        offsetXIn,
-			 G4double        offsetYIn,
-			 G4double        tiltIn):
+BDSAperture::BDSAperture(BDSApertureType apertureTypeIn):
   apertureType(apertureTypeIn),
-  offsetX(offsetXIn),
-  offsetY(offsetYIn),
-  tilt(tiltIn)
+  tiltOffset(BDSTiltOffset())
+{;}
+
+BDSAperture::BDSAperture(BDSApertureType      apertureTypeIn,
+			 const BDSTiltOffset& tiltOffsetIn):
+  apertureType(apertureTypeIn),
+  tiltOffset(tiltOffsetIn)
 {;}
 
 void BDSAperture::SetTiltOffset(G4double offsetXIn,
 				G4double offsetYIn,
 				G4double tiltIn)
 {
-  offsetX = offsetXIn;
-  offsetY = offsetYIn;
-  tilt    = tiltIn;
+  tiltOffset = BDSTiltOffset(offsetXIn, offsetYIn, tiltIn);
 }
 
 void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
@@ -57,11 +56,4 @@ void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
     {throw BDSException("","\"aper3\" not set, but required to be.");}
   if (aper4Set && !BDS::IsFinite(aper4))
     {throw BDSException("","\"aper4\" not set, but required to be.");}
-}
-
-BDSExtent BDSAperture::ExtentOffsetTilt(const BDSExtent& simpleExtent) const
-{
-  BDSTiltOffset xyt = BDSTiltOffset(offsetX, offsetY, tilt);
-  BDSExtent transformed = simpleExtent.TiltOffset(&xyt);
-  return transformed;
 }

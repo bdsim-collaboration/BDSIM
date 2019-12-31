@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSAPERTURE_H
 
 #include "BDSApertureType.hh"
+#include "BDSExtent.hh"
+#include "BDSTiltOffset.hh"
 
 #include "globals.hh"
 
@@ -34,10 +36,9 @@ class BDSExtent;
 class BDSAperture
 {
 public:
-  explicit BDSAperture(BDSApertureType apertureTypeIn,
-		       G4double        offsetXIn = 0,
-		       G4double        offsetYIn = 0,
-		       G4double        tiltIn    = 0);
+  explicit BDSAperture(BDSApertureType apertureTypeIn);
+  BDSAperture(BDSApertureType apertureTypeIn,
+	      const BDSTiltOffset& tiltOffsetIn);
   virtual ~BDSAperture(){;}
 
   void SetTiltOffset(G4double offsetXIn,
@@ -45,9 +46,7 @@ public:
 		     G4double tiltIn);
   
   BDSApertureType apertureType;
-  G4double        offsetX;
-  G4double        offsetY;
-  G4double        tilt;
+  BDSTiltOffset   tiltOffset;
 
   friend bool operator == (const BDSAperture& lhs, const BDSAperture& rhs) {return (lhs.apertureType == rhs.apertureType) && lhs.Equals(&rhs);}
   friend bool operator != (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs == rhs);}
@@ -70,7 +69,7 @@ public:
 protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.
-  BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const;
+  BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}
 };
 
 #endif
