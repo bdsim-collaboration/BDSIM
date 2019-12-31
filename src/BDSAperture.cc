@@ -36,13 +36,6 @@ BDSAperture::BDSAperture(BDSApertureType      apertureTypeIn,
   tiltOffset(tiltOffsetIn)
 {;}
 
-void BDSAperture::SetTiltOffset(G4double offsetXIn,
-				G4double offsetYIn,
-				G4double tiltIn)
-{
-  tiltOffset = BDSTiltOffset(offsetXIn, offsetYIn, tiltIn);
-}
-
 void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
 					     G4double aper2, G4bool aper2Set,
 					     G4double aper3, G4bool aper3Set,

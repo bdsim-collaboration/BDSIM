@@ -41,9 +41,7 @@ public:
 	      const BDSTiltOffset& tiltOffsetIn);
   virtual ~BDSAperture(){;}
 
-  void SetTiltOffset(G4double offsetXIn,
-		     G4double offsetYIn,
-		     G4double tiltIn);
+  inline void SetTiltOffset(const BDSTiltOffset& tiltOffsetIn) {tiltOffset = tiltOffsetIn;}
   
   BDSApertureType apertureType;
   BDSTiltOffset   tiltOffset;
@@ -69,7 +67,7 @@ public:
 protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.
-  BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}
+  inline BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}
 };
 
 #endif
