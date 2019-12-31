@@ -43,13 +43,13 @@ BDSApertureFactory::BDSApertureFactory():
 BDSApertureFactory::~BDSApertureFactory()
 {;}
 
-G4VSolid* BDSApertureFactory::CreateAperture(G4String name,
-			 G4double length,
-			 BDSApertureInfo* shapeIn,
-			 BDSApertureInfo* shapeOut,
-			 G4double lengthExtraForBoolean)
+G4VSolid* BDSApertureFactory::CreateAperture(G4String         name,
+					     G4double         length,
+					     BDSApertureInfo* shapeIn,
+					     BDSApertureInfo* shapeOut,
+					     G4double         lengthExtraForBoolean)
 {
-  G4bool tapered = shapeOut; // ie valid pointer for shape out.
+  G4bool tapered   = shapeOut; // ie valid pointer for shape out.
   G4bool sameShape = true;
   if (shapeOut)
     {sameShape = shapeIn->apertureType == shapeOut->apertureType;}
