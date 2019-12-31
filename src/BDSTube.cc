@@ -63,13 +63,13 @@ BDSTube::BDSTube(const G4String& nameIn,
 							G4TV(sp[j].x(), sp[j].y(),  l),
 							G4TV(sp[i].x(), sp[i].y(),  l),
 							G4FacetVertexType::ABSOLUTE);
-      G4TriangularFacet* facetF = new G4TriangularFacet(G4TV(0,         0,         za),
-							G4TV(sp[j].x(), sp[j].y(), za),
-							G4TV(sp[i].x(), sp[i].y(), za),
+      G4TriangularFacet* facetF = new G4TriangularFacet(G4TV(0,         0,         -l),
+							G4TV(sp[j].x(), sp[j].y(), -l),
+							G4TV(sp[i].x(), sp[i].y(), -l),
 							G4FacetVertexType::ABSOLUTE);
-      G4TriangularFacet* facetB = new G4TriangularFacet(G4TV(0,         0,         zb),
-							G4TV(fp[i].x(), fp[i].y(), zb),
-							G4TV(fp[j].x(), fp[j].y(), zb),
+      G4TriangularFacet* facetB = new G4TriangularFacet(G4TV(0,         0,          l),
+							G4TV(sp[i].x(), sp[i].y(),  l),
+							G4TV(sp[j].x(), sp[j].y(),  l),
 							G4FacetVertexType::ABSOLUTE);
       AddFacet((G4VFacet*)facet1);
       AddFacet((G4VFacet*)facet2);
