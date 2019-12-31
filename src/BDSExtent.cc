@@ -105,7 +105,7 @@ BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
 {
   if (!tiltOffset)
     {return BDSExtent(*this);}
-  BDSExtent tilted = Tilted(tiltOffset->GetTilt());
+  BDSExtent tilted = Tilted(tiltOffset->Tilt());
   BDSExtent offset = tilted.Translate(tiltOffset->GetOffset());
   return offset;
 }

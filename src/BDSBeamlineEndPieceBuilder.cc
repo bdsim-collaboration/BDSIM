@@ -96,7 +96,7 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();
 		      if (accComponentTO) // could be nullptr
-			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
+			{extPipe = extPipe.Tilted(accComponentTO->Tilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing             = false;
@@ -204,7 +204,7 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();
 		      if (accComponentTO) // could be nullptr
-			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
+			{extPipe = extPipe.Tilted(accComponentTO->Tilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing            = false;

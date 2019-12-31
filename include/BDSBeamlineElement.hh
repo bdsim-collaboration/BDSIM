@@ -134,7 +134,7 @@ public:
   /// @}
   
   /// Convenience accessor.
-  inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
+  inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->Tilt() : 0.0;}
   
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);

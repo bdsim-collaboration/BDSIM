@@ -46,13 +46,13 @@ public:
 		G4double yOffset,
 		G4double tiltIn);
 
-  ///@{ Accessor
-  inline G4double GetXOffset() const {return dx;}
-  inline G4double GetYOffset() const {return dy;}
-  inline G4double GetTilt()    const {return tilt;}
+  ///@{ Accessor.
+  inline G4double OffsetX() const {return dx;}
+  inline G4double OffsetY() const {return dy;}
+  inline G4double Tilt()    const {return tilt;}
   ///@}
 
-  /// More advance accessor for offset - only in x,y.
+  /// More advanced accessor for offset - only in x,y.
   G4ThreeVector GetOffset() const {return G4ThreeVector(dx, dy, 0);}
 
   /// Get a transform to represent this tilt offset.

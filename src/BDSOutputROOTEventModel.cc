@@ -254,9 +254,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
     BDSTiltOffset* to = (*i)->GetTiltOffset();
     if (to)
       {
-	tilt.push_back((float)to->GetTilt() / CLHEP::rad);
-	offsetX.push_back((float)to->GetXOffset() / CLHEP::m);
-	offsetY.push_back((float)to->GetYOffset() / CLHEP::m);
+	tilt.push_back((float) to->Tilt() / CLHEP::rad);
+	offsetX.push_back((float) to->OffsetX() / CLHEP::m);
+	offsetY.push_back((float) to->OffsetY() / CLHEP::m);
       }
     else
       {
