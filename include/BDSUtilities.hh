@@ -119,6 +119,10 @@ namespace BDS
   /// Test whether a number is non-zero - ie abs(number) > minimum number
   G4bool NonZero(G4double value);
 
+  /// Test whether two doubles are the same w.r.t. machine precision for
+  /// that specific value.  Like a safe double == double.
+  G4bool DoublesAreEqual(G4double v1, G4double v2);
+
   /// Test if a number is above a certain tolerance for tracking strength
   /// purposes. Currently at 1e-50 as potential can be small and squared. Uses
   /// IsFinite() with 1e-50 as tolerance.
