@@ -59,3 +59,11 @@ G4bool BDSTiltOffset::HasFiniteTilt() const
 {
   return BDS::IsFinite(tilt);
 }
+
+bool operator== (const BDSTiltOffset& lhs, const BDSTiltOffset& rhs)
+{
+  // remember, double == double is wrong
+  bool sameTilt   = BDS::DoublesAreEqual(lhs.tilt, rhs.tilt);
+  bool sameOffset = BDS::DoublesAreEqual(lhs.dx, rhs.dx) && BDS::DoublesAreEqual(lhs.dy, rhs.dy);
+  return sameTilt && sameOffset;
+}

@@ -65,6 +65,9 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSTiltOffset const &to);
+
+  /// Comparison.
+  friend bool operator== (const BDSTiltOffset& lhs, const BDSTiltOffset& rhs);
   
 private:
   /// Horizontal displacement (mm) - note right handed coordinate system
