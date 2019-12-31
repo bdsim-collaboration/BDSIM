@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+class BDSExtent;
+
 /**
  * @brief A definition of an aperture shape.
  *
@@ -54,14 +56,21 @@ public:
   friend bool operator <= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs > rhs);}
   friend bool operator >= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs < rhs);}
 
-  virtual bool Equals(const BDSAperture* other) const = 0;
-  virtual bool LessThan(const BDSAperture* other) const = 0;
-  virtual void CheckInfoOK() const = 0;
+  virtual G4bool    Equals(const BDSAperture* other)   const = 0;
+  virtual G4bool    LessThan(const BDSAperture* other) const = 0;
+  virtual void      CheckInfoOK()                      const = 0;
+  virtual G4double  RadiusToEncompass()                const = 0; // was IndicativeRadius RCWD
+  virtual BDSExtent Extent()                           const = 0;
 
   void CheckRequiredParametersSet(G4double aper1,     G4bool aper1Set,
 				  G4double aper2 = 0, G4bool aper2Set = false,
 				  G4double aper3 = 0, G4bool aper3Set = false,
-				  G4double aper4 = 0, G4bool aper4Set = false);
+				  G4double aper4 = 0, G4bool aper4Set = false) const;
+
+protected:
+  /// Apply the members offsetX, offsetY and tilt to an extent. Utility
+  /// function for Extent() implemented in derived classes.
+  BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const;
 };
 
 #endif

@@ -17,7 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
+#include "BDSApertureType.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Types.hh"
@@ -44,7 +47,7 @@ void BDSAperture::SetTiltOffset(G4double offsetXIn,
 void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
 					     G4double aper2, G4bool aper2Set,
 					     G4double aper3, G4bool aper3Set,
-					     G4double aper4, G4bool aper4Set)
+					     G4double aper4, G4bool aper4Set) const
 {
   if (aper1Set && !BDS::IsFinite(aper1))
     {throw BDSException("","\"aper1\" not set, but required to be.");}
@@ -54,4 +57,11 @@ void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
     {throw BDSException("","\"aper3\" not set, but required to be.");}
   if (aper4Set && !BDS::IsFinite(aper4))
     {throw BDSException("","\"aper4\" not set, but required to be.");}
+}
+
+BDSExtent BDSAperture::ExtentOffsetTilt(const BDSExtent& simpleExtent) const
+{
+  BDSTiltOffset xyt = BDSTiltOffset(offsetX, offsetY, tilt);
+  BDSExtent transformed = simpleExtent.TiltOffset(&xyt);
+  return transformed;
 }
