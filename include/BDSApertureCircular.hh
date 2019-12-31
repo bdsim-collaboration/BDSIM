@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSApertureCircular: public BDSAperture
 {
 public:
-  BDSApertureCircular(G4double radiusIn);
+  explicit BDSApertureCircular(G4double radiusIn);
   virtual ~BDSApertureCircular(){;}
 
   G4double radius;

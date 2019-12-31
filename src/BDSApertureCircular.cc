@@ -38,7 +38,8 @@ G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
   else
     {
       const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
-      return oc->radius == radius;}
+      return oc->radius == radius;
+    }
 }
 
 G4bool BDSApertureCircular::LessThan(const BDSAperture* other) const
