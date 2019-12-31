@@ -33,16 +33,19 @@ class BDSApertureCircular: public BDSAperture
 {
 public:
   BDSApertureCircular(G4double radiusIn);
-  virtual ~BDSAperture(){;}
+  virtual ~BDSApertureCircular(){;}
 
   G4double radius;
 
-  virtual bool Equals(const BDSAperture* other);
-  virtual bool LessThan(const BDSAperture* other);
+  virtual G4bool    Equals(const BDSAperture* other)   const;
+  virtual G4bool    LessThan(const BDSAperture* other) const;
+  virtual void      CheckInfoOK()                      const;
+  virtual G4double  RadiusToEncompass()                const {return radius;}
+  virtual BDSExtent Extent()                           const;
 
-  BDSApertureCircular        operator+ (const G4double number);
+  BDSApertureCircular        operator+ (const G4double number) const;
   const BDSApertureCircular& operator+=(const G4double number);
-  BDSApertureCircular        operator* (const G4double number);
+  BDSApertureCircular        operator* (const G4double number) const;
   const BDSApertureCircular& operator*=(const G4double number);
 };
 
