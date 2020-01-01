@@ -39,6 +39,11 @@ public:
 	  G4double        fullLengthIn,
 	  const std::vector<G4TwoVector>& startingPoints);
 
+  BDSTube(const G4String&                 nameIn,
+	  G4double                        fullLengthIn,
+	  const std::vector<G4TwoVector>& startingPoints,
+	  const std::vector<G4TwoVector>& finishingPoints);
+
   BDSTube(const G4String& nameIn,
 	  G4double        dZNegative,
 	  G4double        dZPositive,

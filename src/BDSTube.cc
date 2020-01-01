@@ -80,6 +80,13 @@ BDSTube::BDSTube(const G4String& nameIn,
 }
 
 BDSTube::BDSTube(const G4String& nameIn,
+		 G4double        fullLengthIn,
+		 const std::vector<G4TwoVector>& startingPoints,
+		 const std::vector<G4TwoVector>& finishingPoints):
+  BDSTube(nameIn, -0.5*fullLengthIn, 0.5*fullLengthIn, startingPoints, finishingPoints)
+{;}
+
+BDSTube::BDSTube(const G4String& nameIn,
 		 G4double        dZNegative,
 		 G4double        dZPositive,
 		 const std::vector<G4TwoVector>& startingPoints,
