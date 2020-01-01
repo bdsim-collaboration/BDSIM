@@ -25,7 +25,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace BDS
 {
-  /// Linear interpolation in 1 dimension.
+  /// Same as below but for a type T instead of a 3-vector. T must have
+  /// the +,- and * operators implemented.
+  template<class T>
+  inline T Linear1D(T v0,
+		    T v1,
+		    G4double t)
+  {return v0*(1.-t) + v1*t;};
+  
+  /// Linear interpolation in 1 dimension. Uses slightly different
+  /// version of the classic formula that's equivalent to guarantee
+  /// value = vmax when x = 1.
   BDSFieldValue Linear1D(const BDSFieldValue p[2],
 			 const G4double      x);
 

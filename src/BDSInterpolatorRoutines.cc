@@ -21,7 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
-
 BDSFieldValue BDS::Linear1D(const BDSFieldValue p[2],
 			    const G4double      x)
 {
