@@ -311,6 +311,19 @@ G4bool BDS::IsNumber(const char* ch, double& convertedNumber)
   return (*p == 0);
 }
 
+G4int BDS::GreatestCommonDivisor(G4int a, G4int b)
+{
+  if (a == 0) 
+    {return b;}
+  else
+    {return BDS::GreatestCommonDivisor(b % a, a);}
+}
+
+G4int BDS::LowestCommonMultiple(G4int a, G4int b)
+{
+  return std::abs(a * b) / BDS::GreatestCommonDivisor(a, b); 
+}
+
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 {
   G4cout << "Rotation matrix - reference: \"" << keyName << "\"" << *rm << G4endl;
