@@ -42,12 +42,15 @@ public:
   BDSApertureFactory();
   ~BDSApertureFactory();
 
+  /// Create any aperture shape with flat ends. The apertureOut is optionally
+  /// for definining the possibly different aperture shape at the output end.
   G4VSolid* CreateAperture(const G4String&    name,
 			   G4double           length,
 			   const BDSAperture* apertureIn,
 			   const BDSAperture* apertureOut = nullptr,
 			   G4double           lengthExtraForBoolean = 0);
 
+  /// Create any aperture shape with angled ends specified by unit normals.
   G4VSolid* CreateAperture(const G4String&      name,
 			   G4double             length,
 			   const BDSAperture*   apertureIn,
@@ -57,12 +60,14 @@ public:
 			   G4double             lengthExtraForBoolean = 0);
 
 private:
+  /// Common construction code for the main CreateAperture interfaces.
   G4VSolid* CommonConstruction(const G4String&    name,
 			       G4double           length,
 			       const BDSAperture* apertureIn,
 			       const BDSAperture* apertureOut,
 			       G4double           lengthExtraForBoolean);
-  
+
+  /// @{ Flat faced construction function.
   G4VSolid* CreateCircular()    const;
   G4VSolid* CreateRectangular() const;
   G4VSolid* CreateElliptical()  const;
@@ -71,15 +76,20 @@ private:
   G4VSolid* CreateRaceTrack()   const;
   G4VSolid* CreateOctagonal()   const;
   G4VSolid* CreateClicPCL()     const;
+  /// @}
 
+  /// Create a shape with different ends.
   G4VSolid* CreateDifferentEnds() const;
   
   G4VSolid* CreateTubeByPoints()  const;
 
   G4VSolid* CircularToCircular() const;
 
+  /// Ratio of radii used for an intersection solid - greater than 1 and
+  /// defined arbitrarily.
   const G4double intersectionRadiusRatio;
-  
+
+  /// @{ Cache of input variable to simplify function arguments.
   G4String           productName;
   G4double           productLength;
   const BDSAperture* productApertureIn;

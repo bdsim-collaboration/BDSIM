@@ -63,9 +63,9 @@ G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
 					     const BDSAperture* apertureOut,
 					     G4double           lengthExtraForBoolean)
 {
-  productNormalIn    = G4ThreeVector();
-  productNormalOut   = G4ThreeVector();
-  angledFaces        = false;
+  productNormalIn  = G4ThreeVector();
+  productNormalOut = G4ThreeVector();
+  angledFaces      = false;
 
   return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
 }
@@ -78,7 +78,7 @@ G4VSolid* BDSApertureFactory::CreateAperture(const G4String&      name,
 					     const BDSAperture*   apertureOut,
 					     G4double             lengthExtraForBoolean)
 {
-  productNormalIn = normalIn;
+  productNormalIn  = normalIn;
   productNormalOut = normalOut;
   angledFaces      = true;
 
