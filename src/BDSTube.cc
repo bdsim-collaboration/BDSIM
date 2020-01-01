@@ -129,5 +129,73 @@ void BDSTube::SubMultipleConstruction(G4double dZNegative,
 				      const std::vector<G4TwoVector>& startingPoints,
 				      const std::vector<G4TwoVector>& finishingPoints)
 {
+  // shortcuts / aliases
+  const std::vector<G4TwoVector>& sp = startingPoints;
+  const std::vector<G4TwoVector>& fp = finishingPoints;
+  typedef G4ThreeVector G4TV;
+  G4double za = dZNegative;
+  G4double zb = dZPositive;
+  
+  unsigned int sn = (unsigned int)sp.size();
+  unsigned int fn = (unsigned int)fp.size();
+  G4bool endHasMore = sn > fn;
+  if (endHasMore)
+    {
+      unsigned int factor = fn / sn;
+      for (unsigned int si = 0; si < sn; si++)
+	{// for each starting point (fewer)
+	  for (unsigned int fi = 0; fi < factor; fi++)
+	    {// one triangle from starting point to each end point multiple
+	      G4TriangularFacet* f = new G4TriangularFacet(G4TV(sp[si].x(),      sp[si].y(),      za),
+							   G4TV(fp[si+fi].x(),   fp[si+fi].y(),   zb),
+							   G4TV(fp[si+fi+1].x(), fp[si+fi+1].y(), zb),
+							   G4FacetVertexType::ABSOLUTE);
+	      AddFacet(f);
+	    }
+	}
+    }
+  else
+    {// start has more points
+      unsigned int factor = sn / fn;
+      for (unsigned int fi = 0; fi < fn; fi++)
+	{// for each finishing point (fewer)
+	  for (unsigned int si = 0; si < factor; si++)
+	    {// one triangle from finishing point to each start point multiple
+	      G4TriangularFacet* f = new G4TriangularFacet(G4TV(fp[fi].x(),      fp[fi].y(),      zb),
+							   G4TV(sp[fi+si+1].x(), sp[fi+si+1].y(), za),
+							   G4TV(sp[fi+si].x(),   sp[fi+si].y(),   za),
+							   G4FacetVertexType::ABSOLUTE);
+	      AddFacet(f);
+	    }
+	}
+
+    }
+
+  // start face polygons
+  for (unsigned int i = 0; i < sn; i++)
+    {
+      unsigned int j = i + 1;
+      if (j == sn)
+	{j = 0;}
+      G4TriangularFacet* f = new G4TriangularFacet(G4TV(0,         0,         za),
+						   G4TV(sp[j].x(), sp[j].y(), za),
+						   G4TV(sp[i].x(), sp[i].y(), za),
+						   G4FacetVertexType::ABSOLUTE);
+      AddFacet(f);
+    }
+
+  // ending face polygons
+  for (unsigned int i = 0; i < fn; i++)
+    {
+      unsigned int j = i + 1;
+      if (j == fn)
+	{j = 0;}
+      G4TriangularFacet* f = new G4TriangularFacet(G4TV(0,         0,         zb),
+						   G4TV(fp[i].x(), fp[i].y(), zb),
+						   G4TV(fp[j].x(), fp[j].y(), zb),
+						   G4FacetVertexType::ABSOLUTE);
+      AddFacet(f);
+    }
+  
   SetSolidClosed(true);
 }
