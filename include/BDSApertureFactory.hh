@@ -18,10 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSAPERTUREFACTORY_H
 #define BDSAPERTUREFACTORY_H
+#include "BDSApertureType.hh"
 
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
+
+#include <map>
+#include <utility>
 
 class BDSAperture;
 class G4VSolid;
@@ -69,6 +73,10 @@ private:
   G4VSolid* CreateClicPCL()     const;
 
   G4VSolid* CreateDifferentEnds() const;
+  
+  G4VSolid* CreateTubeByPoints()  const;
+
+  G4VSolid* CircularToCircular() const;
 
   const G4double intersectionRadiusRatio;
   
@@ -80,6 +88,18 @@ private:
   G4ThreeVector      productNormalIn;
   G4ThreeVector      productNormalOut;
   G4bool             angledFaces;
+  /// @}
+
+  /// Create a pair where the two values are in order. We do this so we can access
+  /// a map of unique pairs.
+  std::pair<BDSApertureType, BDSApertureType> MakePair(BDSApertureType a1,
+						       BDSApertureType a2) const;
+
+  /// Typedef for function pointers to simplify syntax.
+  typedef G4VSolid*(BDSApertureFactory::*Constructor)(void) const;
+
+  /// Map of unique aperture type pairs to member function pointers.
+  std::map<std::pair<BDSApertureType, BDSApertureType>, Constructor> specialisations;
 };
 
 

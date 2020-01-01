@@ -35,6 +35,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
+#include <map>
+#include <utility>
+
 
 BDSApertureFactory::BDSApertureFactory():
   intersectionRadiusRatio(1.3),
@@ -45,9 +49,9 @@ BDSApertureFactory::BDSApertureFactory():
   productLengthExtra(0),
   angledFaces(false)
 {
-  /*
   specialisations = {
-  std::make_pair(BDSApertureType::*/
+		     {MakePair(BDSApertureType::circular, BDSApertureType::circular), &BDSApertureFactory::CircularToCircular}
+  };
 }
 
 BDSApertureFactory::~BDSApertureFactory()
@@ -207,4 +211,24 @@ G4VSolid* BDSApertureFactory::CreateClicPCL() const
 {return CreateCircular();}
 
 G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
-{return CreateCircular();}
+{
+  // check specialisations
+  auto key    = MakePair(productApertureIn->apertureType, productApertureOut->apertureType);
+  auto search = specialisations.find(key);
+  if (search != specialisations.end())
+    {
+      auto mem = search->second;
+      return (this->*mem)();
+    }
+  else
+    {return CreateTubeByPoints();}
+}
+
+G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
+{return nullptr;}
+
+std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
+									BDSApertureType a2) const
+{
+  return std::make_pair(std::min(a1, a2), std::max(a1, a2));
+}
