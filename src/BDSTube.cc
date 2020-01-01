@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSInterpolatorRoutines.hh"
 #include "BDSTube.hh"
 
 #include "G4TessellatedSolid.hh"
@@ -77,11 +78,11 @@ BDSTube::BDSTube(const G4String& nameIn,
     {
       // if rotation between points > 90deg, add 1 z plane per 90deg - TODO
       std::vector<G4double> z;
-      G4double dzNorm = 1.0 / (G4double)numberOfSuggestedZSections;
+      G4double dzNorm = 1.0 / ((G4double)numberOfSuggestedZSections - 1.0);
       for (unsigned int i = 0; i < numberOfSuggestedZSections; i++)
 	{
 	  G4double t = (G4double)i * dzNorm;
-	  z.push_back(dZNegative*(1. - t) + dZPositive * t);
+	  z.push_back(BDS::Linear1D(dZNegative, dZPositive, t));
 	}
       RegularConstruction(z, startingPoints, finishingPoints);   
     }
@@ -99,10 +100,12 @@ void BDSTube::RegularConstruction(const std::vector<G4double>&    z,
   const std::vector<G4TwoVector>& fp = finishingPoints;
   typedef G4ThreeVector G4TV;
   
+  G4double dzNorm = 1.0 / ((G4double)z.size() - 1.0); // here we assume even spacing
+  
   for (G4int zi = 0; zi < (G4int)z.size() - 1; zi++)
     {
       G4double za = z[zi];
-      G4double zb = z[zi+1]; // TODO only 2 points for now
+      G4double zb = z[zi+1];
       
       G4int limit = (G4int)sp.size();
       for (G4int i = 0; i < limit; i++)
@@ -110,21 +113,27 @@ void BDSTube::RegularConstruction(const std::vector<G4double>&    z,
 	  G4int j = i + 1;
 	  if (j == limit)
 	    {j = 0;}
-	  G4TriangularFacet* facet1 = new G4TriangularFacet(G4TV(sp[i].x(), sp[i].y(), za),
-							    G4TV(sp[j].x(), sp[j].y(), za),
-							    G4TV(fp[i].x(), fp[i].y(), zb),
+
+	  G4TwoVector si = BDS::Linear1D(sp[i], fp[i], (G4double)zi   * dzNorm);
+	  G4TwoVector sj = BDS::Linear1D(sp[j], fp[j], (G4double)zi   * dzNorm);
+	  G4TwoVector fi = BDS::Linear1D(sp[i], fp[i], ((G4double)zi+1) * dzNorm);
+	  G4TwoVector fj = BDS::Linear1D(sp[j], fp[j], ((G4double)zi+1) * dzNorm);
+	  
+	  G4TriangularFacet* facet1 = new G4TriangularFacet(G4TV(si.x(), si.y(), za),
+							    G4TV(sj.x(), sj.y(), za),
+							    G4TV(fi.x(), fi.y(), zb),
 							    G4FacetVertexType::ABSOLUTE);
-	  G4TriangularFacet* facet2 = new G4TriangularFacet(G4TV(sp[j].x(), sp[j].y(), za),
-							    G4TV(fp[j].x(), fp[j].y(), zb),
-							    G4TV(fp[i].x(), fp[i].y(), zb),
+	  G4TriangularFacet* facet2 = new G4TriangularFacet(G4TV(sj.x(), sj.y(), za),
+							    G4TV(fj.x(), fj.y(), zb),
+							    G4TV(fi.x(), fi.y(), zb),
 							    G4FacetVertexType::ABSOLUTE);
-	  G4TriangularFacet* facetF = new G4TriangularFacet(G4TV(0,         0,         za),
-							    G4TV(sp[j].x(), sp[j].y(), za),
-							    G4TV(sp[i].x(), sp[i].y(), za),
+	  G4TriangularFacet* facetF = new G4TriangularFacet(G4TV(0,      0,      za),
+							    G4TV(sj.x(), sj.y(), za),
+							    G4TV(si.x(), si.y(), za),
 							    G4FacetVertexType::ABSOLUTE);
-	  G4TriangularFacet* facetB = new G4TriangularFacet(G4TV(0,         0,         zb),
-							    G4TV(fp[i].x(), fp[i].y(), zb),
-							    G4TV(fp[j].x(), fp[j].y(), zb),
+	  G4TriangularFacet* facetB = new G4TriangularFacet(G4TV(0,      0,      zb),
+							    G4TV(fi.x(), fi.y(), zb),
+							    G4TV(fj.x(), fj.y(), zb),
 							    G4FacetVertexType::ABSOLUTE);
 	  AddFacet(facet1);
 	  AddFacet(facet2);
