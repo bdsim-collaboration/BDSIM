@@ -51,6 +51,21 @@ public:
 	  const std::vector<G4TwoVector>& finishingPoints);
 
   virtual ~BDSTube(){;}
+
+protected:
+
+  /// Construct 2x triangles between each pair of points from start to finish.
+  /// Points are linearly interpolated between z positions (minimum 2).
+  void RegularConstruction(const std::vector<G4double>&    z,
+			   const std::vector<G4TwoVector>& startingPoints,
+			   const std::vector<G4TwoVector>& finishingPoints);
+
+  /// No z interpolation but construct with N to M points where M is a*N where
+  /// a is an integer. Can be either way around.  E.g. 4 to 8; 12 to 4.
+  void SubMultipleConstruction(G4double dZNegative,
+			       G4double dZPositive,
+			       const std::vector<G4TwoVector>& startingPoints,
+			       const std::vector<G4TwoVector>& finishingPoints);
 };
 
 #endif
