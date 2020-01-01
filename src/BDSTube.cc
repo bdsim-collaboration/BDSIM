@@ -39,15 +39,17 @@ BDSTube::BDSTube(const G4String& nameIn,
 BDSTube::BDSTube(const G4String& nameIn,
 		 G4double        fullLengthIn,
 		 const std::vector<G4TwoVector>& startingPoints,
-		 const std::vector<G4TwoVector>& finishingPoints):
-  BDSTube(nameIn, -0.5*fullLengthIn, 0.5*fullLengthIn, startingPoints, finishingPoints)
+		 const std::vector<G4TwoVector>& finishingPoints,
+		 unsigned int    numberOfSuggestedZSections):
+  BDSTube(nameIn, -0.5*fullLengthIn, 0.5*fullLengthIn, startingPoints, finishingPoints, numberOfSuggestedZSections)
 {;}
 
 BDSTube::BDSTube(const G4String& nameIn,
 		 G4double        dZNegative,
 		 G4double        dZPositive,
 		 const std::vector<G4TwoVector>& startingPoints,
-		 const std::vector<G4TwoVector>& finishingPoints):
+		 const std::vector<G4TwoVector>& finishingPoints,
+		 unsigned int    numberOfSuggestedZSections):
   G4TessellatedSolid(nameIn)
 {
   // checks
@@ -71,7 +73,13 @@ BDSTube::BDSTube(const G4String& nameIn,
   else
     {
       // if rotation between points > 90deg, add 1 z plane per 90deg - TODO
-      std::vector<G4double> z = {dZNegative, dZPositive};
+      std::vector<G4double> z;
+      G4double dzNorm = 1.0 / (G4double)numberOfSuggestedZSections;
+      for (unsigned int i = 0; i < numberOfSuggestedZSections; i++)
+	{
+	  G4double t = (G4double)i * dzNorm;
+	  z.push_back(dZNegative*(1. - t) + dZPositive * t);
+	}
       RegularConstruction(z, startingPoints, finishingPoints);   
     }
 }

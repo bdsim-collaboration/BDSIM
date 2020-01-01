@@ -42,13 +42,15 @@ public:
   BDSTube(const G4String&                 nameIn,
 	  G4double                        fullLengthIn,
 	  const std::vector<G4TwoVector>& startingPoints,
-	  const std::vector<G4TwoVector>& finishingPoints);
+	  const std::vector<G4TwoVector>& finishingPoints,
+	  unsigned int numberOfSuggestedZSections = 2);
 
   BDSTube(const G4String& nameIn,
 	  G4double        dZNegative,
 	  G4double        dZPositive,
 	  const std::vector<G4TwoVector>& startingPoints,
-	  const std::vector<G4TwoVector>& finishingPoints);
+	  const std::vector<G4TwoVector>& finishingPoints,
+	  unsigned int    numberOfSuggestedZSections = 2);
 
   virtual ~BDSTube(){;}
 
