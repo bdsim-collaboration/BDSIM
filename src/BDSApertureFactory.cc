@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSTube.hh"
+#include "BDSUtilities.hh"
 
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -31,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4Tubs.hh"
+#include "G4TwoVector.hh"
 #include "G4VSolid.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -38,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <map>
 #include <utility>
+#include <vector>
 
 
 BDSApertureFactory::BDSApertureFactory():
@@ -226,7 +230,26 @@ G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
 }
 
 G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
-{return nullptr;}
+{
+  G4int nPointsIn  = productApertureIn->MinimumNumberOfPoints();
+  G4int nPointsOut = productApertureOut->MinimumNumberOfPoints();
+
+  G4bool isAMultiple = (nPointsIn % nPointsOut == 0) || (nPointsOut % nPointsIn == 0);
+  if (!isAMultiple)
+    {
+      G4int lowestCommonMultiple = BDS::LowestCommonMultiple(nPointsIn, nPointsOut);
+      nPointsIn  = lowestCommonMultiple;
+      nPointsOut = lowestCommonMultiple;
+    }
+
+  std::vector<G4TwoVector> startingPoints  = productApertureIn->GeneratePoints(nPointsIn);
+  std::vector<G4TwoVector> finishingPoints = productApertureOut->GeneratePoints(nPointsOut);
+  
+  return new BDSTube(productName,
+		     productLength + productLengthExtra,
+		     startingPoints,
+		     finishingPoints);
+}
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
 									BDSApertureType a2) const
