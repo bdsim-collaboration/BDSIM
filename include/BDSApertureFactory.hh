@@ -53,6 +53,12 @@ public:
 			   G4double             lengthExtraForBoolean = 0);
 
 private:
+  G4VSolid* CommonConstruction(const G4String&    name,
+			       G4double           length,
+			       const BDSAperture* apertureIn,
+			       const BDSAperture* apertureOut,
+			       G4double           lengthExtraForBoolean);
+  
   G4VSolid* CreateCircular()    const;
   G4VSolid* CreateRectangular() const;
   G4VSolid* CreateElliptical()  const;

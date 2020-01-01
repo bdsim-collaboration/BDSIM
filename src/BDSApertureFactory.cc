@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureCircular.hh"
 #include "BDSApertureFactory.hh"
 #include "BDSApertureType.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -57,6 +59,36 @@ G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
 					     const BDSAperture* apertureOut,
 					     G4double           lengthExtraForBoolean)
 {
+  productNormalIn    = G4ThreeVector();
+  productNormalOut   = G4ThreeVector();
+  angledFaces        = false;
+
+  return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
+}
+
+G4VSolid* BDSApertureFactory::CreateAperture(const G4String&      name,
+					     G4double             length,
+					     const BDSAperture*   apertureIn,
+					     const G4ThreeVector& normalIn,
+					     const G4ThreeVector& normalOut,
+					     const BDSAperture*   apertureOut,
+					     G4double             lengthExtraForBoolean)
+{
+  productNormalIn = normalIn;
+  productNormalOut = normalOut;
+  angledFaces      = true;
+
+  return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
+}
+
+G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
+						 G4double           length,
+						 const BDSAperture* apertureIn,
+						 const BDSAperture* apertureOut,
+						 G4double           lengthExtraForBoolean)
+{
+  if (!apertureIn)
+    {throw BDSException(__METHOD_NAME__, "no aperture specified.");}
   G4bool variedAperture = (G4bool)apertureOut; // ie valid pointer for shape out.
 
   productName        = name;
@@ -64,9 +96,6 @@ G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
   productApertureIn  = apertureIn;
   productApertureOut = apertureOut;
   productLengthExtra = lengthExtraForBoolean;
-  productNormalIn    = G4ThreeVector();
-  productNormalOut   = G4ThreeVector();
-  angledFaces        = false;
 
   if (variedAperture)
     {return CreateDifferentEnds();}
