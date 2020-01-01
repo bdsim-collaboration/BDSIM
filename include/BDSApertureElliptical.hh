@@ -33,17 +33,20 @@ class BDSApertureElliptical: public BDSAperture
 {
 public:
   BDSApertureElliptical(G4double aIn,
-			G4double bIn);
+			G4double bIn,
+			G4int    nPointsIn = 0);
   virtual ~BDSApertureElliptical(){;}
 
   G4double a;
   G4double b;
+  G4int    nPoints;
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
   virtual G4bool    LessThan(const BDSAperture* other) const;
   virtual void      CheckInfoOK()                      const;
   virtual G4double  RadiusToEncompass()                const;
   virtual BDSExtent Extent()                           const;
+  virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
 
   BDSApertureElliptical        operator+ (const G4double number) const;
   const BDSApertureElliptical& operator+=(const G4double number);

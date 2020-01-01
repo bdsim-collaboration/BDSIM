@@ -21,13 +21,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureElliptical.hh"
 #include "BDSApertureType.hh"
 #include "BDSExtent.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "G4Types.hh"
 
-BDSApertureCircular::BDSApertureCircular(G4double radiusIn):
+BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
+					 G4int    nPointsIn):
   BDSAperture(BDSApertureType::circular),
-  radius(radiusIn)
-{;}
+  radius(radiusIn),
+  nPoints(nPointsIn)
+{
+  if (nPoints == 0)
+    {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
+}
 
 G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
 {

@@ -21,15 +21,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureElliptical.hh"
 #include "BDSApertureType.hh"
 #include "BDSExtent.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "G4Types.hh"
 
 BDSApertureElliptical::BDSApertureElliptical(G4double aIn,
-					     G4double bIn):
+					     G4double bIn,
+					     G4int    nPointsIn):
   BDSAperture(BDSApertureType::elliptical),
   a(aIn),
-  b(bIn)
-{;}
+  b(bIn),
+  nPoints(nPointsIn)
+{
+  if (nPoints == 0)
+    {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
+}
 
 G4bool BDSApertureElliptical::Equals(const BDSAperture* other) const
 {

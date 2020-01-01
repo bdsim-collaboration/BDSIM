@@ -23,7 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSTiltOffset.hh"
 
-#include "globals.hh"
+#include "G4TwoVector.hh"
+#include "G4Types.hh"
+
+#include <vector>
 
 class BDSExtent;
 
@@ -58,11 +61,17 @@ public:
   virtual void      CheckInfoOK()                      const = 0;
   virtual G4double  RadiusToEncompass()                const = 0; // was IndicativeRadius RCWD
   virtual BDSExtent Extent()                           const = 0;
+  /// Minimal number of 2D points to represent the shape, e.g. 3 for a triangle; 4 for a rectangle etc.
+  virtual G4int     MinimumNumberOfPoints()            const = 0;
 
   void CheckRequiredParametersSet(G4double aper1,     G4bool aper1Set,
 				  G4double aper2 = 0, G4bool aper2Set = false,
 				  G4double aper3 = 0, G4bool aper3Set = false,
 				  G4double aper4 = 0, G4bool aper4Set = false) const;
+
+  /// Generate a set of x,y points to represent the aperture. Number == 0 means minimal
+  /// number of points which will be at least 3.
+  std::vector<G4TwoVector> GeneratePoints(G4int nPoints = 0) const;
 
 protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility

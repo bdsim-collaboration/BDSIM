@@ -32,16 +32,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSApertureCircular: public BDSAperture
 {
 public:
-  explicit BDSApertureCircular(G4double radiusIn);
+  explicit BDSApertureCircular(G4double radiusIn,
+			       G4int    nPointsIn = 0);
   virtual ~BDSApertureCircular(){;}
 
   G4double radius;
+  G4int    nPoints;
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
   virtual G4bool    LessThan(const BDSAperture* other) const;
   virtual void      CheckInfoOK()                      const;
   virtual G4double  RadiusToEncompass()                const {return radius;}
   virtual BDSExtent Extent()                           const;
+  virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
 
   BDSApertureCircular        operator+ (const G4double number) const;
   const BDSApertureCircular& operator+=(const G4double number);
