@@ -66,7 +66,10 @@ BDSTube::BDSTube(const G4String& nameIn,
   if (spSize != fpSize)
     {
       if (spSize % fpSize == 0 || fpSize % spSize == 0)
-	{SubMultipleConstruction(dZNegative, dZPositive, startingPoints, finishingPoints);}
+	{
+	  if (numberOfSuggestedZSections > 2)
+	    {throw BDSException(__METHOD_NAME__, "cannot use multiple z-sections with non 1:1 points.");}
+	  SubMultipleConstruction(dZNegative, dZPositive, startingPoints, finishingPoints);}
       else
 	{throw BDSException(__METHOD_NAME__, "mismatched sizes of points.");}
     }
