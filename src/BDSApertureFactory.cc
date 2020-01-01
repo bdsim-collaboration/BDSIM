@@ -16,11 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAperture.hh"
+#include "BDSApertureCircular.hh"
 #include "BDSApertureFactory.hh"
-#include "BDSApertureInfo.hh"
 #include "BDSApertureType.hh"
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
+#include "G4Types.hh"
+
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
@@ -34,98 +38,75 @@ BDSApertureFactory::BDSApertureFactory():
   intersectionRadiusRatio(1.3),
   productName(""),
   productLength(0),
-  productShapeIn(nullptr),
-  productShapeOut(nullptr),
+  productApertureIn(nullptr),
+  productApertureOut(nullptr),
   productLengthExtra(0),
   angledFaces(false)
-{;}
+{
+  /*
+  specialisations = {
+  std::make_pair(BDSApertureType::*/
+}
 
 BDSApertureFactory::~BDSApertureFactory()
 {;}
 
-G4VSolid* BDSApertureFactory::CreateAperture(G4String         name,
-					     G4double         length,
-					     BDSApertureInfo* shapeIn,
-					     BDSApertureInfo* shapeOut,
-					     G4double         lengthExtraForBoolean)
+G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
+					     G4double           length,
+					     const BDSAperture* apertureIn,
+					     const BDSAperture* apertureOut,
+					     G4double           lengthExtraForBoolean)
 {
-  G4bool tapered   = shapeOut; // ie valid pointer for shape out.
-  G4bool sameShape = true;
-  if (shapeOut)
-    {sameShape = shapeIn->apertureType == shapeOut->apertureType;}
+  G4bool variedAperture = (G4bool)apertureOut; // ie valid pointer for shape out.
 
   productName        = name;
   productLength      = length;
-  productShapeIn     = shapeIn;
-  productShapeOut    = shapeOut;
+  productApertureIn  = apertureIn;
+  productApertureOut = apertureOut;
   productLengthExtra = lengthExtraForBoolean;
   productNormalIn    = G4ThreeVector();
   productNormalOut   = G4ThreeVector();
   angledFaces        = false;
 
-  if (!sameShape)
+  if (variedAperture)
     {return CreateDifferentEnds();}
 
   // else create non-tapering piece of geometry
   G4VSolid* product = nullptr;
-  if (!tapered)
+  switch (apertureIn->apertureType.underlying())
     {
-      switch (shapeIn->apertureType.underlying())
-	{
-	case BDSApertureType::circular:
-	  {product = CreateCircular(); break;}
-	case BDSApertureType::rectangular:
-	  {product = CreateRectangular(); break;}
-	case BDSApertureType::elliptical:
-	  {product = CreateElliptical(); break;}
-	case BDSApertureType::lhc:
-	  {product = CreateLHC(); break;}
-	case BDSApertureType::rectellipse:
-	  {product = CreateRectEllipse(); break;}
-	case BDSApertureType::racetrack:
-	  {product = CreateRaceTrack(); break;}
-	case BDSApertureType::octagonal:
-	  {product = CreateOctagonal(); break;}
-	case BDSApertureType::clicpcl:
-	  {product = CreateClicPCL(); break;}
-	default:
-	  {break;}
-	}
-    }
-  else
-    {
-      switch (shapeIn->apertureType.underlying())
-	{
-	case BDSApertureType::circular:
-	  {product = CreateCircularTapered(); break;}
-	case BDSApertureType::rectangular:
-	  {product = CreateRectangularTapered(); break;}
-	case BDSApertureType::elliptical:
-	  {product = CreateEllipticalTapered(); break;}
-	case BDSApertureType::lhc:
-	  {product = CreateLHCTapered(); break;}
-	case BDSApertureType::rectellipse:
-	  {product = CreateRectEllipseTapered(); break;}
-	case BDSApertureType::racetrack:
-	  {product = CreateRaceTrackTapered(); break;}
-	case BDSApertureType::octagonal:
-	  {product = CreateOctagonalTapered(); break;}
-	case BDSApertureType::clicpcl:
-	  {product = CreateClicPCLTapered(); break;}
-	default:
-	  {break;}
-	}
+    case BDSApertureType::circular:
+      {product = CreateCircular();    break;}
+    case BDSApertureType::rectangular:
+      {product = CreateRectangular(); break;}
+    case BDSApertureType::elliptical:
+      {product = CreateElliptical();  break;}
+    case BDSApertureType::lhc:
+      {product = CreateLHC();         break;}
+    case BDSApertureType::rectellipse:
+      {product = CreateRectEllipse(); break;}
+    case BDSApertureType::racetrack:
+      {product = CreateRaceTrack();   break;}
+    case BDSApertureType::octagonal:
+      {product = CreateOctagonal();   break;}
+    case BDSApertureType::clicpcl:
+      {product = CreateClicPCL();     break;}
+    default:
+      {break;}
     }
   return product;
 }
 
 G4VSolid* BDSApertureFactory::CreateCircular() const
 {
+  const BDSApertureCircular* ap = dynamic_cast<const BDSApertureCircular*>(productApertureIn);
+  if (!ap)
+    {return nullptr;}
   if (!angledFaces)
     {
       G4VSolid* product = new G4Tubs(productName,
 				     0,
-				     productShapeIn->aper1,
+				     ap->radius,
 				     0.5 * productLength + productLengthExtra,
 				     0,
 				     CLHEP::twopi);
@@ -135,7 +116,7 @@ G4VSolid* BDSApertureFactory::CreateCircular() const
     {
       G4VSolid* product = new G4CutTubs(productName,
 					0,
-					productShapeIn->aper1,
+					ap->radius,
 					0.5 * productLength + productLengthExtra,
 					0,
 					CLHEP::twopi,
@@ -146,23 +127,28 @@ G4VSolid* BDSApertureFactory::CreateCircular() const
 }
 
 G4VSolid* BDSApertureFactory::CreateRectangular() const
+{return nullptr;}
+/*
+G4VSolid* BDSApertureFactory::CreateRectangular() const
 {
+  const BDSApertureRectangular* ap = dynamic_cast<const BDSApertureRectangular*>(productApertureIn);
+  if (!ap)
+    {return nullptr;}
   if (!angledFaces)
     {
       G4VSolid* product = new G4Box(productName,
-				    productShapeIn->aper1,
-				    productShapeIn->aper2,
+				    ap->a,
+				    ap->b,
 				    0.5 * productLength + productLengthExtra);
       return product;
     }
   else
     {
       G4VSolid* box = new G4Box(productName + "_square",
-				productShapeIn->aper1,
-				productShapeIn->aper2,
+				ap->a,
+				ap->b,
 				productLength + productLengthExtra); // factor 2 here
-      /// TBC - get more accurate maximum radius from axis here
-      G4double maxRadius = productShapeIn->IndicativeRadius();
+      G4double maxRadius = ap->RadiusToEncompass();
       G4double intersectionRadius = intersectionRadiusRatio * maxRadius;
       G4VSolid* cut = new G4CutTubs(productName + "_angled",
 				    0,
@@ -176,6 +162,7 @@ G4VSolid* BDSApertureFactory::CreateRectangular() const
       return product;
     }
 }
+*/
 
 G4VSolid* BDSApertureFactory::CreateElliptical() const
 {return CreateCircular();}
@@ -189,21 +176,6 @@ G4VSolid* BDSApertureFactory::CreateOctagonal() const
 {return CreateCircular();}
 G4VSolid* BDSApertureFactory::CreateClicPCL() const
 {return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateCircularTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateRectangularTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateEllipticalTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateLHCTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateRectEllipseTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateRaceTrackTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateOctagonalTapered() const
-{return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateClicPCLTapered() const
-{return CreateCircular();}
+
 G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
 {return CreateCircular();}
