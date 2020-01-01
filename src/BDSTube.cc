@@ -126,10 +126,10 @@ void BDSTube::RegularConstruction(const std::vector<G4double>&    z,
 							    G4TV(fp[i].x(), fp[i].y(), zb),
 							    G4TV(fp[j].x(), fp[j].y(), zb),
 							    G4FacetVertexType::ABSOLUTE);
-	  AddFacet((G4VFacet*)facet1);
-	  AddFacet((G4VFacet*)facet2);
-	  AddFacet((G4VFacet*)facetF);
-	  AddFacet((G4VFacet*)facetB);
+	  AddFacet(facet1);
+	  AddFacet(facet2);
+	  AddFacet(facetF);
+	  AddFacet(facetB);
 	}
     }
   SetSolidClosed(true);
