@@ -138,8 +138,6 @@ namespace BDS
   G4int Sign(T val)
   {return G4int((T(0) < val) - (val < T(0)));}
 
-  inline G4String BoolToString(const G4bool& in)
-  {return in ? "true" : "false";}
   /// Calculate (recursively) the greatest commong divisor between to numbers. This
   /// uses Euclid's Algorithm. This is the largest postive integer that divides into
   /// both numbers. E.g. GCD(12,8) = 4.
@@ -147,6 +145,9 @@ namespace BDS
 
   /// Calculate the lowest common multiple between two numbers.
   G4int LowestCommonMultiple(G4int a, G4int b);
+
+  /// Return a string version of a bool.
+  inline G4String BoolToString(const G4bool& in) {return in ? "true" : "false";}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream

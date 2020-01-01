@@ -50,7 +50,8 @@ BDSApertureFactory::BDSApertureFactory():
   angledFaces(false)
 {
   specialisations = {
-		     {MakePair(BDSApertureType::circular, BDSApertureType::circular), &BDSApertureFactory::CircularToCircular}
+		     {MakePair(BDSApertureType::circular,
+			       BDSApertureType::circular), &BDSApertureFactory::CircularToCircular}
   };
 }
 
