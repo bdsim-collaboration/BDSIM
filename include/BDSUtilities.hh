@@ -141,10 +141,10 @@ namespace BDS
   /// Calculate (recursively) the greatest commong divisor between to numbers. This
   /// uses Euclid's Algorithm. This is the largest postive integer that divides into
   /// both numbers. E.g. GCD(12,8) = 4.
-  G4int GreatestCommonDivisor(G4int a, G4int b);
+  unsigned int GreatestCommonDivisor(unsigned int a, unsigned int b);
 
   /// Calculate the lowest common multiple between two numbers.
-  G4int LowestCommonMultiple(G4int a, G4int b);
+  unsigned int LowestCommonMultiple(unsigned int a, unsigned int b);
 
   /// Return a string version of a bool.
   inline G4String BoolToString(const G4bool& in) {return in ? "true" : "false";}
