@@ -80,6 +80,13 @@ public:
   inline G4TwoVector back()  const {return points.back();}
   std::vector<G4TwoVector>::size_type size() const {return points.size();}
 
+protected:
+
+  G4bool SegmentsIntersect(const G4TwoVector& p1,
+			   const G4TwoVector& p2,
+			   const G4TwoVector& q1,
+			   const G4TwoVector& q2) const;
+
 private:
   BDSPolygon() = delete;
   

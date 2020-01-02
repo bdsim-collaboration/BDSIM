@@ -51,24 +51,45 @@ G4bool BDSPolygon::Inside(const G4TwoVector& point) const
       G4TwoVector norm = (points[i+1] - points[i]).orthogonal();
       result &= test.dot(norm) > 0;
     }
-
   return result;
 }
 
 G4bool BDSPolygon::Inside(const BDSPolygon& other) const
 {
+  // test all segments don't intersect -> doesn't overlap
+  // test one point is inside
   G4bool result = true;
   for (G4int i = 0; i < (G4int)size() - 1; i++)
     {
-
-
+      for (G4int j = 0; j < (G4int)other.size() - 1; j++)
+	{result &= !SegmentsIntersect(points[i], points[i+1], other.points[j], other.points[j+1]);}
     }
+  if (!result) // don't bother with inside point check
+    {return result;}
+
+  // test one point is inside.
+  result &= other.Inside(points[0]);
   return result;
 }
 
-G4bool BDSPolygon::SelfIntersecting(G4int* indexOfIntersectionA,
-				    G4int* indexOfIntersectionB) const
-{return false;}
+{
+  G4bool result = false;
+  for (G4int i = 0; i < (G4int)size() - 1; i++)
+    {
+      for (G4int j = i + 1; j < (G4int)size() - 1; j++)
+	{
+	  result |= SegmentsIntersect(points[i], points[i+1], points[j], points[j+1]);
+	  if (result)
+	    {// for optional feedback
+	      if (indexOfIntersectionA)
+		{*indexOfIntersectionA = i;}
+	      if (indexOfIntersectionB)
+		{*indexOfIntersectionB = j;}
+	    }
+	}
+    }
+  return result;
+}
 
 BDSPolygon BDSPolygon::ApplyTiltOffset(const BDSTiltOffset& to) const
 {
@@ -107,3 +128,9 @@ BDSExtent BDSPolygon::Extent() const
 			 -lsl,    lsl);
   return BDSExtent(*extent);
 }
+
+G4bool BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
+				     const G4TwoVector& p2,
+				     const G4TwoVector& q1,
+				     const G4TwoVector& q2) const
+{return true;}
