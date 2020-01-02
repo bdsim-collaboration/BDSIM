@@ -46,7 +46,7 @@ public:
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
   virtual void      CheckInfoOK()                      const;
-  virtual G4double  RadiusToEncompass()                const {return std::hypot(a,b);}
+  virtual G4double  RadiusToEncompass()                const {return std::hypot(a,b) + tiltOffset.Radius();}
   virtual BDSExtent Extent()                           const;
   virtual G4int     MinimumNumberOfPoints()            const {return 4;}
 

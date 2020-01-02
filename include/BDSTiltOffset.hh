@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 #include "G4TwoVector.hh"
 
+#include <cmath>
 #include <ostream>
 
 /**
@@ -56,6 +57,7 @@ public:
   /// More advanced accessor for offset - only in x,y.
   G4ThreeVector GetOffset()   const {return G4ThreeVector(dx, dy, 0);}
   G4TwoVector   GetOffset2D() const {return G4TwoVector(dx, dy);}
+  G4double      Radius()      const {return std::hypot(dx,dy);}
 
   /// Get a transform to represent this tilt offset.
   G4Transform3D Transform3D() const;

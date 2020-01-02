@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+#include <cmath>
+
 class BDSExtent;
 class BDSPolygon;
 
@@ -46,7 +48,9 @@ public:
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
   virtual void      CheckInfoOK()                      const;
-  virtual G4double  RadiusToEncompass()                const;
+
+  /// Note this is true even if the ellipse is rotated.
+  virtual G4double  RadiusToEncompass()                const {return std::max(a,b) + tiltOffset.Radius();}
   virtual BDSExtent Extent()                           const;
   virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
 

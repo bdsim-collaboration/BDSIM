@@ -113,5 +113,3 @@ BDSPolygon BDSApertureElliptical::Polygon(G4int nPointsIn) const
   
   return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
 }
-
-
