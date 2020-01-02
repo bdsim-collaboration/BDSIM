@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
 
-BDSSampler::BDSSampler(G4String nameIn):
+BDSSampler::BDSSampler(const G4String& nameIn):
   BDSGeometryComponent(nullptr, nullptr),
   name(nameIn)
 {;}
