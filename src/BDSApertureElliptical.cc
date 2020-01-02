@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Types.hh"
 
@@ -46,7 +47,7 @@ G4bool BDSApertureElliptical::Equals(const BDSAperture* other) const
   else
     {
       const BDSApertureElliptical* oc = dynamic_cast<const BDSApertureElliptical*>(other);
-      return oc->a == a && oc->b == b;
+      return BDS::DoublesAreEqual(oc->a, a) && BDS::DoublesAreEqual(oc->b, b);
     }
 }
 
