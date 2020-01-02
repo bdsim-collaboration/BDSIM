@@ -131,8 +131,41 @@ BDSExtent BDSPolygon::Extent() const
   return BDSExtent(*extent);
 }
 
-G4bool BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
-				     const G4TwoVector& p2,
-				     const G4TwoVector& q1,
-				     const G4TwoVector& q2) const
-{return true;}
+G4int BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
+				    const G4TwoVector& p2,
+				    const G4TwoVector& q1,
+				    const G4TwoVector& q2,
+				    G4TwoVector* intersectionPoint)
+{
+  // Use a relative error test to test for parallelism.  This effectively
+  // is a threshold on the angle between D0 and D1.  The threshold
+  // parameter ’sqrEpsilon’ can be defined in this function or be
+  // available globally.
+  const G4double eps = std::numeric_limits<double>::epsilon() * std::abs(std::max(p1.x(), p1.y()));
+  const G4double sqrEpsilon = eps*eps;
+  G4TwoVector E        = q1 - p1;
+  G4double    kross    = p2.x() * q2.y() - p2.y() * q2.x();
+  G4double    sqrKross = kross * kross;
+  G4double    sqrLen0  = p2.x() * p2.x() + p2.y() * p2.y();
+  G4double    sqrLen1  = q2.x() * q2.x() + q2.y() * q2.y();
+  if (sqrKross > sqrEpsilon * sqrLen0 * sqrLen1)
+    {
+      // lines are not parallel
+      G4double s = (E.x() * q2.y() - E.y() *q2.x()) / kross;
+      if (intersectionPoint)
+	{*intersectionPoint = p1 + s * p2;}
+      return 1;
+    }
+  
+  // lines are parallel
+  G4double sqrLenE = E.x() * E.x() + E.y() * E.y();
+  kross = E.x() * p2.y() - E.y() * p2.x();
+  sqrKross = kross * kross;
+  if (sqrKross > sqrEpsilon * sqrLen0 * sqrLenE)
+    {// lines are different
+      return 0;
+    }
+  
+  // lines are the same
+  return 2;
+}
