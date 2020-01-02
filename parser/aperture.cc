@@ -34,6 +34,9 @@ void Aperture::clear()
   aper2        = 0;
   aper3        = 0;
   aper4        = 0;
+  tilt         = 0;
+  offsetX      = 0;
+  offsetY      = 0;
 }
 
 void Aperture::PublishMembers()
@@ -50,6 +53,10 @@ void Aperture::PublishMembers()
   publish("aperture3",     &Aperture::aper3); // alternative
   publish("aper4",         &Aperture::aper4);
   publish("aperture4",     &Aperture::aper4); // alternative
+  publish("tilt",          &Aperture::tilt);
+  publish("offsetX",       &Aperture::offsetX);
+  publish("offsetY",       &Aperture::offsetY);
+  publish("nPoints",       &Aperture::nPoints);
 }
 
 void Aperture::print()const
@@ -60,5 +67,9 @@ void Aperture::print()const
 	    << "aper1 "         << aper1         << std::endl
 	    << "aper2 "         << aper2         << std::endl
     	    << "aper3 "         << aper3         << std::endl
-    	    << "aper4 "         << aper4         << std::endl;
+    	    << "aper4 "         << aper4         << std::endl
+	    << "tilt "          << tilt          << std::endl
+	    << "offsetX "       << offsetX       << std::endl
+	    << "offsetY "       << offsetY       << std::endl
+	    << "nPoints "       << nPoints       << std::endl;
 }

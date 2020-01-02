@@ -49,6 +49,8 @@ void SamplerPlacement::clear()
   aper2 = 0;
   aper3 = 0;
   aper4 = 0;
+  tilt  = 0;
+  nPoints = 0;
 }
 
 void SamplerPlacement::PublishMembers()
@@ -75,6 +77,8 @@ void SamplerPlacement::PublishMembers()
   publish("aper2",         &SamplerPlacement::aper2);
   publish("aper3",         &SamplerPlacement::aper3);
   publish("aper4",         &SamplerPlacement::aper4);
+  publish("tilt",          &SamplerPlacement::tilt);
+  publish("nPoints",       &SamplerPlacement::nPoints);
 }
 
 void SamplerPlacement::print()const
