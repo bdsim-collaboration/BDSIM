@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSInterpolatorRoutines.hh"
+#include "BDSPolygon.hh"
 #include "BDSTube.hh"
 
 #include "G4TessellatedSolid.hh"
@@ -30,6 +31,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
+
+BDSTube::BDSTube(const G4String&   nameIn,
+		 G4double          fullLengthIn,
+		 const BDSPolygon& startingShape):
+  BDSTube(nameIn, fullLengthIn, startingShape.Points(), startingShape.Points())
+{;}
+
+BDSTube::BDSTube(const G4String&   nameIn,
+		 G4double          fullLengthIn,
+		 const BDSPolygon& startingShape,
+		 const BDSPolygon& finishingShape,
+		 unsigned int      numberOfSuggestedZSections):
+  BDSTube(nameIn, fullLengthIn, startingShape.Points(), finishingShape.Points(), numberOfSuggestedZSections)
+{;}
 
 BDSTube::BDSTube(const G4String& nameIn,
 		 G4double        fullLengthIn,

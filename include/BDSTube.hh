@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
+class BDSPolygon;
+
 /**
  * @brief 
  *
@@ -35,6 +37,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSTube: public G4TessellatedSolid
 {
 public:
+  BDSTube(const G4String&   nameIn,
+	  G4double          fullLengthIn,
+	  const BDSPolygon& startingShape);
+
+  BDSTube(const G4String&   nameIn,
+	  G4double          fullLengthIn,
+	  const BDSPolygon& startingShape,
+	  const BDSPolygon& finishingShape,
+	  unsigned int      numberOfSuggestedZSections = 2);
+  
   BDSTube(const G4String& nameIn,
 	  G4double        fullLengthIn,
 	  const std::vector<G4TwoVector>& startingPoints);
