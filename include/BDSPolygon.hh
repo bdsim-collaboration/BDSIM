@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iterator>
 #include <vector>
 
+class BDSExtent;
 class BDSTiltOffset;
 
 /**
@@ -37,7 +38,7 @@ class BDSPolygon
 {
 public:
   BDSPolygon(const std::vector<G4TwoVector>& pointsIn);
-  ~BDSPolygon(){;}
+  ~BDSPolygon();
 
   /// Accessor.
   const std::vector<G4TwoVector>& Points() const {return points;}
@@ -56,6 +57,8 @@ public:
   
   /// Return a copy with a tilt and offset applied.
   BDSPolygon ApplyTiltOffset(const BDSTiltOffset& to) const;
+
+  BDSExtent Extent() const;
 
   ///@{ Iterator mechanics.
   typedef std::vector<G4TwoVector>::iterator               iterator;
@@ -81,6 +84,9 @@ private:
   BDSPolygon() = delete;
   
   std::vector<G4TwoVector> points;
+
+  /// Cache of extent if calculated - initialised on first call to Extent().
+  mutable BDSExtent* extent;
 };
 
 #endif

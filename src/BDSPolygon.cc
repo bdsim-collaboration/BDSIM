@@ -18,19 +18,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"
 
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
+#include <algorithm>
 #include <vector>
 
 BDSPolygon::BDSPolygon(const std::vector<G4TwoVector>& pointsIn):
-  points(pointsIn)
+  points(pointsIn),
+  extent(nullptr)
 {
   if (points.size() < 3)
     {throw BDSException(__METHOD_NAME__, "polygon must have at least 3 x,y points to be valid.");}
+}
+
+BDSPolygon::~BDSPolygon()
+{
+  delete extent;
 }
 
 G4bool BDSPolygon::Inside(const G4TwoVector& point) const
@@ -73,4 +82,28 @@ BDSPolygon BDSPolygon::ApplyTiltOffset(const BDSTiltOffset& to) const
       p += offset;
     }
   return r;
+}
+
+BDSExtent BDSPolygon::Extent() const
+{
+  if (extent)
+    {return BDSExtent(*extent);}
+
+  G4double extXNeg = 0;
+  G4double extXPos = 0;
+  G4double extYNeg = 0;
+  G4double extYPos = 0;
+  for (const auto& p : points)
+    {
+      extXNeg = std::min(extXNeg, p.x());
+      extXPos = std::max(extXPos, p.x());
+      extYNeg = std::min(extYNeg, p.y());
+      extYPos = std::max(extYPos, p.y());
+    }
+
+  G4double lsl = BDSGlobalConstants::Instance()->LengthSafetyLarge();
+  extent = new BDSExtent(extXNeg, extXPos,
+			 extYNeg, extYPos,
+			 -lsl,    lsl);
+  return BDSExtent(*extent);
 }
