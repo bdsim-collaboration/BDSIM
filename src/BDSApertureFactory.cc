@@ -225,7 +225,7 @@ G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
       auto mem = search->second;
       return (this->*mem)();
     }
-  else
+  else // no specialisation, so use high number polygons
     {return CreateTubeByPoints();}
 }
 
@@ -244,11 +244,20 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 
   std::vector<G4TwoVector> startingPoints  = productApertureIn->GeneratePoints(nPointsIn);
   std::vector<G4TwoVector> finishingPoints = productApertureOut->GeneratePoints(nPointsOut);
+
+  // choose more z points in tube if it twists - approximately 1 z plane per 10-ish degrees
+  unsigned int nZ = 2;
+  if (productApertureIn->FiniteTilt() || productApertureOut->FiniteTilt())
+    {
+      G4double dTilt = productApertureOut->tiltOffset.Tilt() - productApertureIn->tiltOffset.Tilt();
+      nZ += std::ceil(dTilt / 0.2*CLHEP::radian);
+    }
   
   return new BDSTube(productName,
 		     productLength + productLengthExtra,
 		     startingPoints,
-		     finishingPoints);
+		     finishingPoints,
+		     nZ);
 }
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,

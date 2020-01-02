@@ -45,6 +45,7 @@ public:
   virtual ~BDSAperture(){;}
 
   inline void SetTiltOffset(const BDSTiltOffset& tiltOffsetIn) {tiltOffset = tiltOffsetIn;}
+  G4bool FiniteTilt() const {return tiltOffset.HasFiniteTilt();}
   
   BDSApertureType apertureType;
   BDSTiltOffset   tiltOffset;
@@ -55,7 +56,7 @@ public:
   friend bool operator >  (const BDSAperture& lhs, const BDSAperture& rhs) {return rhs < lhs;}
   friend bool operator <= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs > rhs);}
   friend bool operator >= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs < rhs);}
-
+  
   virtual G4bool    Equals(const BDSAperture* other)   const = 0;
   virtual G4bool    LessThan(const BDSAperture* other) const = 0;
   virtual void      CheckInfoOK()                      const = 0;
