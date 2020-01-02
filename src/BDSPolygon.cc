@@ -87,6 +87,7 @@ G4bool BDSPolygon::SelfIntersecting(G4int *const indexOfIntersectionA,
 		{*indexOfIntersectionA = i;}
 	      if (indexOfIntersectionB)
 		{*indexOfIntersectionB = j;}
+	      return result;
 	    }
 	}
     }
