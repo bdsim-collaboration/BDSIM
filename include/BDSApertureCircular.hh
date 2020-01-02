@@ -23,6 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+class BDSExtent;
+class BDSPolygon;
+
 /**
  * @brief Circular aperture.
  *
@@ -40,7 +43,6 @@ public:
   G4int    nPoints;
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual G4bool    LessThan(const BDSAperture* other) const;
   virtual void      CheckInfoOK()                      const;
   virtual G4double  RadiusToEncompass()                const {return radius;}
   virtual BDSExtent Extent()                           const;
@@ -50,6 +52,8 @@ public:
   const BDSApertureCircular& operator+=(const G4double number);
   BDSApertureCircular        operator* (const G4double number) const;
   const BDSApertureCircular& operator*=(const G4double number);
+
+  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 };
 
 #endif

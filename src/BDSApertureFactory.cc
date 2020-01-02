@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSPolygon.hh"
 #include "BDSTube.hh"
 #include "BDSUtilities.hh"
 
@@ -239,8 +240,8 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
       nPointsOut = lowestCommonMultiple;
     }
 
-  std::vector<G4TwoVector> startingPoints  = productApertureIn->GeneratePoints(nPointsIn);
-  std::vector<G4TwoVector> finishingPoints = productApertureOut->GeneratePoints(nPointsOut);
+  BDSPolygon startingPoints  = productApertureIn->Polygon(nPointsIn);
+  BDSPolygon finishingPoints = productApertureOut->Polygon(nPointsOut);
 
   // choose more z points in tube if it twists - approximately 1 z plane per 10-ish degrees
   unsigned int nZ = 2;

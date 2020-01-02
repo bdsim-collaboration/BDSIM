@@ -17,15 +17,20 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureCircular.hh"
 #include "BDSApertureElliptical.hh"
-#include "BDSApertureRectangular.hh"
 #include "BDSApertureType.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSPolygon.hh"
 #include "BDSUtilities.hh"
 
+#include "G4TwoVector.hh"
 #include "G4Types.hh"
+
+#include <cmath>
+#include <vector>
 
 BDSApertureElliptical::BDSApertureElliptical(G4double aIn,
 					     G4double bIn,
@@ -52,39 +57,6 @@ G4bool BDSApertureElliptical::Equals(const BDSAperture* other) const
       const BDSApertureElliptical* oc = dynamic_cast<const BDSApertureElliptical*>(other);
       return BDS::DoublesAreEqual(oc->a, a) && BDS::DoublesAreEqual(oc->b, b);
     }
-}
-
-G4bool BDSApertureElliptical::LessThan(const BDSAperture* other) const
-{
-  if (!other)
-    {return false;}
-
-  G4bool result = false;
-  BDSApertureType otherType = other->apertureType;
-  switch (otherType.underlying())
-    {
-    case BDSApertureType::elliptical:
-      {
-	const BDSApertureElliptical* oc = dynamic_cast<const BDSApertureElliptical*>(other);
-	result = a < oc->a && b < oc->b;
-	break;
-      }
-    case BDSApertureType::circular:
-      {
-	const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
-	result = a < oc->radius && b < oc->radius;
-	break;
-      }
-    case BDSApertureType::rectangular:
-      {
-	const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
-	result = a < oc->a && b < oc->b;
-	break;
-      }
-    default:
-      {break;}
-    }
-  return result;
 }
 
 void BDSApertureElliptical::CheckInfoOK() const
@@ -126,6 +98,20 @@ const BDSApertureElliptical& BDSApertureElliptical::operator*=(const G4double nu
   a *= number;
   b *= number;
   return *this;
+}
+
+BDSPolygon BDSApertureElliptical::Polygon(G4int nPointsIn) const
+{
+  G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
+  if (np < 3 || np < MinimumNumberOfPoints())
+    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < 3.");}
+
+  std::vector<G4TwoVector> r;
+  G4double dTheta = CLHEP::twopi / (G4double)np;
+  for (G4int i = 0; i < np; i++)
+    {r.push_back(G4TwoVector(a * std::cos(i*dTheta), b * std::sin(i*dTheta)));}
+  
+  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
 }
 
 

@@ -25,6 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
+class BDSExtent;
+class BDSPolygon;
+
 /**
  * @brief Rectangular aperture.
  *
@@ -42,7 +45,6 @@ public:
   G4double b;
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual G4bool    LessThan(const BDSAperture* other) const;
   virtual void      CheckInfoOK()                      const;
   virtual G4double  RadiusToEncompass()                const {return std::hypot(a,b);}
   virtual BDSExtent Extent()                           const;
@@ -52,6 +54,8 @@ public:
   const BDSApertureRectangular& operator+=(const G4double number);
   BDSApertureRectangular        operator* (const G4double number) const;
   const BDSApertureRectangular& operator*=(const G4double number);
+
+  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 };
 
 #endif

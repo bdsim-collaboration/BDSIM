@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
+#include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
@@ -49,4 +50,12 @@ void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
     {throw BDSException("","\"aper3\" not set, but required to be.");}
   if (aper4Set && !BDS::IsFinite(aper4))
     {throw BDSException("","\"aper4\" not set, but required to be.");}
+}
+
+G4bool BDSAperture::LessThan(const BDSAperture* other) const
+{
+  if (!other)
+    {return false;}
+
+  return Polygon().Inside(other->Polygon());
 }

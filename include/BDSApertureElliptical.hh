@@ -23,6 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+class BDSExtent;
+class BDSPolygon;
+
 /**
  * @brief Elliptical aperture.
  *
@@ -42,7 +45,6 @@ public:
   G4int    nPoints;
 
   virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual G4bool    LessThan(const BDSAperture* other) const;
   virtual void      CheckInfoOK()                      const;
   virtual G4double  RadiusToEncompass()                const;
   virtual BDSExtent Extent()                           const;
@@ -52,6 +54,8 @@ public:
   const BDSApertureElliptical& operator+=(const G4double number);
   BDSApertureElliptical        operator* (const G4double number) const;
   const BDSApertureElliptical& operator*=(const G4double number);
+
+  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 };
 
 #endif
