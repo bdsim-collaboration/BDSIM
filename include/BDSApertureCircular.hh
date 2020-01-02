@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAperture.hh"
 
-#include "globals.hh"
+#include "G4Types.hh"
 
 /**
  * @brief Circular aperture.
