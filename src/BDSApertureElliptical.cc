@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAperture.hh"
 #include "BDSApertureCircular.hh"
 #include "BDSApertureElliptical.hh"
+#include "BDSApertureRectangular.hh"
 #include "BDSApertureType.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
@@ -70,6 +71,12 @@ G4bool BDSApertureElliptical::LessThan(const BDSAperture* other) const
       {
 	const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
 	result = a < oc->radius && b < oc->radius;
+	break;
+      }
+    case BDSApertureType::rectangular:
+      {
+	const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
+	result = a < oc->a && b < oc->b;
 	break;
       }
     default:

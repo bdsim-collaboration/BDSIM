@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAperture.hh"
 #include "BDSApertureCircular.hh"
 #include "BDSApertureFactory.hh"
+#include "BDSApertureRectangular.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -165,9 +166,6 @@ G4VSolid* BDSApertureFactory::CreateCircular() const
 }
 
 G4VSolid* BDSApertureFactory::CreateRectangular() const
-{return nullptr;}
-/*
-G4VSolid* BDSApertureFactory::CreateRectangular() const
 {
   const BDSApertureRectangular* ap = dynamic_cast<const BDSApertureRectangular*>(productApertureIn);
   if (!ap)
@@ -200,7 +198,6 @@ G4VSolid* BDSApertureFactory::CreateRectangular() const
       return product;
     }
 }
-*/
 
 G4VSolid* BDSApertureFactory::CreateElliptical() const
 {return CreateCircular();}

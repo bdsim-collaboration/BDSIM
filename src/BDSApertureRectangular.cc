@@ -22,21 +22,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureRectangular.hh"
 #include "BDSApertureType.hh"
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Types.hh"
 
-BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
-					 G4int    nPointsIn):
-  BDSAperture(BDSApertureType::circular),
-  radius(radiusIn),
-  nPoints(nPointsIn)
-{
-  if (nPoints == 0)
-    {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
-}
+BDSApertureRectangular::BDSApertureRectangular(G4double aIn,
+					       G4double bIn):
+  BDSAperture(BDSApertureType::rectangular),
+  a(aIn),
+  b(bIn)
+{;}
 
-G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
+G4bool BDSApertureRectangular::Equals(const BDSAperture* other) const
 {
   if (!other)
     {return false;}
@@ -44,12 +41,12 @@ G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
     {return false;}
   else
     {
-      const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
-      return oc->radius == radius;
+      const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
+      return BDS::DoublesAreEqual(oc->a, a) && BDS::DoublesAreEqual(oc->b, b);
     }
 }
 
-G4bool BDSApertureCircular::LessThan(const BDSAperture* other) const
+G4bool BDSApertureRectangular::LessThan(const BDSAperture* other) const
 {
   if (!other)
     {return false;}
@@ -58,22 +55,22 @@ G4bool BDSApertureCircular::LessThan(const BDSAperture* other) const
   BDSApertureType otherType = other->apertureType;
   switch (otherType.underlying())
     {
+    case BDSApertureType::rectangular:
+      {
+	const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
+	result = a < oc->a && b < oc->b;
+	break;
+      }
     case BDSApertureType::circular:
       {
 	const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
-	result = radius < oc->radius;
+	result = a < oc->radius && b < oc->radius;
 	break;
       }
     case BDSApertureType::elliptical:
       {
 	const BDSApertureElliptical* oc = dynamic_cast<const BDSApertureElliptical*>(other);
-	result = radius < oc->a && radius < oc->b;
-	break;
-      }
-    case BDSApertureType::rectangular:
-      {
-	const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
-	result = radius < oc->a && radius < oc->b;
+	result = a < oc->a && b < oc->b;
 	break;
       }
     default:
@@ -82,40 +79,44 @@ G4bool BDSApertureCircular::LessThan(const BDSAperture* other) const
   return result;
 }
 
-void BDSApertureCircular::CheckInfoOK() const
+void BDSApertureRectangular::CheckInfoOK() const
 {
-  CheckRequiredParametersSet(radius, true);
+  CheckRequiredParametersSet(a, true, b, true);
 }
 
-BDSExtent BDSApertureCircular::Extent() const
+BDSExtent BDSApertureRectangular::Extent() const
 {
-  BDSExtent simpleExtent(radius, radius, 0);
+  BDSExtent simpleExtent(a, b, 0);
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureCircular BDSApertureCircular::operator+ (const G4double number) const
+BDSApertureRectangular BDSApertureRectangular::operator+ (const G4double number) const
 {
-  BDSApertureCircular result = BDSApertureCircular(*this);
-  result.radius += number;
+  BDSApertureRectangular result = BDSApertureRectangular(*this);
+  result.a += number;
+  result.b += number;
   return result;
 }
 
-const BDSApertureCircular& BDSApertureCircular::operator+=(const G4double number)
+const BDSApertureRectangular& BDSApertureRectangular::operator+=(const G4double number)
 {
-  radius += number;
+  a += number;
+  b += number;
   return *this;
 }
 
-BDSApertureCircular BDSApertureCircular::operator* (const G4double number) const
+BDSApertureRectangular BDSApertureRectangular::operator* (const G4double number) const
 {
-  BDSApertureCircular result = BDSApertureCircular(*this);
-  result.radius *= number;
+  BDSApertureRectangular result = BDSApertureRectangular(*this);
+  result.a *= number;
+  result.b *= number;
   return result;
 }
 
-const BDSApertureCircular& BDSApertureCircular::operator*=(const G4double number)
+const BDSApertureRectangular& BDSApertureRectangular::operator*=(const G4double number)
 {
-  radius *= number;
+  a *= number;
+  b *= number;
   return *this;
 }
 
