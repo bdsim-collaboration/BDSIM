@@ -30,6 +30,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSAperture;
 class G4VSolid;
 
+namespace GMAD
+{
+  class Aperture;
+  class SamplerPlacement;
+}
+
 /**
  * @brief Main interface for building basic shapes described by apertures.
  * 
@@ -42,22 +48,34 @@ public:
   BDSApertureFactory();
   ~BDSApertureFactory();
 
+  BDSAperture* CreateAperture(const GMAD::Aperture& sp) const;
+  BDSAperture* CreateAperture(const GMAD::SamplerPlacement& sp) const;
+  BDSAperture* CreateAperture(BDSApertureType at,
+			      G4double        a1,
+			      G4double        a2,
+			      G4double        a3,
+			      G4double        a4,
+			      G4double        tilt,
+			      G4double        offsetX,
+			      G4double        offsetY,
+			      unsigned int    nPoints) const;
+  
   /// Create any aperture shape with flat ends. The apertureOut is optionally
   /// for definining the possibly different aperture shape at the output end.
-  G4VSolid* CreateAperture(const G4String&    name,
-			   G4double           length,
-			   const BDSAperture* apertureIn,
-			   const BDSAperture* apertureOut = nullptr,
-			   G4double           lengthExtraForBoolean = 0);
+  G4VSolid* CreateSolid(const G4String&    name,
+			G4double           length,
+			const BDSAperture* apertureIn,
+			const BDSAperture* apertureOut = nullptr,
+			G4double           lengthExtraForBoolean = 0);
 
   /// Create any aperture shape with angled ends specified by unit normals.
-  G4VSolid* CreateAperture(const G4String&      name,
-			   G4double             length,
-			   const BDSAperture*   apertureIn,
-			   const G4ThreeVector& normalIn,
-			   const G4ThreeVector& normalOut,
-			   const BDSAperture*   apertureOut = nullptr,
-			   G4double             lengthExtraForBoolean = 0);
+  G4VSolid* CreateSolid(const G4String&      name,
+			G4double             length,
+			const BDSAperture*   apertureIn,
+			const G4ThreeVector& normalIn,
+			const G4ThreeVector& normalOut,
+			const BDSAperture*   apertureOut = nullptr,
+			G4double             lengthExtraForBoolean = 0);
 
 private:
   /// Common construction code for the main CreateAperture interfaces.

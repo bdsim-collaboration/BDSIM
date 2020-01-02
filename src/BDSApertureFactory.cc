@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
 #include "BDSApertureCircular.hh"
+#include "BDSApertureElliptical.hh"
 #include "BDSApertureFactory.hh"
 #include "BDSApertureRectangular.hh"
 #include "BDSApertureType.hh"
@@ -27,17 +28,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTube.hh"
 #include "BDSUtilities.hh"
 
-#include "G4String.hh"
-#include "G4ThreeVector.hh"
-#include "G4Types.hh"
+#include "parser/aperture.h"
+#include "parser/samplerplacement.h"
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4TwoVector.hh"
+#include "G4Types.hh"
 #include "G4VSolid.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
@@ -64,11 +68,64 @@ BDSApertureFactory::BDSApertureFactory():
 BDSApertureFactory::~BDSApertureFactory()
 {;}
 
-G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
-					     G4double           length,
-					     const BDSAperture* apertureIn,
-					     const BDSAperture* apertureOut,
-					     G4double           lengthExtraForBoolean)
+BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
+{
+  return CreateAperture(BDS::DetermineApertureType(ap.apertureType),
+			ap.aper1 * CLHEP::m,
+			ap.aper2 * CLHEP::m,
+			ap.aper3 * CLHEP::m,
+			ap.aper4 * CLHEP::m,
+			ap.tilt  * CLHEP::rad,
+			ap.offsetX * CLHEP::m,
+			ap.offsetY * CLHEP::m,
+			ap.nPoints);
+}
+
+BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp) const
+{
+  return CreateAperture(BDS::DetermineApertureType(sp.shape),
+			sp.aper1 * CLHEP::m,
+			sp.aper2 * CLHEP::m,
+			sp.aper3 * CLHEP::m,
+			sp.aper4 * CLHEP::m,
+			sp.tilt  * CLHEP::rad,
+			0,
+			0,
+			sp.nPoints);
+}
+
+BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
+						G4double        a1,
+						G4double        a2,
+						G4double        a3,
+						G4double        a4,
+						G4double        tilt,
+						G4double        offsetX,
+						G4double        offsetY,
+						unsigned int    nPoints) const
+{
+  BDSAperture* result = nullptr;
+  switch (at.underlying())
+    {
+    case BDSApertureType::circular:
+      {result = new BDSApertureCircular(a1, nPoints);       break;}
+    case BDSApertureType::elliptical:
+      {result = new BDSApertureElliptical(a1, a2, nPoints); break;}
+    case BDSApertureType::rectangular:
+      {result = new BDSApertureRectangular(a1, a2);         break;}
+    default:
+      {break;}
+    }
+  if (result)
+    {result->SetTiltOffset(BDSTiltOffset(tilt, offsetX, offsetY));}
+  return result;
+}
+
+G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
+					  G4double           length,
+					  const BDSAperture* apertureIn,
+					  const BDSAperture* apertureOut,
+					  G4double           lengthExtraForBoolean)
 {
   productNormalIn  = G4ThreeVector();
   productNormalOut = G4ThreeVector();
@@ -77,13 +134,13 @@ G4VSolid* BDSApertureFactory::CreateAperture(const G4String&    name,
   return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
 }
 
-G4VSolid* BDSApertureFactory::CreateAperture(const G4String&      name,
-					     G4double             length,
-					     const BDSAperture*   apertureIn,
-					     const G4ThreeVector& normalIn,
-					     const G4ThreeVector& normalOut,
-					     const BDSAperture*   apertureOut,
-					     G4double             lengthExtraForBoolean)
+G4VSolid* BDSApertureFactory::CreateSolid(const G4String&      name,
+					  G4double             length,
+					  const BDSAperture*   apertureIn,
+					  const G4ThreeVector& normalIn,
+					  const G4ThreeVector& normalOut,
+					  const BDSAperture*   apertureOut,
+					  G4double             lengthExtraForBoolean)
 {
   productNormalIn  = normalIn;
   productNormalOut = normalOut;
@@ -257,6 +314,9 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 		     finishingPoints,
 		     nZ);
 }
+
+G4VSolid* BDSApertureFactory::CircularToCircular() const
+{return nullptr;}
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
 									BDSApertureType a2) const
