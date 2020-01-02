@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4TwoVector.hh"
 
 #include <ostream>
 
@@ -53,7 +54,8 @@ public:
   ///@}
 
   /// More advanced accessor for offset - only in x,y.
-  G4ThreeVector GetOffset() const {return G4ThreeVector(dx, dy, 0);}
+  G4ThreeVector GetOffset()   const {return G4ThreeVector(dx, dy, 0);}
+  G4TwoVector   GetOffset2D() const {return G4TwoVector(dx, dy);}
 
   /// Get a transform to represent this tilt offset.
   G4Transform3D Transform3D() const;
@@ -68,6 +70,7 @@ public:
 
   /// Comparison.
   friend bool operator== (const BDSTiltOffset& lhs, const BDSTiltOffset& rhs);
+  friend bool operator!= (const BDSTiltOffset& lhs, const BDSTiltOffset& rhs) {return !(lhs == rhs);}
   
 private:
   /// Horizontal displacement (mm) - note right handed coordinate system
