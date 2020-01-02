@@ -45,6 +45,8 @@ G4bool BDSApertureElliptical::Equals(const BDSAperture* other) const
     {return false;}
   else if (other->apertureType != apertureType)
     {return false;}
+  else if (other->tiltOffset != tiltOffset)
+    {return false;}
   else
     {
       const BDSApertureElliptical* oc = dynamic_cast<const BDSApertureElliptical*>(other);

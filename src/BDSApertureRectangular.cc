@@ -39,6 +39,8 @@ G4bool BDSApertureRectangular::Equals(const BDSAperture* other) const
     {return false;}
   else if (other->apertureType != apertureType)
     {return false;}
+  else if (other->tiltOffset != tiltOffset)
+    {return false;}
   else
     {
       const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);

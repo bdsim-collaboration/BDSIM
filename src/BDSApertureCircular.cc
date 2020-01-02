@@ -42,6 +42,8 @@ G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
     {return false;}
   else if (other->apertureType != apertureType)
     {return false;}
+  else if (other->tiltOffset != tiltOffset)
+    {return false;}
   else
     {
       const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
