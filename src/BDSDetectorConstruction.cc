@@ -19,7 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
-#include "BDSApertureInfo.hh"
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineBLMBuilder.hh"
@@ -229,15 +230,11 @@ void BDSDetectorConstruction::InitialiseRegions()
 
 void BDSDetectorConstruction::InitialiseApertures()
 {
-  std::map<G4String, BDSApertureInfo*> apertures;
+  std::map<G4String, BDSAperture*> apertures;
+  BDSApertureFactory fac;
   for (const GMAD::Aperture& a : BDSParser::Instance()->GetApertures())
     {
-      BDSApertureInfo* ap = new BDSApertureInfo(a.apertureType,
-						a.aper1 * CLHEP::m,
-						a.aper2 * CLHEP::m,
-						a.aper3 * CLHEP::m,
-						a.aper4 * CLHEP::m,
-						a.name);
+      BDSAperture* ap = fac.CreateAperture(a);
       apertures[a.name] = ap;
     }
   acceleratorModel->RegisterApertures(apertures);
@@ -811,17 +808,13 @@ BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD:
   BDSExtent apertureExtent;
   if (sp.apertureModel.empty())
     {
-      BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
-						 sp.aper1 * CLHEP::m,
-						 sp.aper2 * CLHEP::m,
-						 sp.aper3 * CLHEP::m,
-						 sp.aper4 * CLHEP::m,
-						 sp.name);
-      apertureExtent = aperture.Extent();
+      BDSApertureFactory fac;
+      BDSAperture* aperture = fac.CreateAperture(sp);
+      apertureExtent = aperture->Extent();
     }
   else
     {
-      BDSApertureInfo* aperture = BDSAcceleratorModel::Instance()->Aperture(sp.apertureModel);
+      BDSAperture* aperture = BDSAcceleratorModel::Instance()->Aperture(sp.apertureModel);
       apertureExtent = aperture->Extent();
     }
   

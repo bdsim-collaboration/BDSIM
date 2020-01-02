@@ -21,14 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSSampler.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 
-class BDSApertureInfo;
+class BDSAperture;
 
 /** 
  * @brief Custom shaped sampler with fixed thickness.
  * 
- * Does not retain ownership of BDSApertureInfo instance.
+ * Does not retain ownership of BDSAperture instance.
  * 
  * @author Laurie Nevay
  */
@@ -36,8 +36,8 @@ class BDSApertureInfo;
 class BDSSamplerCustom: public BDSSampler
 {
 public:
-  BDSSamplerCustom(G4String               name,
-		   const BDSApertureInfo& shape);
+  BDSSamplerCustom(const G4String& name,
+		   BDSAperture*    shape);
 
   virtual ~BDSSamplerCustom(){;}
 

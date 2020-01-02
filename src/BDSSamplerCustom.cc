@@ -16,64 +16,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSApertureInfo.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
+#include "BDSDebug.hh"
+#include "BDSExtent.hh"
+#include "BDSException.hh"
 #include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSDManager.hh"
 
-#include "globals.hh" // geant4 types / globals
-#include "G4Box.hh"
 #include "G4LogicalVolume.hh"
+#include "G4String.hh"
 #include "G4Tubs.hh"
+#include "G4Types.hh"
 
 
-BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
-				   const BDSApertureInfo& shape):
+BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
+				   BDSAperture* shape):
   BDSSampler(nameIn)
 {
-  /*
+  // Make general samplers thicker to be more tolerant on possible
+  // problems with overlapping faces - unlike normal samplers were
+  // BDSIM strictly controls the layout.
   BDSApertureFactory fac;
-  containerSolid = fac.CreateAperture(name + "_aperture",
-				      BDSSamplerPlane::chordLength,
-				      shape);
-  */
-  // We make the sampler 10x bigger than normal as it's still really small
-  // but less likely to cause overlap problems. The original sampler width
-  // is designed to be functional but as small as possible to avoid introducing
-  // extra length for optical tracking.
-  switch (shape.apertureType.underlying())
-    {
-    case BDSApertureType::circular:
-      {
-	containerSolid = new G4Tubs(name + "_solid",
-				    0,
-				    shape.aper1,
-				    10*BDSSamplerPlane::chordLength,
-				    0,
-				    CLHEP::twopi);
-	break;
-      }
-    case BDSApertureType::rectangular:
-      {
-	containerSolid = new G4Box(name + "_solid",
-				   shape.aper1,
-				   shape.aper2,
-				   10*BDSSamplerPlane::chordLength);
-	break;
-      }
-    default:
-      {
-	G4cerr << "Shape \"" << shape.apertureType.ToString() << "\" is not currently supported." << G4endl;
-	G4cerr << "Please use circular or rectangular." << G4endl;
-	exit(1);
-	break;
-      }
-    }
-  
+  containerSolid = fac.CreateSolid(name + "_aperture",
+				   10*BDSSamplerPlane::chordLength,
+				   shape);
+  if (!containerSolid)
+    {throw BDSException(__METHOD_NAME__, "invalid shape for sampler.");}
 
-  BDSExtent ae = shape.Extent();
+  BDSExtent ae = shape->Extent();
   G4double  dz = BDSSamplerPlane::chordLength * 0.5;
   SetExtent(BDSExtent(ae.XNeg(), ae.XPos(), ae.YNeg(), ae.YPos(), -dz, dz));
 

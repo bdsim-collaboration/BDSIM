@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorModel.hh"
-#include "BDSApertureInfo.hh"
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamPipe.hh"
@@ -152,20 +153,17 @@ void BDSParallelWorldSampler::Construct()
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
       
       G4String samplerName = G4String(samplerPlacement.name);
-      BDSApertureInfo* shape = nullptr;
+      BDSAperture* shape = nullptr;
       if (samplerPlacement.apertureModel.empty())
 	{
-	  shape = new BDSApertureInfo(samplerPlacement.shape,
-				      samplerPlacement.aper1*CLHEP::m,
-				      samplerPlacement.aper2*CLHEP::m,
-				      samplerPlacement.aper3*CLHEP::m,
-				      samplerPlacement.aper4*CLHEP::m,
-				      samplerPlacement.name);
+	  BDSApertureFactory fac;
+	  shape = fac.CreateAperture(samplerPlacement);
+	  BDSAcceleratorModel::Instance()->RegisterAperture(samplerPlacement.name, shape);
 	}
       else
 	{shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
       
-      BDSSampler* sampler = new BDSSamplerCustom(samplerName, *shape);
+      BDSSampler* sampler = new BDSSamplerCustom(samplerName, shape);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);
