@@ -52,8 +52,8 @@ public:
 
   /// Return true if any segments that make this polyon intersect with
   /// any others.
-  G4bool SelfIntersecting(G4int* indexOfIntersectionA = nullptr,
-			  G4int* indexOfIntersectionB = nullptr) const;
+  G4bool SelfIntersecting(G4int *const indexOfIntersectionA = nullptr,
+			  G4int *const indexOfIntersectionB = nullptr) const;
   
   /// Return a copy with a tilt and offset applied.
   BDSPolygon ApplyTiltOffset(const BDSTiltOffset& to) const;

@@ -72,6 +72,8 @@ G4bool BDSPolygon::Inside(const BDSPolygon& other) const
   return result;
 }
 
+G4bool BDSPolygon::SelfIntersecting(G4int *const indexOfIntersectionA,
+				    G4int *const indexOfIntersectionB) const
 {
   G4bool result = false;
   for (G4int i = 0; i < (G4int)size() - 1; i++)
