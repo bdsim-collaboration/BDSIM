@@ -37,8 +37,8 @@ class BDSPolygon;
 class BDSApertureRectangular: public BDSAperture
 {
 public:
-  explicit BDSApertureRectangular(G4double aIn,
-				  G4double bIn);
+  BDSApertureRectangular(G4double aIn,
+			 G4double bIn);
   virtual ~BDSApertureRectangular(){;}
 
   G4double a;
