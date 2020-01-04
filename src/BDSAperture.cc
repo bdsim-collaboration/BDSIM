@@ -18,12 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
 #include "BDSApertureType.hh"
+#include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
+#include "G4String.hh"
 #include "G4Types.hh"
 
 BDSAperture::BDSAperture(BDSApertureType apertureTypeIn):
@@ -50,6 +52,13 @@ void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
     {throw BDSException("","\"aper3\" not set, but required to be.");}
   if (aper4Set && !BDS::IsFinite(aper4))
     {throw BDSException("","\"aper4\" not set, but required to be.");}
+}
+
+void BDSAperture::CheckParameterIsPositive(G4double        parameter,
+					   const G4String& nameToWarn) const
+{
+  if (parameter <= 0)
+    {throw BDSException(__METHOD_NAME__, "parameter \"" + nameToWarn + "\" is not >= 0");}
 }
 
 G4bool BDSAperture::LessThan(const BDSAperture* other) const

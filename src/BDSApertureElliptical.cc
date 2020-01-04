@@ -62,6 +62,8 @@ G4bool BDSApertureElliptical::Equals(const BDSAperture* other) const
 void BDSApertureElliptical::CheckInfoOK() const
 {
   CheckRequiredParametersSet(a, true, b, true);
+  CheckParameterIsPositive(a, "a");
+  CheckParameterIsPositive(b, "b");
 }
 
 BDSExtent BDSApertureElliptical::Extent() const

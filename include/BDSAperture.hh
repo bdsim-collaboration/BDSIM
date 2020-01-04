@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSTiltOffset.hh"
 
+#include "G4String.hh"
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
@@ -65,11 +66,16 @@ public:
   /// Minimal number of 2D points to represent the shape, e.g. 3 for a triangle; 4 for a rectangle etc.
   virtual G4int     MinimumNumberOfPoints()            const = 0;
 
+  /// Check flagged parameters (variable number) are non-zero and throw exception if not.
   void CheckRequiredParametersSet(G4double aper1,     G4bool aper1Set,
 				  G4double aper2 = 0, G4bool aper2Set = false,
 				  G4double aper3 = 0, G4bool aper3Set = false,
 				  G4double aper4 = 0, G4bool aper4Set = false) const;
 
+  /// Check value is >= 0 and throw exception with nameToWarn if not.
+  void CheckParameterIsPositive(G4double        parameter,
+				const G4String& nameToWarn) const;
+  
   virtual G4bool LessThan(const BDSAperture* other) const;
 
   /// Generate a set of x,y points to represent the aperture. Number == 0 means minimal

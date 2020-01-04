@@ -30,10 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include <cmath>
 #include <vector>
-
-#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
 					 G4int    nPointsIn):
@@ -63,6 +63,7 @@ G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
 void BDSApertureCircular::CheckInfoOK() const
 {
   CheckRequiredParametersSet(radius, true);
+  CheckParameterIsPositive(radius, "radius");
 }
 
 BDSExtent BDSApertureCircular::Extent() const

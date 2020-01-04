@@ -53,6 +53,8 @@ G4bool BDSApertureRectangular::Equals(const BDSAperture* other) const
 void BDSApertureRectangular::CheckInfoOK() const
 {
   CheckRequiredParametersSet(a, true, b, true);
+  CheckParameterIsPositive(a, "a");
+  CheckParameterIsPositive(b, "b");
 }
 
 BDSExtent BDSApertureRectangular::Extent() const
