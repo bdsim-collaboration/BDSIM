@@ -64,8 +64,7 @@ BDSExtent BDSApertureRectangular::Extent() const
 BDSApertureRectangular BDSApertureRectangular::operator+ (const G4double number) const
 {
   BDSApertureRectangular result = BDSApertureRectangular(*this);
-  result.a += number;
-  result.b += number;
+  result += number;
   return result;
 }
 
@@ -79,8 +78,7 @@ const BDSApertureRectangular& BDSApertureRectangular::operator+=(const G4double 
 BDSApertureRectangular BDSApertureRectangular::operator* (const G4double number) const
 {
   BDSApertureRectangular result = BDSApertureRectangular(*this);
-  result.a *= number;
-  result.b *= number;
+  result *= number;
   return result;
 }
 

@@ -74,7 +74,7 @@ BDSExtent BDSApertureCircular::Extent() const
 BDSApertureCircular BDSApertureCircular::operator+ (const G4double number) const
 {
   BDSApertureCircular result = BDSApertureCircular(*this);
-  result.radius += number;
+  result += number;
   return result;
 }
 
@@ -87,7 +87,7 @@ const BDSApertureCircular& BDSApertureCircular::operator+=(const G4double number
 BDSApertureCircular BDSApertureCircular::operator* (const G4double number) const
 {
   BDSApertureCircular result = BDSApertureCircular(*this);
-  result.radius *= number;
+  result *= number;
   return result;
 }
 

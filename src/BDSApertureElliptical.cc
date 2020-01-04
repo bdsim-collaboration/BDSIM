@@ -73,8 +73,7 @@ BDSExtent BDSApertureElliptical::Extent() const
 BDSApertureElliptical BDSApertureElliptical::operator+ (const G4double number) const
 {
   BDSApertureElliptical result = BDSApertureElliptical(*this);
-  result.a += number;
-  result.b += number;
+  result += number;
   return result;
 }
 
@@ -88,8 +87,7 @@ const BDSApertureElliptical& BDSApertureElliptical::operator+=(const G4double nu
 BDSApertureElliptical BDSApertureElliptical::operator* (const G4double number) const
 {
   BDSApertureElliptical result = BDSApertureElliptical(*this);
-  result.a *= number;
-  result.b *= number;
+  result *= number;
   return result;
 }
 
