@@ -178,8 +178,8 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
       {product = CreateRectangular(); break;}
     case BDSApertureType::elliptical:
       {product = CreateElliptical();  break;}
-    case BDSApertureType::lhc:
-      {product = CreateLHC();         break;}
+    case BDSApertureType::rectcircle:
+      {product = CreateRectCircle();  break;}
     case BDSApertureType::rectellipse:
       {product = CreateRectEllipse(); break;}
     case BDSApertureType::racetrack:
@@ -259,7 +259,7 @@ G4VSolid* BDSApertureFactory::CreateRectangular() const
 
 G4VSolid* BDSApertureFactory::CreateElliptical() const
 {return CreateCircular();}
-G4VSolid* BDSApertureFactory::CreateLHC() const
+G4VSolid* BDSApertureFactory::CreateRectCircle() const
 {return CreateCircular();}
 G4VSolid* BDSApertureFactory::CreateRectEllipse() const
 {return CreateCircular();}

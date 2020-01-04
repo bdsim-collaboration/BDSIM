@@ -89,7 +89,7 @@ private:
   G4VSolid* CreateCircular()    const;
   G4VSolid* CreateRectangular() const;
   G4VSolid* CreateElliptical()  const;
-  G4VSolid* CreateLHC()         const;
+  G4VSolid* CreateRectCircle()  const;
   G4VSolid* CreateRectEllipse() const;
   G4VSolid* CreateRaceTrack()   const;
   G4VSolid* CreateOctagonal()   const;
