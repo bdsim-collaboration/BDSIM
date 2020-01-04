@@ -54,6 +54,9 @@ public:
   const BDSApertureCircular& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
+
+private:
+  BDSApertureCircular() = delete;
 };
 
 #endif

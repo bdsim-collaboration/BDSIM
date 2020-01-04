@@ -60,6 +60,9 @@ public:
   const BDSApertureElliptical& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
+
+private:
+  BDSApertureElliptical() = delete;
 };
 
 #endif

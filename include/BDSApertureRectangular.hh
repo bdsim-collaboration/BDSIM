@@ -56,6 +56,9 @@ public:
   const BDSApertureRectangular& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
+
+private:
+  BDSApertureRectangular() = delete;
 };
 
 #endif
