@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSAPERTURERECTANGULAR_H
 
 #include "BDSAperture.hh"
+#include "BDSTiltOffset.hh"
 
 #include "G4Types.hh"
 
