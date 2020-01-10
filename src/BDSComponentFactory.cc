@@ -1571,7 +1571,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 			 "same number of materials as layers - check 'layerMaterials'");
     }
 
-  if (element->layerThicknesses.size() == 0 )
+  if (element->layerThicknesses.empty())
     {throw BDSException(__METHOD_NAME__, "Element: \"" + elementName + "\" has 0 screen layers");}
   
   std::list<std::string>::const_iterator itm;
@@ -1588,7 +1588,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 	     << *(itt) << ", material "  << (*itm)
 	     <<	", isSampler: "  << (*itIsSampler) << G4endl;
 #endif
-      if (element->layerIsSampler.size()>0)
+      if (!(element->layerIsSampler.empty()))
 	{
 	  theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
 	  ++itIsSampler;
