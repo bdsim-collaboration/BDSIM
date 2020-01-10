@@ -135,7 +135,7 @@ public:
   
 #ifndef __ROOTBUILD__
   /// Fill maps of particle information from Geant4.
-  void Fill(const G4bool& fillIons);
+  void Fill(G4bool fillIons);
 #endif
 
   std::map<int, ParticleInfo> particles;
