@@ -16,8 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSParser.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSParser.hh"
 #include "BDSUtilities.hh"
 
 #include <string>
@@ -90,6 +91,9 @@ void BDSParser::CheckOptions()
       std::cerr << "The default value is 1 pm" << std::endl;
       exit(1);
     }
+
+  if (options.thinElementLength < 3*options.lengthSafety)
+    {throw BDSException(__METHOD_NAME__, "thinElementLength must be at least 3x lengthSafety");}
 
   if (options.nturns < 1)
     {options.nturns = 1;}
