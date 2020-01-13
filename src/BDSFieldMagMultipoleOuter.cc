@@ -28,10 +28,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <vector>
 
-BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              orderIn,
-						     const G4double&          poleTipRadiusIn,
-						     BDSFieldMag*             innerFieldIn,
-						     const G4bool&            kPositive):
+BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
+						     G4double           poleTipRadiusIn,
+						     const BDSFieldMag* innerFieldIn,
+						     G4bool             kPositive):
   order(orderIn),
   normalisation(1), // we have to get field first to calculate the normalisation which uses it, so start with 1
   positiveField(kPositive),

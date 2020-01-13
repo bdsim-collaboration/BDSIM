@@ -307,7 +307,9 @@ void BDSDetectorConstruction::BuildBeamlines()
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
 						   placement.sequence,
 						   startTransform,
-						   startS);
+						   startS,
+						   false,
+						   true);
       
       acceleratorModel->RegisterBeamlineSetExtra(placement.sequence, extraBeamline);
     }
@@ -317,7 +319,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      G4String             name,
 						      const G4Transform3D& initialTransform,
 						      G4double             initialS,
-						      G4bool               beamlineIsCircular)
+						      G4bool               beamlineIsCircular,
+						      G4bool               isPlacementBeamline)
 {
   if (beamLine.empty()) // note a line always has a 'line' element first so an empty line will not be 'empty'
     {return BDSBeamlineSet();}
@@ -432,7 +435,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   
   if (BDSGlobalConstants::Instance()->Survey())
     {
-      BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
+      G4String surveyFileName = BDSGlobalConstants::Instance()->SurveyFileName() + ".dat";
+      if (isPlacementBeamline)
+        {surveyFileName = BDSGlobalConstants::Instance()->SurveyFileName() + "_" + name + ".dat";}
+      BDSSurvey* survey = new BDSSurvey(surveyFileName);
       survey->Write(massWorld);
       delete survey;
     }
