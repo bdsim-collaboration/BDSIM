@@ -171,6 +171,9 @@ public:
 
   /// Whether this beam line element will overlaps in 3D Cartesian coordinates with another.
   G4bool Overlaps(const BDSBeamlineElement* otherElement) const;
+
+  G4bool OrientationOutgoingIsNearIncomingOf(const BDSBeamlineElement* other) const;
+  G4bool OrientationIncomingIsNearOutgoingOf(const BDSBeamlineElement* other) const;
   
 private:
   /// The accelerator component

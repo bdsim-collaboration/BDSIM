@@ -226,4 +226,16 @@ G4bool BDSBeamlineElement::Overlaps(const BDSBeamlineElement* otherElement) cons
   return thisGlobal.Overlaps(otherGlobal);
 }
 
+G4bool BDSBeamlineElement::OrientationOutgoingIsNearIncomingOf(const BDSBeamlineElement* other) const
+{
+  if (!other)
+    {return false;}
+  return referenceRotationEnd->isNear(*(other->referenceRotationStart));
+}
 
+G4bool BDSBeamlineElement::OrientationIncomingIsNearOutgoingOf(const BDSBeamlineElement* other) const
+{
+  if (!other)
+    {return false;}
+  return referenceRotationStart->isNear(*(other->referenceRotationEnd));
+}
