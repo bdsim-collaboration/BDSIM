@@ -134,7 +134,7 @@ namespace BDS
   G4int Sign(T val)
   {return G4int((T(0) < val) - (val < T(0)));}
 
-  inline G4String BoolToString(const G4bool& in)
+  inline G4String BoolToString(G4bool in)
   {return in ? "true" : "false";}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
