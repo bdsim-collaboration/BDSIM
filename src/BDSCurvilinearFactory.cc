@@ -92,7 +92,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
         }
     }
   
-  G4double halfLength = chordLength * 0.5 - lengthSafety;
+  G4double halfLength = chordLength * 0.5;
   G4CutTubs* solid = new G4CutTubs(name + "_solid", // name
                                    0,                  // inner radius
                                    radiusLocal,        // outer radius
