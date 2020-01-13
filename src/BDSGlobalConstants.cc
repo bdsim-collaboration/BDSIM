@@ -87,7 +87,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" " << horizontalWidth
 	     << " must be greater than 2x (\"aper1\" + \"beamPipeThickness\") ("
 	     << defaultBeamPipeModel->aper1 << " + " << defaultBeamPipeModel->beamPipeThickness << ")" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__,"error in beam pipe defaults");
     }
   magnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
