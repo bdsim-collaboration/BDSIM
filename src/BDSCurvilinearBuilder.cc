@@ -44,7 +44,7 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
 
   paddingLength       = BDSBeamline::PaddingLength();
-  defaultBridgeLength = paddingLength + 4*globals->LengthSafety();
+  defaultBridgeLength = 1.1*paddingLength + 4*globals->LengthSafety();
   curvilinearRadius   = globals->CurvilinearDiameter()*0.5;
   radiusTolerance     = 0.8;
   if (globals->BuildTunnel() || globals->BuildTunnelStraight())
@@ -74,13 +74,16 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
   delete factory;
 }
 
+G4bool BDSCurvilinearBuilder::TooShort(BDSBeamlineElement const* const element) const
+{return element->GetArcLength() < 1.1*BDSGlobalConstants::Instance()->ThinElementLength();}
+
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
 								 const G4bool circular)
 {  
   BDSBeamline* result = new BDSBeamline();
 
   //prepend small sections to machine when non-circular
-  G4bool bonusSections = (!circular && !beamline->empty());
+  G4bool bonusSections = !circular && !beamline->empty();
 
   if (bonusSections)
     {//prepend small section to machine
@@ -91,6 +94,22 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
   G4int i = 0;
   for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); ++element)
     {
+      BDSBeamline::const_iterator startElement  = element;
+      BDSBeamline::const_iterator finishElement = element;
+      if (TooShort(*element))
+        {continue;}
+
+      // if next element is short, we create a volume covering it to avoid creating short volumes
+      // however, if it's say a fringe on a bend the orientation will be slightly different so there'll
+      // be a cosine error here in the coordinate system found from the CL volume - this should be
+      // acceptably small because the length of the 'short' element should be short
+      BDSBeamline::const_iterator next = std::next(element);
+      if (next < beamline->end())
+        {
+          if (TooShort(*next))
+            {finishElement = next;}
+        }
+
       G4String name = (*element)->GetName() + "_cl_" + std::to_string(i);
       i++;
       const BDSBeamlineElement* pstEl = nullptr;
@@ -209,19 +228,18 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(const G4Stri
   
   if (startElement == finishElement)
     {// build 1:1
-      chordLength = (*startElement)->GetChordLength() + paddingLength;
+      // the 0.5*paddingLength margin is to ensure there are no coplanar faces between worlds
+      // i.e. the face of the CL volume should not be coplanar with one in the mass world
+      chordLength = (*startElement)->GetChordLength();// + 0.5*paddingLength;
       angle       = (*startElement)->GetAngle();
       if (Angled(*startElement))
-	{
-	  // Not strictly accurate to add on paddingLength to arcLength, but close for now.
-	  arcLength = (*startElement)->GetArcLength() + paddingLength;
-	}
+	    {arcLength = (*startElement)->GetArcLength();}// - 0.5*paddingLength;}
     }
   else
     {// cover a few components
       G4ThreeVector positionStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector positionEnd   = (*finishElement)->GetReferencePositionEnd();
-      chordLength                 = (positionEnd - positionStart).mag() + paddingLength;
+      chordLength                 = (positionEnd - positionStart).mag();// - 0.5*paddingLength;
       
       G4double accumulatedAngle = 0;
       for (auto it = startElement; it < finishElement; it++)
@@ -275,8 +293,11 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
   else if (BDS::IsFinite((*element)->GetAngle()))
     {// width may be reduced due to bend - check if required
       G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
-      width = std::min(width, crRadius);
-      component = CreateStraightBridgeComponent(width, numberOfUniqueComponents);
+      if (width < curvilinearRadius)
+	{
+	  G4double shortestLength = std::min({paddingLength, 0.5*(*nextElement)->GetArcLength(), 0.5*(*element)->GetArcLength()});
+	  G4double bridgeLength = ((*nextElement)->GetReferencePositionStart() - (*element)->GetReferencePositionEnd()).mag() + shortestLength;
+	  component = CreateStraightBridgeComponent(bridgeLength, width, numberOfUniqueComponents);}
     }
 
   return CreateBridgeElementFromComponent(component, element, nextElement, end, beamlineIndex);
@@ -295,12 +316,13 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
   return component;
 }
 
-BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateStraightBridgeComponent(G4double width,
-									      G4int&   numberOfUniqueComponents)
+BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateStraightBridgeComponent(G4double chordLengthIn,
+                                                                              G4double width,
+									                                          G4int&   numberOfUniqueComponents)
 {
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
-								   defaultBridgeLength,
-								   width);
+								   chordLengthIn,
+								   width*0.5);
   BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
   numberOfUniqueComponents++;
   return component;

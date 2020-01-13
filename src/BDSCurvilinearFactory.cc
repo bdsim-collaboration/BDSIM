@@ -91,7 +91,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
           outputface = outputface.rotateZ(tilt);
         }
     }
-  
+
   G4double halfLength = chordLength * 0.5;
   G4CutTubs* solid = new G4CutTubs(name + "_solid", // name
                                    0,                  // inner radius

@@ -108,8 +108,9 @@ private:
 
   /// Create a unique accelerator component for an element that's straight, but with a
   /// specific width.
-  BDSAcceleratorComponent* CreateStraightBridgeComponent(G4double                    width,
-							 G4int&                      numberOfUniqueComponents);
+  BDSAcceleratorComponent* CreateStraightBridgeComponent(G4double chordLengthIn,
+							 G4double width,
+							 G4int&   numberOfUniqueComponents);
   
   /// Create a unique accelerator component for an element with angled faces.
   BDSAcceleratorComponent* CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
