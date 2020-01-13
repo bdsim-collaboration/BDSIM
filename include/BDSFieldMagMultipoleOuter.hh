@@ -55,10 +55,10 @@ class BDSMagnetStrength;
 class BDSFieldMagMultipoleOuter: public BDSFieldMag
 {
 public:
-  BDSFieldMagMultipoleOuter(const G4int     orderIn,
-			    const G4double& poleTipRadius,
-			    BDSFieldMag*    innerFieldIn,
-			    const G4bool&   kPositive);
+  BDSFieldMagMultipoleOuter(G4int              orderIn,
+			    G4double           poleTipRadius,
+			    const BDSFieldMag* innerFieldIn,
+			    G4bool             kPositive);
 
   virtual ~BDSFieldMagMultipoleOuter(){;}
 

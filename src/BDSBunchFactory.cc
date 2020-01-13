@@ -45,10 +45,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       const GMAD::Beam& beam,
-				       G4Transform3D     beamlineTransform,
-				       G4double          beamlineS,
-				       const G4bool&     generatePrimariesOnlyIn)  
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)  
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
@@ -71,11 +71,11 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 }
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       BDSBunchType      distrType,
-				       const GMAD::Beam& beam,
-				       G4Transform3D beamlineTransform,
-				       G4double beamlineS,
-				       const G4bool& generatePrimariesOnlyIn)
+				       BDSBunchType                 distrType,
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)
 { 
   BDSBunch* bdsBunch = nullptr;
 

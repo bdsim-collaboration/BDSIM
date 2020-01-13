@@ -45,10 +45,10 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CalculateStartAngles()
 }
 
 void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(const G4String& name,
-									const G4double& length,
-									const G4int&    order,
-									const G4double& magnetContainerLength,
-const G4double& magnetContainerRadiusIn)
+									G4double        length,
+									G4int           order,
+									G4double        magnetContainerLength,
+								        G4double        magnetContainerRadiusIn)
 {
   G4double zPlanesMagCont[2] = {-magnetContainerLength*0.5, magnetContainerLength*0.5};
   G4double zPlanesCont[2]  = {-length*0.5,      length*0.5};
