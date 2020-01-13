@@ -342,6 +342,9 @@ Bug Fixes
   The message has also changed so as not to be confused with particle species.
 * Fix the extension of any list type parameters in beam line elements when they're extended or redefined -
   such as updating the `knl` parameter of a multipole. Previously the parser would not understand this syntax.
+* Fix survey writing for models with placement beam lines to now write those beam lines in separate files
+  named as the survey name appended with the placement name. Previously the survey file was overwritten for
+  every secondary beam lines so only the final beam line placement was recorded.
 
 Output Changes
 --------------
