@@ -76,9 +76,9 @@ void HistogramFactory::CheckNameAndTitle(std::string& name,
 					 const std::string& overRideName,
 					 const std::string& overRideTitle)
 {
-  if (overRideName != "")
+  if (!overRideName.empty())
     {name = overRideName;}
-  if (overRideTitle != "")
+  if (!overRideTitle.empty())
     {title = overRideTitle;}
 }
 
