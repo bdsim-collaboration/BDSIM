@@ -113,12 +113,6 @@ HistogramSet::~HistogramSet()
     {delete binsIons[id];}
 }
 
-
-//void HistogramSet::Fill(int      /*pdgID*/,
-//			double[] /*variable*/,
-//			double   /*weight*/)
-//{;}
-
 HistogramSet* HistogramSet::TopN(int n) const
 {
   std::set<long long int> keys;

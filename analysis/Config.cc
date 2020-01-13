@@ -53,9 +53,9 @@ Config::Config(const std::string& inputFilePathIn,
   optionsBool["perentryevent"] = true;
 }
 
-Config::Config(std::string fileNameIn,
-	       std::string inputFilePathIn,
-	       std::string outputFileNameIn):
+Config::Config(const std::string& fileNameIn,
+	       const std::string& inputFilePathIn,
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);  
@@ -223,7 +223,7 @@ void Config::ParseHistogramLine(const std::string& line)
     }
 }
 
-void Config::ParseHistogram(const std::string line, const int nDim)
+void Config::ParseHistogram(const std::string& line, const int nDim)
 {  
   // split line on white space
   // doesn't inspect words themselves
@@ -260,7 +260,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
   
-  std::string treeName  = results[1];
+  std::string treeName = results[1];
   CheckValidTreeName(treeName);
 
   if (perEntry)
@@ -296,8 +296,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   std::regex singleColon("\\w+(:{1})\\w+");
   // count the number of matches by distance of match iterator from beginning
   int nColons = static_cast<int>(std::distance(std::sregex_iterator(variable.begin(),
-								   variable.end(),
-								   singleColon),
+								    variable.end(),
+								    singleColon),
 					       std::sregex_iterator()));
   if (nColons > nDim - 1)
     {
@@ -388,8 +388,8 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
   UpdateRequiredBranches(def->treeName, def->selection);
 }
 
-void Config::UpdateRequiredBranches(const std::string treeName,
-				    const std::string var)
+void Config::UpdateRequiredBranches(const std::string& treeName,
+				    const std::string& var)
 {
   // This won't work properly for the options Tree that has "::" in the class
   // as well as double splitting. C++ regex does not support lookahead / behind
@@ -407,8 +407,8 @@ void Config::UpdateRequiredBranches(const std::string treeName,
     }
 }
 
-void Config::SetBranchToBeActivated(const std::string treeName,
-				    const std::string branchName)
+void Config::SetBranchToBeActivated(const std::string& treeName,
+				    const std::string& branchName)
 {
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
@@ -437,7 +437,7 @@ bool Config::InvalidTreeName(const std::string& treeName) const
 }
 
 
-void Config::ParseBins(const std::string bins,
+void Config::ParseBins(const std::string& bins,
 		       const int nDim,
 		       int& xBins,
 		       int& yBins,
@@ -455,7 +455,7 @@ void Config::ParseBins(const std::string bins,
     {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
 
-void Config::ParseBinning(const std::string binning,
+void Config::ParseBinning(const std::string& binning,
 			  const int nDim,
 			  double& xLow, double& xHigh,
 			  double& yLow, double& yHigh,
