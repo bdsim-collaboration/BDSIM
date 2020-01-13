@@ -57,6 +57,9 @@ public:
 		 bool        logarithmicZIn = false);
   virtual ~HistogramDef3D(){;}
 
+  /// Copy this instance. Virtual to be overridden in derived classes.
+  virtual HistogramDef* Clone() const {return new HistogramDef3D(*this);}
+
   int         zNBins;
   double      zLow;
   double      zHigh;

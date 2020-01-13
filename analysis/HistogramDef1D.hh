@@ -48,6 +48,9 @@ public:
 		 bool        perEntryIn   = true,
 		 bool        logarithmicX = false);
   virtual ~HistogramDef1D(){;}
+
+  /// Copy this instance. Virtual to be overridden in derived classes.
+  virtual HistogramDef* Clone() const {return new HistogramDef1D(*this);}
   
   int         xNBins;
   double      xLow;
