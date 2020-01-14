@@ -276,20 +276,10 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   std::string binning   = results[4];
   std::string variable  = results[5];
   std::string selection = results[6];
-
-  int nBinsX = 1;
-  int nBinsY = 1;
-  int nBinsZ = 1;
-  double xLow  = 0;
-  double xHigh = 0;
-  double yLow  = 0;
-  double yHigh = 0;
-  double zLow  = 0;
-  double zHigh = 0;
-
-  ParseBins(bins, nDim, nBinsX, nBinsY, nBinsZ);
-  ParseBinning(binning, nDim, xLow, xHigh, yLow, yHigh, zLow, zHigh);
-
+  
+  Config::Binning b;
+  ParseBinsAndBinning(bins, binning, nDim);
+  
   // make a check that the number of variables supplied in ttree with y:x syntax doesn't
   // exceed the number of declared dimensions - this would result in a segfault from ROOT
   // a single (not 2) colon with at least one character on either side
@@ -315,7 +305,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     case 1:
       {
 	result = new HistogramDef1D(treeName, histName,
-				    nBinsX, xLow, xHigh,
+				    b.nBinsX, b.xLow, b.xHigh,
 				    variable, selection,
 				    perEntry, xLog);
 	break;
@@ -323,9 +313,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     case 2:
       {
 	result = new HistogramDef2D(treeName, histName,
-				    nBinsX, nBinsY,
-				    xLow, xHigh,
-				    yLow, yHigh,
+				    b.nBinsX, b.nBinsY,
+				    b.xLow,   b.xHigh,
+				    b.yLow,   b.yHigh,
 				    variable, selection,
 				    perEntry, xLog, yLog);
 	break;
@@ -333,10 +323,10 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     case 3:
       {
 	result = new HistogramDef3D(treeName, histName,
-				    nBinsX, nBinsY, nBinsZ,
-				    xLow, xHigh,
-				    yLow, yHigh,
-				    zLow, zHigh,
+				    b.nBinsX, b.nBinsY, b.nBinsZ,
+				    b.xLow, b.xHigh,
+				    b.yLow, b.yHigh,
+				    b.zLow, b.zHigh,
 				    variable, selection, perEntry,
 				    xLog, yLog, zLog);
 	break;
@@ -452,6 +442,16 @@ void Config::ParseBins(const std::string& bins,
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
     {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
+}
+
+Config::Binning Config::ParseBinsAndBinning(const std::string& bins,
+					    const std::string& binning,
+					    int                nDim) const
+{
+  Binning b;
+  ParseBinning(binning, nDim, b.xLow, b.xHigh, b.yLow, b.yHigh, b.zLow, b.zHigh);
+  ParseBins(bins, nDim, b.nBinsX, b.nBinsY, b.nBinsZ);
+  return b;
 }
 
 void Config::ParseBinning(const std::string& binning,
