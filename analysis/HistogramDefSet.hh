@@ -35,12 +35,13 @@ class HistogramDefSet
 {
 public:
   HistogramDefSet(const std::string&  setNameIn,
-		  const HistogramDef* baseDefinition,
+		  const HistogramDef* baseDefinitionIn,
 		  const std::set<long long int>& pdgIDsIn = {},
 		  bool ionsIn = false);
-  ~HistogramDefSet(){;}
+  ~HistogramDefSet();
 
   std::string setName;
+  HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
   bool ions;
   bool storeAllNonIons;

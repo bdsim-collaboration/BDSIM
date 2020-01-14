@@ -34,6 +34,8 @@ HistogramDefSet::HistogramDefSet(const std::string&        setNameIn,
 {
   if (baseDefinitionIn)
     {throw std::invalid_argument("invalid histogram definition");}
+
+  baseDefinition = baseDefinitionIn->Clone();
   
   for (auto pdgID : pdgIDsIn)
     {
@@ -42,4 +44,11 @@ HistogramDefSet::HistogramDefSet(const std::string&        setNameIn,
       h->selection = setName + ".partID=="+std::to_string(pdgID);
       definitions[pdgID] = h;
     }
+}
+
+HistogramDefSet::~HistogramDefSet()
+{
+  delete baseDefinition;
+  for (auto kv : definitions)
+    {delete kv.second;}
 }
