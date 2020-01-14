@@ -23,11 +23,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RebdsimTypes.hh"
 
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <map>
 
 class HistogramDef;
+class HistogramDefSet;
 
 /**
  * @brief Configuration and configuration parser class.
@@ -56,6 +58,9 @@ private:
 
   /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
+
+  std::map<std::string, std::vector<HistogramDefSet*> > histoDefSetsSimple;
+  std::map<std::string, std::vector<HistogramDefSet*> > histoDefSetsPerEntry;
   
 public:
   virtual ~Config();
@@ -84,6 +89,12 @@ public:
   /// Access all per entry histogram definitions - throws exception if out of range.
   inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(const std::string& treeName) const
   {return histoDefsPerEntry.at(treeName);}
+
+  inline const std::vector<HistogramDefSet*>& HistogramSetDefinitionsSimple(const std::string& treeName) const
+  {return histoDefSetsSimple.at(treeName);}
+
+  inline const std::vector<HistogramDefSet*>& HistogramSetDefinitionsPerEntry(const std::string& treeName) const
+  {return histoDefSetsPerEntry.at(treeName);}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
@@ -138,6 +149,8 @@ public:
 
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string& line, const int nDim);
+
+  void ParseSpectraLine(const std::string& line);
 
   /// Check whether a histogram definition word contains the world 'simple' and
   /// if so, it's not a per-entry histogram.
