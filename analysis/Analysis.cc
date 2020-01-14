@@ -101,7 +101,7 @@ void Analysis::PreparePerEntryHistograms()
   if (c)
     {
       auto definitions = c->HistogramDefinitionsPerEntry(treeName);
-      for (const auto &def : definitions)
+      for (const auto& def : definitions)
         {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
     }
 }
@@ -138,6 +138,7 @@ void Analysis::Write(TFile* outputFile)
   TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
   TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
 
+  // per entry histograms
   perEntryDir->cd();
   for (auto h : perEntryHistograms)
     {h->Write(perEntryDir);}
