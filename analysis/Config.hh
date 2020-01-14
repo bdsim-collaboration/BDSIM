@@ -184,6 +184,25 @@ public:
 		    double& yLow, double& yHigh,
 		    double& zLow, double& zHigh) const;
 
+  /// Simple struct to hold bin numbers and ranges.
+  struct Binning
+  {
+    int nBinsX   = 1;
+    int nBinsY   = 1;
+    int nBinsZ   = 1;
+    double xLow  = 0;
+    double xHigh = 0;
+    double yLow  = 0;
+    double yHigh = 0;
+    double zLow  = 0;
+    double zHigh = 0;
+  };
+
+  /// Return a struct of bin numbers and ranges.
+  Binning ParseBinsAndBinning(const std::string& bins,
+			      const std::string& binning,
+			      int nDim) const;
+
   /// Parse a settings line in input file and appropriate update member map.
   void ParseSetting(const std::string& line);
 
