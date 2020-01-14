@@ -108,24 +108,14 @@ void Analysis::PreparePerEntryHistograms()
 
 void Analysis::AccumulatePerEntryHistograms(const long int& entryNumber)
 {
-  auto c = Config::Instance();
-  if (c)
-    {
-      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
-      for (auto &peHist : perEntryHistograms)
-        {peHist->AccumulateCurrentEntry(entryNumber);}
-    }
+  for (auto &peHist : perEntryHistograms)
+    {peHist->AccumulateCurrentEntry(entryNumber);}
 }
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  auto c = Config::Instance();
-  if (c)
-    {
-      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
-      for (auto &peHist : perEntryHistograms)
-        {peHist->Terminate();}
-    }
+  for (auto &peHist : perEntryHistograms)
+    {peHist->Terminate();}
 }
 
 void Analysis::Terminate()
