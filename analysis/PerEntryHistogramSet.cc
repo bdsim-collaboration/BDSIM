@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramDef.hh"
+#include "HistogramDefSet.hh"
 #include "HistogramFactory.hh"
-#include "HistogramSet.hh"
+#include "PerEntryHistogram.hh"
+#include "PerEntryHistogramSet.hh"
 
 #include <map>
 #include <set>
@@ -30,9 +32,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2.h"
 #include "TH3.h"
 
-ClassImp(HistogramSet)
+//ClassImp(PerEntryHistogramSet)
 
-HistogramSet::HistogramSet():
+/*
+PerEntryHistogramSet::PerEntryHistogramSet():
   setName(""),
   definition(nullptr),
   ions(false),
@@ -40,8 +43,45 @@ HistogramSet::HistogramSet():
   storeAllNonIons(true),
   nDimensions(0)
 {;}
+*/
+PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
+					   Event*                 eventIn,
+					   TChain*                chainIn):
+  event(eventIn),
+  chain(chainIn),
+  setName(definitionIn->setName),
+  storeIons(definitionIn->ions),
+  storeAllNonIons(definitionIn->storeAllNonIons),
+  nEntries(0)
+{
+  if (!definitionIn)
+    {throw std::invalid_argument("invalid histogram set definition");}
+  
+  for (const auto pdgIDDef : definitionIn->definitions)
+    {
+      if (IsIon(pdgIDDef.first))
+	{ions[pdgIDDef.first] = new PerEntryHistogram(pdgIDDef.second, chainIn);}
+      else
+	{particles[pdgIDDef.first] = new PerEntryHistogram(pdgIDDef.second, chainIn);}      
+    }
+}
 
-HistogramSet::HistogramSet(const std::string&        setNameIn,
+PerEntryHistogramSet::~PerEntryHistogramSet()
+{
+  for (auto kv : particles)
+    {delete kv.second;}
+  for (auto kv : ions)
+    {delete kv.second;}
+}
+
+void PerEntryHistogramSet::AccumulateCurrentEntry(const long int& entryNumber)
+{
+
+
+}
+
+/*
+PerEntryHistogramSet::PerEntryHistogramSet(const std::string&        setNameIn,
 			   const HistogramDef*       definitionIn,
 			   const std::set<long int>& pdgIDsIn,
 			   bool                      ionsIn):
@@ -64,9 +104,9 @@ HistogramSet::HistogramSet(const std::string&        setNameIn,
     {CreateHistogram(id);} 
 }
 
-HistogramSet::HistogramSet(const HistogramSet* other,
+PerEntryHistogramSet::PerEntryHistogramSet(const PerEntryHistogramSet* other,
 			   std::set<long long int> subsetOfPDGIDs):
-  HistogramSet()
+  PerEntryHistogramSet()
 {
   if (!other)
     {throw std::invalid_argument("invalid instance to copy from");}
@@ -84,19 +124,19 @@ HistogramSet::HistogramSet(const HistogramSet* other,
 	  try // cast up from TObject to TH1 at least which is base class of all TH*
 	    {binsIons[id] = static_cast<TH1*>(other->binsIons.at(id)->Clone());}
 	  catch (const std::out_of_range&)
-	    {throw std::invalid_argument("Invalid key for subset of HistogramSet");}
+	    {throw std::invalid_argument("Invalid key for subset of PerEntryHistogramSet");}
 	}
       else
 	{
 	  try
 	    {bins[id] = static_cast<TH1*>(other->bins.at(id)->Clone());}
 	  catch (const std::out_of_range&)
-	    {throw std::invalid_argument("Invalid key for subset of HistogramSet");}
+	    {throw std::invalid_argument("Invalid key for subset of PerEntryHistogramSet");}
 	}
     }
 }
 
-TH1* HistogramSet::Histogram(long long int pdgID) const
+TH1* PerEntryHistogramSet::Histogram(long long int pdgID) const
 {
   if (IsIon(pdgID))
     {return binsIons.at(pdgID);}
@@ -104,7 +144,7 @@ TH1* HistogramSet::Histogram(long long int pdgID) const
     {return bins.at(pdgID);}
 }
 
-HistogramSet::~HistogramSet()
+PerEntryHistogramSet::~PerEntryHistogramSet()
 {
   delete definition;
   for (const auto id : pdgIDs)
@@ -113,7 +153,7 @@ HistogramSet::~HistogramSet()
     {delete binsIons[id];}
 }
 
-HistogramSet* HistogramSet::TopN(int n) const
+PerEntryHistogramSet* PerEntryHistogramSet::TopN(int n) const
 {
   std::set<long long int> keys;
   std::map<long long int, TH1*> all;
@@ -123,20 +163,20 @@ HistogramSet* HistogramSet::TopN(int n) const
   int i = 0;
   for (auto v = all.rbegin(); i < n; i++, v++)
     {keys.insert(v->first);}
-  return CloneHistogramSet(keys);
+  return ClonePerEntryHistogramSet(keys);
 }
 
-HistogramSet* HistogramSet::Top5() const
+PerEntryHistogramSet* PerEntryHistogramSet::Top5() const
 {
   return TopN(5);
 }
 
-HistogramSet* HistogramSet::Top10() const
+PerEntryHistogramSet* PerEntryHistogramSet::Top10() const
 {
   return TopN(10);
 }
 
-HistogramSet* HistogramSet::TopNIons(int n) const
+PerEntryHistogramSet* PerEntryHistogramSet::TopNIons(int n) const
 {
   std::set<long long int> keys;
   std::map<long long int, TH1*> all;
@@ -144,25 +184,25 @@ HistogramSet* HistogramSet::TopNIons(int n) const
   int i = 0;
   for (auto v = all.rbegin(); i < n; i++, v++)
     {keys.insert(v->first);}
-  return CloneHistogramSet(keys);
+  return ClonePerEntryHistogramSet(keys);
 }
 
-HistogramSet* HistogramSet::Top5Ions() const
+PerEntryHistogramSet* PerEntryHistogramSet::Top5Ions() const
 {
   return TopNIons(5);
 }
 
-HistogramSet* HistogramSet::Top10Ions() const
+PerEntryHistogramSet* PerEntryHistogramSet::Top10Ions() const
 {
   return TopNIons(10);
 }
 
-HistogramSet* HistogramSet::Ions() const
+PerEntryHistogramSet* PerEntryHistogramSet::Ions() const
 {
-  return CloneHistogramSet(pdgIDsIons);
+  return ClonePerEntryHistogramSet(pdgIDsIons);
 }
 
-TH1* HistogramSet::CreateHistogram(long long int pdgID)
+TH1* PerEntryHistogramSet::CreateHistogram(long long int pdgID)
 {
   HistogramFactory fac;
   TH1* hist = fac.CreateHistogram(definition,
@@ -175,7 +215,7 @@ TH1* HistogramSet::CreateHistogram(long long int pdgID)
   return hist;
 }
 
-void HistogramSet::Fill(int    pdgID,
+void PerEntryHistogramSet::Fill(int    pdgID,
 			double variable[],
 			double weight)
 {
@@ -230,3 +270,4 @@ void HistogramSet::Fill(int    pdgID,
       {break;}
     }
 }
+*/
