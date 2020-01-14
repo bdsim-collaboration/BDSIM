@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Config.hh"
+#include "HistogramDefSet.hh"
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
@@ -28,8 +29,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <map>
 #include <regex>
+#include <set>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 ClassImp(Config)
@@ -150,6 +153,8 @@ void Config::ParseInputFile()
   std::regex comment("^\\#.*");
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
+  // match a line starting with 'spectra', ignoring case
+  std::regex spectra("(?:simple)*spectra.*", std::regex_constants::icase);
 
   while(std::getline(f, line))
     {
@@ -160,6 +165,8 @@ void Config::ParseInputFile()
 	{continue;} // skip lines starting with '#'
       else if (std::regex_search(line, histogram))
 	{ParseHistogramLine(line);} // any histogram - must be before settings
+      else if (std::regex_search(line, spectra))
+	{ParseSpectraLine(line);}
       else
 	{ParseSetting(line);} // any setting
     }
@@ -221,6 +228,70 @@ void Config::ParseHistogramLine(const std::string& line)
 	+ ": \n\"" + line + "\"\n";
       throw std::string(errString);
     }
+}
+
+void Config::ParseSpectraLine(const std::string& line)
+
+{
+  // split line on white space
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitepsace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  
+  if (results.size() < 5)
+    {// ensure enough columns
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
+	+ " - invalid number of columns (too few)";
+      throw std::string(errString);
+    }
+  if (results.size() > 6)
+    {// ensure not too many columns
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
+      + " - too many columns - check no extra whitespace";
+      throw std::string(errString);
+    }
+
+  bool log  = false;
+  bool logy = false; // duff values to fulfill function
+  bool logz = false;
+  ParseLog(results[0], log, logy, logz);
+
+  std::regex ionInWord("(Ion)", std::regex_constants::icase);
+  bool ion = std::regex_search(results[0], ionInWord);
+
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
+
+  std::string spectraName  = results[1];
+  std::string selection    = results[5];
+  
+  Config::Binning b;
+  ParseBinsAndBinning(results[2], results[3], 1);
+
+  std::set<long long int> particles = ParseParticles(results[4]);
+
+  HistogramDef1D* def = new HistogramDef1D("Event.", spectraName,
+					   b.nBinsX, b.xLow, b.xHigh,
+					   spectraName + ".energy",
+					   "", perEntry, log);
+
+  HistogramDefSet* result = new HistogramDefSet(spectraName,
+						def,
+						particles,
+						ion);
+  delete def; // no longer needed
+  
+  if (perEntry)
+    {histoDefSetsPerEntry["Event."].push_back(result);}
+  else
+    {histoDefSetsSimple["Event."].push_back(result);}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
