@@ -41,7 +41,7 @@ public:
 	       int         nDimensionsIn,
                std::string variable,
 	       std::string selectionIn = "1",
-	       bool        perEnetry   = true);
+	       bool        perEntry    = true);
   virtual ~HistogramDef(){;}
 
   /// Copy this instance. Virtual to be overridden in derived classes.

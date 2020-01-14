@@ -171,7 +171,7 @@ public:
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBins(const std::string& bins,
-		 const int nDim,
+		 int  nDim,
 		 int& xBins,
 		 int& yBins,
 		 int& zBins) const;
@@ -179,7 +179,7 @@ public:
   /// Parse binning substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBinning(const std::string& binning,
-		    const int nDim,
+		    int nDim,
 		    double& xLow, double& xHigh,
 		    double& yLow, double& yHigh,
 		    double& zLow, double& zHigh) const;

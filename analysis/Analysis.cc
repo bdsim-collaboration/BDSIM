@@ -39,10 +39,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 Analysis::Analysis(const std::string& treeNameIn,
-		   TChain*     chainIn,
+		   TChain*            chainIn,
 		   const std::string& mergedHistogramNameIn,
-		   bool        perEntryAnalysis,
-		   bool        debugIn):
+		   bool               perEntryAnalysis,
+		   bool               debugIn):
   treeName(treeNameIn),
   chain(chainIn),
   mergedHistogramName(mergedHistogramNameIn),
