@@ -436,9 +436,8 @@ bool Config::InvalidTreeName(const std::string& treeName) const
   return std::find(treeNames.begin(), treeNames.end(), treeName) == treeNames.end();
 }
 
-
 void Config::ParseBins(const std::string& bins,
-		       const int nDim,
+		       int  nDim,
 		       int& xBins,
 		       int& yBins,
 		       int& zBins) const
@@ -456,7 +455,7 @@ void Config::ParseBins(const std::string& bins,
 }
 
 void Config::ParseBinning(const std::string& binning,
-			  const int nDim,
+			  int nDim,
 			  double& xLow, double& xHigh,
 			  double& yLow, double& yHigh,
 			  double& zLow, double& zHigh) const
