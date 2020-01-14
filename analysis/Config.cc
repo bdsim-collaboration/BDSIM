@@ -491,6 +491,28 @@ void Config::ParseBinning(const std::string& binning,
     }
 }
 
+std::set<long long int> Config::ParseParticles(const std::string& word) const
+{
+  std::regex inBrackets("^{(.+)}$");
+  std::smatch match;
+  auto firstSearch = std::regex_search(word, match, inBrackets);
+  if (!firstSearch)
+    {throw std::string("Invalid particle definition - no braces");}
+  std::string numbers = match[1];
+  std::set<long long int> result;
+  std::regex commas(",");
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(word.begin(), word.end(), commas, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      long long int id = std::stoll(res);
+      result.insert(id);
+    }
+  return result;
+}
+
 std::string Config::LowerCase(const std::string& st) const
 {
   std::string res = st;
