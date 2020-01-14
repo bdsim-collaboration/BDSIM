@@ -59,11 +59,11 @@ public:
   virtual void AccumulateCurrentEntry(const long int& entryNumber);
 
   /// Terminate the accumulator and save the result to the result member variable.
-  void Terminate();
+  virtual void Terminate();
 
   /// Forwarding function - call Write on result histograms on the currently
   /// open file. Optional directory to specify where the histogram should be moved to.
-  void Write(TDirectory* dir = nullptr);
+  virtual void Write(TDirectory* dir = nullptr);
 
 protected:
   HistogramAccumulator* accumulator;
