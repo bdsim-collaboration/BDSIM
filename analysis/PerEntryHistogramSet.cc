@@ -81,8 +81,9 @@ void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
 
 PerEntryHistogramSet::~PerEntryHistogramSet()
 {
-  for (auto kv : histograms)
-    {delete kv.second;}
+  delete baseDefinition;
+  for (auto kv : allPerEntryHistograms)
+    {delete kv;}
 }
 
 void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
