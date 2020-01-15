@@ -24,14 +24,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <string>
 
-
-HistogramDefSet::HistogramDefSet(const std::string&        branchNameIn,
-				 const HistogramDef*       baseDefinitionIn,
+HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
+				 const HistogramDef* baseDefinitionIn,
 				 const std::set<long long int>& pdgIDsIn,
-				 bool                      dynamicallyStoreIonsIn):
+				 bool                dynamicallyStoreIonsIn,
+				 const std::string&  particleSpecificationIn):
   branchName(branchNameIn),
   dynamicallyStoreIons(dynamicallyStoreIonsIn),
-  dynamicallyStoreParticles(pdgIDsIn.empty())
+  dynamicallyStoreParticles(pdgIDsIn.empty()),
+  what(writewhat::all),
+  topN(10)
 {
   if (baseDefinitionIn)
     {throw std::invalid_argument("invalid histogram definition");}
@@ -45,6 +47,20 @@ HistogramDefSet::HistogramDefSet(const std::string&        branchNameIn,
       h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
       definitions[pdgID] = h;
     }
+
+  std::string spec = particleSpecificationIn;
+  std::transform(spec.begin(), spec.end(), spec.begin(), ::tolower);
+  if (spec.find("all") != std::string::npos)
+    {what = writewhat::all;}
+  else if (spec.find("ions") != std::string::npos)
+    {
+      if (spec.find("topn") != std::string::npos)
+	{what = writewhat::topNIons;}
+      else
+	{what = writewhat::ions;}
+    }
+  else if (spec.find("topn") != std::string::npos)
+    {what = writewhat::topN;}
 }
 
 HistogramDefSet::~HistogramDefSet()
