@@ -121,6 +121,8 @@ EventAnalysis::~EventAnalysis()
 {
   for (auto& sa : samplerAnalyses)
     {delete sa;}
+  for (auto hs : perEntryHistogramSets)
+    {delete hs;}
 }
 
 void EventAnalysis::Process()
