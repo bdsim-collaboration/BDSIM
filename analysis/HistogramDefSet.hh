@@ -37,7 +37,8 @@ public:
   HistogramDefSet(const std::string&  branchNameIn,
 		  const HistogramDef* baseDefinitionIn,
 		  const std::set<long long int>& pdgIDsIn = {},
-		  bool dynamicallyStoreIons = false);
+		  bool                dynamicallyStoreIons = false,
+		  const std::string&  particleSpecificationIn = "");
   ~HistogramDefSet();
 
   static std::string AddPDGFilterToSelection(long long int      pdgID,
@@ -47,8 +48,12 @@ public:
   std::string   branchName;
   HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
-  bool dynamicallyStoreIons;
-  bool dynamicallyStoreParticles; ///< Dynamically store all non-ions.
+  bool          dynamicallyStoreIons;
+  bool          dynamicallyStoreParticles; ///< Dynamically store all non-ions.
+
+  enum class writewhat {all, topN, ions, topNIons, nonIons, topNNonIons};
+  writewhat     what;
+  int           topN;  
 };
 
 #endif
