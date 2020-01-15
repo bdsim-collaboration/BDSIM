@@ -37,14 +37,14 @@ public:
   HistogramDefSet(const std::string&  setNameIn,
 		  const HistogramDef* baseDefinitionIn,
 		  const std::set<long long int>& pdgIDsIn = {},
-		  bool ionsIn = false);
+		  bool dynamicallyStoreIons = false);
   ~HistogramDefSet();
 
   std::string setName;
   HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
-  bool ions;
-  bool storeAllNonIons;
+  bool dynamicallyStoreIons;
+  bool dynamicallyStoreParticles; ///< Dynamically store all non-ions.
 };
 
 #endif

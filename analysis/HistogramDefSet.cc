@@ -27,10 +27,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 HistogramDefSet::HistogramDefSet(const std::string&        setNameIn,
 				 const HistogramDef*       baseDefinitionIn,
 				 const std::set<long long int>& pdgIDsIn,
-				 bool                      ionsIn):
+				 bool                      dynamicallyStoreIonsIn):
   setName(setNameIn),
-  ions(ionsIn),
-  storeAllNonIons(pdgIDsIn.empty())
+  dynamicallyStoreIons(dynamicallyStoreIonsIn),
+  dynamicallyStoreParticles(pdgIDsIn.empty())
 {
   if (baseDefinitionIn)
     {throw std::invalid_argument("invalid histogram definition");}
