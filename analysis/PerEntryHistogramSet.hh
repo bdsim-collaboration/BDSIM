@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define PERENTRYHISTOGRAMSET_H
 #include "PerEntryHistogram.hh"
 
+#include "BDSOutputROOTEventSampler.hh"
+
 #include <map>
 #include <set>
 #include <string>
@@ -33,6 +35,7 @@ class Event;
 class HistogramDef;
 class HistogramDefSet;
 class TChain;
+class TDirectory;
 class TH1;
 
 /**
@@ -55,7 +58,7 @@ public:
 
   virtual void Write(TDirectory* dir = nullptr);
 
-  /*PerEntryHistogramSet(const std::string&        setNameIn,
+  /*PerEntryHistogramSet(const std::string&        branchNameIn,
 	       const HistogramDef*       definitionIn,
 	       const std::set<long int>& pdgIDsIn = {},
 	       bool                      ions     = false);*/
@@ -63,7 +66,8 @@ public:
   //PerEntryHistogramSet(const PerEntryHistogramSet* other,
   //		       std::set<long long int> subsetOfPDGIDs);
   //virtual PerEntryHistogramSet* ClonePerEntryHistogramSet(const std::set<long long int>& subsetKeys = {}) const= 0;
-  
+
+  /*
   virtual void Fill(int    pdgID,
 		    double variable[],
 		    double weight = 1.0);
@@ -77,30 +81,39 @@ public:
 
   PerEntryHistogramSet* TopN(int n) const;
   PerEntryHistogramSet* TopNIons(int n) const;
+   */
 
 protected:
-  TH1* CreateHistogram(long long int pdgID);
-  bool IsIon(long long int pdgID) const {return pdgID > 100000000;}
+  ///TH1* CreateHistogram(long long int pdgID);
+  inline bool IsIon(long long int pdgID) const {return pdgID > 100000000;}
 
+  void CreatePerEntryHistogram(long long int pdgID);
+
+  HistogramDef*           baseDefinition;
   Event*                  event;
   TChain*                 chain;
-  std::string             setName;
-  bool                    storeIons;
-  bool                    storeAllNonIons;
-
+  std::string             branchName;
+  bool                    dynamicallyStoreParticles;
+  bool                    dynamicallyStoreIons;
   long long int           nEntries;
-  std::set<long int>      pdgIDs;
+
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* sampler;
+#else
+  BDSOutputROOTEventSampler<float>*  sampler;
+#endif
+
+  std::set<long long int> allPDGIDs;
+  std::set<long long int> pdgIDs;
   std::set<long long int> pdgIDsIons;
-
-  const HistogramDef*     definition;
-  
-  //unsigned int            nDimensions;
-
-  std::map<long long int, TH1*>           bins;
-  std::unordered_map<long long int, TH1*> binsIons;
-
   std::map<long long int, PerEntryHistogram*> particles;
   std::unordered_map<long long int, PerEntryHistogram*> ions;
+  std::vector<PerEntryHistogram*> allPerEntryHistograms;
+
+  //const HistogramDef*     definition;
+  //unsigned int            nDimensions;
+  //std::map<long long int, TH1*>           bins;
+  //std::unordered_map<long long int, TH1*> binsIons;
 
   //ClassDef(PerEntryHistogramSet, 1);
 };
