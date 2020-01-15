@@ -42,7 +42,7 @@ HistogramAccumulator::HistogramAccumulator():
 
 HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
 					   int                nDimensionsIn,
-					   const std::string  resultHistNameIn,
+					   const std::string& resultHistNameIn,
 					   const std::string& resultHistTitleIn):
   nDimensions(nDimensionsIn),
   n(0),

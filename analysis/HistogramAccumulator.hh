@@ -65,7 +65,7 @@ public:
   /// baseHistogram exists in the currently open file.
   HistogramAccumulator(TH1*               baseHistogram,
 		       int                nDimensionsIn,
-		       const std::string  resultHistName,
+		       const std::string& resultHistName,
 		       const std::string& resultHistTitle);
 
   /// Destructor deletes mean and variance temporary histograms but leaks
