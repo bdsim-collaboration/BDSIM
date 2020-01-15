@@ -35,7 +35,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
   what(writewhat::all),
   topN(10)
 {
-  if (baseDefinitionIn)
+  if (!baseDefinitionIn)
     {throw std::invalid_argument("invalid histogram definition");}
 
   baseDefinition = baseDefinitionIn->Clone();
@@ -43,7 +43,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
   for (auto pdgID : pdgIDsIn)
     {
       HistogramDef* h = baseDefinitionIn->Clone();
-      h->histName  = h->histName + "_" + std::to_string(pdgID);
+      h->histName  = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
       h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
       definitions[pdgID] = h;
     }
@@ -86,8 +86,9 @@ std::string HistogramDefSet::AddPDGFilterToSelection(long long int      pdgID,
       result = selection; // copy it
       result.insert(match.position() + match.length() + bracketPos, "&&"+filter);
     }
+  else if (selection.empty())
+    {result = filter;}
   else
     {result = selection + "*("+filter+")";}
-  //branchName + ".partID=="+std::to_string(pdgID);
   return result;
 }
