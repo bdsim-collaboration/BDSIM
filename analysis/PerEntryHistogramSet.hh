@@ -49,7 +49,7 @@ public:
 		       TChain*                chainIn);  
   virtual ~PerEntryHistogramSet();
 
-  virtual void AccumulateCurrentEntry(const long int& entryNumber);
+  virtual void AccumulateCurrentEntry(long int entryNumber);
 
   virtual void Terminate();
 
