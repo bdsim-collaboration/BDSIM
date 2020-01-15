@@ -270,7 +270,9 @@ void Config::ParseSpectraLine(const std::string& line)
   ParsePerEntry(results[0], perEntry);
 
   std::string spectraName  = results[1];
-  std::string selection    = results[5];
+  std::string selection    = "1";
+  if (results.size() > 5)
+    {selection = results[5];}
   
   Config::Binning b;
   ParseBinsAndBinning(results[2], results[3], 1);
