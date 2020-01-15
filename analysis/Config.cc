@@ -270,8 +270,8 @@ void Config::ParseSpectraLine(const std::string& line)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
 
-  std::string spectraName  = results[1];
-  std::string selection    = "1";
+  std::string spectraName = results[1];
+  std::string selection   = "1";
   if (results.size() > 5)
     {selection = results[5];}
   
@@ -288,7 +288,8 @@ void Config::ParseSpectraLine(const std::string& line)
   HistogramDefSet* result = new HistogramDefSet(spectraName,
 						def,
 						particles,
-						ion);
+						ion,
+						results[0]);
   delete def; // no longer needed
   
   if (perEntry)
