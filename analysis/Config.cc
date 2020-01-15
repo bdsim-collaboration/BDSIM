@@ -245,7 +245,7 @@ void Config::ParseSpectraLine(const std::string& line)
       results.push_back(res);
     }
   
-  if (results.size() < 5)
+  if (results.size() < 6)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
 	+ " - invalid number of columns (too few)";
@@ -270,22 +270,22 @@ void Config::ParseSpectraLine(const std::string& line)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
 
-  std::string spectraName = results[1];
-  std::string selection   = "1";
-  if (results.size() > 5)
-    {selection = results[5];}
+  bool totalEnergy = ContainsWordCI(results[0], "TE");
+
+  std::string samplerName = results[1];
+  std::string selection   = results[5];
   
-  Config::Binning b;
-  ParseBinsAndBinning(results[2], results[3], 1);
+  Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
   std::set<long long int> particles = ParseParticles(results[4]);
 
-  HistogramDef1D* def = new HistogramDef1D("Event.", spectraName,
+  std::string variable = totalEnergy ? ".energy" : ".kineticEnergy";
+  HistogramDef1D* def = new HistogramDef1D("Event.", samplerName,
 					   b.nBinsX, b.xLow, b.xHigh,
-					   spectraName + ".energy",
-					   "", perEntry, log);
+					   samplerName + variable,
+					   "1", perEntry, log);
 
-  HistogramDefSet* result = new HistogramDefSet(spectraName,
+  HistogramDefSet* result = new HistogramDefSet(samplerName,
 						def,
 						particles,
 						ion,
@@ -297,7 +297,7 @@ void Config::ParseSpectraLine(const std::string& line)
   else
     {eventHistoDefSetsSimple.push_back(result);}
 
-  SetBranchToBeActivated("Event.", spectraName);
+  SetBranchToBeActivated("Event.", samplerName);
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
@@ -428,6 +428,14 @@ void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
   std::string res = name;
   std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
   perEntry = res.find("simple") == std::string::npos;
+}
+
+bool Config::ContainsWordCI(const std::string& input,
+			    const std::string& word) const
+{
+  std::string res = input;
+  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+  return res.find(word) != std::string::npos;
 }
 
 void Config::ParseLog(const std::string& definition,
