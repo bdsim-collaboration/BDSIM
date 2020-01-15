@@ -153,8 +153,8 @@ void Config::ParseInputFile()
   std::regex comment("^\\#.*");
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
-  // match a line starting with 'spectra', ignoring case
-  std::regex spectra("(?:simple)*spectra.*", std::regex_constants::icase);
+  // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
+  std::regex spectra("(?:simple)*spectra(?:TE)*(?:ion)*(?:log)*(?:\\s+)", std::regex_constants::icase);
 
   while(std::getline(f, line))
     {
@@ -570,7 +570,7 @@ void Config::ParseBinning(const std::string& binning,
 
 std::set<long long int> Config::ParseParticles(const std::string& word) const
 {
-  std::regex inBrackets("^{(.+)}$");
+  std::regex inBrackets("^\\{(.+)\\}$");
   std::smatch match;
   auto firstSearch = std::regex_search(word, match, inBrackets);
   if (!firstSearch)
@@ -579,7 +579,7 @@ std::set<long long int> Config::ParseParticles(const std::string& word) const
   std::set<long long int> result;
   std::regex commas(",");
   // -1 here makes it point to the suffix, ie the word rather than the wspace
-  std::sregex_token_iterator iter(word.begin(), word.end(), commas, -1);
+  std::sregex_token_iterator iter(numbers.begin(), numbers.end(), commas, -1);
   std::sregex_token_iterator end;
   for (; iter != end; ++iter)
     {
