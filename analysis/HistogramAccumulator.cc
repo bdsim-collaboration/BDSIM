@@ -253,6 +253,6 @@ void HistogramAccumulator::AccumulateSingleValue(const double&  oldMean,
 						 double&        newMean,
 						 double&        newVari) const
 {
-  newMean = oldMean + ((x - oldMean) / nEntriesAccumulated);
+  newMean = oldMean + ((x - oldMean) / (double)nEntriesAccumulated);
   newVari = oldVari + ((x - oldMean) * (x - newMean));
 }
