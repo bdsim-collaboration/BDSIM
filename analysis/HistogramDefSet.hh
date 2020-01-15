@@ -34,7 +34,7 @@ class HistogramDef;
 class HistogramDefSet
 {
 public:
-  HistogramDefSet(const std::string&  setNameIn,
+  HistogramDefSet(const std::string&  branchNameIn,
 		  const HistogramDef* baseDefinitionIn,
 		  const std::set<long long int>& pdgIDsIn = {},
 		  bool dynamicallyStoreIons = false);
