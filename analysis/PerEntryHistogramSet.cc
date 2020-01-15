@@ -74,7 +74,7 @@ PerEntryHistogramSet::~PerEntryHistogramSet()
     {delete kv.second;}
 }
 
-void PerEntryHistogramSet::AccumulateCurrentEntry(const long int& entryNumber)
+void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
 {
 
 

@@ -106,7 +106,7 @@ void Analysis::PreparePerEntryHistograms()
     }
 }
 
-void Analysis::AccumulatePerEntryHistograms(const long int& entryNumber)
+void Analysis::AccumulatePerEntryHistograms(long int entryNumber)
 {
   for (auto &peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry(entryNumber);}

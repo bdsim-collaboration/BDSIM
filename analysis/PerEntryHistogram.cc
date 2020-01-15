@@ -104,7 +104,7 @@ PerEntryHistogram::~PerEntryHistogram()
   delete accumulator;
 }
       
-void PerEntryHistogram::AccumulateCurrentEntry(const long int& entryNumber)
+void PerEntryHistogram::AccumulateCurrentEntry(long int entryNumber)
 {  
   // Fill the temporary histogram with 1 event - the current one
   // This is used as it doesn't matter if the variable is a vector
