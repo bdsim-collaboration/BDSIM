@@ -291,9 +291,9 @@ void Config::ParseSpectraLine(const std::string& line)
   delete def; // no longer needed
   
   if (perEntry)
-    {histoDefSetsPerEntry["Event."].push_back(result);}
+    {eventHistoDefSetsPerEntry.push_back(result);}
   else
-    {histoDefSetsSimple["Event."].push_back(result);}
+    {eventHistoDefSetsSimple.push_back(result);}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)

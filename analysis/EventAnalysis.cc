@@ -19,9 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "Config.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
 #include "HistogramMeanFromFile.hh"
+#include "PerEntryHistogramSet.hh"
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
 
@@ -100,6 +102,7 @@ void EventAnalysis::Execute()
     TH2::AddDirectory(kTRUE);
     TH3::AddDirectory(kTRUE);
     PreparePerEntryHistograms();
+    PreparePerEntryHistogramSets();
     Process();
   }
   SimpleHistograms();
@@ -158,6 +161,7 @@ void EventAnalysis::Process()
 
       // per event histograms
       AccumulatePerEntryHistograms(i);
+      AccumulatePerEntryHistogramSets(i);
 
       UserProcess();
 
@@ -187,6 +191,7 @@ void EventAnalysis::Process()
 void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
+  TerminatePerEntryHistogramSets();
 
   if (processSamplers)
     {
@@ -302,4 +307,27 @@ void EventAnalysis::Initialise()
       for (auto s : samplerAnalyses)
 	{s->Initialise();}
     }
+}
+
+void EventAnalysis::PreparePerEntryHistogramSets()
+{
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto setDefinitions  = c->EventHistogramSetDefinitionsPerEntry();
+      for (const auto& def : setDefinitions)
+	{perEntryHistogramSets.push_back(new PerEntryHistogramSet(def, event, chain));}
+    }
+}
+
+void EventAnalysis::AccumulatePerEntryHistogramSets(long int entryNumber)
+{
+  for (auto &peSet : perEntryHistogramSets)
+    {peSet->AccumulateCurrentEntry(entryNumber);}
+}
+
+void EventAnalysis::TerminatePerEntryHistogramSets()
+{
+  for (auto &peSet : perEntryHistogramSets)
+    {peSet->Terminate();}
 }

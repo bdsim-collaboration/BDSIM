@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h" // for classdef
 
 class Event;
+class PerEntryHistogramSet;
 class SamplerAnalysis;
 class TChain;
 class TFile;
@@ -75,6 +76,10 @@ protected:
   std::vector<SamplerAnalysis*> samplerAnalyses; ///< Holder for sampler analysis objects.
   std::vector<std::vector<std::vector<double> > > opticalFunctions; ///< Optical functions from all samplers.
 
+  void PreparePerEntryHistogramSets();
+  void AccumulatePerEntryHistogramSets(long int entryNumber);
+  void TerminatePerEntryHistogramSets();
+
 private:
   /// Set how often to print out information about the event.
   void SetPrintModuloFraction(double fraction);
@@ -90,6 +95,8 @@ private:
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
   long int eventStart;    ///< Event index to start analysis from.
   long int eventEnd;      ///< Event index to end analysis at.
+
+  std::vector<PerEntryHistogramSet*> perEntryHistogramSets;
   
   ClassDef(EventAnalysis,1);
 };
