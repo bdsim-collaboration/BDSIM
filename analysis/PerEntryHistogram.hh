@@ -18,12 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef PERENTRYHISTOGRAM_H
 #define PERENTRYHISTOGRAM_H
+#include "HistogramAccumulator.hh"
 
 #include <string>
 
 #include "Rtypes.h" // for classdef
 
-class HistogramAccumulator;
 class HistogramDef;
 
 class TChain;
@@ -64,6 +64,10 @@ public:
   /// Forwarding function - call Write on result histograms on the currently
   /// open file. Optional directory to specify where the histogram should be moved to.
   virtual void Write(TDirectory* dir = nullptr);
+
+  /// Permit the number of recorded entries to be incremented with zero values,
+  /// ie just increment n.
+  inline void AddNEmptyEntries(unsigned long i){accumulator->AddNEmptyEntries(i);}
 
 protected:
   HistogramAccumulator* accumulator;
