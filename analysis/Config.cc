@@ -264,7 +264,8 @@ void Config::ParseSpectraLine(const std::string& line)
   ParseLog(results[0], log, logy, logz);
 
   std::regex ionInWord("(Ion)", std::regex_constants::icase);
-  bool ion = std::regex_search(results[0], ionInWord);
+  std::regex allInWord("(all)", std::regex_constants::icase);
+  bool ion = std::regex_search(results[0], ionInWord) || std::regex_search(results[0], allInWord);
 
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
