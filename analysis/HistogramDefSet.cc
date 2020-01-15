@@ -24,11 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 
-HistogramDefSet::HistogramDefSet(const std::string&        setNameIn,
+HistogramDefSet::HistogramDefSet(const std::string&        branchNameIn,
 				 const HistogramDef*       baseDefinitionIn,
 				 const std::set<long long int>& pdgIDsIn,
 				 bool                      dynamicallyStoreIonsIn):
-  setName(setNameIn),
+  branchName(branchNameIn),
   dynamicallyStoreIons(dynamicallyStoreIonsIn),
   dynamicallyStoreParticles(pdgIDsIn.empty())
 {
