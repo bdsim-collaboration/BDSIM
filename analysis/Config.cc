@@ -294,6 +294,8 @@ void Config::ParseSpectraLine(const std::string& line)
     {eventHistoDefSetsPerEntry.push_back(result);}
   else
     {eventHistoDefSetsSimple.push_back(result);}
+
+  SetBranchToBeActivated("Event.", spectraName);
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
