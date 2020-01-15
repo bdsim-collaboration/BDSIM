@@ -59,8 +59,8 @@ private:
   /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
 
-  std::map<std::string, std::vector<HistogramDefSet*> > histoDefSetsSimple;
-  std::map<std::string, std::vector<HistogramDefSet*> > histoDefSetsPerEntry;
+  std::vector<HistogramDefSet*> eventHistoDefSetsSimple;
+  std::vector<HistogramDefSet*> eventHistoDefSetsPerEntry;
   
 public:
   virtual ~Config();
@@ -90,11 +90,11 @@ public:
   inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(const std::string& treeName) const
   {return histoDefsPerEntry.at(treeName);}
 
-  inline const std::vector<HistogramDefSet*>& HistogramSetDefinitionsSimple(const std::string& treeName) const
-  {return histoDefSetsSimple.at(treeName);}
+  inline const std::vector<HistogramDefSet*>& EventHistogramSetDefinitionsSimple() const
+  {return eventHistoDefSetsSimple;}
 
-  inline const std::vector<HistogramDefSet*>& HistogramSetDefinitionsPerEntry(const std::string& treeName) const
-  {return histoDefSetsPerEntry.at(treeName);}
+  inline const std::vector<HistogramDefSet*>& EventHistogramSetDefinitionsPerEntry() const
+  {return eventHistoDefSetsPerEntry;}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
