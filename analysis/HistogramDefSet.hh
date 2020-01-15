@@ -40,7 +40,11 @@ public:
 		  bool dynamicallyStoreIons = false);
   ~HistogramDefSet();
 
-  std::string setName;
+  static std::string AddPDGFilterToSelection(long long int      pdgID,
+					     const std::string& selection,
+					     const std::string& branchName);
+
+  std::string   branchName;
   HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
   bool dynamicallyStoreIons;

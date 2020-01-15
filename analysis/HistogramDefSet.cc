@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDefSet.hh"
 
 #include <map>
+#include <regex>
 #include <set>
 #include <string>
 
@@ -41,7 +42,7 @@ HistogramDefSet::HistogramDefSet(const std::string&        branchNameIn,
     {
       HistogramDef* h = baseDefinitionIn->Clone();
       h->histName  = h->histName + "_" + std::to_string(pdgID);
-      h->selection = setName + ".partID=="+std::to_string(pdgID);
+      h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
       definitions[pdgID] = h;
     }
 }
@@ -51,4 +52,26 @@ HistogramDefSet::~HistogramDefSet()
   delete baseDefinition;
   for (auto kv : definitions)
     {delete kv.second;}
+}
+
+std::string HistogramDefSet::AddPDGFilterToSelection(long long int      pdgID,
+						     const std::string& selection,
+						     const std::string& branchName)
+{
+  std::string filter = branchName+".partID=="+std::to_string(pdgID);
+  // check if it has a boolean expression already in it
+  std::string result;
+  std::regex boolOperator("&&|[<>!=]=|[<>]|\\|\\|");
+  std::smatch match;
+  if (std::regex_search(selection, match, boolOperator))
+    {// has boolean operator somewhere in it      
+      std::string afterBool = match.suffix();
+      std::size_t bracketPos = afterBool.find(")");
+      result = selection; // copy it
+      result.insert(match.position() + match.length() + bracketPos, "&&"+filter);
+    }
+  else
+    {result = selection + "*("+filter+")";}
+  //branchName + ".partID=="+std::to_string(pdgID);
+  return result;
 }
