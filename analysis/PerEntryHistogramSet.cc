@@ -16,15 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "Event.hh"
 #include "HistogramDef.hh"
 #include "HistogramDefSet.hh"
-#include "HistogramFactory.hh"
 #include "PerEntryHistogram.hh"
 #include "PerEntryHistogramSet.hh"
 
+#include "BDSOutputROOTEventSampler.hh"
+
+#include <algorithm>
+#include <iterator>
 #include <map>
 #include <set>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
@@ -34,36 +37,45 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 //ClassImp(PerEntryHistogramSet)
 
-/*
-PerEntryHistogramSet::PerEntryHistogramSet():
-  setName(""),
-  definition(nullptr),
-  ions(false),
-  nEntries(0),
-  storeAllNonIons(true),
-  nDimensions(0)
-{;}
-*/
 PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
 					   Event*                 eventIn,
 					   TChain*                chainIn):
+  baseDefinition(definitionIn->baseDefinition),
   event(eventIn),
   chain(chainIn),
-  setName(definitionIn->setName),
-  storeIons(definitionIn->ions),
-  storeAllNonIons(definitionIn->storeAllNonIons),
-  nEntries(0)
+  branchName(definitionIn->branchName),
+  dynamicallyStoreParticles(definitionIn->dynamicallyStoreParticles),
+  dynamicallyStoreIons(definitionIn->dynamicallyStoreIons),
+  nEntries(0),
+  sampler(nullptr)
 {
-  if (!definitionIn)
-    {throw std::invalid_argument("invalid histogram set definition");}
-  
   for (const auto pdgIDDef : definitionIn->definitions)
     {
+      PerEntryHistogram* hist = new PerEntryHistogram(pdgIDDef.second, chainIn);
       if (IsIon(pdgIDDef.first))
-	{ions[pdgIDDef.first] = new PerEntryHistogram(pdgIDDef.second, chainIn);}
+        {ions[pdgIDDef.first] = hist;}
       else
-	{particles[pdgIDDef.first] = new PerEntryHistogram(pdgIDDef.second, chainIn);}      
+        {particles[pdgIDDef.first] = hist;}
+      allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumualte() call
     }
+  sampler = event->GetSampler(branchName); // cache sampler
+}
+
+void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
+{
+  // copy base definition
+  HistogramDef* def = baseDefinition->Clone();
+  def->selection = HistogramDefSet::AddPDGFilterToSelection(pdgID,
+							    def->selection,
+							    branchName);
+
+  PerEntryHistogram* hist = new PerEntryHistogram(def, chain);
+  hist->AddNEmptyEntries(nEntries); // update to current number of events
+  if (IsIon(pdgID))
+    {ions[pdgID] = hist;}
+  else
+    {particles[pdgID] = hist;}
+  allPerEntryHistograms.push_back(hist);
 }
 
 PerEntryHistogramSet::~PerEntryHistogramSet()
@@ -76,16 +88,51 @@ PerEntryHistogramSet::~PerEntryHistogramSet()
 
 void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
 {
+  nEntries += 1;
 
+  if (dynamicallyStoreParticles || dynamicallyStoreIons)
+    {
+      // for this event, loop over all pdgIDs and make a set of them
+      // then ensure we have all prepare histograms
+      const auto &partID = sampler->partID;
+      std::set<long long int> pdgIDSet;
+      for (const auto id : partID)
+        {pdgIDSet.insert(id);}
+
+      // use vector because set cannot be appended to for set_difference
+      std::vector<long long int> missing;
+      std::set_difference(pdgIDSet.begin(), pdgIDSet.end(),
+          allPDGIDs.begin(), allPDGIDs.end(),
+          std::back_inserter(missing));
+      if (!missing.empty())
+        {
+          for (auto pdgID : missing)
+            {
+              bool isIon = IsIon(pdgID);
+              if ((isIon && dynamicallyStoreIons) || (!isIon && dynamicallyStoreParticles))
+                {CreatePerEntryHistogram(pdgID);}
+            }
+        }
+    }
+
+  for (auto hist : allPerEntryHistograms)
+    {hist->AccumulateCurrentEntry(entryNumber);}
+}
+
+void PerEntryHistogramSet::Terminate()
+{}
+
+void PerEntryHistogramSet::Write(TDirectory* dir)
+{
 
 }
 
 /*
-PerEntryHistogramSet::PerEntryHistogramSet(const std::string&        setNameIn,
+PerEntryHistogramSet::PerEntryHistogramSet(const std::string&        branchNameIn,
 			   const HistogramDef*       definitionIn,
 			   const std::set<long int>& pdgIDsIn,
 			   bool                      ionsIn):
-  setName(setNameIn),
+  branchName(branchNameIn),
   definition(definitionIn),
   pdgIDs(pdgIDsIn),
   ions(ionsIn),
@@ -110,7 +157,7 @@ PerEntryHistogramSet::PerEntryHistogramSet(const PerEntryHistogramSet* other,
 {
   if (!other)
     {throw std::invalid_argument("invalid instance to copy from");}
-  setName         = other->setName;
+  branchName         = other->branchName;
   definition      = other->definition->Clone();
   pdgIDs          = other->pdgIDs;
   pdgIDsIons      = other->pdgIDsIons;
@@ -206,8 +253,8 @@ TH1* PerEntryHistogramSet::CreateHistogram(long long int pdgID)
 {
   HistogramFactory fac;
   TH1* hist = fac.CreateHistogram(definition,
-				  setName + "_" + definition->histName,
-				  setName + "_" + definition->histName);
+				  branchName + "_" + definition->histName,
+				  branchName + "_" + definition->histName);
   if (IsIon(pdgID))
     {binsIons[pdgID] = hist;}
   else
