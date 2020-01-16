@@ -444,9 +444,11 @@ void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
 bool Config::ContainsWordCI(const std::string& input,
 			    const std::string& word) const
 {
-  std::string res = input;
-  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
-  return res.find(word) != std::string::npos;
+  std::string il = input;
+  std::string wl = word;
+  std::transform(il.begin(), il.end(), il.begin(), ::tolower); // convert to lower case
+  std::transform(wl.begin(), wl.end(), wl.begin(), ::tolower);
+  return il.find(wl) != std::string::npos;
 }
 
 void Config::ParseLog(const std::string& definition,
