@@ -214,7 +214,7 @@ void EventAnalysis::Write(TFile* outputFile)
 
   std::string peSetsDirName = "PerEntryHistogramSets";
   //std::string siSetsDirName = "SimpleHistogramSets";
-  std::string cleanedName   = treeName.erase(treeName.size() - 1);
+  std::string cleanedName   = treeName;
   TDirectory* treeDir       = outputFile->GetDirectory(cleanedName.c_str());
   TDirectory* peSetsDir     = treeDir->mkdir(peSetsDirName.c_str());
   //TDirectory* siSetsDir     = treeDir->mkdir(siSetsDirName.c_str());
