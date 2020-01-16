@@ -243,6 +243,10 @@ public:
   /// Whether all branches will be activatd - ie for optics.
   bool allBranchesActivated;
 
+  /// Cache of all spectra names declared to permit unique naming of histograms
+  /// when there's more than one spectra per branch used.
+  std::map<std::string, int> spectraNames;
+
   ClassDef(Config,1);
 };
 

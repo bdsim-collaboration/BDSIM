@@ -273,14 +273,25 @@ void Config::ParseSpectraLine(const std::string& line)
   bool totalEnergy = ContainsWordCI(results[0], "TE");
 
   std::string samplerName = results[1];
-  std::string selection   = results[5];
+  std::string histogramName = samplerName;
+  // because we can have multiple spectra on a branch and there are no user-specified names for this
+  auto search = spectraNames.find(samplerName);
+  if (search != spectraNames.end())
+    {// branch name already exists
+      search->second++;
+      int nSpectraThisBranch = search->second;
+      histogramName += "_" + std::to_string(nSpectraThisBranch);
+    }
+  else
+    {spectraNames[samplerName] = 1;}
+  std::string selection = results[5];
   
   Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
   std::set<long long int> particles = ParseParticles(results[4]);
 
   std::string variable = totalEnergy ? ".energy" : ".kineticEnergy";
-  HistogramDef1D* def = new HistogramDef1D("Event.", samplerName,
+  HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
 					   b.nBinsX, b.xLow, b.xHigh,
 					   samplerName + variable,
 					   "1", perEntry, log);
