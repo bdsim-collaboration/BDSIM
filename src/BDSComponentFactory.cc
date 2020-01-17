@@ -799,7 +799,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
   if (!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
-      fieldType   = BDSFieldType::bzero;
+      fieldType   = BDSFieldType::bfieldzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
 
