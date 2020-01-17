@@ -292,7 +292,7 @@ void Config::ParseSpectraLine(const std::string& line)
   HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
 					   b.nBinsX, b.xLow, b.xHigh,
 					   samplerName + variable,
-					   "1", perEntry, log);
+					   selection, perEntry, log);
 
   HistogramDefSet* result = new HistogramDefSet(samplerName,
 						def,
