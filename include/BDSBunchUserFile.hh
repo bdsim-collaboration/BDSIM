@@ -75,7 +75,9 @@ private:
   G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
-  G4bool   printedOutFirstTime; ///< Whether we've printed out opening the file the first time.
+  G4bool   printedOutFirstTime;    ///< Whether we've printed out opening the file the first time.
+  G4bool   anEnergyCoordinateInUse;///< Whether Et, Ek or P are in the columns.
+  G4bool   changingParticleType;   ///< Whether the particle type is a column.
 
   void ParseFileFormat(); ///< Parse the column tokens and units factors
   void OpenBunchFile();   ///< Open the file and check it's open.

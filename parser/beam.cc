@@ -155,6 +155,8 @@ void Beam::PublishMembers()
   publish("beamParticle",         &Beam::beamParticleName);
   publish("beamParticleName",     &Beam::beamParticleName);
   publish("energy",               &Beam::beamEnergy);
+  publish("kineticEnergy",        &Beam::beamKineticEnergy);
+  publish("momentum",             &Beam::beamMomentum);
   publish("distrType",            &Beam::distrType);
   publish("xDistrType",           &Beam::xDistrType);
   publish("yDistrType",           &Beam::yDistrType);
@@ -184,9 +186,12 @@ void Beam::PublishMembers()
   publish("tilt",  &Beam::tilt);
   publish("T0",    &Beam::T0);
   publish("E0",    &Beam::E0);
+  publish("Ek0",   &Beam::Ek0);
+  publish("P0",    &Beam::P0);
 
   publish("sigmaT", &Beam::sigmaT);
   publish("sigmaE", &Beam::sigmaE);
+  publish("sigmaP", &Beam::sigmaP);
 
   // for gausstwiss
   publish("betx",  &Beam::betx);
