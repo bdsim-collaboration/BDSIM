@@ -14,6 +14,17 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
+New Features
+------------
+
+* Both the design and beam particle may now be specified by either :code:`energy` (total),
+  :code:`kineticEnergy`, :code:`momentum` in the case of the design particle, or :code:`E0`,
+  :code:`Ek0` and :code:`P0` in the case of the optional beam particle if different from
+  the design one. This makes input of the desired beam easier but also permits easy specification
+  of different particle species beams with the same momentum for example.
+* Either :code:`sigmaE` or :code:`sigmaP` can be used for bunch distributions that use this
+  parameter.
+
 V1.4 - 2019 / 10 / ??
 =====================
 
