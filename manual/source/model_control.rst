@@ -1925,7 +1925,7 @@ BDSIM starts each event in one of two ways.
 1) Particles coordinates for one particle
    are generated from a chosen beam distribution, which is specified in the input GMAD file.
    In most cases, the particle coordinates are randomly generated according
-   to the distribution.
+   to a distribution.
 
 2) A primary vertex is loaded from an event genertor file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
@@ -1942,30 +1942,29 @@ Apart from the design particle and energy, a beam of particles of a different sp
 energy may be specified. By default, if only one particle is specified this is assumed to be
 both the design particle and the particle used for the beam distribution.
 
-.. note:: The design energy is required to be specified, but the central energy, of
-	  a bunch, for example with a Gaussian distribution, can be specified with `E0`.
-
 .. note:: `energy` here is the **total energy** of the particle. This must be greater than
 	  the rest mass of the particle.
 
-The user **must** specify at least `energy` and the `particle` type. In this case the
-`reference`_ distribution will be used as well as default parameters. The minimum
-beam definitions are::
+* The user **must** specify at least one of [:code:`energy`, :code:`kineticEnergy`,
+  :code:`momentum`] as well as :code:`particle`. 
+* The central energy of the distribution can be specified (if different) with :code:`E0`.
+* If no distribution is specified, the `reference`_ distribution is the default.
+
+A few minimal examples of beam definition are::
 
   beam, particle="proton",
         energy=34.2*GeV;
 
+  beam, particle="2212",
+        kineticEnergy=230*MeV;
 
-Other parameters, such
-as the beam distribution type, `distrType`, are optional and can be specified as described
-in the following sections. The beam is defined using the following syntax::
+  beam, particle="e-",
+        momentum=600*MeV;
 
-  beam, particle="proton",
-        energy=4.0*TeV,
-	distrType="reference";
 
-Energy is the total energy in `GeV`. The beam particle may be specified by name as it is
-in Geant4 (exactly) or by it's PDG ID. The follow are available by default:
+Other parameters, such as the beam distribution type, :code:`distrType`, are optional and can
+be specified as described in the following sections. The beam particle may be specified by name
+as it is in Geant4 (exactly) or by it's PDG ID. The follow are available by default:
 
 * `e-` or `e+`
 * `proton` or `antiproton`
@@ -1976,13 +1975,13 @@ in Geant4 (exactly) or by it's PDG ID. The follow are available by default:
 * `photon` or `gamma`
 * `kaon-`, `kaon+` or `kaon0L`
 
-In fact, the user may specify any particle that is available through the physics lists
-used. If given by name, the particle must be given by the Geant4 name exactly. The ones
-above are always defined and so can always safely be used irrespective of the physics
-lists used. If the particle definition is not found, BDSIM will print a warning and exit.
+In fact, the user may specify any particle that is available through the physics list
+used. If given by name, the particle must be given by the Geant4 name exactly (case sensitive).
+The particle names above are always defined and so can always safely be used irrespective of the physics
+list used. If the particle definition is not found, BDSIM will print a warning and exit.
 
 If more exotic particles are desired but no corresponding physics processes are desired, then
-the special physics list "all_particles" can be used to only load the particle definitions.
+the special physics list **"all_particles"** can be used to only load the particle definitions.
 
 The PDG IDs can be found at the PDG website; reviews and tables; Monte Carlo Numbering Scheme.
 
@@ -2017,9 +2016,9 @@ Different Beam and Design Particles
 The model may use one particle for design and one for the beam distribution. The "design" particle
 is used to calculate the rigidity that is used along with normalised field strengths (such as
 :code:`k1` for quadrupoles) to calculate an absolute field or field gradient. However, it is
-often useful to simulate a beam of other particles. To specify a different central energy, the
-parameter :code:`E0` should be used. If a different particle is required the parameter
-:code:`beamParticleName` should be used.
+often useful to simulate a beam of other particles.  To specify a different particle, the parameter
+:code:`beamParticleName` should be used. For a different energy or kinetic energy or momentum, (only)
+one of :code:`E0`, :code:`Ek0`, :code:`P0` should be used.
 
 Examples: ::
 
@@ -2037,10 +2036,20 @@ parameters). ::
 	 E0=20*GeV;
 
 This specified that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 20 GeV positron beam.
+and the beam tracked is a 20 GeV positron beam. ::
+
+  beam, particle="e-",
+        momentum=20.3*GeV,
+	beamParticleName="proton";
+
+This defines a machine designed with respect to an electron beam with 20.3 GeV of momentum but
+uses a beam of protons with the exact same momentum (kinetic energy and total energy are calculated
+from this value given the proton's mass).
 
 * If no :code:`beamParticleName` variable is specified, it's assumed to be the same as :code:`particle`.
 * If no :code:`E0` variable is specified, it's assumed to be the same as :code:`energy`.
+* If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
+  the same particle is assumed as :code:`particle` but with a different energy.
 	
 
 Generate Only the Input Distribution
@@ -2178,7 +2187,13 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
+| `Ek0`                            | Central kinetic energy of bunch distribution (GeV)    | \*       |
++----------------------------------+-------------------------------------------------------+----------+
+| `P0`                             | Central momentum of bunch distribution (GeV)          | \*       |
++----------------------------------+-------------------------------------------------------+----------+
 
+* \* Only one of :code:`E0`, :code:`Ek0` and :code:`P0` can be set. The others are calculated from
+  that value.
 * `S0` allows the beam to be translated to a certain point in the beam line, where the beam
   coordinates are with respect to the curvilinear frame at that point in the beam line.
 * `S0` and `Z0` cannot both be set - BDSIM will exit with a warning if this conflicting input is given.
@@ -2249,7 +2264,7 @@ gauss
 
 Uses the `gaussmatrix`_ beam generator but with simplified input parameters, as opposed to a complete
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for
-correlations between phase space coordinates, so
+correlations between phase space coordinates, so:
 
 .. math::
    \sigma_{11} & =  \sigma_x^2   \\
@@ -2261,6 +2276,14 @@ correlations between phase space coordinates, so
 
 * The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
 * All parameters from `reference`_ distribution are used as centroids.
+* Either :code:`sigmaE` or :code:`sigmaP` can be specified, but not both.
+
+In the case :code:`sigmaP` is specified, :code:`sigmaE` is calculated as follows:
+
+.. math::
+   \frac{dE}{E} = (\beta_{Lorentz}^2) \frac{dP}{P}
+
+for the beam particle.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2276,6 +2299,8 @@ correlations between phase space coordinates, so
 | `sigmaYp`        | Sigma of the vertical canonical momentum           |
 +------------------+----------------------------------------------------+
 | `sigmaE`         | Relative energy spread :math:`\sigma_{E}/E`        |
++------------------+----------------------------------------------------+
+| `sigmaP`         | Relative momentum spread :math:`\sigma_{P}/P`      |
 +------------------+----------------------------------------------------+
 | `sigmaT`         | Sigma of the temporal distribution [s]             |
 +------------------+----------------------------------------------------+
@@ -2317,7 +2342,8 @@ is calculated, using the following equations:
    \sigma_{66} & =  \sigma_{E}^2
 
 * All parameters from `reference`_ distribution are used as centroids.
-* Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
+* Longitudinal parameters :math:`\sigma_{E}`, :math:`\sigma_{P}` and :math:`\sigma_{T}`
+  can be used as defined in `gauss`_ .
 
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -2451,9 +2477,13 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
 | `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
-|                                  | distributed between $\pm$ `sigmaE`.                                |
+|                                  | distributed between :math:`\pm` `sigmaE`.                          |
++----------------------------------+--------------------------------------------------------------------+
+| `sigmaP`                         | Extent of energy spread in fractional momentum. Uniformly          |
+|                                  | distributed between :math:`\pm` `sigmaP`.                          |
 +----------------------------------+--------------------------------------------------------------------+
 
+* Only one of :code:`sigmaE` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
 
 .. _beam-halo-distribution:

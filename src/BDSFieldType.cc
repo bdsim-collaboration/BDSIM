@@ -28,9 +28,9 @@ template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
       {BDSFieldType::none,             	           "none"},
-      {BDSFieldType::bzero,            	           "bzero"},
-      {BDSFieldType::ezero,            	           "ezero"},
-      {BDSFieldType::ebzero,           	           "ebzero"},
+      {BDSFieldType::bfieldzero,                   "bfieldzero"},
+      {BDSFieldType::efieldzero,                   "efieldzero"},
+      {BDSFieldType::ebfieldzero,                  "ebfieldzero"},
       {BDSFieldType::teleporter,       	           "teleporter"},
       {BDSFieldType::bmap1d,           	           "bmap1d"},
       {BDSFieldType::bmap2d,           	           "bmap2d"},
@@ -81,9 +81,9 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
 {
   std::map<G4String, BDSFieldType> types;
   types["none"]             = BDSFieldType::none;
-  types["bzero"]            = BDSFieldType::bzero;
-  types["ezero"]            = BDSFieldType::ezero;
-  types["ebzero"]           = BDSFieldType::ebzero;
+  types["bfieldzero"]       = BDSFieldType::bfieldzero;
+  types["efieldzero"]       = BDSFieldType::efieldzero;
+  types["ebfieldzero"]      = BDSFieldType::ebfieldzero;
   types["teleporter"]       = BDSFieldType::teleporter;
   types["bmap1d"]           = BDSFieldType::bmap1d;
   types["bmap2d"]           = BDSFieldType::bmap2d;
