@@ -146,9 +146,9 @@ void PerEntryHistogramSet::Write(TDirectory* dir)
 	  {desiredPDGIDs = ions;              break;}
 	case HistogramDefSet::writewhat::topNIons:
 	  {desiredPDGIDs = TopNIons(topN);    break;}
-	case HistogramDefSet::writewhat::nonIons:
+	case HistogramDefSet::writewhat::particles:
 	  {desiredPDGIDs = nonIons;           break;}
-	case HistogramDefSet::writewhat::topNNonIons:
+	case HistogramDefSet::writewhat::topNPartcles:
 	  {desiredPDGIDs = TopNNonIons(topN); break;}
 	} 
 
