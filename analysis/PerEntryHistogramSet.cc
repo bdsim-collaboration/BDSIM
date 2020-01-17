@@ -53,11 +53,10 @@ PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
       histograms[pdgIDDef.first] = hist;
       allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumualte() call
       if (IsIon(pdgIDDef.first))
-	{ions.insert(pdgIDDef.first);}
+        {ions.insert(pdgIDDef.first);}
       else
-	{nonIons.insert(pdgIDDef.first);}
+        {nonIons.insert(pdgIDDef.first);}
     }
-  sampler = event->GetSampler(branchName); // cache sampler
 }
 
 void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
@@ -89,7 +88,12 @@ PerEntryHistogramSet::~PerEntryHistogramSet()
 
 void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
 {
-  nEntries += 1;
+  if (!sampler)
+    {
+      sampler = event->GetSampler(branchName + "."); // cache sampler
+      if (!sampler)
+        {return;}
+    }
 
   if (dynamicallyStoreParticles || dynamicallyStoreIons)
     {
