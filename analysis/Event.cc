@@ -294,7 +294,7 @@ void Event::SetBranchAddress(TTree* t,
       std::cout << "Event::SetBranchAddress> Info.               " << Info               << std::endl;
     }
 
-  if (processSamplers && samplerNamesIn)
+  if (processSamplers || samplerNamesIn)
     {
       unsigned int nrSamplers = samplerNamesIn->size();
       Samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
