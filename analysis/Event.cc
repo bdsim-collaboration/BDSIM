@@ -237,12 +237,15 @@ void Event::SetBranchAddress(TTree* t,
             {nCollimatorsToTurnOn++;}
         }
       collimators.resize(nCollimatorsToTurnOn); // reserve size of required vector to avoid recopying
-      
+
+      auto branchList = t->GetListOfBranches();
       for (const auto& name : *branchesToTurnOn)
 	{
 	  std::string nameStar = name + "*";
 	  if (debug)
 	    {std::cout << "Event::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
+	  if (branchList->FindObject((name + ".").c_str()) == nullptr)
+        {throw std::string("Unkown branch name \"" + name + "\"");}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 
 	  // we can't automatically do this as SetBranchAddress must use the pointer
