@@ -271,6 +271,11 @@ void DataLoader::SetBranchAddress(bool allOn,
     {
       if (bToTurnOn->find("Event.") != bToTurnOn->end())
 	{evtBranches = &(*bToTurnOn).at("Event.");}
+	for (const auto& bName : *evtBranches)
+      {
+        if (std::find(allSamplerNames.begin(), allSamplerNames.end(), bName + ".") != allSamplerNames.end())
+          {samplerNames.push_back(bName + ".");}
+      }
     }
   evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches, &collimatorNames);
 
