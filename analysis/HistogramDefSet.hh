@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEFSET_H
 #define HISTOGRAMDEFSET_H
-
 #include <map>
 #include <set>
 #include <string>
@@ -26,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class HistogramDef;
 
 /**
- * @brief Specification for set of histograms.
+ * @brief Specification for a set of histograms.
  *
  * @author L. Nevay
  */
@@ -44,8 +43,10 @@ public:
 					     const std::string& selection,
 					     const std::string& branchName);
 
+  /// Strip off all possible words we accept then try to convert to an integer.
   int IdentifyTopN(const std::string& word) const;
 
+  /// Remove a substring from a string.
   std::string RemoveSubString(const std::string& stringIn,
                               const std::string& wordToRemove) const;
 

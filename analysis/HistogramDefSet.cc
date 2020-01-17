@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <regex>
 #include <set>
+#include <stdexcept>
 #include <string>
 
 HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
@@ -98,6 +99,13 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
     }
 }
 
+HistogramDefSet::~HistogramDefSet()
+{
+  delete baseDefinition;
+  for (auto kv : definitions)
+    {delete kv.second;}
+}
+
 int HistogramDefSet::IdentifyTopN(const std::string& word) const
 {
   std::string wl = word;
@@ -129,13 +137,6 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
       result.erase(pos, wordToRemove.size());
     }
   return result;
-}
-
-HistogramDefSet::~HistogramDefSet()
-{
-  delete baseDefinition;
-  for (auto kv : definitions)
-    {delete kv.second;}
 }
 
 std::string HistogramDefSet::AddPDGFilterToSelection(long long int      pdgID,
