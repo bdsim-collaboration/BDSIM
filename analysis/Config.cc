@@ -275,7 +275,7 @@ void Config::ParseSpectraLine(const std::string& line)
   if (search != spectraNames.end())
     {// branch name already exists
       search->second++;
-      int nSpectraThisBranch = search->second;
+      int nSpectraThisBranch = search->second - 1;
       histogramName += "_" + std::to_string(nSpectraThisBranch);
     }
   else
