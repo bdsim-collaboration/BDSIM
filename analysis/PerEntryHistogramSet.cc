@@ -69,6 +69,7 @@ void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
     {nonIons.insert(pdgID);}
   // copy base definition
   HistogramDef* def = baseDefinition->Clone();
+  def->histName  = "Spectra_" + def->histName + "_" + std::to_string(pdgID);
   def->selection = HistogramDefSet::AddPDGFilterToSelection(pdgID,
 							    def->selection,
 							    branchName);
