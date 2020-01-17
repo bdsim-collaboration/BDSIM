@@ -35,8 +35,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct fieldtypes_def
 {
+  // we use "bfieldzero" etc instead of "bzero" because "bzero" exists
+  // in strings.h in the macosx system SDK globals
   enum type {none,
-	     bzero, ezero, ebzero,
+	     bfieldzero, efieldzero, ebfieldzero,
 	     teleporter,
 	     bmap1d,  bmap2d,  bmap3d,  bmap4d,
 	     emap1d,  emap2d,  emap3d,  emap4d,
