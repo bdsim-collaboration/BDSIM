@@ -119,7 +119,7 @@ void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
             }
         }
     }
-
+  nEntries += 1;
   for (auto hist : allPerEntryHistograms)
     {hist->AccumulateCurrentEntry(entryNumber);}
 }
