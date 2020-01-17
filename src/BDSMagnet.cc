@@ -202,7 +202,7 @@ void BDSMagnet::BuildOuter()
 							       chordLength,
 							       beampipe);
 
-  if(outer)
+  if (outer)
     {
       // copy necessary bits out of BDSGeometryComponent that holds
       // container information for whole magnet object provided by

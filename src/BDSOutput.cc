@@ -159,7 +159,7 @@ void BDSOutput::FillHeader()
   ClearStructuresHeader();
 }
 
-void BDSOutput::FillGeant4Data(const G4bool& writeIons)
+void BDSOutput::FillGeant4Data(G4bool writeIons)
 {
   // always prepare geant4 data and link to other classes, but optionally fill it
   geant4DataOutput->Flush();
