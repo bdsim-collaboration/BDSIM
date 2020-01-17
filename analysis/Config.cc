@@ -269,18 +269,20 @@ void Config::ParseSpectraLine(const std::string& line)
   bool totalEnergy = ContainsWordCI(results[0], "TE");
 
   std::string samplerName = results[1];
-  std::string histogramName = samplerName;
   // because we can have multiple spectra on a branch and there are no user-specified names for this
+  int nSpectraThisBranch = 0;
   auto search = spectraNames.find(samplerName);
   if (search != spectraNames.end())
     {// branch name already exists
+      nSpectraThisBranch = search->second;
       search->second++;
-      int nSpectraThisBranch = search->second - 1;
-      histogramName += "_" + std::to_string(nSpectraThisBranch);
     }
   else
     {spectraNames[samplerName] = 1;}
+  std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
   std::string selection = results[5];
+  if (selection.empty())
+    {selection = "1";}
   
   Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
