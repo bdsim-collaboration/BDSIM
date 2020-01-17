@@ -37,7 +37,6 @@ public:
   HistogramDefSet(const std::string&  branchNameIn,
 		  const HistogramDef* baseDefinitionIn,
 		  const std::set<long long int>& pdgIDsIn = {},
-		  bool                dynamicallyStoreIons = false,
 		  const std::string&  particleSpecificationIn = "");
   ~HistogramDefSet();
 
@@ -45,13 +44,18 @@ public:
 					     const std::string& selection,
 					     const std::string& branchName);
 
+  int IdentifyTopN(const std::string& word) const;
+
+  std::string RemoveSubString(const std::string& stringIn,
+                              const std::string& wordToRemove) const;
+
   std::string   branchName;
   HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
   bool          dynamicallyStoreIons;
   bool          dynamicallyStoreParticles; ///< Dynamically store all non-ions.
 
-  enum class writewhat {all, topN, ions, topNIons, nonIons, topNNonIons};
+  enum class writewhat {all, particles, ions, topN, topNPartcles, topNIons};
   writewhat     what;
   int           topN;  
 };

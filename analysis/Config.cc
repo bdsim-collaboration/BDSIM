@@ -154,7 +154,7 @@ void Config::ParseInputFile()
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
-  std::regex spectra("(?:simple)*spectra(?:TE)*(?:ion)*(?:log)*(?:\\s+)", std::regex_constants::icase);
+  std::regex spectra("(?:simple)*spectra(?:TE)*(?:log)*(?:\\s+)", std::regex_constants::icase);
 
   while(std::getline(f, line))
     {
@@ -263,10 +263,6 @@ void Config::ParseSpectraLine(const std::string& line)
   bool logz = false;
   ParseLog(results[0], log, logy, logz);
 
-  std::regex ionInWord("(Ion)", std::regex_constants::icase);
-  std::regex allInWord("(all)", std::regex_constants::icase);
-  bool ion = std::regex_search(results[0], ionInWord) || std::regex_search(results[0], allInWord);
-
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
 
@@ -299,8 +295,7 @@ void Config::ParseSpectraLine(const std::string& line)
   HistogramDefSet* result = new HistogramDefSet(samplerName,
 						def,
 						particles,
-						ion,
-						results[0]);
+						results[4]);
   delete def; // no longer needed
   
   if (perEntry)
