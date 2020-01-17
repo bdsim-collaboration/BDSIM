@@ -591,11 +591,20 @@ void Config::ParseBinning(const std::string& binning,
 
 std::set<long long int> Config::ParseParticles(const std::string& word) const
 {
+  // if there are non-digits
+  std::regex anyNonDigit("^\\{(\\D+,*)+\\d*\\}$");
+  std::smatch matchAnyNonDigit;
+  if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
+    {return std::set<long long int>();}
+
+  // detect brackets and strip off
   std::regex inBrackets("^\\{(.+)\\}$");
   std::smatch match;
   auto firstSearch = std::regex_search(word, match, inBrackets);
   if (!firstSearch)
     {throw std::string("Invalid particle definition - no braces");}
+
+  // split up numbers inside brackets on commas
   std::string numbers = match[1];
   std::set<long long int> result;
   std::regex commas(",");
