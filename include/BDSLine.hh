@@ -50,7 +50,7 @@ public:
   /// Add a component to the line.
   void AddComponent(BDSAcceleratorComponent* component);
 
-  /// @{ Override base class method as BDSAcceleratorComponent::chordLength etc variabes are const and we append to this.
+  /// @{ Override base class method as BDSAcceleratorComponent::chordLength etc variables are const and we append to this.
   virtual G4double GetArcLength() const;
   virtual G4double GetChordLength() const;
   /// @}
