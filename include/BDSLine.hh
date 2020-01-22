@@ -50,6 +50,11 @@ public:
   /// Add a component to the line.
   void AddComponent(BDSAcceleratorComponent* component);
 
+  /// @{ Override base class method as BDSAcceleratorComponent::chordLength etc variabes are const and we append to this.
+  virtual G4double GetArcLength() const;
+  virtual G4double GetChordLength() const;
+  /// @}
+
   /// @{ Iterator mechanics
   typedef BDSLineVector::iterator       iterator;
   typedef BDSLineVector::const_iterator const_iterator;
