@@ -59,7 +59,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   type(typeIn),
   angle(angleIn),
   beamPipeInfo(beamPipeInfoIn),
-  acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   userLimits(nullptr),
@@ -176,4 +175,14 @@ void BDSAcceleratorComponent::BuildUserLimits()
   if (ul != defaultUL) // if it's not the default register it
     {RegisterUserLimits(ul);}
   userLimits = ul; // assign to member
+}
+
+std::set<G4LogicalVolume*> BDSAcceleratorComponent::GetAcceleratorMaterialLogicalVolumes() const
+{
+  // get full set minus ones marked to be excluded completely from biasing
+  std::set<G4LogicalVolume*> result = BDSGeometryComponent::GetAllBiasingVolumes();
+
+  for (auto lv : acceleratorVacuumLV)
+    {result.erase(lv);}
+  return result;
 }
