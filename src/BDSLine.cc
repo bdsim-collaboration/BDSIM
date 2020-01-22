@@ -28,6 +28,22 @@ BDSLine::BDSLine(G4String nameIn):
 void BDSLine::AddComponent(BDSAcceleratorComponent* component)
 {line.push_back(component);}
 
+G4double BDSLine::GetArcLength() const
+{
+  G4double result = 0;
+  for (auto component : *this)
+    {result += component->GetArcLength();}
+  return result;
+}
+
+G4double BDSLine::GetChordLength() const
+{
+  G4double result = 0;
+  for (auto component : *this)
+    {result += component->GetChordLength();}
+  return result;
+}
+
 void BDSLine::Initialise()
 {
   for (auto component : *this)
