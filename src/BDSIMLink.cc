@@ -205,12 +205,12 @@ int BDSIMLink::Initialise()
 	{G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
     }
   // update rigidity where needed
-  realWorld->SetDesignParticle(designParticle);
+  //realWorld->SetDesignParticle(designParticle); TODO
   BDSFieldFactory::SetDesignParticle(designParticle);
   
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
-  if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
-    {physList->RegisterPhysics(biasPhysics);}
+  //if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
+  //  {physList->RegisterPhysics(biasPhysics);}
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
@@ -264,7 +264,7 @@ int BDSIMLink::Initialise()
   runManager->Initialize();
   
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
-  realWorld->BuildPhysicsBias();
+  //realWorld->BuildPhysicsBias(); TODO
 
   if (usualPrintOut && BDSGlobalConstants::Instance()->PhysicsVerbose())
     {

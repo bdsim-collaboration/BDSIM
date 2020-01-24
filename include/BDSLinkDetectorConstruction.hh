@@ -29,7 +29,7 @@ public:
   /// Default constructor
   BDSLinkDetectorConstruction(/* something. special GMAD syntax?*/);
 
-  virtual ~BDSDetectorConstruction();
+  virtual ~BDSLinkDetectorConstruction();
   virtual G4VPhysicalVolume* Construct();
 };
 
