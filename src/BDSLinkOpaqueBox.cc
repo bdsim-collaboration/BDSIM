@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSLinkOpaqueBox.hh"
 
-LinkOpaqueBox::LinkOpaqueBox(BDSAcceleratorComponent* componentIn,
-			     G4int indexIn):
+BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
+				   G4int indexIn):
   BDSGeometryComponent(nullptr, nullptr),
-  component(componentIn),
+  component(acceleratorComponentIn),
   index(indexIn)
 {
   // build container geometry.
@@ -40,7 +40,7 @@ LinkOpaqueBox::LinkOpaqueBox(BDSAcceleratorComponent* componentIn,
 
 }
 
-BDSExtent LinkOpaqueBox::GetExtent()
+BDSExtent BDSLinkOpaqueBox::GetExtent()
 {
   return component->GetExtent();
 }

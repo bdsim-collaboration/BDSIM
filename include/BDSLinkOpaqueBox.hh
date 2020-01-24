@@ -29,7 +29,9 @@ class BDSAcceleratorComponent;
 class BDSLinkOpaqueBox: public BDSGeometryComponent
 {
 public:
-  BDSLinkOpaqueBox(BDSAcceleratorComponent*);
+  BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
+		   G4int indexIn);
+  virtual ~BDSLinkOpaqueBox() noexcept = default;
 
   BDSExtent GetExtent();
 
@@ -37,19 +39,16 @@ public:
   BDSLinkOpaqueBox() = delete;
 
   /// Copy constructor
-  BDSLinkOpaqueBox(const LinkOpaqueBox &other) = default;
+  BDSLinkOpaqueBox(const BDSLinkOpaqueBox &other) = default;
 
   /// Move constructor
-  BDSLinkOpaqueBox(LinkOpaqueBox &&other) noexcept = default;
-
-  /// Destructor
-  virtual ~LinkOpaqueBox() noexcept = default;
+  //BDSLinkOpaqueBox(BDSLinkOpaqueBox &&other) noexcept = default;
 
   /// Copy assignment operator
   BDSLinkOpaqueBox& operator=(const BDSLinkOpaqueBox &other) = default;
 
   /// Move assignment operator
-  BDSLinkOpaqueBox& operator=(BDSLinkOpaqueBox &&other) noexcept = default;
+  //BDSLinkOpaqueBox& operator=(BDSLinkOpaqueBox &&other) noexcept = default;
 
 private:
   BDSAcceleratorComponent* component;
