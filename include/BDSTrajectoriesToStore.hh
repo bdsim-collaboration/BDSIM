@@ -26,6 +26,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSTrajectory;
 
+/**
+ * @brief Double map of trajectories to bitset of which filters matched whether to store them.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSTrajectoriesToStore
 {
 public:
