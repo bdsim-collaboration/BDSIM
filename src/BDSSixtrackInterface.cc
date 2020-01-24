@@ -1,7 +1,28 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2020.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "BDSIMLink.hh"
+
 #include <algorithm>
 #include <iostream>
 #include <set>
 #include <string>
+#include <vector>
 
 std::string CleanFortranString(char* str, size_t count);
 
@@ -9,6 +30,8 @@ std::string CleanFortranString(char* str, size_t count);
 //std::vector<CollimationParticle> output_particles;
 //std::vector<CollimationEnergyDeposition> EnergyDepositionConfiguration;
 //std::set<int> keep_ids;
+
+BDSIMLink* bds = nullptr;
 
 extern "C"
 void g4_collimation_init(double* ReferenceE,
@@ -22,7 +45,17 @@ void g4_collimation_init(double* ReferenceE,
 			 bool*   g4_debug,
 			 bool*   g4_keep_stable,
 			 bool*   DoEnergyDeposition)
-{;}
+{
+  bds = new BDSIMLink();
+
+  std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug"/*, "--batch"*/};
+  std::vector<char*> argv;
+  for (const auto& arg : arguments)
+    {argv.push_back((char*)arg.data());}
+  argv.push_back(nullptr);
+
+  bds->Initialise(argv.size() - 1, argv.data());
+}
 
 extern "C"
 void g4_add_collimator(char*   name,
@@ -62,20 +95,20 @@ void g4_set_collimator(char* name)
 }
 
 extern "C"
-void g4_add_particle(double* x,
-		     double* y,
-		     double* xp,
-		     double* yp,
-		     double* e,
+void g4_add_particle(double*  x,
+		     double*  y,
+		     double*  xp,
+		     double*  yp,
+		     double*  e,
 		     int32_t* pdgid,
 		     int16_t* nzz,
 		     int16_t* naa,
 		     int16_t* nqq,
-		     double* mass,
-		     double* sigmv,
-		     double* sx,
-		     double* sy,
-		     double* sz)
+		     double*  mass,
+		     double*  sigmv,
+		     double*  sx,
+		     double*  sy,
+		     double*  sz)
 {
   //WARNING: at this stage in SixTrack the units have been converted to GeV, m, and rad!
   //The particle energy input is the TOTAL energy
@@ -127,21 +160,7 @@ void g4_add_particle(double* x,
 extern "C"
 void g4_collimate()
 {
-  /*
-  output_particles.clear();
-  //Update the gun with this particle's details
-  for(size_t n=0; n < input_particles.size(); n++)
-    {
-      part->SetParticleDetails(input_particles.at(n).x, input_particles.at(n).y, input_particles.at(n).px, input_particles.at(n).py, input_particles.at(n).pz, input_particles.at(n).e, input_particles.at(n).p, input_particles.at(n).pdgid, input_particles.at(n).q, input_particles.at(n).m, input_particles.at(n).sx, input_particles.at(n).sy, input_particles.at(n).sz);
-      
-      //Tell the "event" about the parent particle ID for tracking secondaries
-      
-      //Run!
-      runManager->BeamOn(1);
-    }
-  input_particles.clear();
-  std::cout << std::flush;
-  */
+  bds->BeamOn();
 }
 
 extern "C"

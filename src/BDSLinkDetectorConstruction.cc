@@ -22,6 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // class BDSParticleDefinition
 
+BDSLinkDetectorConstruction::BDSLinkDetectorConstruction(){;}
+
+BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
+
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   {
     // auto g4proton =
@@ -39,6 +43,6 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
     // 
 
-    
+    return nullptr;
   }
 
