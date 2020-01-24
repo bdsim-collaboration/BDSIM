@@ -71,8 +71,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
           // Only need first argument, the rest pertain to beamlines.
           BDSAcceleratorComponent *component =
-              theComponentFactory->CreateComponent(&(*elementIt), nullptr,
-                                                   nullptr, 0.0);
+	    componentFactory->CreateComponent(&(*elementIt), nullptr,
+					      nullptr, 0.0);
 
 
 	  auto opaqueBox = BDSLinkOpaqueBox(component);
@@ -80,7 +80,6 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
 	  opaqueBoxes.push_back(opaqueBox);
 
-	  G4double length = geom->GetExtent().DZ();
 	  BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
 							    geom,
 							    length);

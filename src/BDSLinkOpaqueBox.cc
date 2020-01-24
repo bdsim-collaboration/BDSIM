@@ -48,21 +48,21 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 
 
   auto outer = new G4Box(name + "_opaque_box_outer_solid",
-			 0.5 * extent.DX + gap + opaqueBoxThickness,
-			 0.5 * extent.DY + gap + opaqueBoxThickness,
-			 0.5 * extent.DZ + gap + opaqueBoxThickness);
+			 0.5 * extent.DX() + gap + opaqueBoxThickness,
+			 0.5 * extent.DY() + gap + opaqueBoxThickness,
+			 0.5 * extent.DZ() + gap + opaqueBoxThickness);
 
   auto inner = new G4Box(name + "_opaque_box_inner_solid",
-			 0.5 * extent.DX + gap,
-			 0.5 * extent.DY + gap,
-			 0.5 * extent.DZ + gap);
+			 0.5 * extent.DX() + gap,
+			 0.5 * extent.DY() + gap,
+			 0.5 * extent.DZ() + gap);
 
   auto opaqueBox = new G4SubtractionSolid(name + "opaque_box_solid",
 					  outer, inner);
-  
-  auto opaqueBoxLV =  new G4LogicalVolume(opaqueBox,
-					  BDSMaterials::GetMaterial("G4_Galactic"),
-					  name + "opaque_box_lv");
+
+  auto opaqueBoxLV = new G4LogicalVolume(
+      opaqueBox, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
+      name + "opaque_box_lv");
 
   auto termUL = new G4UserLimits(std::numeric_limits<double>::max(),
 				 std::numeric_limits<double>::max(),
@@ -74,13 +74,13 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   
   G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
-			     0.5 * extent.DX + gap + opaqueBoxThickness + ls,
-		       	     0.5 * extent.DY + gap + opaqueBoxThickness + ls,
-			     0.5 * extent.DZ + gap + opaqueBoxThickness + ls);
-    
-  containerLogicalVolume = new G4LogicalVolume(vacuumBox,
-					       BDSMaterials::GetMaterial("G4_Galactic"),
-					       outer, inner);
+			     0.5 * extent.DX() + gap + opaqueBoxThickness + ls,
+		       	     0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
+			     0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
+
+  containerLogicalVolume = new G4LogicalVolume(
+      vacuumBox, BDSMaterials::Instance()->GetMaterial("G4_Galactic"), outer,
+      inner);
 
   auto boxPlacement = new G4PVPlacement(nullptr,
 					G4ThreeVector(),
@@ -102,9 +102,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   
 					      
 
-  outerExtent = BDSExtent(0.5 * extent.DX + gap + opaqueBoxThickness + ls,
-			  0.5 * extent.DX + gap + opaqueBoxThickness + ls,
-			  0.5 * extent.DX + gap + opaqueBoxThickness + ls);
+  outerExtent = BDSExtent(0.5 * extent.DX() + gap + opaqueBoxThickness + ls,
+			  0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
+			  0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
     
 
   // build container geometry.
