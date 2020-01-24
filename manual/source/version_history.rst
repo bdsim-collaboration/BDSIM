@@ -94,6 +94,9 @@ New Features
 * New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
   energy a particle must have for either an aperture impact or collimator hit respectively to
   be generated.
+* A generic element now has the ability to label (classify) volumes as 'vacuum' for the purposes of
+  biasing where we split geometry into 'vacuum' and (general) 'material', e.g. yoke. See :ref:`element`
+  for details and the :code:`namedVacuumVolumes` parameter.
 
 * New options:
 
