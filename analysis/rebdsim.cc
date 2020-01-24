@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
 
       outputFile->Close();
       delete outputFile;
+      std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
   catch (const std::string& error)
     {
