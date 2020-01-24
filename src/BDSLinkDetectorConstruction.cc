@@ -17,16 +17,23 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "G4types.hh"
+#include "G4Box.hh"
+#include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4types.hh"
 
+
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
+#include "BDSComponentFactory.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkDetectorConstruction.hh"
+#include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicsUtilities.hh"
+#include "BDSSimpleComponent.hh"
 
 // class BDSParticleDefinition
 
@@ -35,118 +42,118 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction(){;}
 BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
 
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
-  {
+{
 
-    auto globalConstants = BDSGlobalConstants::Instance();
-    BDSParticleDefinition* designParticle = nullptr; // set below.
-    G4bool beamDifferentFromDesignParticle = false;
-    BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
-					globalConstants->FFact(),
-					designParticle,
-					nullptr,
-					false);
+  auto globalConstants = BDSGlobalConstants::Instance();
+  BDSParticleDefinition* designParticle = nullptr; // set below.
+  BDSParticleDefinition* beamParticle = nullptr;
+  G4bool beamDifferentFromDesignParticle = false;
+  BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
+				      globalConstants->FFact(),
+				      designParticle,
+				      beamParticle,
+				      beamDifferentFromDesignParticle);
 
-    auto componentFactory = new BDSComponentFactory(designParticle);
-    auto beamline = BDSParser::Instance()->GetBeamline();
+  auto componentFactory = new BDSComponentFactory(designParticle);
+  auto beamline = BDSParser::Instance()->GetBeamline();
 
-    G4double gapBetweenOpaqueBoxes = 10*CLHEP::cm;
-    G4double totalBoxesLength = 0.0;
-    G4int nboxes = 0
+  std::vector<BDSLinkOpaqueBox> opaqueBoxes = {};
 
-    std::vector<BDSLinkOpaqueBox> opaqueBoxes = {};
+  BDSBeamline* bl = new BDSBeamline();
 
-    BDSBeamline* bl = new BDSBeamline();
+  for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
+    {
+      auto type = elementIt->type;
+      if (type != GMAD::ElementType::_ECOL ||
+	  type != GMAD::ElementType::_RCOL ||
+	  type != GMAD::ElementType::_JCOL ||
+	  type != GMAD::ElementType::_CRYSTALCOL)
+	{
+	  throw BDSException(G4String("Unsupported element type for link = " +
+				      GMAD::typestr(type)));
+	}
 
-    for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
-      {
-	auto type = elementIt->type;
-        if (type != GMAD::ElementType::_ECOL ||
-            type != GMAD::ElementType::_RCOL ||
-            type != GMAD::ElementType::_JCOL ||
-            type != GMAD::ElementType::_CRYSTALCOL)
-	  {
-	    throw BDSException(G4String("Unsupported element type for link = " +
-					GMAD::typestr(type)));
-	  }
-
-          // Only need first argument, the rest pertain to beamlines.
-          BDSAcceleratorComponent *component =
-	    componentFactory->CreateComponent(&(*elementIt), nullptr,
-					      nullptr, 0.0);
+      // Only need first argument, the rest pertain to beamlines.
+      BDSAcceleratorComponent *component =
+	componentFactory->CreateComponent(&(*elementIt), nullptr,
+					  nullptr, 0.0);
 
 
-	  auto opaqueBox = BDSLinkOpaqueBox(component);
-	  totalCollimatorLength += opaqueBox.GetExtent().DZ();
+      auto opaqueBox = BDSLinkOpaqueBox(component, 0 /* XXX: index...  to do*/);
 
-	  opaqueBoxes.push_back(opaqueBox);
+      opaqueBoxes.push_back(opaqueBox);
 
-	  BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
-							    geom,
-							    length);
+      BDSSimpleComponent *comp =
+          new BDSSimpleComponent(opaqueBox.GetName(),
+                                 &opaqueBox, opaqueBox.GetExtent().DZ());
 
-	  bl->AddComponent(comp);
+      bl->AddComponent(comp);
 
-      }
+    }
 
 
-    BDSExtent worldExtent = blm->GetExtent();
-    auto worldSolid = new G4Box(worldName + "_solid",
-				worldExtent.DX() * 1.2,
-				worldExtent.DY() * 1.2,
-				worldExtent.DZ() * 1.2);
-    auto worldLV = new G4LogicalVolume(worldSolid,
-				       BDSMaterials::GetMaterial("G4_Galactic"),
-				       "world_lv");
+  BDSExtent worldExtent = bl->GetExtentGlobal();
+  auto worldSolid = new G4Box("world_solid",
+			      worldExtent.DX() * 1.2,
+			      worldExtent.DY() * 1.2,
+			      worldExtent.DZ() * 1.2);
 
-    auto debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-    debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-    worldLV->SetVisAttributes(debugWorldVis);
-    worldLV->SetUserLimits(globalConstants->DefaultUserLimits());
+  auto worldLV = new G4LogicalVolume(
+				     worldSolid, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
+				     "world_lv");
 
-    auto worldPV = new G4PVPlacement(nullptr,
-				     G4ThreeVector(),
-				     "world_pv",
-				     nullptr,
-				     false,
-				     0,
-				     true);
+  auto debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  worldLV->SetVisAttributes(debugWorldVis);
+  worldLV->SetUserLimits(globalConstants->DefaultUserLimits());
+
+  auto worldPV = new G4PVPlacement(nullptr,
+				   G4ThreeVector(),
+				   worldLV,
+				   "world_pv",
+				   nullptr,
+				   false,
+				   0,
+				   true);
 				       
 
 
-    for (auto element : *beamline)
-      {
+  for (auto element : *bl)
+    {
 
-	G4String placementName = element->GetPlacementName() + "_pv";
-	G4Transform3D* placementTransform = element->GetPlacementTransform();
-	G4int copyNumber = element->GetCopyNumber();
-	auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-				    placementName,                        // placement name
-				    element->GetContainerLogicalVolume(), // volume to be placed
-				    worldPV,                          // volume to place it in
-				    false,                                // no boolean operation
-				    copyNumber,                           // copy number
-				    true);                       // overlap checking
-      }
-
-
-
-  }
+      G4String placementName = element->GetPlacementName() + "_pv";
+      G4Transform3D* placementTransform = element->GetPlacementTransform();
+      G4int copyNumber = element->GetCopyNo();
+      // auto pv = 
+      new G4PVPlacement(*placementTransform,                  // placement transform
+			placementName,                        // placement name
+			element->GetContainerLogicalVolume(), // volume to be placed
+			worldPV,                          // volume to place it in
+			false,                                // no boolean operation
+			copyNumber,                           // copy number
+			true);                       // overlap checking
+    }
 
 
+  return worldPV;
+
+}
 
 
-    // for (auto const &element
 
-    // construct collimators using component factory
 
-    // Wrap in OpaqueBox instances, with index in line.
+// for (auto const &element
 
-    // Then place the OpaqueBoxes
+// construct collimators using component factory
 
-    // Record placement/transform with index.
+// Wrap in OpaqueBox instances, with index in line.
 
-    //
+// Then place the OpaqueBoxes
 
-    return nullptr;
+// Record placement/transform with index.
 
-  }
+//
+
+
+
+
