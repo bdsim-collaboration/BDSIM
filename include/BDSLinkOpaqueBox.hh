@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include "BDSExtent.hh"
+#include "BDSGeometryComponent.hh"
 
 class BDSAcceleratorComponent;
 

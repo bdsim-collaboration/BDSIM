@@ -47,27 +47,28 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   auto name = component->GetName();
 
 
-  auto outer = new G4Box(name + "_opaque_box_outer_solid",
+  auto terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
 			 0.5 * extent.DX() + gap + opaqueBoxThickness,
 			 0.5 * extent.DY() + gap + opaqueBoxThickness,
 			 0.5 * extent.DZ() + gap + opaqueBoxThickness);
 
-  auto inner = new G4Box(name + "_opaque_box_inner_solid",
+  auto terminatorBoxInner = new G4Box(name + "_terminator_box_inner_solid",
 			 0.5 * extent.DX() + gap,
 			 0.5 * extent.DY() + gap,
 			 0.5 * extent.DZ() + gap);
 
-  auto opaqueBox = new G4SubtractionSolid(name + "opaque_box_solid",
-					  outer, inner);
+  auto opaqueBox = new G4SubtractionSolid(name + "_opaque_box_solid",
+					  terminatorBoxOuter,
+					  terminatorBoxInner);
 
   auto opaqueBoxLV = new G4LogicalVolume(
       opaqueBox, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
-      name + "opaque_box_lv");
+      name + "_opaque_box_lv");
 
   auto termUL = new G4UserLimits(std::numeric_limits<double>::max(),
 				 std::numeric_limits<double>::max(),
 				 std::numeric_limits<double>::max(),
-				 0.,0.);
+				 0., 0.);
   RegisterUserLimits(termUL);
   opaqueBoxLV->SetUserLimits(termUL);
 
@@ -79,10 +80,11 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 			     0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
 
   containerLogicalVolume = new G4LogicalVolume(
-      vacuumBox, BDSMaterials::Instance()->GetMaterial("G4_Galactic"), outer,
-      inner);
+      containerSolid, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
+      name + "_container_lv");
 
-  auto boxPlacement = new G4PVPlacement(nullptr,
+  // auto boxPlacement = 
+    new G4PVPlacement(nullptr,
 					G4ThreeVector(),
 					opaqueBoxLV,
 					name + "_opaque_box_pv",
@@ -91,7 +93,8 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 					1,
 					true);
   
-  auto collimatorPlacement = new G4PVPlacement(nullptr,
+  // auto collimatorPlacement =
+    new G4PVPlacement(nullptr,
 					       G4ThreeVector(),
 					       component->GetContainerLogicalVolume(),
 					       component->GetName() + "_pv",
