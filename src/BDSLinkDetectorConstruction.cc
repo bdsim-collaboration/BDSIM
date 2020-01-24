@@ -1,8 +1,25 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2020.
 
+This file is part of BDSIM.
 
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "G4types.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4types.hh"
 
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
@@ -13,10 +30,22 @@
 
 // class BDSParticleDefinition
 
+BDSLinkDetectorConstruction::BDSLinkDetectorConstruction(){;}
+
+BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
+
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   {
-    // auto g4proton =
-    auto designParticle = nullptr;
+
+    auto globalConstants = BDSGlobalConstants::Instance();
+    BDSParticleDefinition* designParticle = nullptr; // set below.
+    G4bool beamDifferentFromDesignParticle = false;
+    BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
+					globalConstants->FFact(),
+					designParticle,
+					nullptr,
+					false);
+
     auto componentFactory = new BDSComponentFactory(designParticle);
     auto beamline = BDSParser::Instance()->GetBeamline();
 
@@ -73,7 +102,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
     auto debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
     debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
     worldLV->SetVisAttributes(debugWorldVis);
-    worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+    worldLV->SetUserLimits(globalConstants->DefaultUserLimits());
 
     auto worldPV = new G4PVPlacement(nullptr,
 				     G4ThreeVector(),
@@ -119,5 +148,6 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
     //
 
+    return nullptr;
 
   }

@@ -208,7 +208,7 @@ int BDSIMLink::Initialise()
   //realWorld->SetDesignParticle(designParticle); TODO
   BDSFieldFactory::SetDesignParticle(designParticle);
   
-  auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
+  //auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   //if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
   //  {physList->RegisterPhysics(biasPhysics);}
   runManager->SetUserInitialization(physList);

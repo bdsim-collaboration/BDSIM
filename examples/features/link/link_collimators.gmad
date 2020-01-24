@@ -1,9 +1,10 @@
-
-option, physicsList="g4FTFP_BERT all_particles";
-
 c1: rcol, l=0.6*m, material="Tungsten", xsize=0.1*cm, ysize=4*cm;
 c2: rcol, l=0.6*m, material="Tungsten", xsize=0.1*cm, ysize=4*cm;
 
 l1: line = (c1, c2);
-
 use, l1;
+
+option, physicsList="g4FTFP_BERT all_particles";
+
+beam, particle="proton",
+      energy=7*TeV;
