@@ -73,6 +73,7 @@ int main(int argc, char* argv[])
       
       evtAnalysis->WriteOrbit(outputFile);
       outputFile->Close();
+      std::cout << "Result written to: " << outputFileName << std::endl;
     }
   catch (const std::string& error)
     {
