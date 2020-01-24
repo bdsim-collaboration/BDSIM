@@ -87,7 +87,6 @@ private:
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
-  BDSComponentFactoryUser* userComponentFactory;
   /// @}
 };
 

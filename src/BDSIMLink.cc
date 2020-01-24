@@ -85,8 +85,7 @@ BDSIMLink::BDSIMLink():
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(nullptr),
-  runManager(nullptr),
-  userComponentFactory(nullptr)
+  runManager(nullptr)
 {;}
 
 BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
@@ -99,8 +98,7 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(nullptr),
-  runManager(nullptr),
-  userComponentFactory(nullptr)
+  runManager(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -170,7 +168,7 @@ int BDSIMLink::Initialise()
   runManager = new BDSRunManager;
 
   /// Register the geometry and parallel world construction methods with run manager.
-  auto realWorld = new BDSLinkDetectorConstruction(userComponentFactory);
+  auto realWorld = new BDSLinkDetectorConstruction();
   runManager->SetUserInitialization(realWorld);
   
 #ifdef BDSDEBUG
@@ -382,16 +380,4 @@ BDSIMLink::~BDSIMLink()
 
   if (usualPrintOut)
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
-}
-
-void BDSIMLink::RegisterUserComponent(G4String componentTypeName,
-				  BDSComponentConstructor* componentConstructor)
-{
-  if (initialised)
-    {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
-  if (!userComponentFactory)
-    {userComponentFactory = new BDSComponentFactoryUser();}
-
-  userComponentFactory->RegisterComponent(componentTypeName,
-					  componentConstructor);
 }
