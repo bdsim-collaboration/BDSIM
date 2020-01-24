@@ -1,11 +1,11 @@
 
 #include "G4VPhysicalVolume.hh"
-#include "CouplingDetectorConstruction.hh"
+#include "BDSLinkDetectorConstruction.hh"
 #include "BDSPhysicsUtilities.hh"
 
 // class BDSParticleDefinition
 
-G4VPhysicalVolume* Coupling::DetectorConstruction::Construct()
+G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   {
     // auto g4proton =
     // auto designParticle = nullptr;

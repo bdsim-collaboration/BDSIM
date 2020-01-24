@@ -1,11 +1,11 @@
-#ifndef COUPLINGDETECTORCONSTRUCTION_H
-#define COUPLINGDETECTORCONSTRUCTION_H
+#ifndef BDSLINKDETECTORCONSTRUCTION_H
+#define BDSLINKDETECTORCONSTRUCTION_H
 
 #include "G4VUserDetectorConstruction.hh"
 
 class G4VPhysicalVolume;
 
-class DetectorConstruction : G4VUserDetectorConstruction
+class BDSLinkDetectorConstruction : G4VUserDetectorConstruction
 {
 public:
   //! Default constructor
@@ -20,6 +20,6 @@ private:
 
 };
 
-// } // namespace coupling
+// } // namespace BDSLINK
 
-#endif /* COUPLINGDETECTORCONSTRUCTION_H */
+#endif /* BDSLINKDETECTORCONSTRUCTION_H */
