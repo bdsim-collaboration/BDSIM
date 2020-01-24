@@ -32,21 +32,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-int main(int /*argc*/, char** /*argv*/)
+int main(int argc, char** argv)
 {
   BDSIMLink* bds = nullptr;
   try
     {
       bds = new BDSIMLink();
-      
-      std::vector<std::string> arguments = {"--file=../examples/features/link/link_collimators.gmad",
-					    "--vis_debug"/*, "--batch"*/};
-      std::vector<char*> argv;
-      for (const auto& arg : arguments)
-	{argv.push_back((char*)arg.data());}
-      argv.push_back(nullptr);
-     
-      bds->Initialise(argv.size() - 1, argv.data()); 
+
+      //std::vector<std::string> arguments = {"--file=../examples/features/link/link_collimators.gmad",
+	//				    "--vis_debug"/*, "--batch"*/};
+      /*std::vector<char*> argvv;
+     for (const auto& arg : arguments)
+   {argvv.push_back((char*)arg.data());}
+     argv.push_back(std::string(*(argv->[0])));
+    */
+      bds->Initialise(argc, argv);
       if (!bds->Initialised())
 	{
 	  if (bds->InitialisationResult() == 1) // if 2 it's ok
