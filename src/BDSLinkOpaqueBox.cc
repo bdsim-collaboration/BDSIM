@@ -17,7 +17,22 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSExtent.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSLinkOpaqueBox.hh"
+#include "BDSMaterials.hh"
+
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4ThreeVector.hh"
+#include "G4types.hh"
+#include "G4UserLimits.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <limits>
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
 				   G4int indexIn):
@@ -25,6 +40,73 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   component(acceleratorComponentIn),
   index(indexIn)
 {
+
+  BDSExtent extent = component->GetExtent();
+  G4double gap = 50*CLHEP::cm;
+  G4double opaqueBoxThickness = 10*CLHEP::mm;
+  auto name = component->GetName();
+
+
+  auto outer = new G4Box(name + "_opaque_box_outer_solid",
+			 0.5 * extent.DX + gap + opaqueBoxThickness,
+			 0.5 * extent.DY + gap + opaqueBoxThickness,
+			 0.5 * extent.DZ + gap + opaqueBoxThickness);
+
+  auto inner = new G4Box(name + "_opaque_box_inner_solid",
+			 0.5 * extent.DX + gap,
+			 0.5 * extent.DY + gap,
+			 0.5 * extent.DZ + gap);
+
+  auto opaqueBox = new G4SubtractionSolid(name + "opaque_box_solid",
+					  outer, inner);
+  
+  auto opaqueBoxLV =  new G4LogicalVolume(opaqueBox,
+					  BDSMaterials::GetMaterial("G4_Galactic"),
+					  name + "opaque_box_lv");
+
+  auto termUL = new G4UserLimits(std::numeric_limits<double>::max(),
+				 std::numeric_limits<double>::max(),
+				 std::numeric_limits<double>::max(),
+				 0.,0.);
+  RegisterUserLimits(termUL);
+  opaqueBoxLV->SetUserLimits(termUL);
+
+  
+  G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
+  containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
+			     0.5 * extent.DX + gap + opaqueBoxThickness + ls,
+		       	     0.5 * extent.DY + gap + opaqueBoxThickness + ls,
+			     0.5 * extent.DZ + gap + opaqueBoxThickness + ls);
+    
+  containerLogicalVolume = new G4LogicalVolume(vacuumBox,
+					       BDSMaterials::GetMaterial("G4_Galactic"),
+					       outer, inner);
+
+  auto boxPlacement = new G4PVPlacement(nullptr,
+					G4ThreeVector(),
+					opaqueBoxLV,
+					name + "_opaque_box_pv",
+					containerLogicalVolume,
+					false,
+					1,
+					true);
+  
+  auto collimatorPlacement = new G4PVPlacement(nullptr,
+					       G4ThreeVector(),
+					       component->GetContainerLogicalVolume(),
+					       component->GetName() + "_pv",
+					       containerLogicalVolume,
+					       false,
+					       1,
+					       true);
+  
+					      
+
+  outerExtent = BDSExtent(0.5 * extent.DX + gap + opaqueBoxThickness + ls,
+			  0.5 * extent.DX + gap + opaqueBoxThickness + ls,
+			  0.5 * extent.DX + gap + opaqueBoxThickness + ls);
+    
+
   // build container geometry.
   // One box minus smaller box to make room for collimator.
 
@@ -39,6 +121,8 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 
 
 }
+
+
 
 BDSExtent BDSLinkOpaqueBox::GetExtent()
 {
