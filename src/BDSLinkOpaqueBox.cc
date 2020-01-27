@@ -40,19 +40,18 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   component(acceleratorComponentIn),
   index(indexIn)
 {
-
   BDSExtent extent = component->GetExtent();
   G4double gap = 50*CLHEP::cm;
   G4double opaqueBoxThickness = 10*CLHEP::mm;
-  auto name = component->GetName();
+  G4String name = component->GetName();
 
 
-  auto terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
+  G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
 			 0.5 * extent.DX() + gap + opaqueBoxThickness,
 			 0.5 * extent.DY() + gap + opaqueBoxThickness,
 			 0.5 * extent.DZ() + gap + opaqueBoxThickness);
 
-  auto terminatorBoxInner = new G4Box(name + "_terminator_box_inner_solid",
+  G4Box* terminatorBoxInner = new G4Box(name + "_terminator_box_inner_solid",
 			 0.5 * extent.DX() + gap,
 			 0.5 * extent.DY() + gap,
 			 0.5 * extent.DZ() + gap);
@@ -61,11 +60,11 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 					  terminatorBoxOuter,
 					  terminatorBoxInner);
 
-  auto opaqueBoxLV = new G4LogicalVolume(
+  G4LogicalVolume* opaqueBoxLV = new G4LogicalVolume(
       opaqueBox, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
       name + "_opaque_box_lv");
 
-  auto termUL = new G4UserLimits(std::numeric_limits<double>::max(),
+  G4UserLimits* termUL = new G4UserLimits(std::numeric_limits<double>::max(),
 				 std::numeric_limits<double>::max(),
 				 std::numeric_limits<double>::max(),
 				 0., 0.);

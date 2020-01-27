@@ -99,16 +99,16 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
     }
 
   BDSExtent worldExtent = bl->GetExtentGlobal();
-  auto worldSolid = new G4Box("world_solid",
+  G4Box* worldSolid = new G4Box("world_solid",
 			      worldExtent.DX() * 1.2,
 			      worldExtent.DY() * 1.2,
 			      worldExtent.DZ() * 1.2);
 
-  auto worldLV = new G4LogicalVolume(worldSolid,
+  G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid,
 				     BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
 				     "world_lv");
 
-  auto debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(debugWorldVis);
   worldLV->SetUserLimits(globalConstants->DefaultUserLimits());
