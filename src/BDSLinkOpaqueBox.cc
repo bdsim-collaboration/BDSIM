@@ -124,10 +124,3 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 
 
 }
-
-
-
-BDSExtent BDSLinkOpaqueBox::GetExtent()
-{
-  return component->GetExtent();
-}
