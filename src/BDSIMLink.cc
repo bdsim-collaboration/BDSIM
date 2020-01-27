@@ -367,7 +367,7 @@ BDSIMLink::~BDSIMLink()
 	{
 	  delete BDSColours::Instance();
 	  delete BDSFieldLoader::Instance();
-	  delete BDSSDManager::Instance();
+	  //delete BDSSDManager::Instance();
 	  delete BDSSamplerRegistry::Instance();
 	}
     }
