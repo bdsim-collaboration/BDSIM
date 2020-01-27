@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
-#include "G4types.hh"
+#include "G4Types.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
