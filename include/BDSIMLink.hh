@@ -24,9 +24,14 @@ class BDSComponentConstructor;
 class BDSComponentFactoryUser;
 class BDSOutput;
 class BDSParser;
+class BDSParticleCoordsFull;
+class BDSParticleDefinition;
+class BDSParticleExternal;
 class BDSRunManager;
 
 #include "G4String.hh"
+
+#include <vector>
 
 /** 
  * @brief Interface class to use BDSIM with trackers.
@@ -70,6 +75,9 @@ public:
   /// from the standard input e.g. the executable option ngenerate and then the one specified
   /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
+
+  void AddParticle(const BDSParticleDefinition* particleDefinitionIn,
+		   const BDSParticleCoordsFull& coordsIn);
   
 private:
   /// The main function where everything is constructed.
@@ -87,6 +95,8 @@ private:
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
+  
+  std::vector<BDSParticleExternal*> externalParticles;
   /// @}
 };
 

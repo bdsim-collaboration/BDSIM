@@ -58,7 +58,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
-#include "BDSParser.hh" // Parser
+#include "BDSParser.hh"
+#include "BDSParticleExternal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
@@ -380,4 +381,10 @@ BDSIMLink::~BDSIMLink()
 
   if (usualPrintOut)
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
+}
+
+void BDSIMLink::AddParticle(const BDSParticleDefinition* particleDefinitionIn,
+			    const BDSParticleCoordsFull& coordsIn)
+{
+  externalParticles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn));
 }
