@@ -16,26 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "G4Box.hh"
-#include "G4PVPlacement.hh"
-#include "G4VisAttributes.hh"
-#include "G4types.hh"
-
-
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicsUtilities.hh"
-#include "BDSSimpleComponent.hh"
 
-// class BDSParticleDefinition
+#include "parser/elementtype.h"
+
+#include "G4Box.hh"
+#include "G4PVPlacement.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
+#include "G4VisAttributes.hh"
+
+#include <set>
+#include <vector>
+
+class BDSParticleDefinition;
 
 BDSLinkDetectorConstruction::BDSLinkDetectorConstruction(){;}
 
