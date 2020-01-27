@@ -76,7 +76,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSVisManager.hh"
 #include "BDSWarning.hh"
 
-BDSIMLink::BDSIMLink():
+BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   ignoreSIGINT(false),
   usualPrintOut(true),
   initialised(false),
@@ -85,7 +85,7 @@ BDSIMLink::BDSIMLink():
   argvCache(nullptr),
   parser(nullptr),
   bdsOutput(nullptr),
-  bdsBunch(nullptr),
+  bdsBunch(bunchIn),
   runManager(nullptr)
 {;}
 
@@ -215,6 +215,8 @@ int BDSIMLink::Initialise()
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
+  GMAD::BeamBase b;
+  b.distrType = "sixtracklink";
   bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
 					  parser->GetBeam(),
 					  globalConstants->BeamlineTransform(),
@@ -381,10 +383,4 @@ BDSIMLink::~BDSIMLink()
 
   if (usualPrintOut)
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
-}
-
-void BDSIMLink::AddParticle(const BDSParticleDefinition* particleDefinitionIn,
-			    const BDSParticleCoordsFull& coordsIn)
-{
-  externalParticles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn));
 }
