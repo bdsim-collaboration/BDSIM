@@ -2355,7 +2355,7 @@ Beam of randomly distributed particles with a uniform distribution within a circ
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
 range from `-envelopeX` to `envelopeX` for example. Total
-energy is also uniformly distributed between $\pm$ `envelopeE`.
+energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -2379,7 +2379,7 @@ square
 
 This distribution has similar properties to the `circle`_ distribution, with the
 exception that the particles are randomly uniformly distributed within a square. Total
-energy is also uniformly distributed between $\pm$ `envelopeE`.
+energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -2452,7 +2452,7 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
 | `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
-|                                  | distributed between $\pm$ `sigmaE`.                                |
+|                                  | distributed between :math:`\pm` `sigmaE`.                          |
 +----------------------------------+--------------------------------------------------------------------+
 
 * No variation in `t`, `z`, `s`. Only central values.
