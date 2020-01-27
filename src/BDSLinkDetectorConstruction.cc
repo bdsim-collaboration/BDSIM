@@ -62,7 +62,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   auto componentFactory = new BDSComponentFactory(designParticle);
   auto beamline = BDSParser::Instance()->GetBeamline();
 
-  std::vector<BDSLinkOpaqueBox> opaqueBoxes = {};
+  std::vector<BDSLinkOpaqueBox*> opaqueBoxes = {};
   BDSBeamline* bl = new BDSBeamline();
 
   for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
@@ -87,13 +87,13 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 									     0);
 
 
-      auto opaqueBox = BDSLinkOpaqueBox(component, 0 /* XXX: index...  to do*/);
+      BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, 0 /* XXX: index...  to do*/);
 
       opaqueBoxes.push_back(opaqueBox);
 
-      BDSSimpleComponent* comp = new BDSSimpleComponent(opaqueBox.GetName(),
-							&opaqueBox,
-							opaqueBox.GetExtent().DZ());
+      BDSSimpleComponent* comp = new BDSSimpleComponent(opaqueBox->GetName(),
+							opaqueBox,
+							opaqueBox->GetExtent().DZ());
       
       bl->AddComponent(comp);
     }
