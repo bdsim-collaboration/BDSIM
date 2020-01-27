@@ -54,7 +54,7 @@ class BDSIMLink
 public:
   /// Construct an instance but don't initialise. Requires initialisation with
   /// arguments argc and arv
-  BDSIMLink();
+  explicit BDSIMLink(BDSBunch* bunchIn);
 
   /// Initialise everything given these arguments.
   int Initialise(int argc, char** argv, bool usualPrintOut=true);
@@ -75,9 +75,6 @@ public:
   /// from the standard input e.g. the executable option ngenerate and then the one specified
   /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
-
-  void AddParticle(const BDSParticleDefinition* particleDefinitionIn,
-		   const BDSParticleCoordsFull& coordsIn);
   
 private:
   /// The main function where everything is constructed.

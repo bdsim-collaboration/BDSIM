@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBunch.hh"
+#include "BDSBunchSixtrackLink.hh"
 #include "BDSException.hh"
 #include "BDSIMLink.hh"
 #include "BDSIonDefinition.hh"
@@ -46,6 +46,7 @@ std::string CleanFortranString(char* str, size_t count);
 //std::set<int> keep_ids;
 
 BDSIMLink* bds = nullptr;
+BDSBunchSixtrackLink* stp = nullptr;
 
 extern "C"
 void g4_collimation_init(double* ReferenceE,
@@ -60,7 +61,8 @@ void g4_collimation_init(double* ReferenceE,
 			 bool*   g4_keep_stable,
 			 bool*   DoEnergyDeposition)
 {
-  bds = new BDSIMLink();
+  stp = new BDSBunchSixtrackLink();
+  bds = new BDSIMLink(stp);
 
   std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug", "--batch"};
   std::vector<char*> argv;
@@ -171,7 +173,7 @@ void g4_add_particle(double*  xIn,
     }
 
   if (particleDefinition)
-    {bds->AddParticle(particleDefinition, coords);}
+    {stp->AddParticle(particleDefinition, coords);}
   //WARNING: at this stage in SixTrack the units have been converted to GeV, m, and rad!
   //The particle energy input is the TOTAL energy
   //mass (i.e. nucm) is already in MeV!
