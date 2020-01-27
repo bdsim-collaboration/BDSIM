@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4PVPlacement.hh"
 #include "G4String.hh"
+#include "G4ThreeVector.hh"
 #include "G4Types.hh"
 #include "G4VisAttributes.hh"
 
@@ -99,12 +100,14 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       bl->AddComponent(comp);
     }
 
-  BDSExtent worldExtent = bl->GetExtentGlobal();
+  G4ThreeVector worldExtentAbs = bl->GetExtentGlobal().GetMaximumExtentAbsolute();
+  worldExtentAbs *= 1.2;
   G4Box* worldSolid = new G4Box("world_solid",
-			      worldExtent.DX() * 1.2,
-			      worldExtent.DY() * 1.2,
-			      worldExtent.DZ() * 1.2);
-
+				worldExtentAbs.x(),
+				worldExtentAbs.y(),
+				worldExtentAbs.z());
+  worldExtent = BDSExtent(worldExtentAbs);
+  
   G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid,
 				     BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
 				     "world_lv");

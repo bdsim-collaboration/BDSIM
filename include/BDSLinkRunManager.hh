@@ -16,27 +16,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSLINKDETECTORCONSTRUCTION_H
-#define BDSLINKDETECTORCONSTRUCTION_H
-#include "BDSExtent.hh"
+#ifndef BDSLINKRUNMANAGER_H
+#define BDSLINKRUNMANAGER_H
 
-#include "G4VUserDetectorConstruction.hh"
+#include "G4RunManager.hh"
 
-class G4VPhysicalVolume;
+/**
+ * @brief Wrapper from G4RunManager that provides more output.
+ *
+ */
 
-class BDSLinkDetectorConstruction: public G4VUserDetectorConstruction
+class BDSLinkRunManager: public G4RunManager
 {
 public:
-  /// Default constructor
-  BDSLinkDetectorConstruction(/* something. special GMAD syntax?*/);
+  BDSLinkRunManager(){;}
+  virtual ~BDSLinkRunManager(){;}
 
-  virtual ~BDSLinkDetectorConstruction();
-  virtual G4VPhysicalVolume* Construct();
-
-  BDSExtent WorldExtent() const {return worldExtent;}
-
-private:
-  BDSExtent worldExtent;
+  /// Run G4RunManager::Initialise() and update BDSPrimaryGeneratorAction with knowledge
+  /// of the world extent for coordinate checking.
+  virtual void Initialize();
 };
-
 #endif
+
