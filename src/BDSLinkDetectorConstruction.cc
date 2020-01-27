@@ -49,10 +49,9 @@ BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
 
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 {
-
-  auto globalConstants = BDSGlobalConstants::Instance();
-  BDSParticleDefinition* designParticle = nullptr; // set below.
-  BDSParticleDefinition* beamParticle = nullptr;
+  BDSGlobalConstants*    globalConstants = BDSGlobalConstants::Instance();
+  BDSParticleDefinition* designParticle  = nullptr; // set below.
+  BDSParticleDefinition* beamParticle    = nullptr;
   G4bool beamDifferentFromDesignParticle = false;
   BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
 				      globalConstants->FFact(),
@@ -64,20 +63,22 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   auto beamline = BDSParser::Instance()->GetBeamline();
 
   std::vector<BDSLinkOpaqueBox> opaqueBoxes = {};
-
   BDSBeamline* bl = new BDSBeamline();
 
   for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
     {
-      auto type = elementIt->type;
-      if (type != GMAD::ElementType::_ECOL ||
-	  type != GMAD::ElementType::_RCOL ||
-	  type != GMAD::ElementType::_JCOL ||
-	  type != GMAD::ElementType::_CRYSTALCOL)
-	{
-	  throw BDSException(G4String("Unsupported element type for link = " +
-				      GMAD::typestr(type)));
-	}
+      GMAD::ElementType eType = elementIt->type;
+
+      if (eType == GMAD::ElementType::_LINE || eType == GMAD::ElementType::_REV_LINE)
+        {continue;}
+      
+      std::set<GMAD::ElementType> acceptedTypes = {GMAD::ElementType::_ECOL,
+						   GMAD::ElementType::_RCOL,
+						   GMAD::ElementType::_JCOL,
+						   GMAD::ElementType::_CRYSTALCOL};
+      auto search = acceptedTypes.find(eType);
+      if (search == acceptedTypes.end())
+	{throw BDSException(G4String("Unsupported element type for link = " + GMAD::typestr(eType)));}
 
       // Only need first argument, the rest pertain to beamlines.
       BDSAcceleratorComponent* component = componentFactory->CreateComponent(&(*elementIt),
@@ -120,12 +121,9 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 				   false,
 				   0,
 				   true);
-				       
-
 
   for (auto element : *bl)
     {
-
       G4String placementName = element->GetPlacementName() + "_pv";
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       G4int copyNumber = element->GetCopyNo();
@@ -141,7 +139,6 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
 
   return worldPV;
-
 }
 
 
