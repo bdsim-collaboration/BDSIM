@@ -63,7 +63,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleExternal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
-#include "BDSPrimaryGeneratorAction.hh"
+#include "BDSPrimaryGeneratorActionLink.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
 #include "BDSSamplerRegistry.hh"
@@ -207,7 +207,7 @@ int BDSIMLink::Initialise()
     }
   // update rigidity where needed
   //realWorld->SetDesignParticle(designParticle); TODO
-  BDSFieldFactory::SetDesignParticle(designParticle);
+  //BDSFieldFactory::SetDesignParticle(designParticle);
   
   //auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   //if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
@@ -259,9 +259,9 @@ int BDSIMLink::Initialise()
     }
   */
   
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorActionLink(bdsBunch);
   runManager->SetUserAction(primaryGeneratorAction);
-  BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
+  //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
   /// Initialize G4 kernel
   runManager->Initialize();

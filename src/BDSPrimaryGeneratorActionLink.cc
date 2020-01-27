@@ -22,20 +22,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSIonDefinition.hh"
-#include "BDSOutputLoader.hh"
-#include "BDSParticleDefinition.hh"
-#include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorActionLink.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSRandom.hh"
-#include "BDSUtilities.hh"
-
-#include "CLHEP/Random/Random.h"
 
 #include "G4Event.hh"
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
-#include "G4ParticleDefinition.hh"
 #include "G4Types.hh"
 
 BDSPrimaryGeneratorActionLink::BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn):
