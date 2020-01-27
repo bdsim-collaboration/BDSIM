@@ -476,7 +476,7 @@ Examples: ::
 +------------------------------+------------------------------------------------------------------------+
 | ion_elastic_qmd              | `G4IonQMDPhysics`                                                      |
 +------------------------------+------------------------------------------------------------------------+
-| ion_em_dissocation           | Electromagnetic dissociation for ions. Uses `G4EMDissociation`. May    |
+| ion_em_dissociation          | Electromagnetic dissociation for ions. Uses `G4EMDissociation`. May    |
 |                              | produce warnings. Experimental.                                        |
 +------------------------------+------------------------------------------------------------------------+
 | ion_inclxx (`*`)             | `G4IonINCLXXPhysics`                                                   |
