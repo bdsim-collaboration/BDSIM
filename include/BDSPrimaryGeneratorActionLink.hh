@@ -38,7 +38,7 @@ class BDSPrimaryGeneratorActionLink: public G4VUserPrimaryGeneratorAction
 {
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
-  BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn);
+  explicit BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn);
   virtual ~BDSPrimaryGeneratorActionLink();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
