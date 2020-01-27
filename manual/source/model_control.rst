@@ -2144,7 +2144,8 @@ The following beam distributions are available in BDSIM
 
 
 reference
-^^^^^^^^^
+*********
+
 This is a single particle with the same position and angle defined by the following parameters. The
 coordinates are the same for every particle fired using the reference distribution. It is therefore
 not likely to be useful to generate a large number of repeated events with this distribution unless
@@ -2203,7 +2204,7 @@ Generates a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally an
 :math:`\mu\mathrm{m}` vertically.
 
 gaussmatrix
-^^^^^^^^^^^
+***********
 
 Uses the :math:`N` dimensional Gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
 is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.
@@ -2245,7 +2246,7 @@ Examples: ::
 	  be finite also.
 
 gauss
-^^^^^
+*****
 
 Uses the `gaussmatrix`_ beam generator but with simplified input parameters, as opposed to a complete
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for
@@ -2282,7 +2283,7 @@ correlations between phase space coordinates, so
 
 
 gausstwiss
-^^^^^^^^^^
+**********
 
 The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and
 :math:`\gamma`, plus dispersion :math:`\eta`, from which the beam :math:`\sigma` -matrix
@@ -2348,7 +2349,7 @@ is calculated, using the following equations:
 
 
 circle
-^^^^^^
+******
 
 Beam of randomly distributed particles with a uniform distribution within a circle in each
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
@@ -2374,7 +2375,7 @@ energy is also uniformly distributed between $\pm$ `envelopeE`.
 
 
 square
-^^^^^^
+******
 
 This distribution has similar properties to the `circle`_ distribution, with the
 exception that the particles are randomly uniformly distributed within a square. Total
@@ -2402,7 +2403,7 @@ energy is also uniformly distributed between $\pm$ `envelopeE`.
 
 
 ring
-^^^^
+****
 
 The ring distribution randomly and uniformly fills a ring in `x` and `y` between two radii. For
 all other parameters, the `reference`_ coordinates are used, i.e. `xp`, `yp` etc.
@@ -2423,7 +2424,7 @@ all other parameters, the `reference`_ coordinates are used, i.e. `xp`, `yp` etc
 
 
 eshell
-^^^^^^
+******
 
 Defines an elliptical annulus in phase space in each dimension that's uncorrelated.
 
@@ -2459,7 +2460,8 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 .. _beam-halo-distribution:
 
 halo
-^^^^
+****
+
 The halo distribution is effectively a flat phase space with the central beam core removed at
 :math:`\epsilon_{\rm core}`. The beam core is defined using the standard Twiss parameters described
 previously. The implicit general form of a rotated ellipse is
@@ -2543,7 +2545,7 @@ Example::
 .. _beam-composite:
 
 composite
-^^^^^^^^^
+*********
 
 The horizontal, vertical and longitudinal phase spaces can be defined independently. The `xDistrType`,
 `yDistrType` and `zDistrType` can be selected from all the other beam distribution types. All of the
@@ -2594,7 +2596,7 @@ Examples: ::
 
 
 userFile
-^^^^^^^^
+********
 
 The `userFile` distribution allows the user to supply an ASCII text file with particle
 coordinates that are tab-delimited. The column names and the units are specified in an
@@ -2732,7 +2734,7 @@ The corresponding `userbeamdata.dat` file looks like::
 
 
 ptc
-^^^
+***
 
 Output from MAD-X PTC used as input for BDSIM.
 
@@ -2747,7 +2749,7 @@ Output from MAD-X PTC used as input for BDSIM.
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
 
 eventgeneratorfile
-^^^^^^^^^^^^^^^^^^
+******************
 
 To use a file from an event generator, the HepMC3 library must be used and BDSIM must be
 compiled with respect to it.  See :ref:`installation-bdsim-config-options` for more details.
@@ -2863,7 +2865,7 @@ For only pions: ::
   
 
 sphere
-^^^^^^
+******
 
 The `sphere` distribution generates a distribution with a uniform random direction at one location.
 Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
