@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryWriter.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
+#include "BDSLinkRunManager.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -65,7 +66,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
-#include "BDSRunManager.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
 #include "BDSSteppingAction.hh"
@@ -166,7 +166,7 @@ int BDSIMLink::Initialise()
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-  runManager = new BDSRunManager;
+  runManager = new BDSLinkRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
   auto realWorld = new BDSLinkDetectorConstruction();

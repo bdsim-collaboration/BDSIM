@@ -22,12 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
+class BDSLinkRunManager;
 class BDSOutput;
 class BDSParser;
 class BDSParticleCoordsFull;
 class BDSParticleDefinition;
 class BDSParticleExternal;
-class BDSRunManager;
 
 #include "G4String.hh"
 
@@ -88,10 +88,10 @@ private:
   char** argvCache;            ///< Cache of argv.
 
   /// @{ Cache of main object in BDSIM.
-  BDSParser*     parser;
-  BDSOutput*     bdsOutput;
-  BDSBunch*      bdsBunch;
-  BDSRunManager* runManager;
+  BDSParser*         parser;
+  BDSOutput*         bdsOutput;
+  BDSBunch*          bdsBunch;
+  BDSLinkRunManager* runManager;
   
   std::vector<BDSParticleExternal*> externalParticles;
   /// @}
