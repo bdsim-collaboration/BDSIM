@@ -16,9 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBunch.hh"
+#include "BDSException.hh"
 #include "BDSIMLink.hh"
+#include "BDSIonDefinition.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
+
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
+#include "G4Types.hh"
+
+#include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <set>
 #include <string>
@@ -48,7 +62,7 @@ void g4_collimation_init(double* ReferenceE,
 {
   bds = new BDSIMLink();
 
-  std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug"/*, "--batch"*/};
+  std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug", "--batch"};
   std::vector<char*> argv;
   for (const auto& arg : arguments)
     {argv.push_back((char*)arg.data());}
@@ -95,21 +109,69 @@ void g4_set_collimator(char* name)
 }
 
 extern "C"
-void g4_add_particle(double*  x,
-		     double*  y,
-		     double*  xp,
-		     double*  yp,
-		     double*  e,
-		     int32_t* pdgid,
+void g4_add_particle(double*  xIn,
+		     double*  yIn,
+		     double*  xpIn,
+		     double*  ypIn,
+		     double*  totalEnergyIn,
+		     int32_t* pdgIDIn,
 		     int16_t* nzz,
 		     int16_t* naa,
 		     int16_t* nqq,
-		     double*  mass,
+		     double*  massIn,
 		     double*  sigmv,
 		     double*  sx,
 		     double*  sy,
 		     double*  sz)
 {
+  G4double mass        = (*massIn) * CLHEP::MeV;
+  G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV; 
+  G4double momMag      = std::sqrt(totalEnergy - (mass*mass));
+  G4double xp          = (*xpIn)*momMag;
+  G4double yp          = (*ypIn)*momMag;
+  G4double zp          = BDSBunch::CalculateZp(xp,yp,1);
+  BDSParticleCoordsFull coords = BDSParticleCoordsFull((*xIn) * CLHEP::m,
+						       (*yIn) * CLHEP::m,
+						       0,
+						       xp,
+						       yp,
+						       zp,
+						       0,
+						       0,
+						       totalEnergy,
+						       1);
+
+  long long int pdgID = (long long int)(*pdgIDIn);
+
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  G4ParticleDefinition* particleDef = particleTable->FindParticle(pdgID);
+  if (!particleDef)
+    {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(pdgID) + "\" not found");}
+
+  BDSIonDefinition* ionDef = nullptr;
+  if (BDS::IsIon(particleDef))
+    {
+      G4int a = (G4int)(*naa);
+      G4int z = (G4int)(*nzz);
+      G4double q = (G4double)(*nqq) * CLHEP::eplus;
+      ionDef = new BDSIonDefinition(a,z,q);
+    }
+	      
+  // Wrap in our class that calculates momentum and kinetic energy.
+  // Requires that one of E, Ek, P be non-zero (only one).
+  BDSParticleDefinition* particleDefinition = nullptr;
+  try
+    {
+      particleDefinition = new BDSParticleDefinition(particleDef, totalEnergy, 0, 0, 1, ionDef);
+    }
+  catch (const BDSException& e)
+    {// if we throw an exception the object is invalid for the delete on the next loop
+      particleDefinition = nullptr; // reset back to nullptr for safe delete
+      throw e;
+    }
+
+  if (particleDefinition)
+    {bds->AddParticle(particleDefinition, coords);}
   //WARNING: at this stage in SixTrack the units have been converted to GeV, m, and rad!
   //The particle energy input is the TOTAL energy
   //mass (i.e. nucm) is already in MeV!
