@@ -69,7 +69,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   G4UserLimits* termUL = new G4UserLimits(std::numeric_limits<double>::max(),
 					  std::numeric_limits<double>::max(),
 					  std::numeric_limits<double>::max(),
-					  0., 0.);
+					  std::numeric_limits<double>::max(),
+					  std::numeric_limits<double>::max());
+
   RegisterUserLimits(termUL);
   opaqueBoxLV->SetUserLimits(termUL);
   G4VisAttributes* obVis = new G4VisAttributes(*BDSColours::Instance()->GetColour("opaquebox"));
