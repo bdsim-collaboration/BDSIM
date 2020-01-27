@@ -252,7 +252,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
   return result;
 }
 
-G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In) const
+G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)
 {
   G4double zp;
   G4double transMom = std::pow(xp, 2) + std::pow(yp, 2);

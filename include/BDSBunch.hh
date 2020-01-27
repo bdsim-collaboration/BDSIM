@@ -122,6 +122,9 @@ public:
   /// GetNextParticle() or GetNextParticleValid().
   inline G4bool ParticleDefinitionHasBeenUpdated() const {return particleDefinitionHasBeenUpdated;}
 
+  /// Calculate zp safely based on other components.
+  static G4double CalculateZp(G4double xp, G4double yp, G4double Zp0);
+
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
@@ -133,9 +136,6 @@ protected:
 
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
-
-  /// Calculate zp safely based on other components.
-  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
   ///@{ Centre of distributions
   G4double X0;
