@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSColours.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkOpaqueBox.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4types.hh"
 #include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -70,7 +72,10 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 				 0., 0.);
   RegisterUserLimits(termUL);
   opaqueBoxLV->SetUserLimits(termUL);
-
+  G4VisAttributes* obVis = new G4VisAttributes(*BDSColours::Instance()->GetColour("opaquebox"));
+  obVis->SetVisibility(true);
+  opaqueBoxLV->SetVisAttributes(obVis);
+  RegisterVisAttributes(obVis);
   
   G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
