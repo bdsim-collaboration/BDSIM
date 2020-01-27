@@ -34,8 +34,6 @@ public:
 		   G4int indexIn);
   virtual ~BDSLinkOpaqueBox() noexcept = default;
 
-  BDSExtent GetExtent();
-
   //! Default constructor
   BDSLinkOpaqueBox() = delete;
 
