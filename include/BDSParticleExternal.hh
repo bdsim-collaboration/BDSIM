@@ -18,7 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSPARTICLEEXTERNAL_H
 #define BDSPARTICLEEXTERNAL_H 
-#include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
+
+#include "G4Types.hh"
 
 class BDSParticleDefinition;
 
@@ -33,11 +35,13 @@ class BDSParticleExternal
 public:
   BDSParticleExternal() = delete;
   BDSParticleExternal(const BDSParticleDefinition* particleDefinitionIn,
-		      const BDSParticleCoords&     coordsIn);
+		      const BDSParticleCoordsFull& coordsIn,
+		      G4int                        indexIn);
   ~BDSParticleExternal();
 
   const BDSParticleDefinition* particleDefinition;
-  BDSParticleCoords            coords;
+  BDSParticleCoordsFull        coords;
+  G4int                        index;
 };
 
 #endif
