@@ -80,23 +80,22 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 	}
 
       // Only need first argument, the rest pertain to beamlines.
-      BDSAcceleratorComponent *component =
-	componentFactory->CreateComponent(&(*elementIt), nullptr,
-					  nullptr, 0.0);
+      BDSAcceleratorComponent* component = componentFactory->CreateComponent(&(*elementIt),
+									     nullptr,
+									     nullptr,
+									     0);
 
 
       auto opaqueBox = BDSLinkOpaqueBox(component, 0 /* XXX: index...  to do*/);
 
       opaqueBoxes.push_back(opaqueBox);
 
-      BDSSimpleComponent *comp =
-          new BDSSimpleComponent(opaqueBox.GetName(),
-                                 &opaqueBox, opaqueBox.GetExtent().DZ());
-
+      BDSSimpleComponent* comp = new BDSSimpleComponent(opaqueBox.GetName(),
+							&opaqueBox,
+							opaqueBox.GetExtent().DZ());
+      
       bl->AddComponent(comp);
-
     }
-
 
   BDSExtent worldExtent = bl->GetExtentGlobal();
   auto worldSolid = new G4Box("world_solid",
@@ -104,8 +103,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 			      worldExtent.DY() * 1.2,
 			      worldExtent.DZ() * 1.2);
 
-  auto worldLV = new G4LogicalVolume(
-				     worldSolid, BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
+  auto worldLV = new G4LogicalVolume(worldSolid,
+				     BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
 				     "world_lv");
 
   auto debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
