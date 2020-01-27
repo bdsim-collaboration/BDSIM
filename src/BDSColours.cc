@@ -106,6 +106,7 @@ BDSColours::BDSColours()
   colours["awakescreen"]      = colours["screen"];
   colours["awakespectrometer"]= colours["sectorbend"];
   colours["gap"]              = colours["default"];
+  colours["opaquebox"]        = new G4Colour(0.2, 0.2, 0.2, 0.2); // dark grey but mostly transparent
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
