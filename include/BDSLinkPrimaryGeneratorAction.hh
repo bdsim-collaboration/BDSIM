@@ -38,7 +38,8 @@ class BDSLinkPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
-  explicit BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn);
+  explicit BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
+					 int*      currentElementIndexIn);
   virtual ~BDSLinkPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
@@ -49,8 +50,9 @@ public:
   
 private:  
   
+  BDSBunch* bunch;                ///< BDSIM particle generator. 
+  int*      currentElementIndex;  ///< External integer for which element to track in.
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
-  BDSBunch* bunch;                ///< BDSIM particle generator.  
   
   /// World extent that particle coordinates are checked against to ensure they're inside it.
   BDSExtent worldExtent;
