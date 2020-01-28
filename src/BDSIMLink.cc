@@ -63,7 +63,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleExternal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
-#include "BDSPrimaryGeneratorActionLink.hh"
+#include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
 #include "BDSSamplerRegistry.hh"
@@ -259,7 +259,7 @@ int BDSIMLink::Initialise()
     }
   */
   
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorActionLink(bdsBunch);
+  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch);
   runManager->SetUserAction(primaryGeneratorAction);
   //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 

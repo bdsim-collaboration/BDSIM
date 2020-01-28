@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSIonDefinition.hh"
-#include "BDSPrimaryGeneratorActionLink.hh"
+#include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSRandom.hh"
 
@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleGun.hh"
 #include "G4Types.hh"
 
-BDSPrimaryGeneratorActionLink::BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn):
+BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn):
   bunch(bunchIn)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
@@ -41,12 +41,12 @@ BDSPrimaryGeneratorActionLink::BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn):
   particleGun->SetParticleTime(0);
 }
 
-BDSPrimaryGeneratorActionLink::~BDSPrimaryGeneratorActionLink()
+BDSLinkPrimaryGeneratorAction::~BDSLinkPrimaryGeneratorAction()
 {
   delete particleGun;
 }
 
-void BDSPrimaryGeneratorActionLink::GeneratePrimaries(G4Event* anEvent)
+void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // always save seed state in output
   BDSEventInfo* eventInfo = new BDSEventInfo();
