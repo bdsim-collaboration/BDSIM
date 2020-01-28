@@ -41,7 +41,7 @@ public:
   /// Get the next particle.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   
-  void AddParticle(const BDSParticleDefinition* particleDefinitionIn,
+  void AddParticle(BDSParticleDefinition* particleDefinitionIn,
 		   const BDSParticleCoordsFull& coordsIn);
   
 private:

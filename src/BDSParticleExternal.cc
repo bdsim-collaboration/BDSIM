@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
-BDSParticleExternal::BDSParticleExternal(const BDSParticleDefinition* particleDefinitionIn,
+BDSParticleExternal::BDSParticleExternal(BDSParticleDefinition* particleDefinitionIn,
 					 const BDSParticleCoordsFull& coordsIn,
 					 G4int                        indexIn):
   particleDefinition(particleDefinitionIn),
