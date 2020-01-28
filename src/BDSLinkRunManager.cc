@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSExtent.hh"
 #include "BDSLinkRunManager.hh"
 #include "BDSLinkDetectorConstruction.hh"
-#include "BDSExtent.hh"
-#include "BDSPrimaryGeneratorActionLink.hh"
+#include "BDSLinkPrimaryGeneratorAction.hh"
 
 void BDSLinkRunManager::Initialize()
 {
@@ -28,6 +28,6 @@ void BDSLinkRunManager::Initialize()
   BDSExtent worldExtent;
   if (const auto detectorConstruction = dynamic_cast<BDSLinkDetectorConstruction*>(userDetector))
     {worldExtent = detectorConstruction->WorldExtent();}
-  if (const auto primaryGeneratorAction = dynamic_cast<BDSPrimaryGeneratorActionLink*>(userPrimaryGeneratorAction))
+  if (const auto primaryGeneratorAction = dynamic_cast<BDSLinkPrimaryGeneratorAction*>(userPrimaryGeneratorAction))
     {primaryGeneratorAction->SetWorldExtent(worldExtent);}
 }

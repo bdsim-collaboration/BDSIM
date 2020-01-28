@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSPRIMARYGENERATORACTIONLINK_H
-#define BDSPRIMARYGENERATORACTIONLINK_H
+#ifndef BDSLINKPRIMARYGENERATORACTION_H
+#define BDSLINKPRIMARYGENERATORACTION_H
 
 #include "BDSExtent.hh"
 
@@ -34,12 +34,12 @@ class G4ParticleGun;
  *
  */
 
-class BDSPrimaryGeneratorActionLink: public G4VUserPrimaryGeneratorAction
+class BDSLinkPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
-  explicit BDSPrimaryGeneratorActionLink(BDSBunch* bunchIn);
-  virtual ~BDSPrimaryGeneratorActionLink();
+  explicit BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn);
+  virtual ~BDSLinkPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
   virtual void GeneratePrimaries(G4Event*);
