@@ -51,4 +51,6 @@ void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefi
 {
   particles.emplace_back(BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
   size = (G4int)particles.size();
+  if (!particleDefinition)
+    {particleDefinition = particles.back().particleDefinition;}
 }
