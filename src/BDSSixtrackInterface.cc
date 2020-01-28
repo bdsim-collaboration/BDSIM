@@ -106,8 +106,8 @@ extern "C"
 void g4_set_collimator(char* name)
 {
   //  keep 48 value in sync with mNameLen in common_modules.f90
-  std::string CollimatorName = CleanFortranString(name, 48);
-  //geometry->SetCollimator(CollimatorName);
+  std::string collimatorName = CleanFortranString(name, 48);
+  bds->SelectLinkElement(collimatorName);
 }
 
 extern "C"

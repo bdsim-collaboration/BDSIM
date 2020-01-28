@@ -18,6 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSIMLINK_H
 #define BDSIMLINK_H
+#include "G4String.hh"
+
+#include <map>
+#include <string>
+#include <vector>
 
 class BDSBunch;
 class BDSComponentConstructor;
@@ -28,10 +33,6 @@ class BDSParser;
 class BDSParticleCoordsFull;
 class BDSParticleDefinition;
 class BDSParticleExternal;
-
-#include "G4String.hh"
-
-#include <vector>
 
 /** 
  * @brief Interface class to use BDSIM with trackers.
@@ -75,6 +76,8 @@ public:
   /// from the standard input e.g. the executable option ngenerate and then the one specified
   /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
+
+  void SelectLinkElement(const std::string& elementName);
   
 private:
   /// The main function where everything is constructed.
@@ -92,9 +95,11 @@ private:
   BDSOutput*         bdsOutput;
   BDSBunch*          bdsBunch;
   BDSLinkRunManager* runManager;
+  /// @}
   
   std::vector<BDSParticleExternal*> externalParticles;
-  /// @}
+  std::map<std::string, int>        nameToElementIndex;
+  int                               currentElementIndex; ///< Element to track in.
 };
 
 #endif

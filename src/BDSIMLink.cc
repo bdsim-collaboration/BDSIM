@@ -259,7 +259,7 @@ int BDSIMLink::Initialise()
     }
   */
   
-  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch);
+  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex);
   runManager->SetUserAction(primaryGeneratorAction);
   //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
@@ -383,4 +383,13 @@ BDSIMLink::~BDSIMLink()
 
   if (usualPrintOut)
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
+}
+
+void BDSIMLink::SelectLinkElement(const std::string& elementName)
+{
+  auto search = nameToElementIndex.find(elementName);
+  if (search != nameToElementIndex.end())
+    {currentElementIndex = search->second;}
+  else
+    {currentElementIndex = 0;}
 }

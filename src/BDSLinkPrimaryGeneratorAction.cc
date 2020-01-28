@@ -31,8 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleGun.hh"
 #include "G4Types.hh"
 
-BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn):
-  bunch(bunchIn)
+BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
+							     int*      currentElementIndexIn):
+  bunch(bunchIn),
+  currentElementIndex(currentElementIndexIn),
+  particleGun(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
   
@@ -75,6 +78,13 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4cout << "Aborting this event (#" << anEvent->GetEventID() << ")" << G4endl;
       return;
     }
+
+  // TODO STUART
+  // update coords.global with transform based on beam line index "*currentElementIndex"
+  // e.g. something like G4Transform3D offset = registry->GetTransform(*currentElementIndex);
+  // coords.global = coords.local.ApplyTransform(transform); // maybe
+  // or alternatively update the transform inside BDSBunch base class before call
+  // to bunch->GetNextParticle() and it'll do it for you
   
   particleGun->SetParticleDefinition(bunch->ParticleDefinition()->ParticleDefinition());
   
