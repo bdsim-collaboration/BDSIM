@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBunchSixtrackLink.hh"
+#include "BDSBunchSixTrackLink.hh"
 #include "BDSException.hh"
 #include "BDSIMLink.hh"
 #include "BDSIonDefinition.hh"
@@ -46,7 +46,7 @@ std::string CleanFortranString(char* str, size_t count);
 //std::set<int> keep_ids;
 
 BDSIMLink* bds = nullptr;
-BDSBunchSixtrackLink* stp = nullptr;
+BDSBunchSixTrackLink* stp = nullptr;
 
 extern "C"
 void g4_collimation_init(double* ReferenceE,
@@ -61,7 +61,7 @@ void g4_collimation_init(double* ReferenceE,
 			 bool*   g4_keep_stable,
 			 bool*   DoEnergyDeposition)
 {
-  stp = new BDSBunchSixtrackLink();
+  stp = new BDSBunchSixTrackLink();
   bds = new BDSIMLink(stp);
 
   std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug", "--batch"};
