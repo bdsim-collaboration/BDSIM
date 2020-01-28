@@ -30,6 +30,12 @@ BDSParticleExternal::BDSParticleExternal(BDSParticleDefinition* particleDefiniti
   index(indexIn)
 {;}
 
+BDSParticleExternal::BDSParticleExternal(const BDSParticleExternal& other):
+  particleDefinition(new BDSParticleDefinition(*other.particleDefinition)),
+  coords(other.coords),
+  index(other.index)
+{;}
+
 BDSParticleExternal::~BDSParticleExternal()
 {
   delete particleDefinition;
