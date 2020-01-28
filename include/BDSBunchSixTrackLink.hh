@@ -40,13 +40,14 @@ public:
 
   /// Get the next particle.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
-  
+
+  /// Append particle to vector for tracking.
   void AddParticle(BDSParticleDefinition* particleDefinitionIn,
 		   const BDSParticleCoordsFull& coordsIn);
   
 private:
-  G4int currentIndex;
-  G4int size;
+  G4int currentIndex; ///< Index in the vector that we're currently at.
+  G4int size;         ///< Number of particles (1 counting).
   std::vector<BDSParticleExternal> particles;
 };
 #endif

@@ -37,7 +37,7 @@ BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
   currentElementIndex(currentElementIndexIn),
   particleGun(nullptr)
 {
-  particleGun  = new G4ParticleGun(1); // 1-particle gun
+  particleGun = new G4ParticleGun(1); // 1-particle gun
   
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector());
