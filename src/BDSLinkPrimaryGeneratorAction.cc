@@ -69,7 +69,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // it can't
   BDSParticleCoordsFullGlobal coords;
   try
-    {coords = bunch->GetNextParticleValid();}
+    {coords = bunch->GetNextParticle();}
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
       // could be because of user input file
