@@ -49,17 +49,17 @@ BDSIMLink* bds = nullptr;
 BDSBunchSixTrackLink* stp = nullptr;
 
 extern "C"
-void g4_collimation_init(double* ReferenceE,
-			 int*    seed,
-			 double* recut,
-			 double* aecut,
-			 double* rcut,
-			 double* rangecut_mm,
-			 double* v0,
-			 char*   PhysicsSelect,
-			 bool*   g4_debug,
-			 bool*   g4_keep_stable,
-			 bool*   DoEnergyDeposition)
+void g4_collimation_init(double* /*ReferenceE*/,
+			 int*    /*seed*/,
+			 double* /*recut*/,
+			 double* /*aecut*/,
+			 double* /*rcut*/,
+			 double* /*rangecut_mm*/,
+			 double* /*v0*/,
+			 char*   /*PhysicsSelect*/,
+			 bool*   /*g4_debug*/,
+			 bool*   /*g4_keep_stable*/,
+			 bool*   /*DoEnergyDeposition*/)
 {
   stp = new BDSBunchSixTrackLink();
   bds = new BDSIMLink(stp);
@@ -74,13 +74,13 @@ void g4_collimation_init(double* ReferenceE,
 }
 
 extern "C"
-void g4_add_collimator(char*   name,
-		       char*   material,
-		       double* length,
-		       double* aperture,
-		       double* rotation,
-		       double* x_offset,
-		       double* y_offset)
+void g4_add_collimator(char*   /*name*/,
+		       char*   /*material*/,
+		       double* /*length*/,
+		       double* /*aperture*/,
+		       double* /*rotation*/,
+		       double* /*x_offset*/,
+		       double* /*y_offset*/)
 {
   /*
   //  keep 48 value in sync with mNameLen in common_modules.f90
@@ -121,10 +121,10 @@ void g4_add_particle(double*  xIn,
 		     int16_t* naa,
 		     int16_t* nqq,
 		     double*  massIn,
-		     double*  sigmv,
-		     double*  sx,
-		     double*  sy,
-		     double*  sz)
+		     double*  /*sigmv*/,
+		     double*  /*sx*/,
+		     double*  /*sy*/,
+		     double*  /*sz*/)
 {
   G4double mass        = (*massIn) * CLHEP::MeV;
   G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV; 
@@ -228,26 +228,26 @@ void g4_collimate()
 }
 
 extern "C"
-void g4_collimate_return(int*     j,
-			 double*  x,
-			 double*  y,
-			 double*  xp,
-			 double*  yp,
-			 double*  e,
-			 int32_t* pdgid,
-			 double*  m,
-			 int16_t* z,
-			 int16_t* a,
-			 int16_t* q,
-			 double*  sigmv,
-			 int*     part_hit,
-			 int*     part_abs,
-			 double*  part_impact,
-			 double*  part_indiv,
-			 double*  part_linteract,
-			 double*  sx,
-			 double*  sy,
-			 double*  sz)
+void g4_collimate_return(int*     /*j*/,
+			 double*  /*x*/,
+			 double*  /*y*/,
+			 double*  /*xp*/,
+			 double*  /*yp*/,
+			 double*  /*e*/,
+			 int32_t* /*pdgid*/,
+			 double*  /*m*/,
+			 int16_t* /*z*/,
+			 int16_t* /*a*/,
+			 int16_t* /*q*/,
+			 double*  /*sigmv*/,
+			 int*     /*part_hit*/,
+			 int*     /*part_abs*/,
+			 double*  /*part_impact*/,
+			 double*  /*part_indiv*/,
+			 double*  /*part_linteract*/,
+			 double*  /*sx*/,
+			 double*  /*sy*/,
+			 double*  /*sz*/)
 {
   /*
     part_hit(j), part_abs(j), part_impact(j), part_indiv(j),
@@ -307,7 +307,7 @@ std::string CleanFortranString(char* str, size_t count)
 }
 
 extern "C"
-void g4_get_particle_count(int* g4_npart)
+void g4_get_particle_count(int* /*g4_npart*/)
 {
   //*g4_npart = output_particles.size();
 }
@@ -320,24 +320,24 @@ void g4_collimation_clear()
 }
 
 extern "C"
-void g4_keep_id(int* id)
+void g4_keep_id(int* /*id*/)
 {
   //keep_ids.insert(*id);
 }
 
 extern "C"
-void g4_add_edep(char* name_in,
-		 int* type,
-		 double* xstep,
-		 double* ystep,
-		 double* zstep,
-		 double* xmax,
-		 double* ymax,
-		 double* zmax,
-		 double* xbigstep,
-		 double* ybigstep,
-		 double* zbigstep,
-		 double* xbigmax,
-		 double* ybigmax,
-		 double* zbigmax)
+void g4_add_edep(char* /*name_in*/,
+		 int* /*type*/,
+		 double* /*xstep*/,
+		 double* /*ystep*/,
+		 double* /*zstep*/,
+		 double* /*xmax*/,
+		 double* /*ymax*/,
+		 double* /*zmax*/,
+		 double* /*xbigstep*/,
+		 double* /*ybigstep*/,
+		 double* /*zbigstep*/,
+		 double* /*xbigmax*/,
+		 double* /*ybigmax*/,
+		 double* /*zbigmax*/)
 {;}
