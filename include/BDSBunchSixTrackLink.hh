@@ -32,11 +32,11 @@ class BDSParticleCoordsFull;
  * @author Laurie Nevay
  */
 
-class BDSBunchSixtrackLink: public BDSBunch
+class BDSBunchSixTrackLink: public BDSBunch
 {
 public: 
-  BDSBunchSixtrackLink();
-  virtual ~BDSBunchSixtrackLink();
+  BDSBunchSixTrackLink();
+  virtual ~BDSBunchSixTrackLink();
 
   /// Get the next particle.
   virtual BDSParticleCoordsFull GetNextParticleLocal();

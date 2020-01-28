@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * version @BDSIM_VERSION@
  */
-#include "BDSBunchSixtrackLink.hh"
+#include "BDSBunchSixTrackLink.hh"
 #include "BDSIMLink.hh"
 #include "BDSException.hh"
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
   BDSIMLink* bds = nullptr;
   try
     {
-      BDSBunchSixtrackLink* stp = new BDSBunchSixtrackLink();
+      BDSBunchSixTrackLink* stp = new BDSBunchSixTrackLink();
       bds = new BDSIMLink(stp);
 
       //std::vector<std::string> arguments = {"--file=../examples/features/link/link_collimators.gmad",

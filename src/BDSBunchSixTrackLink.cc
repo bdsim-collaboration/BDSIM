@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBunchSixtrackLink.hh"
+#include "BDSBunchSixTrackLink.hh"
 #include "BDSDebug.hh"
 #include "BDSParticleDefinition.hh"
 
@@ -25,15 +25,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-BDSBunchSixtrackLink::BDSBunchSixtrackLink():
+BDSBunchSixTrackLink::BDSBunchSixTrackLink():
   currentIndex(0),
   size(0)
 {;}
 
-BDSBunchSixtrackLink::~BDSBunchSixtrackLink()
+BDSBunchSixTrackLink::~BDSBunchSixTrackLink()
 {;}
 
-BDSParticleCoordsFull BDSBunchSixtrackLink::GetNextParticleLocal()
+BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
 {
   if (currentIndex >= size)
     {
@@ -46,8 +46,8 @@ BDSParticleCoordsFull BDSBunchSixtrackLink::GetNextParticleLocal()
   return particles[ci].coords;
 }
 
-void BDSBunchSixtrackLink::AddParticle(const BDSParticleDefinition* particleDefinitionIn,
-				       const BDSParticleCoordsFull& coordsIn)
+void BDSBunchSixTrackLink::AddParticle(const BDSParticleDefinition* particleDefinitionIn,
+                                       const BDSParticleCoordsFull& coordsIn)
 {
   particles.emplace_back(BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
   size = (G4int)particles.size();
