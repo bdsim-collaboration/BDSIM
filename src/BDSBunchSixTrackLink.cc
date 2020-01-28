@@ -46,7 +46,7 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   return particles[ci].coords;
 }
 
-void BDSBunchSixTrackLink::AddParticle(const BDSParticleDefinition* particleDefinitionIn,
+void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefinitionIn,
                                        const BDSParticleCoordsFull& coordsIn)
 {
   particles.emplace_back(BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
