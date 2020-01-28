@@ -98,6 +98,18 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 							opaqueBox->GetExtent().DZ());
       
       bl->AddComponent(comp);
+
+      // The placement transform refers to centre of the collimators,
+      // so subtract half the collimator length (z) to get to the
+      // opening of the collimator.
+      auto it = bl->end();
+      it--;
+      G4Transform3D* placementTransform = (*it)->GetPlacementTransform();
+      BDSExtent componentExtent = component->GetExtent();
+      G4double componentHalfLength = componentExtent.DZ() / 2.0;
+      auto entranceOffset = G4Translate3D(0.0, 0.0, -componentHalfLength);
+      G4Transform3D openingTransform = entranceOffset * (*placementTransform);
+      collimatorTransforms.push_back(openingTransform);
     }
 
   G4ThreeVector worldExtentAbs = bl->GetExtentGlobal().GetMaximumExtentAbsolute();

@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 
 #include "G4VUserDetectorConstruction.hh"
+#include "G4ThreeVector.hh"
 
 class G4VPhysicalVolume;
 
@@ -37,6 +38,8 @@ public:
 
 private:
   BDSExtent worldExtent;
+  /// Position of the centre of the collimator entrances in global coordinates.
+  std::vector<G4Transform3D> collimatorTransforms;
 };
 
 #endif
