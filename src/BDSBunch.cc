@@ -74,7 +74,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  G4Transform3D beamlineTransformIn,
 			  G4double beamlineSIn)
 {
-  particleDefinition = new BDSParticleDefinition(*beamParticle);
+  particleDefinition = new BDSParticleDefinition(*beamParticle); // copy it so this instance owns it
 
   // back the starting point up by length safety to avoid starting on a boundary
   G4ThreeVector unitZBeamline = G4ThreeVector(0,0,-1).transform(beamlineTransformIn.getRotation());
@@ -90,22 +90,32 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   T0     = beam.T0 * CLHEP::s;
   Xp0    = beam.Xp0 * CLHEP::rad;
   Yp0    = beam.Yp0 * CLHEP::rad;
-  E0     = beam.E0  * CLHEP::GeV;
+  E0     = particleDefinition->TotalEnergy(); // already calculated and set earlier depending on available parameters
+  P0     = particleDefinition->Momentum();
   tilt   = beam.tilt * CLHEP::rad;
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
+  sigmaP = beam.sigmaP;
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
+  G4bool finiteSigmaP = BDS::IsFinite(sigmaP);
 
-  if ((particleDefinition->TotalEnergy() + E0) <= 0)
-    {throw BDSException(__METHOD_NAME__, "beam energy + E0 <= 0 -> cannot have a reference total energy below 0.");}
+  if (finiteSigmaE && finiteSigmaP)
+    {throw BDSException(__METHOD_NAME__, "both \"sigmaE\" and \"sigmaP\" set in beam definition - conflicting information - set only 1.");}
 
-  P0 = particleDefinition->Momentum();
-  sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
-    {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
+    {
+      sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
+      G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;
+    }
+  else
+    {
+      sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
+      G4cout << __METHOD_NAME__ << "sigmaP = " << sigmaP << " -> sigmaE = " << sigmaE << G4endl;
+    }
+  finiteSigmaE = finiteSigmaE || finiteSigmaP; // finiteSigmaE used to know whether any variation in other classes
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
