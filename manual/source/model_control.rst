@@ -1984,6 +1984,13 @@ lists used. If the particle definition is not found, BDSIM will print a warning 
 If more exotic particles are desired but no corresponding physics processes are desired, then
 the special physics list "all_particles" can be used to only load the particle definitions.
 
+The Geant4 particle names can be found by executing BDSIM with the following command: ::
+
+  bdsim --file=yourmodel.gmad --batch --printPhysicsProcesses
+
+This will print each particle available in the model by the Geant4 name as well as the
+physics processes registered to that particle.
+
 The PDG IDs can be found at the PDG website; reviews and tables; Monte Carlo Numbering Scheme.
 
 * `<http://pdg.lbl.gov/2019/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
