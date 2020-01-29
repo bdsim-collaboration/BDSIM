@@ -108,7 +108,8 @@ namespace BDS
 
 #if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.
-  G4VModularPhysicsList* ChannellingPhysicsComplete(const G4bool useEMD = false);
+  G4VModularPhysicsList* ChannellingPhysicsComplete(G4bool useEMD  = false,
+						    G4bool regular = false);
 #endif
 
   /// Set the range cuts on a physics list. This is split into a separate function to allow it
