@@ -14,6 +14,17 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
+New Features
+------------
+
+* Both the design and beam particle may now be specified by either :code:`energy` (total),
+  :code:`kineticEnergy`, :code:`momentum` in the case of the design particle, or :code:`E0`,
+  :code:`Ek0` and :code:`P0` in the case of the optional beam particle if different from
+  the design one. This makes input of the desired beam easier but also permits easy specification
+  of different particle species beams with the same momentum for example.
+* Either :code:`sigmaE` or :code:`sigmaP` can be used for bunch distributions that use this
+  parameter.
+
 V1.4 - 2019 / 10 / ??
 =====================
 
@@ -81,6 +92,9 @@ New Features
 * New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
   energy a particle must have for either an aperture impact or collimator hit respectively to
   be generated.
+* A generic element now has the ability to label (classify) volumes as 'vacuum' for the purposes of
+  biasing where we split geometry into 'vacuum' and (general) 'material', e.g. yoke. See :ref:`element`
+  for details and the :code:`namedVacuumVolumes` parameter.
 
 * New options:
 
@@ -331,6 +345,9 @@ Bug Fixes
   The message has also changed so as not to be confused with particle species.
 * Fix the extension of any list type parameters in beam line elements when they're extended or redefined -
   such as updating the `knl` parameter of a multipole. Previously the parser would not understand this syntax.
+* Fix survey writing for models with placement beam lines to now write those beam lines in separate files
+  named as the survey name appended with the placement name. Previously the survey file was overwritten for
+  every secondary beam lines so only the final beam line placement was recorded.
 
 Output Changes
 --------------
