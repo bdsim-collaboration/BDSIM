@@ -110,7 +110,8 @@ namespace BDS
   /// Build the physics required for channelling to work correctly.
   G4VModularPhysicsList* ChannellingPhysicsComplete(G4bool useEMD  = false,
 						    G4bool regular = false,
-						    G4bool em4     = false);
+						    G4bool em4     = false,
+						    G4bool emss    = false);
 #endif
 
   /// Set the range cuts on a physics list. This is split into a separate function to allow it
