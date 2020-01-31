@@ -221,7 +221,7 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
   std::string beamParticleName = beamDefinition.beamParticleName.empty() ? beamDefinition.particle : beamDefinition.beamParticleName;
   beamDifferentFromDesignParticle = nSetParticle > 0 || beamParticleName != beamDefinition.particle;
   if (nSetParticle > 0)
-    {// at least one specified so use all of the bema particle ones
+    {// at least one specified so use all of the beam particle ones
       BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysParticle, nSetParticle);
       beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
 						      beamDefinition.E0  * CLHEP::GeV,
