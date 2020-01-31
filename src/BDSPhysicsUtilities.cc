@@ -175,9 +175,9 @@ G4int BDS::NBeamParametersSet(const GMAD::Beam&            beamDefinition,
   return nSet;
 }
 
-void BDS::EnergyKineticEnergyMomentumOK(const GMAD::Beam&            beamDefinition,
-					const std::set<std::string>& keys,
-					G4int                        nSet)
+void BDS::ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
+                                   const std::set<std::string>& keys,
+                                   G4int                        nSet)
 {
   if (nSet > 1)
     {
@@ -207,7 +207,7 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
   // check only one of the following has been set - ie no conflicting information
   std::set<std::string> keysDesign = {"energy", "momentum", "kineticEnergy"};
   G4int nSetDesign = BDS::NBeamParametersSet(beamDefinition, keysDesign);
-  BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysDesign, nSetDesign);
+  BDS::ConflictingParametersSet(beamDefinition, keysDesign, nSetDesign);
   std::set<std::string> keysParticle = {"E0", "P0", "Ek0"};
   G4int nSetParticle = BDS::NBeamParametersSet(beamDefinition, keysParticle);
   
@@ -222,7 +222,7 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
   beamDifferentFromDesignParticle = nSetParticle > 0 || beamParticleName != beamDefinition.particle;
   if (nSetParticle > 0)
     {// at least one specified so use all of the bema particle ones
-      BDS::EnergyKineticEnergyMomentumOK(beamDefinition, keysParticle, nSetParticle);
+      BDS::ConflictingParametersSet(beamDefinition, keysParticle, nSetParticle);
       beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
 						      beamDefinition.E0  * CLHEP::GeV,
 						      beamDefinition.Ek0 * CLHEP::GeV,

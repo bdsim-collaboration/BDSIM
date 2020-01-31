@@ -62,11 +62,10 @@ namespace BDS
   G4int NBeamParametersSet(const GMAD::Beam&            beamDefinition,
                            const std::set<std::string>& keys);
 
-  /// Throw an exception if too few or too many parameters are set for total energy
-  /// kinetic energy and momentum. Should only be 1 set.
-  void EnergyKineticEnergyMomentumOK(const GMAD::Beam&            beamDefinition,
-				     const std::set<std::string>& keys,
-				     G4int                        nSet);
+  /// Throw an exception if too few or too many parameters are set for the supplied keys.
+  void ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
+                                const std::set<std::string>& keys,
+                                G4int                        nSet);
 
   /// Construct the design and beam particle definitions. Even if these are the same, unique
   /// objects are created for and must be deleted elsewhere. Two pointers are passed by
