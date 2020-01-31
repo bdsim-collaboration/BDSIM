@@ -12,6 +12,7 @@ simple_fail(bunch-ion-bad-energy              "--file=ion-bad.gmad"             
 simple_fail(bunch-ion-bad-az                  "--file=ion-bad-az.gmad"               "")
 simple_fail(bunch-ion-bad-az-float            "--file=ion-bad-az-float.gmad"         "")
 simple_fail(bunch-multiple-energy-momentum    "--file=multiple-energy-momentum.gmad" "")
+simple_fail(bunch-multiple-sigmaE-sigmaEk-sigmaP  "--file=multiple-sigmaE-sigmaEk-sigmaP.gmad" "")	
 simple_fail(bunch-multiple-e0-ek0             "--file=multiple-energy-momentum-central.gmad" "")
 simple_fail(bunch-reference-bad-params        "--file=reference-bad.gmad"            "")
 simple_fail(bunch-bad-no-beam                 "--file=no-beam.gmad"                  "")
