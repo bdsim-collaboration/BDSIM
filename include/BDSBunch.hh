@@ -152,6 +152,7 @@ protected:
   G4double sigmaT;
   G4double sigmaP;
   G4double sigmaE;
+  G4double sigmaEk;
   ///@}
   
   /// Whether to ignore z and use s and transform for curvilinear coordinates

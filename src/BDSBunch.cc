@@ -93,29 +93,42 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   E0     = particleDefinition->TotalEnergy(); // already calculated and set earlier depending on available parameters
   P0     = particleDefinition->Momentum();
   tilt   = beam.tilt * CLHEP::rad;
-  sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
   sigmaP = beam.sigmaP;
+  sigmaE = beam.sigmaE;
+  sigmaEk = beam.sigmaEk;
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
   G4bool finiteSigmaP = BDS::IsFinite(sigmaP);
+  G4bool finiteSigmaEk = BDS::IsFinite(sigmaEk);
 
-  if (finiteSigmaE && finiteSigmaP)
-    {throw BDSException(__METHOD_NAME__, "both \"sigmaE\" and \"sigmaP\" set in beam definition - conflicting information - set only 1.");}
-
+  std::set<std::string> keysDesign = {"sigmaE", "sigmaEk", "sigmaP"};
+  G4int nSetDesign = BDS::NBeamParametersSet(beam, keysDesign);
+  BDS::EnergyKineticEnergyMomentumOK(beam, keysDesign, nSetDesign);// warn if too many set
   if (finiteSigmaE)
     {
       sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
-      G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;
+      sigmaEk = (beamParticle->TotalEnergy() / beamParticle->KineticEnergy()) * sigmaE;
     }
-  else
+  else if (finiteSigmaP)
     {
       sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
-      G4cout << __METHOD_NAME__ << "sigmaP = " << sigmaP << " -> sigmaE = " << sigmaE << G4endl;
+      sigmaEk = (beamParticle->TotalEnergy() / beamParticle->KineticEnergy()) * sigmaE;
     }
-  finiteSigmaE = finiteSigmaE || finiteSigmaP; // finiteSigmaE used to know whether any variation in other classes
+  else
+    {// finiteSigmaEk
+      sigmaE = sigmaEk * (beamParticle->KineticEnergy() / beamParticle->TotalEnergy());
+      sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
+    }
+  finiteSigmaE = finiteSigmaE || finiteSigmaP || finiteSigmaEk; // finiteSigmaE used to know whether any variation in other classes
+  if (finiteSigmaE)
+    {
+      G4cout << "Beam> sigmaP:    " << sigmaP  << G4endl;
+      G4cout << "Beam> sigmaE:    " << sigmaE  << G4endl;
+      G4cout << "Beam> sigmaEk:   " << sigmaEk << G4endl;
+    }
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
