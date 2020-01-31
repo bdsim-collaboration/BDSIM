@@ -50,10 +50,11 @@ BeamBase::BeamBase()
   E0  = 0.0;
   Ek0 = 0.0;
   P0  = 0.0;
-  tilt   = 0.0;
-  sigmaT = 0.0;
-  sigmaE = 0.0;
-  sigmaP = 0.0;
+  tilt    = 0.0;
+  sigmaT  = 0.0;
+  sigmaE  = 0.0;
+  sigmaEk = 0.0;
+  sigmaP  = 0.0;
 
   betx    = 0.0;
   bety    = 0.0;
