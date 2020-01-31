@@ -200,6 +200,8 @@ void Beam::PublishMembers()
   publish("alfy",  &Beam::alfy);
   publish("emitx", &Beam::emitx);
   publish("emity", &Beam::emity);
+  publish("emitnx",&Beam::emitNX);
+  publish("emitny",&Beam::emitNY);
   publish("dispx", &Beam::dispx);
   publish("dispy", &Beam::dispy);
   publish("dispxp",&Beam::dispxp);
@@ -212,6 +214,8 @@ void Beam::PublishMembers()
   publish("alphaY", &Beam::alfy);
   publish("emitX",  &Beam::emitx);
   publish("emitY",  &Beam::emity);
+  publish("emitNX", &Beam::emitNX);
+  publish("emitNY", &Beam::emitNY);
   publish("dispX",  &Beam::dispx);
   publish("dispXp", &Beam::dispxp);
   publish("dispY",  &Beam::dispy);

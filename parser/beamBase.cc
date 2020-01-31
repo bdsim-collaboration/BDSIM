@@ -61,6 +61,8 @@ BeamBase::BeamBase()
   alfy    = 0.0;
   emitx   = 0.0;
   emity   = 0.0;
+  emitNX  = 0.0;
+  emitNY  = 0.0;
   dispx   = 0.0;
   dispy   = 0.0;
   dispxp  = 0.0;

@@ -73,6 +73,7 @@ namespace GMAD
       
       ///@{ initial twiss parameters
       double betx, bety, alfx, alfy, emitx, emity, dispx, dispy, dispxp, dispyp;
+      double emitNX, emitNY;
       ///@}
       
       ///@{ for the gaussian beam distribution
