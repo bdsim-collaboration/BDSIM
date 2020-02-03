@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Geometry/Point3D.h"
 
 #include <cmath>
+#include <set>
 #include <string>
 
 
@@ -128,6 +129,41 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 	{throw BDSException(__METHOD_NAME__, "both Z0 and S0 are defined - please define only one!");}
       useCurvilinear = true;
     } 
+}
+
+void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
+			     const GMAD::Beam& beam,
+			     G4double&         emittGeometricX,
+			     G4double&         emittGeometricY,
+			     G4double&         emittNormalisedX,
+			     G4double&         emittNormalisedY)
+{
+  std::set<std::string> keysDesignX = {"emitx", "emitNX"};
+  G4int nSetDesignX = BDS::NBeamParametersSet(beam, keysDesignX);
+  BDS::ConflictingParametersSet(beam, keysDesignX, nSetDesignX);
+  if (BDS::IsFinite(beam.emitNX))
+    {
+      emittNormalisedX = G4double(beam.emitNX);
+      emittGeometricX  = G4double(beam.emitNX) / beamParticle->Gamma();
+    }
+  else
+    {
+      emittGeometricX  = G4double(beam.emitx);
+      emittNormalisedX = G4double(beam.emitx) * beamParticle->Gamma();
+    }
+  
+  std::set<std::string> keysDesignY = {"emity", "emitNY"};
+  G4int nSetDesignY = BDS::NBeamParametersSet(beam, keysDesignY);
+  BDS::ConflictingParametersSet(beam, keysDesignY, nSetDesignY);
+  if (BDS::IsFinite(beam.emitNY))
+    {
+      emittNormalisedY = G4double(beam.emitNY);
+      emittGeometricY  = G4double(beam.emitNY) / beamParticle->Gamma();}
+  else
+    {
+      emittGeometricY  = G4double(beam.emity);
+      emittNormalisedY = G4double(beam.emity) * beamParticle->Gamma();
+    }
 }
 
 void BDSBunch::CheckParameters()
