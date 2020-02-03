@@ -164,6 +164,11 @@ void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
       emittGeometricY  = G4double(beam.emity);
       emittNormalisedY = G4double(beam.emity) * beamParticle->Gamma();
     }
+
+  G4cout << __METHOD_NAME__ << "Geometric (x): " << emittGeometricX
+	 << ", Normalised (x): " << emittNormalisedX << G4endl;
+  G4cout << __METHOD_NAME__ << "Geometric (y): " << emittGeometricY
+	 << ", Normalised (y): " << emittNormalisedY << G4endl;
 }
 
 void BDSBunch::CheckParameters()
