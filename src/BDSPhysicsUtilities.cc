@@ -177,7 +177,8 @@ G4int BDS::NBeamParametersSet(const GMAD::Beam&            beamDefinition,
 
 void BDS::ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
                                    const std::set<std::string>& keys,
-                                   G4int                        nSet)
+                                   G4int                        nSet,
+                                   G4bool                       warnZeroParamsSet)
 {
   if (nSet > 1)
     {
@@ -186,7 +187,7 @@ void BDS::ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
         {G4cerr << std::setw(14) << std::left << k << ": " << std::setw(7) << std::right << beamDefinition.get_value(k) << " GeV" << G4endl;}
       throw BDSException(__METHOD_NAME__, "conflicting parameters set");
     }
-  else if (nSet == 0)
+  else if (nSet == 0 && warnZeroParamsSet)
     {
       G4cerr << "Beam> One of the following required to be set" << G4endl;
       for (const auto &k : keys)
@@ -222,7 +223,7 @@ void BDS::ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
   beamDifferentFromDesignParticle = nSetParticle > 0 || beamParticleName != beamDefinition.particle;
   if (nSetParticle > 0)
     {// at least one specified so use all of the beam particle ones
-      BDS::ConflictingParametersSet(beamDefinition, keysParticle, nSetParticle);
+      BDS::ConflictingParametersSet(beamDefinition, keysParticle, nSetParticle, false);
       beamParticle = BDS::ConstructParticleDefinition(beamParticleName,
 						      beamDefinition.E0  * CLHEP::GeV,
 						      beamDefinition.Ek0 * CLHEP::GeV,
