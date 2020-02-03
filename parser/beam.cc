@@ -189,9 +189,10 @@ void Beam::PublishMembers()
   publish("Ek0",   &Beam::Ek0);
   publish("P0",    &Beam::P0);
 
-  publish("sigmaT", &Beam::sigmaT);
-  publish("sigmaE", &Beam::sigmaE);
-  publish("sigmaP", &Beam::sigmaP);
+  publish("sigmaT",  &Beam::sigmaT);
+  publish("sigmaE",  &Beam::sigmaE);
+  publish("sigmaEk", &Beam::sigmaEk);
+  publish("sigmaP",  &Beam::sigmaP);
 
   // for gausstwiss
   publish("betx",  &Beam::betx);
