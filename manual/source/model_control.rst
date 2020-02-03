@@ -2284,14 +2284,20 @@ correlations between phase space coordinates, so:
 
 * The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
 * All parameters from `reference`_ distribution are used as centroids.
-* Either :code:`sigmaE` or :code:`sigmaP` can be specified, but not both.
+* Either :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be specified, but not more than one.
 
 In the case :code:`sigmaP` is specified, :code:`sigmaE` is calculated as follows:
 
 .. math::
    \frac{dE}{E} = (\beta_{Lorentz}^2) \frac{dP}{P}
 
-for the beam particle.
+for the beam particle. In the case :code:`sigmaEk` is specified, :code:`sigmaE` is calculated
+as follows:
+
+.. math::
+   \frac{dEk}{Ek} = \frac{E}{Ek}
+
+and :code:`sigmaP` is subsequently calculated as above from this.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2307,6 +2313,8 @@ for the beam particle.
 | `sigmaYp`        | Sigma of the vertical canonical momentum           |
 +------------------+----------------------------------------------------+
 | `sigmaE`         | Relative energy spread :math:`\sigma_{E}/E`        |
++------------------+----------------------------------------------------+
+| `sigmaEk`        | Relative energy spread :math:`\sigma_{Ek}/Ek`      |
 +------------------+----------------------------------------------------+
 | `sigmaP`         | Relative momentum spread :math:`\sigma_{P}/P`      |
 +------------------+----------------------------------------------------+
@@ -2359,9 +2367,13 @@ is calculated, using the following equations:
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| `emitx`                          | Horizontal beam core emittance [m]                    |
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]      |
 +----------------------------------+-------------------------------------------------------+
-| `emity`                          | Vertical beam core emittance [m]                      |
+| `emity`                          | Vertical beam core geometric emittance [m rad]        |
++----------------------------------+-------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core normalised emittance [m rad] \*  |
++----------------------------------+-------------------------------------------------------+
+| `emitny`                         | Vertical beam core normalised emittance [m rad] \*    |
 +----------------------------------+-------------------------------------------------------+
 | `betx`                           | Horizontal beta function [m]                          |
 +----------------------------------+-------------------------------------------------------+
@@ -2379,6 +2391,8 @@ is calculated, using the following equations:
 +----------------------------------+-------------------------------------------------------+
 | `dispyp`                         | Vertical angular dispersion function                  |
 +----------------------------------+-------------------------------------------------------+
+
+* \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
 
 
 circle
@@ -2487,11 +2501,14 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
 |                                  | distributed between :math:`\pm` `sigmaE`.                          |
 +----------------------------------+--------------------------------------------------------------------+
+| `sigmaEk`                        | Extent of energy spread in fractional kinetic energy. Uniformly    |
+|                                  | distributed between :math:`\pm` `sigmaEk`.                         |
++----------------------------------+--------------------------------------------------------------------+
 | `sigmaP`                         | Extent of energy spread in fractional momentum. Uniformly          |
 |                                  | distributed between :math:`\pm` `sigmaP`.                          |
 +----------------------------------+--------------------------------------------------------------------+
 
-* Only one of :code:`sigmaE` or :code:`sigmaP` can be used.
+* Only one of :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
 
 .. _beam-halo-distribution:
@@ -2530,9 +2547,15 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | Option                           | Description                                                                 |
 +==================================+=============================================================================+
-| `emitx`                          | Horizontal beam core emittance [m] :math:`\epsilon_{{\rm core},x}`          |
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]                            |
+|                                  | :math:`\epsilon_{{\rm core},x}`                                             |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `emity`                          | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
+| `emity`                          | Vertical beam core geometric emittance [m rad]                              |
+|                                  | :math:`\epsilon_{{\rm core},y}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core geometric emittance [m rad] \*                         |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitny`                         | Vertical beam core geometric emittance [m rad] \*                           |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `betx`                           | Horizontal beta function [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -2559,6 +2582,7 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 | `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
 
+* \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
 * No variation in `t`, total energy, `z` and `s`. Only central values.
 
 Example::
