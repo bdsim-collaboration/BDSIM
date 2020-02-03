@@ -118,11 +118,13 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
       sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
       sigmaEk = (beamParticle->TotalEnergy() / beamParticle->KineticEnergy()) * sigmaE;
     }
-  else
-    {// finiteSigmaEk
+  else if (finiteSigmaEk)
+    {
       sigmaE = sigmaEk * (beamParticle->KineticEnergy() / beamParticle->TotalEnergy());
       sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
     }
+  // else they'll all be 0 - no need for a calculation
+  
   finiteSigmaE = finiteSigmaE || finiteSigmaP || finiteSigmaEk; // finiteSigmaE used to know whether any variation in other classes
   if (finiteSigmaE)
     {
