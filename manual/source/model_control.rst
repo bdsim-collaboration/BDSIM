@@ -2367,9 +2367,13 @@ is calculated, using the following equations:
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| `emitx`                          | Horizontal beam core emittance [m]                    |
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]      |
 +----------------------------------+-------------------------------------------------------+
-| `emity`                          | Vertical beam core emittance [m]                      |
+| `emity`                          | Vertical beam core geometric emittance [m rad]        |
++----------------------------------+-------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core normalised emittance [m rad] \*  |
++----------------------------------+-------------------------------------------------------+
+| `emitny`                         | Vertical beam core normalised emittance [m rad] \*    |
 +----------------------------------+-------------------------------------------------------+
 | `betx`                           | Horizontal beta function [m]                          |
 +----------------------------------+-------------------------------------------------------+
@@ -2387,6 +2391,8 @@ is calculated, using the following equations:
 +----------------------------------+-------------------------------------------------------+
 | `dispyp`                         | Vertical angular dispersion function                  |
 +----------------------------------+-------------------------------------------------------+
+
+* \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
 
 
 circle
@@ -2541,9 +2547,15 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | Option                           | Description                                                                 |
 +==================================+=============================================================================+
-| `emitx`                          | Horizontal beam core emittance [m] :math:`\epsilon_{{\rm core},x}`          |
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]                            |
+|                                  | :math:`\epsilon_{{\rm core},x}`                                             |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `emity`                          | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
+| `emity`                          | Vertical beam core geometric emittance [m rad]                              |
+|                                  | :math:`\epsilon_{{\rm core},y}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core geometric emittance [m rad] \*                         |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitny`                         | Vertical beam core geometric emittance [m rad] \*                           |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `betx`                           | Horizontal beta function [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -2570,6 +2582,7 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 | `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
 
+* \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
 * No variation in `t`, total energy, `z` and `s`. Only central values.
 
 Example::
