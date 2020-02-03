@@ -24,6 +24,8 @@ New Features
   of different particle species beams with the same momentum for example.
 * Either :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used for bunch distributions
   that use :code:`sigmaE` nominally.
+* Normalised emittance can now be used for `guasstwiss` and `halo` distributions with the parameters
+  :code:`emitnx` and :code:`emitny`.
 
 V1.4 - 2019 / 10 / ??
 =====================
