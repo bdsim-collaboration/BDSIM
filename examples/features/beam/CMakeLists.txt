@@ -22,6 +22,7 @@ simple_testing(bunch-gaussmatrix              "--file=gaussmatrix.gmad"         
 simple_testing(bunch-gaussmatrix-pregenerate  "--file=gaussmatrix-pregenerate.gmad" "")
 simple_testing(bunch-gausstwiss               "--file=gausstwiss.gmad"              "")
 simple_testing(bunch-gausstwiss-dispersion    "--file=gausstwiss-dispersion.gmad"   "")
+simple_testing(bunch-gausstwiss-emittN        "--file=gausstwiss-en.gmad"           "")	
 simple_testing(bunch-gausstwiss-pregenerate   "--file=gausstwiss-pregenerate.gmad"  "")	
 simple_testing(bunch-halo                     "--file=halo.gmad"                    "")
 simple_testing(bunch-halo-cut                 "--file=halo-cut.gmad"                "")
