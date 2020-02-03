@@ -20,8 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
-#include "BDSPhysicsUtilities.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
 
@@ -32,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
-#include <set>
 
 BDSBunchHalo::BDSBunchHalo():
   alphaX(0.0), alphaY(0.0),
@@ -83,20 +80,8 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   haloPSWeightParameter = G4double(beam.haloPSWeightParameter);
   weightFunction = G4String(beam.haloPSWeightFunction);
 
-  std::set<std::string> keysDesignX = {"emitx", "emitNX"};
-  G4int nSetDesignX = BDS::NBeamParametersSet(beam, keysDesignX);
-  BDS::ConflictingParametersSet(beam, keysDesignX, nSetDesignX);
-  if (BDS::IsFinite(beam.emitNX))
-    {emitX = G4double(beam.emitNX) / beamParticle->Gamma();}
-  else
-    {emitX = G4double(beam.emitx);}
-  std::set<std::string> keysDesignY = {"emity", "emitNY"};
-  G4int nSetDesignY = BDS::NBeamParametersSet(beam, keysDesignY);
-  BDS::ConflictingParametersSet(beam, keysDesignY, nSetDesignY);
-  if (BDS::IsFinite(beam.emitNY))
-    {emitY = G4double(beam.emitNY) / beamParticle->Gamma();}
-  else
-    {emitY = G4double(beam.emity);}
+  G4double ex,ey; // dummy variables we don't need
+  SetEmittances(beamParticle, beam, emitX, emitY, ex, ey);
 
   sigmaX                = std::sqrt(emitX * betaX);
   sigmaY                = std::sqrt(emitY * betaY);
