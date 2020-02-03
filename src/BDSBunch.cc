@@ -153,7 +153,7 @@ void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
 			     G4double&         emittNormalisedX,
 			     G4double&         emittNormalisedY)
 {
-  std::set<std::string> keysDesignX = {"emitx", "emitNX"};
+  std::set<std::string> keysDesignX = {"emitx", "emitnx"};
   G4int nSetDesignX = BDS::NBeamParametersSet(beam, keysDesignX);
   BDS::ConflictingParametersSet(beam, keysDesignX, nSetDesignX);
   if (BDS::IsFinite(beam.emitNX))
@@ -167,7 +167,7 @@ void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
       emittNormalisedX = G4double(beam.emitx) * beamParticle->Gamma();
     }
   
-  std::set<std::string> keysDesignY = {"emity", "emitNY"};
+  std::set<std::string> keysDesignY = {"emity", "emitny"};
   G4int nSetDesignY = BDS::NBeamParametersSet(beam, keysDesignY);
   BDS::ConflictingParametersSet(beam, keysDesignY, nSetDesignY);
   if (BDS::IsFinite(beam.emitNY))
