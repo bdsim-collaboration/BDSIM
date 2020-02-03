@@ -111,11 +111,12 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
       sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
       G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;
     }
-  else
+  else if (finiteSigmaP)
     {
       sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
       G4cout << __METHOD_NAME__ << "sigmaP = " << sigmaP << " -> sigmaE = " << sigmaE << G4endl;
     }
+
   finiteSigmaE = finiteSigmaE || finiteSigmaP; // finiteSigmaE used to know whether any variation in other classes
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
