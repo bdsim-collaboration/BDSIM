@@ -71,26 +71,27 @@ G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
   else
     {
       G4double alpha = 1;
-       G4State state = material->GetState();
-       switch (state)
-         {
-           case G4State::kStateGas:
-             {alpha = 0.05; break;}
-           case G4State::kStateSolid:
-             {alpha = 1.0; break;}
-           case G4State::kStateLiquid:
-             {alpha = 0.5; break;}
-           default:
-             {alpha = 1.0; break;}
-         }
-       G4double density = material->GetDensity();
-       G4double value   = generalDensity->Value(density);
-       G4String vs      = G4String(std::to_string(value));
-       G4Colour* result = BDSColours::Instance()->GetColour(materialName + ":" +
-           vs + " " +
-           vs + " " +
-           vs + " " +
-           std::to_string(alpha));
+      G4State state = material->GetState();
+      switch (state)
+	{
+	case G4State::kStateGas:
+	  {alpha = 0.05; break;}
+	case G4State::kStateSolid:
+	  {alpha = 1.0; break;}
+	case G4State::kStateLiquid:
+	  {alpha = 0.5; break;}
+	default:
+	  {alpha = 1.0; break;}
+	}
+      G4double density = material->GetDensity();
+      G4double value   = generalDensity->Value(density);
+      G4String vs      = G4String(std::to_string(value));
+      G4Colour* result = BDSColours::Instance()->GetColour(materialName + ":" +
+							   vs + " " +
+							   vs + " " +
+							   vs + " " +
+							   std::to_string(alpha));
+      defines[materialName] = result; // cache it as we'd always produce the same result
       return result;
     }
 }
