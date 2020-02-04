@@ -18,5 +18,6 @@ if (USE_GDML)
 
   simple_fail(gdml-bad-gmad-file           "--file=7_gmad_as_gdml.gmad --output=none")
 
-  simple_testing(gmld-no-beam-line         "--file=8_no_beam_line.gmad --output=none" ${OVERLAP_CHECK})
+  simple_testing(gdml-no-beam-line         "--file=8_no_beam_line.gmad --output=none" ${OVERLAP_CHECK})
+  simple_testing(gdml-no-autocolour        "--file=10_no_autocolour.gmad --output=none"  "")
 endif()
