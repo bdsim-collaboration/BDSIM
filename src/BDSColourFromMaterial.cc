@@ -67,6 +67,13 @@ G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
 {
   G4String materialName = material->GetName();
   materialName.toLower();
+
+  // strip off g4 so we don't have to define duplicates of everything
+  std::string toErase = "g4_";
+  size_t pos = materialName.find(toErase);
+  if (pos != std::string::npos)
+    {materialName.erase(pos, toErase.length());}
+
   auto search = defines.find(materialName);
   if (search != defines.end())
     {return search->second;}
