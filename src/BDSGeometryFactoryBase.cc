@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSColours.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryBase.hh"
 #include "BDSGlobalConstants.hh"
@@ -42,12 +43,13 @@ BDSGeometryFactoryBase::~BDSGeometryFactoryBase()
 {;}
 
 std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G4LogicalVolume*>&    lvsIn,
-								      std::map<G4String, G4Colour*>* mapping)
+								      std::map<G4String, G4Colour*>* mapping,
+								      G4bool                         autoColour)
 {
   std::set<G4VisAttributes*> visAttributes; // empty set
 
   // no mapping, just return.
-  if (!mapping)
+  if (!mapping && !autoColour)
     {return visAttributes;}
   
   if (mapping->size() == 1)
@@ -83,6 +85,23 @@ std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G
 	    }
 	}
     }
+  
+  if (autoColour)
+    {
+      for (auto lv : lvsIn)
+        {
+          const G4VisAttributes* existingVis = lv->GetVisAttributes();
+          if (!existingVis)
+            {
+              G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(lv->GetMaterial());
+              G4VisAttributes* vis = new G4VisAttributes(c);
+              vis->SetVisibility(true);
+              visAttributes.insert(vis);
+              lv->SetVisAttributes(vis);
+            }
+        }
+    }
+
   return visAttributes;
 }
 
