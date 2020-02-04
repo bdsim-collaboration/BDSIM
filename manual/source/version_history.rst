@@ -26,6 +26,10 @@ New Features
   that use :code:`sigmaE` nominally.
 * Normalised emittance can now be used for `guasstwiss` and `halo` distributions with the parameters
   :code:`emitnx` and :code:`emitny`.
+* Loaded geometry can now be auto-coloured by BDSIM whereas before it'd all appear very light grey.
+  The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
+  depending on the state of the material. The parameter :code:`autoColour` can be used with the
+  generic beam line element as well as placements and magnet outer geometry.
 
 V1.4 - 2019 / 10 / ??
 =====================
