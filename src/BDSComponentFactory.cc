@@ -1126,7 +1126,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
 			 element->angle * CLHEP::rad,
-			 &vacuumBiasVolumeNames));
+			 &vacuumBiasVolumeNames,
+			 element->autoColour));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
