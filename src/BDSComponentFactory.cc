@@ -2005,6 +2005,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
     {info->coilHeightFraction = 0.8;} // default for both h and c type
 
   info->colour = PrepareColour(el);
+  info->autoColour = el->autoColour;
   
   return info;
 }
