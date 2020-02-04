@@ -47,6 +47,7 @@ BDSColourFromMaterial::~BDSColourFromMaterial()
 BDSColourFromMaterial::BDSColourFromMaterial()
 {
   BDSColours* c = BDSColours::Instance();
+  defines["concrete"] = c->GetColour("tunnel");
   defines["cu"]       = c->GetColour("coil");
   defines["copper"]   = c->GetColour("coil");
   defines["air"]      = c->GetColour("air:0.95 0.95 0.95 0.05");
@@ -54,6 +55,7 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["carbon"]   = c->GetColour("reallyreallydarkgrey");
   defines["sulphur"]  = c->GetColour("yellow");
   defines["chlorine"] = c->GetColour("yellow");
+  defines["water"]    = c->GetColour("water:0 102 204 0.5");
   std::vector<G4double> densities = {1e2,  1,   0.1,  0.01, 1e-4}; // high to low
   for (auto& v : densities)
     {v *= CLHEP::g / CLHEP::cm3;}
