@@ -24,7 +24,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <map>
+#include <vector>
 
 BDSColourFromMaterial* BDSColourFromMaterial::instance = nullptr;
 
@@ -51,8 +54,10 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["carbon"]   = c->GetColour("reallyreallydarkgrey");
   defines["sulphur"]  = c->GetColour("yellow");
   defines["chlorine"] = c->GetColour("yellow");
-  std::vector<G4double> densities = {1e-4, 1e-3, 1e-2, 1,   1e2};
-  std::vector<G4double> values    = {1,    10,   100,  180, 255};
+  std::vector<G4double> densities = {1e2,  1,   0.1,  0.01, 1e-4}; // high to low
+  for (auto& v : densities)
+    {v *= CLHEP::g / CLHEP::cm3;}
+  std::vector<G4double> values    = {100,  120,  150,  180,  210};
   generalDensity = new G4PhysicsOrderedFreeVector(&densities[0], &values[0], values.size());
 }
 
