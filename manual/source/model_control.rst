@@ -1202,6 +1202,9 @@ described in :ref:`tunnel-geometry`.
 |                                  | :ref:`external-world-geometry` for more details.      |
 |                                  | Default = "".                                         |
 +----------------------------------+-------------------------------------------------------+
+| autoColourWorldGeometryFile      | Boolean whether to automatically colour geometry      |
+|                                  | loaded from the worldGeometryFile. Default true.      |
++----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |
 |                                  | Runge-Kutta integrator). Default true.                |
