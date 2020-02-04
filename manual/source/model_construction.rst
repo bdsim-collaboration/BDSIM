@@ -956,6 +956,9 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
 +--------------------+------------------------------+--------------+---------------+
+| `colour`           | Name of colour desired for   | ""           | No            |
+|                    | block. See :ref:`colours`.   |              |               |
++--------------------+------------------------------+--------------+---------------+
 
 Notes: 
 
@@ -1030,6 +1033,9 @@ apertures which are the distances from the centre of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
+| `colour`           | Name of colour desired for   | ""           | No            |
+|                    | block. See :ref:`colours`.   |              |               |
++--------------------+------------------------------+--------------+---------------+
 
 
 Notes: 
@@ -1087,6 +1093,7 @@ Parameter              Description                              Default     Requ
 `degraderOffset`       Horizontal offset of both wedge sets     0           Yes/No*
 `material`             Degrader material                        Carbon      Yes
 `horizontalWidth`      Outer full width [m]                     global      No
+`colour`               Colour of block. See :ref:`colours`      ""          No
 ===================    =======================================  ==========  ===========
 
 .. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
@@ -1133,14 +1140,15 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-=================  ==================================  ==========  ===========
-Parameter          Description                         Default     Required
-`l`                Length [m]                          0           Yes
-`material`         Outer material                      Iron        No
-`horizontalWidth`  Outer full width [m]                global      No
-`xsize`            Horizontal inner half aperture [m]  0           Yes
-`ysize`            Vertical inner half aperture [m]    0           No
-=================  ==================================  ==========  ===========
+=================  ===================================  ==========  ===========
+Parameter          Description                          Default     Required
+`l`                Length [m]                           0           Yes
+`material`         Outer material                       Iron        No
+`horizontalWidth`  Outer full width [m]                 global      No
+`xsize`            Horizontal inner half aperture [m]   0           Yes
+`ysize`            Vertical inner half aperture [m]     0           No
+`colour`           Colour of block. See :ref:`colours`  ""          No
+=================  ===================================  ==========  ===========
 
 Notes:
 
@@ -1484,6 +1492,10 @@ and make a placement at the appropriate point in global coordinates.
 |                      | the geometry file that should be |              |               |
 |                      | considered 'vacuum' for biasing  |              |               |
 |                      | purposes.                        |              |               |
++----------------------+----------------------------------+--------------+---------------+
+| `autoColour`         | 1 or 0. Whether the geometry     | 1            | No            |
+|                      | should be automatically coloured |              |               |
+|                      | according to density.            |              |               |
 +----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
