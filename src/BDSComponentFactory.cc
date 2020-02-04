@@ -1939,7 +1939,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
- if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
+  if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
