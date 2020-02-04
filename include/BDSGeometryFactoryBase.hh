@@ -62,9 +62,9 @@ public:
   /// Apply a colour mapping to a set of logical volumes.  This applies a colour from the map
   /// if the key value is found as a substring or whole part of the logical volume name. Ie
   /// the BDSColour* (red) is defined to key 'quad' and any logical volume with 'quad'
-  /// (case sensitive) will be set as red. Caches common G4VisAttributes (so no repeates for
+  /// (case sensitive) will be set as red. Caches common G4VisAttributes (so no repeats for
   /// same colour) and returns those constructed. Map is searched through so key order gives
-  /// precidence order.
+  /// precedence order.
   virtual std::set<G4VisAttributes*> ApplyColourMapping(std::set<G4LogicalVolume*>&    lvs,
 							std::map<G4String, G4Colour*>* mapping);
 
