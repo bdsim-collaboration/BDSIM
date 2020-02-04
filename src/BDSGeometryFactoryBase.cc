@@ -60,7 +60,7 @@ std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G
           vis->SetVisibility(true);
           visAttributes.insert(vis);
           for (auto lv : lvsIn)
-            { lv->SetVisAttributes(*vis); }
+            {lv->SetVisAttributes(*vis);}
           return visAttributes;
         }
 
