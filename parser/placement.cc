@@ -49,8 +49,7 @@ void Placement::clear()
   angle = 0;
   sensitive     = true;
   axisAngle     = false;
-  side          = "";
-  sideOffset    = 0;
+  autoColour    = true;
 }
 
 void Placement::PublishMembers()
@@ -75,6 +74,7 @@ void Placement::PublishMembers()
   publish("axisAngle",     &Placement::axisAngle);
   publish("side",          &Placement::side);
   publish("sideOffset",    &Placement::sideOffset);
+  publish("autoColour",    &Placement::autoColour);
 }
 
 void Placement::print()const
@@ -96,10 +96,12 @@ void Placement::print()const
     	    << "axisY "         << axisY         << std::endl
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
-	    << "sensitive "     << sensitive     << std::endl
-	    << "axisAngle "     << axisAngle     << std::endl
-	    << "side "          << side          << std::endl
-            << "sideOffset "    << sideOffset    << std::endl;
+	        << "sensitive "     << sensitive     << std::endl
+	        << "axisAngle "     << axisAngle     << std::endl
+	        << "side "          << side          << std::endl
+            << "sideOffset "    << sideOffset    << std::endl
+	        << "axisAngle "     << axisAngle     << std::endl
+	        << "autoColour "    << autoColour    << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
@@ -124,6 +126,7 @@ Placement::Placement(const SamplerPlacement& sp):
   axisZ     = sp.axisZ;
   angle     = sp.angle;
   axisAngle = sp.axisAngle;
+  autoColour = false;
 }
 
 Placement::Placement(const ScorerMesh& sm):
@@ -172,4 +175,5 @@ Placement::Placement(const BLMPlacement& bp):
   axisAngle  = bp.axisAngle;
   side       = bp.side;
   sideOffset = bp.sideOffset;
+  autoColour = false;
 }

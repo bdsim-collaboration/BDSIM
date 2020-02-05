@@ -525,9 +525,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   G4String worldGeometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
   if (!worldGeometryFile.empty())
     {
+      G4bool ac = BDSGlobalConstants::Instance()->AutoColourWorldGeometryFile();
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
 										nullptr,
+										ac,
 										0, 0,
 										nullptr,
 										true,
