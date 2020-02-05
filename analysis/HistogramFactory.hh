@@ -48,8 +48,8 @@ public:
   /// Create a histogram of the appropriate dimensions. Forwards to
   /// other Ndim specific functions.
   TH1* CreateHistogram(const HistogramDef* definition,
-		       std::string overRideName,
-		       std::string overRideTitle);
+		       std::string overRideName  = "",
+		       std::string overRideTitle = "");
 
   /// Whether name is set or not.
   void CheckNameAndTitle(std::string& name,
