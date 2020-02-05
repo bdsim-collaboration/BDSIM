@@ -87,7 +87,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
               else
                 {what = writewhat::topN;}
             }
-          else
+          else // this will happen if 'top' isn't in the specification or it generally doesn't match
             {throw std::string("Invalid particle specifier \"" + particleSpecificationIn + "\"");}
         }
     }
