@@ -79,10 +79,6 @@ public:
   inline double      GetOptionNumber(const std::string& key) const {return optionsNumber.at(key);}
   /// @}
 
-  /// Access all histogram definitions.
-  inline const std::vector<HistogramDef*>& HistogramDefinitions(const std::string& treeName) const
-  {return histoDefs.at(treeName);}
-
   /// Access all simple histogram definitions - throws exception if out of range.
   inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(const std::string& treeName) const
   {return histoDefsSimple.at(treeName);}
