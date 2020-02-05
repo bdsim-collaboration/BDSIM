@@ -37,6 +37,23 @@ class TChain;
 class TDirectory;
 class TH1;
 
+namespace BDS
+{
+  /// Nice flip pair and map from https://stackoverflow.com/questions/5056645/sorting-stdmap-using-value
+  /// to order the map of <pdg ID to integral> so we can get the top N histograms.
+  template<typename A, typename B>
+  std::pair<B, A> flip_pair(const std::pair<A, B> &p)
+  {return std::pair<B, A>(p.second, p.first);};
+
+  template<typename A, typename B>
+  std::multimap<B, A> flip_map(const std::map<A, B> &src)
+  {
+    std::multimap<B, A> dst;
+    std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()), flip_pair<A, B>);
+    return dst;
+  };
+}
+
 /**
  * @brief Histgram over a set of integers not number line.
  *
@@ -61,14 +78,14 @@ protected:
 
   void CreatePerEntryHistogram(long long int pdgID);
 
-  /// Utility function to find top N in set s.
-  std::set<long long int> TopUtility(const std::set<long long int>& s,
-				     int n) const;
+  /// Utility function to find top N in set s. Sorted in descending order of integral.
+  std::vector<long long int> TopUtility(const std::set<long long int>& s,
+				     size_t n) const;
 
-  /// @{ Get top part of set.
-  std::set<long long int> TopNNonIons(int n) const;
-  std::set<long long int> TopNIons(int n) const;
-  std::set<long long int> TopN(int n) const;
+  /// @{ Get top part of set. Sorted in descending order of integral.
+  std::vector<long long int> TopNNonIons(int n) const;
+  std::vector<long long int> TopNIons(int n) const;
+  std::vector<long long int> TopN(int n) const;
   /// @}
   
   HistogramDef* baseDefinition;
