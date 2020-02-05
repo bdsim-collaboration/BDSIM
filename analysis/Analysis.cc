@@ -92,9 +92,6 @@ void Analysis::SimpleHistograms()
       auto definitions = Config::Instance()->HistogramDefinitionsSimple(treeName);
       for (auto definition : definitions)
 	    {FillHistogram(definition);}
-	  auto setDefinitions = Config::Instance()->EventHistogramSetDefinitionsSimple();
-      for (auto definition : setDefinitions)
-        {FillHistogram(definition);}
     }
 }
 
