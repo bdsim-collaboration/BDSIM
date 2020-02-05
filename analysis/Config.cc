@@ -235,7 +235,7 @@ void Config::ParseSpectraLine(const std::string& line)
 {
   // split line on white space
   std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace("\\s+"); // any whitespace
   // -1 here makes it point to the suffix, ie the word rather than the wspace
   std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
   std::sregex_token_iterator end;
@@ -312,7 +312,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   // doesn't inspect words themselves
   // checks number of words, ie number of columns is correct
   std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace("\\s+"); // any whitespace
   // -1 here makes it point to the suffix, ie the word rather than the wspace
   std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
   std::sregex_token_iterator end;
@@ -586,12 +586,13 @@ void Config::ParseBinning(const std::string& binning,
 
 std::set<long long int> Config::ParseParticles(const std::string& word) const
 {
-  // if there are non-digits
+  // if there are non-digits - will parse later on for 'top10' or 'all' etc
   std::regex anyNonDigit("^\\{(\\D+,*)+\\d*\\}$");
   std::smatch matchAnyNonDigit;
   if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
     {return std::set<long long int>();}
 
+  // some numbers in brackets -> try to split up
   // detect brackets and strip off
   std::regex inBrackets("^\\{(.+)\\}$");
   std::smatch match;
