@@ -48,6 +48,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
           h->histName = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
           h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
           definitions[pdgID] = h;
+          definitionsV.push_back(h);
         }
     }
   else

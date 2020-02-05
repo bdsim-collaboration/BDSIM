@@ -50,6 +50,7 @@ public:
   std::string   branchName;
   HistogramDef* baseDefinition;
   std::map<long long int, HistogramDef*> definitions;
+  std::vector<HistogramDef*>             definitionsV; ///< Vector version for easy iteration.
   bool          dynamicallyStoreIons;
   bool          dynamicallyStoreParticles; ///< Dynamically store all non-ions.
 
