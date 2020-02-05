@@ -596,7 +596,7 @@ void Config::ParseBinning(const std::string& binning,
 std::set<long long int> Config::ParseParticles(const std::string& word) const
 {
   // if there are non-digits - will parse later on for 'top10' or 'all' etc
-  std::regex anyNonDigit("^\\D+");
+  std::regex anyNonDigit("^[a-zA-Z]+");
   std::smatch matchAnyNonDigit;
   if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
     {return std::set<long long int>();}
