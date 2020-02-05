@@ -212,22 +212,24 @@ void EventAnalysis::Write(TFile* outputFile)
   // Write rebdsim histograms:
   Analysis::Write(outputFile);
 
+  // histogram sets done in this derived class because they only apply to the Event tree
   std::string peSetsDirName = "PerEntryHistogramSets";
-  //std::string siSetsDirName = "SimpleHistogramSets";
+  std::string siSetsDirName = "SimpleHistogramSets";
   std::string cleanedName   = treeName;
   TDirectory* treeDir       = outputFile->GetDirectory(cleanedName.c_str());
   TDirectory* peSetsDir     = treeDir->mkdir(peSetsDirName.c_str());
-  //TDirectory* siSetsDir     = treeDir->mkdir(siSetsDirName.c_str());
+  TDirectory* siSetsDir     = treeDir->mkdir(siSetsDirName.c_str());
   
   // per entry histogram sets
   peSetsDir->cd();
   for (auto s : perEntryHistogramSets)
     {s->Write(peSetsDir);}
+  outputFile->cd("/");
 
   // simple histogram sets
-  //siSestDir->cd();
-  //for (auto s : perEntryHistogramSets)
-  //  {s->Write(piSetsDir);}
+  siSetsDir->cd();
+  for (auto s : perEntryHistogramSets)
+    {s->Write(siSetsDir);}
   outputFile->cd("/");
 
   // We don't need to write out the optics tree if we didn't process samplers
