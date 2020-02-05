@@ -139,20 +139,20 @@ void PerEntryHistogramSet::Write(TDirectory* dir)
     }
   else
     {
-      // form a set of desired pdgIDs
-      std::set<long long int> desiredPDGIDs;
+      // form a (sorted) vector of desired pdgIDs
+      std::vector<long long int> desiredPDGIDs;
       switch (what)
 	{
 	case HistogramDefSet::writewhat::all:
-	  {desiredPDGIDs = allPDGIDs;         break;}
+	  {std::copy(allPDGIDs.begin(), allPDGIDs.end(), std::back_inserter(desiredPDGIDs)); break;}
 	case HistogramDefSet::writewhat::topN:
 	  {desiredPDGIDs = TopN(topN);        break;}
 	case HistogramDefSet::writewhat::ions:
-	  {desiredPDGIDs = ions;              break;}
+	  {std::copy(ions.begin(), ions.end(), std::back_inserter(desiredPDGIDs)); break;}
 	case HistogramDefSet::writewhat::topNIons:
 	  {desiredPDGIDs = TopNIons(topN);    break;}
 	case HistogramDefSet::writewhat::particles:
-	  {desiredPDGIDs = nonIons;           break;}
+	  {std::copy(nonIons.begin(), nonIons.end(), std::back_inserter(desiredPDGIDs)); break;}
 	case HistogramDefSet::writewhat::topNPartcles:
 	  {desiredPDGIDs = TopNNonIons(topN); break;}
 	} 
@@ -162,28 +162,37 @@ void PerEntryHistogramSet::Write(TDirectory* dir)
     }
 }
 
-std::set<long long int> PerEntryHistogramSet::TopUtility(const std::set<long long int>& s,
-							 int n) const
+std::vector<long long int> PerEntryHistogramSet::TopUtility(const std::set<long long int>& s,
+							 size_t n) const
 {
+  // map the pdg id to the total number (inc weight) of that particle histogrammed (per event)
+  std::map<long long int, double> integrals;
+  for (auto id : s)
+    {integrals[id] = histograms.at(id)->Integral();}
+
+  // reverse the mapping so the pdg ids are sorted by the integral, whilst tolerating
+  // multiple integrals of the same value (ie same rate)
+  std::multimap<double, long long int> sorted = BDS::flip_map(integrals);
+
   // take advantage of a set being (by definition) ordered - reverse iterate.
-  std::set<long long int> result;
-  int in = 0;
-  for (auto i = s.rbegin(); i != s.rend() || in > n; i++, in++)
-    {result.insert(*i);}
+  std::vector<long long int> result;
+  int i = 0;
+  for (auto it = sorted.rbegin(); i < (int)n; i++, it++)
+    {result.push_back(it->second);}
   return result;
 }
 
-std::set<long long int> PerEntryHistogramSet::TopNNonIons(int n) const
+std::vector<long long int> PerEntryHistogramSet::TopNNonIons(int n) const
 {
-  return TopUtility(nonIons, n);
+  return TopUtility(nonIons, (size_t)n);
 }
 
-std::set<long long int> PerEntryHistogramSet::TopNIons(int n) const
+std::vector<long long int> PerEntryHistogramSet::TopNIons(int n) const
 {
-  return TopUtility(ions, n);
+  return TopUtility(ions, (size_t)n);
 }
   
-std::set<long long int> PerEntryHistogramSet::TopN(int n) const
+std::vector<long long int> PerEntryHistogramSet::TopN(int n) const
 {
-  return TopUtility(allPDGIDs, n);
+  return TopUtility(allPDGIDs, (size_t)n);
 }
