@@ -158,7 +158,7 @@ void Config::ParseInputFile()
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
-  std::regex spectra("(?:simple)*spectra(?:TE)*(?:log)*(?:\\s+)", std::regex_constants::icase);
+  std::regex spectra("(?:simple)*spectra(?:TE|rigidity)*(?:log)*(?:\\s+)", std::regex_constants::icase);
 
   while (std::getline(f, line))
     {
@@ -270,7 +270,11 @@ void Config::ParseSpectraLine(const std::string& line)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
 
-  bool totalEnergy = ContainsWordCI(results[0], "TE");
+  std::string variable = ".kineticEnergy"; // kinetic energy by default
+  if (ContainsWordCI(results[0], "TE"))
+    {variable = ".energy";}
+  else if (ContainsWordCI(results[0], "Rigidity"))
+    {variable = ".rigidity";}
 
   std::string samplerName = results[1];
   // because we can have multiple spectra on a branch and there are no user-specified names for this
@@ -295,7 +299,6 @@ void Config::ParseSpectraLine(const std::string& line)
   if (particles.empty() && !perEntry)
     {throw std::string("Simple histogram used for definition but no specific particles named - only works for specific particles");}
 
-  std::string variable = totalEnergy ? ".energy" : ".kineticEnergy";
   HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
 					   b.nBinsX, b.xLow, b.xHigh,
 					   samplerName + variable,
