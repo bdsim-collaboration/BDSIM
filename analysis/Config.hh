@@ -50,15 +50,16 @@ private:
   std::map<std::string, double>      optionsNumber;
   /// @}
 
-  /// Storage of histogram options. This owns th HistogramDef objects.
+  /// Storage of histogram options. This owns the HistogramDef objects.
   std::map<std::string, std::vector<HistogramDef*> > histoDefs;
 
-  /// Copy of defintion used to identify only 'simple' histogram definitions. Doesn't own.
+  /// Copy of definition used to identify only 'simple' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsSimple;
 
-  /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
+  /// Copy of definition used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
 
+  /// Sets of histogram definitions per particle.  Only for event branch.
   std::vector<HistogramDefSet*> eventHistoDefSetsSimple;
   std::vector<HistogramDefSet*> eventHistoDefSetsPerEntry;
   

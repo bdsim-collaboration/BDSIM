@@ -128,15 +128,15 @@ Config* Config::Instance(const std::string& fileName,
 			 const std::string& inputFilePath,
 			 const std::string& outputFileName)
 {
-  if(!instance && fileName != "")
+  if(!instance && !fileName.empty())
     {instance = new Config(fileName, inputFilePath, outputFileName);}
-  else if(instance && fileName != "")
+  else if(instance && !fileName.empty())
     {
       std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
       delete instance;
       instance = new Config(fileName, inputFilePath, outputFileName);
     }
-  else if (!instance && fileName == "")
+  else if (!instance && fileName.empty())
     {instance = new Config(inputFilePath, outputFileName);}
   // else return current instance (can be nullptr!)
   return instance;
@@ -160,7 +160,7 @@ void Config::ParseInputFile()
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
   std::regex spectra("(?:simple)*spectra(?:TE)*(?:log)*(?:\\s+)", std::regex_constants::icase);
 
-  while(std::getline(f, line))
+  while (std::getline(f, line))
     {
       lineCounter++;
       if (std::all_of(line.begin(), line.end(), isspace))
