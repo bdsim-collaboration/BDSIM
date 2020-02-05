@@ -344,12 +344,12 @@ void EventAnalysis::PreparePerEntryHistogramSets()
 
 void EventAnalysis::AccumulatePerEntryHistogramSets(long int entryNumber)
 {
-  for (auto &peSet : perEntryHistogramSets)
+  for (auto& peSet : perEntryHistogramSets)
     {peSet->AccumulateCurrentEntry(entryNumber);}
 }
 
 void EventAnalysis::TerminatePerEntryHistogramSets()
 {
-  for (auto &peSet : perEntryHistogramSets)
+  for (auto& peSet : perEntryHistogramSets)
     {peSet->Terminate();}
 }
