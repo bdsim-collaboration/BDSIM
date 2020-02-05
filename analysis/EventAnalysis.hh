@@ -102,8 +102,10 @@ private:
   long int eventStart;    ///< Event index to start analysis from.
   long int eventEnd;      ///< Event index to end analysis at.
 
+  /// Cache of all per entry histogram sets.
   std::vector<PerEntryHistogramSet*> perEntryHistogramSets;
 
+  /// Map of simple histograms created per histogram set for writing out.
   std::map<HistogramDefSet*, std::vector<TH1*> > simpleSetHistogramOutputs;
   
   ClassDef(EventAnalysis,1);
