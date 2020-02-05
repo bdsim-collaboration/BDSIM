@@ -237,6 +237,18 @@ void EventAnalysis::Write(TFile* outputFile)
 
   // simple histogram sets
   siSetsDir->cd();
+  for (const auto& set : simpleSetHistogramOutputs)
+    {
+      for (auto h : set.second)
+        {
+          siSetsDir->Add(h);
+          h->Write();
+        }
+    }
+  outputFile->cd("/");
+
+  // per entry histogram sets
+  peSetsDir->cd();
   for (auto s : perEntryHistogramSets)
     {s->Write(siSetsDir);}
   outputFile->cd("/");
