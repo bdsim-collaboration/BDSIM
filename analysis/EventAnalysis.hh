@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h" // for classdef
 
 class Event;
+class HistogramDefSet;
 class PerEntryHistogramSet;
 class SamplerAnalysis;
 class TChain;
@@ -65,6 +66,8 @@ public:
   /// Operate on each entry in the event tree.
   virtual void Process();
 
+  virtual void SimpleHistograms();
+
   /// Terminate each individual sampler analysis and append optical functions.
   virtual void Terminate();
 
@@ -79,6 +82,9 @@ protected:
   void PreparePerEntryHistogramSets();
   void AccumulatePerEntryHistogramSets(long int entryNumber);
   void TerminatePerEntryHistogramSets();
+
+  /// Fill a set of simple histograms across all events.
+  void FillHistogram(HistogramDefSet* definition);
 
 private:
   /// Set how often to print out information about the event.
@@ -97,6 +103,8 @@ private:
   long int eventEnd;      ///< Event index to end analysis at.
 
   std::vector<PerEntryHistogramSet*> perEntryHistogramSets;
+
+  std::map<HistogramDefSet*, std::vector<TH1*> > simpleSetHistogramOutputs;
   
   ClassDef(EventAnalysis,1);
 };

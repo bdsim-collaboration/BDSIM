@@ -207,6 +207,15 @@ void EventAnalysis::Terminate()
     }
 }
 
+void EventAnalysis::SimpleHistograms()
+{
+  Analysis::SimpleHistograms();
+
+  auto setDefinitions = Config::Instance()->EventHistogramSetDefinitionsSimple();
+  for (auto definition : setDefinitions)
+    {FillHistogram(definition);}
+}
+
 void EventAnalysis::Write(TFile* outputFile)
 {
   // Write rebdsim histograms:
@@ -352,4 +361,12 @@ void EventAnalysis::TerminatePerEntryHistogramSets()
 {
   for (auto& peSet : perEntryHistogramSets)
     {peSet->Terminate();}
+}
+
+void EventAnalysis::FillHistogram(HistogramDefSet* definition)
+{
+  std::vector<TH1*> outputHistograms;
+  for (auto def : definition->definitionsV)
+    {Analysis::FillHistogram(def, &outputHistograms);}
+  simpleSetHistogramOutputs[definition] = outputHistograms;
 }
