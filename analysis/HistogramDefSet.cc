@@ -40,26 +40,37 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
 
   baseDefinition = baseDefinitionIn->Clone();
 
-  for (auto pdgID : pdgIDsIn)
+  if (!pdgIDsIn.empty())
     {
-      HistogramDef* h = baseDefinitionIn->Clone();
-      h->histName  = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
-      h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
-      definitions[pdgID] = h;
+      for (auto pdgID : pdgIDsIn)
+        {
+          HistogramDef *h = baseDefinitionIn->Clone();
+          h->histName = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
+          h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
+          definitions[pdgID] = h;
+        }
     }
-
-  if (pdgIDsIn.empty())
+  else
     {
       std::string spec = particleSpecificationIn;
       std::transform(spec.begin(), spec.end(), spec.begin(), ::tolower);
       spec = RemoveSubString(spec, "{");
       spec = RemoveSubString(spec, "}");
+
+
+      if (spec.find("all") != std::string::npos || spec.find("ions") != std::string::npos)
+        {dynamicallyStoreIons = true;}
+      if (spec.find("all") != std::string::npos || spec.find("particles") != std::string::npos)
+        {dynamicallyStoreParticles = true;}
+      if (spec.find("top") != std::string::npos)
+        {topN = IdentifyTopN(spec);}
+
       std::map<std::string, writewhat> keys = {{"all",           writewhat::all},
                                                {"particles",     writewhat::particles},
                                                {"ions",          writewhat::ions},
                                                {"topn",          writewhat::topN},
                                                {"topnparticles", writewhat::topNPartcles},
-                                               {"topnions",      writewhat ::topNIons}};
+                                               {"topnions",      writewhat::topNIons}};
 
       auto search = keys.find(spec);
       if (search != keys.end())
@@ -92,7 +103,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
           case writewhat::topN:
           case writewhat::topNPartcles:
           case writewhat::topNIons:
-            {IdentifyTopN(spec); break;}
+            {topN = IdentifyTopN(spec); break;}
           default:
             {break;}
         }
