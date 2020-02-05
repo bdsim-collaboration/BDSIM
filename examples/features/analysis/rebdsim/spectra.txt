@@ -1,0 +1,11 @@
+Debug						0
+InputFilePath					../../data/sample1.root
+OutputFileName					./ana_spectra_1.root
+
+#Object   Sampler Name  # Bins  Binning     Particles        Selection
+Spectra   	d3_1	30	{1e-3:1}    {11,-11,22,-22}  1
+Spectra   	d3_1	30	{1e-3:1}    {11,-11,22,-22}  PrimaryFirstHit.S>3.5
+SpectraLog   	d3_1	30	{-4:0}      {11,-11,22,-22}  1
+SpectraTE   	d3_1	30	{1e-3:1}    {11,-11,22,-22}  1
+SpectraTE   	d3_1	30	{1e-3:1}    {11,-11,22,-22}  PrimaryFirstHit.S>3.5
+SpectraTELog   	d3_1	30	{-4:0}      {11,-11,22,-22}  1
