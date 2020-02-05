@@ -111,13 +111,13 @@ void Analysis::PreparePerEntryHistograms()
 
 void Analysis::AccumulatePerEntryHistograms(long int entryNumber)
 {
-  for (auto &peHist : perEntryHistograms)
+  for (auto& peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry(entryNumber);}
 }
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  for (auto &peHist : perEntryHistograms)
+  for (auto& peHist : perEntryHistograms)
     {peHist->Terminate();}
 }
 
