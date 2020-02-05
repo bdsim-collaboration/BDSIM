@@ -71,7 +71,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
         {what = search->second;}
       else
         {
-          std::regex topNR("top(\\d+)(?:particles\|ions)*");
+          std::regex topNR("top(\\d+)(?:particles|ions)*");
           std::smatch match;
           if (std::regex_search(spec, match, topNR))
             {
