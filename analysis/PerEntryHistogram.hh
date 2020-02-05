@@ -54,7 +54,7 @@ public:
 		    TChain*             chain);
   virtual ~PerEntryHistogram();
 
-  /// Create a histogram of the approprate dimensions for the currently loaded
+  /// Create a histogram of the appropriate dimensions for the currently loaded
   /// event then add it to the online (ie running) means and variances.
   virtual void AccumulateCurrentEntry(long int entryNumber);
 
@@ -68,6 +68,9 @@ public:
   /// Permit the number of recorded entries to be incremented with zero values,
   /// ie just increment n.
   inline void AddNEmptyEntries(unsigned long i){accumulator->AddNEmptyEntries(i);}
+
+  /// Get the Integral() from the reuslt member histogram if it exists, otherwise 0.
+  double Integral() const;
 
 protected:
   HistogramAccumulator* accumulator;

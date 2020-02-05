@@ -129,3 +129,11 @@ void PerEntryHistogram::Write(TDirectory* dir)
       result->Write();
     }
 }
+
+double PerEntryHistogram::Integral() const
+{
+  if (!result)
+    {return 0;}
+  else
+    {return result->Integral();}
+}
