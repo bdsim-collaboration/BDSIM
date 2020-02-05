@@ -28,7 +28,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class HistogramDef;
-class HistogramDefSet;
 class HistogramMeanFromFile;
 class PerEntryHistogram;
 class TChain;
@@ -106,9 +105,6 @@ private:
   
   /// Create an individual histogram based on a definition.
   void FillHistogram(HistogramDef* definition);
-
-  /// Fill a set of simple histograms across all events.
-  void FillHistogram(HistogramDefSet* definition);
 };
 
 #endif
