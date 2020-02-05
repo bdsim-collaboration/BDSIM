@@ -315,7 +315,7 @@ the same thing.
 
 2) Geant4's reference physics lists as described in :ref:`physics-geant4-lists`: ::
 
-     option, physicsList = "g4FTFTP_BERT";
+     option, physicsList = "g4FTFP_BERT";
 
 These are more complete "reference physics lists" that use several modular physics lists from Geant4
 like BDSIM but in a predefined way that Geant4 quote for references results. These have rather confusingly
@@ -1201,6 +1201,9 @@ described in :ref:`tunnel-geometry`.
 | worldGeometryFile                | The filename of the world geometry file. See          |
 |                                  | :ref:`external-world-geometry` for more details.      |
 |                                  | Default = "".                                         |
++----------------------------------+-------------------------------------------------------+
+| autoColourWorldGeometryFile      | Boolean whether to automatically colour geometry      |
+|                                  | loaded from the worldGeometryFile. Default true.      |
 +----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |
