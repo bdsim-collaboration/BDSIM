@@ -43,9 +43,6 @@ public:
 					     const std::string& selection,
 					     const std::string& branchName);
 
-  /// Strip off all possible words we accept then try to convert to an integer.
-  int IdentifyTopN(const std::string& word) const;
-
   /// Remove a substring from a string.
   std::string RemoveSubString(const std::string& stringIn,
                               const std::string& wordToRemove) const;

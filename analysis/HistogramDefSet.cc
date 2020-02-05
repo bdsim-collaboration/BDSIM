@@ -44,7 +44,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
     {
       for (auto pdgID : pdgIDsIn)
         {
-          HistogramDef *h = baseDefinitionIn->Clone();
+          HistogramDef* h = baseDefinitionIn->Clone();
           h->histName = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
           h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
           definitions[pdgID] = h;
@@ -57,55 +57,37 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
       spec = RemoveSubString(spec, "{");
       spec = RemoveSubString(spec, "}");
 
-
       if (spec.find("all") != std::string::npos || spec.find("ions") != std::string::npos)
         {dynamicallyStoreIons = true;}
       if (spec.find("all") != std::string::npos || spec.find("particles") != std::string::npos)
         {dynamicallyStoreParticles = true;}
-      if (spec.find("top") != std::string::npos)
-        {topN = IdentifyTopN(spec);}
 
       std::map<std::string, writewhat> keys = {{"all",           writewhat::all},
                                                {"particles",     writewhat::particles},
-                                               {"ions",          writewhat::ions},
-                                               {"topn",          writewhat::topN},
-                                               {"topnparticles", writewhat::topNPartcles},
-                                               {"topnions",      writewhat::topNIons}};
+                                               {"ions",          writewhat::ions}};
 
       auto search = keys.find(spec);
       if (search != keys.end())
         {what = search->second;}
       else
-        {throw std::string("Invalid particle specifier \"" + particleSpecificationIn + "\"");}
-
-      switch (what)
         {
-          case writewhat::all:
-          case writewhat::ions:
-          case writewhat::topNIons:
-            {dynamicallyStoreIons = true; break;}
-          default:
-            {break;}
-        }
-
-      switch (what)
-        {
-          case writewhat::all:
-          case writewhat::particles:
-          case writewhat::topNPartcles:
-            {dynamicallyStoreParticles = true; break;}
-          default:
-            {break;}
-        }
-
-      switch (what)
-        {
-          case writewhat::topN:
-          case writewhat::topNPartcles:
-          case writewhat::topNIons:
-            {topN = IdentifyTopN(spec); break;}
-          default:
-            {break;}
+          std::regex topNR("top(\\d+)(?:particles\|ions)*");
+          std::smatch match;
+          if (std::regex_search(spec, match, topNR))
+            {
+              try
+                {topN = std::stoi(match[1]);}
+              catch (...)
+                {topN = 1;}
+              if (spec.find("particles") != std::string::npos)
+                {what = writewhat::topNPartcles;}
+              else if (spec.find("ions") != std::string::npos)
+                {what = writewhat::topNIons;}
+              else
+                {what = writewhat::topN;}
+            }
+          else
+            {throw std::string("Invalid particle specifier \"" + particleSpecificationIn + "\"");}
         }
     }
 }
@@ -115,27 +97,6 @@ HistogramDefSet::~HistogramDefSet()
   delete baseDefinition;
   for (auto kv : definitions)
     {delete kv.second;}
-}
-
-int HistogramDefSet::IdentifyTopN(const std::string& word) const
-{
-  std::string wl = word;
-  std::transform(wl.begin(), wl.end(), wl.begin(), ::tolower);
-
-  wl = RemoveSubString(wl, "all");
-  wl = RemoveSubString(wl, "ion");
-  wl = RemoveSubString(wl, "top");
-  wl = RemoveSubString(wl, "particles");
-
-  int result = 1;
-  if (!wl.empty())
-    {
-      try
-        {result = std::stoi(wl);}
-      catch (...)
-        {result = 1;}
-    }
-  return result;
 }
 
 std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
