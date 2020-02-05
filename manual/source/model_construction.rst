@@ -137,6 +137,8 @@ The following elements may be defined
 * `crystalcol`_
 * `undulator`_
 * `transform3d`_
+* `rmatrix`_
+* `thinrmatrix`_
 * `element`_
 * `marker`_
 * `wirescanner`_
@@ -1452,6 +1454,85 @@ Parameter         Description                   Default     Required
 Examples: ::
 
    rcolrot: transform3d, psi=pi/2;
+
+.. _element-rmatrix:
+
+rmatrix
+^^^^^^^
+
+`rmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam for
+an element of finite length. The effect of an rmatrix describes the total effect through the full length of
+the element, but is applied in a single instantaneous kick. As BDSIM is designed to track particles in a 3D model,
+to apply this rmatrix in finite length geometry, BDSIM uses a parallel transporter to simply advance the particles
+along S but without changing the particles transverse coordinates. The transverse effect from the matrix is applied
+once in the middle of the element, whereafter particles are once again parallel transported to the end of the
+element. This way, the correct transverse effect is applied, the recorded tracking time is correct as the particle
+has tracked through a finite length element, and the model is constucted with the correct physical length.
+
+The mathematical effect of the matrix on a particle is:
+
+.. math::
+
+   \begin{pmatrix}
+   x_1    \\
+   x'_1   \\
+   y_1    \\
+   y'_1   \\
+   \end{pmatrix}
+   =
+    \begin{pmatrix}
+    R_{11} & R_{12} & R_{13} & R_{14} \\
+    R_{21} & R_{22} & R_{23} & R_{24} \\
+    R_{31} & R_{32} & R_{33} & R_{34} \\
+    R_{41} & R_{42} & R_{43} & R_{44} \\
+   \end{pmatrix}
+   \begin{pmatrix}
+   x_0    \\
+   x'_0   \\
+   y_0    \\
+   y'_0   \\
+   \end{pmatrix}
+
+The geometry of an rmatrix element is simply that of a drift tube of the same length.
+
+================  =============================  ==========  ==========
+Parameter         Description                     Default     Required
+`l`               Length [m]                         0           Yes
+`rmat11`          matrix element :math:`R_{11}`      1           No
+`rmat12`          matrix element :math:`R_{12}`      0           No
+`rmat13`          matrix element :math:`R_{13}`      0           No
+`rmat14`          matrix element :math:`R_{14}`      0           No
+`rmat21`          matrix element :math:`R_{21}`      0           No
+`rmat22`          matrix element :math:`R_{22}`      1           No
+`rmat23`          matrix element :math:`R_{23}`      0           No
+`rmat24`          matrix element :math:`R_{24}`      0           No
+`rmat31`          matrix element :math:`R_{31}`      0           No
+`rmat32`          matrix element :math:`R_{32}`      0           No
+`rmat33`          matrix element :math:`R_{33}`      1           No
+`rmat34`          matrix element :math:`R_{34}`      0           No
+`rmat41`          matrix element :math:`R_{41}`      0           No
+`rmat42`          matrix element :math:`R_{42}`      0           No
+`rmat43`          matrix element :math:`R_{43}`      0           No
+`rmat44`          matrix element :math:`R_{44}`      1           No
+================  =============================  ==========  ==========
+
+Examples: ::
+
+   rm1: rmatrix, rmat12=0.997, rmat21=-0.924;
+
+thinrmatrix
+^^^^^^^^^^^
+
+`thinrmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam
+within a thin element. Unlike the rmatrix, a thinrmatrix is an instanteous effect in a thin element, therefore
+no geometry is constructed. The parameters for a thinmatrix are the same as those for an :ref:`element-rmatrix` except
+for the length, `l`, which is not required.
+
+.. note:: The length of the thinrmatrix can be changed by setting `thinElementLength` (see :ref:`bdsim-options`).
+
+Examples: ::
+
+   rm1: thinrmatrix, rmat12=0.997, rmat21=-0.924;
 
 .. _element:
 

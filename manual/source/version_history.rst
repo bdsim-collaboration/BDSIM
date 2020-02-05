@@ -251,6 +251,7 @@ General
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
 * Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
   equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
+* Descriptions of the elements rmatrix and thinrmatrix have been added to the manual.
   
 Bug Fixes
 ---------
