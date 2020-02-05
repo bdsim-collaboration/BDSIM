@@ -281,8 +281,6 @@ void Config::ParseSpectraLine(const std::string& line)
     {spectraNames[samplerName] = 1;}
   std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
   std::string selection = results[5];
-  if (selection.empty())
-    {selection = "1";}
   
   Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
