@@ -247,12 +247,6 @@ void EventAnalysis::Write(TFile* outputFile)
     }
   outputFile->cd("/");
 
-  // per entry histogram sets
-  peSetsDir->cd();
-  for (auto s : perEntryHistogramSets)
-    {s->Write(siSetsDir);}
-  outputFile->cd("/");
-
   // We don't need to write out the optics tree if we didn't process samplers
   // as there's no possibility of optical data.
   if (!processSamplers)
