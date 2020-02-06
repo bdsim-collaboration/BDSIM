@@ -999,7 +999,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       
       // loop through all processes
       for (unsigned int p = 0; p < pb.processList.size(); ++p)
-	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
+	{eg->SetBias(bias, pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
@@ -1078,7 +1078,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  for (auto lv : allLVs)
 	    {// BDSAcceleratorComponent automatically removes 'vacuum' volumes from all so we don't need to check
 		  if (debug)
-		    {G4cout << __METHOD_NAME__ << "Baising 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
+		    {G4cout << __METHOD_NAME__ << "Biasing 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
 		  egMaterial->AttachTo(lv);
 	    }
 	}
