@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEFSET_H
 #define HISTOGRAMDEFSET_H
+#include "SpectraParicles.hh"
+
 #include <map>
 #include <set>
 #include <string>
@@ -35,11 +37,11 @@ class HistogramDefSet
 public:
   HistogramDefSet(const std::string&  branchNameIn,
 		  const HistogramDef* baseDefinitionIn,
-		  const std::set<long long int>& pdgIDsIn = {},
+		  const std::set<ParticleSpec>& particlesSpecs = {},
 		  const std::string&  particleSpecificationIn = "");
   ~HistogramDefSet();
 
-  static std::string AddPDGFilterToSelection(long long int      pdgID,
+  static std::string AddPDGFilterToSelection(const ParticleSpec& particleSpec,
 					     const std::string& selection,
 					     const std::string& branchName);
 
@@ -49,8 +51,8 @@ public:
 
   std::string   branchName;
   HistogramDef* baseDefinition;
-  std::map<long long int, HistogramDef*> definitions;
-  std::vector<HistogramDef*>             definitionsV; ///< Vector version for easy iteration.
+  std::map<ParticleSpec, HistogramDef*> definitions;
+  std::vector<HistogramDef*>            definitionsV; ///< Vector version for easy iteration.
   bool          dynamicallyStoreIons;
   bool          dynamicallyStoreParticles; ///< Dynamically store all non-ions.
 

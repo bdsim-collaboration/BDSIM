@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define PERENTRYHISTOGRAMSET_H
 #include "HistogramDefSet.hh"
 #include "PerEntryHistogram.hh"
+#include "SpectraParicles.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -107,7 +108,7 @@ protected:
   std::set<long long int>                     allPDGIDs;
   std::set<long long int>                     ions;
   std::set<long long int>                     nonIons;
-  std::map<long long int, PerEntryHistogram*> histograms;
+  std::map<ParticleSpec, PerEntryHistogram*>  histograms;
   std::vector<PerEntryHistogram*>             allPerEntryHistograms;
 
   //ClassDef(PerEntryHistogramSet, 1);
