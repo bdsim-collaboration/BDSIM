@@ -232,11 +232,25 @@ Spectra
 -------
 
 Spectra is a conveninent way to make common energy or rigidity spectra histograms for a variety of
-particles types. These are made by default on a per-event basis, but can be made a set of simple
+particles types. Normally to make such a plot of the different particles, we are required to make
+1 histogram in energy with a selection of each particle type. This could be done manually as follows:
+::
+
+   Histogram1D Event. Protons           {100} {1:10} samplerName.energy samplerName.partID==2212
+   Histogram1D Event. ProtonsPrimary    {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID==0
+   Histogram1D Event. ProtonsSecondary  {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID>0
+   Histogram1D Event.
+   
+
+
+
+These are made by default on a per-event basis, but can be made a set of simple
 histograms also. The set of histograms is always made on the Event tree in the BDSIM output data
 and uses kinetic energy by default. Note that kinetic energy is not stored by default in the output
 and the option :code:`option, storeSamplerKineticEnergy=1;` should be used at simulation time.
 Alternatively, the suffix "TE" can be used to use the total energy variable "energy" in the data.
+
+A spectra (set
 
 Logarithmic Binning
 -------------------
