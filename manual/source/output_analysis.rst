@@ -168,6 +168,7 @@ Examples can be found in:
 * `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
 * `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
 * `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/rebdsim/`
 
 ::
 
@@ -191,7 +192,11 @@ Examples can be found in:
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
 * :code:`SimpleHistogramND` defines an N-dimension simple histogram where `N` is 1,2 or 3.
-* Arguments in the histogram rows must not contain any white space!
+* :cdoe:`Spectra`, :code:`SpectraTE` and :code:`SpectraRigidity` define a set of 1D histograms
+  for various particles for kinetic energy, total energy ("TE") or rigidity respectively. This
+  has slightly different syntax as described in :ref:`spectra-definition`.
+  
+* Each individual argument in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
 * A line beginning with :code:`#` is ignored as a comment line.
 * Empty lines are also ignored.
@@ -203,10 +208,10 @@ Examples can be found in:
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get
   the kinetic energy of proton primaries in MeV).
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
-* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
+* The selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
 * If a Boolean and a weight is desired, multiply both with the Boolean in brackets, e.g.
-  :code:`Eloss.energy*(Eloss.S>145.3)`.
+  :code:`Eloss.energy*(Eloss.S>145.3)`.  So :code:`weight*(Boolean)`.
 * True or False, as well as 1 or 0, may be used for Boolean options at the top.
 * ROOT special variables can be used as well, such as :code:`Entry$` amd :code:`Entries$`. See
   the documentation link immediately below.
@@ -216,8 +221,22 @@ Examples can be found in:
 	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
 	  useful for per-event analysis on the Event tree.
 
-A full explanation on the combination of selection parameters is given in the ROOT TTree class:
+The variable and selection go directly into ROOT's TTree::Draw method and if you are familiar with
+these, any syntax it supports can be used.  A full explanation on the combination of selection parameters
+is given in the ROOT TTree class:
 `<https://root.cern.ch/doc/master/classTTree.html>`_.  See the "Draw" method and "selection".
+
+.. _spectra-definition:
+
+Spectra
+-------
+
+Spectra is a conveninent way to make common energy or rigidity spectra histograms for a variety of
+particles types. These are made by default on a per-event basis, but can be made a set of simple
+histograms also. The set of histograms is always made on the Event tree in the BDSIM output data
+and uses kinetic energy by default. Note that kinetic energy is not stored by default in the output
+and the option :code:`option, storeSamplerKineticEnergy=1;` should be used at simulation time.
+Alternatively, the suffix "TE" can be used to use the total energy variable "energy" in the data.
 
 Logarithmic Binning
 -------------------
