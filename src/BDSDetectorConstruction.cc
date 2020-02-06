@@ -967,7 +967,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  for (auto lv : allLVs)
 	    {// BDSAcceleratorComponent automatically removes 'vacuum' volumes from all so we don't need to check
 		  if (debug)
-		    {G4cout << __METHOD_NAME__ << "Baising 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
+		    {G4cout << __METHOD_NAME__ << "Biasing 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
 		  egMaterial->AttachTo(lv);
 	    }
 	}
