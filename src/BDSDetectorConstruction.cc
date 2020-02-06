@@ -888,7 +888,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       
       // loop through all processes
       for (unsigned int p = 0; p < pb.processList.size(); ++p)
-	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
+	{eg->SetBias(bias, pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
