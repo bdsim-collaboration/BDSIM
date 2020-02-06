@@ -360,6 +360,11 @@ Bug Fixes
 * Fix survey writing for models with placement beam lines to now write those beam lines in separate files
   named as the survey name appended with the placement name. Previously the survey file was overwritten for
   every secondary beam lines so only the final beam line placement was recorded.
+* Fixed parallel transport integrator for non-paraxial particles (e.g. secondaries from elsewhere) that would
+  be parallel transported to the end of the element regardless of particle entry position or direction of travel.
+  Non-paraxial particles are now tracked through as if the element were a drift. In the case of rmatrix elements,
+  this change does not affect the behaviour of the rmatrix in the centre of the element, only the parallel transport
+  through the thick sections of the element.
 
 Output Changes
 --------------
