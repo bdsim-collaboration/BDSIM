@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramDef.hh"
 #include "HistogramDefSet.hh"
+#include "SpectraParicles.hh"
 
 #include <map>
 #include <regex>
@@ -27,11 +28,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
 				 const HistogramDef* baseDefinitionIn,
-				 const std::set<long long int>& pdgIDsIn,
+				 const std::set<ParticleSpec>& particlesSpecs,
 				 const std::string&  particleSpecificationIn):
   branchName(branchNameIn),
   dynamicallyStoreIons(false),
-  dynamicallyStoreParticles(pdgIDsIn.empty()),
+  dynamicallyStoreParticles(particlesSpecs.empty()),
   what(writewhat::all),
   topN(1)
 {
@@ -40,14 +41,25 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
 
   baseDefinition = baseDefinitionIn->Clone();
 
-  if (!pdgIDsIn.empty())
+  if (!particlesSpecs.empty())
     {
-      for (auto pdgID : pdgIDsIn)
+      for (const auto& particleSpec : particlesSpecs)
         {
           HistogramDef* h = baseDefinitionIn->Clone();
-          h->histName = "Spectra_" + h->histName + "_" + std::to_string(pdgID);
-          h->selection = AddPDGFilterToSelection(pdgID, h->selection, branchName);
-          definitions[pdgID] = h;
+          h->histName = "Spectra_" + h->histName + "_" + std::to_string(particleSpec.first);
+          std::string suffix;
+          switch (particleSpec.second)
+            {
+              case RBDS::SpectraParticles::primary:
+                {suffix = "_Primary"; break;}
+              case RBDS::SpectraParticles::secondary:
+                {suffix = "_Secondary"; break;}
+              default:
+                {break;}
+            }
+          h->histName += suffix;
+          h->selection = AddPDGFilterToSelection(particleSpec, h->selection, branchName);
+          definitions[particleSpec] = h;
           definitionsV.push_back(h);
         }
     }
@@ -112,11 +124,23 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
   return result;
 }
 
-std::string HistogramDefSet::AddPDGFilterToSelection(long long int      pdgID,
+std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particleSpec,
 						     const std::string& selection,
 						     const std::string& branchName)
 {
-  std::string filter = branchName+".partID=="+std::to_string(pdgID);
+  long long int pdgID = particleSpec.first;
+  RBDS::SpectraParticles flag = particleSpec.second;
+  std::string flagFilter;
+  switch (flag)
+    {
+      case RBDS::SpectraParticles::primary:
+        {flagFilter = "&&" + branchName + ".parentID==0"; break;}
+      case RBDS::SpectraParticles::secondary:
+        {flagFilter = "&&" + branchName + ".parentID>0"; break;}
+      default:
+        {break;}
+    }
+  std::string filter = branchName+".partID=="+std::to_string(pdgID) + flagFilter;
   // check if it has a boolean expression already in it
   std::string result;
   std::regex boolOperator("&&|[<>!=]=|[<>]|\\|\\|");

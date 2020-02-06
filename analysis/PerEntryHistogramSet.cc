@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDefSet.hh"
 #include "PerEntryHistogram.hh"
 #include "PerEntryHistogramSet.hh"
+#include "SpectraParicles.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -47,15 +48,20 @@ PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
   topN(definitionIn->topN),
   sampler(nullptr)
 {
-  for (const auto pdgIDDef : definitionIn->definitions)
+  for (const auto pSpecDef : definitionIn->definitions)
     {
-      PerEntryHistogram* hist = new PerEntryHistogram(pdgIDDef.second, chainIn);
-      histograms[pdgIDDef.first] = hist;
+      auto pSpec = pSpecDef.first;
+      auto def   = pSpecDef.second;
+      PerEntryHistogram* hist = new PerEntryHistogram(def, chainIn);
+      histograms[pSpec] = hist;
       allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumulate() call
-      if (IsIon(pdgIDDef.first))
-        {ions.insert(pdgIDDef.first);}
-      else
-        {nonIons.insert(pdgIDDef.first);}
+      if (pSpec.second == RBDS::SpectraParticles::all)
+        {
+          if (IsIon(pSpec.first))
+            {ions.insert(pSpec.first);}
+          else
+            {nonIons.insert(pSpec.first);}
+        }
     }
 }
 
@@ -69,7 +75,7 @@ void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
   // copy base definition
   HistogramDef* def = baseDefinition->Clone();
   def->histName  = "Spectra_" + def->histName + "_" + std::to_string(pdgID);
-  def->selection = HistogramDefSet::AddPDGFilterToSelection(pdgID,
+  def->selection = HistogramDefSet::AddPDGFilterToSelection(ParticleSpec(pdgID,RBDS::SpectraParticles::all),
 							    def->selection,
 							    branchName);
 
