@@ -54,7 +54,7 @@ public:
   bool          dynamicallyStoreIons;
   bool          dynamicallyStoreParticles; ///< Dynamically store all non-ions.
 
-  enum class writewhat {all, particles, ions, topN, topNPartcles, topNIons};
+  enum class writewhat {all, particles, ions, topN, topNParticles, topNIons};
   writewhat     what;
   int           topN;  
 };

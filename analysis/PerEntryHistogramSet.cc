@@ -51,7 +51,7 @@ PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
     {
       PerEntryHistogram* hist = new PerEntryHistogram(pdgIDDef.second, chainIn);
       histograms[pdgIDDef.first] = hist;
-      allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumualte() call
+      allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumulate() call
       if (IsIon(pdgIDDef.first))
         {ions.insert(pdgIDDef.first);}
       else
@@ -153,7 +153,7 @@ void PerEntryHistogramSet::Write(TDirectory* dir)
 	  {desiredPDGIDs = TopNIons(topN);    break;}
 	case HistogramDefSet::writewhat::particles:
 	  {std::copy(nonIons.begin(), nonIons.end(), std::back_inserter(desiredPDGIDs)); break;}
-	case HistogramDefSet::writewhat::topNPartcles:
+	case HistogramDefSet::writewhat::topNParticles:
 	  {desiredPDGIDs = TopNNonIons(topN); break;}
 	} 
 

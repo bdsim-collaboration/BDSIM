@@ -81,7 +81,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
               catch (...)
                 {topN = 1;}
               if (spec.find("particles") != std::string::npos)
-                {what = writewhat::topNPartcles;}
+                {what = writewhat::topNParticles;}
               else if (spec.find("ions") != std::string::npos)
                 {what = writewhat::topNIons;}
               else
