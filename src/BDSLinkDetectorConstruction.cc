@@ -44,7 +44,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSParticleDefinition;
 
-BDSLinkDetectorConstruction::BDSLinkDetectorConstruction(){;}
+BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
+worldSolid(nullptr),
+linkBeamline(nullptr)
+{;}
 
 BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
 
@@ -64,7 +67,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   auto beamline = BDSParser::Instance()->GetBeamline();
 
   std::vector<BDSLinkOpaqueBox*> opaqueBoxes = {};
-  BDSBeamline* bl = new BDSBeamline();
+  linkBeamline = new BDSBeamline();
 
   for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
     {
@@ -89,7 +92,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 									     0);
 
 
-      BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, 0 /* XXX: index...  to do*/);
+      BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, 0, 0/* XXX: index...  to do*/);
 
       opaqueBoxes.push_back(opaqueBox);
 
@@ -97,12 +100,12 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 							opaqueBox,
 							opaqueBox->GetExtent().DZ());
       
-      bl->AddComponent(comp);
+      linkBeamline->AddComponent(comp);
 
       // The placement transform refers to centre of the collimators,
       // so subtract half the collimator length (z) to get to the
       // opening of the collimator.
-      auto it = bl->end();
+      auto it = linkBeamline->end();
       it--;
       G4Transform3D* placementTransform = (*it)->GetPlacementTransform();
       BDSExtent componentExtent = component->GetExtent();
@@ -112,9 +115,9 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       collimatorTransforms.push_back(openingTransform);
     }
 
-  G4ThreeVector worldExtentAbs = bl->GetExtentGlobal().GetMaximumExtentAbsolute();
+  G4ThreeVector worldExtentAbs = linkBeamline->GetExtentGlobal().GetMaximumExtentAbsolute();
   worldExtentAbs *= 1.2;
-  G4Box* worldSolid = new G4Box("world_solid",
+  worldSolid = new G4Box("world_solid",
 				worldExtentAbs.x(),
 				worldExtentAbs.y(),
 				worldExtentAbs.z());
@@ -138,7 +141,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 				   0,
 				   true);
 
-  for (auto element : *bl)
+  for (auto element : *linkBeamline)
     {
       G4String placementName = element->GetPlacementName() + "_pv";
       G4Transform3D* placementTransform = element->GetPlacementTransform();
@@ -153,8 +156,23 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 			true);                       // overlap checking
     }
 
-
   return worldPV;
+}
+
+void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimatorName,
+                  const std::string& materialName,
+                  G4double length,
+                  G4double aperture,
+                  G4double rotation,
+                  G4double xOffset,
+                  G4double yOffset)
+{
+  // build component
+  // wrap in box
+  // add to beam line
+  // update world extents and world solid
+  // place that one element
+
 }
 
 

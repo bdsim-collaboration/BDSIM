@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
+class BDSLinkDetectorConstruction;
 class BDSLinkRunManager;
 class BDSOutput;
 class BDSParser;
@@ -78,6 +79,15 @@ public:
   void BeamOn(int nGenerate=-1);
 
   void SelectLinkElement(const std::string& elementName);
+  void SelectLinkElement(int index);
+
+  void AddLinkCollimator(const std::string& collimatorName,
+      const std::string& materialName,
+      G4double length,
+      G4double aperture,
+      G4double rotation,
+      G4double xOffset,
+      G4double yOffset);
   
 private:
   /// The main function where everything is constructed.
@@ -95,6 +105,7 @@ private:
   BDSOutput*         bdsOutput;
   BDSBunch*          bdsBunch;
   BDSLinkRunManager* runManager;
+  BDSLinkDetectorConstruction* construction;
   /// @}
   
   std::vector<BDSParticleExternal*> externalParticles;

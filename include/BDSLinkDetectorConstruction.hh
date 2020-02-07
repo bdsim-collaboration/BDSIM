@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VUserDetectorConstruction.hh"
 #include "G4ThreeVector.hh"
 
+class BDSBeamline;
+class G4Box;
 class G4VPhysicalVolume;
 
 class BDSLinkDetectorConstruction: public G4VUserDetectorConstruction
@@ -36,8 +38,19 @@ public:
 
   BDSExtent WorldExtent() const {return worldExtent;}
 
+  void AddLinkCollimator(const std::string& collimatorName,
+                    const std::string& materialName,
+                    G4double length,
+                    G4double aperture,
+                    G4double rotation,
+                    G4double xOffset,
+                    G4double yOffset);
+
 private:
+  G4Box* worldSolid;
   BDSExtent worldExtent;
+  BDSBeamline* linkBeamline;
+
   /// Position of the centre of the collimator entrances in global coordinates.
   std::vector<G4Transform3D> collimatorTransforms;
 };
