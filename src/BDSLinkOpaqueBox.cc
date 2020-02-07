@@ -67,14 +67,11 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 						     name + "_opaque_box_lv");
   RegisterLogicalVolume(opaqueBoxLV);
 
-  G4UserLimits* termUL = new G4UserLimits(std::numeric_limits<double>::max(),
-					  std::numeric_limits<double>::max(),
-					  std::numeric_limits<double>::max(),
-					  std::numeric_limits<double>::max(),
-					  std::numeric_limits<double>::max());
-
+  G4UserLimits* termUL = new G4UserLimits();
+  termUL->SetUserMinEkine(std::numeric_limits<double>::max());
   RegisterUserLimits(termUL);
   opaqueBoxLV->SetUserLimits(termUL);
+  
   G4VisAttributes* obVis = new G4VisAttributes(*BDSColours::Instance()->GetColour("opaquebox"));
   obVis->SetVisibility(true);
   opaqueBoxLV->SetVisAttributes(obVis);
