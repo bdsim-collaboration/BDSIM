@@ -86,7 +86,8 @@ BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(bunchIn),
-  runManager(nullptr)
+  runManager(nullptr),
+  construction(nullptr)
 {;}
 
 BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
@@ -99,7 +100,8 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   parser(nullptr),
   bdsOutput(nullptr),
   bdsBunch(nullptr),
-  runManager(nullptr)
+  runManager(nullptr),
+  construction(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -169,8 +171,8 @@ int BDSIMLink::Initialise()
   runManager = new BDSLinkRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
-  auto realWorld = new BDSLinkDetectorConstruction();
-  runManager->SetUserInitialization(realWorld);
+  construction = new BDSLinkDetectorConstruction();
+  runManager->SetUserInitialization(construction);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> Constructing physics processes" << G4endl;
@@ -392,4 +394,31 @@ void BDSIMLink::SelectLinkElement(const std::string& elementName)
     {currentElementIndex = search->second;}
   else
     {currentElementIndex = 0;}
+}
+
+void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
+				  const std::string& materialName,
+				  G4double length,
+				  G4double aperture,
+				  G4double rotation,
+				  G4double xOffset,
+				  G4double yOffset)
+{
+  G4GeometryManager* gm = G4GeometryManager::GetInstance();
+  if (gm->IsGeometryClosed())
+    {gm->OpenGeometry();}
+
+  construction->AddLinkCollimator(collimatorName,
+			      materialName,
+			      length,
+			      aperture,
+			      rotation,
+			      xOffset,
+			      yOffset);
+  
+  /// Close the geometry in preparation for running - everything is now fixed.
+  G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
+  if (!bCloseGeometry)
+    {throw BDSException(__METHOD_NAME__, "error - geometry not closed.");}
+
 }

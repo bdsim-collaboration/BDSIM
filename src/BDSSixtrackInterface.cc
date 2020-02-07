@@ -74,33 +74,38 @@ void g4_collimation_init(double* /*ReferenceE*/,
 }
 
 extern "C"
-void g4_add_collimator(char*   /*name*/,
-		       char*   /*material*/,
-		       double* /*length*/,
-		       double* /*aperture*/,
-		       double* /*rotation*/,
-		       double* /*x_offset*/,
-		       double* /*y_offset*/)
+void g4_add_collimator(char*   name,
+		       char*   material,
+		       double* lengthIn,
+		       double* apertureIn,
+		       double* rotationIn,
+		       double* xOffsetIn,
+		       double* yOffsetIn)
 {
-  /*
   //  keep 48 value in sync with mNameLen in common_modules.f90
-  std::string CollimatorName = CleanFortranString(name, 48);
-  std::string CollimatorMaterialName = CleanFortranString(material, 4);
-  std::cout << "GEANT4> Adding \"" << CollimatorName << "\" with material \"" << CollimatorMaterialName << "\" and rotation \"" << *rotation << "\" and offset x: \"" << *x_offset << "\ y: \"" << *y_offset << "\" and length \"";
-  std::cout << *length << "\"" << std::endl;
+  std::string collimatorName = CleanFortranString(name, 48);
+  std::string materialName   = CleanFortranString(material, 4);
   
-  G4double length_in = *length *CLHEP::m;
-  G4double aperture_in = *aperture *CLHEP::m;
-  G4double rotation_in = *rotation *CLHEP::rad;
-  G4double offset_in = *x_offset *CLHEP::m;
-  
-  geometry->AddCollimator(CollimatorName, length_in, aperture_in, rotation_in, offset_in, CollimatorMaterialName);
-  */
+  G4double length   = *lengthIn   * CLHEP::m;
+  G4double aperture = *apertureIn * CLHEP::m;
+  G4double rotation = *rotationIn * CLHEP::rad;
+  G4double xOffset  = *xOffsetIn  * CLHEP::m;
+  G4double yOffset  = *yOffsetIn  * CLHEP::m;
+
+  bds->AddLinkCollimator(collimatorName,
+      materialName,length,
+  aperture,
+  rotation,
+  xOffset,
+  yOffset);
 }
 
 extern "C"
 void g4_terminate()
-{;}
+{
+  delete bds;
+  bds = nullptr;
+}
 
 extern "C"
 void g4_set_collimator(char* name)
