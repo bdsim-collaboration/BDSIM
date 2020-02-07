@@ -46,6 +46,8 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 {
   BDSExtent extent = component->GetExtent();
   extent = extent.Tilted(tiltIn); // apply tilt
+  const G4double gap                = 10 * CLHEP::cm;
+  const G4double opaqueBoxThickness = 10 * CLHEP::mm;
   G4String name = component->GetName();
 
   G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
@@ -78,16 +80,16 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   RegisterVisAttributes(obVis);
   
   G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
+  G4double margin = gap + opaqueBoxThickness + ls;
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
-			     0.5 * extent.DX() + gap + opaqueBoxThickness + ls,
-		       	     0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
-			     0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
+			                 0.5 * extent.DX() + margin,
+		       	             0.5 * extent.DY() + margin,
+			                 0.5 * extent.DZ() + margin);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
 					       name + "_container_lv");
   containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  
 
   G4RotationMatrix* rm = new G4RotationMatrix();
   rm->rotateZ(tiltIn);
