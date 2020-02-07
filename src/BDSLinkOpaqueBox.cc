@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -37,14 +38,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
+				   G4double tiltIn,
 				   G4int indexIn):
   BDSGeometryComponent(nullptr, nullptr),
   component(acceleratorComponentIn),
   index(indexIn)
 {
   BDSExtent extent = component->GetExtent();
-  G4double gap = 50*CLHEP::cm;
-  G4double opaqueBoxThickness = 10*CLHEP::mm;
+  extent = extent.Tilted(tiltIn); // apply tilt
   G4String name = component->GetName();
 
   G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
@@ -90,6 +91,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 					       name + "_container_lv");
   containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   
+
+  G4RotationMatrix* rm = new G4RotationMatrix();
+  rm->rotateZ(tiltIn);
   // auto boxPlacement = 
   new G4PVPlacement(nullptr,
 		    G4ThreeVector(),
@@ -101,7 +105,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 		    true);
   
   // auto collimatorPlacement =
-  new G4PVPlacement(nullptr,
+  new G4PVPlacement(rm,
 		    G4ThreeVector(),
 		    component->GetContainerLogicalVolume(),
 		    component->GetName() + "_pv",
@@ -113,7 +117,16 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   outerExtent = BDSExtent(0.5 * extent.DX() + gap + opaqueBoxThickness + ls,
 			  0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
 			  0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
-  
+
+  G4TwoVector xy = (component->Sagitta(),0);
+  xy.rotate(tiltIn);
+  if (BDS::IsFinite(component->GetAngle()))
+    {rm->rotate(-0.5 * component->GetAngle(), G4ThreeVector(0,1,0));}
+  offsetToStart = G4ThreeVector(xy.x(), xy.y(), -0.5*component->GetChordLength());
+  transformToStart = G4Transform3D(rm->inverse(), offsetToStart);
+
+
+
   // build container geometry.
   // One box minus smaller box to make room for collimator.
 

@@ -20,9 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define LINKOPAQUEBOX_H
 
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4Types.hh"
 
-#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 
 class BDSAcceleratorComponent;
@@ -31,28 +31,27 @@ class BDSLinkOpaqueBox: public BDSGeometryComponent
 {
 public:
   BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
+		   G4double tiltIn,
 		   G4int indexIn);
-  virtual ~BDSLinkOpaqueBox() noexcept = default;
+  virtual ~BDSLinkOpaqueBox(){;}
 
-  //! Default constructor
+  /// Default constructor
   BDSLinkOpaqueBox() = delete;
 
   /// Copy constructor
   BDSLinkOpaqueBox(const BDSLinkOpaqueBox &other) = default;
-
-  /// Move constructor
-  //BDSLinkOpaqueBox(BDSLinkOpaqueBox &&other) noexcept = default;
-
   /// Copy assignment operator
   BDSLinkOpaqueBox& operator=(const BDSLinkOpaqueBox &other) = default;
 
-  /// Move assignment operator
-  //BDSLinkOpaqueBox& operator=(BDSLinkOpaqueBox &&other) noexcept = default;
+  inline G4int Index() const {return index;}
+  inline const G4ThreeVector& OffsetToStart()    const {return offsetToStart;}
+  inline const G4Transform3D& TransformToStart() const {return transformToStart;}
 
 private:
   BDSAcceleratorComponent* component;
   G4int index;
-  G4ThreeVector toStart;
+  G4ThreeVector offsetToStart;
+  G4Transform3D transformToStart;
 };
 
 #endif
