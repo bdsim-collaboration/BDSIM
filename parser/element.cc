@@ -193,6 +193,7 @@ void Element::PublishMembers()
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
+  publish("autoColour",          &Element::autoColour);
   publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
@@ -511,7 +512,8 @@ void Element::flush()
   fieldVacuum = "";
   fieldAll    = "";
 
-  geometryFile ="";
+  geometryFile = "";
+  autoColour   = true;
   material="";
   namedVacuumVolumes = "";
   windowmaterial = "vacuum";
