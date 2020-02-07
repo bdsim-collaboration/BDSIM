@@ -22,8 +22,14 @@ New Features
   :code:`Ek0` and :code:`P0` in the case of the optional beam particle if different from
   the design one. This makes input of the desired beam easier but also permits easy specification
   of different particle species beams with the same momentum for example.
-* Either :code:`sigmaE` or :code:`sigmaP` can be used for bunch distributions that use this
-  parameter.
+* Either :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used for bunch distributions
+  that use :code:`sigmaE` nominally.
+* Normalised emittance can now be used for `guasstwiss` and `halo` distributions with the parameters
+  :code:`emitnx` and :code:`emitny`.
+* Loaded geometry can now be auto-coloured by BDSIM whereas before it'd all appear very light grey.
+  The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
+  depending on the state of the material. The parameter :code:`autoColour` can be used with the
+  generic beam line element as well as placements and magnet outer geometry.
 
 V1.4 - 2019 / 10 / ??
 =====================
@@ -245,6 +251,7 @@ General
   abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
 * Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
   equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
+* Descriptions of the elements rmatrix and thinrmatrix have been added to the manual.
   
 Bug Fixes
 ---------
@@ -348,6 +355,11 @@ Bug Fixes
 * Fix survey writing for models with placement beam lines to now write those beam lines in separate files
   named as the survey name appended with the placement name. Previously the survey file was overwritten for
   every secondary beam lines so only the final beam line placement was recorded.
+* Fixed parallel transport integrator for non-paraxial particles (e.g. secondaries from elsewhere) that would
+  be parallel transported to the end of the element regardless of particle entry position or direction of travel.
+  Non-paraxial particles are now tracked through as if the element were a drift. In the case of rmatrix elements,
+  this change does not affect the behaviour of the rmatrix in the centre of the element, only the parallel transport
+  through the thick sections of the element.
 
 Output Changes
 --------------
