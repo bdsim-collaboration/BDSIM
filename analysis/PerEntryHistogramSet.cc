@@ -54,6 +54,7 @@ PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
       auto def   = pSpecDef.second;
       PerEntryHistogram* hist = new PerEntryHistogram(def, chainIn);
       histograms[pSpec] = hist;
+      histogramsByPDGID[pSpec.first] = hist;
       allPerEntryHistograms.push_back(hist); // keep vector for quick iteration each Accumulate() call
       if (pSpec.second == RBDS::SpectraParticles::all)
         {
@@ -81,7 +82,8 @@ void PerEntryHistogramSet::CreatePerEntryHistogram(long long int pdgID)
 
   PerEntryHistogram* hist = new PerEntryHistogram(def, chain);
   hist->AddNEmptyEntries(nEntries); // update to current number of events
-  histograms[pdgID] = hist;
+  histograms[ParticleSpec(pdgID, RBDS::SpectraParticles::all)] = hist;
+  histogramsByPDGID[pdgID] = hist;
   allPerEntryHistograms.push_back(hist);
 }
 
@@ -164,7 +166,7 @@ void PerEntryHistogramSet::Write(TDirectory* dir)
 	} 
 
       for (auto pdgID : desiredPDGIDs)
-	{histograms.at(pdgID)->Write(dir);}
+	{histogramsByPDGID.at(pdgID)->Write(dir);}
     }
 }
 
@@ -174,7 +176,7 @@ std::vector<long long int> PerEntryHistogramSet::TopUtility(const std::set<long 
   // map the pdg id to the total number (inc weight) of that particle histogrammed (per event)
   std::map<long long int, double> integrals;
   for (auto id : s)
-    {integrals[id] = histograms.at(id)->Integral();}
+    {integrals[id] = histogramsByPDGID.at(id)->Integral();}
 
   // reverse the mapping so the pdg ids are sorted by the integral, whilst tolerating
   // multiple integrals of the same value (ie same rate)

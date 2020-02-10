@@ -293,7 +293,7 @@ void Config::ParseSpectraLine(const std::string& line)
   
   Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
-  std::set<long long int> particles = ParseParticles(results[4]);
+  std::set<ParticleSpec> particles = ParseParticles(results[4]);
 
   // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
   // per event so we should warn the user about this as it'll create no histograms
@@ -597,13 +597,13 @@ void Config::ParseBinning(const std::string& binning,
     }
 }
 
-std::set<long long int> Config::ParseParticles(const std::string& word) const
+std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
 {
   // if there are non-digits (more than one together) - will parse later on for 'top10' or 'all' etc
   std::regex anyNonDigit("^[a-zA-Z]+");
   std::smatch matchAnyNonDigit;
   if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
-    {return std::set<long long int>();}
+    {return std::set<ParticleSpec>();}
 
   // some numbers in brackets -> try to split up
   // detect brackets and strip off
@@ -615,7 +615,7 @@ std::set<long long int> Config::ParseParticles(const std::string& word) const
 
   // split up numbers inside brackets on commas
   std::string numbers = match[1];
-  std::set<long long int> result;
+  std::set<ParticleSpec> result;  
   std::regex commas(",");
   // -1 here makes it point to the suffix, ie the word rather than the wspace
   std::sregex_token_iterator iter(numbers.begin(), numbers.end(), commas, -1);
@@ -623,8 +623,24 @@ std::set<long long int> Config::ParseParticles(const std::string& word) const
   for (; iter != end; ++iter)
     {
       std::string res = (*iter).str();
-      long long int id = std::stoll(res);
-      result.insert(id);
+      std::regex selection("^(\\D){1}\\d+");
+      std::smatch matchSelection;
+      if (std::regex_search(res, matchSelection, selection))
+	{
+	  auto keySearch = RBDS::spectraParticlesKeys.find(matchSelection[1]);
+	  auto which = RBDS::SpectraParticles::all;
+	  if (keySearch != RBDS::spectraParticlesKeys.end())
+	    {which = keySearch->second;}
+	  else
+	    {throw std::string("Invalid particle specifier \"" + matchSelection[1].str() + "\"");}
+	  long long int id = std::stoll(matchSelection[2]);
+	  result.insert(ParticleSpec(id, which));
+	}
+      else
+	{
+	  long long int id = std::stoll(res);
+	  result.insert(ParticleSpec(id, RBDS::SpectraParticles::all));
+	}
     }
   return result;
 }

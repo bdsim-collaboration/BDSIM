@@ -109,6 +109,7 @@ protected:
   std::set<long long int>                     ions;
   std::set<long long int>                     nonIons;
   std::map<ParticleSpec, PerEntryHistogram*>  histograms;
+  std::map<long long int, PerEntryHistogram*> histogramsByPDGID;
   std::vector<PerEntryHistogram*>             allPerEntryHistograms;
 
   //ClassDef(PerEntryHistogramSet, 1);

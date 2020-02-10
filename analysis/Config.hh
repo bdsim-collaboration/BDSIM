@@ -219,7 +219,7 @@ public:
 			      int nDim) const;
 
   /// Parser a list of particle PDG IDs into a set.
-  std::set<long long int> ParseParticles(const std::string& word) const;
+  std::set<ParticleSpec> ParseParticles(const std::string& word) const;
   
   /// Parse a settings line in input file and appropriate update member map.
   void ParseSetting(const std::string& line);
