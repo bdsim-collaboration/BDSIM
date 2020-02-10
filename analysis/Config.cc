@@ -78,7 +78,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	    {delete histoDef;}
+	{delete histoDef;}
     }
   for (auto def : eventHistoDefSetsSimple)
     {delete def;}
@@ -599,7 +599,7 @@ void Config::ParseBinning(const std::string& binning,
 
 std::set<long long int> Config::ParseParticles(const std::string& word) const
 {
-  // if there are non-digits - will parse later on for 'top10' or 'all' etc
+  // if there are non-digits (more than one together) - will parse later on for 'top10' or 'all' etc
   std::regex anyNonDigit("^[a-zA-Z]+");
   std::smatch matchAnyNonDigit;
   if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
