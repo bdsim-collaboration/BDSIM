@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramDef.hh"
 #include "HistogramDefSet.hh"
-#include "SpectraParicles.hh"
+#include "SpectraParticles.hh"
 
 #include <map>
 #include <regex>

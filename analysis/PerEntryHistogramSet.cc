@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDefSet.hh"
 #include "PerEntryHistogram.hh"
 #include "PerEntryHistogramSet.hh"
-#include "SpectraParicles.hh"
+#include "SpectraParticles.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 

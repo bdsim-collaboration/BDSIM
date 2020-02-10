@@ -19,6 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ANALYSISSPECTRAPARTICLES_H
 #define ANALYSISSPECTRAPARTICLES_H
 
+#include <map>
+#include <string>
+
 /**
  * @brief Enum for which particles to make a spectra of.
  */
@@ -26,6 +29,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace RBDS
 {
   enum class SpectraParticles {all, primary, secondary};
+
+  static const std::map<std::string, SpectraParticles> spectraParticlesKeys =
+    {{"p", SpectraParticles::primary},
+     {"s", SpectraParticles::secondary}};
+     
 }
 
 typedef std::pair<long long int, RBDS::SpectraParticles> ParticleSpec;
