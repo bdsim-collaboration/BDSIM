@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BinGeneration.hh"
 #include "HistogramAccumulator.hh"
 #include "HistogramDef.hh"
 #include "HistogramDef1D.hh"
@@ -32,11 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-#include <cmath>
-#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 ClassImp(PerEntryHistogram)
 
