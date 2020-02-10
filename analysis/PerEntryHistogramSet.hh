@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define PERENTRYHISTOGRAMSET_H
 #include "HistogramDefSet.hh"
 #include "PerEntryHistogram.hh"
-#include "SpectraParicles.hh"
+#include "SpectraParticles.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 

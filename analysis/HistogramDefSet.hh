@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEFSET_H
 #define HISTOGRAMDEFSET_H
-#include "SpectraParicles.hh"
+#include "SpectraParticles.hh"
 
 #include <map>
 #include <set>

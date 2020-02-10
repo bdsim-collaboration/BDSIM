@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h" // for classdef
 
 #include "RebdsimTypes.hh"
+#include "SpectraParticles.hh"
 
 #include <map>
 #include <set>
