@@ -105,6 +105,15 @@ The analysis configuration file is a simple text file. This can be prepared by c
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
 
+The input text file has roughly two sections: options and histogram definitions.
+
+Examples can be found in:
+
+* `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/rebdsim/`
+
 We strongly recommend browsing the data in a TBrowser beforehand and double-clicking
 the variables. This gives you an idea of the range of the data. See :ref:`basic-data-inspection`
 for more details.
@@ -140,6 +149,11 @@ standard error on the beam, i.e.
 
 where :math:`\sigma` is the standard deviation of the values in that bin for all events.
 
+* When loading the resultant histograms with pybdsim (see :ref:`python-utilities`), functions
+  are provided in the pybdsim.Data.TH1 2 and 3 classes that wrap the ROOT TH1D, TH2D and TH3D
+  classes called :code:`ErrorsToSTD()` and :code:`ErrorsToErrorOnMean()` to easily convert
+  between error on the mean and the standard deviation.
+
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than two events.
 
@@ -158,18 +172,10 @@ See :ref:`numerical-methods` for a mathematical description of how the errors ar
 
 .. _output-analysis-configuration-file:
 	  
-Analysis Configuration File
----------------------------
+Histograms
+----------
 
-The input text file has roughly two sections: options and histogram definitions.
-
-Examples can be found in:
-
-* `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
-* `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
-* `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
-* `<bdsim>/examples/features/analysis/rebdsim/`
-
+Below is a complete of a rebdsim analysis configuration text file.
 ::
 
   Debug                                   True
@@ -192,7 +198,7 @@ Examples can be found in:
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
 * :code:`SimpleHistogramND` defines an N-dimension simple histogram where `N` is 1,2 or 3.
-* :cdoe:`Spectra`, :code:`SpectraTE` and :code:`SpectraRigidity` define a set of 1D histograms
+* :code:`Spectra`, :code:`SpectraTE` and :code:`SpectraRigidity` define a set of 1D histograms
   for various particles for kinetic energy, total energy ("TE") or rigidity respectively. This
   has slightly different syntax as described in :ref:`spectra-definition`.
   
@@ -207,6 +213,15 @@ Examples can be found in:
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get
   the kinetic energy of proton primaries in MeV).
+
+Histogram Selections
+--------------------
+
+A selection is a weight that can be used as a filter to fill only desired information
+into the histogram. Conceptually, we loop over all data **always** and multiple by 0 if we
+want to filter it out.
+
+* If no selection or filtering is desired, use 1.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
 * The selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
@@ -231,26 +246,121 @@ is given in the ROOT TTree class:
 Spectra
 -------
 
-Spectra is a conveninent way to make common energy or rigidity spectra histograms for a variety of
+Spectra is a conveninent way to make common energy or rigidity spectra **1D** histograms for a variety of
 particles types. Normally to make such a plot of the different particles, we are required to make
 1 histogram in energy with a selection of each particle type. This could be done manually as follows:
 ::
 
+   # Object   Tree Name Histogram Name  # of Bins Binning Variable       Selection
    Histogram1D Event. Protons           {100} {1:10} samplerName.energy samplerName.partID==2212
    Histogram1D Event. ProtonsPrimary    {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID==0
    Histogram1D Event. ProtonsSecondary  {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID>0
-   Histogram1D Event.
-   
+   Histogram1D Event. Neutrons          {100} {1:10} samplerName.energy samplerName.partID==2112
+   Histgoram1D Event. Electrons         {100} {1:10} samplerName.energy samplerName.partID==11
+
+This can be equivalently achieved with the Spectra command:
+::
+
+   #Object    Sampler Name # of Bins  Binning  Particles                  Selection
+   SpectraTE  samplerName   100       {1:10}   {2212,p2212,s2212,2112,11} 1
 
 
+where `samplerName` is the name of the sampler in the data to be analysed. Here, the histograms
+in total energy are created with 100 bins from 1 to 10 GeV for all protons, primary protons,
+secondary protons, neutrons and electrons.
+
+.. note:: The weight variable is always included in the spectra histograms.
+
+The required columns are:
+
++------------------------+--------------------------------------------+
+| **Column**             | **Description**                            |
++========================+============================================+
+| Command                | Which type of spectra to make              |
++------------------------+--------------------------------------------+
+| Sampler name           | Name of sampler in data to be analysed     |
++------------------------+--------------------------------------------+
+| Number of bins         | Number of bins in each histogram           |
++------------------------+--------------------------------------------+
+| Binning                | The binning range                          |
++------------------------+--------------------------------------------+
+| Paricle specification  | A list of particles - see below            |
++------------------------+--------------------------------------------+
+| Selection              | '1' or a filter as in a regular histogram  |
++------------------------+--------------------------------------------+
 
 These are made by default on a per-event basis, but can be made a set of simple
-histograms also. The set of histograms is always made on the Event tree in the BDSIM output data
-and uses kinetic energy by default. Note that kinetic energy is not stored by default in the output
+histograms also by prefixing Spectra with "Simple". The set of histograms is always made on the
+Event tree in the BDSIM output data and uses kinetic energy by default. Note that kinetic
+energy is not stored by default in the output
 and the option :code:`option, storeSamplerKineticEnergy=1;` should be used at simulation time.
 Alternatively, the suffix "TE" can be used to use the total energy variable "energy" in the data.
 
-A spectra (set
+Spectra Commands
+----------------
+
+The following commands are accepted.
+
++------------------------+-------------------------------------------+
+| **Command**            | **Description**                           |
++========================+===========================================+
+| Spectra                | Per-event histograms in kinetic energy    |
++------------------------+-------------------------------------------+
+| SpectraTE              | Per-event histograms in total energy      |
++------------------------+-------------------------------------------+
+| SpectraRigidity        | Per-event histograms in rigidity          |
++------------------------+-------------------------------------------+
+| SimpleSpectra          | Total histograms in kinetic energy        |
++------------------------+-------------------------------------------+
+| SimpleSpectraTE        | Total histograms in total energy          |
++------------------------+-------------------------------------------+
+| SimpleSpectraRigidity  | Total histograms in rigidity              |
++------------------------+-------------------------------------------+
+
+Each of these can be suffixed with "Log" for logarithmic binning. Note as with the Histogram
+command, if logarithmic binning is used, the bin limits should be the power of 10 desired. e.g.
+::
+
+   SpectraLog  samplerName   100 {-2:4}   {2212,p2212,s2212,2112,11} 1
+
+To make a set of logarithmically binned histograms from :math:`10^{-2}` GeV to :math:`10^{4}` GeV.
+
+Spectra Particle Specification
+------------------------------
+
+Paricles can be specified in several ways:
+
++-------------------+-------------------------------------------------------------------------+
+| **Example**       | **Description**                                                         |
++===================+=========================================================================+
+| {11,-11,22,2212}  | Histograms are made for the specified comma-spearated PDG IDs. The sign |
+|                   | of each is observed, so -11 is not the same as 11.                      |
++-------------------+-------------------------------------------------------------------------+
+| {particles}       | A histogram for every unique particle that is not an ion encountered in |
+|                   | the data is made.                                                       |
++-------------------+-------------------------------------------------------------------------+
+| {ions}            | A histogram for every unique ion encountered in the data is made.       |
++-------------------+-------------------------------------------------------------------------+
+| {all}             | A histogram for every unique particle or ion encountered in the data is |
+|                   | made. Caution - this could be a lot.                                    |
++-------------------+-------------------------------------------------------------------------+
+| {top10}           | A histogram is made for every unique particle and ion encountered in    |
+|                   | data but only the top N specified are saved as judged by the integral   |
+|                   | of each histogram including weights. Here 10 is used but any positive   |
+|                   | number above 1 can be used e.g. Top5 is valid.                          |
++-------------------+-------------------------------------------------------------------------+
+| {p11,s11,-11,22}  | The letter 'p' or 's' can be prefixed to a PDG ID to specify primary    |
+|                   | or secondary versions of that particle species. This can be applied to  |
+|                   | any PDG ID however, it only makes sense for particle(s) in the beam     |
+|                   | definition (or user bunch file or event generator file).                |
++-------------------+-------------------------------------------------------------------------+
+| {top10ions}       | Similar to top10 but only for ions. The number may be a positive        |
+|                   | integer greater than 1.                                                 |
++-------------------+-------------------------------------------------------------------------+
+| {top10particles}  | Similar to top10 but only for non-ions.                                 |
++-------------------+-------------------------------------------------------------------------+
+
+.. note:: No white space should be in the particle specification.
 
 Logarithmic Binning
 -------------------
@@ -452,7 +562,7 @@ Low-Data Volume
 ---------------
 
 If the overall output data volume is relatively low, we recommend analysing all of the
-output files at once with `rebdsim`. In the `Analysis Configuration File`_ file,
+output files at once with `rebdsim`. In the analysis configuration file,
 the `InputFilePath` should be specified as `"*.root"` to match all the root files
 in the current directory.
 
