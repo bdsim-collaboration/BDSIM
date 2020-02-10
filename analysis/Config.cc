@@ -623,7 +623,7 @@ std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
   for (; iter != end; ++iter)
     {
       std::string res = (*iter).str();
-      std::regex selection("^(\\D){1}\\d+");
+      std::regex selection("^([a-zA-Z]){1}(\\d+)");
       std::smatch matchSelection;
       if (std::regex_search(res, matchSelection, selection))
 	{
@@ -633,13 +633,23 @@ std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
 	    {which = keySearch->second;}
 	  else
 	    {throw std::string("Invalid particle specifier \"" + matchSelection[1].str() + "\"");}
-	  long long int id = std::stoll(matchSelection[2]);
-	  result.insert(ParticleSpec(id, which));
+        try
+          {
+            long long int id = std::stoll(matchSelection[2].str());
+            result.insert(ParticleSpec(id, which));
+          }
+        catch (const std::exception& e)
+          {throw std::string(e.what());}
 	}
       else
 	{
-	  long long int id = std::stoll(res);
-	  result.insert(ParticleSpec(id, RBDS::SpectraParticles::all));
+      try
+        {
+          long long int id = std::stoll(res);
+          result.insert(ParticleSpec(id, RBDS::SpectraParticles::all));
+        }
+      catch (const std::exception& e)
+        {throw std::string(e.what());}
 	}
     }
   return result;
