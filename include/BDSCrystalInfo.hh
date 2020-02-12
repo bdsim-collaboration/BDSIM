@@ -44,7 +44,7 @@ class BDSCrystalInfo
 public:
   /// Constructor to assign all members at once.
   BDSCrystalInfo(G4Material*    materialIn,
-		 G4String       dataIn,
+		 const G4String& dataIn,
 		 BDSCrystalType crystalTypeIn,
 		 G4double       lengthXIn,
 		 G4double       lengthYIn,
