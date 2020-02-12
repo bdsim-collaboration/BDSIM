@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 BDSCrystalInfo::BDSCrystalInfo(G4Material*    materialIn,
-			       G4String       dataIn,
+			       const G4String& dataIn,
 			       BDSCrystalType crystalTypeIn,
 			       G4double       lengthXIn,
 			       G4double       lengthYIn,
