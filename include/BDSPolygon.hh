@@ -43,22 +43,29 @@ public:
   /// Accessor.
   const std::vector<G4TwoVector>& Points() const {return points;}
   
-  /// Return true if point inside this polygon.
+  /// Return true if point inside this polygon. This assumes linear interpolation between
+  /// points and ignores the interpolation type member variable. This is for ease of calculating
+  /// normals.
   G4bool Inside(const G4TwoVector& point) const;
-
+  
   /// Return true if polygon is completely contained inside this one.
   /// If any lines intersect, this will return false.
   G4bool Inside(const BDSPolygon& other) const;
 
+  /// What type of interpolation to use between points (e.g. linear, cubic).
+  BDSInterpolatorType Interpolation() const {return interpolation;}
+  
+  /// Access the extent.
+  BDSExtent Extent() const;
+
   /// Return true if any segments that make this polyon intersect with
-  /// any others.
-  G4bool SelfIntersecting(G4int *const indexOfIntersectionA = nullptr,
-			  G4int *const indexOfIntersectionB = nullptr) const;
+  /// any others. Optional arguments for indices of lines that intersect.
+  G4bool SelfIntersecting(G4int* const indexOfIntersectionA = nullptr,
+			  G4int* const indexOfIntersectionB = nullptr) const;
   
   /// Return a copy with a tilt and offset applied.
   BDSPolygon ApplyTiltOffset(const BDSTiltOffset& to) const;
 
-  BDSExtent Extent() const;
 
   ///@{ Iterator mechanics.
   typedef std::vector<G4TwoVector>::iterator               iterator;
