@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSPOLYGON_H
 #define BDSPOLYGON_H
+#include "BDSInterpolatorType.hh"
 
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
@@ -66,6 +67,16 @@ public:
   /// Return a copy with a tilt and offset applied.
   BDSPolygon ApplyTiltOffset(const BDSTiltOffset& to) const;
 
+  /// Calculate the intersection of other and this polygons. Throws BDSException
+  /// if no valid intersection found - ie shapes not overlapping.
+  BDSPolygon Intersection(const BDSPolygon& other) const;
+
+  /// Calculate subtraction of other from this polygon. This may produce more than
+  /// one resultant polygon, therefore a vector is returned.
+  std::vector<BDSPolygon*> Subtraction(const BDSPolygon& other) const;
+
+  /// Calculate the union of 'other' polygon with this one and return as a copy.
+  BDSPolygon Union(const BDSPolygon& other) const;
 
   ///@{ Iterator mechanics.
   typedef std::vector<G4TwoVector>::iterator               iterator;
@@ -101,10 +112,6 @@ public:
 				 const G4TwoVector& q2,
 				 G4TwoVector* intersectionPoint = nullptr);
 
-  BDSPolygon Union(const BDSPolygon& other) const;
-  BDSPolygon Subtraction(const BDSPolygon& other) const;
-  BDSPolygon Intersection(const BDSPolygon& other) const;
-
 private:
   BDSPolygon() = delete;
   
@@ -112,6 +119,9 @@ private:
 
   /// Cache of extent if calculated - initialised on first call to Extent().
   mutable BDSExtent* extent;
+
+  /// Which inteprolation scheme to use if interpolating between points.
+  BDSInterpolatorType interpolation;
 };
 
 #endif

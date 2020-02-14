@@ -27,11 +27,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 BDSPolygon::BDSPolygon(const std::vector<G4TwoVector>& pointsIn):
   points(pointsIn),
-  extent(nullptr)
+  extent(nullptr),
+  interpolation(BDSInterpolatorType::linear1d)
 {
   if (points.size() < 3)
     {throw BDSException(__METHOD_NAME__, "polygon must have at least 3 x,y points to be valid.");}
@@ -72,8 +74,8 @@ G4bool BDSPolygon::Inside(const BDSPolygon& other) const
   return result;
 }
 
-G4bool BDSPolygon::SelfIntersecting(G4int *const indexOfIntersectionA,
-				    G4int *const indexOfIntersectionB) const
+G4bool BDSPolygon::SelfIntersecting(G4int* const indexOfIntersectionA,
+				    G4int* const indexOfIntersectionB) const
 {
   G4bool result = false;
   for (G4int i = 0; i < (G4int)size() - 1; i++)
@@ -172,10 +174,14 @@ G4int BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
 }
 
 BDSPolygon BDSPolygon::Union(const BDSPolygon& other) const
-{;}
+{
+  return BDSPolygon(*this);
+}
 
-BDSPolygon BDSPolygon::Subtraction(const BDSPolygon& other) const
-{;}
+std::vector<BDSPolygon*> BDSPolygon::Subtraction(const BDSPolygon& other) const
+{return std::vector<BDSPolygon*>();}
 
 BDSPolygon BDSPolygon::Intersection(const BDSPolygon& other) const
-{;}
+{
+  return BDSPolygon(*this);
+}
