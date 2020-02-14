@@ -44,6 +44,15 @@ BDSPolygon::~BDSPolygon()
   delete extent;
 }
 
+BDSPolygon::BDSPolygon(const BDSPolygon& other):
+  points(other.points),
+  extent(nullptr),
+  interpolation(other.interpolation)
+{
+  if (other.extent)
+    {extent = new BDSExtent(*other.extent);}
+}
+
 G4bool BDSPolygon::Inside(const G4TwoVector& point) const
 {
   G4bool result = true;

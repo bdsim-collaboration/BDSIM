@@ -40,6 +40,8 @@ class BDSPolygon
 public:
   BDSPolygon(const std::vector<G4TwoVector>& pointsIn);
   ~BDSPolygon();
+  /// Implement the copy constructor because we may have an extent object.
+  BDSPolygon(const BDSPolygon& other);
 
   /// Accessor.
   const std::vector<G4TwoVector>& Points() const {return points;}
