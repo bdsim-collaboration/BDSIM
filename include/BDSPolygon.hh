@@ -94,6 +94,10 @@ public:
 				 const G4TwoVector& q2,
 				 G4TwoVector* intersectionPoint = nullptr);
 
+  BDSPolygon Union(const BDSPolygon& other) const;
+  BDSPolygon Subtraction(const BDSPolygon& other) const;
+  BDSPolygon Intersection(const BDSPolygon& other) const;
+
 private:
   BDSPolygon() = delete;
   

@@ -170,3 +170,12 @@ G4int BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
   // lines are the same
   return 2;
 }
+
+BDSPolygon BDSPolygon::Union(const BDSPolygon& other) const
+{;}
+
+BDSPolygon BDSPolygon::Subtraction(const BDSPolygon& other) const
+{;}
+
+BDSPolygon BDSPolygon::Intersection(const BDSPolygon& other) const
+{;}
