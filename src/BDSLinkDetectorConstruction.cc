@@ -101,22 +101,13 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 							opaqueBox->GetExtent().DZ());
       
       linkBeamline->AddComponent(comp);
-
-      // The placement transform refers to centre of the collimators,
-      // so subtract half the collimator length (z) to get to the
-      // opening of the collimator.
-      auto it = linkBeamline->end();
-      it--;
-      G4Transform3D* placementTransform = (*it)->GetPlacementTransform();
-      BDSExtent componentExtent = component->GetExtent();
-      G4double componentHalfLength = componentExtent.DZ() / 2.0;
-      auto entranceOffset = G4Translate3D(0.0, 0.0, -componentHalfLength);
-      G4Transform3D openingTransform = entranceOffset * (*placementTransform);
-      collimatorTransforms.push_back(openingTransform);
     }
 
-  G4ThreeVector worldExtentAbs = linkBeamline->GetExtentGlobal().GetMaximumExtentAbsolute();
+  BDSExtentGlobal we = linkBeamline->GetExtentGlobal();
+  we.ExpandToEncompass(BDSExtentGlobal(BDSExtent(10*CLHEP::m, 10*CLHEP::m, 10*CLHEP::m))); // minimum size
+  G4ThreeVector worldExtentAbs = we.GetMaximumExtentAbsolute();
   worldExtentAbs *= 1.2;
+
   worldSolid = new G4Box("world_solid",
 				worldExtentAbs.x(),
 				worldExtentAbs.y(),
@@ -147,13 +138,28 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       G4int copyNumber = element->GetCopyNo();
       // auto pv = 
-      new G4PVPlacement(*placementTransform,                  // placement transform
-			placementName,                        // placement name
-			element->GetContainerLogicalVolume(), // volume to be placed
-			worldPV,                          // volume to place it in
-			false,                                // no boolean operation
-			copyNumber,                           // copy number
-			true);                       // overlap checking
+      new G4PVPlacement(*placementTransform,
+			placementName,
+			element->GetContainerLogicalVolume(),
+			worldPV,
+			false,
+			copyNumber,
+			true);
+
+      BDSLinkOpaqueBox* el = dynamic_cast<BDSLinkOpaqueBox*>(element->GetAcceleratorComponent());
+      G4Transform3D elCentreToStart = el->TransformToStart();
+      G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
+      // The placement transform refers to centre of the collimators,
+      // so subtract half the collimator length (z) to get to the
+      // opening of the collimator.
+      auto it = linkBeamline->end();
+      it--;
+      G4Transform3D* placementTransform = (*it)->GetPlacementTransform();
+      BDSExtent componentExtent = component->GetExtent();
+      G4double componentHalfLength = componentExtent.DZ() / 2.0;
+      auto entranceOffset = G4Translate3D(0.0, 0.0, -componentHalfLength);
+      G4Transform3D openingTransform = entranceOffset * (*placementTransform);
+      collimatorTransforms.push_back(openingTransform);
     }
 
   return worldPV;
