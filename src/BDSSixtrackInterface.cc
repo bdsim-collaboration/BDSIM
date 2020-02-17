@@ -93,11 +93,12 @@ void g4_add_collimator(char*   name,
   G4double yOffset  = *yOffsetIn  * CLHEP::m;
 
   bds->AddLinkCollimator(collimatorName,
-      materialName,length,
-  aperture,
-  rotation,
-  xOffset,
-  yOffset);
+			 materialName,
+			 length,
+			 aperture,
+			 rotation,
+			 xOffset,
+			 yOffset);
 }
 
 extern "C"
@@ -296,19 +297,17 @@ void g4_collimate_return(int*     /*j*/,
 
 std::string CleanFortranString(char* str, size_t count)
 {
-  //Fortran string nightmares
-  std::string Whitespace(" \t\n\r");
+  // Fortran string nightmares
+  std::string whitespace(" \t\n\r");
   std::string sstring(str,count);
   
-  size_t lpos = sstring.find_last_not_of(Whitespace);
-  if(lpos!=std::string::npos)
-    {
-	    sstring.erase(lpos+1);
-	}
+  size_t lpos = sstring.find_last_not_of(whitespace);
+  if (lpos != std::string::npos)
+    {sstring.erase(lpos+1);}
 
-	std::transform(sstring.begin(), sstring.end(), sstring.begin(), ::toupper);
-	//Fortran string happy place
-	return sstring;
+  std::transform(sstring.begin(), sstring.end(), sstring.begin(), ::toupper);
+  // Fortran string happy place
+  return sstring;
 }
 
 extern "C"
