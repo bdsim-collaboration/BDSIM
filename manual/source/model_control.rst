@@ -1149,9 +1149,6 @@ described in :ref:`tunnel-geometry`.
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
 |                                  | the beam pipe records energy loss                     |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveVacuum                  | Whether energy deposition in the residual vacuum gas  |
-|                                  | is recorded.                                          |
-+----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
