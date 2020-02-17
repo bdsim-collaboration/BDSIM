@@ -82,9 +82,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
   G4double margin = gap + opaqueBoxThickness + ls;
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
-			                 0.5 * extent.DX() + margin,
-		       	             0.5 * extent.DY() + margin,
-			                 0.5 * extent.DZ() + margin);
+			     0.5 * extent.DX() + margin,
+			     0.5 * extent.DY() + margin,
+			     0.5 * extent.DZ() + margin);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
@@ -125,16 +125,6 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   transformToStart = G4Transform3D(rm->inverse(), offsetToStart);
 
 
-
-  // build container geometry.
-  // One box minus smaller box to make room for collimator.
-
-  // Make a container of vacuum
-
-  // place component in box.
   // place sampler / output plane in box with index.
 
-  // Update containerSolid and containerLV of BDSGeometryComponent.
-  // Update extents of BDSGeometryComponent.
-  // register daughters BDSGeometryComponent.
 }

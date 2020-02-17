@@ -109,14 +109,14 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   worldExtentAbs *= 1.2;
 
   worldSolid = new G4Box("world_solid",
-				worldExtentAbs.x(),
-				worldExtentAbs.y(),
-				worldExtentAbs.z());
+			 worldExtentAbs.x(),
+			 worldExtentAbs.y(),
+			 worldExtentAbs.z());
   worldExtent = BDSExtent(worldExtentAbs);
   
   G4LogicalVolume* worldLV = new G4LogicalVolume(worldSolid,
-				     BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
-				     "world_lv");
+						 BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
+						 "world_lv");
 
   G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
@@ -132,6 +132,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 				   0,
 				   true);
 
+  // place any defined link elements in input
   for (auto element : *linkBeamline)
     {
       G4String placementName = element->GetPlacementName() + "_pv";
@@ -152,6 +153,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       // The placement transform refers to centre of the collimators,
       // so subtract half the collimator length (z) to get to the
       // opening of the collimator.
+      /*
       auto it = linkBeamline->end();
       it--;
       G4Transform3D* placementTransform = (*it)->GetPlacementTransform();
@@ -160,18 +162,19 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       auto entranceOffset = G4Translate3D(0.0, 0.0, -componentHalfLength);
       G4Transform3D openingTransform = entranceOffset * (*placementTransform);
       collimatorTransforms.push_back(openingTransform);
+      */
     }
 
   return worldPV;
 }
 
 void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimatorName,
-                  const std::string& materialName,
-                  G4double length,
-                  G4double aperture,
-                  G4double rotation,
-                  G4double xOffset,
-                  G4double yOffset)
+						    const std::string& materialName,
+						    G4double length,
+						    G4double aperture,
+						    G4double rotation,
+						    G4double xOffset,
+						    G4double yOffset)
 {
   // build component
   // wrap in box
