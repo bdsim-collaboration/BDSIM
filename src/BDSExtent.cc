@@ -222,3 +222,14 @@ BDSExtent BDSExtent::ExpandTransverselyBy(G4double margin) const
   result.extYPos += margin;
   return result;
 }
+
+void BDSExtent::ExpandToEncompass(const BDSExtent& other)
+{
+  BDSExtent result = BDSExtent(*this);
+  result.extXNeg = std::min(extXNeg, other.extXNeg);
+  result.extYNeg = std::min(extYNeg, other.extYNeg);
+  result.extZNeg = std::min(extZNeg, other.extZNeg);
+  result.extXPos = std::max(extXPos, other.extXPos);
+  result.extYPos = std::max(extYPos, other.extYPos);
+  result.extZPos = std::max(extZPos, other.extZPos);
+}
