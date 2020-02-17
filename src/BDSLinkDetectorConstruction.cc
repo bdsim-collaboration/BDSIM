@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkOpaqueBox.hh"
+#include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSParser.hh"
@@ -45,11 +46,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSParticleDefinition;
 
 BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
-worldSolid(nullptr),
-linkBeamline(nullptr)
-{;}
+  worldSolid(nullptr),
+  linkBeamline(nullptr),
+  linkRegistry(nullptr)
+{
+  linkRegistry = new BDSLinkRegistry();
+}
 
-BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction(){;}
+BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction()
+{
+  delete linkBeamline;
+  delete linkRegistry;
+}
 
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 {
@@ -150,6 +158,9 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       BDSLinkOpaqueBox* el = dynamic_cast<BDSLinkOpaqueBox*>(element->GetAcceleratorComponent());
       G4Transform3D elCentreToStart = el->TransformToStart();
       G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
+      linkRegistry->Register(el, globalToStart);
+
+      
       // The placement transform refers to centre of the collimators,
       // so subtract half the collimator length (z) to get to the
       // opening of the collimator.
@@ -181,6 +192,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   // add to beam line
   // update world extents and world solid
   // place that one element
+
+  //linkRegistry->Register(el, globalToStart);
 
 }
 

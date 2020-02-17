@@ -47,6 +47,8 @@ public:
   inline const G4ThreeVector& OffsetToStart()    const {return offsetToStart;}
   inline const G4Transform3D& TransformToStart() const {return transformToStart;}
 
+  void PlaceOutputSampler(G4int ID){;}
+
 private:
   BDSAcceleratorComponent* component;
   G4int index;

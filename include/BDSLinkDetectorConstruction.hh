@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 class BDSBeamline;
+class BDSLinkRegistry;
 class G4Box;
 class G4VPhysicalVolume;
 
@@ -50,6 +51,7 @@ private:
   G4Box* worldSolid;
   BDSExtent worldExtent;
   BDSBeamline* linkBeamline;
+  BDSLinkRegistry* linkRegistry;
 
   /// Position of the centre of the collimator entrances in global coordinates.
   std::vector<G4Transform3D> collimatorTransforms;
