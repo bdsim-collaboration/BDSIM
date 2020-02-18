@@ -45,12 +45,16 @@ public:
   G4Transform3D Transform(const std::string& name) const;
   G4Transform3D Transform(G4int ID) const;
 
+  G4Transform3D TransformInverse(const std::string& name) const;
+  G4Transform3D TransformInverse(G4int ID) const;
+
 private:
 
   struct LinkEntry
   {
     BDSLinkOpaqueBox* component;
     G4Transform3D     transform;
+    G4Transform3D     transformInverse;
     G4int             id;
   };
 
