@@ -44,11 +44,10 @@ public:
   /// Copy assignment operator
   BDSLinkOpaqueBox& operator=(const BDSLinkOpaqueBox &other) = default;
 
-  inline G4int Index() const {return index;}
   inline const G4ThreeVector& OffsetToStart()    const {return offsetToStart;}
   inline const G4Transform3D& TransformToStart() const {return transformToStart;}
 
-  void PlaceOutputSampler(G4int ID){;}
+  void PlaceOutputSampler(G4int ID);
 
 private:
   BDSAcceleratorComponent* component;
