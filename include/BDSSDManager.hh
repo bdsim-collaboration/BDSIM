@@ -31,6 +31,7 @@ class BDSSDEnergyDeposition;
 class BDSSDEnergyDepositionGlobal;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
+class BDSSDSamplerLink;
 class BDSSDTerminator;
 class BDSSDThinThing;
 class BDSSDVolumeExit;
@@ -76,6 +77,9 @@ public:
 
   /// SD for samplers (cylinder type).
   inline BDSSDSampler* SamplerCylinder() const {return samplerCylinder;}
+
+  /// SD for link samplers.
+  inline BDSSDSamplerLink* SamplerLink() const {return samplerLink;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
@@ -140,6 +144,7 @@ private:
   /// @{ SD instance.
   BDSSDSampler*                samplerPlane;
   BDSSDSampler*                samplerCylinder;
+  BDSSDSamplerLink*            samplerLink;
   BDSSDTerminator*             terminator;
   BDSSDEnergyDeposition*       energyDeposition;
   BDSSDEnergyDeposition*       energyDepositionFull;
