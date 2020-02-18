@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
+#include "BDSSDSamplerLink.hh"
 #include "BDSSDThinThing.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
@@ -130,6 +131,9 @@ BDSSDManager::BDSSDManager()
   // Sampler cylindrical
   samplerCylinder = new BDSSDSampler("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
+
+  samplerLink = new BDSSDSamplerLink("plane");
+  SDMan->AddNewDetector(samplerLink);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator = new BDSSDTerminator("terminator");
