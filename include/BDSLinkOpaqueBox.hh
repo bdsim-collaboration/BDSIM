@@ -40,9 +40,9 @@ public:
   BDSLinkOpaqueBox() = delete;
 
   /// Copy constructor
-  BDSLinkOpaqueBox(const BDSLinkOpaqueBox &other) = default;
+  BDSLinkOpaqueBox(const BDSLinkOpaqueBox &other) = delete;
   /// Copy assignment operator
-  BDSLinkOpaqueBox& operator=(const BDSLinkOpaqueBox &other) = default;
+  BDSLinkOpaqueBox& operator=(const BDSLinkOpaqueBox &other) = delete;
 
   inline const G4ThreeVector& OffsetToStart()    const {return offsetToStart;}
   inline const G4Transform3D& TransformToStart() const {return transformToStart;}
