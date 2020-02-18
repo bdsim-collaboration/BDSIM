@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSBeamline.hh"
 #include "BDSColours.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkOpaqueBox.hh"
@@ -30,12 +32,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
+#include "G4TwoVector.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -43,7 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
 				   G4double tiltIn,
-				   G4double outputSamplerRadiusIn)
+				   G4double outputSamplerRadiusIn):
   BDSGeometryComponent(nullptr, nullptr),
   component(acceleratorComponentIn),
   tilt(tiltIn),
@@ -131,7 +135,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 			  0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
 			  0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
 
-  G4RotationMatrix* rm2 = G4RotationMatrix();
+  G4RotationMatrix* rm2 = new G4RotationMatrix();
   G4TwoVector xy = G4TwoVector(component->Sagitta(),0);
   if (BDS::IsFinite(tilt))
     {xy.rotate(tilt);}
@@ -148,22 +152,31 @@ BDSLinkOpaqueBox::~BDSLinkOpaqueBox()
 
 void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
 {  
-  G4String samplerName = name + "_sampler";
-  BDSApertureInfo ap = BDSApertureInfo(BDSApertureType::circular, outputSamplerRadius);
+  G4String samplerName = component->GetName() + "_sampler";
+  BDSApertureType apt = BDSApertureType::circular;
+  BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
   sampler = new BDSSamplerCustom(samplerName, ap);
 
   G4double pl = BDSBeamline::PaddingLength();
-  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl)
+  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl);
   G4RotationMatrix* rm = nullptr;
   if (BDS::IsFinite(component->GetAngle()))
     {
       rm = new G4RotationMatrix();
-      rm->rotateY(-0.5 * component->GetAngle());
+      rm->rotateY(0.5 * component->GetAngle()); // rotate to output face
       RegisterRotationMatrix(rm);
+      position = G4ThreeVector(component->Sagitta(), 0, 0.5*component->GetChordLength());
+      G4ThreeVector gap = G4ThreeVector(0,0,pl);
+      position += gap.transform(*rm);
     }
+  // if there's finite angle, we ensure (in constructor) there's no tilt
   
   new G4PVPlacement(rm,
-		    
-
-
+      position,
+      sampler->GetContainerLogicalVolume(),
+      samplerName + "_pv",
+      containerLogicalVolume,
+      false,
+      ID,
+      true);
 }
