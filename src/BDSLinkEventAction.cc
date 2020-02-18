@@ -73,30 +73,26 @@ void BDSLinkEventAction::BeginOfEventAction(const G4Event* evt)
 
   // number feedback
   if (currentEventIndex % printModulo == 0)
-    {G4cout << "---> Begin of event: " << event_number << G4endl;}
+    {G4cout << "---> Begin of event: " << currentEventIndex << G4endl;}
   if (verboseEventBDSIM) // always print this out
-    {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
+    {G4cout << __METHOD_NAME__ << "event #" << currentEventIndex << G4endl;}
 
   // cache hit collection IDs for quicker access
-  if (samplerCollID_plane < 0)
+  if (collIDSamplerLink < 0)
     {// if one is -1 then all need initialised.
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
-      collIDLinkSampler = g4SDMan->GetCollectionID(bdsSDMan->SamplerLink()->GetName());
+      collIDSamplerLink = g4SDMan->GetCollectionID(bdsSDMan->SamplerLink()->GetName());
     }
 }
 
 void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 {
-  G4bool verboseThisEvent = verboseEventBDSIM && BDS::VerboseThisEvent(currentEventIndex, verboseEventStart, verboseEventStop);
-  if (verboseThisEvent)
-    {eventInfo->Print();}
-
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
   
   typedef BDSHitsCollectionSamplerLink slhc;
-  slhc samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
+  slhc* samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
 
   /*
   output->FillEvent(eventInfo,

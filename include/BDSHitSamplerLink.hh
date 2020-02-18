@@ -65,7 +65,7 @@ private:
   BDSHitSamplerLink() = delete; ///< No default constructor.
 };
 
-typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSampmerLink;
+typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
 extern G4Allocator<BDSHitSamplerLink> BDSAllocatorSamplerLink;
 
 inline void* BDSHitSamplerLink::operator new(size_t)
