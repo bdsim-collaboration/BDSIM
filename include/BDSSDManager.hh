@@ -29,6 +29,7 @@ class BDSSDApertureImpacts;
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSSDEnergyDepositionGlobal;
+class BDSLinkRegistry;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDSamplerLink;
@@ -131,6 +132,8 @@ public:
 
   /// SD for wire scanner wires that is a composite of thin things + energy deposition full.
   inline BDSMultiSensitiveDetectorOrdered* WireComplete() const {return wireCompleteSD;}
+
+  void SetLinkRegistry(BDSLinkRegistry* registry);
 
 private:
   /// Private default constructor for singleton.

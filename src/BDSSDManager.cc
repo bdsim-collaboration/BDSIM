@@ -43,6 +43,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MultiSensitiveDetector.hh"
 #endif
 
+class BDSLinkRegistry;
+
 BDSSDManager* BDSSDManager::instance = nullptr;
 
 BDSSDManager* BDSSDManager::Instance()
@@ -359,4 +361,10 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
       {result = nullptr; break;}
     }
   return result;
+}
+
+void BDSSDManager::SetLinkRegistry(BDSLinkRegistry* registry)
+{
+  if (samplerLink)
+    {samplerLink->SetLinkRegistry(registry);}
 }

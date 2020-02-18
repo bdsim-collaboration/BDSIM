@@ -22,10 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSamplerLink.hh"
 #include "BDSSensitiveDetector.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "G4Types.hh"
 
-class BDSGlobalConstants;
-class BDSSamplerLinkRegistry;
+class BDSLinkRegistry;
 
 class G4Step;
 class G4HCofThisEvent;
@@ -58,6 +57,9 @@ public:
   /// Provide access to last hit.
   virtual G4VHit* last() const;
 
+  /// Update cached pointer of link registry.
+  inline void SetLinkRegistry(BDSLinkRegistry* registryIn) {registry = registryIn;}
+
 private:
   /// The hits collection for this sensitive detector class that's owned by each instance.
   BDSHitsCollectionSamplerLink* samplerLinkCollection;
@@ -68,13 +70,10 @@ private:
   /// Hits collection ID - an integer look up for the hits collection
   /// provided by G4SDManager (a registry) that is given to the
   /// G4HCofThisEvent (Hits collection of the event).
-  int itsHCID;
+  G4int itsHCID;
   
   /// Cached pointer to registry as accessed many times
-  BDSSamplerLinkRegistry* registry;
-
-  /// Cached pointer to global constants as accessed many times
-  BDSGlobalConstants* globals;
+  BDSLinkRegistry* registry;
 };
 
 #endif
