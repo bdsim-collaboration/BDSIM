@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSamplerLink.hh"
 
 #include "G4Allocator.hh"
-#incldue "G4Types.hh"
+#include "G4Types.hh"
 
 G4Allocator<BDSHitSamplerLink> BDSAllocatorSamplerLink;
 
