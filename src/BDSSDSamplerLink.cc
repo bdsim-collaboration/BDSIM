@@ -16,16 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSHitSamplerLink.hh"
+#include "BDSLinkRegistry.hh"
 #include "BDSParticleCoordsFull.hh"
-#include "BDSPhysicalConstants.hh"
-#include "BDSSamplerLinkRegistry.hh"
 #include "BDSSDSamplerLink.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4DynamicParticle.hh"
 #include "G4ParticleDefinition.hh"
@@ -35,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4TouchableHistory.hh"
 #include "G4Track.hh"
+#include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
@@ -45,8 +43,7 @@ BDSSDSamplerLink::BDSSDSamplerLink(G4String name):
   samplerLinkCollection(nullptr),
   itsCollectionName(name),
   itsHCID(-1),
-  registry(nullptr),
-  globals(nullptr)
+  registry(nullptr)
 {
   collectionName.insert(name);
 }
@@ -63,9 +60,6 @@ void BDSSDSamplerLink::Initialize(G4HCofThisEvent* HCE)
   if (itsHCID < 0)
     {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(samplerLinkCollection);}
   HCE->AddHitsCollection(itsHCID,samplerLinkCollection);
-
-  registry = BDSSamplerLinkRegistry::Instance(); // cache pointer to registry
-  globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
 G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*/)
@@ -82,7 +76,6 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   G4double T        = track->GetGlobalTime();        // time since beginning of event
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4double charge   = dp->GetCharge(); // dynamic effective charge
-  G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
@@ -97,7 +90,9 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   G4ThreeVector localDirection;
   
   // Get coordinate transform and prepare local coordinates
-  G4Transform3D globalToLocal = registry->GetTransformInverse(samplerID);
+  G4Transform3D globalToLocal = G4Transform3D::Identity;
+  if (registry)
+    {registry->TransformInverse(samplerID);}
   if (globalToLocal != G4Transform3D::Identity)
     {
       // The global to local transform is defined in the registry.

@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
+#include "BDSSDManager.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicsUtilities.hh"
@@ -51,6 +52,7 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
   linkRegistry(nullptr)
 {
   linkRegistry = new BDSLinkRegistry();
+  BDSSDManager::Instance()->SetLinkRegistry(linkRegistry);
 }
 
 BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction()
