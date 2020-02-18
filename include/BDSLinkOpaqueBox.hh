@@ -26,14 +26,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryComponent.hh"
 
 class BDSAcceleratorComponent;
+class BDSSamplerCustom;
 
 class BDSLinkOpaqueBox: public BDSGeometryComponent
 {
 public:
   BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
 		   G4double tiltIn,
-		   G4int indexIn);
-  virtual ~BDSLinkOpaqueBox(){;}
+		   G4double outputSamplerRadiusIn);
+  virtual ~BDSLinkOpaqueBox();
 
   /// Default constructor
   BDSLinkOpaqueBox() = delete;
@@ -51,9 +52,11 @@ public:
 
 private:
   BDSAcceleratorComponent* component;
-  G4int index;
-  G4ThreeVector offsetToStart;
-  G4Transform3D transformToStart;
+  G4double                 tilt;
+  G4double                 outputSamplerRadius;
+  G4ThreeVector            offsetToStart;
+  G4Transform3D            transformToStart;
+  BDSSamplerCustom*        sampler;
 };
 
 #endif
