@@ -17,11 +17,15 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSApertureInfo.hh"
+#include "BDSApertureType.hh"
+#include "BDSBeamline.hh"
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
+#include "BDSSamplerCustom.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -39,11 +43,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
 				   G4double tiltIn,
-				   G4int indexIn):
+				   G4double outputSamplerRadiusIn)
   BDSGeometryComponent(nullptr, nullptr),
   component(acceleratorComponentIn),
-  index(indexIn)
+  tilt(tiltIn),
+  outputSamplerRadius(outputSamplerRadiusIn),
+  sampler(nullptr)
 {
+  if (BDS::IsFinite(tilt) && BDS::IsFinite(component->GetAngle()))
+    {throw BDSException(__METHOD_NAME__, "finite tilt with angled component unsupported.");}
+  
   BDSExtent extent = component->GetExtent();
   extent = extent.Tilted(tiltIn); // apply tilt
   const G4double gap                = 10 * CLHEP::cm;
@@ -91,8 +100,6 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 					       name + "_container_lv");
   containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
-  G4RotationMatrix* rm = new G4RotationMatrix();
-  rm->rotateZ(tiltIn);
   // auto boxPlacement = 
   new G4PVPlacement(nullptr,
 		    G4ThreeVector(),
@@ -102,8 +109,15 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 		    false,
 		    1,
 		    true);
-  
-  // auto collimatorPlacement =
+
+  G4RotationMatrix* rm = nullptr;
+  if (BDS::IsFinite(tilt))
+    {
+      rm = new G4RotationMatrix();
+      rm->rotateZ(tilt);
+      RegisterRotationMatrix(rm);
+    }
+  // auto componentPlacement =
   new G4PVPlacement(rm,
 		    G4ThreeVector(),
 		    component->GetContainerLogicalVolume(),
@@ -117,14 +131,39 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 			  0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
 			  0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
 
-  G4TwoVector xy = (component->Sagitta(),0);
-  xy.rotate(tiltIn);
-  if (BDS::IsFinite(component->GetAngle()))
-    {rm->rotate(-0.5 * component->GetAngle(), G4ThreeVector(0,1,0));}
+  G4RotationMatrix* rm2 = G4RotationMatrix();
+  G4TwoVector xy = G4TwoVector(component->Sagitta(),0);
+  if (BDS::IsFinite(tilt))
+    {xy.rotate(tilt);}
+  else if (BDS::IsFinite(component->GetAngle()))
+    {rm2->rotate(-0.5 * component->GetAngle(), G4ThreeVector(0,1,0));}
   offsetToStart = G4ThreeVector(xy.x(), xy.y(), -0.5*component->GetChordLength());
   transformToStart = G4Transform3D(rm->inverse(), offsetToStart);
+}
 
+BDSLinkOpaqueBox::~BDSLinkOpaqueBox()
+{
+  delete sampler;
+}
 
-  // place sampler / output plane in box with index.
+void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
+{  
+  G4String samplerName = name + "_sampler";
+  BDSApertureInfo ap = BDSApertureInfo(BDSApertureType::circular, outputSamplerRadius);
+  sampler = new BDSSamplerCustom(samplerName, ap);
+
+  G4double pl = BDSBeamline::PaddingLength();
+  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl)
+  G4RotationMatrix* rm = nullptr;
+  if (BDS::IsFinite(component->GetAngle()))
+    {
+      rm = new G4RotationMatrix();
+      rm->rotateY(-0.5 * component->GetAngle());
+      RegisterRotationMatrix(rm);
+    }
+  
+  new G4PVPlacement(rm,
+		    
+
 
 }
