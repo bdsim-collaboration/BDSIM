@@ -45,7 +45,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDebug.hh"
-#include "BDSEventAction.hh"
 #include "BDSException.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
@@ -54,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryWriter.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
+#include "BDSLinkEventAction.hh"
 #include "BDSLinkRunManager.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
@@ -238,8 +238,8 @@ int BDSIMLink::Initialise()
       G4cout << __METHOD_NAME__ << std::setw(12) << "Radial: "  << std::setw(7) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
     }
   /// Set user action classes
-  //BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
-  //runManager->SetUserAction(eventAction);
+  BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput);
+  runManager->SetUserAction(eventAction);
 
   /*runManager->SetUserAction(new BDSRunAction(bdsOutput,
 					     bdsBunch,
