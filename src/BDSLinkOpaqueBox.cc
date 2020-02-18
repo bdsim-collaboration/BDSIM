@@ -172,11 +172,11 @@ void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
   // if there's finite angle, we ensure (in constructor) there's no tilt
   
   new G4PVPlacement(rm,
-      position,
-      sampler->GetContainerLogicalVolume(),
-      samplerName + "_pv",
-      containerLogicalVolume,
-      false,
-      ID,
-      true);
+		    position,
+		    sampler->GetContainerLogicalVolume(),
+		    samplerName + "_pv",
+		    containerLogicalVolume,
+		    false,
+		    ID,
+		    true);
 }
