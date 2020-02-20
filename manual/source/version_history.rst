@@ -360,6 +360,8 @@ Bug Fixes
   Non-paraxial particles are now tracked through as if the element were a drift. In the case of rmatrix elements,
   this change does not affect the behaviour of the rmatrix in the centre of the element, only the parallel transport
   through the thick sections of the element.
+* Fix segfault in rebdsimOptics when supplying a BDSIM root file in which only primaries are generated, the model
+  isn't constructed in this case so it isn't written, therefore can't be copied to the rebdsimOptics output.
 
 Output Changes
 --------------
