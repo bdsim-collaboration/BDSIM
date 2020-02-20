@@ -228,9 +228,9 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
     // note: optical functions vector not populated in sequential order in order
     // to apply dispersion correction to lattice funcs.
 
-    optical[i][6]  = cenMoms[j][j+1][1][0]; // mean spatial (transv.)/ mean E (longit.)
+    optical[i][6]  = cenMoms[j][j+1][1][0]; // mean spatial (transv.)/ mean P (longit.)
     optical[i][7]  = cenMoms[j][j+1][0][1]; // mean divergence (transv.)/ mean t (longit.)
-    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]); // sigma spatial   (transv.)/ sigma E (longit.)
+    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]); // sigma spatial   (transv.)/ sigma P (longit.)
     optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]); // sigma divergence (transv.)/ sigma t (longit.)
 
     // transverse optical function calculation skipped for longitudinal plane,
@@ -241,7 +241,7 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
     optical[i][4]  = (cenMoms[4][4][1][0]*cenMoms[j][4][1][1])/cenMoms[4][4][2][0];    // eta
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];  // eta prime
 
-    // check for nans (expected if dE=0) and set disp=0 if found
+    // check for nans (expected if dP=0) and set disp=0 if found
     if (!std::isfinite(optical[i][4]))
       {optical[i][4] = 0;}
     if (!std::isfinite(optical[i][5]))
@@ -251,7 +251,7 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
     double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0;
     double corrCentMom_0_2 = 0.0;
 
-    //Correction example: var[x]_corrected = var[x] - eta_x^2*sigma[dE/E]^2
+    //Correction example: var[x]_corrected = var[x] - eta_x^2*sigma[dP/P]^2
     corrCentMom_2_0 =
       cenMoms[j][j+1][2][0] - std::pow(optical[i][4],2)*cenMoms[4][4][2][0]/std::pow(cenMoms[4][4][1][0],2);
 
