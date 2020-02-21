@@ -190,7 +190,7 @@ void BDSCollimator::Build()
     {RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
-                                            (G4ThreeVector)0,        // position
+                                            G4ThreeVector(),         // position
                                             collimatorLV,            // its logical volume
                                             name + "_collimator_pv", // its name
                                             containerLogicalVolume,  // its mother  volume

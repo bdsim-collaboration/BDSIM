@@ -1149,9 +1149,6 @@ described in :ref:`tunnel-geometry`.
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
 |                                  | the beam pipe records energy loss                     |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveVacuum                  | Whether energy deposition in the residual vacuum gas  |
-|                                  | is recorded.                                          |
-+----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
@@ -1449,10 +1446,6 @@ with the following options.
 |                                    | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                    | of the Event Tree in the output. Default on.                       |
 +------------------------------------+--------------------------------------------------------------------+
-| sensitiveVacuum                    | Whether energy deposition in the residual vacuum gas is recorded.  |
-|                                    | Energy loss from this option is recorded in the `Eloss` branch     |
-|                                    | of the Event Tree in the output. Default on.                       |
-+------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
 |                                    | tree in the output that contains coordinates of where the primary  |
 |                                    | particle exists the beam pipe. Note this could be multiple times.  |
@@ -1491,9 +1484,9 @@ with the following options.
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeEloss                         | Whether to store the energy deposition hits. Default on. By        |
-|                                    | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
-|                                    | `sensitiveVacuum` have no effect. Saves run time memory and output |
-|                                    | file size. See next option `storeEloss` for combination.           |
+|                                    | turning off, `sensitiveBeamPipe` and `sensitiveOuter` have no      |
+|                                    | effect. Saves run time memory and output file size. See next       |
+|                                    | option `storeEloss` for combination.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossHistograms               | Whether to store energy deposition histograms `Eloss` and          |
 |                                    | `ElossPE`. This will automatically be on if `storeEloss` is on.    |
