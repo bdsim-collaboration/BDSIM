@@ -16,31 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSTRAJECTORYFILTER_H
-#define BDSTRAJECTORYFILTER_H
+#ifndef BDSCOLOURFROMMATERIAL_H
+#define BDSCOLOURFROMMATERIAL_H
+#include "G4String.hh"
 
-#include "BDSTypeSafeEnum.hh"
+#include <map>
+
+class G4Colour;
+class G4Material;
+class G4PhysicsOrderedFreeVector;
 
 /**
- * @brief Type definition for trajectory filters.
- *
- * Note: no Geant4 classes are used by this as it can be called by the output.
+ * @brief Automatic colours from materials.
  * 
  * @author Laurie Nevay
  */
 
-struct trajectoryfiltertypes_def
+class BDSColourFromMaterial
 {
-  enum type {primary, depth, particle, energyThreshold, sampler, elossSRange,
-	     transportation, minimumZ, maximumR};
+public:
+  static BDSColourFromMaterial* Instance(); ///< Singleton pattern.
+
+  ~BDSColourFromMaterial();
+
+  /// Get colour from name
+  G4Colour* GetColour(const G4Material* material);
+
+private:
+  BDSColourFromMaterial(); ///< Private constructor as singleton
+  static BDSColourFromMaterial* instance;
+
+  std::map<G4String, G4Colour*> defines; ///< Specially defined material colours.
+  G4PhysicsOrderedFreeVector* generalDensity;
 };
-
-typedef BDSTypeSafeEnum<trajectoryfiltertypes_def,int> BDSTrajectoryFilter;
-
-namespace BDS
-{
-  const static int NTrajectoryFilters = 9;
-  BDSTrajectoryFilter BDSTrajectoryFilterEnumOfIndex(int i);
-}
 
 #endif

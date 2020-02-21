@@ -510,9 +510,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   G4String worldGeometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
   if (!worldGeometryFile.empty())
     {
+      G4bool ac = BDSGlobalConstants::Instance()->AutoColourWorldGeometryFile();
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
 										nullptr,
+										ac,
 										0, 0,
 										nullptr,
 										true,
@@ -583,14 +585,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // place the world
-  G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-						 (G4ThreeVector)0,     // at (0,0,0)
-						 worldLV,	            // its logical volume
-						 worldName,            // its name
-						 nullptr,		    // its mother  volume
+  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr,           // no rotation
+						 G4ThreeVector(),   // at (0,0,0)
+						 worldLV,	    // its logical volume
+						 worldName,         // its name
+						 nullptr,	    // its mother  volume
 						 false,		    // no boolean operation
-						 0,                    // copy number
-						 checkOverlaps);       // overlap checking
+						 0,                 // copy number
+						 checkOverlaps);    // overlap checking
 
   // Register the lv & pvs to the our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
@@ -888,7 +890,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       
       // loop through all processes
       for (unsigned int p = 0; p < pb.processList.size(); ++p)
-	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
+	{eg->SetBias(bias, pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
@@ -967,7 +969,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  for (auto lv : allLVs)
 	    {// BDSAcceleratorComponent automatically removes 'vacuum' volumes from all so we don't need to check
 		  if (debug)
-		    {G4cout << __METHOD_NAME__ << "Baising 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
+		    {G4cout << __METHOD_NAME__ << "Biasing 'material' logical volume: " << lv << " " << lv->GetName() << G4endl;}
 		  egMaterial->AttachTo(lv);
 	    }
 	}

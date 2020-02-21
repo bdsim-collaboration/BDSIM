@@ -315,7 +315,7 @@ the same thing.
 
 2) Geant4's reference physics lists as described in :ref:`physics-geant4-lists`: ::
 
-     option, physicsList = "g4FTFTP_BERT";
+     option, physicsList = "g4FTFP_BERT";
 
 These are more complete "reference physics lists" that use several modular physics lists from Geant4
 like BDSIM but in a predefined way that Geant4 quote for references results. These have rather confusingly
@@ -1149,9 +1149,6 @@ described in :ref:`tunnel-geometry`.
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
 |                                  | the beam pipe records energy loss                     |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveVacuum                  | Whether energy deposition in the residual vacuum gas  |
-|                                  | is recorded.                                          |
-+----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
@@ -1201,6 +1198,9 @@ described in :ref:`tunnel-geometry`.
 | worldGeometryFile                | The filename of the world geometry file. See          |
 |                                  | :ref:`external-world-geometry` for more details.      |
 |                                  | Default = "".                                         |
++----------------------------------+-------------------------------------------------------+
+| autoColourWorldGeometryFile      | Boolean whether to automatically colour geometry      |
+|                                  | loaded from the worldGeometryFile. Default true.      |
 +----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |
@@ -1446,10 +1446,6 @@ with the following options.
 |                                    | Energy loss from this option is recorded in the `Eloss` branch     |
 |                                    | of the Event Tree in the output. Default on.                       |
 +------------------------------------+--------------------------------------------------------------------+
-| sensitiveVacuum                    | Whether energy deposition in the residual vacuum gas is recorded.  |
-|                                    | Energy loss from this option is recorded in the `Eloss` branch     |
-|                                    | of the Event Tree in the output. Default on.                       |
-+------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
 |                                    | tree in the output that contains coordinates of where the primary  |
 |                                    | particle exists the beam pipe. Note this could be multiple times.  |
@@ -1488,9 +1484,9 @@ with the following options.
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeEloss                         | Whether to store the energy deposition hits. Default on. By        |
-|                                    | turning off, `sensitiveBeamPipe`, `sensitiveOuter` and             |
-|                                    | `sensitiveVacuum` have no effect. Saves run time memory and output |
-|                                    | file size. See next option `storeEloss` for combination.           |
+|                                    | turning off, `sensitiveBeamPipe` and `sensitiveOuter` have no      |
+|                                    | effect. Saves run time memory and output file size. See next       |
+|                                    | option `storeEloss` for combination.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossHistograms               | Whether to store energy deposition histograms `Eloss` and          |
 |                                    | `ElossPE`. This will automatically be on if `storeEloss` is on.    |

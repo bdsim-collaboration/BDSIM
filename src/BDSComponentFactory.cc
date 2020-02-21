@@ -1126,7 +1126,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
 			 element->angle * CLHEP::rad,
-			 &vacuumBiasVolumeNames));
+			 &vacuumBiasVolumeNames,
+			 element->autoColour));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -1939,7 +1940,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
- if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
+  if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
@@ -2004,6 +2005,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
     {info->coilHeightFraction = 0.8;} // default for both h and c type
 
   info->colour = PrepareColour(el);
+  info->autoColour = el->autoColour;
   
   return info;
 }
@@ -2176,7 +2178,8 @@ void BDSComponentFactory::PrepareCrystals()
 				     G4double(model.gamma)*CLHEP::halfpi,
 				     G4int   (model.spaceGroup),
 				     G4double(model.bendingAngleYAxis)*CLHEP::rad,
-				     G4double(model.bendingAngleZAxis)*CLHEP::rad);
+				     G4double(model.bendingAngleZAxis)*CLHEP::rad,
+				     G4double(model.miscutAngleY)*CLHEP::rad);
       crystalInfos[model.name] = info;
     }
 
