@@ -1155,6 +1155,8 @@ BDSOutputROOTEventInfo
 | nCollimatorsInteracted      | int               | The number of collimators the primary       |
 |                             |                   | particle interacted with.                   |
 +-----------------------------+-------------------+---------------------------------------------+
+| nTracks                     | long long int     | Number of tracks created in the event.      |
++-----------------------------+-------------------+---------------------------------------------+
 
 .. note:: :code:`energyDepositedVacuum` will only be non-zero if the option :code:`storeElossVacuum`
 	  is on which is off by default.

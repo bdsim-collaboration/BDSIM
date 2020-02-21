@@ -600,14 +600,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // place the world
-  G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-						 (G4ThreeVector)0,     // at (0,0,0)
-						 worldLV,	            // its logical volume
-						 worldName,            // its name
-						 nullptr,		    // its mother  volume
+  G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr,           // no rotation
+						 G4ThreeVector(),   // at (0,0,0)
+						 worldLV,	    // its logical volume
+						 worldName,         // its name
+						 nullptr,	    // its mother  volume
 						 false,		    // no boolean operation
-						 0,                    // copy number
-						 checkOverlaps);       // overlap checking
+						 0,                 // copy number
+						 checkOverlaps);    // overlap checking
 
   // Register the lv & pvs to the our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
