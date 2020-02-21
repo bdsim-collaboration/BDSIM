@@ -382,6 +382,7 @@ Output Changes
   accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
 * The header class BDSOutputROOTEventHeader now has variables that store which files were analysed
   in the case of rebdsim and which files were combined in the case of rebdsimCombine.
+* New variable :code:`nTracks` in Event.Summary which is the number of tracks created in that event.
 
 Output Class Versions
 ---------------------
