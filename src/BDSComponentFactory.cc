@@ -213,14 +213,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	  else if (prevType != ElementType::_DRIFT && nextType == ElementType::_DRIFT)
 	    {angleIn = OutgoingFaceAngle(prevElement);}  // next is drift which will match prev
 	}
-      else if (prevElement)
-	{angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
-      else
-	{angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
-
-      // flag as unique only if the angleIn is changed and the geometry is built at an angle
-      if (BDS::IsFinite(angleIn))
-	{differentFromDefinition = true;}
+       else if (prevElement)
+	 {angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
+       else
+	 {angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
+       
+       // flag as unique only if the angleIn is changed and the geometry is built at an angle
+       if (BDS::IsFinite(angleIn))
+	 {differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_SOLENOID)
     {// we build incoming / outgoing fringe fields for solenoids
@@ -717,7 +717,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
     case KickerType::horizontal:
       {
 	hkick = kickFinite ? element->kick : element->hkick;
-	// backwards compatability - if both are zero but angle if finite
+	// backwards compatibility - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(hkick) && BDS::IsFinite(element->angle))
           {hkick = element->angle;} //+ve to match hkick definition
@@ -727,7 +727,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
     case KickerType::vertical:
       {
 	vkick = kickFinite ? element->kick : element->vkick;
-	// backwards compatability - if both are zero but angle if finite
+	// backwards compatibility - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(vkick) && BDS::IsFinite(element->angle))
           {vkick = element->angle;} //+ve to match vkick definition

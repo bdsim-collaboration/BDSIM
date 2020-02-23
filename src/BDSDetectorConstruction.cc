@@ -147,7 +147,7 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
       G4double curvilinearRadiusBends = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
 
       // check it's smaller - the user may have already specified a smaller sampler diameter
-      // and htat should take precedence
+      // and that should take precedence
       if (curvilinearRadiusBends < curvilinearRadius)
 	{
 	  curvilinearRadius = curvilinearRadiusBends;
@@ -473,7 +473,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   const auto& blMain = acceleratorModel->BeamlineSetMain();
   blMain.GetExtentGlobals(extents);
 
-  // check optional placement beam line (likevector of placements)
+  // check optional placement beam line (like vector of placements)
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional - may be nullptr
     {extents.push_back(plBeamline->GetExtentGlobal());}
@@ -703,7 +703,7 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
-      i++; // for increuemental copy numbers
+      i++; // for incremental copy numbers
     }
 }
 
