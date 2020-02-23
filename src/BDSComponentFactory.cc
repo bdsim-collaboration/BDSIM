@@ -2335,7 +2335,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
     {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
 
-  // use a cheeky lambda to aviod repeating the calculation code
+  // use a cheeky lambda to avoid repeating the calculation code
   auto getPhaseFromT = [](G4double tOffsetIn, G4double periodIn)
 		       {
 			 G4double nPeriods = tOffsetIn / periodIn;
