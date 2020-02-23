@@ -118,7 +118,10 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 					const G4int    nElectronsIn,
 					const G4double massIn,
 					const G4double rigidityIn,
-					G4bool fillIon)
+					G4bool  fillIon,
+					G4bool* isIonIn,
+					G4int*  ionAIn,
+					G4int*  ionZIn)
 {
   trackID.push_back(n); // we assume multiple primaries are linearly increasing in track number
   n++;
@@ -144,7 +147,13 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   nElectrons.push_back((int)nElectronsIn);
   kineticEnergy.push_back((double)(coords.totalEnergy - massIn) / CLHEP::GeV);
   FillPolarCoords(coords);
-  if (fillIon)
+  if (isIonIn && ionAIn && ionZIn)
+    {
+      isIon.push_back((int) *isIonIn);
+      ionA.push_back((int) *ionAIn);
+      ionZ.push_back((int) *ionZIn);
+    }
+  else if (fillIon)
     {FillIon();}
 }
 
