@@ -102,7 +102,9 @@ public:
 	    G4bool storeElectrons     = false,
 	    G4bool storeRigidity      = false,
 	    G4bool storeKineticEnergy = false);
-  /// Used for filling primary coordinates only.
+  /// Used for filling primary coordinates only. Optional arguments allow us
+  /// to fill ion information when a particle table is not available. All must
+  /// be defined to use them.
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4double charge,
 	    const G4int    pdgID,
@@ -111,7 +113,10 @@ public:
 	    const G4int    nElectronsIn,
 	    const G4double massIn,
 	    const G4double rigidityIn,
-	    G4bool fillIon = true);
+	    G4bool fillIon = true,
+	    G4bool* isIon  = nullptr,
+	    G4int*  ionA   = nullptr,
+	    G4int*  ionZ   = nullptr);
   void FillPolarCoords(const BDSParticleCoordsFull& coords);  ///< Calculate polar coords and fill.
   void Fill(const BDSPrimaryVertexInformationV* vertexInfos,
 	    const G4int turnsTaken); ///< Fill a vertex directly.
