@@ -289,6 +289,8 @@ Bug Fixes
   case of generating primaries only where the Geant4 kernel isn't used.
 * Fix a possible segfault when an ion beam is used for as well as the `-\\-generatePrimariesOnly`
   excutable option.
+* Ion variables are now correctly written to the Primary branch of the Event tree in the case of using
+  an ion beam with `-\\-generatePrimariesOnly`.
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
