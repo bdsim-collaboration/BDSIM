@@ -758,11 +758,13 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
     } 
 
-  // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
+  // create a transform from w.r.t. the beam line if s is finite and it's not w.r.t a
   // particular element. If it's w.r.t. a particular element, treat s as local curvilinear
   // s and use as local 'z' in the transform.
   if (!placement.referenceElement.empty())
     {// scenario 3
+      if (!beamLine)
+        {throw BDSException(__METHOD_NAME__, "no valid beam line yet placement w.r.t. a beam line.");}
       const BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
 							 placement.referenceElementNumber);
       if (!element)
