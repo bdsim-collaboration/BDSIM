@@ -236,7 +236,15 @@ void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
   G4double pdgID      = particle->PDGID();
   G4double mass       = particle->Mass();
   G4double rigidity   = particle->BRho();
-  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
+  G4bool isIon = particle->IsAnIon();
+  G4int  ionA  = 0;
+  G4int  ionZ  = 0;
+  if (isIon)
+    {// fill primary ion info correctly when we have no particle table available
+      ionA = particle->IonDefinition()->A();
+      ionZ = particle->IonDefinition()->Z();
+    }
+  primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity, true, &isIon, &ionA, &ionZ);
   primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();
