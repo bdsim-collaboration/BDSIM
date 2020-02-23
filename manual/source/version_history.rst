@@ -1,4 +1,4 @@
-V1.5 - 2019 - Planned Development
+V1.5 - 2020 - Planned Development
 =================================
 
 Below is a brief list of planned developments for the next version. Please get in touch
@@ -31,7 +31,7 @@ New Features
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
 
-V1.4 - 2019 / 10 / ??
+V1.4 - 2020 / 03 / ??
 =====================
 
 Expected Changes To Results
@@ -291,6 +291,8 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
+* Fix a possible segfault when an ion beam is used for as well as the `-\\-generatePrimariesOnly`
+  excutable option.
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.

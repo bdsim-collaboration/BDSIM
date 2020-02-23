@@ -242,7 +242,7 @@ void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 {
   G4int    nElectrons = particle->NElectrons();
   G4double charge     = particle->Charge();
-  G4double pdgID      = particle->ParticleDefinition()->GetPDGEncoding();
+  G4double pdgID      = particle->PDGID();
   G4double mass       = particle->Mass();
   G4double rigidity   = particle->BRho();
   primary->Fill(coords.local, charge, pdgID, 0, 0, nElectrons, mass, rigidity);
