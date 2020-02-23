@@ -2347,7 +2347,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
 		       };
 
   G4double phaseOffset = getPhaseFromT(tOffset, period);
-  (*st)["phase"] += phaseOffset;
+  (*st)["phase"] -= phaseOffset;
 
   // sort phase / timing for each fringe
   G4double tOffsetIn   = tOffset; // copy central T0
