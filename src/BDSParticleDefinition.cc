@@ -37,9 +37,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 					     G4double              totalEnergyIn,
 					     G4double              ffact,
-					     BDSIonDefinition*     ionDefinitionIn):
+					     BDSIonDefinition*     ionDefinitionIn,
+                         G4int                 ionPDGIDIn):
   particle(particleIn),
   ionDefinition(ionDefinitionIn),
+  ionPDGID(ionPDGIDIn),
   name(particleIn->GetParticleName()),
   mass(particleIn->GetPDGMass()),
   totalEnergy(totalEnergyIn),
@@ -59,14 +61,16 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
   CalculateLorentzFactors();
 }
 
-BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
+BDSParticleDefinition::BDSParticleDefinition(const G4String&    nameIn,
 					     G4double          massIn,
 					     G4double          chargeIn,
 					     G4double          totalEnergyIn,
 					     G4double          ffact,
-					     BDSIonDefinition* ionDefinitionIn):
+					     BDSIonDefinition* ionDefinitionIn,
+                         G4int             ionPDGIDIn):
   particle(nullptr),
   ionDefinition(ionDefinitionIn),
+  ionPDGID(ionPDGIDIn),
   name(nameIn),
   mass(massIn),
   charge(chargeIn),
@@ -90,6 +94,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
 
 BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other):
   particle(other.particle),
+  ionPDGID(other.ionPDGID),
   name(other.name),
   mass(other.mass),
   charge(other.charge),
@@ -109,6 +114,16 @@ BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other)
 BDSParticleDefinition::~BDSParticleDefinition()
 {
   delete ionDefinition;
+}
+
+G4int BDSParticleDefinition::PDGID() const
+{
+  if (particle)
+    {return particle->GetPDGEncoding();}
+  else if (ionDefinition)
+    {return ionPDGID;}
+  else
+    {return 0;}
 }
 
 std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
