@@ -134,7 +134,7 @@ public:
 
   static BDSOutputROOTGeant4Data* particleTable;
 
-  ClassDef(BDSOutputROOTEventSampler,4);
+  ClassDef(BDSOutputROOTEventSampler,5);
 };
 
 #endif
