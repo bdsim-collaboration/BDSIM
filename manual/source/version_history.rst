@@ -31,6 +31,11 @@ New Features
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
 
+Output Changes
+--------------
+
+* Samplers now have a variable `p` which is the momentum of the particle in GeV.
+
 V1.4 - 2020 / 03 / ??
 =====================
 
