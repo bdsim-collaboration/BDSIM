@@ -179,7 +179,7 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
     {rpValue = 0;}
   rp.push_back(static_cast<U>(rpValue));
 
-  // nans or infinites can be set to 01
+  // nans or infinites can be set to -1
   auto isntSafe = [](double a){return std::isnan(a) || std::isinf(a);};
   double thetapValue = std::atan2(rpValue, zpCoord);
   if (isntSafe(thetapValue))
