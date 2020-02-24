@@ -311,6 +311,8 @@ Bug Fixes
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
 * Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix sampler variables `theta`, `phi` and `phip` being -1 when it should be 0 for 0 angle particles
+  due to a mistake in the identification of possible nans or infinite numbers.
 * Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
   is specified for that element.
 * Correctly identify primary first hits on wire scanner wires. Due to the often very thin geometric
