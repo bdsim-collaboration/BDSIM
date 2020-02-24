@@ -88,8 +88,8 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4double charge   = dp->GetCharge(); // dynamic effective charge
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
-  G4ThreeVector pos = track->GetPosition();          // current particle position (global)
-  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
+  const G4ThreeVector& pos = track->GetPosition();          // current particle position (global)
+  const G4ThreeVector& mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
