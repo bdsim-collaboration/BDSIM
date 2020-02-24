@@ -90,7 +90,6 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   trackID.push_back(hit->trackID);
   turnNumber.push_back(hit->turnsTaken);
 
-  // require mass to calculate kinetic energ
   if (storeMass)
     {mass.push_back((double)(hit->mass / CLHEP::GeV));}
 
@@ -215,10 +214,6 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSPrimaryVertexInformationV* vert
     }
   FillIon();
 }
-
-//#else
-//void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
-//{}
 #endif
 
 template <class U>
