@@ -96,6 +96,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4double rigidity = 0;
   if (BDS::IsFinite(charge))
     {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
+  G4double p = dp->GetTotalMomentum();
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
@@ -154,6 +155,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 
   BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
+					    p,
 					    mass,
 					    charge,
 					    rigidity,
