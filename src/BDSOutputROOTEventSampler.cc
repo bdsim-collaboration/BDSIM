@@ -166,19 +166,19 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
   double ypCoord = coords.yp;
   double zpCoord = coords.zp;
 
-  // we have to tolerate possible sqrt errors here
-  double rValue = std::sqrt(std::pow(xCoord, 2) + std::pow(yCoord, 2));
-  if (!std::isnormal(rValue))
+  // nans or infinite numbers can be set to -1
+  auto isntSafe = [](double a){return std::isnan(a) || std::isinf(a);};
+
+  double rValue = std::hypot(xCoord, yCoord);
+  if (isntSafe(rValue))
     {rValue = 0;}
   r.push_back(static_cast<U>(rValue));
   
-  double rpValue = std::sqrt(std::pow(xpCoord, 2) + std::pow(ypCoord, 2));
-  if (!std::isnormal(rpValue))
+  double rpValue = std::hypot(xpCoord, ypCoord);
+  if (isntSafe(rpValue))
     {rpValue = 0;}
   rp.push_back(static_cast<U>(rpValue));
 
-  // nans or infinites can be set to -1
-  auto isntSafe = [](double a){return std::isnan(a) || std::isinf(a);};
   double thetapValue = std::atan2(rpValue, zpCoord);
   if (isntSafe(thetapValue))
     {thetapValue = -1;}
