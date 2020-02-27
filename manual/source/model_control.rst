@@ -2291,7 +2291,7 @@ for the beam particle. In the case :code:`sigmaEk` is specified, :code:`sigmaE` 
 as follows:
 
 .. math::
-   \frac{dEk}{Ek} = \frac{E}{Ek}
+   \frac{dEk}{Ek} = \frac{E}{Ek} \frac{dE}{E}
 
 and :code:`sigmaP` is subsequently calculated as above from this.
 
