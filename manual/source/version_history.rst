@@ -1,4 +1,4 @@
-V1.5 - 2019 - Planned Development
+V1.5 - 2020 - Planned Development
 =================================
 
 Below is a brief list of planned developments for the next version. Please get in touch
@@ -31,7 +31,55 @@ New Features
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
 
-V1.4 - 2019 / 10 / ??
+Output Changes
+--------------
+
+* Samplers now have a variable `p` which is the momentum of the particle in GeV.
+
+Output Class Versions
+---------------------
+
+* Data Version 6.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | N           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+V1.4 - 2020 / 03 / ??
 =====================
 
 Expected Changes To Results
@@ -287,6 +335,10 @@ Bug Fixes
   was used the phase space coordinates would be correct but the mass, charge, rigidity would be
   written wrongly to the output. The particle definition is now updated correctly in the special
   case of generating primaries only where the Geant4 kernel isn't used.
+* Fix a possible segfault when an ion beam is used for as well as the `-\\-generatePrimariesOnly`
+  excutable option.
+* Ion variables are now correctly written to the Primary branch of the Event tree in the case of using
+  an ion beam with `-\\-generatePrimariesOnly`.
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
@@ -324,6 +376,8 @@ Bug Fixes
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
 * Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix sampler variables `theta`, `phi` and `phip` being -1 when it should be 0 for 0 angle particles
+  due to a mistake in the identification of possible nans or infinite numbers.
 * Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
   is specified for that element.
 * Correctly identify primary first hits on wire scanner wires. Due to the often very thin geometric
@@ -419,7 +473,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | Y           | 3               | 2               |
+| BDSOutputROOTEventHeader          | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -433,7 +487,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventOptions         | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventRunInfo         | Y           | 3               | 2               |
+| BDSOutputROOTEventRunInfo         | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventSampler         | Y           | 3               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+

@@ -213,14 +213,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	  else if (prevType != ElementType::_DRIFT && nextType == ElementType::_DRIFT)
 	    {angleIn = OutgoingFaceAngle(prevElement);}  // next is drift which will match prev
 	}
-      else if (prevElement)
-	{angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
-      else
-	{angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
-
-      // flag as unique only if the angleIn is changed and the geometry is built at an angle
-      if (BDS::IsFinite(angleIn))
-	{differentFromDefinition = true;}
+       else if (prevElement)
+	 {angleIn = OutgoingFaceAngle(prevElement);} // only previous element - match it
+       else
+	 {angleIn = IncomingFaceAngle(nextElement);} // only next element - match it
+       
+       // flag as unique only if the angleIn is changed and the geometry is built at an angle
+       if (BDS::IsFinite(angleIn))
+	 {differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_SOLENOID)
     {// we build incoming / outgoing fringe fields for solenoids
@@ -717,7 +717,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
     case KickerType::horizontal:
       {
 	hkick = kickFinite ? element->kick : element->hkick;
-	// backwards compatability - if both are zero but angle if finite
+	// backwards compatibility - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(hkick) && BDS::IsFinite(element->angle))
           {hkick = element->angle;} //+ve to match hkick definition
@@ -727,7 +727,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
     case KickerType::vertical:
       {
 	vkick = kickFinite ? element->kick : element->vkick;
-	// backwards compatability - if both are zero but angle if finite
+	// backwards compatibility - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(vkick) && BDS::IsFinite(element->angle))
           {vkick = element->angle;} //+ve to match vkick definition
@@ -1940,7 +1940,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (el->magnetGeometryType == "" || globals->IgnoreLocalMagnetGeometry())
+  if (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry())
    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
@@ -1960,7 +1960,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 
   // outer material
   G4Material* outerMaterial;
-  if (el->material == "")
+  if (el->material.empty())
     {
       G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
@@ -2338,7 +2338,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
     {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
 
-  // use a cheeky lambda to aviod repeating the calculation code
+  // use a cheeky lambda to avoid repeating the calculation code
   auto getPhaseFromT = [](G4double tOffsetIn, G4double periodIn)
 		       {
 			 G4double nPeriods = tOffsetIn / periodIn;
