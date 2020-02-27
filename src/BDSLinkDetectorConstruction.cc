@@ -23,12 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLinkComponent.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
-#include "BDSSimpleComponent.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicsUtilities.hh"
 
@@ -106,7 +106,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
       opaqueBoxes.push_back(opaqueBox);
 
-      BDSSimpleComponent* comp = new BDSSimpleComponent(opaqueBox->GetName(),
+      BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 							opaqueBox,
 							opaqueBox->GetExtent().DZ());
       
@@ -157,7 +157,10 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 			copyNumber,
 			true);
 
-      BDSLinkOpaqueBox* el = dynamic_cast<BDSLinkOpaqueBox*>(element->GetAcceleratorComponent());
+      auto lc = dynamic_cast<BDSLinkComponent*>(element->GetAcceleratorComponent());
+      if (!lc)
+        {continue;}
+      BDSLinkOpaqueBox* el = lc->Component();
       G4Transform3D elCentreToStart = el->TransformToStart();
       G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
       linkRegistry->Register(el, globalToStart);
