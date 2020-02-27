@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 class BDSBeamline;
+class BDSBeamlineElement;
 class BDSLinkRegistry;
 class BDSParticleDefinition;
 class G4Box;
@@ -41,18 +42,27 @@ public:
   BDSExtent WorldExtent() const {return worldExtent;}
 
   void AddLinkCollimator(const std::string& collimatorName,
-                    const std::string& materialName,
-                    G4double length,
-                    G4double aperture,
-                    G4double rotation,
-                    G4double xOffset,
-                    G4double yOffset);
+			 const std::string& materialName,
+			 G4double length,
+			 G4double aperture,
+			 G4double rotation,
+			 G4double xOffset,
+			 G4double yOffset);
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
 
 private:
+
+  /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the
+  /// linkBeamline member. Update worldExtent member also.
+  void UpdateWorldSolid();
+
+  /// Place a beam line element in the world.
+  void PlaceOneComponent(const BDSBeamlineElement* element);
+
   G4Box* worldSolid;
+  G4VPhysicalVolume* worldPV;
   BDSExtent worldExtent;
   BDSBeamline* linkBeamline;
   BDSLinkRegistry* linkRegistry;
