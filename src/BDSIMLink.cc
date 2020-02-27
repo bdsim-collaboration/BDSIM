@@ -208,7 +208,7 @@ int BDSIMLink::Initialise()
 	{G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
     }
   // update rigidity where needed
-  //realWorld->SetDesignParticle(designParticle); TODO
+  construction->SetDesignParticle(designParticle);
   //BDSFieldFactory::SetDesignParticle(designParticle);
   
   //auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
