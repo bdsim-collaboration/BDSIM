@@ -168,7 +168,7 @@ void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
       rm->rotateY(0.5 * component->GetAngle()); // rotate to output face
       RegisterRotationMatrix(rm);
       position = G4ThreeVector(component->Sagitta(), 0, 0.5*component->GetChordLength());
-      G4ThreeVector gap = G4ThreeVector(0,0,pl);
+      G4ThreeVector gap = G4ThreeVector(0,0,pl + BDSSamplerPlane::ChordLength());
       position += gap.transform(*rm);
     }
   // if there's finite angle, we ensure (in constructor) there's no tilt
