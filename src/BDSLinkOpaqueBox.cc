@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerCustom.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -158,7 +159,8 @@ void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
   sampler = new BDSSamplerCustom(samplerName, ap);
 
   G4double pl = BDSBeamline::PaddingLength();
-  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl);
+  auto z2 = component->GetExtent();
+  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl + BDSSamplerPlane::ChordLength());
   G4RotationMatrix* rm = nullptr;
   if (BDS::IsFinite(component->GetAngle()))
     {
