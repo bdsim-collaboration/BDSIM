@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef LINKOPAQUEBOX_H
 #define LINKOPAQUEBOX_H
+#include "BDSAcceleratorComponent.hh"
+#include "BDSUtilities.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -47,7 +49,11 @@ public:
   inline const G4ThreeVector& OffsetToStart()    const {return offsetToStart;}
   inline const G4Transform3D& TransformToStart() const {return transformToStart;}
 
+  /// Place the output sampler
   void PlaceOutputSampler(G4int ID);
+
+  /// Whether it's angled or not.
+  G4bool Angled() const {return component ? BDS::IsFinite(component->GetAngle()) : false;}
 
 private:
   BDSAcceleratorComponent* component;

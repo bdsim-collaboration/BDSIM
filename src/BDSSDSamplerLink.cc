@@ -92,9 +92,20 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   
   // Get coordinate transform and prepare local coordinates
   G4Transform3D globalToLocal = G4Transform3D::Identity;
+  G4ThreeVector globalToLocalOffset = G4ThreeVector();
+  G4bool noRotation = true;
   if (registry)
-    {registry->TransformInverse(samplerID);}
-  if (globalToLocal != G4Transform3D::Identity)
+    {
+      noRotation          = registry->NoRotation(samplerID);
+      globalToLocal       = registry->TransformInverse(samplerID);
+      globalToLocalOffset = globalToLocal.getTranslation();
+    }
+  if (noRotation)
+    {
+      localPosition  = pos + globalToLocalOffset;
+      localDirection = mom;
+    }
+  else if (globalToLocal != G4Transform3D::Identity)
     {
       // The global to local transform is defined in the registry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
