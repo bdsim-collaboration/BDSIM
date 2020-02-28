@@ -48,10 +48,14 @@ public:
   G4Transform3D TransformInverse(const std::string& name) const;
   G4Transform3D TransformInverse(G4int ID) const;
 
+  G4bool NoRotation(const std::string& name) const;
+  G4bool NoRotation(G4int ID) const;
+
 private:
 
   struct LinkEntry
   {
+    G4bool            noRotation;  // true if component straight and no rotation is required
     BDSLinkOpaqueBox* component;
     G4Transform3D     transform;
     G4Transform3D     transformInverse;
