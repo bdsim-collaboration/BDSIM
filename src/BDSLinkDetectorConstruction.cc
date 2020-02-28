@@ -95,8 +95,9 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 									     nullptr,
 									     0);
 
-
-      BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, 0, 0/* XXX: index...  to do*/);
+      BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
+                                                         elementIt->tilt,
+                                                         component->GetExtent().MaximumAbsTransverse());
 
       opaqueBoxes.push_back(opaqueBox);
 
@@ -163,7 +164,9 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 									 0); 
 
   // wrap in box 
-  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, 0, 0/* XXX: index...  to do*/);
+  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
+						     el.tilt,
+						     component->GetExtent().MaximumAbsTransverse());
 
   // add to beam line
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
