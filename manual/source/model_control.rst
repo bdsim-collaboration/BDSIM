@@ -2397,7 +2397,7 @@ circle
 Beam of randomly distributed particles with a uniform distribution within a circle in each
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
-range from `-envelopeX` to `envelopeX` for example. Total
+`x` values range from `-envelopeR` to `envelopeR` for example. Total
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
@@ -2407,9 +2407,9 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| `envelopeR`                      | Maximum position                                      |
+| `envelopeR`                      | Maximum radial position from central value            |
 +----------------------------------+-------------------------------------------------------+
-| `envelopeRp`                     | Maximum canonical momentum                            |
+| `envelopeRp`                     | Maximum radial canonical momentum                     |
 +----------------------------------+-------------------------------------------------------+
 | `envelopeT`                      | Maximum time offset [s]                               |
 +----------------------------------+-------------------------------------------------------+
@@ -2421,7 +2421,9 @@ square
 ******
 
 This distribution has similar properties to the `circle`_ distribution, with the
-exception that the particles are randomly uniformly distributed within a square. Total
+exception that the particles are randomly uniformly distributed within a square. Each parameter
+defines the maximum absolute extent in that dimension, i.e. the possible values
+`x` values range from `-envelopeX` to `envelopeX` for example. The total
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
