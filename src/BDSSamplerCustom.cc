@@ -51,7 +51,7 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
 	containerSolid = new G4Tubs(name + "_solid",
 				    0,
 				    shape.aper1,
-				    10*BDSSamplerPlane::chordLength,
+				    0.5*BDSSamplerPlane::chordLength,
 				    0,
 				    CLHEP::twopi);
 	break;
@@ -61,7 +61,7 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
 	containerSolid = new G4Box(name + "_solid",
 				   shape.aper1,
 				   shape.aper2,
-				   10*BDSSamplerPlane::chordLength);
+				   0.5*BDSSamplerPlane::chordLength);
 	break;
       }
     default:
