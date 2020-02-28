@@ -543,11 +543,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 
   // limit step length in field - crucial to this component
   // to get the motion correct this has to be less than one oscillation.
-  // Don't set if frequency is zero as the field will have no oscillation.
+  // Don't set if frequency is zero as the field will have no oscillation, so we can integrate
+  // safely over longer steps without the field changing.
   if (BDS::IsFinite(element->frequency))
     {
       auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      G4double limit = (*st)["length"] * 0.025;
+      G4double stepFraction  = 0.025;
+      G4double period = 1. / (element->frequency*CLHEP::hertz);
+      // choose the smallest length scale based on the length of the component of the distance
+      // travelled in one period - so improved for high frequency fields
+      G4double limit = std::min((*st)["length"], CLHEP::c_light*period) * stepFraction;
       auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
       if (ul != defaultUL)
 	{vacuumField->SetUserLimits(ul);}
