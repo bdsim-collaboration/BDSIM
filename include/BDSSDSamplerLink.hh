@@ -43,7 +43,7 @@ class BDSSDSamplerLink: public BDSSensitiveDetector
 { 
 public:
   /// Construct a sampler with name and type (plane/cylinder).
-  explicit BDSSDSamplerLink(G4String name);
+  explicit BDSSDSamplerLink(const G4String& name);
   virtual ~BDSSDSamplerLink();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
