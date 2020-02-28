@@ -21,9 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkRegistry.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSDSamplerLink.hh"
-#include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4DynamicParticle.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
@@ -36,9 +34,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
+#include "CLHEP/Geometry/Point3D.h"
+#include "CLHEP/Geometry/Vector3D.h"
+
 #include <vector>
 
-BDSSDSamplerLink::BDSSDSamplerLink(G4String name):
+BDSSDSamplerLink::BDSSDSamplerLink(const G4String& name):
   BDSSensitiveDetector("samplerlink/" + name),
   samplerLinkCollection(nullptr),
   itsCollectionName(name),
@@ -71,13 +72,13 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   
   G4Track* track    = aStep->GetTrack();
   const G4DynamicParticle* dp = track->GetDynamicParticle();
-  G4int TrackID     = track->GetTrackID();           // unique ID of track
-  G4int ParentID    = track->GetParentID();          // unique ID of track's mother
+  G4int trackID     = track->GetTrackID();           // unique ID of track
+  G4int parentID    = track->GetParentID();          // unique ID of track's mother
   G4double T        = track->GetGlobalTime();        // time since beginning of event
   G4double energy   = track->GetTotalEnergy();       // total track energy
-  G4double charge   = dp->GetCharge(); // dynamic effective charge
-  G4ThreeVector pos = track->GetPosition();          // current particle position (global)
-  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
+  G4double charge   = dp->GetCharge();               // dynamic effective charge
+  const G4ThreeVector& pos = track->GetPosition();          // current particle position (global)
+  const G4ThreeVector& mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
@@ -120,13 +121,13 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
 			       weight);
 
   BDSHitSamplerLink* smpHit = new BDSHitSamplerLink(samplerID,
-						    coords,
-						    mass,
-						    charge,
-						    PDGtype,
-						    ParentID,
-						    TrackID,
-						    nElectrons);
+                                                    coords,
+                                                    mass,
+                                                    charge,
+                                                    PDGtype,
+                                                    parentID,
+                                                    trackID,
+                                                    nElectrons);
   
   samplerLinkCollection->insert(smpHit);
   return true; // the hit was stored
