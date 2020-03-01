@@ -2291,7 +2291,7 @@ for the beam particle. In the case :code:`sigmaEk` is specified, :code:`sigmaE` 
 as follows:
 
 .. math::
-   \frac{dEk}{Ek} = \frac{E}{Ek}
+   \frac{dEk}{Ek} = \frac{E}{Ek} \frac{dE}{E}
 
 and :code:`sigmaP` is subsequently calculated as above from this.
 
@@ -2308,11 +2308,11 @@ and :code:`sigmaP` is subsequently calculated as above from this.
 +------------------+----------------------------------------------------+
 | `sigmaYp`        | Sigma of the vertical canonical momentum           |
 +------------------+----------------------------------------------------+
-| `sigmaE`         | Relative energy spread :math:`\sigma_{E}/E`        |
+| `sigmaE`         | **Relative** energy spread :math:`\sigma_{E}/E`    |
 +------------------+----------------------------------------------------+
-| `sigmaEk`        | Relative energy spread :math:`\sigma_{Ek}/Ek`      |
+| `sigmaEk`        | **Relative** energy spread :math:`\sigma_{Ek}/Ek`  |
 +------------------+----------------------------------------------------+
-| `sigmaP`         | Relative momentum spread :math:`\sigma_{P}/P`      |
+| `sigmaP`         | **Relative** momentum spread :math:`\sigma_{P}/P`  |
 +------------------+----------------------------------------------------+
 | `sigmaT`         | Sigma of the temporal distribution [s]             |
 +------------------+----------------------------------------------------+
@@ -2397,7 +2397,7 @@ circle
 Beam of randomly distributed particles with a uniform distribution within a circle in each
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
-range from `-envelopeX` to `envelopeX` for example. Total
+`x` values range from `-envelopeR` to `envelopeR` for example. Total
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
@@ -2407,9 +2407,9 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| `envelopeR`                      | Maximum position                                      |
+| `envelopeR`                      | Maximum radial position from central value            |
 +----------------------------------+-------------------------------------------------------+
-| `envelopeRp`                     | Maximum canonical momentum                            |
+| `envelopeRp`                     | Maximum radial canonical momentum                     |
 +----------------------------------+-------------------------------------------------------+
 | `envelopeT`                      | Maximum time offset [s]                               |
 +----------------------------------+-------------------------------------------------------+
@@ -2421,7 +2421,9 @@ square
 ******
 
 This distribution has similar properties to the `circle`_ distribution, with the
-exception that the particles are randomly uniformly distributed within a square. Total
+exception that the particles are randomly uniformly distributed within a square. Each parameter
+defines the maximum absolute extent in that dimension, i.e. the possible values
+`x` values range from `-envelopeX` to `envelopeX` for example. The total
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
@@ -2494,16 +2496,17 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 +----------------------------------+--------------------------------------------------------------------+
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
-| `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
+| `sigmaE`                         | Extent of **relative** energy spread in total energy. Uniformly    |
 |                                  | distributed between :math:`\pm` `sigmaE`.                          |
 +----------------------------------+--------------------------------------------------------------------+
-| `sigmaEk`                        | Extent of energy spread in fractional kinetic energy. Uniformly    |
+| `sigmaEk`                        | Extent of **reative** energy spread in kinetic energy. Uniformly   |
 |                                  | distributed between :math:`\pm` `sigmaEk`.                         |
 +----------------------------------+--------------------------------------------------------------------+
-| `sigmaP`                         | Extent of energy spread in fractional momentum. Uniformly          |
-|                                  | distributed between :math:`\pm` `sigmaP`.                          |
+| `sigmaP`                         | Extent of **relative** energy spread in momentum.                  |
+|                                  | Uniformly distributed between :math:`\pm` `sigmaP`.                |
 +----------------------------------+--------------------------------------------------------------------+
 
+* Note, 'relative' energy spread means normalised (e.g. :code:`sigmaE` = :math:`\sigma_{E}/E`)
 * Only one of :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
 

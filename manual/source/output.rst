@@ -1288,6 +1288,8 @@ doubles the output file size.
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | zp                 | std::vector<T>    | Vector of the fractional forward momentum                                |
 +--------------------+-------------------+--------------------------------------------------------------------------+
+| p                  | std::vector<T>    | Vector of the momentum (magnitude) of the particle (GeV)                 |
++--------------------+-------------------+--------------------------------------------------------------------------+
 | T                  | std::vector<T>    | Vector of the time-of-flight of the particle (ns)                        |
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | weight             | std::vector<T>    | Vector of the associated weights of the hits                             |
