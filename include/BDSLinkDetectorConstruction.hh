@@ -52,6 +52,8 @@ public:
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
 
+  inline BDSLinkRegistry* LinkRegistry() const {return linkRegistry;}
+
 private:
 
   /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the

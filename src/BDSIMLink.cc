@@ -259,7 +259,7 @@ int BDSIMLink::Initialise()
     }
   */
   
-  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex);
+  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex, construction);
   runManager->SetUserAction(primaryGeneratorAction);
   //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
@@ -393,6 +393,11 @@ void BDSIMLink::SelectLinkElement(const std::string& elementName)
     {currentElementIndex = search->second;}
   else
     {currentElementIndex = 0;}
+}
+
+void BDSIMLink::SelectLinkElement(int index)
+{
+  currentElementIndex = index;
 }
 
 void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,

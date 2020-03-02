@@ -21,10 +21,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSExtent.hh"
 
-#include "globals.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 
 class BDSBunch;
+class BDSLinkDetectorConstruction;
 class BDSOutputLoader;
 class BDSPTCOneTurnMap;
 class G4Event;
@@ -38,8 +38,9 @@ class BDSLinkPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
-  explicit BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
-					 int*      currentElementIndexIn);
+  BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
+					            int*      currentElementIndexIn,
+                                BDSLinkDetectorConstruction* constructionIn);
   virtual ~BDSLinkPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
@@ -52,6 +53,7 @@ private:
   
   BDSBunch* bunch;                ///< BDSIM particle generator. 
   int*      currentElementIndex;  ///< External integer for which element to track in.
+  BDSLinkDetectorConstruction* construction; ///< Cache of detector construction for link registry of transforms.
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
   
   /// World extent that particle coordinates are checked against to ensure they're inside it.
