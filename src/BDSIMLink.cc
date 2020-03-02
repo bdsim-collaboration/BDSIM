@@ -377,8 +377,7 @@ BDSIMLink::~BDSIMLink()
     }
   catch (...)
     {;} // ignore any exception as this is a destructor
-      
-  delete runManager;
+
   delete bdsBunch;
   delete parser;
 
