@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 #include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
+#include "BDSSDManager.hh"
+#include "BDSSDSamplerLink.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -157,6 +159,7 @@ void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
   BDSApertureType apt = BDSApertureType::circular;
   BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
   sampler = new BDSSamplerCustom(samplerName, ap);
+  sampler->GetContainerLogicalVolume()->SetSensitiveDetector(BDSSDManager::Instance()->SamplerLink());
 
   G4double pl = BDSBeamline::PaddingLength();
   auto z2 = component->GetExtent();
