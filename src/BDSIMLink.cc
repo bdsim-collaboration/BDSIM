@@ -416,7 +416,7 @@ void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
 				  yOffset);
   
   /// Close the geometry in preparation for running - everything is now fixed.
-  G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
+  G4bool bCloseGeometry = gm->CloseGeometry();
   if (!bCloseGeometry)
     {throw BDSException(__METHOD_NAME__, "error - geometry not closed.");}
 }
