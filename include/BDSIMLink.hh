@@ -83,12 +83,12 @@ public:
   void SelectLinkElement(int index);
 
   void AddLinkCollimator(const std::string& collimatorName,
-      const std::string& materialName,
-      G4double length,
-      G4double aperture,
-      G4double rotation,
-      G4double xOffset,
-      G4double yOffset);
+			 const std::string& materialName,
+			 G4double length,
+			 G4double aperture,
+			 G4double rotation,
+			 G4double xOffset,
+			 G4double yOffset);
   
 private:
   /// The main function where everything is constructed.
