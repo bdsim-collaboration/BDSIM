@@ -420,3 +420,11 @@ void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
   if (!bCloseGeometry)
     {throw BDSException(__METHOD_NAME__, "error - geometry not closed.");}
 }
+
+BDSHitsCollectionSamplerLink* BDSIMLink::SamplerHits() const
+{
+  if (runAction)
+    {return runAction->SamplerHits();}
+  else
+    {return nullptr;}
+}

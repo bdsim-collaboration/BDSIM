@@ -44,6 +44,8 @@ public:
   /// Append particle to vector for tracking.
   void AddParticle(BDSParticleDefinition* particleDefinitionIn,
 		   const BDSParticleCoordsFull& coordsIn);
+
+  void ClearParticles() {particles.clear();}
   
 private:
   G4int currentIndex; ///< Index in the vector that we're currently at.
