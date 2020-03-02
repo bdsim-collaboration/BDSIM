@@ -46,6 +46,8 @@ public:
 		   const BDSParticleCoordsFull& coordsIn);
 
   void ClearParticles() {particles.clear();}
+
+  inline size_t Size() const {return particles.size();}
   
 private:
   G4int currentIndex; ///< Index in the vector that we're currently at.
