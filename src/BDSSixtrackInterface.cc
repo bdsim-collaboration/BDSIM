@@ -234,29 +234,29 @@ void g4_collimate()
 }
 
 extern "C"
-void g4_collimate_return(int*     /*j*/,
-			 double*  /*x*/,
-			 double*  /*y*/,
-			 double*  /*xp*/,
-			 double*  /*yp*/,
-			 double*  /*e*/,
-			 int32_t* /*pdgid*/,
-			 double*  /*m*/,
-			 int16_t* /*z*/,
-			 int16_t* /*a*/,
-			 int16_t* /*q*/,
-			 double*  /*sigmv*/,
+void g4_collimate_return(int*     j,
+			 double*  x,
+			 double*  y,
+			 double*  xp,
+			 double*  yp,
+			 double*  e,
+			 int32_t* pdgid,
+			 double*  m,
+			 int16_t* z,
+			 int16_t* a,
+			 int16_t* q,
+			 double*  sigmv,
 			 int*     /*part_hit*/,
 			 int*     /*part_abs*/,
 			 double*  /*part_impact*/,
 			 double*  /*part_indiv*/,
 			 double*  /*part_linteract*/,
-			 double*  /*sx*/,
-			 double*  /*sy*/,
-			 double*  /*sz*/)
+			 double*  sx,
+			 double*  sy,
+			 double*  sz)
 {
 
-  const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
+
   /*
     part_hit(j), part_abs(j), part_impact(j), part_indiv(j),
     & part_linteract(j))
@@ -269,32 +269,30 @@ void g4_collimate_return(int*     /*j*/,
   */
   
   //Here the units have been converted back to GeV and m (in the tracking action)
-  /*
-  *x  = output_particles.at(*j).x;
-  *y  = output_particles.at(*j).y;
-  double px = output_particles.at(*j).px;
-  double py = output_particles.at(*j).py;
-  
+  const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
+  BDSHitSamplerLink* hit = (*hits)[*j];
+  const BDSParticleCoordsFull& coords = hit->coords;
+  *x  = coords.x / CLHEP::m;
+  *y  = coords.y / CLHEP::m;
   //Remember, sixtrack xp, yp are p_x / p_total
-  *xp = output_particles.at(*j).px / output_particles.at(*j).p;
-  *yp = output_particles.at(*j).py / output_particles.at(*j).p;
-  *e  = output_particles.at(*j).e;
-  *pdgid  = output_particles.at(*j).pdgid;
-  *z = output_particles.at(*j).z;
-  *a  = output_particles.at(*j).a;
-  *q  = output_particles.at(*j).q;
+  *xp = coords.xp;
+  *yp = coords.yp;
+  *e  = coords.totalEnergy;
+  *pdgid  = (int32_t)hit->pdgID;
+  *z = (int16_t)hit->Z;
+  *a = (int16_t)hit->A;
+  *q = (int16_t)hit->charge;
   
   //nucm is in MeV on both sides
-  *m  = output_particles.at(*j).m;
+  *m  = hit->mass;
   
   //Spin
-  *sx = output_particles.at(*j).sx;
-  *sy = output_particles.at(*j).sy;
-  *sz = output_particles.at(*j).sz;
+  *sx = 0;
+  *sy = 0;
+  *sz = 1;
   
   //time, must be converted for using with sigmv
-  *sigmv  = output_particles.at(*j).t;
-  */
+  *sigmv  = coords.T / CLHEP::s;
 }
 
 std::string CleanFortranString(char* str, size_t count)
@@ -313,9 +311,9 @@ std::string CleanFortranString(char* str, size_t count)
 }
 
 extern "C"
-void g4_get_particle_count(int* /*g4_npart*/)
+void g4_get_particle_count(int* g4_npart)
 {
-  //*g4_npart = output_particles.size();
+  *g4_npart = bds->SamplerHits()->entries();
 }
 
 extern "C"
