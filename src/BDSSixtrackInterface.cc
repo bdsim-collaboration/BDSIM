@@ -255,6 +255,8 @@ void g4_collimate_return(int*     /*j*/,
 			 double*  /*sy*/,
 			 double*  /*sz*/)
 {
+
+  const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
   /*
     part_hit(j), part_abs(j), part_impact(j), part_indiv(j),
     & part_linteract(j))
@@ -319,8 +321,8 @@ void g4_get_particle_count(int* /*g4_npart*/)
 extern "C"
 void g4_collimation_clear()
 {
-  //input_particles.clear();
-  //output_particles.clear();
+  bds->ClearSamplerHits();
+  stp->ClearParticles();
 }
 
 extern "C"

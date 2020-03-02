@@ -42,6 +42,9 @@ public:
 
   void AppendHits(G4int currentEventIndex,
 		  const BDSHitsCollectionSamplerLink* hits);
+
+  BDSHitsCollectionSamplerLink* SamplerHits() const {return allHits;}
+  void ClearSamplerHits() {delete allHits; allHits = nullptr;}
   
 private:
   BDSHitsCollectionSamplerLink* allHits;

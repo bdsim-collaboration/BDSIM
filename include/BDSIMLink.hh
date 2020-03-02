@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSIMLINK_H
 #define BDSIMLINK_H
+#include "BDSHitSamplerLink.hh"
+#include "BDSLinkRunAction.hh"
 #include "G4String.hh"
 
 #include <map>
@@ -28,7 +30,6 @@ class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
 class BDSLinkDetectorConstruction;
-class BDSLinkRunAction;
 class BDSLinkRunManager;
 class BDSOutput;
 class BDSParser;
@@ -89,6 +90,9 @@ public:
 			 G4double rotation,
 			 G4double xOffset,
 			 G4double yOffset);
+
+  BDSHitsCollectionSamplerLink* SamplerHits() const;
+  void ClearSamplerHits() {runAction->ClearSamplerHits();}
   
 private:
   /// The main function where everything is constructed.

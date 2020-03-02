@@ -23,9 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSLinkRunAction::BDSLinkRunAction():
   allHits(nullptr)
-{
-  allHits = new BDSHitsCollectionSamplerLink();
-}
+{;}
 
 BDSLinkRunAction::~BDSLinkRunAction()
 {
@@ -35,7 +33,7 @@ BDSLinkRunAction::~BDSLinkRunAction()
 void BDSLinkRunAction::BeginOfRunAction(const G4Run* /*aRun*/)
 {
   BDSAuxiliaryNavigator::ResetNavigatorStates();
-  
+  allHits = new BDSHitsCollectionSamplerLink();
   //output->InitialiseGeometryDependent();
   //output->NewFile();
   // Write options now file open.
