@@ -37,7 +37,7 @@ void BDSLinkRegistry::Register(BDSLinkOpaqueBox*    componentIn,
 			       const G4Transform3D& globalToInputIn)
 {
   G4int newID = (G4int)byName.size();
-  G4bool noRotation = componentIn->Angled();
+  G4bool noRotation = !(componentIn->Angled());
   BDSLinkRegistry::LinkEntry le = {noRotation, componentIn, globalToInputIn, globalToInputIn.inverse(), newID};
   byName[componentIn->GetName()] = le;
   byID[newID] = le;
