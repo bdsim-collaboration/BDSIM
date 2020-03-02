@@ -82,6 +82,10 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
+  G4double momentum = dp->GetTotalMomentum();
+  auto pd = dp->GetParticleDefinition();
+  G4int z = pd->GetAtomicNumber();
+  G4int a = pd->GetAtomicMass();
 
   // The copy number from the physical volume is used as our unique sampler ID
   G4int samplerID = track->GetVolume()->GetCopyNo();
@@ -133,7 +137,10 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
 
   BDSHitSamplerLink* smpHit = new BDSHitSamplerLink(samplerID,
                                                     coords,
+                                                    momentum,
                                                     mass,
+                                                    z,
+                                                    a,
                                                     charge,
                                                     PDGtype,
                                                     parentID,

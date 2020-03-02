@@ -39,7 +39,10 @@ class BDSHitSamplerLink: public G4VHit
 public:
   BDSHitSamplerLink(G4int samplerIDIn,
 		    const BDSParticleCoordsFull& coordsIn,
+		    G4double momentumIn,
 		    G4double massIn,
+		    G4int    ZIn,
+		    G4int    AIn,
 		    G4double chargeIn,
 		    G4int    pdgIDIn,
 		    G4int    parentIDIn,
@@ -54,7 +57,10 @@ public:
 
   G4int                 samplerID;
   BDSParticleCoordsFull coords;
+  G4double              momentum;
   G4double              mass;
+  G4int                 Z;
+  G4int                 A;
   G4double              charge; ///< Double as g4 uses charge as a double.
   G4int                 pdgID;
   G4int                 parentID;
