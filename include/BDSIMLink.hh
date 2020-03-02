@@ -28,6 +28,7 @@ class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
 class BDSLinkDetectorConstruction;
+class BDSLinkRunAction;
 class BDSLinkRunManager;
 class BDSOutput;
 class BDSParser;
@@ -106,6 +107,7 @@ private:
   BDSBunch*          bdsBunch;
   BDSLinkRunManager* runManager;
   BDSLinkDetectorConstruction* construction;
+  BDSLinkRunAction*  runAction;
   /// @}
   
   std::vector<BDSParticleExternal*> externalParticles;

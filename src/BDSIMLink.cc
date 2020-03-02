@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
+#include "BDSLinkRunAction.hh"
 #include "BDSLinkRunManager.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
@@ -87,7 +88,8 @@ BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   bdsOutput(nullptr),
   bdsBunch(bunchIn),
   runManager(nullptr),
-  construction(nullptr)
+  construction(nullptr),
+  runAction(nullptr)
 {;}
 
 BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
@@ -101,7 +103,8 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   bdsOutput(nullptr),
   bdsBunch(nullptr),
   runManager(nullptr),
-  construction(nullptr)
+  construction(nullptr),
+  runAction(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -238,16 +241,11 @@ int BDSIMLink::Initialise()
       G4cout << __METHOD_NAME__ << std::setw(12) << "Radial: "  << std::setw(7) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
     }
   /// Set user action classes
-  BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput);
+  runAction = new BDSLinkRunAction();
+  BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction);
   runManager->SetUserAction(eventAction);
-
-  /*runManager->SetUserAction(new BDSRunAction(bdsOutput,
-					     bdsBunch,
-					     bdsBunch->ParticleDefinition()->IsAnIon(),
-					     eventAction,
-					     globalConstants->StoreTrajectorySamplerID()));
-  */
-
+  runManager->SetUserAction(runAction);
+  
   /*
   // Only add steppingaction if it is actually used, so do check here (for performance reasons)
   G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
@@ -354,6 +352,7 @@ BDSIMLink::~BDSIMLink()
   G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
   delete bdsOutput;
+  delete runAction;
 
   try
     {

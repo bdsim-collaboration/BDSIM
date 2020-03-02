@@ -16,42 +16,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSLINKEVENTACTION_H
-#define BDSLINKEVENTACTION_H
+#ifndef BDSLINKRUNACTION_H
+#define BDSLINKRUNACTION_H
+#include "BDSHitSamplerLink.hh"
 
 #include "G4Types.hh"
-#include "G4UserEventAction.hh"
+#include "G4UserRunAction.hh"
 
-class BDSLinkRunAction;
-class BDSOutput;
-class G4Event;
+class G4Run;
 
 /**
- * @brief Process information at the event level for Link to trackers.
+ * @brief Simplified run action to hold link hits.
  * 
  * @author Laurie Nevay
  */
 
-class BDSLinkEventAction: public G4UserEventAction
+class BDSLinkRunAction: public G4UserRunAction
 {
 public:
-  explicit BDSLinkEventAction(BDSOutput* outputIn,
-			      BDSLinkRunAction* runActionIn);
-  virtual ~BDSLinkEventAction();
+  BDSLinkRunAction();
+  virtual ~BDSLinkRunAction();
   
-  virtual void BeginOfEventAction(const G4Event* evt);
-  virtual void EndOfEventAction(const G4Event* evt);
+  virtual void BeginOfRunAction(const G4Run* aRun);
+  virtual void EndOfRunAction(const G4Run* aRun);
 
+  void AppendHits(G4int currentEventIndex,
+		  const BDSHitsCollectionSamplerLink* hits);
+  
 private:
-  BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
-  BDSLinkRunAction* runAction;
-  G4bool verboseEventBDSIM;
-  G4int  verboseEventStart;
-  G4int  verboseEventStop;
-  G4int  printModulo;
-
-  G4int collIDSamplerLink;
-  G4int currentEventIndex;
+  BDSHitsCollectionSamplerLink* allHits;
 };
 
 #endif

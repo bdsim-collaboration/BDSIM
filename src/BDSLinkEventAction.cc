@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSHitSamplerLink.hh"
 #include "BDSLinkEventAction.hh"
+#include "BDSLinkRunAction.hh"
 #include "BDSOutput.hh"
 #include "BDSSDSamplerLink.hh"
 #include "BDSSDManager.hh"
@@ -40,8 +41,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn):
+BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn,
+				       BDSLinkRunAction* runActionIn):
   output(outputIn),
+  runAction(runActionIn),
   collIDSamplerLink(-1),
   currentEventIndex(0)
 {
@@ -93,6 +96,15 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
   
   typedef BDSHitsCollectionSamplerLink slhc;
   slhc* samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
+
+  if (!samplerLink)
+    {return;}
+  if (!(samplerLink->entries() > 0))
+    {return;}
+  else
+    {
+      runAction->AppendHits(currentEventIndex, samplerLink);
+    }
 
   /*
   output->FillEvent(eventInfo,
