@@ -187,7 +187,6 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	  tpreWeight.push_back(point->GetPreWeight());
 	  tpostWeight.push_back(point->GetPostWeight());
 	  tenergyDeposit.push_back(point->GetEnergy());
-
 	  G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
 	  tPXPYPZ.push_back(TVector3(mom.getX(),
 				     mom.getY(),
