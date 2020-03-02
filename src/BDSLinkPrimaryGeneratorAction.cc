@@ -22,7 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSIonDefinition.hh"
+#include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkPrimaryGeneratorAction.hh"
+#include "BDSLinkRegistry.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSRandom.hh"
 
@@ -32,9 +34,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
-							     int*      currentElementIndexIn):
+							     int*      currentElementIndexIn,
+							     BDSLinkDetectorConstruction* constructionIn):
   bunch(bunchIn),
   currentElementIndex(currentElementIndexIn),
+  construction(constructionIn),
   particleGun(nullptr)
 {
   particleGun = new G4ParticleGun(1); // 1-particle gun
@@ -67,9 +71,9 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // generate set of coordinates - internally the bunch may try many times to generate
   // coordinates with total energy above the rest mass and may throw an exception if
   // it can't
-  BDSParticleCoordsFullGlobal coords;
+  BDSParticleCoordsFull coords;
   try
-    {coords = bunch->GetNextParticle();}
+    {coords = bunch->GetNextParticleLocal();}
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
       // could be because of user input file
@@ -79,12 +83,22 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       return;
     }
 
-  // TODO STUART
-  // update coords.global with transform based on beam line index "*currentElementIndex"
-  // e.g. something like G4Transform3D offset = registry->GetTransform(*currentElementIndex);
-  // coords.global = coords.local.ApplyTransform(transform); // maybe
-  // or alternatively update the transform inside BDSBunch base class before call
-  // to bunch->GetNextParticle() and it'll do it for you
+  BDSParticleCoordsFullGlobal cg;
+  auto lr = construction->LinkRegistry();
+  G4Transform3D tr = lr->TransformInverse(*currentElementIndex);
+  if (lr->NoRotation(*currentElementIndex))
+    {
+      BDSParticleCoordsFull cgf = BDSParticleCoordsFull(coords);
+      G4ThreeVector offset = tr.getTranslation();
+      cgf.x += offset.x();
+      cgf.y += offset.y();
+      cgf.z += offset.z();
+      cg = BDSParticleCoordsFullGlobal(coords, coords);
+    }
+  else
+    {
+      cg = BDSParticleCoordsFullGlobal(coords,(BDSParticleCoords)coords.ApplyTransform(tr));
+    }
   
   particleGun->SetParticleDefinition(bunch->ParticleDefinition()->ParticleDefinition());
   
@@ -93,7 +107,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // check that kinetic energy is positive and finite anyway and abort if not.
   // get the mass from the beamParticle as this takes into account any electrons
-  G4double EK = coords.local.totalEnergy - bunch->ParticleDefinition()->Mass();
+  G4double EK = cg.local.totalEnergy - bunch->ParticleDefinition()->Mass();
   if (EK <= 0)
     {
       G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
@@ -104,9 +118,9 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 
   // check the coordinates are valid
-  if (!worldExtent.Encompasses(coords.global))
+  if (!worldExtent.Encompasses(cg.global))
     {
-      G4cerr << __METHOD_NAME__ << "point: " << coords.global
+      G4cerr << __METHOD_NAME__ << "point: " << cg.global
 	     << "mm lies outside the world volume with extent ("
 	     << worldExtent << " - event aborted!" << G4endl << G4endl;
       anEvent->SetEventAborted();
@@ -116,19 +130,19 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4cout << __METHOD_NAME__ << coords << G4endl;
 #endif
 
-  G4ThreeVector PartMomDir(coords.global.xp,coords.global.yp,coords.global.zp);
-  G4ThreeVector PartPosition(coords.global.x,coords.global.y,coords.global.z);
+  G4ThreeVector PartMomDir(cg.global.xp,cg.global.yp,cg.global.zp);
+  G4ThreeVector PartPosition(cg.global.x,cg.global.y,cg.global.z);
 
   particleGun->SetParticlePosition(PartPosition);
   particleGun->SetParticleEnergy(EK);
   particleGun->SetParticleMomentumDirection(PartMomDir);
-  particleGun->SetParticleTime(coords.global.T);
+  particleGun->SetParticleTime(cg.global.T);
 
   particleGun->GeneratePrimaryVertex(anEvent);
 
   // set the weight
   auto vertex = anEvent->GetPrimaryVertex();
-  vertex->SetWeight(coords.local.weight);
+  vertex->SetWeight(cg.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
   //vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
