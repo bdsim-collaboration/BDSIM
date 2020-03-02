@@ -54,7 +54,11 @@ int main(int argc, char** argv)
 	    {std::cout << "Intialisation failed" << std::endl; return 1;}
 	}
       else
-	{bds->BeamOn();}
+	{
+	  bds->BeamOn();
+	}
+    auto hits = bds->SamplerHits();
+    G4cout << hits->entries() << G4endl;
       delete bds;
     }
   catch (const BDSException& exception)
@@ -69,5 +73,6 @@ int main(int argc, char** argv)
       delete bds;
       exit(1);
     }
+
   return 0;
 }
