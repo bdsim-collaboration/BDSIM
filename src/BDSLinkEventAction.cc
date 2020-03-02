@@ -99,7 +99,7 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 
   if (!samplerLink)
     {return;}
-  if (!(samplerLink->entries() > 0))
+  if (samplerLink->entries() <= 0)
     {return;}
   else
     {
