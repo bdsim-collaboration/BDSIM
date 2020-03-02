@@ -230,7 +230,7 @@ void g4_add_particle(double*  xIn,
 extern "C"
 void g4_collimate()
 {
-  bds->BeamOn();
+  bds->BeamOn((G4int)stp->Size());
 }
 
 extern "C"
