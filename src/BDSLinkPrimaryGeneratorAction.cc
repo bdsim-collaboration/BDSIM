@@ -85,15 +85,11 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   BDSParticleCoordsFullGlobal cg;
   auto lr = construction->LinkRegistry();
-  G4Transform3D tr = lr->TransformInverse(*currentElementIndex);
+  G4Transform3D tr = lr->Transform(*currentElementIndex);
   if (lr->NoRotation(*currentElementIndex))
     {
-      BDSParticleCoordsFull cgf = BDSParticleCoordsFull(coords);
-      G4ThreeVector offset = tr.getTranslation();
-      cgf.x += offset.x();
-      cgf.y += offset.y();
-      cgf.z += offset.z();
-      cg = BDSParticleCoordsFullGlobal(coords, coords);
+      BDSParticleCoords cgf = coords.ApplyOffset(tr.getTranslation());
+      cg = BDSParticleCoordsFullGlobal(coords, cgf);
     }
   else
     {
