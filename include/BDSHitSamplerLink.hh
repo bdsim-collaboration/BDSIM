@@ -38,13 +38,13 @@ class BDSHitSamplerLink: public G4VHit
 {
 public:
   BDSHitSamplerLink(G4int samplerIDIn,
-		     const BDSParticleCoordsFull& coordsIn,
-		     G4double massIn,
-		     G4double chargeIn,
-		     G4int    pdgIDIn,
-		     G4int    parentIDIn,
-		     G4int    trackIDIn,
-		     G4int    nElectronsIn = 0);
+		    const BDSParticleCoordsFull& coordsIn,
+		    G4double massIn,
+		    G4double chargeIn,
+		    G4int    pdgIDIn,
+		    G4int    parentIDIn,
+		    G4int    trackIDIn,
+		    G4int    nElectronsIn = 0);
 
   /// Note this should not be inline when we use a G4Allocator.
   virtual ~BDSHitSamplerLink();
@@ -60,6 +60,7 @@ public:
   G4int                 parentID;
   G4int                 trackID;
   G4int                 nElectrons; ///< Can only get this at inspection time so include here.
+  G4int                 eventID;
   
 private:
   BDSHitSamplerLink() = delete; ///< No default constructor.

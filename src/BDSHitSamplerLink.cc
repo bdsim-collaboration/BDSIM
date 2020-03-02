@@ -39,7 +39,8 @@ BDSHitSamplerLink::BDSHitSamplerLink(G4int samplerIDIn,
   pdgID(pdgIDIn),
   parentID(parentIDIn),
   trackID(trackIDIn),
-  nElectrons(nElectronsIn)
+  nElectrons(nElectronsIn),
+  eventID(0)
 {;}
 
 BDSHitSamplerLink::~BDSHitSamplerLink()
