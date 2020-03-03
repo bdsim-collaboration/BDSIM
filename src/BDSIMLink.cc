@@ -57,6 +57,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkEventAction.hh"
 #include "BDSLinkRunAction.hh"
 #include "BDSLinkRunManager.hh"
+#include "BDSLinkStackingAction.hh"
+#include "BDSLinkTrackingAction.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -253,6 +255,16 @@ int BDSIMLink::Initialise()
   BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction);
   runManager->SetUserAction(eventAction);
   runManager->SetUserAction(runAction);
+  G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
+  G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
+                                                          globalConstants->VerboseSteppingEventContinueFor());
+  runManager->SetUserAction(new BDSLinkTrackingAction(globalConstants->Batch(),
+                                                      eventAction,
+                                                      verboseSteppingEventStart,
+                                                      verboseSteppingEventStop,
+                                                      globalConstants->VerboseSteppingPrimaryOnly(),
+                                                      globalConstants->VerboseSteppingLevel()));
+  runManager->SetUserAction(new BDSLinkStackingAction(globalConstants));
   
   /*
   // Only add steppingaction if it is actually used, so do check here (for performance reasons)
