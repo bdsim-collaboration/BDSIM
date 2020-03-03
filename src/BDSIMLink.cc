@@ -267,7 +267,7 @@ int BDSIMLink::Initialise()
   runManager->Initialize();
   
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
-  //realWorld->BuildPhysicsBias(); TODO
+  construction->BuildPhysicsBias();
 
   if (usualPrintOut && BDSGlobalConstants::Instance()->PhysicsVerbose())
     {
