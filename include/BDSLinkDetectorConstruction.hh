@@ -22,12 +22,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4VUserDetectorConstruction.hh"
 #include "G4ThreeVector.hh"
+#include "G4Types.hh"
+
+#include <string>
 
 class BDSBeamline;
 class BDSBeamlineElement;
 class BDSLinkRegistry;
 class BDSParticleDefinition;
 class G4Box;
+class G4ChannelingOptrMultiParticleChangeCrossSection;
 class G4VPhysicalVolume;
 
 class BDSLinkDetectorConstruction: public G4VUserDetectorConstruction
@@ -74,8 +78,7 @@ public:
   /// Particle definition all components are built w.r.t. Includes rigidity etc.
   const BDSParticleDefinition* designParticle;
 
-  /// Position of the centre of the collimator entrances in global coordinates.
-  std::vector<G4Transform3D> collimatorTransforms;
+  G4ChannelingOptrMultiParticleChangeCrossSection* crystalBiasing;
 };
 
 #endif
