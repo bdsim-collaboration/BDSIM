@@ -36,17 +36,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SDManager.hh"
 #include "G4TransportationManager.hh"
 
-#include <algorithm>
-#include <map>
-#include <string>
-#include <vector>
-
 BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn,
 				       BDSLinkRunAction* runActionIn):
   output(outputIn),
   runAction(runActionIn),
   collIDSamplerLink(-1),
-  currentEventIndex(0)
+  currentEventIndex(0),
+  primaryAbsorbedInCollimator(false)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   verboseEventBDSIM         = globals->VerboseEventBDSIM();
@@ -61,6 +57,7 @@ BDSLinkEventAction::~BDSLinkEventAction()
 void BDSLinkEventAction::BeginOfEventAction(const G4Event* evt)
 {
   currentEventIndex = evt->GetEventID();
+  primaryAbsorbedInCollimator = false;
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();

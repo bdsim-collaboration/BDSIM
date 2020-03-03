@@ -42,6 +42,11 @@ public:
   virtual void BeginOfEventAction(const G4Event* evt);
   virtual void EndOfEventAction(const G4Event* evt);
 
+  G4int CurrentEventIndex() const {return currentEventIndex;}
+
+  /// Flag that the primary was absorbed in a collimator - can be done externally to this class.
+  void SetPrimaryAbsorbedInCollimator(G4bool stoppedIn) {primaryAbsorbedInCollimator = stoppedIn;}
+
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   BDSLinkRunAction* runAction;
@@ -52,6 +57,7 @@ private:
 
   G4int collIDSamplerLink;
   G4int currentEventIndex;
+  G4bool primaryAbsorbedInCollimator;
 };
 
 #endif
