@@ -147,12 +147,12 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 						    G4double yOffset)
 {
   std::map<std::string, std::string> collimatorToCrystal =
-      {
-          {"cry.mio.b1", "stf"},
-          {"cry.mio.b2", "stf"},
-          {"tcpv.a6l7.b1", "stf"},
-          {"tcpv.a6r7.b2", "stf"}
-      };
+    {
+     {"cry.mio.b1", "stf75"},   //b1 h
+     {"cry.mio.b2", "tcp76"},   //b2 h
+     {"tcpv.a6l7.b1", "qmp34"}, // b1 v
+     {"tcpv.a6r7.b2", "qmp53"}  // b2 v
+    };
 
   G4bool isACrystal = collimatorToCrystal.find(collimatorName) != collimatorToCrystal.end();
 
