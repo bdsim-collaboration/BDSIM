@@ -54,7 +54,8 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
   worldPV(nullptr),
   linkBeamline(nullptr),
   linkRegistry(nullptr),
-  designParticle(nullptr)
+  designParticle(nullptr),
+  crystalBiasing(nullptr)
 {
   linkRegistry = new BDSLinkRegistry();
   BDSSDManager::Instance()->SetLinkRegistry(linkRegistry);
@@ -64,6 +65,7 @@ BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction()
 {
   delete linkBeamline;
   delete linkRegistry;
+  delete crystalBiasing;
 }
 
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
@@ -173,8 +175,16 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
     {
       el.type = GMAD::ElementType::_CRYSTALCOL;
       el.l += 1e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
-      el.crystalLeft = collimatorToCrystal[collimatorName];
-      el.crystalAngleYAxisLeft = 50 * CLHEP::radian * 1e-6;
+      if (collimatorName.find("2") != std::string::npos) // b2
+        {
+          el.crystalLeft = collimatorToCrystal[collimatorName];
+          el.crystalAngleYAxisLeft = 50 * CLHEP::radian * 1e-6;
+        }
+      else
+        {
+          el.crystalRight = collimatorToCrystal[collimatorName];
+          el.crystalAngleYAxisRight = -50 * CLHEP::radian * 1e-6;
+        }
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
@@ -201,6 +211,9 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 
   // place that one element
   PlaceOneComponent(linkBeamline->back());
+
+  // update crystal biasing
+  BuildPhysicsBias();
 }
 
 void BDSLinkDetectorConstruction::UpdateWorldSolid()
@@ -251,13 +264,19 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
 
 void BDSLinkDetectorConstruction::BuildPhysicsBias()
 {
+  if (!crystalBiasing) // cache it because we may have to dynamically add later
+    {crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();}
+
   // crystal biasing necessary for implementation of variable density
   std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
   if (!crystals->empty())
     {
       G4cout << __METHOD_NAME__ << "Using crystal biasing: true" << G4endl; // to match print out style further down
-      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
       for (auto crystal : *crystals)
-        {crystalBiasing->AttachTo(crystal);}
+        {
+          // if it hasn't been added already - g4 will whine for double registration
+          if (!crystalBiasing->GetBiasingOperator(crystal))
+            {crystalBiasing->AttachTo(crystal);}
+        }
     }
 }
