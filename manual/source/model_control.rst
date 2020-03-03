@@ -2285,40 +2285,41 @@ correlations between phase space coordinates, so
 gausstwiss
 **********
 
-The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and
-:math:`\gamma`, plus dispersion :math:`\eta`, from which the beam :math:`\sigma` -matrix
-is calculated, using the following equations:
+The beam parameters are defined by the usual Twiss parameters (listed below in full)
+:math:`\alpha`, :math:`\beta` and :math:`\gamma`, plus dispersion :math:`\eta`, from
+which the beam :math:`\sigma` -matrix is calculated, using the following equations:
 
 .. math::
-   \sigma_{11} & =  \epsilon_x \beta_x + \eta_{x}^{2}\sigma_{E}^{2} \\
-   \sigma_{12} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{21} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{22} & =  \epsilon_x \gamma_x + \eta_{xp}^{2}\sigma_{E}^{2}\\
-   \sigma_{33} & =  \epsilon_y \beta_y + \eta_{y}^{2}\sigma_{E}^{2}\\
-   \sigma_{34} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{43} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{44} & =  \epsilon_y \gamma_y + \eta_{yp}^{2}\sigma_{E}^{2}\\
-   \sigma_{13} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{31} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{23} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{32} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{14} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{41} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{24} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{42} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{16} & = \eta_{x}\sigma_{E}^{2}\\
-   \sigma_{61} & = \eta_{x}\sigma_{E}^{2}\\
-   \sigma_{26} & = \eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{62} & = \eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{36} & = \eta_{y}\sigma_{E}^{2}\\
-   \sigma_{63} & = \eta_{y}\sigma_{E}^{2}\\
-   \sigma_{46} & = \eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{64} & = \eta_{x}\sigma_{E}^{2}\\
-   \sigma_{55} & =  \sigma_{T}^2 \\
-   \sigma_{66} & =  \sigma_{E}^2
+   \sigma_{11} & =  \epsilon_x \beta_x + \eta_{x}^{2}\sigma_{P}^{2} \\
+   \sigma_{12} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{P}^{2}\\
+   \sigma_{21} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{P}^{2}\\
+   \sigma_{22} & =  \epsilon_x \gamma_x + \eta_{xp}^{2}\sigma_{P}^{2}\\
+   \sigma_{33} & =  \epsilon_y \beta_y + \eta_{y}^{2}\sigma_{P}^{2}\\
+   \sigma_{34} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{43} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{44} & =  \epsilon_y \gamma_y + \eta_{yp}^{2}\sigma_{P}^{2}\\
+   \sigma_{13} & = \eta_{x}\eta_{y}\sigma_{P}^{2}\\
+   \sigma_{31} & = \eta_{x}\eta_{y}\sigma_{P}^{2}\\
+   \sigma_{23} & = \eta_{xp}\eta_{y}\sigma_{P}^{2}\\
+   \sigma_{32} & = \eta_{xp}\eta_{y}\sigma_{P}^{2}\\
+   \sigma_{14} & = \eta_{x}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{41} & = \eta_{x}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{24} & = \eta_{xp}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{42} & = \eta_{xp}\eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{16} & = \eta_{x}\sigma_{P}^{2}\\
+   \sigma_{61} & = \eta_{x}\sigma_{P}^{2}\\
+   \sigma_{26} & = \eta_{xp}\sigma_{P}^{2}\\
+   \sigma_{62} & = \eta_{xp}\sigma_{P}^{2}\\
+   \sigma_{36} & = \eta_{y}\sigma_{P}^{2}\\
+   \sigma_{63} & = \eta_{y}\sigma_{P}^{2}\\
+   \sigma_{46} & = \eta_{yp}\sigma_{P}^{2}\\
+   \sigma_{64} & = \eta_{x}\sigma_{P}^{2}\\
+   \sigma_{55} & = \sigma_{T}^2 \\
+   \sigma_{66} & = \sigma_{P}^2
 
 * All parameters from `reference`_ distribution are used as centroids.
-* Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
+* `sigmaE` or `sigmaP` may be specified in the beam command and
+  one is calculated from the other.
 
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -2345,6 +2346,10 @@ is calculated, using the following equations:
 | `dispxp`                         | Horizontal angular dispersion function                |
 +----------------------------------+-------------------------------------------------------+
 | `dispyp`                         | Vertical angular dispersion function                  |
++----------------------------------+-------------------------------------------------------+
+| `sigmaE`                         | Normalised energy spread                              |
++----------------------------------+-------------------------------------------------------+
+| `sigmaP`                         | Normalised momentum spread                            |
 +----------------------------------+-------------------------------------------------------+
 
 
