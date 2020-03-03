@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0042 NEW)
 if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
+
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GenerateExportHeader)
 
@@ -174,6 +177,7 @@ set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include
 
 # BDSIM library and binaries
 add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
+target_compile_features(${BDSIM_LIB_NAME} PUBLIC cxx_std_11)
 generate_export_header(${BDSIM_LIB_NAME})
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
@@ -213,6 +217,7 @@ if($ENV{VERBOSE})
 endif()
 
 add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+target_compile_features(bdsimRootEvent PUBLIC cxx_std_11)
 target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
 # link against ROOT
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
