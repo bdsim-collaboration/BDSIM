@@ -60,20 +60,14 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-
-  // update particle definition in the special case of an ion - can only be done here
-  // and not before due to Geant4 ion information availability only at run time
-  /*if (ionPrimary && !ionCached)
-    {
-      bunch->UpdateIonDefinition();
-    }
-  */
-  // generate set of coordinates - internally the bunch may try many times to generate
-  // coordinates with total energy above the rest mass and may throw an exception if
-  // it can't
   BDSParticleCoordsFull coords;
   try
-    {coords = bunch->GetNextParticleLocal();}
+    {
+      // update particle definition in the special case of an ion - can only be done here
+      // and not before due to Geant4 ion information availability only at run time
+      bunch->UpdateIonDefinition();
+      coords = bunch->GetNextParticleLocal();
+    }
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort
       // could be because of user input file
