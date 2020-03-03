@@ -173,6 +173,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
       el.crystalLeft = collimatorToCrystal[collimatorName];
       el.crystalAngleYAxisLeft = 50 * CLHEP::radian * 1e-6;
     }
+  else
+    {el.region = "r1";} // stricter range cuts for default collimators
   
   auto componentFactory = new BDSComponentFactory(designParticle);
   BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el,
