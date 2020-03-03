@@ -146,6 +146,16 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 						    G4double xOffset,
 						    G4double yOffset)
 {
+  std::map<std::string, std::string> collimatorToCrystal =
+      {
+          {"cry.mio.b1", "stf"},
+          {"cry.mio.b2", "stf"},
+          {"tcpv.a6l7.b1", "stf"},
+          {"tcpv.a6r7.b2", "stf"}
+      };
+
+  G4bool isACrystal = collimatorToCrystal.find(collimatorName) != collimatorToCrystal.end();
+
   // build component
   GMAD::Element el = GMAD::Element();
   el.type     = GMAD::ElementType::_JCOL;
@@ -156,6 +166,13 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   el.tilt     = rotation;
   el.offsetX  = xOffset;
   el.offsetY  = yOffset;
+  if (isACrystal)
+    {
+      el.type = GMAD::ElementType::_CRYSTALCOL;
+      el.l += 1e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
+      el.crystalLeft = collimatorToCrystal[collimatorName];
+      el.crystalAngleYAxisLeft = 50 * CLHEP::radian * 1e-6;
+    }
   
   auto componentFactory = new BDSComponentFactory(designParticle);
   BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el,
