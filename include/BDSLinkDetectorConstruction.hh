@@ -54,7 +54,9 @@ public:
 
   inline BDSLinkRegistry* LinkRegistry() const {return linkRegistry;}
 
-private:
+  void BuildPhysicsBias();
+
+ private:
 
   /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the
   /// linkBeamline member. Update worldExtent member also.

@@ -16,9 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSExtentGlobal.hh"
@@ -35,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/elementtype.h"
 
 #include "G4Box.hh"
+#include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #include "G4PVPlacement.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -244,4 +247,17 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
   G4Transform3D elCentreToStart = el->TransformToStart();
   G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
   linkRegistry->Register(el, globalToStart);
+}
+
+void BDSLinkDetectorConstruction::BuildPhysicsBias()
+{
+  // crystal biasing necessary for implementation of variable density
+  std::set<G4LogicalVolume*>* crystals = BDSAcceleratorModel::Instance()->VolumeSet("crystals");
+  if (!crystals->empty())
+    {
+      G4cout << __METHOD_NAME__ << "Using crystal biasing: true" << G4endl; // to match print out style further down
+      auto crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();
+      for (auto crystal : *crystals)
+        {crystalBiasing->AttachTo(crystal);}
+    }
 }
