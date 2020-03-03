@@ -34,12 +34,17 @@ endif()
 
 # Object library, will be used by both static and shared library
 add_library(gmadLib OBJECT ${GMAD_PARSER_SOURCES} ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+target_compile_features(gmadLib PUBLIC cxx_std_11)
+
 # Shared libraries need PIC
 set_target_properties(gmadLib PROPERTIES POSITION_INDEPENDENT_CODE 1)
 # Static library for BDSIM
 add_library(gmad STATIC $<TARGET_OBJECTS:gmadLib>)
+target_compile_features(gmad PUBLIC cxx_std_11)
+
 # For Python a shared library is needed
 add_library(gmadShared SHARED $<TARGET_OBJECTS:gmadLib>)
+target_compile_features(gmadShared PUBLIC cxx_std_11)
 
 if($ENV{VERBOSE})
   message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
