@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
+#include "BDSBunchSixTrackLink.hh"
 #include "BDSCavityFactory.hh"
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -220,13 +221,20 @@ int BDSIMLink::Initialise()
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
-  GMAD::BeamBase b;
+  GMAD::Beam b;
   b.distrType = "sixtracklink";
-  bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
-					  parser->GetBeam(),
-					  globalConstants->BeamlineTransform(),
-					  globalConstants->BeamlineS(),
-					  globalConstants->GeneratePrimariesOnly());
+  if (!bdsBunch)
+    {
+      bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
+                                              parser->GetBeam(),
+                                              globalConstants->BeamlineTransform(),
+                                              globalConstants->BeamlineS(),
+                                              globalConstants->GeneratePrimariesOnly());
+    }
+  else
+    {
+      bdsBunch->SetOptions(beamParticle, b, BDSBunchType::reference); // update particle definition only
+    }
   /// We no longer need beamParticle so delete it to avoid confusion. The definition is
   /// held inside bdsBunch (can be updated dynamically).
   delete beamParticle;
