@@ -58,7 +58,8 @@ int main(int argc, char** argv)
 	  bds->BeamOn();
 	}
     auto hits = bds->SamplerHits();
-    G4cout << hits->entries() << G4endl;
+    if (hits)
+      {G4cout << hits->entries() << G4endl;}
       delete bds;
     }
   catch (const BDSException& exception)
