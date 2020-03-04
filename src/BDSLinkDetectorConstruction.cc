@@ -159,14 +159,27 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
      {"tcpv.a6l7.b1", "qmp34"}, // b1 v
      {"tcpv.a6r7.b2", "qmp53"}  // b2 v
     };
-
   G4bool isACrystal = collimatorToCrystal.find(collimatorName) != collimatorToCrystal.end();
+
+  std::map<std::string, std::string> sixtrackToBDSIM =
+      {
+          {"CU", "Cu"},
+          {"W",  "W"},
+          {"C",  "G4_GRAPHITE_POROUS"},
+          {"Si", "Si"}
+      };
+  std::string g4material;
+  auto search = sixtrackToBDSIM.find(materialName);
+  if (search != sixtrackToBDSIM.end())
+    {g4material = search->second;}
+  else
+    {g4material = materialName;}
 
   // build component
   GMAD::Element el = GMAD::Element();
   el.type     = GMAD::ElementType::_JCOL;
   el.name     = collimatorName;
-  el.material = materialName;
+  el.material = g4material;
   el.l        = length;
   el.aper1    = aperture;
   el.tilt     = rotation;
