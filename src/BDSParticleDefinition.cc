@@ -148,7 +148,8 @@ BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other)
   momentum(other.momentum),
   gamma(other.gamma),
   beta(other.beta),
-  brho(other.brho)
+  brho(other.brho),
+  ffact(other.ffact)
 {
   if (other.ionDefinition)
     {ionDefinition = new BDSIonDefinition(*other.ionDefinition);}
