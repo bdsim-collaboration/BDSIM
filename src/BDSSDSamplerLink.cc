@@ -89,6 +89,7 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
 
   // The copy number from the physical volume is used as our unique sampler ID
   G4int samplerID = track->GetVolume()->GetCopyNo();
+  G4cout << "samplerID " << samplerID << G4endl;
 
   // Initialize variables for the local position and direction
   G4ThreeVector localPosition;
