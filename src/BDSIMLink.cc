@@ -18,22 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSIMLink.hh"
 
-#include "BDSExecOptions.hh"     // executable command line options 
-#include "BDSGlobalConstants.hh" //  global parameters
-
 #include <cstdlib>      // standard headers 
 #include <cstdio>
 #include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
-#include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
 #include "G4GeometryTolerance.hh"
-#include "G4PhysicsListHelper.hh"
-#include "G4ParallelWorldPhysics.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4SteppingManager.hh"
-#include "G4TrackingManager.hh"
 #include "G4Version.hh"
 #include "G4VModularPhysicsList.hh"
 
@@ -47,11 +38,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExecOptions.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
@@ -69,16 +62,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsUtilities.hh"
 #include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
-#include "BDSRunAction.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
-#include "BDSSteppingAction.hh"
-#include "BDSStackingAction.hh"
 #include "BDSTemporaryFiles.hh"
-#include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
-#include "BDSWarning.hh"
+
+#include <map>
 
 BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   ignoreSIGINT(false),
@@ -317,6 +307,9 @@ int BDSIMLink::Initialise()
 				    globalConstants->ExportFileName());
     }
 
+  const auto& nameInds = construction->NameToElementIndex();
+  nameToElementIndex.insert(nameInds.begin(), nameInds.end());
+
   initialised = true;
   return 0;
 }
@@ -438,6 +431,7 @@ void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
 				  rotation,
 				  xOffset,
 				  yOffset);
+  nameToElementIndex[collimatorName] = construction->NumberOfElements() - 1;
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = gm->CloseGeometry();
