@@ -100,8 +100,11 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 									     nullptr,
 									     0);
 
+      BDSTiltOffset* to = new BDSTiltOffset(elementIt->offsetX * CLHEP::m,
+                                            elementIt->offsetY * CLHEP::m,
+                                            elementIt->tilt * CLHEP::rad);
       BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
-                                                         elementIt->tilt,
+                                                         to,
                                                          component->GetExtent().MaximumAbsTransverse());
 
       opaqueBoxes.push_back(opaqueBox);
@@ -209,9 +212,12 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 									 nullptr,
 									 0); 
 
-  // wrap in box 
+  // wrap in box
+  BDSTiltOffset* to = new BDSTiltOffset(el.offsetX * CLHEP::m,
+                                        el.offsetY * CLHEP::m,
+                                        el.tilt * CLHEP::rad);
   BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
-						     el.tilt,
+						     to,
 						     component->GetExtent().MaximumAbsTransverse());
 
   // add to beam line

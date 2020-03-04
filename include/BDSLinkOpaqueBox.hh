@@ -34,7 +34,7 @@ class BDSLinkOpaqueBox: public BDSGeometryComponent
 {
 public:
   BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
-		   G4double tiltIn,
+                   BDSTiltOffset* tiltOffsetIn,
 		   G4double outputSamplerRadiusIn);
   virtual ~BDSLinkOpaqueBox();
 
@@ -55,9 +55,11 @@ public:
   /// Whether it's angled or not.
   G4bool Angled() const {return component ? BDS::IsFinite(component->GetAngle()) : false;}
 
+  /// Access the underlying name used for linking to tracker.
+  G4String LinkName() const {return component ? component->GetName() : "unknown";}
+
 private:
   BDSAcceleratorComponent* component;
-  G4double                 tilt;
   G4double                 outputSamplerRadius;
   G4ThreeVector            offsetToStart;
   G4Transform3D            transformToStart;
