@@ -109,7 +109,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 							opaqueBox,
 							opaqueBox->GetExtent().DZ());
-      
+
+      nameToElementIndex[elementIt->name] = (G4int)linkBeamline->size();
       linkBeamline->AddComponent(comp);
     }
 
@@ -158,14 +159,27 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
      {"tcpv.a6l7.b1", "qmp34"}, // b1 v
      {"tcpv.a6r7.b2", "qmp53"}  // b2 v
     };
-
   G4bool isACrystal = collimatorToCrystal.find(collimatorName) != collimatorToCrystal.end();
+
+  std::map<std::string, std::string> sixtrackToBDSIM =
+      {
+          {"CU", "Cu"},
+          {"W",  "W"},
+          {"C",  "G4_GRAPHITE_POROUS"},
+          {"Si", "Si"}
+      };
+  std::string g4material;
+  auto search = sixtrackToBDSIM.find(materialName);
+  if (search != sixtrackToBDSIM.end())
+    {g4material = search->second;}
+  else
+    {g4material = materialName;}
 
   // build component
   GMAD::Element el = GMAD::Element();
   el.type     = GMAD::ElementType::_JCOL;
   el.name     = collimatorName;
-  el.material = materialName;
+  el.material = g4material;
   el.l        = length;
   el.aper1    = aperture;
   el.tilt     = rotation;
@@ -204,6 +218,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
+  nameToElementIndex[collimatorName] = (G4int)linkBeamline->size();
   linkBeamline->AddComponent(comp);
 
   // update world extents and world solid
@@ -219,7 +234,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 void BDSLinkDetectorConstruction::UpdateWorldSolid()
 {
   BDSExtentGlobal we = linkBeamline->GetExtentGlobal();
-  we.ExpandToEncompass(BDSExtentGlobal(BDSExtent(10*CLHEP::m, 10*CLHEP::m, 10*CLHEP::m))); // minimum size
+  we = we.ExpandToEncompass(BDSExtentGlobal(BDSExtent(10*CLHEP::m, 10*CLHEP::m, 10*CLHEP::m))); // minimum size
   G4ThreeVector worldExtentAbs = we.GetMaximumExtentAbsolute();
   worldExtentAbs *= 1.2;
 
@@ -244,6 +259,7 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
   G4String placementName = element->GetPlacementName() + "_pv";
   G4Transform3D* placementTransform = element->GetPlacementTransform();
   G4int copyNumber = element->GetCopyNo();
+  G4cout << "placing " << placementName << " with copy number " << copyNumber << G4endl;
   // auto pv =
   new G4PVPlacement(*placementTransform,
                     placementName,

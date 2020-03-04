@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSLINKDETECTORCONSTRUCTION_H
 #define BDSLINKDETECTORCONSTRUCTION_H
+#include "BDSBeamline.hh"
 #include "BDSExtent.hh"
 
 #include "G4VUserDetectorConstruction.hh"
@@ -60,6 +61,9 @@ public:
 
   void BuildPhysicsBias();
 
+  inline const std::map<std::string, G4int>& NameToElementIndex() const {return nameToElementIndex;}
+  inline G4int NumberOfElements() const {return linkBeamline ? (G4int)linkBeamline->size() : 0;}
+
  private:
 
   /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the
@@ -79,6 +83,8 @@ public:
   const BDSParticleDefinition* designParticle;
 
   G4ChannelingOptrMultiParticleChangeCrossSection* crystalBiasing;
+
+  std::map<std::string, G4int> nameToElementIndex; ///< Build up a copy here too.
 };
 
 #endif

@@ -70,6 +70,7 @@ include(cmake/CLHEP.cmake)
 
 # ROOT
 include(cmake/ROOT.cmake)
+string(REPLACE "-stdlib=libc++"  "" ROOT_LIBRARIES ${ROOT_LIBRARIES})
 
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )

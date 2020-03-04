@@ -82,8 +82,11 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4Transform3D tr = lr->Transform(*currentElementIndex);
   if (lr->NoRotation(*currentElementIndex))
     {
+      G4cout << "coords before " << coords << G4endl;
+      G4cout << "offset " << tr.getTranslation() << G4endl;
       BDSParticleCoords cgf = coords.ApplyOffset(tr.getTranslation());
       cg = BDSParticleCoordsFullGlobal(coords, cgf);
+      G4cout << "coords after " << cg << G4endl;
     }
   else
     {
@@ -133,6 +136,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // set the weight
   auto vertex = anEvent->GetPrimaryVertex();
   vertex->SetWeight(cg.local.weight);
+  vertex->Print();
 
   // associate full set of coordinates with vertex for writing to output after event
   //vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
