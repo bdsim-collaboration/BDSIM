@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerPlane.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSamplerLink.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -49,32 +50,38 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
-				   G4double tiltIn,
+				   BDSTiltOffset* tiltOffsetIn,
 				   G4double outputSamplerRadiusIn):
   BDSGeometryComponent(nullptr, nullptr),
   component(acceleratorComponentIn),
-  tilt(tiltIn),
   outputSamplerRadius(outputSamplerRadiusIn),
   sampler(nullptr)
 {
-  if (BDS::IsFinite(tilt) && BDS::IsFinite(component->GetAngle()))
+  if (tiltOffsetIn->HasFiniteTilt() && BDS::IsFinite(component->GetAngle()))
     {throw BDSException(__METHOD_NAME__, "finite tilt with angled component unsupported.");}
-  
+
+  G4double tilt = tiltOffsetIn->GetTilt();
+  G4double ox   = tiltOffsetIn->GetXOffset();
+  G4double oy   = tiltOffsetIn->GetYOffset();
   BDSExtent extent = component->GetExtent();
-  extent = extent.Tilted(tiltIn); // apply tilt
+  extent = extent.TiltOffset(tiltOffsetIn);
   const G4double gap                = 10 * CLHEP::cm;
   const G4double opaqueBoxThickness = 10 * CLHEP::mm;
   G4String name = component->GetName();
 
+  G4double mx = extent.MaximumX();
+  G4double my = extent.MaximumY();
+  G4double mz = extent.MaximumZ();
+  G4cout << mx << " " << my << " " << mz << G4endl;
   G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
-					0.5 * extent.DX() + gap + opaqueBoxThickness,
-					0.5 * extent.DY() + gap + opaqueBoxThickness,
-					0.5 * extent.DZ() + gap + opaqueBoxThickness);
+					mx + gap + opaqueBoxThickness,
+					my + gap + opaqueBoxThickness,
+					mz + gap + opaqueBoxThickness);
   RegisterSolid(terminatorBoxOuter);
   G4Box* terminatorBoxInner = new G4Box(name + "_terminator_box_inner_solid",
-					0.5 * extent.DX() + gap,
-					0.5 * extent.DY() + gap,
-					0.5 * extent.DZ() + gap);
+					mx + gap,
+					my + gap,
+					mz + gap);
   RegisterSolid(terminatorBoxInner);
   G4SubtractionSolid* opaqueBox = new G4SubtractionSolid(name + "_opaque_box_solid",
 							 terminatorBoxOuter,
@@ -98,9 +105,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
   G4double margin = gap + opaqueBoxThickness + ls;
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
-			     0.5 * extent.DX() + margin,
-			     0.5 * extent.DY() + margin,
-			     0.5 * extent.DZ() + margin);
+			     mx + margin,
+			     my + margin,
+			     mz + margin);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
@@ -126,7 +133,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
     }
   // auto componentPlacement =
   new G4PVPlacement(rm,
-		    G4ThreeVector(),
+		    G4ThreeVector(ox,oy,0),
 		    component->GetContainerLogicalVolume(),
 		    component->GetName() + "_pv",
 		    containerLogicalVolume,
@@ -134,9 +141,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 		    1,
 		    true);
   
-  outerExtent = BDSExtent(0.5 * extent.DX() + gap + opaqueBoxThickness + ls,
-			  0.5 * extent.DY() + gap + opaqueBoxThickness + ls,
-			  0.5 * extent.DZ() + gap + opaqueBoxThickness + ls);
+  outerExtent = BDSExtent(extent.MaximumX() + gap + opaqueBoxThickness + ls,
+			  extent.MaximumY() + gap + opaqueBoxThickness + ls,
+			  extent.MaximumZ() + gap + opaqueBoxThickness + ls);
 
   G4RotationMatrix* rm2 = new G4RotationMatrix();
   G4TwoVector xy = G4TwoVector(component->Sagitta(),0);
