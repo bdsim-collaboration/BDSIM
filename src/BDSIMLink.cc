@@ -401,11 +401,13 @@ BDSIMLink::~BDSIMLink()
 
 void BDSIMLink::SelectLinkElement(const std::string& elementName)
 {
+  G4cout << "Searching for " << elementName << G4endl;
   auto search = nameToElementIndex.find(elementName);
   if (search != nameToElementIndex.end())
     {currentElementIndex = search->second;}
   else
-    {currentElementIndex = 0;}
+    {currentElementIndex = -1;}
+  G4cout << "Index " << currentElementIndex << G4endl;
 }
 
 void BDSIMLink::SelectLinkElement(int index)

@@ -136,7 +136,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // set the weight
   auto vertex = anEvent->GetPrimaryVertex();
   vertex->SetWeight(cg.local.weight);
-  vertex->Print();
+  //vertex->Print();
 
   // associate full set of coordinates with vertex for writing to output after event
   //vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
