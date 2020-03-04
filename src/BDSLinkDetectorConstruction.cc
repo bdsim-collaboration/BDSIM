@@ -30,8 +30,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
 #include "BDSParser.hh"
+#include "BDSSDManager.hh"
+#include "BDSTiltOffset.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
@@ -72,7 +73,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 {
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
-  auto componentFactory = new BDSComponentFactory(designParticle);
+  auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
   auto beamline = BDSParser::Instance()->GetBeamline();
 
   std::vector<BDSLinkOpaqueBox*> opaqueBoxes = {};
@@ -169,7 +170,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
           {"CU", "Cu"},
           {"W",  "W"},
           {"C",  "G4_GRAPHITE_POROUS"},
-          {"Si", "Si"}
+          {"Si", "Si"},
+          {"SI", "Si"}
       };
   std::string g4material;
   auto search = sixtrackToBDSIM.find(materialName);
@@ -183,11 +185,14 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   el.type     = GMAD::ElementType::_JCOL;
   el.name     = collimatorName;
   el.material = g4material;
-  el.l        = length;
-  el.aper1    = aperture;
-  el.tilt     = rotation;
-  el.offsetX  = xOffset;
-  el.offsetY  = yOffset;
+  el.l        = length / CLHEP::m;
+  el.aper1    = aperture / CLHEP::m;
+  el.xsize    = aperture * 0.5 / CLHEP::m;
+  el.ysize    = 0.2; // 1 m - big default
+  el.tilt     = rotation / CLHEP::rad;
+  el.offsetX  = xOffset / CLHEP::m;
+  el.offsetY  = yOffset / CLHEP::m;
+  el.horizontalWidth = 2.0; // m
   if (isACrystal)
     {
       el.type = GMAD::ElementType::_CRYSTALCOL;
@@ -195,18 +200,18 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
       if (collimatorName.find("2") != std::string::npos) // b2
         {
           el.crystalLeft = collimatorToCrystal[collimatorName];
-          el.crystalAngleYAxisLeft = 50 * CLHEP::radian * 1e-6;
+          el.crystalAngleYAxisLeft = 50 * 1e-6;
         }
       else
         {
           el.crystalRight = collimatorToCrystal[collimatorName];
-          el.crystalAngleYAxisRight = -50 * CLHEP::radian * 1e-6;
+          el.crystalAngleYAxisRight = -50 * 1e-6;
         }
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
   
-  auto componentFactory = new BDSComponentFactory(designParticle);
+  auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
   BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el,
 									 nullptr,
 									 nullptr,
