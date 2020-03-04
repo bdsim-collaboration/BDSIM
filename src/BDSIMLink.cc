@@ -245,15 +245,15 @@ int BDSIMLink::Initialise()
   BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction);
   runManager->SetUserAction(eventAction);
   runManager->SetUserAction(runAction);
-  G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
-  G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
-                                                          globalConstants->VerboseSteppingEventContinueFor());
-  runManager->SetUserAction(new BDSLinkTrackingAction(globalConstants->Batch(),
+  //G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
+  //G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
+  //                                                        globalConstants->VerboseSteppingEventContinueFor());
+  /*runManager->SetUserAction(new BDSLinkTrackingAction(globalConstants->Batch(),
                                                       eventAction,
                                                       verboseSteppingEventStart,
                                                       verboseSteppingEventStop,
                                                       globalConstants->VerboseSteppingPrimaryOnly(),
-                                                      globalConstants->VerboseSteppingLevel()));
+                                                      globalConstants->VerboseSteppingLevel()));*/
   runManager->SetUserAction(new BDSLinkStackingAction(globalConstants));
   
   /*
