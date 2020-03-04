@@ -234,7 +234,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 void BDSLinkDetectorConstruction::UpdateWorldSolid()
 {
   BDSExtentGlobal we = linkBeamline->GetExtentGlobal();
-  we.ExpandToEncompass(BDSExtentGlobal(BDSExtent(10*CLHEP::m, 10*CLHEP::m, 10*CLHEP::m))); // minimum size
+  we = we.ExpandToEncompass(BDSExtentGlobal(BDSExtent(10*CLHEP::m, 10*CLHEP::m, 10*CLHEP::m))); // minimum size
   G4ThreeVector worldExtentAbs = we.GetMaximumExtentAbsolute();
   worldExtentAbs *= 1.2;
 
