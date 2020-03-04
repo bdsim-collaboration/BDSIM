@@ -109,7 +109,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 							opaqueBox,
 							opaqueBox->GetExtent().DZ());
-      
+
+      nameToElementIndex[elementIt->name] = (G4int)linkBeamline->size();
       linkBeamline->AddComponent(comp);
     }
 
@@ -204,6 +205,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
+  nameToElementIndex[collimatorName] = (G4int)linkBeamline->size();
   linkBeamline->AddComponent(comp);
 
   // update world extents and world solid
