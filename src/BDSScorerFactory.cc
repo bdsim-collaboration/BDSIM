@@ -29,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerType.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
 #include "G4PSCellCharge.hh"
 #include "G4PSCellCharge3D.hh"
 #include "G4PSDoseDeposit.hh"
@@ -41,6 +40,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ScoringBox.hh"
 #include "G4ScoringManager.hh"
 #include "G4SDParticleWithEnergyFilter.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 #include "G4VPrimitiveScorer.hh"
 
 BDSScorerFactory::BDSScorerFactory()
@@ -65,10 +66,10 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
   return primitiveScorer;
 }
 
-G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String                  name,
+G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&           name,
 							   const BDSScorerType       scorerType,
-							   G4String                  filename,
-							   G4String                  pathname,
+							   const G4String&           filename,
+							   const G4String&           pathname,
 							   const BDSHistBinMapper3D* mapper,
 							   G4double*                 unit)
 {
@@ -116,7 +117,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(G4String             
   return result;
 }
 
-BDSSDFilterAnd* BDSScorerFactory::CreateFilter(G4String name,
+BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String &name,
 					       const BDSScorerInfo* info) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);

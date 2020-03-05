@@ -25,8 +25,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/scorer.h"
 
-#include "globals.hh"
 #include "G4ParticleTable.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
+
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -84,7 +86,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
     {materialsToExclude.push_back(BDSMaterials::Instance()->GetMaterial(me));} 
 }
 
-void BDSScorerInfo::CheckParticle(G4ParticleDefinition* particleIn, G4String nameIn)
+void BDSScorerInfo::CheckParticle(G4ParticleDefinition* particleIn,
+				  const G4String& nameIn)
 {
   if (!particleIn)
     {

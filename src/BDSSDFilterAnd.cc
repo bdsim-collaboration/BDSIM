@@ -18,9 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSSDFilterAnd.hh"
 
-#include "globals.hh"
 #include "G4Step.hh"
+#include "G4String.hh"
 #include "G4Track.hh"
+#include "G4Types.hh"
 #include "G4VSDFilter.hh"
 
 #include <vector>

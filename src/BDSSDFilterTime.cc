@@ -19,10 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterTime.hh"
 
 #include "G4Step.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
-BDSSDFilterTime::BDSSDFilterTime(G4String name,
-					 G4double lowerLimitIn,
-					 G4double upperLimitIn):
+BDSSDFilterTime::BDSSDFilterTime(const G4String& name,
+				 G4double lowerLimitIn,
+				 G4double upperLimitIn):
   G4VSDFilter(name),
   lowerLimit(lowerLimitIn),
   upperLimit(upperLimitIn)

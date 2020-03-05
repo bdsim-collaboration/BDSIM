@@ -23,8 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSDFilterLogicalVolume::BDSSDFilterLogicalVolume(G4String name,
-					     G4LogicalVolume* referenceLVIn):
+BDSSDFilterLogicalVolume::BDSSDFilterLogicalVolume(const G4String& name,
+						   G4LogicalVolume* referenceLVIn):
   G4VSDFilter(name),
   referenceLV(referenceLVIn)
 {;}

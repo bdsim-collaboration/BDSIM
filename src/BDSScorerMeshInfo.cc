@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
+#include "G4Types.hh"
 
 #include "parser/scorermesh.h"
 

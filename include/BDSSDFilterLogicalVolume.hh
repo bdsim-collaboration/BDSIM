@@ -19,10 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDFILTERLOGICALVOLUME_H
 #define BDSSDFILTERLOGICALVOLUME_H
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 #include "G4VSDFilter.hh"
 
 class G4LogicalVolume;
+class G4Step;
 
 /**
  * @brief SD filter for a particular volume.
@@ -33,8 +35,8 @@ class G4LogicalVolume;
 class BDSSDFilterLogicalVolume: public G4VSDFilter
 {
 public:
-  BDSSDFilterLogicalVolume(G4String name,
-			G4LogicalVolume* referenceLVIn);
+  BDSSDFilterLogicalVolume(const G4String& name,
+			   G4LogicalVolume* referenceLVIn);
   
   virtual ~BDSSDFilterLogicalVolume();
 

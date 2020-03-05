@@ -23,9 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerQuantity3D.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
 #include "G4PhysicsVector.hh"
+#include "G4String.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4Types.hh"
 #include "G4VSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VPVParameterisation.hh"
@@ -38,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
                                          const BDSHistBinMapper3D* mapperIn,
                                          G4int ni,
                                          G4int nj,
@@ -58,7 +59,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
   fNk = nk;
 }
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String            scorerName,
+BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
 					 const BDSHistBinMapper3D* mapperIn,
 					 const G4String            filename,
 					 G4int ni,

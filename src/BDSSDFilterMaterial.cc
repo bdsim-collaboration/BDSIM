@@ -16,19 +16,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <algorithm>
-
 #include "BDSSDFilterMaterial.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
+#include "G4String.hh"
 #include "G4Track.hh"
+#include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSDFilterMaterial::BDSSDFilterMaterial(G4String name,
+#include <algorithm>
+#include <vector>
+
+BDSSDFilterMaterial::BDSSDFilterMaterial(const G4String& name,
                                          const std::vector<G4Material*>& materialsIn,
-					 G4bool   inclusiveIn):
+					 G4bool inclusiveIn):
   G4VSDFilter(name),
   materials(materialsIn),
   inclusive(inclusiveIn)

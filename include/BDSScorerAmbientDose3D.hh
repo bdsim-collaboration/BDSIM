@@ -21,7 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSScorerQuantity3D.hh"
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include <map>
 
@@ -37,9 +38,9 @@ class G4PhysicsVector;
 class BDSScorerAmbientDose3D: public BDSScorerQuantity3D
 {
 public:
-  BDSScorerAmbientDose3D(const G4String            scorerName,
+  BDSScorerAmbientDose3D(const G4String&           scorerName,
 			 const BDSHistBinMapper3D* mapperIn,
-			 const G4String            pathname,
+			 const G4String&           pathname,
 			 G4int ni=1,
 			 G4int nj=1,
 			 G4int nk=1,
