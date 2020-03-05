@@ -39,9 +39,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String            scorerName,
+BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String&           scorerName,
 					       const BDSHistBinMapper3D* mapperIn,
-					       const G4String            pathname,
+					       const G4String&           pathname,
 					       G4int ni,
 					       G4int nj,
 					       G4int nk,

@@ -19,7 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDFILTERMATERIAL_H
 #define BDSSDFILTERMATERIAL_H
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 #include "G4VSDFilter.hh"
 
 #include <vector>
@@ -39,7 +40,7 @@ public:
   /// correspond to passing the filter, i.e. accepting the step. If false,
   /// then any material matching will be rejected (any random material will
   /// be accepted).
-  BDSSDFilterMaterial(G4String name,
+  BDSSDFilterMaterial(const G4String& name,
 		      const std::vector<G4Material*>& materialsIn,
 		      G4bool   inclusiveIn);
   

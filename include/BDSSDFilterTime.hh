@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERTIMEFILTER_H
 #define BDSSCORERTIMEFILTER_H
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 #include "G4VSDFilter.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
+
+class G4Step;
 
 /**
  * @brief Filter for time value for a sensitive detector.
@@ -34,7 +37,7 @@ class BDSSDFilterTime: public G4VSDFilter
 {
 public:
   /// Constructor with default values.
-  explicit BDSSDFilterTime(G4String name,
+  explicit BDSSDFilterTime(const G4String& name,
 			   G4double lowerLimitIn = 0.0,
 			   G4double upperLimitIn = 1*CLHEP::s);
   

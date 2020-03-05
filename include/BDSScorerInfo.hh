@@ -48,7 +48,8 @@ public:
   /// be upgraded to 3d as required for use in a mesh.
   explicit BDSScorerInfo(const GMAD::Scorer& scorer,
 			 G4bool upgradeTo3D = false);
-  void CheckParticle(G4ParticleDefinition* particleIn, G4String nameIn);
+  void CheckParticle(G4ParticleDefinition* particleIn,
+		     const G4String& nameIn);
   
   BDSScorerType scorerType;          ///< Scorer type.
   G4String      name;                ///< Scorer name.

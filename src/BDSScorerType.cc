@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSScorerType.hh"
 
+#include "globals.hh"
+
 #include <map>
 #include <string>
 

@@ -56,15 +56,15 @@ private:
   ///@}
 
   /// Construct the primitive scorer required.
-  G4VPrimitiveScorer* GetAppropriateScorer(G4String                  name,
+  G4VPrimitiveScorer* GetAppropriateScorer(const G4String&           name,
 					   const BDSScorerType       scorerType,
-					   G4String                  filename,
-					   G4String                  pathname,
+					   const G4String&           filename,
+					   const G4String&           pathname,
 					   const BDSHistBinMapper3D* mapper,
 					   G4double*                 unit = nullptr);
 
   /// Create a combined filter with AND logic for the scorer.
-  BDSSDFilterAnd* CreateFilter(G4String name,
+  BDSSDFilterAnd* CreateFilter(const G4String& name,
 			       const BDSScorerInfo* info) const;
 };
 

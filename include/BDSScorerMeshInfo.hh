@@ -21,7 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSExtent.hh"
 
-#include "globals.hh"         // geant4 types / globals
+#include "G4String.hh"
+#include "G4Types.hh"
 
 namespace GMAD
 {
@@ -55,11 +56,10 @@ public:
   G4double zLow;
   G4double zHigh;
 
-  inline G4double ScoringBoxX() const {return 0.5*(xHigh-xLow);}
-  inline G4double ScoringBoxY() const {return 0.5*(yHigh-yLow);}
-  inline G4double ScoringBoxZ() const {return 0.5*(zHigh-zLow);}
-
-  BDSExtent Extent() const {return extent;}
+  inline G4double  ScoringBoxX() const {return 0.5*(xHigh-xLow);}
+  inline G4double  ScoringBoxY() const {return 0.5*(yHigh-yLow);}
+  inline G4double  ScoringBoxZ() const {return 0.5*(zHigh-zLow);}
+  inline BDSExtent Extent()      const {return extent;}
 
 private:
   BDSScorerMeshInfo() = delete;

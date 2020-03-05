@@ -19,7 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERTYPE_H
 #define BDSSCORERTYPE_H
 
-#include "globals.hh" // geant4 globals / types
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include "BDSTypeSafeEnum.hh"
 
