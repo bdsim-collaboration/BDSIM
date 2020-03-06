@@ -315,6 +315,9 @@ Bug Fixes
 * Fix polarity for dipole yoke fields. The field in the yokes had the opposite polarity to that
   of the beam pipe resulting in particles slightly missing the beam pipe being deflected in the
   wrong direction.
+* Fix phase offset based on postiion in lattice for RF cavities. Only noticeable when the phase
+  was set to provie zero acceleration (:math:`pi/2`) and it was slightly off causing a gain or
+  loss in energy.
 * Fixed formula in manual for standard error on the mean calculation. The implementation in code
   was correct and has not changed.
 * Fix thick multipole element where the field was 1M times too strong because of the omission of units.
