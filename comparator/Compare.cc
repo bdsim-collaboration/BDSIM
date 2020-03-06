@@ -50,11 +50,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TObjArray.h"
 #include "TTree.h"
 
-const double        CHI2TOLERANCE = 40;
-const double        TREETOLERANCE = 0.05;
-const double OPTICSSIGMATOLERANCE = 10;
-const double   EVENTTREETOLERANCE = 1e-10;
-
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
   std::vector<Result*> results; 
@@ -141,7 +136,7 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
   // Take difference between histograms
   ResultHistogram* c = new ResultHistogram();
   c->name      = h1->GetName();
-  c->tolerance = CHI2TOLERANCE;
+  c->tolerance = Compare::Chi2Tolerance;
   c->objtype   = "TH1";
   c->h1Entries = h1->GetEntries();
   c->h2Entries = h2->GetEntries();
@@ -179,7 +174,7 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
   c->chi2 /= ndof;
   
   c->passed = true;
-  if(c->chi2 > CHI2TOLERANCE)
+  if(c->chi2 > Compare::Chi2Tolerance)
     {c->passed = false;}
 
   results.push_back(c);
@@ -240,7 +235,7 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	  t1->GetEntry(i);
 	  t2->GetEntry(i);
 	  
-	  if(std::abs((t1v - t2v )/t1v) > TREETOLERANCE)
+	  if(std::abs((t1v - t2v )/t1v) > Compare::TreeTolerance)
 	    {
 	      c->passed    = false;
 	      branchFailed = true;
@@ -386,7 +381,7 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	      // Here only one entry so ndof = 1
 	      double chi2 = std::pow(t1v - t2v, 2) / (std::pow(t1e,2) + std::pow(t2e,2));
 	      
-	      branchFailed = chi2 > OPTICSSIGMATOLERANCE;
+	      branchFailed = chi2 > Compare::OpticsSimgaTolerance;
 	      
 	      if (branchFailed)
 		{
