@@ -109,10 +109,10 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
   G4double radiationQuantity = 0;
 
-  // fluence computation
   if (!BDS::IsFinite(stepLength))
     {return false;}
-  
+
+  // fluence computation
   const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
   G4VSolid* solid = touchable->GetSolid();
   G4double cubicVolume = 1;
