@@ -25,6 +25,103 @@ File Writing Policy
 * BDSIM will overwrite an output file if `-\\-outfile` is supplied with the same name again.
 * The behaviour is the same in both visualiser mode and batch mode.
 * A new output file is created for each :code:`/run/beamOn` command in the visualiser.
+
+Output Format
+-------------
+
+The following output formats are provided:
+
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+
++----------------------+----------------------+-----------------------------------------------+
+| Format               | Syntax               | Description                                   |
++======================+======================+===============================================+
+| None                 | -\\-output=none      | No output is written                          |
++----------------------+----------------------+-----------------------------------------------+
+| ROOT Event (Default) | -\\-output=rootevent | A ROOT file with details of the model built,  |
+|                      |                      | options used, seed states, and event-by-event |
+|                      |                      | information (default and recommended).        |
++----------------------+----------------------+-----------------------------------------------+
+
+With the default output format :code:`rootevent`, data is written to a ROOT file. This format
+is preferred as it lends itself nicely to particle physics information as it's space
+efficient (compressed binary), and can store and load complex custom structures. ROOT files
+generally can always be read at a later date with ROOT even if the original software used
+to create the files (BDSIM) is unavailble.
+
+.. note:: **ASCII Data** - In the past BDSIM had ASCII output as well as some functionality in
+	  the pybdsim Python utility to deal with this. This has been deprecated and removed
+	  because it is just not suitable for particle physics-style data and analysis. It
+	  is cumbersome, inefficient and vastly inferior in the possible structuring of the data.
+	  We highly encourage use of the ROOT output (`rootevent` format.). It is easy to
+	  explore the data files (see :ref:`basic-data-inspection`) and the included analysis
+	  tools (see ref:`rebdsim-analysis-tool`) and the supplied Python utilities
+	  (see :ref:`python-utilities`, and pybdsim in particular) make the regular workflow
+	  very easy.
+
+A few general points:
+
+* Units, unless specified, are SI (i.e. m, rad).
+* "Energy" is in GeV and is the total energy of a particle.
+* Time is measured in nanoseconds.
+* Small letters denote local (to that object) coordinates, whereas capital letters represent
+  global coordinates.
+
+Not all information described may be written by default. Options described in
+:ref:`bdsim-options-output` allow control over what is stored. The default options
+give a detailed picture with an acceptable file size. The true amount of information
+produced in the simulation of every particle and the steps taken is tremendous
+and cannot be usefully stored.
+
+As a general guideline, the following naming conventions are used:
+
+========== ================
+Short Name Meaning
+========== ================
+Phits      Primary hits
+Ploss      Primary losses
+Eloss      Energy loss
+PE         Per element
+Coll       Collimator
+========== ================
+
+.. note:: A "hit" is the point of first contact, whereas a "loss" is the
+	  last point that particle existed - in the case of a primary it
+	  is where it stopped being a primary.
+
+.. note:: Energy loss is the energy deposited by particles along their step.
+
+
+Output Data Selection \& Reduction
+----------------------------------
+
+Not all the variables in the output are filled by default, but are kept (empty) to maintain
+a consistent structure (as much as possible). The default level of output is judged to be
+the most commonly useful for the purpose of BDSIM but there are many extra options to control
+the detail of the output as well as the ability to turn bits off.
+
+This granularity is very useful when you have made small studies with the options you
+desire and now want to scale up the simulation to large statistics and the size of the data
+may become difficult to deal with. At this point, the user can turn off any data they may
+not need to save space.
+
+If some output is not required, BDSIM will not generate the 'hit' information with sensitive
+detector classes automatically to improve computational speed and reduce memory usage during
+the simulation. This is handled automatically in BDSIM.
+
+It is thoroughly recommend to consult all the options at :ref:`bdsim-options-output`. However,
+consider the following points to reduce output data size:
+
+
+* If energy loss hits are not required (e.g. maybe only the pre-made histograms will suffice),
+  turn these off with the option :code:`storeELoss`.
+* Eloss normally dominates the size of the output file as it has the largest number of hits with
+  typically :math:`10^4` energy deposition hits per primary.
+* By default some basic information is store in "Geant4Data" for all particles used
+  in the simulation.
+  For a big study, it is worth turning this off as it's replicated in every file.
+* :code:`sample, all;` is convenient, especially at the start of a study, but you should only
+  attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
   
 Output Information
 ------------------
@@ -448,90 +545,6 @@ which is a Boolean to identify whether the hit is an ion or not. This is true fo
 This is **note** true for just a proton, which is considered a separate particle. In Geant4,
 a proton is both a particle and also considered an ion, however there are different physics
 processes for each.
-
-
-Output Data Selection \& Reduction
-----------------------------------
-
-Not all the variables in the output are filled by default, but are kept (empty) to maintain
-a consistent structure (as much as possible). The default level of output is judged to be
-the most commonly useful for the purpose of BDSIM but there are many extra options to control
-the detail of the output as well as the ability to turn bits off.
-
-This granularity is very useful when you have made small studies with the options you
-desire and now want to scale up the simulation to large statistics and the size of the data
-may become difficult to deal with. At this point, the user can turn off any data they may
-not need to save space.
-
-If some output is not required, BDSIM will not generate the 'hit' information with sensitive
-detector classes automatically to improve computational speed and reduce memory usage during
-the simulation. This is handled automatically in BDSIM.
-
-It is thoroughly recommend to consult all the options at :ref:`bdsim-options-output`. However,
-consider the following points to reduce output data size:
-
-
-* If energy loss hits are not required (e.g. maybe only the pre-made histograms will suffice),
-  turn these off with the option :code:`storeELoss`.
-* Eloss normally dominates the size of the output file as it has the largest number of hits with
-  typically :math:`10^4` energy deposition hits per primary.
-* By default some basic information is store in "Geant4Data" for all particles used
-  in the simulation.
-  For a big study, it is worth turning this off as it's replicated in every file.
-* :code:`sample, all;` is convenient, especially at the start of a study, but you should only
-  attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
-
-Output Files
-------------
-
-This section only describes the structure. Loading and analysis instructions can be found
-in :ref:`output-analysis-section`.
-
-The output format 'rootevent' is written to a ROOT file. This format
-is preferred as it lends itself nicely to particle physics information; is stored as compressed
-binary internally; and can store and load complex custom structures.
-
-* Units, unless specified, are SI (i.e. m, rad).
-* Energy is in GeV and is the total energy of a particle.
-* Time is measured in nanoseconds.
-* Small letters denote local (to that object) coordinates, whereas capital letters represent
-  global coordinates.
-
-Not all information described may be written by default. Options described in
-:ref:`bdsim-options-output` allow control over what is stored. The default options
-give a detailed picture with an acceptable file size. The true amount of information
-produced in the simulation of every particle and the steps taken is tremendous
-and cannot be usefully stored.
-
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
-
-+----------------------+----------------------+-----------------------------------------------+
-| Format               | Syntax               | Description                                   |
-+======================+======================+===============================================+
-| None                 | -\\-output=none      | No output is written                          |
-+----------------------+----------------------+-----------------------------------------------+
-| ROOT Event (Default) | -\\-output=rootevent | A ROOT file with details of the model built,  |
-|                      |                      | options used, seed states, and event-by-event |
-|                      |                      | information (default and recommended).        |
-+----------------------+----------------------+-----------------------------------------------+
-
-As a general guideline, the following naming conventions are used:
-
-========== ================
-Short Name Meaning
-========== ================
-Phits      Primary hits
-Ploss      Primary losses
-Eloss      Energy loss
-PE         Per element
-Coll       Collimator
-========== ================
-
-.. note:: A "hit" is the point of first contact, whereas a "loss" is the
-	  last point that particle existed - in the case of a primary it
-	  is where it stopped being a primary.
-
-.. note:: Energy loss is the energy deposited by particles along their step.
 
 .. _basic-data-inspection:
 

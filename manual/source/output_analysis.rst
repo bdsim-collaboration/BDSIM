@@ -70,6 +70,7 @@ Plot Energy Deposition \& Losses
    >>> import pybdsim
    >>> pybdsim.Plot.LossAndEnergyDeposition("results.root")
 
+.. _rebdsim-analysis-tool:
 
 rebdsim - General Analysis Tool
 ===============================
