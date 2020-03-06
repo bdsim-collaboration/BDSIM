@@ -102,6 +102,8 @@ Expected Changes To Results
 * Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
 * Reference coordinates `X0`, `Y0`, `Z0`, `Xp`, `Yp` are now added to the userfile distribution
   coordinates if specified. (`Zp` was already added).
+* Polarity of dipole yoke fields was fixed so particles slightly outside the beam pipe will be deflected
+  in a different (but now correct) direction.
 
 New Features
 ------------
@@ -309,6 +311,9 @@ General
 Bug Fixes
 ---------
 
+* Fix polarity for dipole yoke fields. The field in the yokes had the opposite polarity to that
+  of the beam pipe resulting in particles slightly missing the beam pipe being deflected in the
+  wrong direction.
 * Fix phase offset based on postiion in lattice for RF cavities. Only noticeable when the phase
   was set to provie zero acceleration (:math:`pi/2`) and it was slightly off causing a gain or
   loss in energy.
