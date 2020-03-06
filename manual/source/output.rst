@@ -130,15 +130,38 @@ See :ref:`bdsim-options-output` with options beginning with :code:`storeTrajecto
 5) Collimator Hits
 ^^^^^^^^^^^^^^^^^^
 
-Collimators are often expected to intercept the beam before other parts of the machine. Therefore,
-some special information can be recorded summarising all collimators as well as per-collimator hit
-information. This is optional and creates extra sampler-like structures in the output that summarise
-the hits on that collimator.
+Several options exist to allow extra collimator-specific information to be stored. Why collimators?
+These are usually the devices intended to first intercept the beam so it is highly useful to
+understand the history of each event with respect to the collimators. By default no extra collimator
+information is stored. The options allow for increasingly detailed information to be stored. These
+are listed in increasing amount of data below.
 
-By default, the collimator hits are only generated for primary particles, but ion fragments can optionally
-be included, and also, optionally all particles.
+0) No collimator information - the default option.
 
-See :ref:`bdsim-options-output` with options beginning with :code:`storeCollimator`.
+1) :code:`option, storeCollimatorInfo=1;` is used. Collimator geometry information is stored in the Model
+   tree of the output. Per-collimator structures are created in the Event tree with a Boolean flag
+   called `primaryInteracted` and `primaryStopped` for that collimator for each event. Additionally,
+   the `totalEnergyDeposited` for that collimator (including weights) is filled. In the event
+   summary, the `nCollimatorsInteracted` and `primaryAbsorbedInCollimator` variables are also filled.
+   No collimator hits are stored.
+   
+2) :code:`option, storeCollimatorInfo=1, storeCollimatorHits=1;` is used. Similar to scenario 1 but in
+   addition 'hits' with the coordinates are created for each collimator for primary particles. Note,
+   that a primary particle can create more than one hit (which is a snapshot of a step in the collimator)
+   on a single pass, and in a circular model the primary may hit on many turns.
+   
+3) :code:`option, storeCollimatorInfo=1, storeCollimatorHitsIons=1;` is used. Similar to scenario 2 but hits
+   are generated for secondary ion fragments in addition to any primary particles. This is useful for
+   ion collimation where ion fragments may carry significant energy.
+   
+4) In combination with 1, 2 or 3, :code:`option, storeCollimatorHitsLinks=1;` may be used that stores the extra
+   variables `charge`, `mass`, `rigidity` and `kineticEnergy` per hit in the collimator. These are added
+   for whatever collimator hits are generated according to the other options.
+
+
+Generally, store as little as is required. This is why several options are given. See
+:ref:`bdsim-options-output` with options beginning with :code:`storeCollimator` for more
+details.
 
 6) Aperture Impacts
 ^^^^^^^^^^^^^^^^^^^
@@ -455,43 +478,8 @@ consider the following points to reduce output data size:
 * By default some basic information is store in "Geant4Data" for all particles used
   in the simulation.
   For a big study, it is worth turning this off as it's replicated in every file.
-* :code:`sample ,all;` is convenient, especially at the start of a study, but you should only
+* :code:`sample, all;` is convenient, especially at the start of a study, but you should only
   attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
-
-
-Collimator Specific Data
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-Several options exist to allow extra collimator-specific information to be stored. Why collimators?
-These are usually the devices intended to first intercept the beam so it is highly useful to
-understand the history of each event with respect to the collimators. By default no extra collimator
-information is stored. The options allow for increasingly detailed information to be stored. These
-are listed in increasing amount of data below.
-
-0) No collimator information - the default option.
-
-1) :code:`option, storeCollimatorInfo=1;` is used. Collimator geometry information is stored in the Model
-   tree of the output. Per-collimator structures are created in the Event tree with a Boolean flag
-   called `primaryInteracted` and `primaryStopped` for that collimator for each event. Additionally,
-   the `totalEnergyDeposited` for that collimator (including weights) is filled. In the event
-   summary, the `nCollimatorsInteracted` and `primaryAbsorbedInCollimator` variables are also filled.
-   No collimator hits are stored.
-   
-2) :code:`option, storeCollimatorInfo=1, storeCollimatorHits=1;` is used. Similar to scenario 1 but in
-   addition 'hits' with the coordinates are created for each collimator for primary particles. Note,
-   that a primary particle can create more than one hit (which is a snapshot of a step in the collimator)
-   on a single pass, and in a circular model the primary may hit on many turns.
-   
-3) :code:`option, storeCollimatorInfo=1, storeCollimatorHitsIons=1;` is used. Similar to scenario 2 but hits
-   are generated for secondary ion fragments in addition to any primary particles. This is useful for
-   ion collimation where ion fragments may carry significant energy.
-   
-4) In combination with 1, 2 or 3, :code:`option, storeCollimatorHitsLinks=1;` may be used that stores the extra
-   variables `charge`, `mass`, `rigidity` and `kineticEnergy` per hit in the collimator. These are added
-   for whatever collimator hits are generated according to the other options.
-
-
-Generally, store as little as is required. This is why several options are given.
 
 Output Files
 ------------
