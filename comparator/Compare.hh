@@ -39,6 +39,11 @@ class TTree;
 
 namespace Compare
 {
+  const static double Chi2Tolerance = 40;
+  const static double TreeTolerance = 0.05;
+  const static double OpticsSimgaTolerance = 10;
+  const static double EventTreeTolerance = 1e-10;
+
   /// Compare two files.
   std::vector<Result*> Files(TFile* f1, TFile* f2);
 
