@@ -65,7 +65,7 @@ namespace Compare
   void Optics(TTree* t1, TTree* t2, std::vector<Result*>& results);
 
   void EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
-		 std::vector<std::string> samplerNames);
+		 const std::vector<std::string>& samplerNames);
 
 #ifdef __ROOTDOUBLE__
   void Sampler(BDSOutputROOTEventSampler<double>* e1,
