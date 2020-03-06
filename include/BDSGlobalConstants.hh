@@ -232,7 +232,7 @@ public:
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
-  inline G4bool   StoreTrajectoryIons()      const {return G4bool  (options.storeTrajectoryIons);}
+  inline G4bool   StoreTrajectoryIon()       const {return G4bool  (options.storeTrajectoryIon);}
   inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
   inline G4bool   TrajectoryFilterLogicAND() const {return G4bool  (options.trajectoryFilterLogicAND);}
@@ -240,7 +240,7 @@ public:
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
   inline G4bool   StoreSamplerPolarCoords()  const {return G4bool  (options.storeSamplerPolarCoords);}
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
-  inline G4bool   StoreSamplerKineticEnergy() const {return G4bool  (options.storeSamplerKineticEnergy);}
+  inline G4bool   StoreSamplerKineticEnergy()const {return G4bool  (options.storeSamplerKineticEnergy);}
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
