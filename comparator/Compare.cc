@@ -200,7 +200,7 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       TDirectory* dir = t1->GetDirectory();
       TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
       if (!modTree)
-	{return;} // shouldnt' really happen, but we can't compare the samplers
+	{return;} // shouldn't really happen, but we can't compare the samplers
       
       Model* mod = new Model();
       mod->SetBranchAddress(modTree);
@@ -244,7 +244,7 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	    {c->passed = true;}
 	}
       if (branchFailed)
-	{c->offendingBranches.push_back(std::string(b2->GetName()));}
+	{c->offendingBranches.emplace_back(std::string(b2->GetName()));}
   }
   results.push_back(c);
 }
@@ -404,7 +404,7 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 }
 
 void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
-			std::vector<std::string> samplerNames)
+			const std::vector<std::string>& samplerNames)
 {
   ResultEventTree* ret = new ResultEventTree();
   ret->name            = t1->GetName();
