@@ -1412,7 +1412,7 @@ This is the first trajectory for each event and the total energy of all steps of
 	  the curvilinear coordinate system is not available - e.g. typically greater than 2.5m from the beam line.
 .. note:: (\**) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLinks=1;`
 	  as described in :ref:`bdsim-options-output`.
-.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIons=1;`
+.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIon=1;`
 	  as described in :ref:`bdsim-options-output`.
 
 
