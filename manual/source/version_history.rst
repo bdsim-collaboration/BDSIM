@@ -30,6 +30,9 @@ New Features
   The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
+* Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
+  created per event 3D histograms for various quantities. Ability to score multiple quantities,
+  per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
 
 Output Changes
 --------------
