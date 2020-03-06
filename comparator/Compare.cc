@@ -503,7 +503,10 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 
   // update parent result status
   if (!rs.passed)
-    {re->passed = false;}
+    {
+      re->passed = false;
+      re->offendingBranches.push_back(e1->samplerName);
+    }
   re->samplerResults.push_back(rs);
 }
 
