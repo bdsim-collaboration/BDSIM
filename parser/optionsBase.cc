@@ -274,7 +274,7 @@ OptionsBase::OptionsBase()
   trajNoTransportation               = false; ///< kept only for backwards compatibility.
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
-  storeTrajectoryIons            = false;
+  storeTrajectoryIon             = false;
   trajectoryFilterLogicAND       = false;
   
   storeSamplerAll          = false;

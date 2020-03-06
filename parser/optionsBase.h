@@ -311,7 +311,7 @@ namespace GMAD
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
-    bool        storeTrajectoryIons;
+    bool        storeTrajectoryIon;
     bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
