@@ -76,18 +76,17 @@ namespace Compare
 	       BDSOutputROOTEventSampler<float>* e2,
 	       ResultEvent* results);
 #endif
-  
-#ifdef __ROOTDOUBLE__
-  bool Diff(const std::vector<double>& v1, const std::vector<double>& v2, int i);
-#else
-  bool Diff(const std::vector<float>& v1, const std::vector<float>& v2, int i);
-#endif
 
-#ifdef __ROOTDOUBLE__
-  bool Diff(const double& v1, const double& v2);
-#else
-  bool Diff(const float& v1, const float& v2);
-#endif
+  /// Return true if they're different.
+  template <typename T>
+  bool Diff(const std::vector<T>& v1, std::vector<T>& v2, int i) {return std::abs(v1[i] - v2[i]) > (T)EventTreeTolerance;}
+  template <>
+  bool Diff(const std::vector<bool>& v1, std::vector<bool>& v2, int i) {return v1[i] != v2[i];}
+
+  template <typename T>
+  bool Diff(T v1, T v2) {return std::abs(v1 - v2) > (T)Compare::EventTreeTolerance;}
+  template <>
+  bool Diff(bool v1, bool v2) {return v1 != v2;}
 
   /// Simply print out feedback warning that a matching object wasn't found and
   /// no comparison is being done.
