@@ -486,6 +486,8 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
       
       for (int i = 0; i < e1->n; i++)
 	{
+	  if (Diff(e1->energy, e2->energy, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("energy");}
 	  if (Diff(e1->x, e2->x, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
 	  if (Diff(e1->y, e2->y, i))
@@ -496,8 +498,22 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {rs.passed = false; rs.offendingLeaves.push_back("yp");}
 	  if (Diff(e1->zp, e2->zp, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
+      if (Diff(e1->p, e2->p, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("p");}
 	  if (Diff(e1->T, e2->T, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("T");}
+      if (Diff(e1->partID, e2->partID, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("partID");}
+      if (Diff(e1->charge, e2->charge, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("charge");}
+      if (Diff(e1->isIon, e2->isIon, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("isIon");}
+      if (Diff(e1->ionA, e2->ionA, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("ionA");}
+      if (Diff(e1->ionZ, e2->ionZ, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("ionZ");}
+      if (Diff(e1->nElectrons, e2->nElectrons, i))
+        {rs.passed = false; rs.offendingLeaves.push_back("nElectrons");}
 	}
     }
 
