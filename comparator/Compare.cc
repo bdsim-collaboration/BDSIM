@@ -510,24 +510,6 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
   re->samplerResults.push_back(rs);
 }
 
-#ifdef __ROOTDOUBLE__
-bool Compare::Diff(const std::vector<double>& v1, const std::vector<double>& v2, int i)
-#else
-bool Compare::Diff(const std::vector<float>& v1, const std::vector<float>& v2, int i)
-#endif
-{
-  return std::abs(v1[i] - v2[i]) > EVENTTREETOLERANCE;
-}
-
-#ifdef __ROOTDOUBLE__
-bool Compare::Diff(const double& v1, const double& v2)
-#else
-bool Compare::Diff(const float& v1, const float& v2)
-#endif
-{
-  return std::abs(v1 - v2) > EVENTTREETOLERANCE;
-}
-
 bool Compare::Summarise(std::vector<Result*> results)
 {
   bool allPassed = true;
