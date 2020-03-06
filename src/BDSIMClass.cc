@@ -328,7 +328,7 @@ int BDSIM::Initialise()
 						  globalConstants->StoreTrajectory(),
 						  globalConstants->StoreTrajectoryLocal(),
 						  globalConstants->StoreTrajectoryLinks(),
-						  globalConstants->StoreTrajectoryIons(),
+						  globalConstants->StoreTrajectoryIon(),
 						  !globalConstants->StoreTrajectoryTransportationSteps(),
 						  eventAction,
 						  verboseSteppingEventStart,
