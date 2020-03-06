@@ -193,7 +193,7 @@ New Features
 | storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                    | compatible.                                                        |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+| storeTrajectoryIon                 | For the trajectories that are stored (according to the filters),   |
 |                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |

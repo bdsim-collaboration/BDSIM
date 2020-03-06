@@ -226,7 +226,7 @@ BDSSDManager::BDSSDManager()
   thinThingSD = new BDSSDThinThing("thinthing_general",
 				   g->StoreTrajectoryLocal(),
 				   g->StoreTrajectoryLinks(),
-				   g->StoreTrajectoryIons());
+				   g->StoreTrajectoryIon());
   thinThingSD->SetFilter(filters["primary"]);
   SDMan->AddNewDetector(thinThingSD);
 
