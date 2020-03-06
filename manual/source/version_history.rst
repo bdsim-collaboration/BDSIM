@@ -309,9 +309,6 @@ General
 Bug Fixes
 ---------
 
-* Fix phase offset based on postiion in lattice for RF cavities. Only noticeable when the phase
-  was set to provie zero acceleration (:math:`pi/2`) and it was slightly off causing a gain or
-  loss in energy.
 * Fix polarity for dipole yoke fields. The field in the yokes had the opposite polarity to that
   of the beam pipe resulting in particles slightly missing the beam pipe being deflected in the
   wrong direction.
