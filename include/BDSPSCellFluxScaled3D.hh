@@ -28,6 +28,13 @@ class G4PhysicsVector;
 
 /**
  * @brief Primitive scorer for cell flux in a 3D mesh with a conversion factor.
+ *
+ * The cell flux (step length / cell volume) * weight is also multiplied by a
+ * conversion factor (just a number) as listed vs energy in a supplied file. The
+ * default is none and just a factor of 1.
+ *
+ * The implementation also differs from G4PSCellFlux3D as we cache the volume
+ * to avoid repeated calculation.
  * 
  * @author Robin Tesse
  */
@@ -39,6 +46,7 @@ public:
   /// use conversion factor 1.0.
   BDSPSCellFluxScaled3D(const G4String&           scorerName,
                         const BDSHistBinMapper3D* mapperIn,
+                        const G4String&           unitIn = "percm2",
                         G4int ni=1, G4int nj=1, G4int nk=1,
                         G4int depi=2, G4int depj=1, G4int depk=0);
 
@@ -47,6 +55,7 @@ public:
   BDSPSCellFluxScaled3D(const G4String&           scorerName,
                         const BDSHistBinMapper3D* mapperIn,
                         const G4String&           filename,
+                        const G4String&           unitIn = "percm2",
                         G4int ni=1, G4int nj=1, G4int nk=1,
                         G4int depi=2, G4int depj=1, G4int depk=0);
 
@@ -63,6 +72,9 @@ public:
 				       G4double kineticEnergy) const;
   
 private:
+  /// Define units -> taken from G4PSCellFlux
+  void DefineUnitAndCategory() const;
+
   G4int                 HCID3D;   ///< Collection ID.
   G4THitsMap<G4double>* evtMap3D; ///< Hits map.
   

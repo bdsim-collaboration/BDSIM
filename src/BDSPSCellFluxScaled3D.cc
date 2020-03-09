@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
                                              const BDSHistBinMapper3D* mapperIn,
+                                             const G4String&           unitIn,
                                              G4int ni,
                                              G4int nj,
                                              G4int nk,
@@ -54,7 +55,9 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
   conversionFactor(nullptr),
   mapper(mapperIn)
 {
-  fNi = ni;
+  DefineUnitAndCategory();
+  SetUnit(unitIn);
+  fNi = ni; // set base class members
   fNj = nj;
   fNk = nk;
 }
@@ -62,23 +65,15 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
 BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
                                              const BDSHistBinMapper3D* mapperIn,
                                              const G4String&           filename,
+                                             const G4String&           unitIn,
                                              G4int ni,
                                              G4int nj,
                                              G4int nk,
                                              G4int depi,
                                              G4int depj,
                                              G4int depk):
-  G4VPrimitiveScorer(scorerName),
-  HCID3D(-1),
-  evtMap3D(nullptr),
-  fDepthi(depi),fDepthj(depj),fDepthk(depk),
-  conversionFactor(nullptr),
-  mapper(mapperIn)
+  BDSPSCellFluxScaled3D(scorerName, mapperIn, unitIn, ni, nj, nk, depi, depk, depj)
 {
-  fNi = ni;
-  fNj = nj;
-  fNk = nk;
-
   if (filename.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorerName + "\" - required");}
 
@@ -182,4 +177,12 @@ G4int BDSPSCellFluxScaled3D::GetIndex(G4Step* aStep)
   G4int globalIndex = mapper->GlobalFromIJKIndex(i,j,k); // x,y,z
   //G4int oldResult = i*fNj*fNk+j*fNk+k;
   return globalIndex;
+}
+
+void BDSPSCellFluxScaled3D::DefineUnitAndCategory() const
+{
+  // Per Unit Surface
+  new G4UnitDefinition("percentimeter2","percm2","Per Unit Surface",(1./CLHEP::cm2));
+  new G4UnitDefinition("permillimeter2","permm2","Per Unit Surface",(1./CLHEP::mm2));
+  new G4UnitDefinition("permeter2","perm2","Per Unit Surface",(1./CLHEP::m2));
 }
