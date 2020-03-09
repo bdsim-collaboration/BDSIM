@@ -78,7 +78,7 @@ bool RBDS::IsBDSIMOutputFile(TFile* file,
   return fileType == "BDSIM";
 }
 
-bool RBDS::IsBDSIMOutputFile(const std::string filePath,
+bool RBDS::IsBDSIMOutputFile(const std::string& filePath,
 			     int* dataVersion)
 {
   TFile* f = new TFile(filePath.c_str());
@@ -102,7 +102,7 @@ bool RBDS::IsREBDSIMOutputFile(TFile* file)
   return fileType == "REBDSIM";
 }
 
-bool RBDS::IsREBDSIMOutputFile(const std::string filePath)
+bool RBDS::IsREBDSIMOutputFile(const std::string& filePath)
 {
   TFile* f = new TFile(filePath.c_str());
   bool result = IsREBDSIMOutputFile(f);
@@ -128,7 +128,7 @@ bool RBDS::IsREBDSIMOrCombineOutputFile(TFile* file)
   return found != std::string::npos;
 }
 
-bool RBDS::IsREBDSIMOrCombineOutputFile(const std::string filePath)
+bool RBDS::IsREBDSIMOrCombineOutputFile(const std::string& filePath)
 {
   TFile* f = new TFile(filePath.c_str());
   bool result = IsREBDSIMOrCombineOutputFile(f);
