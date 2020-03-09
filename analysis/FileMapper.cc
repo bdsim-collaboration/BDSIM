@@ -190,7 +190,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
     {gDirectory->pwd();}
 
   TList* dirk = dir->GetListOfKeys();
-  for(int i = 0; i < dirk->GetEntries(); ++i)
+  for (int i = 0; i < dirk->GetEntries(); ++i)
     {
       TObject* keyObject = dirk->At(i); // key object in list of keys
       TObject* dirObject = dir->Get(keyObject->GetName()); // object in file
@@ -217,7 +217,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  std::string histTitle = std::string(h->GetTitle());
 	  TDirectory* outDir = output->GetDirectory(histPath.c_str());
 	  if (!outDir)
-	    {output->mkdir(histPath.c_str());} // this returs the parent dir for some stupid reason
+	    {output->mkdir(histPath.c_str());} // this returns the parent dir for some stupid reason
 	  // instead get the directory from the output, knowing it now exists
 	  outDir = output->GetDirectory(histPath.c_str());
 	  output->cd(histPath.c_str()); // change into it so new histograms are added to it
