@@ -74,7 +74,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 {
   G4VPrimitiveScorer* result = nullptr;
   switch (scorerType.underlying())
-    {
+    {// if adding new 3D ones, remember to update the 3D upgrade mapping in BDSScorerInfo
     case BDSScorerType::cellcharge:
       {result = new G4PSCellCharge(name);    break;}
     case BDSScorerType::cellcharge3d:
