@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSHistBinMapper3D.hh"
 #include "BDSScorerConversionLoader.hh"
-#include "BDSScorerAmbientDose3D.hh"
+#include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -39,15 +39,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String&           scorerName,
-					       const BDSHistBinMapper3D* mapperIn,
-					       const G4String&           pathname,
-					       G4int ni,
-					       G4int nj,
-					       G4int nk,
-					       G4int depi,
-					       G4int depj,
-					       G4int depk):
+BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
+                                                                   const BDSHistBinMapper3D* mapperIn,
+                                                                   const G4String&           pathname,
+                                                                   G4int ni,
+                                                                   G4int nj,
+                                                                   G4int nk,
+                                                                   G4int depi,
+                                                                   G4int depj,
+                                                                   G4int depk):
   BDSPSCellFluxScaled3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
 {
   if (pathname.empty())
@@ -85,13 +85,13 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String&           scorerN
     }
 }
 
-BDSScorerAmbientDose3D::~BDSScorerAmbientDose3D()
+BDSPSCellFluxScaledPerParticle3D::~BDSPSCellFluxScaledPerParticle3D()
 {
   for (auto cf : conversionFactors)
     {delete cf.second;}
 }
 
-G4double BDSScorerAmbientDose3D::GetConversionFactor(G4int particleID, G4double kineticEnergy) const
+G4double BDSPSCellFluxScaledPerParticle3D::GetConversionFactor(G4int particleID, G4double kineticEnergy) const
 {
   auto search = conversionFactors.find(particleID);
   if (search != conversionFactors.end())
