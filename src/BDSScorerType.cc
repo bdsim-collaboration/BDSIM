@@ -31,14 +31,16 @@ std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
         new std::map<BDSScorerType, std::string> ({
 	    {BDSScorerType::cellcharge,      "cellcharge"},
 	    {BDSScorerType::cellcharge3d,    "cellcharge3d"},
-            {BDSScorerType::depositeddose,   "depositeddose"},
+        {BDSScorerType::depositeddose,   "depositeddose"},
 	    {BDSScorerType::depositeddose3d, "depositeddose3d"},
-            {BDSScorerType::depositedenergy, "depositedenergy"},
+        {BDSScorerType::depositedenergy, "depositedenergy"},
 	    {BDSScorerType::depositedenergy, "depositedenergy3d"},
-            {BDSScorerType::population,      "population"},
+        {BDSScorerType::population,      "population"},
 	    {BDSScorerType::population3d,    "population3d"},
-            {BDSScorerType::ambientdose,     "ambientdose"},
-            {BDSScorerType::ambientdose,     "activation"}
+	    {BDSScorerType::cellflux,        "cellflux"},
+	    {BDSScorerType::cellflux3d,      "cellflux3d"},
+	    {BDSScorerType::cellfluxscaled3d,"cellfluxscaled"},
+        {BDSScorerType::cellfluxscaledperparticle3d, "cellfluxscaledperparticle"}
         });
 
 BDSScorerType BDS::DetermineScorerType(G4String scorerType)
@@ -52,8 +54,10 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["depositedenergy3d"] = BDSScorerType::depositedenergy3d;
   types["population"]        = BDSScorerType::population;
   types["population3d"]      = BDSScorerType::population3d;
-  types["ambientdose"]       = BDSScorerType::ambientdose;
-  types["activation"]        = BDSScorerType::activation;
+  types["cellflux"]          = BDSScorerType::cellflux;
+  types["cellflux3d"]        = BDSScorerType::cellflux3d;
+  types["cellfluxscaled3d"]  = BDSScorerType::cellfluxscaled3d;
+  types["cellfluxscaledperparticle3d"] = BDSScorerType::cellfluxscaledperparticle3d;
   
   scorerType.toLower();
   
