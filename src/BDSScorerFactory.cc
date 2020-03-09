@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerAmbientDose3D.hh"
-#include "BDSScorerQuantity3D.hh"
+#include "BDSPSCellFluxScaled3D.hh"
 #include "BDSSDFilterAnd.hh"
 #include "BDSSDFilterMaterial.hh"
 #include "BDSSDFilterTime.hh"
@@ -102,7 +102,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
     case BDSScorerType::ambientdose:
       {result = new BDSScorerAmbientDose3D(name,mapper,pathname); break;}
      case BDSScorerType::activation:
-      {result = new BDSScorerQuantity3D(name,mapper,filename);break;}
+      {result = new BDSPSCellFluxScaled3D(name, mapper, filename);break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");

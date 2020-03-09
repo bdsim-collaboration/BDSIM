@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSCORERQUANTITY3D_H
-#define BDSSCORERQUANTITY3D_H
+#ifndef BDSPSCELLFLUXSCALED3D_H
+#define BDSPSCELLFLUXSCALED3D_H
 
 #include "globals.hh"
 #include "G4THitsMap.hh"
@@ -27,30 +27,30 @@ class BDSHistBinMapper3D;
 class G4PhysicsVector;
 
 /**
- * @brief Primitive scorer for a 3D mesh with a conversion factor.
+ * @brief Primitive scorer for cell flux in a 3D mesh with a conversion factor.
  * 
  * @author Robin Tesse
  */
 
-class BDSScorerQuantity3D: public G4VPrimitiveScorer
+class BDSPSCellFluxScaled3D: public G4VPrimitiveScorer
 {
 public:
   /// Constructor where no conversion factor file is provided and all cell fluxes just
   /// use conversion factor 1.0.
-  BDSScorerQuantity3D(const G4String&           scorerName,
-		      const BDSHistBinMapper3D* mapperIn,
-		      G4int ni=1, G4int nj=1, G4int nk=1,
-		      G4int depi=2, G4int depj=1, G4int depk=0);
+  BDSPSCellFluxScaled3D(const G4String&           scorerName,
+                        const BDSHistBinMapper3D* mapperIn,
+                        G4int ni=1, G4int nj=1, G4int nk=1,
+                        G4int depi=2, G4int depj=1, G4int depk=0);
 
   /// Constructor where conversion factor file is provided and loaded into a physics vector.
   /// Cell fluxes are multiplied by the factor as a function of the particle kinetic energy.
-  BDSScorerQuantity3D(const G4String&           scorerName,
-		      const BDSHistBinMapper3D* mapperIn,
-		      const G4String&           filename,
-		      G4int ni=1, G4int nj=1, G4int nk=1,
-		      G4int depi=2, G4int depj=1, G4int depk=0);
+  BDSPSCellFluxScaled3D(const G4String&           scorerName,
+                        const BDSHistBinMapper3D* mapperIn,
+                        const G4String&           filename,
+                        G4int ni=1, G4int nj=1, G4int nk=1,
+                        G4int depi=2, G4int depj=1, G4int depk=0);
 
-  virtual ~BDSScorerQuantity3D() override;
+  virtual ~BDSPSCellFluxScaled3D() override;
   
 public:
   void   Initialize(G4HCofThisEvent* HCE) override;
