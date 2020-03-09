@@ -106,12 +106,12 @@ BDSScorerQuantity3D::~BDSScorerQuantity3D()
 
 G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-  G4double stepLength = aStep->GetStepLength()/CLHEP::cm;
+  G4double stepLength = aStep->GetStepLength();
   G4double radiationQuantity = 0;
 
   if (!BDS::IsFinite(stepLength))
     {return false;}
-  
+
   const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
   G4VSolid* solid = touchable->GetSolid();
   G4double cubicVolume = 1;
@@ -119,7 +119,7 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   if (search == volumeCache.end())
     {// cache the volume of the volume to avoid repeated calculation
       // this is simple for a cube, but expensive for a cuttubs
-      cubicVolume = solid->GetCubicVolume()/CLHEP::cm3;
+      cubicVolume = solid->GetCubicVolume();
       volumeCache[solid] = cubicVolume;
     }
   else
