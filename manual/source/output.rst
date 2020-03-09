@@ -26,6 +26,15 @@ File Writing Policy
 * The behaviour is the same in both visualiser mode and batch mode.
 * A new output file is created for each :code:`/run/beamOn` command in the visualiser.
 
+Units
+-----
+
+* Units, unless specified, are SI (i.e. m, rad).
+* "energy" is in GeV and is the total energy of a particle unless labelled specifically (e.g. 'kineticEnergy').
+* Time is measured in nanoseconds.
+* Small letters denote local (to that object) coordinates, whereas capital letters represent
+global coordinates.
+
 Output Format
 -------------
 
@@ -59,13 +68,6 @@ to create the files (BDSIM) is unavailble.
 	  (see :ref:`python-utilities`, and pybdsim in particular) make the regular workflow
 	  very easy.
 
-A few general points:
-
-* Units, unless specified, are SI (i.e. m, rad).
-* "Energy" is in GeV and is the total energy of a particle.
-* Time is measured in nanoseconds.
-* Small letters denote local (to that object) coordinates, whereas capital letters represent
-  global coordinates.
 
 Not all information described may be written by default. Options described in
 :ref:`bdsim-options-output` allow control over what is stored. The default options
