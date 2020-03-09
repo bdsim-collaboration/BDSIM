@@ -46,7 +46,7 @@ public:
 
   G4String uniqueName; ///< Unique name of mesh/scorer -> slash required by Geant4.
   G4String outputName; ///< Copy of unique name that's safe for output.
-  G4String primitiveScorerName;        ///< Primitve scorer name used to look up units.
+  G4String primitiveScorerName;        ///< Primitive scorer name used to look up units.
   G4double primitiveScorerUnitValue;   ///< Numerical factor to use for scorer units.
   BDSHistBinMapper3D coordinateMapper; ///< Coordinate mapper - this class owns it.
 
