@@ -67,7 +67,7 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
       // it's not a valid key
       G4cout << __METHOD_NAME__ << "\"" << scorerType << "\" is not a valid scorer type" << G4endl;
       G4cout << "Available scorer types are:" << G4endl;
-      for (auto it : types)
+      for (const auto& it : types)
         {G4cout << "\"" << it.first << "\"" << G4endl;}
       throw BDSException(__METHOD_NAME__, "error.");
     }

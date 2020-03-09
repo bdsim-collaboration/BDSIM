@@ -41,6 +41,7 @@ public:
   BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
 								   const BDSHistBinMapper3D* mapperIn,
 								   const G4String&           pathname,
+								   const G4String&           unitIn = "percm2",
 								   G4int ni=1,
 								   G4int nj=1,
 								   G4int nk=1,
