@@ -30,6 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4PSCellCharge.hh"
 #include "G4PSCellCharge3D.hh"
+#include "G4PSCellFlux.hh"
+#include "G4PSCellFlux3D.hh"
 #include "G4PSDoseDeposit.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSEnergyDeposit.hh"
@@ -95,6 +97,20 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
     case BDSScorerType::population3d:
       {
 	G4PSPopulation3D* scorer = new G4PSPopulation3D(name);
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::cellflux:
+      {
+	G4PSCellFlux* scorer= new G4PSCellFlux(name, "percm2");
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::cellflux3d:
+      {
+	BDSPSCellFlux3D* scorer = new G4PSCellFlux3D(name), "percm2";
 	scorer->Weighted(true);
 	result = scorer;
 	break;
