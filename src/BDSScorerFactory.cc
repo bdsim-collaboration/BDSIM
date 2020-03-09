@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
-#include "BDSScorerAmbientDose3D.hh"
+#include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSPSCellFluxScaled3D.hh"
 #include "BDSSDFilterAnd.hh"
 #include "BDSSDFilterMaterial.hh"
@@ -100,7 +100,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 	break;
       }
     case BDSScorerType::ambientdose:
-      {result = new BDSScorerAmbientDose3D(name,mapper,pathname); break;}
+      {result = new BDSPSCellFluxScaledPerParticle3D(name, mapper, pathname); break;}
      case BDSScorerType::activation:
       {result = new BDSPSCellFluxScaled3D(name, mapper, filename);break;}
     default:

@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSCORERAMBIENTDOSE3D_H
-#define BDSSCORERAMBIENTDOSE3D_H
+#ifndef BDSPSCELLFLUXSCALEDPERPARTICLE3D_H
+#define BDSPSCELLFLUXSCALEDPERPARTICLE3D_H
 
 #include "BDSPSCellFluxScaled3D.hh"
 
@@ -35,20 +35,20 @@ class G4PhysicsVector;
  * @author Robin Tesse
  */
 
-class BDSScorerAmbientDose3D: public BDSPSCellFluxScaled3D
+class BDSPSCellFluxScaledPerParticle3D: public BDSPSCellFluxScaled3D
 {
 public:
-  BDSScorerAmbientDose3D(const G4String&           scorerName,
-			 const BDSHistBinMapper3D* mapperIn,
-			 const G4String&           pathname,
-			 G4int ni=1,
-			 G4int nj=1,
-			 G4int nk=1,
-			 G4int depi=2,
-			 G4int depj=1,
-			 G4int depk=0);
+  BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
+								   const BDSHistBinMapper3D* mapperIn,
+								   const G4String&           pathname,
+								   G4int ni=1,
+								   G4int nj=1,
+								   G4int nk=1,
+								   G4int depi=2,
+								   G4int depj=1,
+								   G4int depk=0);
 
-  virtual ~BDSScorerAmbientDose3D() override;
+  virtual ~BDSPSCellFluxScaledPerParticle3D() override;
 
 public:
   virtual G4double GetConversionFactor(G4int particleID, G4double kineticEnergy) const override;
