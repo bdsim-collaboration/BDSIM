@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSHistBinMapper3D.hh"
 #include "BDSScorerConversionLoader.hh"
-#include "BDSScorerQuantity3D.hh"
+#include "BDSPSCellFluxScaled3D.hh"
 #include "BDSUtilities.hh"
 
 #include "G4PhysicsVector.hh"
@@ -39,14 +39,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
-                                         const BDSHistBinMapper3D* mapperIn,
-                                         G4int ni,
-                                         G4int nj,
-                                         G4int nk,
-                                         G4int depi,
-                                         G4int depj,
-                                         G4int depk):
+BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
+                                             const BDSHistBinMapper3D* mapperIn,
+                                             G4int ni,
+                                             G4int nj,
+                                             G4int nk,
+                                             G4int depi,
+                                             G4int depj,
+                                             G4int depk):
   G4VPrimitiveScorer(scorerName),
   HCID3D(-1),
   evtMap3D(nullptr),
@@ -59,15 +59,15 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
   fNk = nk;
 }
 
-BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
-					 const BDSHistBinMapper3D* mapperIn,
-					 const G4String&           filename,
-					 G4int ni,
-					 G4int nj,
-					 G4int nk,
-					 G4int depi,
-					 G4int depj,
-					 G4int depk):
+BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
+                                             const BDSHistBinMapper3D* mapperIn,
+                                             const G4String&           filename,
+                                             G4int ni,
+                                             G4int nj,
+                                             G4int nk,
+                                             G4int depi,
+                                             G4int depj,
+                                             G4int depk):
   G4VPrimitiveScorer(scorerName),
   HCID3D(-1),
   evtMap3D(nullptr),
@@ -99,12 +99,12 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
     }
 }
 
-BDSScorerQuantity3D::~BDSScorerQuantity3D()
+BDSPSCellFluxScaled3D::~BDSPSCellFluxScaled3D()
 {
   delete conversionFactor;
 }
 
-G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSPSCellFluxScaled3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4double stepLength = aStep->GetStepLength();
   G4double radiationQuantity = 0;
@@ -137,13 +137,13 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   return true;
 }
 
-G4double BDSScorerQuantity3D::GetConversionFactor(G4int  /*particleID*/,
-						  G4double kineticEnergy) const
+G4double BDSPSCellFluxScaled3D::GetConversionFactor(G4int  /*particleID*/,
+                                                    G4double kineticEnergy) const
 {
   return conversionFactor ? conversionFactor->Value(kineticEnergy) : 1.0;
 }
 
-void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
+void BDSPSCellFluxScaled3D::Initialize(G4HCofThisEvent* HCE)
 {
   evtMap3D = new G4THitsMap<G4double>(detector->GetName(),
 				      GetName());
@@ -152,15 +152,15 @@ void BDSScorerQuantity3D::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(HCID3D, evtMap3D);
 }
 
-void BDSScorerQuantity3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
+void BDSPSCellFluxScaled3D::EndOfEvent(G4HCofThisEvent* /*HEC*/)
 {;}
 
-void BDSScorerQuantity3D::clear()
+void BDSPSCellFluxScaled3D::clear()
 {
   evtMap3D->clear();
 }
 
-G4int BDSScorerQuantity3D::GetIndex(G4Step* aStep)
+G4int BDSPSCellFluxScaled3D::GetIndex(G4Step* aStep)
 {
   const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
   G4int i = touchable->GetReplicaNumber(fDepthi);

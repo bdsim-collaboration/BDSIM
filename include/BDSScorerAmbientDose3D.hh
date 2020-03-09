@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERAMBIENTDOSE3D_H
 #define BDSSCORERAMBIENTDOSE3D_H
 
-#include "BDSScorerQuantity3D.hh"
+#include "BDSPSCellFluxScaled3D.hh"
 
 #include "G4String.hh"
 #include "G4Types.hh"
@@ -35,7 +35,7 @@ class G4PhysicsVector;
  * @author Robin Tesse
  */
 
-class BDSScorerAmbientDose3D: public BDSScorerQuantity3D
+class BDSScorerAmbientDose3D: public BDSPSCellFluxScaled3D
 {
 public:
   BDSScorerAmbientDose3D(const G4String&           scorerName,

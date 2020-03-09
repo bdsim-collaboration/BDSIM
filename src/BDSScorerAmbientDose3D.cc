@@ -48,7 +48,7 @@ BDSScorerAmbientDose3D::BDSScorerAmbientDose3D(const G4String&           scorerN
 					       G4int depi,
 					       G4int depj,
 					       G4int depk):
-  BDSScorerQuantity3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
+  BDSPSCellFluxScaled3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
 {
   if (pathname.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorerName + "\" - required");}
