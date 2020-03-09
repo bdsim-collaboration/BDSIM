@@ -46,7 +46,7 @@ public:
   /// Cell fluxes are multiplied by the factor as a function of the particle kinetic energy.
   BDSScorerQuantity3D(const G4String&           scorerName,
 		      const BDSHistBinMapper3D* mapperIn,
-		      const G4String            filename,
+		      const G4String&           filename,
 		      G4int ni=1, G4int nj=1, G4int nk=1,
 		      G4int depi=2, G4int depj=1, G4int depk=0);
 

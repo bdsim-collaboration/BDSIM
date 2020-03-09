@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSMaterials.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSScorerAmbientDose3D.hh"
@@ -37,8 +36,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSPopulation.hh"
 #include "G4PSPopulation3D.hh"
-#include "G4ScoringBox.hh"
-#include "G4ScoringManager.hh"
 #include "G4SDParticleWithEnergyFilter.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
