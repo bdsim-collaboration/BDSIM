@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
                                                                    const BDSHistBinMapper3D* mapperIn,
                                                                    const G4String&           pathname,
+                                                                   const G4String&           unitIn,
                                                                    G4int ni,
                                                                    G4int nj,
                                                                    G4int nk,
@@ -50,6 +51,7 @@ BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4Strin
                                                                    G4int depk):
   BDSPSCellFluxScaled3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
 {
+  SetUnit(unitIn);
   if (pathname.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorerName + "\" - required");}
   
