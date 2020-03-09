@@ -84,7 +84,7 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
       BDSScorerConversionLoader<igzstream> loader;
       conversionFactor = loader.Load(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else
