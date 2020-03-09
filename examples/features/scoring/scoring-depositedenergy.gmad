@@ -12,7 +12,7 @@ meshCol: scorermesh, nx=10, ny=10, nz=5, scoreQuantity="denergy",
 beam, particle="proton",
       energy=50*GeV;
 
-option, physicsList="g4FTFP_BERT",
+option, physicsList="em",
 	defaultRangeCut=1*cm,
 	minimumKineticEnergy=100*MeV,
 	elossHistoBinWidth=5*mm,
