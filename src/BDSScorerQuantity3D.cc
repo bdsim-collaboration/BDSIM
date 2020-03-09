@@ -61,7 +61,7 @@ BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
 
 BDSScorerQuantity3D::BDSScorerQuantity3D(const G4String&           scorerName,
 					 const BDSHistBinMapper3D* mapperIn,
-					 const G4String            filename,
+					 const G4String&           filename,
 					 G4int ni,
 					 G4int nj,
 					 G4int nk,
@@ -111,8 +111,7 @@ G4bool BDSScorerQuantity3D::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   if (!BDS::IsFinite(stepLength))
     {return false;}
-
-  // fluence computation
+  
   const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
   G4VSolid* solid = touchable->GetSolid();
   G4double cubicVolume = 1;
