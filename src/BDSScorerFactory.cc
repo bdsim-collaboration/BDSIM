@@ -110,15 +110,15 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
       }
     case BDSScorerType::cellflux3d:
       {
-	BDSPSCellFlux3D* scorer = new G4PSCellFlux3D(name), "percm2";
+	G4PSCellFlux3D* scorer = new G4PSCellFlux3D(name, "percm2");
 	scorer->Weighted(true);
 	result = scorer;
 	break;
       }
-    case BDSScorerType::ambientdose:
+    case BDSScorerType::cellfluxscaledperparticle3d:
       {result = new BDSPSCellFluxScaledPerParticle3D(name, mapper, pathname); break;}
-     case BDSScorerType::activation:
-      {result = new BDSPSCellFluxScaled3D(name, mapper, filename);break;}
+    case BDSScorerType::cellfluxscaled3d:
+      {result = new BDSPSCellFluxScaled3D(name, mapper, filename, "percm2");break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");
