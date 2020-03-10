@@ -33,8 +33,8 @@ void Scorer::clear()
   type                 = "";
   particleName         = "";
   particlePDGID        = 0;
-  minimumEnergy        = 0;
-  maximumEnergy        = 1e8; // 100 PeV - well beyond G4 physics for now
+  minimumKineticEnergy = 0;
+  maximumKineticEnergy = 1e8; // 100 PeV - well beyond G4 physics for now
   minimumTime          = 0;
   maximumTime          = 0;
   conversionFactorFile = "";
@@ -49,8 +49,8 @@ void Scorer::PublishMembers()
   publish("type",                 &Scorer::type);
   publish("particleName",         &Scorer::particleName);
   publish("particlePDGID",        &Scorer::particlePDGID);
-  publish("minimumEnergy",        &Scorer::minimumEnergy);
-  publish("maximumEnergy",        &Scorer::maximumEnergy);
+  publish("minimumKineticEnergy",        &Scorer::minimumKineticEnergy);
+  publish("maximumKineticEnergy",        &Scorer::maximumKineticEnergy);
   publish("minimumTime",          &Scorer::minimumTime);
   publish("maximumTime",          &Scorer::maximumTime);
   publish("conversionFactorFile", &Scorer::conversionFactorFile);
@@ -62,13 +62,13 @@ void Scorer::PublishMembers()
 
 void Scorer::print()const
 {
-  std::cout << "field: "
+  std::cout << "scorer: "
 	    << "name "                  << name                 << std::endl
 	    << "type "                  << type                 << std::endl
 	    << "particleName "          << particleName         << std::endl
 	    << "particlePDGID "         << particlePDGID        << std::endl
-	    << "minimumEnergy "         << minimumEnergy        << std::endl
-	    << "maximumEnergy "         << maximumEnergy        << std::endl
+	    << "minimumKineticEnergy "  << minimumKineticEnergy << std::endl
+	    << "maximumKineticEnergy "  << maximumKineticEnergy << std::endl
 	    << "minimumTime "           << minimumTime          << std::endl
 	    << "maximumTime "           << maximumTime          << std::endl
 	    << "conversionFactorFile "  << conversionFactorFile << std::endl

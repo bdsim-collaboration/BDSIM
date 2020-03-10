@@ -63,8 +63,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   
   scorerType    = BDS::DetermineScorerType(G4String(scorerTypeName));
   name          = scorer.name;
-  minimumEnergy = scorer.minimumEnergy*CLHEP::GeV;
-  maximumEnergy = scorer.maximumEnergy*CLHEP::GeV;
+  minimumKineticEnergy = scorer.minimumKineticEnergy * CLHEP::GeV;
+  maximumKineticEnergy = scorer.maximumKineticEnergy * CLHEP::GeV;
   filename      = scorer.conversionFactorFile;
   pathname      = scorer.conversionFactorPath;
   minimumTime   = scorer.minimumTime*CLHEP::second;
