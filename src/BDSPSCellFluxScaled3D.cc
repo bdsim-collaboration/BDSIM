@@ -56,7 +56,7 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
   mapper(mapperIn)
 {
   DefineUnitAndCategory();
-  SetUnit(unitIn);
+  CheckAndSetUnit(unitIn, "Per Unit Surface");
   fNi = ni; // set base class members
   fNj = nj;
   fNk = nk;
