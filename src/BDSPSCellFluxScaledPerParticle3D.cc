@@ -70,14 +70,14 @@ BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4Strin
       if (BDS::FileExists(uncompressedFile))
 	{
 	  conversionFactors[filePDG.second] = loader.Load(uncompressedFile);
-	  G4cout << __METHOD_NAME__ << "adding: " << uncompressedFile << G4endl;
+	  G4cout << "Adding: " << uncompressedFile << G4endl;
 	}
       else if (BDS::FileExists(compressedFile))
 	{
 #ifdef USE_GZSTREAM
 	  BDSScorerConversionLoader<igzstream> loaderC;
 	  conversionFactors[filePDG.second] = loaderC.Load(compressedFile);
-	  G4cout << __METHOD_NAME__ << "adding: " << compressedFile << G4endl;
+	  G4cout << "Adding: " << compressedFile << G4endl;
 #else
 	  throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
