@@ -3130,24 +3130,43 @@ of 0.05 MeV.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
-+-------------------------+---------------------------------------------------+-----------------+
-| **Scorer Type**         | **Description**                                   | **Units**       |
-+=========================+===================================================+=================+
-| cellcharge              | The charge deposited in the cell                  | e-              |
-+-------------------------+---------------------------------------------------+-----------------+
-| depositeddose           | The dose (energy deposited per unit mass          | Gray (J/kg)     |
-+-------------------------+---------------------------------------------------+-----------------+
-| depositedenergy         | The deposited energy in the cell                  | J               |
-+-------------------------+---------------------------------------------------+-----------------+
-| population              | The number of particles passing through the cell  | NA              |
-+-------------------------+---------------------------------------------------+-----------------+
-| activation              | The cell flux (step length / cubic volume) x      | :math:`cm^{-2}` |
-+-------------------------+---------------------------------------------------+-----------------+
-| ambientdose             | The cell flux (step length / cubic volume) x      |                 |
-|                         | a kinetic energy factor from the                  |                 |
-|                         | conversionFactorFile                              |                 |
-+-------------------------+---------------------------------------------------+-----------------+
++---------------------------+---------------------------------------------------+-----------------+
+| **Scorer Type**           | **Description**                                   | **Units**       |
++===========================+===================================================+=================+
+| cellcharge                | The charge deposited in the cell                  | e-              |
++---------------------------+---------------------------------------------------+-----------------+
+| cellflux                  | The flux (step length / cell volume)              | :math:`cm^{-2}` |
++---------------------------+---------------------------------------------------+-----------------+
+| cellfluxscaled            | The flux (step length / cell volume) multiplied   | :math:`cm^{-2}` |
+|                           | a factor as a funciton of kinetic energy as       |                 |
+|                           | specificed in the :code:`conversionFactorFile`.   |                 |
+|                           | Default factor is 1.0.                            |                 |
++---------------------------+---------------------------------------------------+-----------------+
+| cellfluxscaledperparticle | Similar to `cellfluxscaled` but per particle      | :math:`cm^{-2}` |
+|                           | species. Specify :code:`conversionFilePath` to    |                 |
+|                           | files (see below). Default factor is 0 for all    |                 |
+|                           | particles and energies.                           |                 |
++---------------------------+---------------------------------------------------+-----------------+
+| depositeddose             | The dose (energy deposited per unit mass)         | Gray (J/kg)     |
++---------------------------+---------------------------------------------------+-----------------+
+| depositedenergy           | The deposited energy in the cell                  | J               |
++---------------------------+---------------------------------------------------+-----------------+
+| population                | The number of particles passing through the cell  | NA              |
++---------------------------+---------------------------------------------------+-----------------+
 
+Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
+
+* :code:`protons.dat`
+* :code:`neutrons.dat`
+* :code:`photons.dat`
+* :code:`electrons.dat`
+* :code:`positrons.dat`
+
+At least 1 must be specified.  Any particles without a conversion factory are scored as 0.
+
+
+.. note:: All scorers include the weight associated with the particle, which is only different from
+	  1 if biasing is used. This ensures the correct physical result is always obtained.
 
 .. note:: As the histogram is per-event, the quantity stored is per-event also. So, if there
 	  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
