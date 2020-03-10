@@ -37,8 +37,8 @@ struct scorertype_def
 	     depositedenergy, depositedenergy3d,
 	     population, population3d,
 	     cellflux, cellflux3d,
-	     cellfluxscaledperparticle3d,
-	     cellfluxscaled3d};
+	     cellfluxscaledperparticle, cellfluxscaledperparticle3d,
+	     cellfluxscaled, cellfluxscaled3d};
 };
 
 typedef BDSTypeSafeEnum<scorertype_def,int> BDSScorerType;
