@@ -6,6 +6,7 @@ simple_testing(scoring-cellfluxscaled                    "--file=scoring-cellflu
 simple_testing(scoring-cellfluxscaledperparticle         "--file=scoring-cellfluxscaledperparticle.gmad"        "")	
 simple_testing(scoring-depositeddose                     "--file=scoring-depositeddose.gmad"                    "")
 simple_testing(scoring-depositedenergy                   "--file=scoring-depositedenergy.gmad"                  "")
+simple_testing(scoring-filter-ek                         "--file=scoring-filter-ek.gmad"                        "")
 simple_testing(scoring-filter-material-exclude           "--file=scoring-filter-material-exclude.gmad"          "")
 simple_testing(scoring-filter-material-exclude-multiple  "--file=scoring-filter-material-exclude-multiple.gmad" "")
 simple_testing(scoring-filter-material-include           "--file=scoring-filter-material-include.gmad"          "")
