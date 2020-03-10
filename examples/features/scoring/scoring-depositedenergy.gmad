@@ -6,7 +6,7 @@ denergy: scorer, type="depositedenergy";
 
 ! mesh in collimator
 meshCol: scorermesh, nx=10, ny=10, nz=5, scoreQuantity="denergy",
-	 xsize=40*cm, ysize=40*cm, zsize=10*cm,
+	 xsize=40*cm, ysize=40*cm, zsize=20*cm,
 	 z=10*cm;
 
 beam, particle="proton",
