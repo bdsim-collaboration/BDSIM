@@ -240,10 +240,10 @@ private:
   void FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& scorerHitsMap);
 
   /// Fill an individual scorer hits map into a particular output histogram.
-  void FillScorerHitsIndividual(const G4String hsitogramDefName,
+  void FillScorerHitsIndividual(const G4String& hsitogramDefName,
 				const G4THitsMap<G4double>* hitMap);
 
-  void FillScorerHitsIndividualBLM(G4String histogramDefName,
+  void FillScorerHitsIndividualBLM(const G4String& histogramDefName,
                                    const G4THitsMap<G4double>* hitMap);
 
   /// Fill run level summary information.
@@ -251,9 +251,9 @@ private:
 
   /// Utility function to copy out select bins from one histogram to another for 1D
   /// histograms only.
-  void CopyFromHistToHist1D(const G4String sourceName,
-			    const G4String destinationName,
-			    const std::vector<G4int> indices);
+  void CopyFromHistToHist1D(const G4String& sourceName,
+			    const G4String& destinationName,
+			    const std::vector<G4int>& indices);
 
   /// No default constructor.
   BDSOutput() = delete;
