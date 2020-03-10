@@ -12,8 +12,8 @@ ambientdose_material: scorer,
 ! Score only the contribution of neutrons to the ambient dose
 ambientdose_particle: scorer,
              type="ambientdose",
-             minimumEnergy=1e-11*MeV,
-             maximumEnergy=20*MeV,
+             minimumKineticEnergy=1e-11*MeV,
+             maximumKineticEnergy=20*MeV,
              conversionFactorPath="conversion_factors/",
              particleName="neutron";
 

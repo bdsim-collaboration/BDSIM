@@ -4,8 +4,8 @@ use, l1;
 
 protonAmbient: scorer, type="ambientdose",
 	       particleName="proton",
-	       minimumEnergy=20*MeV,
-	       maximumEnergy=100*GeV,
+	       minimumKineticEnergy=20*MeV,
+	       maximumKineticEnergy=100*GeV,
 	       minimumTime=0*s,
 	       maximumTime=1*s,
 	       conversionFactorFile="h10protons.txt";

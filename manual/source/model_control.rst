@@ -3076,10 +3076,10 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
 |                         |               | (only one)                                     |
 +-------------------------+---------------+------------------------------------------------+
-| minimumEnergy           | No            | Minimum kinetic energy of particles to be      |
+| minimumKineticEnergy    | No            | Minimum kinetic energy of particles to be      |
 |                         |               | included in scoring (GeV)                      |
 +-------------------------+---------------+------------------------------------------------+
-| maximumEnergy           | No            | Maximum kinetic energy of particles to be      |
+| maximumKineticEnergy    | No            | Maximum kinetic energy of particles to be      |
 |                         |               | included in scoring (GeV)                      |
 +-------------------------+---------------+------------------------------------------------+
 | minimumTime             | No            | Minimum time coordinate of particles to be     |
@@ -3171,8 +3171,8 @@ Example 2: ::
 
   protonAmbient: scorer, type="ambientdose",
 	    	         particleName="proton",
-		         minimumEnergy=20*MeV,
-		         maximumEnergy=1*GeV,
+		         minimumKineticEnergy=20*MeV,
+		         maximumKineticEnergy=1*GeV,
 		         minimumTime=0*s,
 		         maximumTime=1*s,
 		         conversionFactorFile="h10protons.txt";

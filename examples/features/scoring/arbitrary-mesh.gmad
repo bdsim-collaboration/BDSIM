@@ -4,8 +4,8 @@ use, l1;
 
 neutronActivation: scorer, type="activation",
 	    	       particleName="neutron",
-	    	       minimumEnergy=1e-11*MeV,
-	    	       maximumEnergy=20*MeV,
+	    	       minimumKineticEnergy=1e-11*MeV,
+	    	       maximumKineticEnergy=20*MeV,
 	    	       minimumTime=0*s,
 	    	       maximumTime=1*s,
 	    	       conversionFactorFile="conversion_factors/crs_element.dat";
