@@ -49,7 +49,7 @@ BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4Strin
                                                                    G4int depi,
                                                                    G4int depj,
                                                                    G4int depk):
-  BDSPSCellFluxScaled3D(scorerName, mapperIn, ni, nj, nk, depi, depj, depk)
+  BDSPSCellFluxScaled3D(scorerName, mapperIn, unitIn, ni, nj, nk, depi, depj, depk)
 {
   SetUnit(unitIn);
   if (pathname.empty())
