@@ -1,8 +1,8 @@
 d1: drift, l=1*m;
 name: type, parameter=value;
 
-redprotons: scorer, formula="h10", particle="proton", minimumEnergy=20*MeV, maximumEnergy=1*GeV, conversionFactorFile="protonsh10.dat";
-dullneutrons: scorer, formula="h10", particle="neutron", minimumEnergy=20*MeV, maximumEnergy=1*GeV, conversionFactorFile="neuh10.dat";
+redprotons: scorer, formula="h10", particle="proton", minimumKineticEnergy=20*MeV, maximumKineticEnergy=1*GeV, conversionFactorFile="protonsh10.dat";
+dullneutrons: scorer, formula="h10", particle="neutron", minimumKineticEnergy=20*MeV, maximumKineticEnergy=1*GeV, conversionFactorFile="neuh10.dat";
 
 ! option 1 - all volumes (per volume) in mass world
 option, scorerMassWorld={"redprotons, dullneutrons"};
