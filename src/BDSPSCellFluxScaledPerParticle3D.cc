@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerConversionLoader.hh"
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4PhysicsVector.hh"
@@ -83,6 +84,15 @@ BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4Strin
 #endif
 	}
     }
+  if (conversionFactors.empty())
+    {
+      G4String message = "no conversion files for scorer \"" + scorerName + "\" found. Please specify one of:\n";
+      for (const auto &kv : files)
+        {message += kv.first + "\n";}
+      message += "In the specified directory \"" + pathname + "\"\n";
+      message += "Defaulting to factor of 1.0 for all particles and all energies.";
+      BDS::Warning(__METHOD_NAME__, message);
+    }
 }
 
 BDSPSCellFluxScaledPerParticle3D::~BDSPSCellFluxScaledPerParticle3D()
@@ -97,5 +107,5 @@ G4double BDSPSCellFluxScaledPerParticle3D::GetConversionFactor(G4int particleID,
   if (search != conversionFactors.end())
     {return search->second->Value(kineticEnergy);}
   else
-    {return 0;}
+    {return 1.0;}
 }
