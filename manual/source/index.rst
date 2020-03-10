@@ -17,6 +17,7 @@ Welcome to BDSIM's documentation!
    model_customisation
    model_conversion
    externalgeometry
+   model_scoring
    output
    output_analysis
    python_utilities
