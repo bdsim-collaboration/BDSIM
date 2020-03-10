@@ -41,11 +41,13 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   particle(nullptr)
 {
   const std::map<std::string, std::string> replacements = {
-							   {"cellcharge", "cellcharge3d"},
+							   {"cellcharge",      "cellcharge3d"},
 							   {"depositeddose",   "depositeddose3d"},
 							   {"depositedenergy", "depositedenergy3d"},
 							   {"population",      "population3d"},
-							   {"cellflux", "cellflux3d"}
+							   {"cellflux",        "cellflux3d"},
+                               {"cellfluxscaled",  "cellfluxscaled3d"},
+                               {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;
