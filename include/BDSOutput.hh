@@ -66,8 +66,8 @@ class BDSOutput: protected BDSOutputStructures
 {
 public:
   /// Constructor with base file name (without extension or number suffix).
-  BDSOutput(G4String baseFileNameIn,
-	    G4String fileExtentionIn,
+  BDSOutput(const G4String& baseFileNameIn,
+	    const G4String& fileExtentionIn,
 	    G4int    fileNumberOffset);
   virtual ~BDSOutput(){;}
 
