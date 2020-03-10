@@ -181,8 +181,7 @@ G4int BDSPSCellFluxScaled3D::GetIndex(G4Step* aStep)
 
 void BDSPSCellFluxScaled3D::DefineUnitAndCategory() const
 {
-  // Per Unit Surface
-  new G4UnitDefinition("percentimeter2","percm2","Per Unit Surface",(1./CLHEP::cm2));
-  new G4UnitDefinition("permillimeter2","permm2","Per Unit Surface",(1./CLHEP::mm2));
-  new G4UnitDefinition("permeter2","perm2","Per Unit Surface",(1./CLHEP::m2));
+  new G4UnitDefinition("percentimeter2", "percm2", "Per Unit Surface", (1./CLHEP::cm2));
+  new G4UnitDefinition("permillimeter2", "permm2", "Per Unit Surface", (1./CLHEP::mm2));
+  new G4UnitDefinition("permeter2",      "perm2",  "Per Unit Surface", (1./CLHEP::m2));
 }
