@@ -2,6 +2,7 @@ simple_testing(scorer-arbitrary-mesh                     "--file=arbitrary-mesh.
 simple_testing(scoring-population                        "--file=scoring-population.gmad"                       "")
 simple_testing(scoring-cellcharge                        "--file=scoring-cellcharge.gmad"                       "")
 simple_testing(scoring-cellflux                          "--file=scoring-cellflux.gmad"                         "")
+simple_testing(scoring-cellfluxscaled                    "--file=scoring-cellfluxscaled.gmad"                   "")	
 simple_testing(scoring-depositeddose                     "--file=scoring-depositeddose.gmad"                    "")
 simple_testing(scoring-depositedenergy                   "--file=scoring-depositedenergy.gmad"                  "")
 simple_testing(scoring-filter-material-exclude           "--file=scoring-filter-material-exclude.gmad"          "")
