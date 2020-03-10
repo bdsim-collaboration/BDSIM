@@ -933,7 +933,6 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
   const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
   TH3D* hist = evtHistos->Get3DHistogram(histIndex);
   G4int x,y,z;
-  //const BDSHistBinMapper3D* mapper = hist3DMapper[histIndex];
 #if G4VERSION < 1039
   for (const auto& hit : *hitMap->GetMap())
 #else
