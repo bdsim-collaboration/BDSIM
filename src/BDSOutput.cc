@@ -921,7 +921,7 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
     }
 }
 
-void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
+void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
   if (histogramDefName.contains("blm_"))
@@ -948,7 +948,7 @@ void BDSOutput::FillScorerHitsIndividual(G4String histogramDefName,
   runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
 }
 
-void BDSOutput::FillScorerHitsIndividualBLM(G4String histogramDefName,
+void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,
                                             const G4THitsMap<G4double>* hitMap)
 {
   G4int histIndex = blmCollectionNameToHistogramID[histogramDefName];
@@ -973,9 +973,9 @@ void BDSOutput::FillRunInfo(const BDSEventInfo* info)
     {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
 }
 
-void BDSOutput::CopyFromHistToHist1D(const G4String sourceName,
-				     const G4String destinationName,
-				     const std::vector<G4int> indices)
+void BDSOutput::CopyFromHistToHist1D(const G4String& sourceName,
+				     const G4String& destinationName,
+				     const std::vector<G4int>& indices)
 {
   TH1D* sourceEvt      = evtHistos->Get1DHistogram(histIndices1D[sourceName]);
   TH1D* destinationEvt = evtHistos->Get1DHistogram(histIndices1D[destinationName]);
