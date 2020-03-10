@@ -51,11 +51,9 @@ BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4Strin
                                                                    G4int depk):
   BDSPSCellFluxScaled3D(scorerName, mapperIn, unitIn, ni, nj, nk, depi, depj, depk)
 {
-  SetUnit(unitIn);
-  if (pathname.empty())
-    {throw BDSException(__METHOD_NAME__, "no conversionFactorPath provided for \"" + scorerName + "\" - required");}
-  
   G4String filePath = BDS::GetFullPath(pathname);
+  if (filePath.back() != '/')
+    {filePath += '/';}
 
   const std::map<std::string, G4int> files = {{"protons.dat",   2212},
 					      {"neutrons.dat",  2112},
