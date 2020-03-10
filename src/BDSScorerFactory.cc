@@ -50,7 +50,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 						   const BDSHistBinMapper3D* mapper,
 						   G4double*                 unit)
 {
-  // here we create the scorer with the informations inside BDSScorerInfo.
+  // here we create the scorer with the information from BDSScorerInfo.
   G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name,
 							     info->scorerType,
 							     info->filename,
