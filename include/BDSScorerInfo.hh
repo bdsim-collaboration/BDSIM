@@ -54,10 +54,10 @@ public:
   BDSScorerType scorerType;          ///< Scorer type.
   G4String      name;                ///< Scorer name.
   G4ParticleDefinition* particle;    ///< Particle filter
-  G4double      minimumEnergy;       ///< Minimal energy
-  G4double      maximumEnergy;       ///< Maximal energy
-  G4double      minimumTime;         ///< Minimum time
-  G4double      maximumTime;         ///< Maximum time
+  G4double      minimumKineticEnergy;
+  G4double      maximumKineticEnergy;
+  G4double      minimumTime;
+  G4double      maximumTime;
   G4String      filename;            ///< Name of the conversion factor file
   G4String      pathname;            ///< Path of the conversion factor file (for ambient dose)
   std::vector<G4Material*> materialsToInclude; /// Which materials to include for scoring.

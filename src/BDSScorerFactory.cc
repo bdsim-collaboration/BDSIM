@@ -145,8 +145,8 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String &name,
     {
       G4String particleName = info->particle->GetParticleName();
       auto particleWithKineticEnergyFilter = new G4SDParticleWithEnergyFilter("particle_filter",
-									      info->minimumEnergy,
-									      info->maximumEnergy);
+									      info->minimumKineticEnergy,
+									      info->maximumKineticEnergy);
       particleWithKineticEnergyFilter->add(particleName);
       result->RegisterFilter(particleWithKineticEnergyFilter);
     }
