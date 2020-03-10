@@ -119,6 +119,12 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
       {result = new BDSPSCellFluxScaledPerParticle3D(name, mapper, pathname); break;}
     case BDSScorerType::cellfluxscaled3d:
       {result = new BDSPSCellFluxScaled3D(name, mapper, filename, "percm2");break;}
+    case BDSScorerType::cellfluxscaled:
+    case BDSScorerType::cellfluxscaledperparticle:
+      {
+	throw BDSException(__METHOD_NAME__, "unimplemented scorer \"" + scorerType.ToString() + "\"");
+	break;
+      }
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + scorerType.ToString() + "\"");
