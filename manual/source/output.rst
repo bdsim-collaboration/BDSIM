@@ -32,8 +32,8 @@ Units
 * Units, unless specified, are SI (i.e. m, rad).
 * "energy" is in GeV and is the total energy of a particle unless labelled specifically (e.g. 'kineticEnergy').
 * Time is measured in nanoseconds.
-* Small letters denote local (to that object) coordinates, whereas capital letters represent
-global coordinates.
+* Small letters denote local (to that object) coordinates, whereas capital letters represent global coordinates.
+
 
 Output Format
 -------------
