@@ -895,20 +895,22 @@ the edge effects are provided by default and are controllable with the option `i
   is also an rf cavity.
 * The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
   model is supplied, the cavity fringes are built with the same radius as the model iris radius.
-
-If `tOffset` is specified, a phase offset is calculated from this time for the **speed
-of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
-element is used to find the phase offset.
-
+* If `phase` is specified, this is added to the calculated phase offset from either the lattice
+  position or `tOffset`.
+* The step length in the cavity is limited for all particles to be 2.5% of the minimum
+  of the element length and the wavelength (given the frequency). In the case of 0 frequency,
+  only the length is considered. This is to ensure accurate numerical integration of the
+  motion through the varying field.
+* If `tOffset` is specified, a phase offset is calculated from this time for the **speed
+  of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
+  element is used to find the phase offset.
+* In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
+  used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
+  
 .. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
 	  only correct for already relativistic beams. Development is underway to improve
 	  this calculation for sub-relativistic beams.
 
-If `phase` is specified, this is added to the calculated phase offset from either the lattice
-position or `tOffset`.
-
-In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
-used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
 
 Simple examples: ::
 
