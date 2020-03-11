@@ -883,7 +883,7 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   // Multiplied by 5 because it works...
   G4double ls = 5 * BDSGlobalConstants::Instance()->LengthSafetyLarge();
 
-  if (placement.sideOffset)
+  if (BDS::IsFinite(placement.sideOffset))
     {ls = placement.sideOffset * CLHEP::m;}
   
   if (side == "top")
