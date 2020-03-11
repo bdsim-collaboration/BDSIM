@@ -48,8 +48,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include <set>
-#include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements,
@@ -71,21 +71,28 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
     }
   
   std::set<std::set<G4String> > scorerSetsToMake;
+  // cache a map of set of scorers and combined name by BLM name so we don't have to do it later again
+  std::map<std::string, std::pair<std::set<G4String>, G4String> >blmScoringInfo;
   for (const auto& bp : blmPlacements)
     {
+      std::vector<G4String> scorersForThisBLM = BDS::GetWordsFromString(G4String(bp.scoreQuantity));
       std::set<G4String> requiredScorers;
-      std::stringstream sqss(bp.scoreQuantity);
-      G4String word;
-      while (sqss >> word) // split by white space - process word at a time
-	{
-	  auto search = scorerRecipes.find(word);
+      G4String combinedName = "";
+      for (const auto& name : scorersForThisBLM)
+        {
+          auto search = scorerRecipes.find(name);
 	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for blm \"" + bp.name + "\" not found.");}
-	  requiredScorers.insert(word);
+	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" for blm \"" + bp.name + "\" not found.");}
+	  else
+            {
+	      requiredScorers.insert(name);
+	      combinedName += name;
+	    }
 	}
       if (requiredScorers.empty())
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
+      blmScoringInfo[bp.name] = std::make_pair(requiredScorers, combinedName);
     }
 #ifdef BDSDEBUG
   G4cout << "Unqiue combinations of scorers: " << scorerSetsToMake.size() << G4endl;
@@ -99,17 +106,14 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   std::vector<G4String> uniquePrimitiveScorerNames;
   std::vector<G4double> scorerUnits;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  for (const auto& ss : scorerSetsToMake)
+  for (const auto& ssAndCombinedName : blmScoringInfo)
     {
-      G4String combinedName = "";
-      for (const auto& name : ss) // merge into one name
-	{combinedName += name;}
-
+      G4String combinedName = ssAndCombinedName.second.second;
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Making unique SD " << combinedName << G4endl;
 #endif
       G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector("blm_"+combinedName);
-      for (const auto& name : ss)
+      for (const auto& name : ssAndCombinedName.second.first)
 	{
 	  auto search = scorerRecipes.find(name);
 	  if (search == scorerRecipes.end())
@@ -135,14 +139,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   for (const auto& bp : blmPlacements)
     {
       // form a set of score quantities again
-      std::set<G4String> requiredScorers;
-      std::stringstream sqss(bp.scoreQuantity);
-      G4String word;
-      while (sqss >> word)
-	{requiredScorers.insert(word);}
-      G4String combinedName = "";
-      for (const auto& name : requiredScorers)
-	{combinedName += name;}
+      const auto& v = blmScoringInfo.at(bp.name);
+      std::set<G4String> requiredScorers = v.first;
+      G4String combinedName = v.second;
 
       auto sdSearch = sensitiveDetectors.find(combinedName);
       if (sdSearch == sensitiveDetectors.end())
