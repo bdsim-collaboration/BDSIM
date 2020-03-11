@@ -865,9 +865,9 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.
   G4double pathLength = placement.s*CLHEP::m;
-  std::pair<G4double, G4double> extent_z = placementExtent.ExtentZ();
-  G4double sLow  = pathLength + extent_z.first;
-  G4double sHigh = pathLength + extent_z.second;
+  std::pair<G4double, G4double> extentZ = placementExtent.ExtentZ();
+  G4double sLow  = pathLength + extentZ.first;
+  G4double sHigh = pathLength + extentZ.second;
   // iterator pointing to lower bound
   auto start = beamLine->FindFromS(sLow);
   auto end   = beamLine->FindFromS(sHigh);
