@@ -77,7 +77,6 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
     {
       std::vector<G4String> scorersForThisBLM = BDS::GetWordsFromString(G4String(bp.scoreQuantity));
       std::set<G4String> requiredScorers;
-      G4String combinedName = "";
       for (const auto& name : scorersForThisBLM)
         {
           auto search = scorerRecipes.find(name);
@@ -86,12 +85,17 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	  else
             {
 	      requiredScorers.insert(name);
-	      combinedName += name;
 	    }
 	}
       if (requiredScorers.empty())
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
+
+      // the set by definition orders its contents, so we iterate through it to form a uniquely
+      // ordered combined name for the set.
+      G4String combinedName = "";
+      for (const auto& n : requiredScorers)
+        {combinedName += n;}
       blmScoringInfo[bp.name] = std::make_pair(requiredScorers, combinedName);
     }
 #ifdef BDSDEBUG
