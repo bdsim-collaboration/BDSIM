@@ -1900,12 +1900,31 @@ Below are the available parameters. A BLM is created using the `blm` command.::
 Either a simple geometric shape can be used, which is a single volume of one material, or a
 user supplied geometry file can be used.
 
+The quantity produced by the BLM per event is defined using a scorer (see :ref:`scorer`) and
+attached to the BLM with the `scoreQuantity` parameter. If this is not defined, it is simply
+passive material.
+
 The placement parameters are the same as the general placements (see :ref:`placements`). So the
 BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
 in global Cartesian coordinates.
   
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
++-------------------------+--------------------------------------------------------------------+
+| blmMaterial             | Name of material to use for simple geometry                        |
++-------------------------+--------------------------------------------------------------------+
+| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
++-------------------------+--------------------------------------------------------------------+
+| blm2                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm3                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm4                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| scoreQuantity           | Name of a scorer object that should be used for record a quantity  |
+|                         | in the BLM. See :ref:`scorer`.                                     |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -1931,8 +1950,6 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
 +-------------------------+--------------------------------------------------------------------+
-| sensitive               | Whether the geometry records energy deposition (default true)      |
-+-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
 | referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
@@ -1940,18 +1957,13 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | Optional file to use for geometry of BLM including format          |
 +-------------------------+--------------------------------------------------------------------+
-| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
+| side                    | Optional which side of `referenceElement` the BLM is placed with   |
+|                         | respect to. One of :code:`left`, :code:`right`, :code:`top` and    |
+|                         | :code:`bottom`.                                                    |
 +-------------------------+--------------------------------------------------------------------+
-| blmMaterial             | Name of material to use for simple geometry                        |
+| sideOffset              | Distance from the (square) extent of an object the BLM is placed.  |
 +-------------------------+--------------------------------------------------------------------+
-| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
-+-------------------------+--------------------------------------------------------------------+
-| blm2                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
-| blm3                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
-| blm4                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
+
 
 BLM Shapes
 **********
@@ -1985,7 +1997,7 @@ Examples
 2) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
 
    ::
-
+      
       minidetector: blm, x=3.2*m, y=0.25*m,
 	      	    geometryType="cylinder",
 		    blmMaterial="Si",
@@ -1995,10 +2007,11 @@ Examples
 3) User defined geometry in a GDML file.
 
    ::
-
+      blmdose: scorer, type="depositedenery";
       minidetector: blm, x=0.4*m, y=0.25*m,
                     geometryFile="gdml:simpleshape.gdml",
 		    blmMaterial="N",
 		    blm1=20*cm,
-		    blm2=5*cm;
+		    blm2=5*cm,
+		    scorerQuantity="blmdose";
 
