@@ -31,6 +31,13 @@ New Features
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
 
+
+General
+-------
+
+* Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
+  allows the static library to be compiled too (in addition to the shared one).
+
 Output Changes
 --------------
 
