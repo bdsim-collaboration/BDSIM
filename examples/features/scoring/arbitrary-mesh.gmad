@@ -2,7 +2,7 @@ c1: rcol, l=0.2*m, material="W";
 l1: line=(c1);
 use, l1;
 
-neutronActivation: scorer, type="activation",
+neutronActivation: scorer, type="cellfluxscaled",
 	    	       particleName="neutron",
 	    	       minimumKineticEnergy=1e-11*MeV,
 	    	       maximumKineticEnergy=20*MeV,
