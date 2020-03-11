@@ -2988,7 +2988,7 @@ scoring mesh in a parallel world.
 
 	    Wireframe view of the same quadrupole but with a scoring mesh visualised (grey).
 
-Conceptually this is split into two key specifications:
+Conceptually creating a scoring mesh is split into two key definitions in the input:
 
 1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
 2) A :ref:`scorer` to define what information is recorded
@@ -2998,7 +2998,7 @@ Conceptually this is split into two key specifications:
 * Because the steps are limited by the boundaries and all the physics processes are
   checked for each step, the presence of a scoring mesh will make the simulation
   a little bit slower.
-* Each mesh creates a 3D histogram in the outpu for each quantity for each event.
+* Each mesh creates a 3D histogram in the output for each quantity for each event.
 * Each mesh is a 3D mesh of cuboids where each has the same dimensions. 
 * All scorers include the weight associated with the particle, which is only different from
   1 if biasing is used. This ensures the correct physical result is always obtained.
@@ -3144,8 +3144,8 @@ The following are accepted scorer types.
 | cellflux                  | The flux (step length / cell volume)              | :math:`cm^{-2}` |
 +---------------------------+---------------------------------------------------+-----------------+
 | cellfluxscaled            | The flux (step length / cell volume) multiplied   | :math:`cm^{-2}` |
-|                           | a factor as a funciton of kinetic energy as       |                 |
-|                           | specificed in the :code:`conversionFactorFile`.   |                 |
+|                           | a factor as a function of kinetic energy as       |                 |
+|                           | specified in the :code:`conversionFactorFile`.    |                 |
 |                           | Default factor is 1.0.                            |                 |
 +---------------------------+---------------------------------------------------+-----------------+
 | cellfluxscaledperparticle | Similar to `cellfluxscaled` but per particle      | :math:`cm^{-2}` |
@@ -3237,15 +3237,44 @@ file) for protons between 20 MeV and 1 GeV in kinetic energy and that exist betw
 Visualising a Scoring Mesh
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: figures/scoring-root-file-view.png
-	    :width: 50%
-	    :align: center
+Scoring meshes are by default invisible because 1) they are not constructed by Geant4 until the
+start of a run and 2) they are in a parallel world and have to be explicitly viewed. To visualise
+a mesh:
 
-	    View of a ROOT TBrowser showing an average 3D histogram from a scoring mesh using
-	    the "lego2" visualisation option.
+1) Start BDSIM interactively (without :code:`--batch`)
+2) Run 1 event :code:`/run/beamOn 1`
+3) Draw parallel worlds :code:`/vis/drawVolume worlds`
+4) Use the tick boxes in the scene tree to turn off other parallel worlds such as the
+   curvilinear ones, and also ideally set the view to wireframe with the wireframe button
+   on the top row of icons.
+
 
 Visualising Scoring Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+Quantities from a scoring mesh are stored per-event in the output (in the default ROOT event output
+this is in the vector :code:`Event.Histos.histograms3D`). Each histogram can of course be accessed
+individually by loading the data in ROOT or Python (see :ref:`output-user-analysis`). However, the
+best way is to merge the histograms per-event into an average. This can be done with rebdsimHistoMerge.
+
+::
+
+   bdsim --file=scoring-filter-material-include.gmad --outfile=d1 --batch --ngenerate=100
+   rebdsimHistoMerge d1.root d1-histos.root
+   root -l d1-histos.root
+   > TBrowser tb;
+
+* ROOT's TBrowser does not show 3D histograms by default. In the top left, the "Draw Option" drop
+  down menu should be set to "lego2" for example, then re-click on the 3D histogram as shown below.
+
+.. figure:: figures/scoring-root-file-view.png
+	    :width: 80%
+	    :align: center
+
+	    View of a ROOT TBrowser showing an average 3D histogram from a scoring mesh using
+	    the "lego2" visualisation option. This is based on 100 events from the example
+	    `scoring-filter-material-include.gmad`.
+
 	     
 .. _controlling-simulation-speed:
 
