@@ -3013,7 +3013,7 @@ Scorer Mesh
   
 For :code:`scorermesh`, the syntax is: ::
 
-  name, scorermesh, parameter=value, parameter2=value;
+  name: scorermesh, parameter=value, parameter2=value;
 
 Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
 example parameter and value pairs. The following parameters may be specified.
@@ -3084,7 +3084,7 @@ Scorer
 
 A `scorer` defines a quantity to be recorded. The syntax is: ::
 
-  name, scorer, parameter=value, parameter2=value;
+  name: scorer, parameter=value, parameter2=value;
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 		    
