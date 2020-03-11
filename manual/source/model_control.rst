@@ -2964,17 +2964,36 @@ parameters is described below, but the required ones for each scenario are descr
 Scoring
 -------
 
-Scoring is the ability to record integrals (or 'scores') of certain information in a 3D
-histogram for some part of the 3D model. Conceptually this is split into two key specifications:
-
-1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
-2) A :ref:`scorer` to define what information is recorded
+Scoring is the ability to record integrals (or 'scores') of certain information such as the
+dose or flux in a 3D histogram for some part of the 3D model. This is done as it is much less
+information than storing all the 'hits' from each step of each particle in each event as well
+as a useful way to measure a given quantity per unit volume. 
 
 A scoring mesh is a 3D grid (mesh) created in a parallel geometry that can safely overlap with other
 geometry in the model. Although in a parallel world, the steps of a particle through the 3D geometry
 are limited by the boundary of the mesh. This means that no step covers more than one cell or
 bin in the mesh and therefore there's no ambiguity over proportioning some quantity (like
-energy deposition) in one step or another.
+energy deposition) in one step or another. The figure below shows the regular "mass world"
+view of a quadrupole, and also a wireframe view of the same quadrupole with the normally invisible
+scoring mesh in a parallel world.
+
+.. figure:: figures/scoring-mass-world.png
+	    :width: 50%
+	    :align: center
+
+	    "Mass world" view of a quadrupole.
+
+
+.. figure:: figures/scoring-wireframe.png
+	    :width: 50%
+	    :align: center
+
+	    Wireframe view of the same quadrupole but with a scoring mesh visualised (grey).
+
+Conceptually this is split into two key specifications:
+
+1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
+2) A :ref:`scorer` to define what information is recorded
 
 * The mesh does not affect the physics of the simulation but is used to record or
   'score' one or more quantities.
@@ -3216,7 +3235,19 @@ In this example, a similar mesh as Example 1 is used, but two 3D histograms are 
 the neutron population and one for the ambient dose (using the "h10protons.txt" conversion
 file) for protons between 20 MeV and 1 GeV in kinetic energy and that exist between 0 s
 (the start of the simulation) and 1 s in time of flight.
-		       
+
+Visualising a Scoring Mesh
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: figures/scoring-root-file-view
+	    :width: 50%
+	    :align: center
+
+	    View of a ROOT TBrowser showing an average 3D histogram from a scoring mesh using
+	    the "lego2" visualisation option.
+
+Visualising Scoring Data
+^^^^^^^^^^^^^^^^^^^^^^^^
 	     
 .. _controlling-simulation-speed:
 
