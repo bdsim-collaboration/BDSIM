@@ -1,4 +1,0 @@
-Model scoring
-=============
-
-TODO (cedric)
