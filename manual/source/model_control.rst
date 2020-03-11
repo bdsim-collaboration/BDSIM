@@ -44,7 +44,7 @@ BDSIM starts each event in one of two ways.
    In most cases, the particle coordinates are randomly generated according
    to a distribution.
 
-2) A primary vertex is loaded from an event genertor file. This currently requires linking to
+2) A primary vertex is loaded from an event generator file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
    `eventgeneratorfile`_).
 
@@ -623,7 +623,7 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `sigmaE`                         | Extent of **relative** energy spread in total energy. Uniformly    |
 |                                  | distributed between :math:`\pm` `sigmaE`.                          |
 +----------------------------------+--------------------------------------------------------------------+
-| `sigmaEk`                        | Extent of **reative** energy spread in kinetic energy. Uniformly   |
+| `sigmaEk`                        | Extent of **relative** energy spread in kinetic energy. Uniformly  |
 |                                  | distributed between :math:`\pm` `sigmaEk`.                         |
 +----------------------------------+--------------------------------------------------------------------+
 | `sigmaP`                         | Extent of **relative** energy spread in momentum.                  |
@@ -846,7 +846,7 @@ Examples:
 1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
 2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
    The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
-   for another instance of BDSIM on a compure farm.
+   for another instance of BDSIM on a computer farm.
 
 Acceptable tokens for the columns are:
 
@@ -992,7 +992,7 @@ The following parameters are used to control the use of an event generator file.
 +-------------------------+-----------------------------------------------------------+
 
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
-  in the original coorinates of the event generator file.
+  in the original coordinates of the event generator file.
 
 .. warning:: Only particles available through the chosen physics list can be used otherwise they will
 	     not have the correct properties and will **not be** added to the primary vertex and are
@@ -1069,9 +1069,7 @@ An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is 
         energy = 1.2*GeV,
 	distrType = "sphere",
 	X0 = 9*cm,
-	Z0 = 0.5*m;
-
-	     
+	Z0 = 0.5*m;	     
 
 
 .. _physics-processes:
@@ -1777,7 +1775,7 @@ User Sampler Visualisation
 Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
 visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
 in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and un-tick the desired element to see
+worlds) and other samplers. It is recommended to tick and untick the desired element to see
 it appear and disappear repeatedly.
   
 .. _bdsim-options:
@@ -2320,7 +2318,7 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Function**                                                       |
 +====================================+====================================================================+
-| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generatod (GeV)|
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generated (GeV)|
 +------------------------------------+--------------------------------------------------------------------+
 | collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
 +------------------------------------+--------------------------------------------------------------------+
@@ -2346,7 +2344,7 @@ with the following options.
 |                                    | particle exists the beam pipe. Note this could be multiple times.  |
 +------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsIons           | If `storeApertureImpacts` is on, the information will be generated |
-|                                    | for all secondary ions as well as the primay. No information will  |
+|                                    | for all secondary ions as well as the primary. No information will |
 |                                    | be generated for other particles.                                  |
 +------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
@@ -2515,7 +2513,7 @@ with the following options.
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
 |                                    | string such as "cd1 qf32x". If the same element exists multiple    |
-|                                    | times, all matches wil be stored.                                  |
+|                                    | times, all matches will be stored.                                 |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryTransportationSteps | On by default. If true, include steps in the trajectories that     |
 |                                    | are created by transportation only. When a particle crosses a      |
@@ -2568,7 +2566,7 @@ Recommendations:
 * Event is the minimal unit of simulation - usually in BDSIM this is the propagation of 1 primary particle.
 * Run is a group of events where the physics and geometry remained the same.
 
-The options listed below are list roughly in terms of the simulation hiearchy.
+The options listed below are list roughly in terms of the simulation hierarchy.
 
 +----------------------------------+----------+-------------------------------------------------------------------+
 | **Option**                       | **Type** | **Description**                                                   |
@@ -2661,7 +2659,7 @@ volume, which is the outermost coordinate system.
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------+--------------------------------------------------------------------+
-| **Option**           | **Funciton**                                                       |
+| **Option**           | **Function**                                                       |
 +======================+====================================================================+
 | beamlineX            | Offset in x                                                        |
 +----------------------+--------------------------------------------------------------------+
@@ -2786,7 +2784,7 @@ should only be used with understanding.
 |                                   | geometry, resulting in incorrect tracking. This only occurs in     |
 |                                   | integrator sets which construct the poleface geometry, namely      |
 |                                   | :code:`bdsimtwo`, :code:`geant4`, and :code:`geant4dp`. This option|
-|                                   | overides this, allowing samplers to be attached. This option will  |
+|                                   | overrides this, allowing samplers to be attached. This option will |
 |                                   | not affect the default integrator set, :code:`bdsimmatrix`.        |
 +-----------------------------------+--------------------------------------------------------------------+
 | teleporterFullTransform           | Default true. Whether to use the newer teleporter offset method    |
