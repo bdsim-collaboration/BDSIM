@@ -2007,6 +2007,7 @@ Examples
 3) User defined geometry in a GDML file.
 
    ::
+      
       blmdose: scorer, type="depositedenery";
       minidetector: blm, x=0.4*m, y=0.25*m,
                     geometryFile="gdml:simpleshape.gdml",
