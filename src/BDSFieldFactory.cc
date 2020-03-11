@@ -365,7 +365,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::multipoleouterdipole:
       {// suitable only for querying transversely in x,y - no 3d nature
 	BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
-	G4bool positiveField = (*strength)["field"] > 0;
+	G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
 	field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
 	delete innerField; // no longer required
 	break;

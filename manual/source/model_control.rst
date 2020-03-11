@@ -1591,7 +1591,7 @@ with the following options.
 |                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
 |                                    | `rigidity` variables for each step.                                |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+| storeTrajectoryIon                 | For the trajectories that are stored (according to the filters),   |
 |                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to. 0 is  |
