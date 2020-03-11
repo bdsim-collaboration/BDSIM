@@ -3239,7 +3239,7 @@ file) for protons between 20 MeV and 1 GeV in kinetic energy and that exist betw
 Visualising a Scoring Mesh
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: figures/scoring-root-file-view
+.. figure:: figures/scoring-root-file-view.png
 	    :width: 50%
 	    :align: center
 
