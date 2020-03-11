@@ -422,7 +422,8 @@ void Options::PublishMembers()
   publish("trajNoTransportation",               &Options::trajNoTransportation); ///< kept only for backwards compatibility.
   publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
-  publish("storeTrajectoryIons",                &Options::storeTrajectoryIons);
+  publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);
+  publish("storeTrajectoryIons",                &Options::storeTrajectoryIon); ///< alternative for backwards compatibility.
   publish("trajectoryFilterLogicAND",           &Options::trajectoryFilterLogicAND);
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
