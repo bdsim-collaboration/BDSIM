@@ -34,6 +34,13 @@ New Features
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
 
+
+General
+-------
+
+* Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
+  allows the static library to be compiled too (in addition to the shared one).
+
 Output Changes
 --------------
 
