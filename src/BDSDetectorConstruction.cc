@@ -861,6 +861,7 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 {
   G4ThreeVector result = G4ThreeVector();
   G4String side = G4String(placement.side);
+  side.toLower();
   
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.
