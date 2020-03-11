@@ -2967,8 +2967,8 @@ Scoring
 Scoring is the ability to record integrals (or 'scores') of certain information in a 3D
 histogram for some part of the 3D model. Conceptually this is split into two key specifications:
 
-1) A 'scorer' (:code:`scorer`) to define what information is recorded
-2) A 'scoring mesh' (:code:`scorermesh`) to define the 3D histogram that the scorer is attached to.
+1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
+2) A :ref:`scorer` to define what information is recorded
 
 A scoring mesh is a 3D grid (mesh) created in a parallel geometry that can safely overlap with other
 geometry in the model. Although in a parallel world, the steps of a particle through the 3D geometry
@@ -2982,11 +2982,15 @@ energy deposition) in one step or another.
   checked for each step, the presence of a scoring mesh will make the simulation
   a little bit slower.
 * Each mesh creates a 3D histogram in the outpu for each quantity for each event.
-* Each mesh is a 3D mesh of cuboids where each has the same dimensions.
-
-
+* Each mesh is a 3D mesh of cuboids where each has the same dimensions. 
+* All scorers include the weight associated with the particle, which is only different from
+  1 if biasing is used. This ensures the correct physical result is always obtained.
+* As the histogram is per-event, the quantity stored is per-event also. So, if there
+  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
+.. _scoring-mesh:
+  
 Scorer Mesh
 ^^^^^^^^^^^
   
@@ -3056,6 +3060,8 @@ see :ref:`placements` for the 3 possible ways to make placements easily in BDSIM
 * Multiple quantities may be specified in `scoreQuantity` if the names are separated by a space
   inside the string.
 
+.. _scorer:
+  
 Scorer
 ^^^^^^
 
@@ -3106,27 +3112,10 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 |                         |               | scoring.                                       |
 +-------------------------+---------------+------------------------------------------------+
 
-The conversion factor file is a text file (optionally compressed with gzip, but not tar)
-that contains two columns separated by white space. The first is the kinetic energy point
-in MeV (currently no other possible units). The second is the numerical factor desired.
-Currently, linear interpolation is used between points using the Geant4
-`G4PhysicsOrderedFreeVector` class.
+Scorer Types
+^^^^^^^^^^^^
 
-Below is an example contents: ::
-
-  5.0e-02	2.97e-09
-  1.0e-01	1.52e-09
-  2.0e-01	9.99e-10
-  5.0e-01	7.86e-10
-  1.0e+00	6.41e-10
-  5.0e+00	7.65e-10
-  1.0e+01	8.39e-10
-  1.0e+02	8.22e-10
-  1.0e+03	9.96e-10
-  1.0e+04	1.20e-09
-
-Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
-of 0.05 MeV.
+The following are accepted scorer types.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
@@ -3154,6 +3143,34 @@ of 0.05 MeV.
 | population                | The number of particles passing through the cell  | NA              |
 +---------------------------+---------------------------------------------------+-----------------+
 
+Conversion Factor File
+^^^^^^^^^^^^^^^^^^^^^^
+
+The conversion factor file is a text file (optionally compressed with gzip, but not tar)
+that contains two columns separated by white space. Currently, linear interpolation is
+used between points in kinetic energy using the Geant4 `G4PhysicsOrderedFreeVector` class.
+
+Columns are:
+
+1) Kinetic energy in **MeV**
+2) Numerical factor
+
+Below is an example contents: ::
+
+  5.0e-02	2.97e-09
+  1.0e-01	1.52e-09
+  2.0e-01	9.99e-10
+  5.0e-01	7.86e-10
+  1.0e+00	6.41e-10
+  5.0e+00	7.65e-10
+  1.0e+01	8.39e-10
+  1.0e+02	8.22e-10
+  1.0e+03	9.96e-10
+  1.0e+04	1.20e-09
+
+Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
+of 0.05 MeV.
+
 Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
 
 * :code:`protons.dat`
@@ -3164,12 +3181,8 @@ Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
 
 At least 1 must be specified.  Any particles without a conversion factory are scored as 0.
 
-
-.. note:: All scorers include the weight associated with the particle, which is only different from
-	  1 if biasing is used. This ensures the correct physical result is always obtained.
-
-.. note:: As the histogram is per-event, the quantity stored is per-event also. So, if there
-	  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
+Scoring Examples
+^^^^^^^^^^^^^^^^
 
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
