@@ -31,6 +31,13 @@ New Features
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
 
+
+General
+-------
+
+* Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
+  allows the static library to be compiled too (in addition to the shared one).
+
 Output Changes
 --------------
 
@@ -102,6 +109,8 @@ Expected Changes To Results
 * Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
 * Reference coordinates `X0`, `Y0`, `Z0`, `Xp`, `Yp` are now added to the userfile distribution
   coordinates if specified. (`Zp` was already added).
+* Polarity of dipole yoke fields was fixed so particles slightly outside the beam pipe will be deflected
+  in a different (but now correct) direction.
 
 New Features
 ------------
@@ -191,7 +200,7 @@ New Features
 | storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
 |                                    | compatible.                                                        |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryIons                | For the trajectories that are stored (according to the filters),   |
+| storeTrajectoryIon                 | For the trajectories that are stored (according to the filters),   |
 |                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
@@ -300,10 +309,19 @@ General
 * Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
   equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
 * Descriptions of the elements rmatrix and thinrmatrix have been added to the manual.
+* Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
+  the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
+  and the length of the element.
   
 Bug Fixes
 ---------
 
+* Fix polarity for dipole yoke fields. The field in the yokes had the opposite polarity to that
+  of the beam pipe resulting in particles slightly missing the beam pipe being deflected in the
+  wrong direction.
+* Fix phase offset based on postiion in lattice for RF cavities. Only noticeable when the phase
+  was set to provie zero acceleration (:math:`pi/2`) and it was slightly off causing a gain or
+  loss in energy.
 * Fixed formula in manual for standard error on the mean calculation. The implementation in code
   was correct and has not changed.
 * Fix thick multipole element where the field was 1M times too strong because of the omission of units.

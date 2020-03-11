@@ -25,6 +25,15 @@ File Writing Policy
 * BDSIM will overwrite an output file if `-\\-outfile` is supplied with the same name again.
 * The behaviour is the same in both visualiser mode and batch mode.
 * A new output file is created for each :code:`/run/beamOn` command in the visualiser.
+
+Units
+-----
+
+* Units, unless specified, are SI (i.e. m, rad).
+* "energy" is in GeV and is the total energy of a particle unless labelled specifically (e.g. 'kineticEnergy').
+* Time is measured in nanoseconds.
+* Small letters denote local (to that object) coordinates, whereas capital letters represent
+  global coordinates.
   
 Output Information
 ------------------
@@ -298,12 +307,6 @@ in :ref:`output-analysis-section`.
 The output format 'rootevent' is written to a ROOT file. This format
 is preferred as it lends itself nicely to particle physics information; is stored as compressed
 binary internally; and can store and load complex custom structures.
-
-* Units, unless specified, are SI (i.e. m, rad).
-* Energy is in GeV and is the total energy of a particle.
-* Time is measured in nanoseconds.
-* Small letters denote local (to that object) coordinates, whereas capital letters represent
-  global coordinates.
 
 Not all information described may be written by default. Options described in
 :ref:`bdsim-options-output` allow control over what is stored. The default options
@@ -1208,7 +1211,7 @@ This is the first trajectory for each event and the total energy of all steps of
 	  the curvilinear coordinate system is not available - e.g. typically greater than 2.5m from the beam line.
 .. note:: (\**) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryLinks=1;`
 	  as described in :ref:`bdsim-options-output`.
-.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIons=1;`
+.. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIon=1;`
 	  as described in :ref:`bdsim-options-output`.
 
 
