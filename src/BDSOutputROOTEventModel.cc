@@ -282,7 +282,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
     const auto accComp = (*i)->GetAcceleratorComponent();
     material.push_back(accComp->Material());
 
-    // helper shortcuts to all the memeber vectors
+    // helper shortcuts to all the member vectors
     std::vector<std::vector<float>*> localNorm = {
       &k1,&k2,&k3,&k4,&k5,&k6,&k7,&k8,&k9,&k10,&k11,&k12};
     std::vector<std::vector<float>*> localSkew = {
