@@ -210,7 +210,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
       collimatorInfo.push_back(info);
 
       // cache difference in apertures for efficient interpolation and avoid
-      // repeated calcualtion. not requried in info for output though.
+      // repeated calculation. not required in info for output though.
       G4double xDiff = info.xSizeOut - info.xSizeIn;
       G4double yDiff = info.ySizeOut - info.ySizeIn;
       collimatorDifferences.emplace_back(xDiff, yDiff); // construct in place
