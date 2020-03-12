@@ -152,15 +152,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	{throw BDSException(__METHOD_NAME__, "unknown set of scorers");}
       G4MultiFunctionalDetector* sd = sdSearch->second;      
 
-      BDSBLM* blm = factory.BuildBLM(bp.name,
-				     bp.geometryFile,
-				     bp.geometryType,
-				     bp.blmMaterial,
-				     bp.blm1 * CLHEP::m,
-				     bp.blm2 * CLHEP::m,
-				     bp.blm3 * CLHEP::m,
-				     bp.blm4 * CLHEP::m,
-				     sd);
+      BDSBLM* blm = factory.CreateBLM(bp, sd);
       BDSExtent blmExtent = blm->GetExtent();
       G4double  length    = blmExtent.DZ();
       if (!BDS::IsFinite(length))
