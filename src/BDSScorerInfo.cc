@@ -69,7 +69,7 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   pathname      = scorer.conversionFactorPath;
   minimumTime   = scorer.minimumTime*CLHEP::second;
   maximumTime   = scorer.maximumTime*CLHEP::second;
-  worldVolumeOnly   = scorer.scoreWorldVolumeOnly;
+  worldVolumeOnly = scorer.scoreWorldVolumeOnly;
 
   if (scorer.particlePDGID != 0)
     {

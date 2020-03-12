@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSPSCellFluxScaled3D.hh"
 #include "BDSSDFilterAnd.hh"
+#include "BDSSDFilterLogicalVolume.hh"
 #include "BDSSDFilterMaterial.hh"
 #include "BDSSDFilterTime.hh"
 #include "BDSScorerType.hh"
@@ -48,7 +49,8 @@ BDSScorerFactory::BDSScorerFactory()
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      info,
 						   const BDSHistBinMapper3D* mapper,
-						   G4double*                 unit)
+						   G4double*                 unit,
+						   G4LogicalVolume*          worldLV)
 {
   // here we create the scorer with the information from BDSScorerInfo.
   G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(info->name,
@@ -58,7 +60,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     mapper,
 							     unit);
 
-  BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info);
+  BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info, worldLV);
   if (filter)
     {primitiveScorer->SetFilter(filter);}
 
@@ -136,21 +138,21 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
   return result;
 }
 
-BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String &name,
-					       const BDSScorerInfo* info) const
+BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
+					                           const BDSScorerInfo* info,
+                                               G4LogicalVolume*     worldLV) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
 
   if (info->particle)
     {
       G4String particleName = info->particle->GetParticleName();
-      auto particleWithKineticEnergyFilter = new G4SDParticleWithEnergyFilter("particle_filter",
-									      info->minimumKineticEnergy,
-									      info->maximumKineticEnergy);
-      particleWithKineticEnergyFilter->add(particleName);
-      result->RegisterFilter(particleWithKineticEnergyFilter);
+      auto pwkef = new G4SDParticleWithEnergyFilter("particle_filter",
+						    info->minimumKineticEnergy,
+						    info->maximumKineticEnergy);
+      pwkef->add(particleName);
+      result->RegisterFilter(pwkef);
     }
-
   if (BDS::IsFinite(info->maximumTime) || BDS::IsFinite(info->minimumTime))
     {
       auto timeFilter = new BDSSDFilterTime("time_filter",
@@ -158,7 +160,6 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String &name,
 					    info->maximumTime);
       result->RegisterFilter(timeFilter);
     }
-
   if (!(info->materialsToInclude.empty()))
     {
       auto materialFilterInc = new BDSSDFilterMaterial("material_filter_include",
@@ -166,13 +167,17 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String &name,
 						       /*inclusive*/true);
       result->RegisterFilter(materialFilterInc);
     }
-  
   if (!(info->materialsToExclude.empty()))
     {
       auto materialFilterExc = new BDSSDFilterMaterial("material_filter_exclude",
 						       info->materialsToExclude,
 						       /*inclusive*/false);
       result->RegisterFilter(materialFilterExc);
+    }
+  if (info->worldVolumeOnly)
+    {
+      auto worldLVFilter = new BDSSDFilterLogicalVolume("world_lv_only", worldLV);
+      result->RegisterFilter(worldLVFilter);
     }
 
   // if we didn't register any filters, just delete it
