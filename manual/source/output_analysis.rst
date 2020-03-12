@@ -66,10 +66,25 @@ Plot Energy Deposition \& Losses
 ::
    
    rebdsimHistoMerge output.root results.root
-   ipython
+
+.. code-block:: python
+   
    >>> import pybdsim
    >>> pybdsim.Plot.LossAndEnergyDeposition("results.root")
 
+
+Load Raw Data
+-------------
+
+.. code-block:: python
+   
+   >>> import pybdsim
+   >>> d = pybdsim.Data.Load("results.root")
+   >>> for event in d.GetEventTree():
+   ...:    print(event.Summary.duration)
+
+
+.. _rebdsim-analysis-tool:
 
 rebdsim - General Analysis Tool
 ===============================
@@ -603,6 +618,7 @@ file. This is numerically equivalent to analysing all the data in one execution 
 	    into a final output identical to what would have been produced from analysing
 	    all data at once, but in vastly reduced time.
 
+.. _output-user-analysis:
 
 User Analysis
 =============
