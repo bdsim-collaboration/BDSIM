@@ -1675,13 +1675,11 @@ density.
   will be the default for `prodCutProtons` in a `cutsregion` object if `defaultRangeCut`
   is not specified in the object.
 * See :code:`bdsim/examples/features/processes/regions` for documented examples.
-  
-.. rubric:: Footnotes
 
 .. _one-turn-map:
 
 One Turn Map
-^^^^^^^^^^^^
+------------
 
 Geant4 mandates that there are no overlaps between solids, which in
 BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice
