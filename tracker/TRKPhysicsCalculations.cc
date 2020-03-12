@@ -59,10 +59,15 @@ BDSParticleDefinition* TRK::ConstructParticleDefinition(std::string particleName
 {
   double mass   = TRKParticleDefinition::Instance()->GetParticleMass(particleNameIn);
   double charge = (double)TRKParticleDefinition::Instance()->GetParticleCharge(particleNameIn);
-  
+
+  // only need 1 of total energy, kinetic energy or momentum
   BDSParticleDefinition* particleDefB = new BDSParticleDefinition(particleNameIn,
-								  mass, charge,
-								  totalEnergy, ffact);
+								  mass,
+								  charge,
+								  totalEnergy,
+								  0, /*kinetic energy*/
+								  0, /*momentum*/
+								  ffact);
 
   return particleDefB;
 }

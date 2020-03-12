@@ -114,10 +114,10 @@ void TRKTracker::Track(TRKBunch* bunch)
 	}
 
       // finish an event in the output which is a turn here
-      std::map<BDSTrajectory*, bool> trajectorymap;
+      const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
       output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			nullptr, trajectorymap, nullptr, nullptr, i);
+			nullptr, nullptr, nullptr, nullptr, scorerhits, i);
     }// end of turns iteration
     
     
