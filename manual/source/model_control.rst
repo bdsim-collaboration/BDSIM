@@ -28,6 +28,13 @@ Model Control
   - :ref:`sampler-visualisation`
   - :ref:`user-sampler-placement`
 
+* :ref:`scoring`
+
+  - :ref:`scoring-mesh`
+  - :ref:`scorer`
+  - :ref:`scorer-types`
+  - :ref:`scorer-conversion-factor-file`
+
 * :ref:`controlling-simulation-speed`
 * More details about :ref:`bend-tracking-behaviour`
 
@@ -3129,6 +3136,8 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 |                         |               | scoring.                                       |
 +-------------------------+---------------+------------------------------------------------+
 
+.. _scorer-types:
+
 Scorer Types
 ^^^^^^^^^^^^
 
@@ -3159,6 +3168,8 @@ The following are accepted scorer types.
 +---------------------------+---------------------------------------------------+-----------------+
 | population                | The number of particles passing through the cell  | NA              |
 +---------------------------+---------------------------------------------------+-----------------+
+
+.. _scorer-conversion-factor-file:
 
 Conversion Factor File
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -3268,12 +3279,14 @@ best way is to merge the histograms per-event into an average. This can be done 
   down menu should be set to "lego2" for example, then re-click on the 3D histogram as shown below.
 
 .. figure:: figures/scoring-root-file-view.png
-	    :width: 80%
+	    :width: 95%
 	    :align: center
 
 	    View of a ROOT TBrowser showing an average 3D histogram from a scoring mesh using
 	    the "lego2" visualisation option. This is based on 100 events from the example
-	    `scoring-filter-material-include.gmad`.
+	    `scoring-filter-material-include.gmad`. Here a material filter is used to score only
+	    the coils of a quadrupole - the 8 coils can be seen lying in 8 clusters in an
+	    x,y plane with z (along the beam line) being vertically.
 
 	     
 .. _controlling-simulation-speed:
