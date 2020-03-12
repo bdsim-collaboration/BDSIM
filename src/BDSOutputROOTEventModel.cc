@@ -225,11 +225,11 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
 
     // Reference orbit positions
     p = (*i)->GetReferencePositionStart();
-    staRefPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
+    staRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
     p = (*i)->GetReferencePositionMiddle();
-    midRefPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
+    midRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
     p = (*i)->GetReferencePositionEnd();
-    endRefPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
+    endRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
 
     // Reference orbit rotations
     gr = (*i)->GetReferenceRotationStart();
