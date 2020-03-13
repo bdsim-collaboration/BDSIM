@@ -177,16 +177,21 @@ Examples can be found in:
   CalculateOpticalFunctions               True
   CalculateOpticalFunctionsFileName       ./ana_1.dat
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
-  Histogram1D  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
-  Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
-  Histogram1D  Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram1D  Model.    componentLength {100}      {0.0:100}           Model.length        1
-  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Summary.duration    1
-  Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
-  Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
-  Histogram1DLog Event.  PrimaryXAbs     {20}       {-9:-3}      abs(Primary.x)                 1
-  Histogram2DLinLog Event. PhaseSpaceAbs {20,20}    {-1e-6:1e-5,-9:-3} Primary.x:abs(Primary.y) 1
-  Histogram2DLog    Event. PhaseSpaceAbs2 {20,20}   {-9:-3,-1e-6:1e-5} abs(Primary.x):Primary.y 1
+  Histogram1D  Event.    Primaryx         {100}      {-0.1:0.1}          Primary.x           1
+  Histogram1D  Event.    Primaryy         {100}      {-0.1:0.1}          Primary.y           1
+  Histogram1D  Options.  seedState        {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram1D  Model.    componentLength  {100}      {0.0:100}           Model.length        1
+  Histogram1D  Run.      runDuration      {1000}     {0:1000}            Summary.duration    1
+  Histogram2D  Event.    XvsY             {100,100}  {-0.1:0.1,-0.1:0.1} Primary.y:Primary.x 1
+  Histogram3D  Event.    PhaseSpace3D     {20,30,40} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1DLog  Event. PrimaryXAbs      {20}       {-9:-3}             abs(Primary.x)                 1
+  Histogram2D     Event. PhaseSpaceXXP    {20,30}    {-1e-6:1e-6,-1e-4:1e-4} Primary.xp:Primaryx 1
+  Histogram2DLog  Event. PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
+
+.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
+	     method.  This is **totally inconsistent**.  If 1D, there is just :code:`x`.  If 2D, it's
+	     :code:`y : x`. If 3D, it's :code:`x : y : z`.  This **only** applies to the variable and
+	     **not** to the bin specification. 
 
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
@@ -239,11 +244,6 @@ a 1D histogram with thirty logarithmically spaced bins from 1e-3 to 1e3, the fol
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
-
-.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
-	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
-	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
-	     not to the bin specification.
 
 
 Analysis Configuration Options
