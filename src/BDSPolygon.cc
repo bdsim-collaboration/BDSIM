@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <limits>
+#include <list>
 #include <vector>
 
 BDSPolygon::BDSPolygon(const std::vector<G4TwoVector>& pointsIn):
@@ -64,6 +65,12 @@ G4bool BDSPolygon::Inside(const G4TwoVector& point) const
     }
   return result;
 }
+
+BDSPolygon::PointIs BDSPolygon::InsideLabelled(const G4TwoVector& point) const
+{
+  return Inside(point) ? BDSPolygon::PointIs::in : BDSPolygon::PointIs::out;
+}
+
 
 G4bool BDSPolygon::Inside(const BDSPolygon& other) const
 {
@@ -179,6 +186,23 @@ G4int BDSPolygon::SegmentsIntersect(const G4TwoVector& p1,
   
   // lines are the same
   return 2;
+}
+
+std::list<BDSPolygon::LabelledPoint> BDSPolygon::GenerateLabelled(const BDSPolygon& reference,
+                                           const BDSPolygon& test,
+                                           G4int* nInside)
+{
+  std::list<BDSPolygon::LabelledPoint> testLabelled;
+  G4int nIn = 0;
+  for (const auto& p : test)
+    {
+      auto inOut = reference.InsideLabelled(p);
+      nIn += inOut == BDSPolygon::PointIs::in ? 1 : 0;
+      testLabelled.emplace_back(BDSPolygon::LabelledPoint{&p, inOut});
+    }
+  if (nInside)
+    {*nInside = nIn;}
+  return testLabelled;
 }
 
 BDSPolygon BDSPolygon::Union(const BDSPolygon& other) const

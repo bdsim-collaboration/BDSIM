@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <iterator>
+#include <list>
 #include <vector>
 
 class BDSExtent;
@@ -43,6 +44,9 @@ public:
   /// Implement the copy constructor because we may have an extent object.
   BDSPolygon(const BDSPolygon& other);
 
+  /// Enum to help us label points in a polygon for Boolean operations.
+  enum class PointIs {in, out, intersection};
+
   /// Accessor.
   const std::vector<G4TwoVector>& Points() const {return points;}
   
@@ -50,6 +54,9 @@ public:
   /// points and ignores the interpolation type member variable. This is for ease of calculating
   /// normals.
   G4bool Inside(const G4TwoVector& point) const;
+
+  /// Labelled version of Inside function where we return an enum. Doesn't return on boundary.
+  BDSPolygon::PointIs InsideLabelled(const G4TwoVector& point) const;
   
   /// Return true if polygon is completely contained inside this one.
   /// If any lines intersect, this will return false.
@@ -114,9 +121,24 @@ public:
 				 const G4TwoVector& q2,
 				 G4TwoVector* intersectionPoint = nullptr);
 
+protected:
+  /// Simple structure of a 2D point (by pointer to avoid copy) and a label as defiend by enum.
+  struct LabelledPoint
+  {
+    const G4TwoVector* point;
+    BDSPolygon::PointIs label;
+  };
+
+  /// Generate a list of labelled points as to whether each point in 'test' is in 'reference'.
+  /// If the optional G4int* is given, the number is updated with the number inside reference.
+  static std::list<LabelledPoint> GenerateLabelled(const BDSPolygon& reference,
+						   const BDSPolygon& test,
+						   G4int* nInside = nullptr);
+  
 private:
   BDSPolygon() = delete;
-  
+
+  /// Polygon 2D coordinates.
   std::vector<G4TwoVector> points;
 
   /// Cache of extent if calculated - initialised on first call to Extent().
