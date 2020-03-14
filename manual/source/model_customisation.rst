@@ -422,7 +422,7 @@ componentsFractions Mass fraction of each component in material unit
 
 Example::
 
-  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
+  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentsFractions = {0.338,0.662};
 
 The second syntax can also be used to define materials which are composed by
 other materials (and not by atoms).
