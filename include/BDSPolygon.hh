@@ -38,7 +38,7 @@ class BDSTiltOffset;
 class BDSPolygon
 {
 public:
-  BDSPolygon(const std::vector<G4TwoVector>& pointsIn);
+  explicit BDSPolygon(const std::vector<G4TwoVector>& pointsIn);
   ~BDSPolygon();
   /// Implement the copy constructor because we may have an extent object.
   BDSPolygon(const BDSPolygon& other);
@@ -106,7 +106,7 @@ public:
   /// Geometric Tools for Computer Graphics by Philip J. Schneider David H. Eberly,
   /// ISBN 1-55860-594-0. Geant4 has a similar one in
   /// G4TessellatedGeometryAlgorithms::IntersectLineAndLineSegment2D, however they've
-  /// parmaterised it in a different way that's relative to the first point with graidents
+  /// parameterised it in a different way that's relative to the first point with gradients
   /// and don't fully explain their input parameters.
   static G4int SegmentsIntersect(const G4TwoVector& p1,
 				 const G4TwoVector& p2,
@@ -122,7 +122,7 @@ private:
   /// Cache of extent if calculated - initialised on first call to Extent().
   mutable BDSExtent* extent;
 
-  /// Which inteprolation scheme to use if interpolating between points.
+  /// Which interpolation scheme to use if interpolating between points.
   BDSInterpolatorType interpolation;
 };
 

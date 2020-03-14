@@ -108,7 +108,6 @@ G4bool BDSPolygon::SelfIntersecting(G4int* const indexOfIntersectionA,
 BDSPolygon BDSPolygon::ApplyTiltOffset(const BDSTiltOffset& to) const
 {
   BDSPolygon r(*this);
-  
   G4double    t      = to.Tilt();
   G4TwoVector offset = to.GetOffset2D();
   for (auto& p : r)
