@@ -207,6 +207,25 @@ std::list<BDSPolygon::LabelledPoint> BDSPolygon::GenerateLabelled(const BDSPolyg
 
 BDSPolygon BDSPolygon::Union(const BDSPolygon& other) const
 {
+  // loop over points in other and mark as inside or outside this polygon
+  G4int nOtherInThis = 0;
+  std::list<BDSPolygon::LabelledPoint> otherLabelled = GenerateLabelled(*this, other, &nOtherInThis);
+  G4int nThisInOther = 0;
+  std::list<BDSPolygon::LabelledPoint> thisLabelled = GenerateLabelled(other, *this, &nOtherInThis);
+
+  // if all outside search for intersections between all segments
+  if (nOtherInThis == 0)
+    {
+      // check if any segments intersect
+
+      // if no intersections and all outside, then throw exception -> no disjoint unions
+    }
+  else
+    {
+      // generate intersection points between this and other polygon
+
+    }
+  
   return BDSPolygon(*this);
 }
 
