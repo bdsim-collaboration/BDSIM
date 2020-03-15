@@ -1731,7 +1731,7 @@ information from the `placements`. The full list of accepted parameters is given
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | apertureType            | The shape of the sampler desired as described using the aperture   |
