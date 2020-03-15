@@ -2637,7 +2637,7 @@ Examples: ::
           verboseEventLevel=2;
 
 This will print out verbose stepping information for the primary particle (default is only the primary)
-for the 4th event onwwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+for the 4th event onwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
 example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`. This will print out for
 every event after this.  Another example is: ::
 

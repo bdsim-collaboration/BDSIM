@@ -251,9 +251,10 @@ are listed in increasing amount of data below.
    - `CollPInteractedPE`: Boolean of whether primary passed through the collimator material on that event.
 
    These are done per element ("PE") which means one number for the whole collimator (e.g. energy deposition
-   is integrated across the whole geometry of that one collimator). Each bin in these histograms is for
-   one collimator in the order it appears in the beam line. The :code:`collimatorIndices` and
-   :code:`collimatorIndicesByName` in the Model tree can be used to match the collimators to the
+   is integrated across the whole geometry of that one collimator). The first three are simply individual
+   bins copied out of the general `PhitsPE` `PlossPE` and `ElossPE` histograms. Each bin in these
+   histograms is for one collimator in the order it appears in the beam line. The :code:`collimatorIndices`
+   and :code:`collimatorIndicesByName` in the Model tree can be used to match the collimators to the
    information stored in the Model tree.
    
 2) :code:`option, storeCollimatorInfo=1, storeCollimatorHits=1;` is used. Similar to scenario 1 but in
@@ -489,7 +490,7 @@ BDSOutputROOTEventHeader
 | doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
 |                        |                          | double precision for output           |
 +------------------------+--------------------------+---------------------------------------+
-| analysedFiles          | std::vector<std::string> | List of files anlaysed in the case of |
+| analysedFiles          | std::vector<std::string> | List of files analysed in the case of |
 |                        |                          | rebdsim, rebdsimHistoMerge,           |
 |                        |                          | rebdsimOptics and rebdsimOrbit        |
 +------------------------+--------------------------+---------------------------------------+
@@ -1345,7 +1346,7 @@ doubles the output file size.
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | phi (\*)           | std::vector<T>    | Vector of angle of x and y (calculated from arctan(y/x)                  |
 +--------------------+-------------------+--------------------------------------------------------------------------+
-| phip (\*)          | std::vector<T>    | Vector of angle of xp and yp (calcualted from arctan(yp/xp)              |
+| phip (\*)          | std::vector<T>    | Vector of angle of xp and yp (calculated from arctan(yp/xp)              |
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | theta (\*)         | std::vector<T>    | Vector of the angle of the particle from the local z axis (calculated    |
 |                    |                   | from arctan(rp/zp)                                                       |
