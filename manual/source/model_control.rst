@@ -1731,7 +1731,7 @@ information from the `placements`. The full list of accepted parameters is given
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | apertureType            | The shape of the sampler desired as described using the aperture   |
@@ -2637,7 +2637,7 @@ Examples: ::
           verboseEventLevel=2;
 
 This will print out verbose stepping information for the primary particle (default is only the primary)
-for the 4th event onwwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+for the 4th event onwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
 example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`. This will print out for
 every event after this.  Another example is: ::
 
