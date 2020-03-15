@@ -141,7 +141,9 @@ See :ref:`bdsim-options-output` with options beginning with :code:`storeTrajecto
 Collimators are often expected to intercept the beam before other parts of the machine. Therefore,
 some special information can be recorded summarising all collimators as well as per-collimator hit
 information. This is optional and creates extra sampler-like structures in the output that summarise
-the hits on that collimator.
+the hits on that collimator. Some collimator-specific histograms are also made that contain the usual
+summary histogram information (primary hits, primary losses, energy deposition) where each bin is
+a collimator as they appear in order in the beam line.
 
 By default, the collimator hits are only generated for primary particles, but ion fragments can optionally
 be included, and also, optionally all particles.
