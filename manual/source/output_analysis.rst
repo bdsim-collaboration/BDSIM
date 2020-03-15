@@ -516,7 +516,7 @@ associated with it. ::
   >>> d.
   d.ConvertToPybdsimHistograms d.histograms2d                
   d.filename                   d.histograms2dpy              
-  d.histograms                 d.histograms3d               >
+  d.histograms                 d.histograms3d
   d.histograms1d               d.histograms3dpy              
   d.histograms1dpy             d.histogramspy 
 

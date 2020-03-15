@@ -495,7 +495,7 @@ BDSOutputROOTEventHeader
 | doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
 |                        |                          | double precision for output           |
 +------------------------+--------------------------+---------------------------------------+
-| analysedFiles          | std::vector<std::string> | List of files anlaysed in the case of |
+| analysedFiles          | std::vector<std::string> | List of files analysed in the case of |
 |                        |                          | rebdsim, rebdsimHistoMerge,           |
 |                        |                          | rebdsimOptics and rebdsimOrbit        |
 +------------------------+--------------------------+---------------------------------------+
@@ -1349,7 +1349,7 @@ doubles the output file size.
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | phi (\*)           | std::vector<T>    | Vector of angle of x and y (calculated from arctan(y/x)                  |
 +--------------------+-------------------+--------------------------------------------------------------------------+
-| phip (\*)          | std::vector<T>    | Vector of angle of xp and yp (calcualted from arctan(yp/xp)              |
+| phip (\*)          | std::vector<T>    | Vector of angle of xp and yp (calculated from arctan(yp/xp)              |
 +--------------------+-------------------+--------------------------------------------------------------------------+
 | theta (\*)         | std::vector<T>    | Vector of the angle of the particle from the local z axis (calculated    |
 |                    |                   | from arctan(rp/zp)                                                       |
