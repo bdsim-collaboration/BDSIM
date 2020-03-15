@@ -1125,11 +1125,11 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 
-`referenceElementNumber` is the occurence of that element in the sequence. For example, if a sequence
+`referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
 was: ::
 
   l1: line=(d1,sb1,d2,qd1,d2,df1,d2,sb1,d1);

@@ -34,7 +34,7 @@ The overall program structure should follow:
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
 6) A beam definition (see :ref:`beam-parameters`)
 
-* Specifing and option or definition again, will overwrite the previous value.
+* Specifying and option or definition again, will overwrite the previous value.
 * The only **order specific** part is the **use** command (see :ref:`the-use-command`) as this
   copied whatever sequence is *used* at that point, so any further updates to the component
   definitions will not be observed.
@@ -1461,7 +1461,7 @@ to apply this rmatrix in finite length geometry, BDSIM uses a parallel transport
 along S but without changing the particles transverse coordinates. The transverse effect from the matrix is applied
 once in the middle of the element, whereafter particles are once again parallel transported to the end of the
 element. This way, the correct transverse effect is applied, the recorded tracking time is correct as the particle
-has tracked through a finite length element, and the model is constucted with the correct physical length.
+has tracked through a finite length element, and the model is constructed with the correct physical length.
 
 The mathematical effect of the matrix on a particle is:
 
@@ -1518,7 +1518,7 @@ thinrmatrix
 ^^^^^^^^^^^
 
 `thinrmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam
-within a thin element. Unlike the rmatrix, a thinrmatrix is an instanteous effect in a thin element, therefore
+within a thin element. Unlike the rmatrix, a thinrmatrix is an instantaneous effect in a thin element, therefore
 no geometry is constructed. The parameters for a thinmatrix are the same as those for an :ref:`element-rmatrix` except
 for the length, `l`, which is not required.
 
@@ -1720,7 +1720,7 @@ may specify an initial offset and rotation for the beam line with respect to the
 volume using the options described in :ref:`beamline-offset`.
 
 .. warning:: When the :code:`use` command is called, the elements are copied internally,
-	     so their definition is fixed. Any element parameter adjustmments or redefinitions
+	     so their definition is fixed. Any element parameter adjustments or redefinitions
 	     after the :code:`use` command will therefore not be observed.
 
 Multiple beam lines may also be visualised - but only visualised (not suitable for
@@ -1923,7 +1923,7 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | Optional file to use for geometry of BLM including format          |
