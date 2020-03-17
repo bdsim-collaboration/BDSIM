@@ -445,6 +445,14 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(G4bool useEMD,
 
   biasingPhysics->PhysicsBiasAllCharged();
   physlist->RegisterPhysics(biasingPhysics);
+  if (BDSGlobalConstants::Instance()->MinimumKineticEnergy() > 0 &&
+      BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMCutsAndLimits())
+    {
+      G4cout << "\nWARNING - adding cuts and limits physics process to \"COMPLETE\" physics list" << G4endl;
+      G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
+      G4cout << "This can be turned off by setting option, g4PhysicsUseBDSIMCutsAndLimits=0;\n" << G4endl;
+      physlist->RegisterPhysics(new BDSPhysicsCutsAndLimits());
+    }
   return physlist;
 }
 #endif
