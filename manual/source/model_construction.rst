@@ -1907,6 +1907,13 @@ passive material.
 The placement parameters are the same as the general placements (see :ref:`placements`). So the
 BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
 in global Cartesian coordinates.
+
+Bias objects may be attached to a BLM via the :code:`bias` attribute. This names a defined
+bias object (see :ref:`physics-bias-cross-section-biasing`). This is applied to all logical
+volumes in the BLM.
+
+.. note:: If multiple BLMs use the same external geometry file, the biasing
+	  will be applied to all of them as there is only one copy of the geometry in memory.
   
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
@@ -1962,6 +1969,8 @@ in global Cartesian coordinates.
 |                         | :code:`bottom`.                                                    |
 +-------------------------+--------------------------------------------------------------------+
 | sideOffset              | Distance from the (square) extent of an object the BLM is placed.  |
++-------------------------+--------------------------------------------------------------------+
+| bias                    | Name of bias object to apply to all volumes in the BLM.            |
 +-------------------------+--------------------------------------------------------------------+
 
 

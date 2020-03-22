@@ -33,6 +33,10 @@ New Features
 * Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
+* BLMs now must use a :code:`scoreQuantity` to name a scorer object to decide what they record
+  as opposed to previously just recording energy deposition.
+* BLMs now have a parameter :code:`bias` that allows a cross-section biasing object to be attached
+  to all logical volumes in that BLM.
 
 
 General
