@@ -54,6 +54,7 @@ void BLMPlacement::clear()
   blm3 = 0;
   blm4 = 0;
   scoreQuantity = "";
+  bias = "";
 }
 
 void BLMPlacement::PublishMembers()
@@ -84,6 +85,7 @@ void BLMPlacement::PublishMembers()
   publish("blm3",          &BLMPlacement::blm3);
   publish("blm4",          &BLMPlacement::blm4);
   publish("scoreQuantity", &BLMPlacement::scoreQuantity);
+  publish("bias",          &BLMPlacement::bias);
 }
 
 void BLMPlacement::print()const
@@ -110,8 +112,9 @@ void BLMPlacement::print()const
 	    << "geometryType "  << geometryType  << std::endl
 	    << "blmMaterial "   << blmMaterial   << std::endl
 	    << "blm1 "          << blm1          << std::endl
-    	    << "blm2 "          << blm2          << std::endl
-    	    << "blm3 "          << blm3          << std::endl
-    	    << "blm4 "          << blm4          << std::endl
-	    << "scoreQuantity " << scoreQuantity << std::endl;
+    	<< "blm2 "          << blm2          << std::endl
+    	<< "blm3 "          << blm3          << std::endl
+    	<< "blm4 "          << blm4          << std::endl
+	    << "scoreQuantity " << scoreQuantity << std::endl
+	    << "bias "          << bias          << std::endl;
 }

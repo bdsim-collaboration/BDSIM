@@ -62,7 +62,8 @@ BDSBLM* BDSBLMFactory::CreateBLM(const GMAD::BLMPlacement& bp,
                    bp.blm2 * CLHEP::m,
                    bp.blm3 * CLHEP::m,
                    bp.blm4 * CLHEP::m,
-                   sd);
+                   sd,
+                   bp.bias);
 }
 
 BDSBLM* BDSBLMFactory::CreateBLM(const G4String& name,
@@ -73,7 +74,8 @@ BDSBLM* BDSBLMFactory::CreateBLM(const G4String& name,
 				G4double blm2,
 				G4double blm3,
 				G4double /*blm4*/,
-				G4VSensitiveDetector* sd)
+				G4VSensitiveDetector* sd,
+				const G4String& bias)
 {
   // if geometry file is specified then we load the external file.
   BDSBLM* result = nullptr;
@@ -107,6 +109,8 @@ BDSBLM* BDSBLMFactory::CreateBLM(const G4String& name,
     {lv->SetSensitiveDetector(sd);}
   result->GetContainerLogicalVolume()->SetSensitiveDetector(sd); // attach separately to the container
 
+  // biasing - name of objects attached here and built later
+  result->SetBias(bias);
   return result;
 }
 
