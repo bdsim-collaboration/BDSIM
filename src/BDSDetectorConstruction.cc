@@ -971,8 +971,8 @@ BDSExtentGlobal BDSDetectorConstruction::CalculateExtentOfScorerMeshes(const BDS
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection*
 BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& biasList,
-					       G4String defaultBias,
-					       G4String elementName)
+					       const G4String& defaultBias,
+					       const G4String& elementName)
 {
   // no accelerator components to bias
   if (biasList.empty())
