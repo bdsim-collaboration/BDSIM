@@ -68,6 +68,7 @@ namespace GMAD
     double blm3;
     double blm4;
     std::string scoreQuantity;
+    std::string bias;
         
     /// constructor
     BLMPlacement();

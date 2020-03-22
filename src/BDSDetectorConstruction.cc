@@ -28,6 +28,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBLM.hh"
+#include "BDSBLMRegistry.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -1029,6 +1031,20 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{crystalBiasing->AttachTo(crystal);}
     }
 #endif
+
+  auto blmSet = BDSBLMRegistry::Instance()->BLMs();
+  for (auto blm : blmSet)
+    {
+      G4String biasNamesS = blm->Bias();
+      if (biasNamesS.empty())
+        {continue;}
+      auto biasNamesV = BDS::GetWordsFromString(biasNamesS);
+      std::list<std::string> biasNames = {biasNamesV.begin(), biasNamesV.end()};
+      auto biasForBLM = BuildCrossSectionBias(biasNames, "", blm->GetName());
+      for (auto lv : blm->GetAllLogicalVolumes())
+        {biasForBLM->AttachTo(lv);}
+      biasForBLM->AttachTo(blm->GetContainerLogicalVolume()); // in some cases it's just a single volume
+    }
 
   G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
   G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
