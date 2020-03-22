@@ -14,6 +14,6 @@ minidetector: blm, x=10*m,y=3*cm,z=12*m,
 		      referenceElementNumber=2,
 		      s=0.2,
 		      side="left",
-		      sideOfffset=1*cm,
+		      sideOffset=1*cm,
 		      scoreQuantity="dose",
 		      bias="biasobjectname";
