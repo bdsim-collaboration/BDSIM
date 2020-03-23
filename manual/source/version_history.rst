@@ -37,6 +37,8 @@ New Features
   as opposed to previously just recording energy deposition.
 * BLMs now have a parameter :code:`bias` that allows a cross-section biasing object to be attached
   to all logical volumes in that BLM.
+* Cubic is now the default interpolation for fields and is automatically matched to the number
+  of dimensions in the field map file.
 
 
 General
