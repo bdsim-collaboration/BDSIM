@@ -251,7 +251,7 @@ New Features
 |                                    | and `verboseSteppingEventContinueFor`. Default is all events.      |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 print out per step of each particle. This    |
-|                                    | done according to the range of `verboseSteppingEventStart, and     |
+|                                    | done according to the range of `verboseSteppingEventStart`, and    |
 |                                    | `verboseSteppingEventContinueFor`. Default is all events and all   |
 |                                    | particles.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
@@ -269,7 +269,7 @@ New Features
 |                                    | step. Note, this is a lot of output.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 stepping level print out. The same           |
-|                                    |  as `-\\-verbose_G4stepping=X` executable option.                  |
+|                                    | as `-\\-verbose_G4stepping=X` executable option.                   |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseTrackingLevel               | (0-5) level of Geant4 tracking level print out. The same           |
 |                                    | as `-\\-verbose_G4tracking=X` executable option.                   |
