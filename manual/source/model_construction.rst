@@ -1589,9 +1589,15 @@ Simple example::
 
 Example with field: ::
 
-  detectorfield: field, type="bmap2d", bScaling = 0.5, magneticFile = "bdsim2d:/Path/To/File.dat";
+  detectorfield: field, type="bmap2d",
+                        bScaling = 0.5,
+			magneticFile = "bdsim2d:/Path/To/File.dat",
+			magneticInterpolator="cubic2d";
 
-  detec: element, geometryFile="gdml:twoboxes.gdml", fieldAll="detectorfield", l=5*m, horizontalWidth=0.76*m;
+  detec: element, geometryFile="gdml:twoboxes.gdml",
+                  fieldAll="detectorfield",
+		  l=5*m,
+		  horizontalWidth=0.76*m;
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
