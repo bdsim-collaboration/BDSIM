@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDFACTORY_H
 
 #include "BDSFieldType.hh"
+#include "BDSInterpolatorType.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -86,6 +87,9 @@ public:
   /// Return a BDSFieldInfo instance from the parser definitions. Will
   /// exit if no matching field definition found.
   BDSFieldInfo* GetDefinition(G4String name) const;
+
+  /// Suggest a default interpolator.
+  static BDSInterpolatorType DefaultInterpolatorType(G4int numberOfDimensions);
 
 private:
   /// Create a purely magnetic field.
