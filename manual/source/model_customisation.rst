@@ -50,6 +50,7 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * Fields may have up to four dimensions.
 * The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
   :math:`x,y,z` and a 2D field :math:`x,y`.
+* Cubic interpolation is used by default unless otherwise specified.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -64,6 +65,14 @@ ascending or descending order.
 	  recommended the user re-sample any existing field map into a regular grid. A regular
 	  grid is also much faster for tracking purposes.
 
+Here is a minimal example of a magnetic field in BDSIM format::
+
+  detfield: field, type="bmap3d",
+                   magneticFile="bdsim3d:fieldmap.dat.gz";
+
+This will use the "g4classicalrk4" integrator for the particle motion and the "cubic3d" interpolation
+by default.
+	  
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
 
