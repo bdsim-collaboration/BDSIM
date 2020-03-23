@@ -1003,6 +1003,10 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       eg->AddParticle(pb.particle);
       
       // loop through all processes
+      if (pb.flag.size() != pb.processList.size())
+        {throw BDSException(__METHOD_NAME__, "number of flag entries in \"" + pb.name + "\" doesn't match number of processes");}
+      if (pb.factor.size() != pb.processList.size())
+        {throw BDSException(__METHOD_NAME__, "number of factor entries in \"" + pb.name + "\" doesn't match number of processes");}
       for (unsigned int p = 0; p < pb.processList.size(); ++p)
 	{eg->SetBias(bias, pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
