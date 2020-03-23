@@ -107,7 +107,7 @@ void BDSFieldLoader::DeleteArrays()
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      info,
 						      const BDSMagnetStrength* scalingStrength,
-						      const G4String           scalingKey)
+						      const G4String&          scalingKey)
 {
   G4String                    filePath = info.MagneticFile();
   BDSFieldFormat                format = info.MagneticFormat();
