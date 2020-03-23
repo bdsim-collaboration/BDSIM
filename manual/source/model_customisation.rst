@@ -612,6 +612,11 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
+.. note:: If no beam pipe is desired, :code:`apertureType="circularvacuum"` can be used that makes
+	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
+	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
+	  a magnet with air and no beam pipe.
+
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
 |                   | parameters   |                   |                 |                |                  |
@@ -639,6 +644,8 @@ The required parameters and their meaning are given in the following table.
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
 |                   |              |                   | y half-height   | y half-height  | between ellipses |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 These parameters can be set with the *option* command, as the default parameters
