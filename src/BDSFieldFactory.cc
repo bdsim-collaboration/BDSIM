@@ -260,7 +260,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
     }
 }
 
-BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
+BDSFieldInfo* BDSFieldFactory::GetDefinition(const G4String& name) const
 {
   // Here we test if the string is empty and return nullptr. We do this so
   // this method can be used without exiting when no key is specified at all.
@@ -281,7 +281,7 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
 
 BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
 					      const BDSMagnetStrength* scalingStrength,
-					      const G4String           scalingKey)
+					      const G4String&          scalingKey)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << info << G4endl;
@@ -312,7 +312,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
       
 BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 						 const BDSMagnetStrength* scalingStrength,
-						 const G4String           scalingKey)
+						 const G4String&          scalingKey)
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
