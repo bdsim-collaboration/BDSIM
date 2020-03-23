@@ -1541,14 +1541,15 @@ Examples: ::
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by externally provided geometry. It includes
-the possibility of overlaying a field as well. Several geometry formats are supported. The user
-must supply the length (accurately) as well as a diameter, such that the geometry will be
-contained in a box that has horizontal and vertical sizes of diameter.
+`element` defines an arbitrary beam line element that's defined by externally provided geometry.
+It includes the possibility of overlaying a field as well. Several geometry formats are supported.
+The user must supply the length (accurately) as well as a `horizontalWidth` (full widht), such
+that the geometry will be contained in a box that has horizontal and vertical sizes of `horizontalWidth`.
 
-The geometry is simply placed in the beam line. There is no placement offset other than the
-offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
-with the placement as required.
+The outermost volume of the loaded geometry is simply placed in the beam line. There is no placement
+offset other than the :code:`offsetX`, :code:`offsetY` and :code:`tilt` of that element in the beam line.
+Therefore, the user must prepare geometry with the placement of the contents in the outermost volume
+as required.
 
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
@@ -1592,7 +1593,7 @@ and make a placement at the appropriate point in global coordinates.
 	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
 	  than the size required for the geometry, the beam may be mismatched into the rest of
-	  the accelerator. A common practice is to add a picometre to the length of the geometry.
+	  the accelerator. A common practice is to add a nanometre to the length of the geometry.
 
 Simple example::
 
@@ -1600,16 +1601,15 @@ Simple example::
 
 Example with field: ::
 
-  somefield: field, type="ebmap2d",
-		    eScaling = 3.1e3,
-		    bScaling = 0.5,
-		    integrator = "g4classicalrk4",
-		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
-		    electricInterpolator = "linear2D";
+  detectorfield: field, type="bmap2d",
+                        bScaling = 0.5,
+			magneticFile = "bdsim2d:/Path/To/File.dat",
+			magneticInterpolator="cubic2d";
 
-   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, horizontalWidth=0.76*m;
+  detec: element, geometryFile="gdml:twoboxes.gdml",
+                  fieldAll="detectorfield",
+		  l=5*m,
+		  horizontalWidth=0.76*m;
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does

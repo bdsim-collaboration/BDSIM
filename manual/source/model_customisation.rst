@@ -26,11 +26,18 @@ Model Customisation
 Fields
 ------
 
-BDSIM provides the facility to overlay pure magnetic, pure electric or combined electromagnetic fields
-on an element, as defined by an externally provided field map. This can be done for 1) only the vacuum
-volume; 2) only the volume outside the vacuum (i.e. the yoke); 3) or one full map for the whole
-element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
-can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
+BDSIM provides the facility to overlay magnetic, electric, or combined electromagnetic fields
+on an element, as defined by an externally provided field map. A field map is an array of evenly
+space points in **Cartesian** coordinates that define the field as a 3-vector at that point.
+A field can be applied to an element of piece of geometry for
+
+1) only the "vacuum" volume
+2) only the volume outside the vacuum (i.e. the yoke)
+3) or one full map for the whole element.
+
+BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
+can be chosen given knowledge of the smoothness of the field or the application (default is
+a 4th order Runge Kutta). BDSIM also provides
 a selection of 1-4D interpolators that are used to provide the field value in between the data points
 in the supplied field map.
 
@@ -41,9 +48,8 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to four dimensions.
-
-The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
-:math:`x,y,z` and a 2D field :math:`x,y`.
+* The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
+  :math:`x,y,z` and a 2D field :math:`x,y`.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -612,6 +618,11 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
+.. note:: If no beam pipe is desired, :code:`apertureType="circularvacuum"` can be used that makes
+	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
+	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
+	  a magnet with air and no beam pipe.
+
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
 |                   | parameters   |                   |                 |                |                  |
@@ -639,6 +650,8 @@ The required parameters and their meaning are given in the following table.
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
 |                   |              |                   | y half-height   | y half-height  | between ellipses |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 These parameters can be set with the *option* command, as the default parameters
