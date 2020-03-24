@@ -30,6 +30,15 @@ New Features
   The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
+* Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
+  created per event 3D histograms for various quantities. Ability to score multiple quantities,
+  per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
+* BLMs now must use a :code:`scoreQuantity` to name a scorer object to decide what they record
+  as opposed to previously just recording energy deposition.
+* BLMs now have a parameter :code:`bias` that allows a cross-section biasing object to be attached
+  to all logical volumes in that BLM.
+* Cubic is now the default interpolation for fields and is automatically matched to the number
+  of dimensions in the field map file.
 
 
 General
@@ -152,6 +161,8 @@ New Features
 * New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
   energy a particle must have for either an aperture impact or collimator hit respectively to
   be generated.
@@ -240,7 +251,7 @@ New Features
 |                                    | and `verboseSteppingEventContinueFor`. Default is all events.      |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 print out per step of each particle. This    |
-|                                    | done according to the range of `verboseSteppingEventStart, and     |
+|                                    | done according to the range of `verboseSteppingEventStart`, and    |
 |                                    | `verboseSteppingEventContinueFor`. Default is all events and all   |
 |                                    | particles.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
@@ -258,7 +269,7 @@ New Features
 |                                    | step. Note, this is a lot of output.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 stepping level print out. The same           |
-|                                    |  as `-\\-verbose_G4stepping=X` executable option.                  |
+|                                    | as `-\\-verbose_G4stepping=X` executable option.                   |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseTrackingLevel               | (0-5) level of Geant4 tracking level print out. The same           |
 |                                    | as `-\\-verbose_G4tracking=X` executable option.                   |
@@ -345,6 +356,8 @@ Bug Fixes
 * Fix wire scanner sensitivity. The wire was never sensitive.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from the run histograms.
 * The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
@@ -405,6 +418,7 @@ Bug Fixes
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 * Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Fixed a bug where the `lhcright` transverse extent was set incorrectly.
 * Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.

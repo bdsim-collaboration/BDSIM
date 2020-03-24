@@ -233,3 +233,16 @@ void BDSExtent::ExpandToEncompass(const BDSExtent& other)
   result.extYPos = std::max(extYPos, other.extYPos);
   result.extZPos = std::max(extZPos, other.extZPos);
 }
+namespace BDS
+{
+  BDSExtent MaximumCombinedExtent(const BDSExtent& first,
+				  const BDSExtent& second)
+  {
+    return BDSExtent(std::min(first.XNeg(), second.XNeg()),
+		     std::max(first.XPos(), second.XPos()),
+		     std::min(first.YNeg(), second.YNeg()),
+		     std::max(first.YPos(), second.YPos()),
+		     std::min(first.ZNeg(), second.ZNeg()),
+		     std::max(first.ZPos(), second.ZPos()));
+  }
+}
