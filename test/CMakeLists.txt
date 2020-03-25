@@ -15,6 +15,9 @@ add_executable(bdsim-linkexec link-test.cc)
 set_target_properties(bdsim-linkexec PROPERTIES OUTPUT_NAME "BDSLink" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsim-linkexec ${BDSIM_LIB_NAME} gmad)
 
+add_executable(bdsim-sixtrackexec SixTrackTest.cc)
+set_target_properties(bdsim-sixtrackexec PROPERTIES OUTPUT_NAME "bdssixtracktest" ${BDSIM_VERSIO})
+target_link_libraries(bdsim-sixtrackexec ${BDSIM_LIB_NAME} gmad)
 
 add_subdirectory(TrackingTestFiles)
 
