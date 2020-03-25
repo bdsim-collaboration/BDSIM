@@ -83,8 +83,8 @@ TRKFactory::TRKFactory(const GMAD::Options&   options,
 
   //pull out info from options
   strategy        = SetStrategyEnum(options.trackingType);
-  aperturetype    = SetApertureEnum(options.apertureType);
-  beampiperadius  = options.aper1;
+  // aperturetype    = SetApertureEnum(options.apertureType);
+  // beampiperadius  = options.aper1;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
   dontuseaperture = options.dontUseAperture;
