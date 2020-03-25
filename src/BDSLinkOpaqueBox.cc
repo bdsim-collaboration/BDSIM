@@ -71,16 +71,17 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 
   G4double mx = extent.MaximumX();
   G4double my = extent.MaximumY();
+  G4double mr = std::max({mx, my, outputSamplerRadius});
   G4double mz = extent.MaximumZ();
   G4cout << mx << " " << my << " " << mz << G4endl;
   G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
-					mx + gap + opaqueBoxThickness,
-					my + gap + opaqueBoxThickness,
+					mr + gap + opaqueBoxThickness,
+					mr + gap + opaqueBoxThickness,
 					mz + gap + opaqueBoxThickness);
   RegisterSolid(terminatorBoxOuter);
   G4Box* terminatorBoxInner = new G4Box(name + "_terminator_box_inner_solid",
-					mx + gap,
-					my + gap,
+					mr + gap,
+					mr + gap,
 					mz + gap);
   RegisterSolid(terminatorBoxInner);
   G4SubtractionSolid* opaqueBox = new G4SubtractionSolid(name + "_opaque_box_solid",
@@ -102,12 +103,15 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   opaqueBoxLV->SetVisAttributes(obVis);
   RegisterVisAttributes(obVis);
   
-  G4double ls = BDSGlobalConstants::Instance()->LengthSafety();
+  G4double ls = BDSGlobalConstants::Instance()->LengthSafetyLarge();
   G4double margin = gap + opaqueBoxThickness + ls;
+  G4double xsize = mr + margin;
+  G4double ysize = mr + margin;
+  G4double zsize = mz + margin;
   containerSolid = new G4Box(name + "_opaque_box_vacuum_solid",
-			     mx + margin,
-			     my + margin,
-			     mz + margin);
+			     xsize,
+			     ysize,
+			     zsize);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       BDSMaterials::Instance()->GetMaterial("G4_Galactic"),
@@ -141,9 +145,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 		    1,
 		    true);
   
-  outerExtent = BDSExtent(extent.MaximumX() + gap + opaqueBoxThickness + ls,
-			  extent.MaximumY() + gap + opaqueBoxThickness + ls,
-			  extent.MaximumZ() + gap + opaqueBoxThickness + ls);
+  outerExtent = BDSExtent(xsize, ysize, zsize);
 
   G4RotationMatrix* rm2 = new G4RotationMatrix();
   G4TwoVector xy = G4TwoVector(component->Sagitta(),0);
