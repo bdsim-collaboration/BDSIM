@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
-#include "tracker/TRKPhysicsCalculations.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
 
@@ -32,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputFactory.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 
 int main (int argc, char** argv)
@@ -69,13 +69,15 @@ int main (int argc, char** argv)
   /// Build bunch
   BDSParticleDefinition* designParticle = nullptr;
   BDSParticleDefinition* beamParticle   = nullptr;
-  G4bool beamDifferentFromDesignParticle = false;
-  TRK::ConstructDesignAndBeamParticle(beam,
+  bool beamDifferentFromDesignParticle = false;
+  long int nGenerate = globalConstants->NGenerate();
+  BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
 				      globalConstants->FFact(),
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
-  TRKBunch* bunch = new TRKBunch(beam, beamParticle, globalConstants->NGenerate());
+
+  TRKBunch* bunch = new TRKBunch(beam, beamParticle, nGenerate);
   /// Write primaries to output file
   output->WriteTrackerBunch("primaries",bunch,true);
   

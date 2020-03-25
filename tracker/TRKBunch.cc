@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 #include "TRKParticleDefinition.hh"
-#include "TRKPhysicsCalculations.hh"
 
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"

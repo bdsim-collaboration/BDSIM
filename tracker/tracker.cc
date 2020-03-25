@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
-#include "tracker/TRKPhysicsCalculations.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
 
@@ -32,7 +31,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputFactory.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
+
+#include <stdexcept>
 
 int main (int argc, char** argv)
 {
@@ -71,11 +73,17 @@ int main (int argc, char** argv)
   BDSParticleDefinition* beamParticle   = nullptr;
   bool beamDifferentFromDesignParticle = false;
   long int nGenerate = globalConstants->NGenerate();
-  TRK::ConstructDesignAndBeamParticle(beam,
+  BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
 				      globalConstants->FFact(),
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
+
+  if (beamDifferentFromDesignParticle) {
+    throw std::runtime_error(
+        "Tracker beam particle must match design particle.");
+  }
+
   TRKBunch* bunch = new TRKBunch(beam, beamParticle, nGenerate);
 
   /// Build beamline
