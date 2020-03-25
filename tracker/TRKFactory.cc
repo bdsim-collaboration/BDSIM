@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 #include "BDSDebug.hh"
 #include "BDSParticleDefinition.hh"
@@ -139,15 +140,15 @@ TRKStrategy* TRKFactory::CreateStrategy()
   return result;
 }
 
-TRK::Aperture TRKFactory::SetApertureEnum(std::string aIn)
+TRK::Aperture TRKFactory::SetApertureEnum(std::string aper)
 {
-  if      (aIn == "circular")    {return TRK::CIRCULAR;}
-  else if (aIn == "rectangular") {return TRK::RECTANGULAR;}
-  else if (aIn == "ellipsoidal") {return TRK::ELLIPSOIDAL;}
+  if      (aper == "circular")    {return TRK::CIRCULAR;}
+  else if (aper == "rectangular") {return TRK::RECTANGULAR;}
+  else if (aper == "ellipsoidal") {return TRK::ELLIPSOIDAL;}
   else
     {
-      std::cout << "Unknown aperture type " << aIn << std::endl;
-      exit(1);
+      auto msg = std::string("Unknown aperture type " + aper);
+      throw std::runtime_error(msg);
     }
 }
 
