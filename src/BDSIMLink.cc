@@ -270,6 +270,7 @@ int BDSIMLink::Initialise()
   */
   
   auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex, construction);
+  construction->SetPrimaryGeneratorAction(primaryGeneratorAction);
   runManager->SetUserAction(primaryGeneratorAction);
   //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 

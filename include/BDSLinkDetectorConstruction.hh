@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSBeamline;
 class BDSBeamlineElement;
+class BDSLinkPrimaryGeneratorAction;
 class BDSLinkRegistry;
 class BDSParticleDefinition;
 class G4Box;
@@ -56,6 +57,7 @@ public:
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
+  inline void SetPrimaryGeneratorAction(BDSLinkPrimaryGeneratorAction* pgIn) {primaryGeneratorAction = pgIn;}
 
   inline BDSLinkRegistry* LinkRegistry() const {return linkRegistry;}
 
@@ -78,6 +80,7 @@ public:
   BDSExtent worldExtent;
   BDSBeamline* linkBeamline;
   BDSLinkRegistry* linkRegistry;
+  BDSLinkPrimaryGeneratorAction* primaryGeneratorAction;
 
   /// Particle definition all components are built w.r.t. Includes rigidity etc.
   const BDSParticleDefinition* designParticle;
