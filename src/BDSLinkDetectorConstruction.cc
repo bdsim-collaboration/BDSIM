@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkComponent.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkOpaqueBox.hh"
+#include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
@@ -55,6 +56,7 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
   worldPV(nullptr),
   linkBeamline(nullptr),
   linkRegistry(nullptr),
+  primaryGeneratorAction(nullptr),
   designParticle(nullptr),
   crystalBiasing(nullptr)
 {
@@ -263,6 +265,8 @@ void BDSLinkDetectorConstruction::UpdateWorldSolid()
       worldSolid->SetZHalfLength(worldExtentAbs.z());
     }
   worldExtent = BDSExtent(worldExtentAbs);
+  if (primaryGeneratorAction)
+    {primaryGeneratorAction->SetWorldExtent(worldExtent);}
 }
 
 void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* element)
