@@ -73,7 +73,6 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   G4double my = extent.MaximumY();
   G4double mr = std::max({mx, my, outputSamplerRadius});
   G4double mz = extent.MaximumZ();
-  G4cout << mx << " " << my << " " << mz << G4endl;
   G4Box* terminatorBoxOuter = new G4Box(name + "_terminator_box_outer_solid",
 					mr + gap + opaqueBoxThickness,
 					mr + gap + opaqueBoxThickness,
