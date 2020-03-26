@@ -274,7 +274,6 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
   G4String placementName = element->GetPlacementName() + "_pv";
   G4Transform3D* placementTransform = element->GetPlacementTransform();
   G4int copyNumber = element->GetCopyNo();
-  G4cout << "placing " << placementName << " with copy number " << copyNumber << G4endl;
   // auto pv =
   new G4PVPlacement(*placementTransform,
                     placementName,

@@ -82,11 +82,11 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4Transform3D tr = lr->Transform(*currentElementIndex);
   if (lr->NoRotation(*currentElementIndex))
     {
-      G4cout << "coords before " << coords << G4endl;
-      G4cout << "offset " << tr.getTranslation() << G4endl;
+      G4cout << "PGA: Coords before " << coords;
+      G4cout << "Offset " << tr.getTranslation() << G4endl;
       BDSParticleCoords cgf = coords.ApplyOffset(tr.getTranslation());
       cg = BDSParticleCoordsFullGlobal(coords, cgf);
-      G4cout << "coords after " << cg << G4endl;
+      G4cout << "Coords after " << cg.global;
     }
   else
     {
