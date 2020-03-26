@@ -56,7 +56,7 @@ void Summarise(BDSIMLink* bds);
 
 int main(int /*argc2*/, char** /*argv2*/)
 {
-  std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--file=lhccrystals.gmad", "--vis_debug", "--batch"};
+  std::vector<std::string> arguments = {"--file=/Users/nevay/physics/reps/bdsim-tracker-coupling/test/lhccrystals.gmad","--file=/Users/nevay/physics/reps/bdsim-tracker-coupling/test/lhccrystals.gmad", "--vis_debug", "--batch"};
   std::vector<char*> argv;
   for (const auto& arg : arguments)
     {argv.push_back((char*)arg.data());}
@@ -79,10 +79,8 @@ int main(int /*argc2*/, char** /*argv2*/)
       exit(1);
     }
 
-  // read file
-  std::vector<Collimator> collimators = ReadFile("allColl.dat");
+  std::vector<Collimator> collimators = ReadFile("/Users/nevay/physics/reps/bdsim-tracker-coupling/test/allColls.dat");
 
-  // for thing in collimators AddCollimator
   for (const auto& c : collimators)
     {
       bds->AddLinkCollimator(c.name,
@@ -105,9 +103,6 @@ int main(int /*argc2*/, char** /*argv2*/)
       bds->BeamOn((G4int)stp->Size());
       Summarise(bds);
     }
-
-  delete bds;
-  delete stp;
   
   return 0;
 }
@@ -136,10 +131,10 @@ void AddParticle(BDSBunchSixTrackLink* stp)
 {
   G4double totalEnergy = 123*CLHEP::GeV;
   BDSParticleCoordsFull coords = BDSParticleCoordsFull(1e-3, 1e-3, 0,
-						       0, 0, 1,
-						       0, 0,
-						       totalEnergy,
-						       1);
+                                                       0, 0, 1,
+                                                       0, 0,
+                                                       totalEnergy,
+                                                       1);
 
   long long int pdgID = 2212;
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -155,7 +150,7 @@ void AddParticle(BDSBunchSixTrackLink* stp)
       G4double q = 82 * CLHEP::eplus;
       ionDef = new BDSIonDefinition(a,z,q);
     }
-	      
+
   // Wrap in our class that calculates momentum and kinetic energy.
   // Requires that one of E, Ek, P be non-zero (only one).
   BDSParticleDefinition* particleDefinition = nullptr;
@@ -176,5 +171,6 @@ void AddParticle(BDSBunchSixTrackLink* stp)
 void Summarise(BDSIMLink* bds)
 {
   const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
+
   //const BDSParticleCoordsFull& coords = hit->coords;
 }
