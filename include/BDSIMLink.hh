@@ -30,12 +30,12 @@ class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
 class BDSLinkDetectorConstruction;
-class BDSLinkRunManager;
 class BDSOutput;
 class BDSParser;
 class BDSParticleCoordsFull;
 class BDSParticleDefinition;
 class BDSParticleExternal;
+class G4RunManager;
 
 /** 
  * @brief Interface class to use BDSIM with trackers.
@@ -106,10 +106,10 @@ private:
   char** argvCache;            ///< Cache of argv.
 
   /// @{ Cache of main object in BDSIM.
-  BDSParser*         parser;
-  BDSOutput*         bdsOutput;
-  BDSBunch*          bdsBunch;
-  BDSLinkRunManager* runManager;
+  BDSParser*    parser;
+  BDSOutput*    bdsOutput;
+  BDSBunch*     bdsBunch;
+  G4RunManager* runManager;
   BDSLinkDetectorConstruction* construction;
   BDSLinkRunAction*  runAction;
   /// @}

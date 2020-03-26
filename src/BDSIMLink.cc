@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GeometryManager.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4RunManager.hh"
 #include "G4Version.hh"
 #include "G4VModularPhysicsList.hh"
 
@@ -49,7 +50,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
 #include "BDSLinkRunAction.hh"
-#include "BDSLinkRunManager.hh"
 #include "BDSLinkStackingAction.hh"
 #include "BDSLinkTrackingAction.hh"
 #include "BDSMaterials.hh"
@@ -164,7 +164,7 @@ int BDSIMLink::Initialise()
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-  runManager = new BDSLinkRunManager();
+  runManager = new G4RunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
   construction = new BDSLinkDetectorConstruction();
