@@ -18,11 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSixTrackLink.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIMLink.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
+#include "BDSVisManager.hh"
 
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
@@ -103,6 +105,10 @@ int main(int /*argc2*/, char** /*argv2*/)
       bds->BeamOn((G4int)stp->Size());
       Summarise(bds);
     }
+
+  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
+                                           BDSGlobalConstants::Instance()->Geant4MacroFileName());
+  visManager.StartSession(argv.size() - 1, argv.data());
   
   return 0;
 }
@@ -171,6 +177,9 @@ void AddParticle(BDSBunchSixTrackLink* stp)
 void Summarise(BDSIMLink* bds)
 {
   const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
-
-  //const BDSParticleCoordsFull& coords = hit->coords;
+  for (G4int i = 0; i < (G4int)hits->entries(); i++)
+    {
+      BDSHitSamplerLink* hit = (*hits)[i];
+      G4cout << hit->coords << G4endl;
+    }
 }

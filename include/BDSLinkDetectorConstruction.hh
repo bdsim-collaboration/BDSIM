@@ -40,7 +40,7 @@ class BDSLinkDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
   /// Default constructor
-  BDSLinkDetectorConstruction(/* something. special GMAD syntax?*/);
+  BDSLinkDetectorConstruction();
 
   virtual ~BDSLinkDetectorConstruction();
   virtual G4VPhysicalVolume* Construct();
