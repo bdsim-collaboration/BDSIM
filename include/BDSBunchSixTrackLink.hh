@@ -45,7 +45,7 @@ public:
   void AddParticle(BDSParticleDefinition* particleDefinitionIn,
 		   const BDSParticleCoordsFull& coordsIn);
 
-  void ClearParticles() {particles.clear();}
+  void ClearParticles() {particles.clear(); currentIndex = 0;}
 
   inline size_t Size() const {return particles.size();}
   
