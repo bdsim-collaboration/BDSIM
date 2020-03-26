@@ -317,7 +317,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
     {FillPrimaryLoss(primaryLoss);}
-  FillTrajectories(trajectories);
+  if (trajectories)
+    {FillTrajectories(trajectories);}
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
   if (apertureImpacts)
