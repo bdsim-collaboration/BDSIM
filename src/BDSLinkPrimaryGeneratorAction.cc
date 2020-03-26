@@ -79,7 +79,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   BDSParticleCoordsFullGlobal cg;
   auto lr = construction->LinkRegistry();
-  G4Transform3D tr = lr->Transform(*currentElementIndex);
+  const G4Transform3D tr = lr->Transform(*currentElementIndex);
   if (lr->NoRotation(*currentElementIndex))
     {
       G4cout << "PGA: Coords before " << coords;

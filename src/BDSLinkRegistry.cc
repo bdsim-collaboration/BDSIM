@@ -45,7 +45,7 @@ void BDSLinkRegistry::Register(BDSLinkOpaqueBox*    componentIn,
   componentIn->PlaceOutputSampler(newID);
 }
 
-G4Transform3D BDSLinkRegistry::Transform(const std::string& name) const
+const G4Transform3D& BDSLinkRegistry::Transform(const std::string& name) const
 {
   auto search = byName.find(name);
   if (search != byName.end())
@@ -54,7 +54,7 @@ G4Transform3D BDSLinkRegistry::Transform(const std::string& name) const
     {throw BDSException(__METHOD_NAME__, "unknown link element name \"" + name + "\"");}
 }
 
-G4Transform3D BDSLinkRegistry::Transform(const G4int ID) const
+const G4Transform3D& BDSLinkRegistry::Transform(const G4int ID) const
 {
   auto search = byID.find(ID);
   if (search != byID.end())
@@ -63,7 +63,7 @@ G4Transform3D BDSLinkRegistry::Transform(const G4int ID) const
     {throw BDSException(__METHOD_NAME__, "unknown link element ID " + std::to_string(ID));}
 }
 
-G4Transform3D BDSLinkRegistry::TransformInverse(const std::string& name) const
+const G4Transform3D& BDSLinkRegistry::TransformInverse(const std::string& name) const
 {
   auto search = byName.find(name);
   if (search != byName.end())
@@ -72,7 +72,7 @@ G4Transform3D BDSLinkRegistry::TransformInverse(const std::string& name) const
     {throw BDSException(__METHOD_NAME__, "unknown link element name \"" + name + "\"");}
 }
 
-G4Transform3D BDSLinkRegistry::TransformInverse(const G4int ID) const
+const G4Transform3D& BDSLinkRegistry::TransformInverse(const G4int ID) const
 {
   auto search = byID.find(ID);
   if (search != byID.end())

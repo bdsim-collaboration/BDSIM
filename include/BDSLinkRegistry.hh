@@ -42,11 +42,11 @@ public:
   void Register(BDSLinkOpaqueBox*    componentIn,
 		const G4Transform3D& globalToInputIn);
 
-  G4Transform3D Transform(const std::string& name) const;
-  G4Transform3D Transform(G4int ID) const;
+  const G4Transform3D& Transform(const std::string& name) const;
+  const G4Transform3D& Transform(G4int ID) const;
 
-  G4Transform3D TransformInverse(const std::string& name) const;
-  G4Transform3D TransformInverse(G4int ID) const;
+  const G4Transform3D& TransformInverse(const std::string& name) const;
+  const G4Transform3D& TransformInverse(G4int ID) const;
 
   G4bool NoRotation(const std::string& name) const;
   G4bool NoRotation(G4int ID) const;
