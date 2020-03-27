@@ -354,6 +354,7 @@ Bug Fixes
   required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
   instead.
 * Fix wire scanner sensitivity. The wire was never sensitive.
+* Fix generic element sensitivity. It never produced energy deposition.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
