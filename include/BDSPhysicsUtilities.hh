@@ -115,7 +115,7 @@ namespace BDS
 #endif
 
   /// Set the range cuts on a physics list. This is split into a separate function to allow it
-  /// to be applied to physics lists both from BDSIM's modular phyiscs list and other sources
+  /// to be applied to physics lists both from BDSIM's modular physics list and other sources
   /// with the same mechanism.
   void SetRangeCuts(G4VModularPhysicsList* physicsList, G4int verbosity = 1);
 
