@@ -42,13 +42,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKSBend.hh"
 
 //tracking strategies / routines
-#include "TRKStrategy.hh"
 #include "TRK.hh"
+#include "TRKDefaultStrategy.hh"
+#include "TRKHybrid.hh"
 #include "TRKParticleDefinition.hh"
+#include "TRKStrategy.hh"
+#include "TRKThick.hh"
 #include "TRKThin.hh"
 #include "TRKThinSymplectic.hh"
-#include "TRKThick.hh"
-#include "TRKHybrid.hh"
 
 #include "parser/beam.h"
 #include "parser/element.h"
@@ -109,6 +110,7 @@ std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
 TRK::Strategy TRKFactory::SetStrategyEnum(std::string sIn)
 {
   if (sIn == "thin") {return TRK::THIN;}
+  else if (sIn == "default") {return TRK::DEFAULT;}
   else if (sIn == "thinsymplectic") {return TRK::THINSYMPLECTIC;}
   else if (sIn == "thick") {return TRK::THICK;}
   else if (sIn == "hybrid") {return TRK::HYBRID;}
@@ -126,6 +128,8 @@ TRKStrategy* TRKFactory::CreateStrategy()
     {
     case TRK::THIN:
       {result = new TRKThin(trackingsteps); break;}
+    case TRK::DEFAULT:
+      {result = new TRKDefaultStrategy(); break;}
     case TRK::THINSYMPLECTIC:
       {result = new TRKThinSymplectic(trackingsteps); break;}
     case TRK::THICK:

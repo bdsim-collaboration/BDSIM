@@ -40,8 +40,8 @@ namespace TRK {
    * thick: thick lens tracking
    * hybrid: Geant4 field stepper
    */
-  //enum TRKType 
-  enum Strategy {THIN,THINSYMPLECTIC,THICK,HYBRID};
+  //enum TRKType
+  enum Strategy { THIN, THINSYMPLECTIC, THICK, HYBRID, DEFAULT };
   enum Aperture {CIRCULAR,RECTANGULAR,ELLIPSOIDAL};
 
   /** 
