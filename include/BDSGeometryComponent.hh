@@ -198,7 +198,7 @@ public:
   inline void MakeAllVolumesSensitive(BDSSDType stype = BDSSDType::energydep) {RegisterSensitiveVolume(GetAllLogicalVolumes(), stype);}
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
-  void AttachSensitiveDetectors();
+  virtual void AttachSensitiveDetectors();
 
   /// Remove a particular logical volume from the logical volumes that will be
   /// returned for biasing.
