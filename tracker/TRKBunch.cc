@@ -89,14 +89,20 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
     {
       // bdsbunch generates values in CLHEP mm standard.
       BDSParticleCoordsFullGlobal c = bdsbunch->GetNextParticle();
-      double energy = c.local.totalEnergy/CLHEP::GeV;
+      double energy = c.local.totalEnergy;
       //momentum back calculated from kinetic energy - can't change bds bunch
       // p = sqrt( (E + m)^2 - m^2 )
       double p = sqrt( energy*energy + 2*energy*mass );
 
-      double paramsIn[8] = {c.local.x/CLHEP::um,c.local.y/CLHEP::um,c.local.s/CLHEP::um,
-			    c.local.xp/CLHEP::rad,c.local.yp/CLHEP::rad,c.local.zp/CLHEP::rad,
-			    p,mass};
+      double paramsIn[8] = {c.local.x,
+                            c.local.y,
+                            c.local.s,
+                            c.local.xp,
+                            c.local.yp,
+                            c.local.zp,
+                            p,
+                            mass};
+
       bunch.push_back(TRKParticle(paramsIn, charge, i));
 
       //weight not required - maybe should be kept though to pass on to bdsim
