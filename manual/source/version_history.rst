@@ -33,6 +33,12 @@ New Features
 * Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
+* BLMs now must use a :code:`scoreQuantity` to name a scorer object to decide what they record
+  as opposed to previously just recording energy deposition.
+* BLMs now have a parameter :code:`bias` that allows a cross-section biasing object to be attached
+  to all logical volumes in that BLM.
+* Cubic is now the default interpolation for fields and is automatically matched to the number
+  of dimensions in the field map file.
 
 
 General
@@ -245,7 +251,7 @@ New Features
 |                                    | and `verboseSteppingEventContinueFor`. Default is all events.      |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 print out per step of each particle. This    |
-|                                    | done according to the range of `verboseSteppingEventStart, and     |
+|                                    | done according to the range of `verboseSteppingEventStart`, and    |
 |                                    | `verboseSteppingEventContinueFor`. Default is all events and all   |
 |                                    | particles.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
@@ -263,7 +269,7 @@ New Features
 |                                    | step. Note, this is a lot of output.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 stepping level print out. The same           |
-|                                    |  as `-\\-verbose_G4stepping=X` executable option.                  |
+|                                    | as `-\\-verbose_G4stepping=X` executable option.                   |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseTrackingLevel               | (0-5) level of Geant4 tracking level print out. The same           |
 |                                    | as `-\\-verbose_G4tracking=X` executable option.                   |
@@ -348,6 +354,7 @@ Bug Fixes
   required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
   instead.
 * Fix wire scanner sensitivity. The wire was never sensitive.
+* Fix generic element sensitivity. It never produced energy deposition.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
 * Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)

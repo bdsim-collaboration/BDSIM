@@ -87,6 +87,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	      requiredScorers.insert(name);
 	    }
 	}
+	  // no BDS::Warning here as that slows down print out - could be all the blms turned off
       if (requiredScorers.empty())
 	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
@@ -119,12 +120,9 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector("blm_"+combinedName);
       for (const auto& name : ssAndCombinedName.second.first)
 	{
-	  auto search = scorerRecipes.find(name);
-	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" not found.");}
-
+	  const auto& recipe = scorerRecipes.at(name); // safe as in previous loop we ensure it exists
 	  G4double unit = 1.0;
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), nullptr, &unit);
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&recipe, nullptr, &unit);
 	  sd->RegisterPrimitive(ps);
 	  // We rely on the prefix "blm_" here to intercept scorer hits in BDSOutput so if
 	  // this changes, that matching must be done there too. It's to distinguish them

@@ -55,7 +55,8 @@ public:
 		   G4double blm2,
 		   G4double blm3,
 		   G4double blm4,
-		   G4VSensitiveDetector* sd);
+		   G4VSensitiveDetector* sd,
+		   const G4String& bias = "");
 
 private:
   void PositiveFinite(G4double value,

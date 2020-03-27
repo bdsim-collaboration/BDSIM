@@ -34,7 +34,7 @@ The overall program structure should follow:
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
 6) A beam definition (see :ref:`beam-parameters`)
 
-* Specifing and option or definition again, will overwrite the previous value.
+* Specifying and option or definition again, will overwrite the previous value.
 * The only **order specific** part is the **use** command (see :ref:`the-use-command`) as this
   copied whatever sequence is *used* at that point, so any further updates to the component
   definitions will not be observed.
@@ -1469,7 +1469,7 @@ to apply this rmatrix in finite length geometry, BDSIM uses a parallel transport
 along S but without changing the particles transverse coordinates. The transverse effect from the matrix is applied
 once in the middle of the element, whereafter particles are once again parallel transported to the end of the
 element. This way, the correct transverse effect is applied, the recorded tracking time is correct as the particle
-has tracked through a finite length element, and the model is constucted with the correct physical length.
+has tracked through a finite length element, and the model is constructed with the correct physical length.
 
 The mathematical effect of the matrix on a particle is:
 
@@ -1526,7 +1526,7 @@ thinrmatrix
 ^^^^^^^^^^^
 
 `thinrmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam
-within a thin element. Unlike the rmatrix, a thinrmatrix is an instanteous effect in a thin element, therefore
+within a thin element. Unlike the rmatrix, a thinrmatrix is an instantaneous effect in a thin element, therefore
 no geometry is constructed. The parameters for a thinmatrix are the same as those for an :ref:`element-rmatrix` except
 for the length, `l`, which is not required.
 
@@ -1541,14 +1541,15 @@ Examples: ::
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by externally provided geometry. It includes
-the possibility of overlaying a field as well. Several geometry formats are supported. The user
-must supply the length (accurately) as well as a diameter, such that the geometry will be
-contained in a box that has horizontal and vertical sizes of diameter.
+`element` defines an arbitrary beam line element that's defined by externally provided geometry.
+It includes the possibility of overlaying a field as well. Several geometry formats are supported.
+The user must supply the length (accurately) as well as a `horizontalWidth` (full widht), such
+that the geometry will be contained in a box that has horizontal and vertical sizes of `horizontalWidth`.
 
-The geometry is simply placed in the beam line. There is no placement offset other than the
-offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
-with the placement as required.
+The outermost volume of the loaded geometry is simply placed in the beam line. There is no placement
+offset other than the :code:`offsetX`, :code:`offsetY` and :code:`tilt` of that element in the beam line.
+Therefore, the user must prepare geometry with the placement of the contents in the outermost volume
+as required.
 
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
@@ -1592,7 +1593,7 @@ and make a placement at the appropriate point in global coordinates.
 	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
 	  than the size required for the geometry, the beam may be mismatched into the rest of
-	  the accelerator. A common practice is to add a picometre to the length of the geometry.
+	  the accelerator. A common practice is to add a nanometre to the length of the geometry.
 
 Simple example::
 
@@ -1600,16 +1601,15 @@ Simple example::
 
 Example with field: ::
 
-  somefield: field, type="ebmap2d",
-		    eScaling = 3.1e3,
-		    bScaling = 0.5,
-		    integrator = "g4classicalrk4",
-		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
-		    electricInterpolator = "linear2D";
+  detectorfield: field, type="bmap2d",
+                        bScaling = 0.5,
+			magneticFile = "bdsim2d:/Path/To/File.dat",
+			magneticInterpolator="cubic2d";
 
-   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, horizontalWidth=0.76*m;
+  detec: element, geometryFile="gdml:twoboxes.gdml",
+                  fieldAll="detectorfield",
+		  l=5*m,
+		  horizontalWidth=0.76*m;
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
@@ -1732,7 +1732,7 @@ may specify an initial offset and rotation for the beam line with respect to the
 volume using the options described in :ref:`beamline-offset`.
 
 .. warning:: When the :code:`use` command is called, the elements are copied internally,
-	     so their definition is fixed. Any element parameter adjustmments or redefinitions
+	     so their definition is fixed. Any element parameter adjustments or redefinitions
 	     after the :code:`use` command will therefore not be observed.
 
 Multiple beam lines may also be visualised - but only visualised (not suitable for
@@ -1907,6 +1907,13 @@ passive material.
 The placement parameters are the same as the general placements (see :ref:`placements`). So the
 BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
 in global Cartesian coordinates.
+
+Bias objects may be attached to a BLM via the :code:`bias` attribute. This names a defined
+bias object (see :ref:`physics-bias-cross-section-biasing`). This is applied to all logical
+volumes in the BLM.
+
+.. note:: If multiple BLMs use the same external geometry file, the biasing
+	  will be applied to all of them as there is only one copy of the geometry in memory.
   
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
@@ -1952,7 +1959,7 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | Optional file to use for geometry of BLM including format          |
@@ -1962,6 +1969,8 @@ in global Cartesian coordinates.
 |                         | :code:`bottom`.                                                    |
 +-------------------------+--------------------------------------------------------------------+
 | sideOffset              | Distance from the (square) extent of an object the BLM is placed.  |
++-------------------------+--------------------------------------------------------------------+
+| bias                    | Name of bias object to apply to all volumes in the BLM.            |
 +-------------------------+--------------------------------------------------------------------+
 
 

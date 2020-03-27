@@ -383,7 +383,7 @@ void Parser::expand_line(FastList<Element>& target,
   
   // leave only the desired range
   //
-  // rule - from first occurence of 'start' till first 'end' coming after 'start'
+  // rule - from first occurrence of 'start' till first 'end' coming after 'start'
   
   if( !start.empty()) // determine the start element
     {
