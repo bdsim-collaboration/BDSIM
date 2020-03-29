@@ -21,14 +21,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 
-
-BDSSimpleComponent::BDSSimpleComponent(G4String              nameIn,
-				       BDSGeometryComponent* component,
+BDSSimpleComponent::BDSSimpleComponent(const G4String&       nameIn,
+				                       BDSGeometryComponent* component,
                                        G4double              arcLengthIn,
-				       G4double              angleIn,
-				       G4ThreeVector         inputFaceNormalIn,
-				       G4ThreeVector         outputFaceNormalIn,
-				       BDSBeamPipeInfo*      beamPipeInfoIn):
+				                       G4double              angleIn,
+				                       const G4ThreeVector&  inputFaceNormalIn,
+				                       const G4ThreeVector&  outputFaceNormalIn,
+				                       BDSBeamPipeInfo*      beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, "simpleComponent", beamPipeInfoIn,
 			  inputFaceNormalIn, outputFaceNormalIn)
 {
