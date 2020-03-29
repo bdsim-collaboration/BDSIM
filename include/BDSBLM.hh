@@ -34,8 +34,6 @@ class G4VSolid;
  * this provides no additional members, but experience with beam pipes
  * and magnet outer geometry says that this class will undoubtedly be
  * required. Easier to implement now than rewrite all factories later.
- * The base class copy constructor doesn't update any registered objects
- * so we keep a copy of the pointer to query in select functions.
  * 
  * @author Laurie Nevay
  */
@@ -48,10 +46,13 @@ public:
   /// No default constructor
   BDSBLM() = delete;
 
-  BDSBLM(const BDSGeometryComponent* geometry);
+  /// Accept a component and register as a daughter.
+  BDSBLM(BDSGeometryComponent* geometry);
+
+  /// This constructor is used when the BLM is a 1 volume BLM.
   BDSBLM(G4VSolid*         containerSolidIn,
          G4LogicalVolume*  containerLVIn,
-         BDSExtent         extentIn          = BDSExtent());
+         BDSExtent         extentIn = BDSExtent());
 
   virtual ~BDSBLM(){;}
 
@@ -62,16 +63,11 @@ public:
   /// can get away with using the base class constructor.
   void SetBias(const G4String& biasIn) {bias = biasIn;}
 
-  virtual std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return geometry->GetAllPhysicalVolumes();}
-  virtual std::set<G4RotationMatrix*>  GetAllRotationMatrices() const {return geometry->GetAllRotationMatrices();}
-  virtual std::set<G4VisAttributes*>   GetAllVisAttributes()    const {return geometry->GetAllVisAttributes();}
-  virtual std::set<G4UserLimits*>      GetAllUserLimits()       const {return geometry->GetAllUserLimits();}
-  virtual std::set<BDSGeometryComponent*> GetAllDaughters()     const {return geometry->GetAllDaughters();}
-  virtual std::set<G4VSolid*>          GetAllSolids()           const {return geometry->GetAllSolids();}
-  virtual std::set<G4LogicalVolume*>   GetAllLogicalVolumes()   const {return geometry->GetAllLogicalVolumes();}
+  /// We override this and do nothing so that the default energy deposition
+  /// sensitivity isn't attached. We handle this explicitly in the BLM creation.
+  virtual void AttachSensitiveDetectors() {;}
 
 private:
-  const BDSGeometryComponent* geometry;
   G4String bias = "";
 };
 
