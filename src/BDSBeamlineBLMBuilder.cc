@@ -127,7 +127,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 	  // We rely on the prefix "blm_" here to intercept scorer hits in BDSOutput so if
 	  // this changes, that matching must be done there too. It's to distinguish them
 	  // from 3D mesh hits and put them in the BLM output.
-	  uniquePrimitiveScorerNames.push_back("blm_"+combinedName+"/"+name);
+	  uniquePrimitiveScorerNames.emplace_back("blm_"+combinedName+"/"+name);
 	  scorerUnits.push_back(unit);
 	}
       sensitiveDetectors[combinedName] = sd;
