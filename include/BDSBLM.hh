@@ -41,18 +41,16 @@ class G4VSolid;
 class BDSBLM: public BDSGeometryComponent
 {
 public:
-  /// Use constructors of BDSGeometryComponent
-  //using BDSGeometryComponent::BDSGeometryComponent;
   /// No default constructor
   BDSBLM() = delete;
 
-  /// Accept a component and register as a daughter.
+  /// Accept a component and register it as a daughter.
   BDSBLM(BDSGeometryComponent* geometry);
 
   /// This constructor is used when the BLM is a 1 volume BLM.
-  BDSBLM(G4VSolid*         containerSolidIn,
-         G4LogicalVolume*  containerLVIn,
-         BDSExtent         extentIn = BDSExtent());
+  BDSBLM(G4VSolid*        containerSolidIn,
+         G4LogicalVolume* containerLVIn,
+         BDSExtent        extentIn = BDSExtent());
 
   virtual ~BDSBLM(){;}
 
@@ -65,7 +63,7 @@ public:
 
   /// We override this and do nothing so that the default energy deposition
   /// sensitivity isn't attached. We handle this explicitly in the BLM creation.
-  virtual void AttachSensitiveDetectors() {;}
+  virtual void AttachSensitiveDetectors(){;}
 
 private:
   G4String bias = "";
