@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "G4Version.hh"
@@ -952,6 +953,7 @@ void BDSMaterials::AddMaterial(G4String name,
 
 G4Material* BDSMaterials::GetMaterial(G4String material) const
 {
+  G4String materialOriginal = material;
   // for short names we assume they're elements so we prefix with G4_ and
   // get them from NIST
   G4String nistString ("G4_");
@@ -980,18 +982,19 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
       if (iter != materials.end())
         {return (*iter).second;}
       else
-	{
-	  // search aliases
-	  auto iter2 = aliases.find(material);
-	  if (iter2 != aliases.end())
-	    {return iter2->second;}
-	  else
-	    {// can't find it -> warn and exit
-	      ListMaterials();
-	      G4cout << __METHOD_NAME__ << "\"" << material << "\" is unknown." << G4endl;
-	      exit(1);
-	    }
-	}
+        {
+          // search aliases
+          auto iter2 = aliases.find(material);
+          if (iter2 != aliases.end())
+            {return iter2->second;}
+          else
+            {// can't find it -> warn and exit
+              ListMaterials();
+              throw BDSException(__METHOD_NAME__, "\"" + materialOriginal + "\" is unknown.");
+            }
+        }
+    }
+}
     }
 }
 
