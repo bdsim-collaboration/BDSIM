@@ -35,10 +35,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSLinkPrimaryGeneratorAction::BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
 							     int*      currentElementIndexIn,
-							     BDSLinkDetectorConstruction* constructionIn):
+							     BDSLinkDetectorConstruction* constructionIn,
+							     G4bool    debugIn):
   bunch(bunchIn),
   currentElementIndex(currentElementIndexIn),
   construction(constructionIn),
+  debug(debugIn),
   particleGun(nullptr)
 {
   particleGun = new G4ParticleGun(1); // 1-particle gun
@@ -82,11 +84,15 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   const G4Transform3D tr = lr->Transform(*currentElementIndex);
   if (lr->NoRotation(*currentElementIndex))
     {
-      G4cout << "PGA: Coords before " << coords;
-      G4cout << "Offset " << tr.getTranslation() << G4endl;
+      if (debug)
+        {
+          G4cout << "PGA: Coords before " << coords;
+          G4cout << "Offset " << tr.getTranslation() << G4endl;
+        }
       BDSParticleCoords cgf = coords.ApplyOffset(tr.getTranslation());
       cg = BDSParticleCoordsFullGlobal(coords, cgf);
-      G4cout << "Coords after " << cg.global;
+      if (debug)
+        {G4cout << "Coords after " << cg.global;}
     }
   else
     {

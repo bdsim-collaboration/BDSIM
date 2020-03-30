@@ -40,7 +40,8 @@ public:
   /// Bunch must have a valid particle definition (ie not nullptr).
   BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
 					            int*      currentElementIndexIn,
-                                BDSLinkDetectorConstruction* constructionIn);
+                                BDSLinkDetectorConstruction* constructionIn,
+                                G4bool    debugIn = false);
   virtual ~BDSLinkPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
@@ -54,6 +55,7 @@ private:
   BDSBunch* bunch;                ///< BDSIM particle generator. 
   int*      currentElementIndex;  ///< External integer for which element to track in.
   BDSLinkDetectorConstruction* construction; ///< Cache of detector construction for link registry of transforms.
+  G4bool    debug;
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
   
   /// World extent that particle coordinates are checked against to ensure they're inside it.

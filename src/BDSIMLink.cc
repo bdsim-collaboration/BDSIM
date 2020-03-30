@@ -121,6 +121,8 @@ int BDSIMLink::Initialise()
   G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
+  G4bool trackerDebug = false;
+
   /// Initialize executable command line options reader object
   const BDSExecOptions* execOptions = new BDSExecOptions(argcCache,argvCache);
   if (usualPrintOut)
@@ -243,7 +245,7 @@ int BDSIMLink::Initialise()
     }
   /// Set user action classes
   runAction = new BDSLinkRunAction();
-  BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction);
+  BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction, trackerDebug);
   runManager->SetUserAction(eventAction);
   runManager->SetUserAction(runAction);
   //G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
@@ -270,7 +272,7 @@ int BDSIMLink::Initialise()
     }
   */
   
-  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex, construction);
+  auto primaryGeneratorAction = new BDSLinkPrimaryGeneratorAction(bdsBunch, &currentElementIndex, construction, trackerDebug);
   construction->SetPrimaryGeneratorAction(primaryGeneratorAction);
   runManager->SetUserAction(primaryGeneratorAction);
   //BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
@@ -401,19 +403,23 @@ BDSIMLink::~BDSIMLink()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
-void BDSIMLink::SelectLinkElement(const std::string& elementName)
+void BDSIMLink::SelectLinkElement(const std::string& elementName, G4bool debug)
 {
-  G4cout << "Searching for " << elementName;
+  if (debug)
+    {G4cout << "Searching for " << elementName;}
   auto search = nameToElementIndex.find(elementName);
   if (search != nameToElementIndex.end())
     {currentElementIndex = search->second;}
   else
     {currentElementIndex = -1;}
-  G4cout << ", Index " << currentElementIndex << G4endl;
+  if (debug)
+    {G4cout << ", Index " << currentElementIndex << G4endl;}
 }
 
-void BDSIMLink::SelectLinkElement(int index)
+void BDSIMLink::SelectLinkElement(int index, G4bool debug)
 {
+  if (debug)
+    {G4cout << "Searching for " << index << G4endl;}
   currentElementIndex = index;
 }
 
