@@ -79,6 +79,8 @@ option, physicsList="g4FTFP_BERT";
 
 option, minimumKineticEnergy=100*GeV;
 
+option, physicsVerbosity=0;
+
 r1: cutsregion, defaultRangeCut=50*cm;
 
 beam, particle="proton",
