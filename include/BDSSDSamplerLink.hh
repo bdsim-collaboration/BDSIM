@@ -60,6 +60,9 @@ public:
   /// Update cached pointer of link registry.
   inline void SetLinkRegistry(BDSLinkRegistry* registryIn) {registry = registryIn;}
 
+  inline void SetMinimumEK(G4double minimumEKIn) {minimumEK = minimumEKIn;}
+  inline void SetProtonsAndIonsOnly(G4bool protonsAndIonsOnlyIn) {protonsAndIonsOnly = protonsAndIonsOnlyIn;}
+
 private:
   /// The hits collection for this sensitive detector class that's owned by each instance.
   BDSHitsCollectionSamplerLink* samplerLinkCollection;
@@ -74,6 +77,12 @@ private:
   
   /// Cached pointer to registry as accessed many times
   BDSLinkRegistry* registry;
+
+  /// Minimum kinetic energy to generate a hit for.
+  G4double minimumEK;
+
+  /// Whether to return protons and ions only.
+  G4bool protonsAndIonsOnly;
 };
 
 #endif

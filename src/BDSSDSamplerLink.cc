@@ -31,8 +31,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TouchableHistory.hh"
 #include "G4Track.hh"
 #include "G4Types.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4VTouchable.hh"
 
 #include "CLHEP/Geometry/Point3D.h"
 #include "CLHEP/Geometry/Vector3D.h"
@@ -44,7 +42,9 @@ BDSSDSamplerLink::BDSSDSamplerLink(const G4String& name):
   samplerLinkCollection(nullptr),
   itsCollectionName(name),
   itsHCID(-1),
-  registry(nullptr)
+  registry(nullptr),
+  minimumEK(0),
+  protonsAndIonsOnly(true)
 {
   collectionName.insert(name);
 }
@@ -69,21 +69,36 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   if (postStepPoint->GetStepStatus() != fGeomBoundary)
     {return false;} // this step was not stored
-  
-  G4Track* track    = aStep->GetTrack();
+
+  G4Track* track = aStep->GetTrack();
   const G4DynamicParticle* dp = track->GetDynamicParticle();
-  G4int trackID     = track->GetTrackID();           // unique ID of track
-  G4int parentID    = track->GetParentID();          // unique ID of track's mother
-  G4double T        = track->GetGlobalTime();        // time since beginning of event
-  G4double energy   = track->GetTotalEnergy();       // total track energy
-  G4double charge   = dp->GetCharge();               // dynamic effective charge
+  G4double charge = dp->GetCharge(); // dynamic effective charge
+  auto pd = dp->GetParticleDefinition();
+
+  // check against various filters
+  if (charge == 0) // don't return neutral particles
+    {return false;}
+  if (!pd->GetPDGStable()) // don't return unstable particles
+    {return false;}
+  G4double ek = track->GetKineticEnergy();
+  if (ek < minimumEK)
+    {return false;}
+
+  if (protonsAndIonsOnly)
+    {;}
+
+  G4int trackID   = track->GetTrackID();           // unique ID of track
+  G4int parentID  = track->GetParentID();          // unique ID of track's mother
+  G4double T      = track->GetGlobalTime();        // time since beginning of event
+  G4double energy = track->GetTotalEnergy();       // total track energy
+
   const G4ThreeVector& pos = track->GetPosition();          // current particle position (global)
   const G4ThreeVector& mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
   G4double momentum = dp->GetTotalMomentum();
-  auto pd = dp->GetParticleDefinition();
+
   G4int z = pd->GetAtomicNumber();
   G4int a = pd->GetAtomicMass();
 
