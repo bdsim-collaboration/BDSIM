@@ -1013,6 +1013,8 @@ void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>&
                                           const G4String& prepend,
                                           G4bool prependWasUsed)
 {
+  // Register in "aliases" member so we don't try to delete - geant4 will
+  // do this for ones loaded in GDML. Therefore, avoid double deletion.
   for (const auto& kv : materialsGDML)
     {
       G4String nameLower = kv.first;
@@ -1020,14 +1022,14 @@ void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>&
       //G4bool startsWithPrepend = prependExists ? BDS::StartsWith(kv.first, prepend) : false;
       if (BDS::StartsWith(nameLower, "g4_") || materials.find(nameLower) != materials.end())
         {continue;} // a Geant4 material or a BDSIM one
-      materials[nameLower] = kv.second;
+      aliases[nameLower] = kv.second;
 
       if (prependWasUsed)
         {// cache without prefix
           G4String nameCopy = kv.first;
           nameCopy.erase(0, prepend.size() + 1);
           nameCopy.toLower();
-          materials[nameCopy] = kv.second;
+          aliases[nameCopy] = kv.second;
           possibleDuplicates[nameCopy]++;
         }
     }
