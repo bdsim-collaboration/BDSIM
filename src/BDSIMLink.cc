@@ -49,6 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
+#include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSLinkRunAction.hh"
 #include "BDSLinkStackingAction.hh"
 #include "BDSLinkTrackingAction.hh"
@@ -60,7 +61,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleExternal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
-#include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
@@ -102,16 +102,21 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   initialisationResult = Initialise();
 }
 
-int BDSIMLink::Initialise(int argc, char** argv, bool usualPrintOutIn)
+int BDSIMLink::Initialise(int argc,
+    char** argv,
+    bool   usualPrintOutIn,
+    double minimumKineticEnergy,
+    bool   protonsAndIonsOnly)
 {
   argcCache = argc;
   argvCache = argv;
   usualPrintOut = usualPrintOutIn;
-  initialisationResult = Initialise();
+  initialisationResult = Initialise(minimumKineticEnergy, protonsAndIonsOnly);
   return initialisationResult;
 }
 
-int BDSIMLink::Initialise()
+int BDSIMLink::Initialise(double minimumKineticEnergy,
+                          bool   protonsAndIonsOnly)
 {
   /// Print header & program information
   G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
@@ -171,6 +176,10 @@ int BDSIMLink::Initialise()
   /// Register the geometry and parallel world construction methods with run manager.
   construction = new BDSLinkDetectorConstruction();
   runManager->SetUserInitialization(construction);
+
+  // Set filters used in sensitive detectors that transfer particles back
+  BDSSDManager::Instance()->SetLinkMinimumEK(minimumKineticEnergy * CLHEP::GeV);
+  BDSSDManager::Instance()->SetLinkProtonsAndIonsOnly(protonsAndIonsOnly);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> Constructing physics processes" << G4endl;

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
+#include "BDSSDSamplerLink.hh"
 #include "BDSSDType.hh"
 
 #include "G4String.hh"
@@ -35,7 +36,6 @@ class BDSSDEnergyDepositionGlobal;
 class BDSLinkRegistry;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
-class BDSSDSamplerLink;
 class BDSSDTerminator;
 class BDSSDThinThing;
 class BDSSDVolumeExit;
@@ -155,6 +155,8 @@ public:
 
   /// If samplerLink member exists, set the registry to look up links for that SD.
   void SetLinkRegistry(BDSLinkRegistry* registry);
+  inline void SetLinkMinimumEK(G4double minimumEKIn) {samplerLink->SetMinimumEK(minimumEKIn);}
+  inline void SetLinkProtonsAndIonsOnly(G4bool protonsAndIonsOnlyIn) {samplerLink->SetProtonsAndIonsOnly(protonsAndIonsOnlyIn);}
 
 private:
   /// Private default constructor for singleton.

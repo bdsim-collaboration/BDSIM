@@ -60,8 +60,12 @@ public:
   /// arguments argc and arv
   explicit BDSIMLink(BDSBunch* bunchIn);
 
-  /// Initialise everything given these arguments.
-  int Initialise(int argc, char** argv, bool usualPrintOut=true);
+  /// Initialise everything given these arguments. The minimumKinetic energy should be in GeV.
+  int Initialise(int argc,
+                 char** argv,
+                 bool   usualPrintOut        = true,
+                 double minimumKineticEnergy = 0,
+                 bool   protonsAndIonsOnly   = true);
 
   /// Construct and initialise BDSIM.
   BDSIMLink(int argc, char** argv, bool usualPrintOut=true);
@@ -96,7 +100,8 @@ public:
   
 private:
   /// The main function where everything is constructed.
-  int Initialise();
+  int Initialise(double minimumKineticEnergy = 0,
+                 bool   protonsAndIonsOnly   = true);
   
   bool   ignoreSIGINT;         ///< For cmake testing.
   bool   usualPrintOut;        ///< Whether to allow the usual cout output.
