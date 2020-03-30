@@ -652,7 +652,7 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 		       false,
 		       false,
 		       false,
-		       true); // use incremental copy nubmers 
+		       true); // use incremental copy numbers
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
