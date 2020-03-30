@@ -45,6 +45,8 @@ std::string CleanFortranString(char* str, size_t count);
 //std::vector<CollimationEnergyDeposition> EnergyDepositionConfiguration;
 //std::set<int> keep_ids;
 
+
+
 BDSIMLink* bds = nullptr;
 BDSBunchSixTrackLink* stp = nullptr;
 
@@ -64,13 +66,19 @@ void g4_collimation_init(double* /*ReferenceE*/,
   stp = new BDSBunchSixTrackLink();
   bds = new BDSIMLink(stp);
 
-  std::vector<std::string> arguments = {"--file=input.gmad", "--vis_debug", "--batch"};
+  std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--file=lhccrystals.gmad", "--vis_debug", "--batch"};
+  //std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--batch"};
   std::vector<char*> argv;
   for (const auto& arg : arguments)
     {argv.push_back((char*)arg.data());}
   argv.push_back(nullptr);
 
-  bds->Initialise(argv.size() - 1, argv.data());
+  try
+    {bds->Initialise(argv.size() - 1, argv.data());}
+  catch (const std::exception& e)
+    {std::cout << e.what() << std::endl; exit(1);}
+  catch (const BDSException& e)
+    {std::cout << e.what() << std::endl; exit(1);}
 }
 
 extern "C"
@@ -89,9 +97,9 @@ void g4_add_collimator(char*   name,
   G4double length   = *lengthIn   * CLHEP::m;
   G4double aperture = *apertureIn * CLHEP::m;
   G4double rotation = *rotationIn * CLHEP::rad;
-  G4double xOffset  = *xOffsetIn  * CLHEP::m;
-  G4double yOffset  = *yOffsetIn  * CLHEP::m;
-
+  G4double xOffset  = *xOffsetIn;
+  G4double yOffset  = *yOffsetIn;
+  G4cout << "TEST " << collimatorName << " " << materialName << " " << length << " " << aperture << " " <<  rotation << " " << xOffset << " " << yOffset << G4endl;
   bds->AddLinkCollimator(collimatorName,
 			 materialName,
 			 length,
@@ -126,17 +134,17 @@ void g4_add_particle(double*  xIn,
 		     int16_t* nzz,
 		     int16_t* naa,
 		     int16_t* nqq,
-		     double*  massIn,
+		     double*  /*massIn*/,
 		     double*  /*sigmv*/,
 		     double*  /*sx*/,
 		     double*  /*sy*/,
 		     double*  /*sz*/)
 {
-  G4double mass        = (*massIn) * CLHEP::MeV;
-  G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV; 
-  G4double momMag      = std::sqrt(totalEnergy - (mass*mass));
-  G4double xp          = (*xpIn)*momMag;
-  G4double yp          = (*ypIn)*momMag;
+  //G4double mass        = (*massIn) * CLHEP::MeV;
+  G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV;
+  //G4double momMag      = std::sqrt(totalEnergy*totalEnergy - mass*mass);
+  G4double xp          = (*xpIn);
+  G4double yp          = (*ypIn);
   G4double zp          = BDSBunch::CalculateZp(xp,yp,1);
   BDSParticleCoordsFull coords = BDSParticleCoordsFull((*xIn) * CLHEP::m,
 						       (*yIn) * CLHEP::m,
@@ -175,7 +183,7 @@ void g4_add_particle(double*  xIn,
   catch (const BDSException& e)
     {// if we throw an exception the object is invalid for the delete on the next loop
       particleDefinition = nullptr; // reset back to nullptr for safe delete
-      throw e;
+      return;
     }
 
   if (particleDefinition)
@@ -255,8 +263,8 @@ void g4_collimate_return(int*     j,
 			 double*  sy,
 			 double*  sz)
 {
-
-
+  if (*j == 0)
+    {return;}
   /*
     part_hit(j), part_abs(j), part_impact(j), part_indiv(j),
     & part_linteract(j))
@@ -277,7 +285,7 @@ void g4_collimate_return(int*     j,
   //Remember, sixtrack xp, yp are p_x / p_total
   *xp = coords.xp;
   *yp = coords.yp;
-  *e  = coords.totalEnergy;
+  *e  = coords.totalEnergy / CLHEP::GeV;
   *pdgid  = (int32_t)hit->pdgID;
   *z = (int16_t)hit->Z;
   *a = (int16_t)hit->A;
@@ -313,7 +321,9 @@ std::string CleanFortranString(char* str, size_t count)
 extern "C"
 void g4_get_particle_count(int* g4_npart)
 {
-  *g4_npart = bds->SamplerHits()->entries();
+  int count = bds->SamplerHits()->entries();
+  std::cout << "Returning " << count << std::endl;
+  *g4_npart = count;
 }
 
 extern "C"
