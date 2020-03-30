@@ -152,7 +152,8 @@ public:
 
   /// Access the map of units for primitive scorers.
   inline const std::map<G4String, G4double>& PrimitiveScorerUnits() const {return primitiveScorerNameToUnit;}
-  
+
+  /// If samplerLink member exists, set the registry to look up links for that SD.
   void SetLinkRegistry(BDSLinkRegistry* registry);
 
 private:
