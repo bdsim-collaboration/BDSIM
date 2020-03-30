@@ -107,6 +107,7 @@ namespace GMAD
     /// list of physics processes
     std::string physicsList;
     bool        physicsVerbose;
+    int         physicsVerbosity;
     double      physicsEnergyLimitLow;
     double      physicsEnergyLimitHigh;
     bool        g4PhysicsUseBDSIMRangeCuts;

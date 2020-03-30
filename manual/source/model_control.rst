@@ -2246,6 +2246,8 @@ Physics Processes
 | physicsVerbose                   | Prints out all processes linked to primary particle   |
 |                                  | and all physics processes registered in general       |
 +----------------------------------+-------------------------------------------------------+
+| physicsVerbosity                 | Set the physics verbosity for Geant4 (0,1,2).         |
++----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m]                                    |
 +----------------------------------+-------------------------------------------------------+
