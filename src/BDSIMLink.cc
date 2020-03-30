@@ -183,7 +183,8 @@ int BDSIMLink::Initialise()
   // hard to sift through and fix afterwards
   G4PhysicsListHelper::GetPhysicsListHelper()->UseLowLooperThresholds();
 #endif
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
+  G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
+  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
 
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
@@ -289,7 +290,7 @@ int BDSIMLink::Initialise()
   /// Set verbosity levels at run and G4 event level. Per event and stepping are controlled
   /// in event, tracking and stepping action. These have to be done here due to the order
   /// of construction in Geant4.
-  runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
+  runManager->SetVerboseLevel(std::min(globalConstants->VerboseRunLevel(), globalConstants->PhysicsVerbosity()));
   G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
   
