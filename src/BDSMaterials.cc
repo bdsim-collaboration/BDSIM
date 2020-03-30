@@ -985,7 +985,11 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
       if (search != possibleDuplicates.end())
         {
           if (search->second > 1)
-            {throw BDSException(__METHOD_NAME__, "material \"" + materialOriginal + "\" has been loaded from multiple GDML files and is ambiguous. Please prepend with the BDSIM element used to load the file to be explicit");}
+            {
+              throw BDSException(__METHOD_NAME__, "material \"" + materialOriginal
+              + "\" has been loaded from multiple GDML files and is ambiguous.\n"
+              + "Please prepend with the BDSIM element used to load the file to be explicit.");
+            }
         }
       auto iter = materials.find(material);
       if (iter != materials.end())
