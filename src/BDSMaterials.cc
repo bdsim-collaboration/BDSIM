@@ -20,8 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
-#include "G4Version.hh"
+#include "BDSUtilities.hh"
+
+#include "G4MaterialTable.hh"
 #include "G4NistManager.hh"
+#include "G4Version.hh"
 
 #include <chrono>
 #include <iomanip>
@@ -978,6 +981,12 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
     {
       // find material regardless of capitalisation
       material.toLower();
+      auto search = possibleDuplicates.find(material);
+      if (search != possibleDuplicates.end())
+        {
+          if (search->second > 1)
+            {throw BDSException(__METHOD_NAME__, "material \"" + materialOriginal + "\" has been loaded from multiple GDML files and is ambiguous. Please prepend with the BDSIM element used to load the file to be explicit");}
+        }
       auto iter = materials.find(material);
       if (iter != materials.end())
         {return (*iter).second;}
@@ -995,6 +1004,28 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
         }
     }
 }
+
+void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>& materialsGDML,
+                                          const G4String& prepend,
+                                          G4bool prependWasUsed)
+{
+  for (const auto& kv : materialsGDML)
+    {
+      G4String nameLower = kv.first;
+      nameLower.toLower();
+      //G4bool startsWithPrepend = prependExists ? BDS::StartsWith(kv.first, prepend) : false;
+      if (BDS::StartsWith(nameLower, "g4_") || materials.find(nameLower) != materials.end())
+        {continue;} // a Geant4 material or a BDSIM one
+      materials[nameLower] = kv.second;
+
+      if (prependWasUsed)
+        {// cache without prefix
+          G4String nameCopy = kv.first;
+          nameCopy.erase(0, prepend.size() + 1);
+          nameCopy.toLower();
+          materials[nameCopy] = kv.second;
+          possibleDuplicates[nameCopy]++;
+        }
     }
 }
 
