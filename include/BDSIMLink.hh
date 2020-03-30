@@ -80,8 +80,8 @@ public:
   /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
 
-  void SelectLinkElement(const std::string& elementName);
-  void SelectLinkElement(int index);
+  void SelectLinkElement(const std::string& elementName, G4bool debug = false);
+  void SelectLinkElement(int index, G4bool debug = false);
 
   void AddLinkCollimator(const std::string& collimatorName,
 			 const std::string& materialName,

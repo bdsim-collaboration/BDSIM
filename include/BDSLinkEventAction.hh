@@ -35,8 +35,10 @@ class G4Event;
 class BDSLinkEventAction: public G4UserEventAction
 {
 public:
-  explicit BDSLinkEventAction(BDSOutput* outputIn,
-			      BDSLinkRunAction* runActionIn);
+  BDSLinkEventAction() = delete;
+  BDSLinkEventAction(BDSOutput*        outputIn,
+		     BDSLinkRunAction* runActionIn,
+		     G4bool            debugIn = false);
   virtual ~BDSLinkEventAction();
   
   virtual void BeginOfEventAction(const G4Event* evt);
@@ -50,6 +52,7 @@ public:
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   BDSLinkRunAction* runAction;
+  G4bool debug;
   G4bool verboseEventBDSIM;
   G4int  verboseEventStart;
   G4int  verboseEventStop;

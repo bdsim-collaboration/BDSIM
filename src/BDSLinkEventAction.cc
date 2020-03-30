@@ -37,9 +37,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TransportationManager.hh"
 
 BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn,
-				       BDSLinkRunAction* runActionIn):
+				       BDSLinkRunAction* runActionIn,
+				       G4bool            debugIn):
   output(outputIn),
   runAction(runActionIn),
+  debug(debugIn),
   collIDSamplerLink(-1),
   currentEventIndex(0),
   primaryAbsorbedInCollimator(false)
@@ -72,8 +74,11 @@ void BDSLinkEventAction::BeginOfEventAction(const G4Event* evt)
   tm->GetPropagatorInField()->ClearPropagatorState(); // <- this one really makes a difference
 
   // number feedback
-  if (currentEventIndex % printModulo == 0)
-    {G4cout << "---> Begin of event: " << currentEventIndex << G4endl;}
+  if (debug)
+    {
+      if (currentEventIndex % printModulo == 0)
+        {G4cout << "---> Begin of event: " << currentEventIndex << G4endl;}
+    }
   if (verboseEventBDSIM) // always print this out
     {G4cout << __METHOD_NAME__ << "event #" << currentEventIndex << G4endl;}
 
