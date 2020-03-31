@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleDefinition.hh"
 
 
-G4double BDSLinkStackingAction::energyKilled = 0;
+G4double BDSLinkStackingAction::kineticEnergyKilled = 0;
 
 BDSLinkStackingAction::BDSLinkStackingAction(const BDSGlobalConstants* globals,
 const std::set<G4int> pdgIDsToAllowIn,
