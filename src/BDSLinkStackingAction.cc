@@ -27,14 +27,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 #include "G4ParticleDefinition.hh"
 
+#include <set>
 
 G4double BDSLinkStackingAction::kineticEnergyKilled = 0;
 
 BDSLinkStackingAction::BDSLinkStackingAction(const BDSGlobalConstants* globals,
-const std::set<G4int> pdgIDsToAllowIn,
-G4bool protonsAndIonsOnlyIn):
-pdgIDsToAllow(pdgIDsToAllowIn),
-protonsAndIonsOnly(protonsAndIonsOnlyIn)
+                                             const std::set<G4int>&    pdgIDsToAllowIn,
+                                             G4bool                    protonsAndIonsOnlyIn,
+                                             G4double                  minimumEKIn):
+  pdgIDsToAllow(pdgIDsToAllowIn),
+  protonsAndIonsOnly(protonsAndIonsOnlyIn),
+  minimumEK(minimumEKIn)
 {
   killNeutrinos     = globals->KillNeutrinos();
   stopSecondaries   = globals->StopSecondaries();
@@ -48,15 +51,18 @@ BDSLinkStackingAction::~BDSLinkStackingAction()
 
 G4ClassificationOfNewTrack BDSLinkStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
-  G4ClassificationOfNewTrack classification = fUrgent;
-
+  G4ClassificationOfNewTrack result = fUrgent;
+  
   // If beyond max number of tracks, kill it
   if (aTrack->GetTrackID() > maxTracksPerEvent)
-    {classification = fKill;}
+    {result = fKill;}
+
+  if (aTrack->GetKineticEnergy() <= minimumEK)
+    {result = fKill;}
 
   // kill secondaries
   if (stopSecondaries && (aTrack->GetParentID() > 0))
-    {classification = fKill;}
+    {result = fKill;}
 
   auto definition = aTrack->GetDefinition();
   G4int pdgID = definition->GetPDGEncoding();
@@ -65,22 +71,25 @@ G4ClassificationOfNewTrack BDSLinkStackingAction::ClassifyNewTrack(const G4Track
   if (killNeutrinos)
     {
       if (pdgID == 12 || pdgID == 14 || pdgID == 16)
-        {classification = fKill;}
+        {result = fKill;}
     }
 
   if (protonsAndIonsOnly)
     {
-      if (!BDS::IsIon(definition))
-        {classification = fKill;}
-      if (pdgID == 2212)
-        {classification = fUrgent;}
+      if (!BDS::IsIon(definition) && pdgID != 2212)
+        {result = fKill;}
+      else if (pdgID == 2212)
+        {result = fUrgent;}
     }
   else if (!pdgIDsToAllow.empty())
      {
         if (pdgIDsToAllow.find(pdgID) != pdgIDsToAllow.end())
-          {classification = fKill;}
+          {result = fKill;}
      }
-  return classification;
+
+  if (result == fKill)
+    {kineticEnergyKilled += aTrack->GetKineticEnergy() * aTrack->GetWeight();}
+  return result;
 }
 
 
