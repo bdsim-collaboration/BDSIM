@@ -67,7 +67,7 @@ int main(int /*argc2*/, char** /*argv2*/)
   BDSBunchSixTrackLink* stp = new BDSBunchSixTrackLink();
   BDSIMLink* bds = new BDSIMLink(stp);
   try
-    {bds->Initialise(argv.size() - 1, argv.data());}
+    {bds->Initialise(argv.size() - 1, argv.data(), true, 100);}
   catch (const BDSException& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;

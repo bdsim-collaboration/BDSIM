@@ -67,6 +67,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSVisManager.hh"
 
 #include <map>
+#include <set>
 
 BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   ignoreSIGINT(false),
@@ -116,6 +117,8 @@ int BDSIMLink::Initialise(int argc,
 int BDSIMLink::Initialise(double minimumKineticEnergy,
                           bool   protonsAndIonsOnly)
 {
+  minimumKineticEnergy *= CLHEP::GeV; // units
+
   /// Print header & program information
   G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
   G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"<<G4endl;
@@ -176,7 +179,7 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   runManager->SetUserInitialization(construction);
 
   // Set filters used in sensitive detectors that transfer particles back
-  BDSSDManager::Instance()->SetLinkMinimumEK(minimumKineticEnergy * CLHEP::GeV);
+  BDSSDManager::Instance()->SetLinkMinimumEK(minimumKineticEnergy);
   BDSSDManager::Instance()->SetLinkProtonsAndIonsOnly(protonsAndIonsOnly);
   
 #ifdef BDSDEBUG
@@ -264,7 +267,7 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
                                                       verboseSteppingEventStop,
                                                       globalConstants->VerboseSteppingPrimaryOnly(),
                                                       globalConstants->VerboseSteppingLevel()));*/
-  runManager->SetUserAction(new BDSLinkStackingAction(globalConstants));
+  runManager->SetUserAction(new BDSLinkStackingAction(globalConstants, std::set<G4int>(), protonsAndIonsOnly, minimumKineticEnergy));
   
   /*
   // Only add steppingaction if it is actually used, so do check here (for performance reasons)
