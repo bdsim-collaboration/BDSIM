@@ -1289,7 +1289,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   G4bool circularOuter = false;
   G4String apertureType = G4String(element->apertureType);
   if (apertureType == "circular")
-  {circularOuter = true;}
+    {circularOuter = true;}
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
