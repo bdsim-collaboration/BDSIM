@@ -47,7 +47,7 @@ int main(int argc, char** argv)
    {argvv.push_back((char*)arg.data());}
      argv.push_back(std::string(*(argv->[0])));
     */
-      bds->Initialise(argc, argv);
+      bds->Initialise(argc, argv, true, 100);
       if (!bds->Initialised())
 	{
 	  if (bds->InitialisationResult() == 1) // if 2 it's ok
