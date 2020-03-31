@@ -2055,6 +2055,10 @@ The histograms will be called "BLM_chrg", "BLM_dose" and "BLM_eDep". The second 
 (bin index #1) will always be 0 as the 2nd BLM (in order of construction) "BLM_t2" does not use the "chrg"
 scorer. This is done so that a given BLM is always in the same bin in all BLM histograms.
 
+.. note:: The 2nd bin in each output histogram (bin index #1) will be for "BLM_t2" as it is the second
+	  to be constructed, even though it is placed geometrically before "BLM_t1" with respect to the
+	  beam line (s = 5cm vs s = 10cm).
+
 The model was run with 10 events and the output summarised using `rebdsimHistoMerge`. ::
 
   bdsim --file=blm-output-example.gmad --outfile=t1 --batch --ngenerate=10
@@ -2062,19 +2066,21 @@ The model was run with 10 events and the output summarised using `rebdsimHistoMe
   root -l t1-histos.root
   > TBrowser tb;
 
+
 .. figure:: figures/blm-histos1.png
 	    :width: 90%
 	    :align: center
 
-   Preview of "eDep" scorer histogram for all BLMs from above example. 3rd bin is empty
-   as the 3rd BLM doesn't use this scorer.
+            Preview of "eDep" scorer histogram for all BLMs from above example. 3rd bin is empty
+            as the 3rd BLM doesn't use this scorer.
+
 
 .. figure:: figures/blm-histos2.png
 	    :width: 90%
 	    :align: center
 
-   Preview of "dose" scorer histogram for all BLMs from above example. All bins are filled
-   as all BLMs use this scorer.
+            Preview of "dose" scorer histogram for all BLMs from above example. All bins are filled
+            as all BLMs use this scorer.
 
 
 Examples
