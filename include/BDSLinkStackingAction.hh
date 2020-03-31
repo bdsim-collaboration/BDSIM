@@ -43,7 +43,7 @@ public:
   /// the even won't conserve energy with the stopSecondaries on.
   virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track* aTrack);
 
-  static G4double energyKilled;
+  static G4double kineticEnergyKilled;
 
 private:
   /// Force use of supplied constructor.
