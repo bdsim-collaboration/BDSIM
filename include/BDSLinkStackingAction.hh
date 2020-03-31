@@ -34,9 +34,13 @@ class G4Track;
 class BDSLinkStackingAction: public G4UserStackingAction
 {
 public:
-  BDSLinkStackingAction(const BDSGlobalConstants* globals,
-      const std::set<G4int> pdgIDsToAllowIn = std::set<G4int>(),
-                        G4bool protonsAndIonsOnlyIn = true);
+  /// Force use of supplied constructor.
+  BDSLinkStackingAction() = delete;
+
+  explicit BDSLinkStackingAction(const BDSGlobalConstants* globals,
+                                 const std::set<G4int>&    pdgIDsToAllowIn      = std::set<G4int>(),
+                                 G4bool                    protonsAndIonsOnlyIn = true,
+                                 G4double                  minimumEKIn          = 0);
   virtual ~BDSLinkStackingAction();
 
   /// Decide whether to kill tracks if they're neutrinos or we're killing all secondaries. Note
@@ -46,14 +50,12 @@ public:
   static G4double kineticEnergyKilled;
 
 private:
-  /// Force use of supplied constructor.
-  BDSLinkStackingAction() = delete;
-
   G4bool killNeutrinos;     ///< Local copy of whether to kill neutrinos for tracking efficiency.
   G4bool stopSecondaries;   ///< Whether particles with parentID > 0 will be killed.
   G4long maxTracksPerEvent; ///< Maximum number of tracks before start killing.
   std::set<G4int> pdgIDsToAllow;
   G4bool protonsAndIonsOnly;
+  G4double minimumEK;       ///< Minimum kinetic energy to generate a hit for.
  };
 
 #endif
