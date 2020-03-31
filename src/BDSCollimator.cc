@@ -30,10 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
@@ -121,22 +121,22 @@ G4String BDSCollimator::Material() const
 
 void BDSCollimator::BuildContainerLogicalVolume()
 {
-    if(circularOuter)
+  if(circularOuter)
     {
-        containerSolid = new G4Tubs(name + "_solid",
-                                    0,
-                                    0.5*horizontalWidth,
-                                    0.5*chordLength,
-                                    0,
-                                    CLHEP::twopi);
+      containerSolid = new G4Tubs(name + "_solid",
+				  0,
+				  0.5*horizontalWidth,
+				  0.5*chordLength,
+				  0,
+				  CLHEP::twopi);
     }
-    else
-     {
-            containerSolid = new G4Box(name + "_container_solid",
-                                       horizontalWidth*0.5,
-                                       horizontalWidth*0.5,
-                                       chordLength*0.5);
-     }
+  else
+    {
+      containerSolid = new G4Box(name + "_container_solid",
+				 horizontalWidth*0.5,
+				 horizontalWidth*0.5,
+				 chordLength*0.5);
+    }
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
@@ -167,22 +167,23 @@ void BDSCollimator::Build()
 
   G4VSolid* outerSolid = nullptr;
   if (circularOuter)
-  {
+    {
       outerSolid = new G4Tubs(name + "_outer_solid",
-                            0,
-                             horizontalWidth * 0.5 - lengthSafety,
-                             chordLength * 0.5 - lengthSafety,
-                             0,
-                             CLHEP::twopi);
-  }
-  else {
+			      0,
+			      horizontalWidth * 0.5 - lengthSafety,
+			      chordLength * 0.5 - lengthSafety,
+			      0,
+			      CLHEP::twopi);
+    }
+  else
+    {
       outerSolid = new G4Box(name + "_outer_solid",
                              horizontalWidth * 0.5 - lengthSafety,
                              horizontalWidth * 0.5 - lengthSafety,
                              chordLength * 0.5 - lengthSafety);
-  }
+    }
   RegisterSolid(outerSolid);
-
+  
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set
