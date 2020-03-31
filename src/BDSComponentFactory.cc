@@ -1121,7 +1121,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
   if (!HasSufficientMinimumLength(element)) 
-    {return nullptr;}
+    {throw BDSException(__METHOD_NAME__, "insufficient length for element \"" + element->name + "\" - must specify a suitable length");}
 
   // we don't specify the field explicitly here - this is done generically
   // in the main CreateComponent method with SetFieldDefinitions.
@@ -1818,7 +1818,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
   if (el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
-	{BDS::Warning("---> NOT creating element \"" + el->name + "\" -> l < 1e-7 m: l = " + std::to_string(el->l) + " m");} // already in m
+	{BDS::Warning("---> NOT creating element \"" + el->name + "\" -> l < 1e-7 m: l = " + std::to_string(el->l) + " m");}
       return false;
     }
   else

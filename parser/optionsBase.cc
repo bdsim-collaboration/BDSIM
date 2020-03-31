@@ -79,6 +79,7 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList                    = ""; //default - only transportation
   physicsVerbose                 = false;
+  physicsVerbosity               = 1;
   physicsEnergyLimitLow          = 0;
   physicsEnergyLimitHigh         = 0;
   g4PhysicsUseBDSIMRangeCuts     = true;

@@ -207,6 +207,7 @@ void Options::PublishMembers()
   // physics
   publish("physicsList",       &Options::physicsList);
   publish("physicsVerbose",    &Options::physicsVerbose);
+  publish("physicsVerbosity",  &Options::physicsVerbosity);
   publish("physicsEnergyLimitLow",          &Options::physicsEnergyLimitLow);
   publish("physicsEnergyLimitHigh",         &Options::physicsEnergyLimitHigh);
   publish("g4PhysicsUseBDSIMRangeCuts",     &Options::g4PhysicsUseBDSIMRangeCuts);
