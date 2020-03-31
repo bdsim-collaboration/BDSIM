@@ -16,22 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLinkStackingAction.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSRunManager.hh"
 
-
-#include "G4Run.hh"
 #include "G4Event.hh"
-#include "G4ThreeVector.hh"
 #include "G4Track.hh"
 #include "G4TrackStatus.hh"
 #include "G4Types.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4ParticleTypes.hh"
-#include "G4Version.hh"
 
 
 G4double BDSLinkStackingAction::energyKilled = 0;

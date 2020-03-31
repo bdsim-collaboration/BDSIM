@@ -46,11 +46,11 @@ public:
   explicit BDSSDSamplerLink(const G4String& name);
   virtual ~BDSSDSamplerLink();
 
-  /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
+  /// Overridden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).
   virtual void Initialize(G4HCofThisEvent* HCE);
 
-  /// Overriden from G4VSensitiveDetector.  Creates hit instances and appends them to the
+  /// Overridden from G4VSensitiveDetector.  Creates hit instances and appends them to the
   /// hits collection.
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH);
 
