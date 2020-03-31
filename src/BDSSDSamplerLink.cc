@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSamplerLink.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSParticleCoordsFull.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSSDSamplerLink.hh"
 
 #include "G4DynamicParticle.hh"
@@ -84,8 +85,12 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
   if (ek < minimumEK)
     {return false;}
 
+  G4int PDGtype = pd->GetPDGEncoding();
   if (protonsAndIonsOnly)
-    {;}
+    {
+      if (!BDS::IsIon(dp) && PDGtype != 2212)
+        {return false;}
+    }
 
   G4int trackID   = track->GetTrackID();           // unique ID of track
   G4int parentID  = track->GetParentID();          // unique ID of track's mother
@@ -136,9 +141,7 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
-
-  G4int    PDGtype     = track->GetDefinition()->GetPDGEncoding();
-  G4String pName       = track->GetDefinition()->GetParticleName();
+  G4String pName = pd->GetParticleName();
 
   BDSParticleCoordsFull coords(localPosition.x(),
 			       localPosition.y(),
