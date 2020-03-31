@@ -91,9 +91,9 @@ public:
 			 const std::string& materialName,
 			 G4double length,
 			 G4double aperture,
-			 G4double rotation,
-			 G4double xOffset,
-			 G4double yOffset);
+			 G4double rotation = 0,
+			 G4double xOffset  = 0,
+			 G4double yOffset  = 0);
 
   BDSHitsCollectionSamplerLink* SamplerHits() const;
   void ClearSamplerHits() {runAction->ClearSamplerHits();}
