@@ -94,7 +94,7 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
 
   const G4ThreeVector& pos = track->GetPosition();          // current particle position (global)
   const G4ThreeVector& mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
-  G4double weight   = track->GetWeight();            // weighting
+  G4double weight   = track->GetWeight();                   // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
   G4double momentum = dp->GetTotalMomentum();
@@ -129,7 +129,7 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
     {
       // The global to local transform is defined in the registry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
-      localPosition  = globalToLocal * (HepGeom::Point3D<G4double>)pos;
+      localPosition = globalToLocal * (HepGeom::Point3D<G4double>)pos;
       // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
       // Account for this by purposively setting local z to be 0.
       localPosition.setZ(0.0);
