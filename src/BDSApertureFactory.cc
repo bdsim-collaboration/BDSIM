@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
+#include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -115,7 +116,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
     case BDSApertureType::circle:
       {result = new BDSApertureCircle(a1, nPoints);       break;}
     case BDSApertureType::ellipse:
-      {result = new BDSApertureEllpse(a1, a2, nPoints); break;}
+      {result = new BDSApertureEllipse(a1, a2, nPoints); break;}
     case BDSApertureType::rectangle:
       {result = new BDSApertureRectangle(a1, a2);         break;}
     case BDSApertureType::rectcircle:
@@ -258,22 +259,53 @@ G4VSolid* BDSApertureFactory::CreateRectangle() const
 				ap->b,
 				productLength + productLengthExtra); // factor 2 here
       G4double maxRadius = ap->RadiusToEncompass();
-      G4double intersectionRadius = intersectionRadiusRatio * maxRadius;
-      G4VSolid* cut = new G4CutTubs(productName + "_angled",
-				    0,
-				    intersectionRadius,
-				    0.5 * productLength + productLengthExtra,
-				    0,
-				    CLHEP::twopi,
-				    productNormalIn,
-				    productNormalOut);
+      G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
       G4VSolid* product = new G4IntersectionSolid(productName, box, cut);
       return product;
     }
 }
 
+G4VSolid* BDSApertureFactory::CutSolid(const G4String& name,
+                                       G4double radiusToEncompass) const
+{
+  G4double intersectionRadius = intersectionRadiusRatio * radiusToEncompass;
+  G4VSolid* cut = new G4CutTubs(name,
+                                0,
+                                intersectionRadius,
+                                0.5 * productLength + productLengthExtra,
+                                0,
+                                CLHEP::twopi,
+                                productNormalIn,
+                                productNormalOut);
+  return cut;
+}
+
 G4VSolid* BDSApertureFactory::CreateEllipse() const
-{return CreateCircle();}
+{
+  const BDSApertureEllipse* ap = dynamic_cast<const BDSApertureEllipse*>(productApertureIn);
+  if (!ap)
+    {return nullptr;}
+  if (!angledFaces)
+    {
+      G4VSolid* product = new G4EllipticalTube(productName,
+                                               ap->a,
+                                               ap->b,
+                                               0.5 * productLength + productLengthExtra);
+      return product;
+    }
+  else
+    {
+      G4double maxRadius = ap->RadiusToEncompass();
+      G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
+      G4VSolid* tube = new G4EllipticalTube(productName + "_square",
+                                            ap->a,
+                                            ap->b,
+                                            productLength + productLengthExtra);
+      G4VSolid* product = new G4IntersectionSolid(productName, tube, cut);
+      return product;
+    }
+}
+
 G4VSolid* BDSApertureFactory::CreateRectCircle() const
 {return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateRectEllipse() const
