@@ -96,7 +96,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp
 			sp.tilt  * CLHEP::rad,
 			0,
 			0,
-			sp.nPoints);
+            (unsigned int)sp.nPoints);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,

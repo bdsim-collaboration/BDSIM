@@ -62,7 +62,7 @@ namespace GMAD
     double aper3;
     double aper4;
     double tilt;
-    double nPoints;
+    int    nPoints;
     
     /// constructor
     SamplerPlacement();
