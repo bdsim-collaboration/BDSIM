@@ -37,8 +37,8 @@ class BDSApertureRectCircle: public BDSAperture
 {
 public:
   BDSApertureRectCircle(G4double aIn,
-			G4double bIn,
-			G4double radiusIn);
+			            G4double bIn,
+			            G4double radiusIn);
   virtual ~BDSApertureRectCircle(){;}
 
   G4double a;

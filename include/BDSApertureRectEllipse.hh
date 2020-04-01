@@ -39,9 +39,9 @@ class BDSApertureRectEllipse: public BDSAperture
 {
 public:
   explicit BDSApertureRectEllipse(G4double rectangleAIn,
-				  G4double rectangleBIn,
-				  G4double ellipseAIn,
-				  G4double ellipseBIn);
+				                  G4double rectangleBIn,
+				                  G4double ellipseAIn,
+				                  G4double ellipseBIn);
   virtual ~BDSApertureRectEllipse(){;}
 
   G4double rectangleA;
