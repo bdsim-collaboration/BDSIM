@@ -48,7 +48,7 @@ public:
   BDSApertureFactory();
   ~BDSApertureFactory();
 
-  BDSAperture* CreateAperture(const GMAD::Aperture& sp) const;
+  BDSAperture* CreateAperture(const GMAD::Aperture& ap) const;
   BDSAperture* CreateAperture(const GMAD::SamplerPlacement& sp) const;
   BDSAperture* CreateAperture(BDSApertureType at,
 			      G4double        a1,
@@ -61,7 +61,7 @@ public:
 			      unsigned int    nPoints) const;
   
   /// Create any aperture shape with flat ends. The apertureOut is optionally
-  /// for definining the possibly different aperture shape at the output end.
+  /// for defining the possibly different aperture shape at the output end.
   G4VSolid* CreateSolid(const G4String&    name,
 			G4double           length,
 			const BDSAperture* apertureIn,
