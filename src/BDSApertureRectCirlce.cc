@@ -56,8 +56,8 @@ G4bool BDSApertureRectCircle::Equals(const BDSAperture* other) const
     {
       const BDSApertureRectCircle* oc = dynamic_cast<const BDSApertureRectCircle*>(other);
       return BDS::DoublesAreEqual(oc->a, a) &&
-	BDS::DoublesAreEqual(oc->b, b) &&
-	BDS::DoublesAreEqual(oc->radius, radius);
+	  BDS::DoublesAreEqual(oc->b, b) &&
+	  BDS::DoublesAreEqual(oc->radius, radius);
     }
 }
 
@@ -118,51 +118,4 @@ BDSPolygon BDSApertureRectCircle::Polygon(G4int nPointsIn) const
   BDSPolygon pRectangle = ar.Polygon();
   BDSPolygon result = pCircle.Intersection(pRectangle);
   return result;
-
-  /*
-  std::vector<G4TwoVector> r;
-
-  if (a < radius) // vertical
-    {
-      // calculate angle between x axis and x,y point where rectangle of width
-      // a intercepts circle of radius r where a < r
-      G4double thetaToIntersect = std::acos(a/radius);
-      G4int    npTopHalf        = (G4int)std::nearbyint(np / 2);
-      G4int    npBottomHalf     = np - npTopHalf;
-      G4double dThetaTop    = 2*thetaToIntersect / (G4double)npTopHalf;
-      G4double dThetaBottom = 2*thetaToIntersect / (G4double)npBottomHalf;
-      for (G4int i = 0; i < npTopHalf; i++)
-	{
-	  r.push_back(G4TwoVector(radius * std::cos(thetaToIntersect + i*dThetaTop),
-				  radius * std::sin(thetaToIntersect + i*dThetaTop)));
-	}
-      for (G4int i = 0; i < npBottomHalf; i++)
-	{
-	  r.push_back(G4TwoVector(radius * std::cos(thetaToIntersect + CLHEP::pi + i*dThetaBottom),
-				  radius * std::sin(thetaToIntersect + CLHEP::pi + i*dThetaBottom)));
-	}
-    }
-  else // horizontal
-    {
-      // calculate angle between x axis and x,y point where rectangle of width
-      // a intercepts circle of radius r where b < r
-      G4double thetaToIntersect = std::asin(b/radius);
-      G4int    npRightHalf = (G4int)std::nearbyint(np / 2);
-      G4int    npLeftHalf  = np - npRightHalf;
-      G4double dThetaRight = 2*thetaToIntersect / (G4double)npRightHalf;
-      G4double dThetaLeft  = 2*thetaToIntersect / (G4double)npLeftHalf;
-      for (G4int i = 0; i < npRightHalf; i++)
-	{
-	  r.push_back(G4TwoVector(radius * std::cos(-thetaToIntersect + i*dThetaRight),
-				  radius * std::sin(-thetaToIntersect + i*dThetaRight)));
-	}
-      for (G4int i = 0; i < npLeftHalf; i++)
-	{
-	  r.push_back(G4TwoVector(radius * std::cos(-thetaToIntersect + CLHEP::pi + i*dThetaLeft),
-				  radius * std::sin(-thetaToIntersect + CLHEP::pi + i*dThetaLeft)));
-	}
-    }
-  
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
-  */
 }
