@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureEllpse.hh"
+#include "BDSApertureEllipse.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -32,9 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <vector>
 
-BDSApertureEllpse::BDSApertureEllpse(G4double aIn,
-                                     G4double bIn,
-                                     G4int    nPointsIn):
+BDSApertureEllipse::BDSApertureEllipse(G4double aIn,
+                                      G4double bIn,
+                                      G4int    nPointsIn):
   BDSAperture(BDSApertureType::ellipse),
   a(aIn),
   b(bIn),
@@ -44,7 +44,7 @@ BDSApertureEllpse::BDSApertureEllpse(G4double aIn,
     {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
 }
 
-G4bool BDSApertureEllpse::Equals(const BDSAperture* other) const
+G4bool BDSApertureEllipse::Equals(const BDSAperture* other) const
 {
   if (!other)
     {return false;}
@@ -54,53 +54,53 @@ G4bool BDSApertureEllpse::Equals(const BDSAperture* other) const
     {return false;}
   else
     {
-      const BDSApertureEllpse* oc = dynamic_cast<const BDSApertureEllpse*>(other);
+      const BDSApertureEllipse* oc = dynamic_cast<const BDSApertureEllipse*>(other);
       return BDS::DoublesAreEqual(oc->a, a) && BDS::DoublesAreEqual(oc->b, b);
     }
 }
 
-void BDSApertureEllpse::CheckInfoOK() const
+void BDSApertureEllipse::CheckInfoOK() const
 {
   CheckRequiredParametersSet(a, true, b, true);
   CheckParameterIsPositive(a, "a");
   CheckParameterIsPositive(b, "b");
 }
 
-BDSExtent BDSApertureEllpse::Extent() const
+BDSExtent BDSApertureEllipse::Extent() const
 {
   BDSExtent simpleExtent(a, b, 0);
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureEllpse BDSApertureEllpse::operator+ (G4double number) const
+BDSApertureEllipse BDSApertureEllipse::operator+ (G4double number) const
 {
-  BDSApertureEllpse result = BDSApertureEllpse(*this);
+  BDSApertureEllipse result = BDSApertureEllipse(*this);
   result += number;
   return result;
 }
 
-const BDSApertureEllpse& BDSApertureEllpse::operator+=(G4double number)
+const BDSApertureEllipse& BDSApertureEllipse::operator+=(G4double number)
 {
   a += number;
   b += number;
   return *this;
 }
 
-BDSApertureEllpse BDSApertureEllpse::operator* (G4double number) const
+BDSApertureEllipse BDSApertureEllipse::operator* (G4double number) const
 {
-  BDSApertureEllpse result = BDSApertureEllpse(*this);
+  BDSApertureEllipse result = BDSApertureEllipse(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureEllpse& BDSApertureEllpse::operator*=(G4double number)
+const BDSApertureEllipse& BDSApertureEllipse::operator*=(G4double number)
 {
   a *= number;
   b *= number;
   return *this;
 }
 
-BDSPolygon BDSApertureEllpse::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureEllipse::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
   if (np < 3 || np < MinimumNumberOfPoints())

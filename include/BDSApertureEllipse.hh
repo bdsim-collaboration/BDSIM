@@ -35,13 +35,13 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureEllpse: public BDSAperture
+class BDSApertureEllipse: public BDSAperture
 {
 public:
-  BDSApertureEllpse(G4double aIn,
-                    G4double bIn,
-                    G4int    nPointsIn = 0);
-  virtual ~BDSApertureEllpse(){;}
+  BDSApertureEllipse(G4double aIn,
+                     G4double bIn,
+                     G4int    nPointsIn = 0);
+  virtual ~BDSApertureEllipse(){;}
 
   G4double a;
   G4double b;
@@ -55,15 +55,15 @@ public:
   virtual BDSExtent Extent()                const;
   virtual G4int     MinimumNumberOfPoints() const {return nPoints;}
 
-  BDSApertureEllpse        operator+ (G4double number) const;
-  const BDSApertureEllpse& operator+=(G4double number);
-  BDSApertureEllpse        operator* (G4double number) const;
-  const BDSApertureEllpse& operator*=(G4double number);
+  BDSApertureEllipse        operator+ (G4double number) const;
+  const BDSApertureEllipse& operator+=(G4double number);
+  BDSApertureEllipse        operator* (G4double number) const;
+  const BDSApertureEllipse& operator*=(G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 
 private:
-  BDSApertureEllpse() = delete;
+  BDSApertureEllipse() = delete;
 };
 
 #endif

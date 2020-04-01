@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAperture.hh"
 #include "BDSApertureCircle.hh"
 #include "BDSApertureClicPCL.hh"
-#include "BDSApertureEllpse.hh"
+#include "BDSApertureEllipse.hh"
 #include "BDSApertureFactory.hh"
 #include "BDSApertureOctagon.hh"
 #include "BDSApertureRaceTrack.hh"
