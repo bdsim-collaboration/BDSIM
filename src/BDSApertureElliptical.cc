@@ -35,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSApertureElliptical::BDSApertureElliptical(G4double aIn,
 					     G4double bIn,
 					     G4int    nPointsIn):
-  BDSAperture(BDSApertureType::elliptical),
+  BDSAperture(BDSApertureType::ellipse),
   a(aIn),
   b(bIn),
   nPoints(nPointsIn)
