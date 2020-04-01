@@ -1961,6 +1961,8 @@ described in :ref:`tunnel-geometry`.
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| apertureType                     | Default aperture type for all elements.               |
++----------------------------------+-------------------------------------------------------+
 | aper1                            | Default aper1 parameter                               |
 +----------------------------------+-------------------------------------------------------+
 | aper2                            | Default aper2 parameter                               |
@@ -2243,6 +2245,8 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | physicsVerbose                   | Prints out all processes linked to primary particle   |
 |                                  | and all physics processes registered in general       |
++----------------------------------+-------------------------------------------------------+
+| physicsVerbosity                 | Set the physics verbosity for Geant4 (0,1,2).         |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m]                                    |

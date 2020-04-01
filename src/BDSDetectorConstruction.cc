@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBLM.hh"
+#include "BDSBLMRegistry.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
@@ -647,7 +649,7 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 		       false,
 		       false,
 		       false,
-		       true); // use incremental copy nubmers 
+		       true); // use incremental copy numbers
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
@@ -964,8 +966,8 @@ BDSExtentGlobal BDSDetectorConstruction::CalculateExtentOfScorerMeshes(const BDS
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection*
 BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& biasList,
-					       G4String defaultBias,
-					       G4String elementName)
+					       const G4String& defaultBias,
+					       const G4String& elementName)
 {
   // no accelerator components to bias
   if (biasList.empty())
@@ -994,6 +996,10 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       eg->AddParticle(pb.particle);
       
       // loop through all processes
+      if (pb.flag.size() != pb.processList.size())
+        {throw BDSException(__METHOD_NAME__, "number of flag entries in \"" + pb.name + "\" doesn't match number of processes");}
+      if (pb.factor.size() != pb.processList.size())
+        {throw BDSException(__METHOD_NAME__, "number of factor entries in \"" + pb.name + "\" doesn't match number of processes");}
       for (unsigned int p = 0; p < pb.processList.size(); ++p)
 	{eg->SetBias(bias, pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
@@ -1022,6 +1028,20 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{crystalBiasing->AttachTo(crystal);}
     }
 #endif
+
+  auto blmSet = BDSBLMRegistry::Instance()->BLMs();
+  for (auto blm : blmSet)
+    {
+      G4String biasNamesS = blm->Bias();
+      if (biasNamesS.empty())
+        {continue;}
+      auto biasNamesV = BDS::GetWordsFromString(biasNamesS);
+      std::list<std::string> biasNames = {biasNamesV.begin(), biasNamesV.end()};
+      auto biasForBLM = BuildCrossSectionBias(biasNames, "", blm->GetName());
+      for (auto lv : blm->GetAllLogicalVolumes())
+        {biasForBLM->AttachTo(lv);}
+      biasForBLM->AttachTo(blm->GetContainerLogicalVolume()); // in some cases it's just a single volume
+    }
 
   G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
   G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;

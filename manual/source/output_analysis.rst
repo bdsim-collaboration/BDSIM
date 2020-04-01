@@ -43,6 +43,8 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 The absolute path is not necessary, as the above environmental variables are used by ROOT
 to find the library.
 
+.. _output-analysis-quick-recipes:
+
 Quick Recipes
 =============
 
