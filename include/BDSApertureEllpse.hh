@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSAPERTUREELLIPTICAL_H
-#define BDSAPERTUREELLIPTICAL_H
+#ifndef BDSAPERTUREELLIPSE_H
+#define BDSAPERTUREELLIPSE_H
 
 #include "BDSAperture.hh"
 #include "BDSTiltOffset.hh"
@@ -35,13 +35,13 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureElliptical: public BDSAperture
+class BDSApertureEllpse: public BDSAperture
 {
 public:
-  BDSApertureElliptical(G4double aIn,
-			G4double bIn,
-			G4int    nPointsIn = 0);
-  virtual ~BDSApertureElliptical(){;}
+  BDSApertureEllpse(G4double aIn,
+                    G4double bIn,
+                    G4int    nPointsIn = 0);
+  virtual ~BDSApertureEllpse(){;}
 
   G4double a;
   G4double b;
@@ -55,15 +55,15 @@ public:
   virtual BDSExtent Extent()                           const;
   virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
 
-  BDSApertureElliptical        operator+ (const G4double number) const;
-  const BDSApertureElliptical& operator+=(const G4double number);
-  BDSApertureElliptical        operator* (const G4double number) const;
-  const BDSApertureElliptical& operator*=(const G4double number);
+  BDSApertureEllpse        operator+ (const G4double number) const;
+  const BDSApertureEllpse& operator+=(const G4double number);
+  BDSApertureEllpse        operator* (const G4double number) const;
+  const BDSApertureEllpse& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 
 private:
-  BDSApertureElliptical() = delete;
+  BDSApertureEllpse() = delete;
 };
 
 #endif
