@@ -97,6 +97,7 @@ BDSPolygon BDSApertureRectangle::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
+  //np = BDS::NextMultiple(np,4); // ensure multiple of 4
   /// TODO deal with nPoints
   std::vector<G4TwoVector> r;
   r.emplace_back(G4TwoVector( a,  b));
