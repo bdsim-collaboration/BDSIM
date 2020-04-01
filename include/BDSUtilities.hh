@@ -146,6 +146,10 @@ namespace BDS
   /// Calculate the lowest common multiple between two numbers.
   unsigned int LowestCommonMultiple(unsigned int a, unsigned int b);
 
+  /// Return either 'value' or a number greater than value that is the next
+  /// multiple of divisor. Adds the modulo. e.g. (13,4) -> 16
+  unsigned int NextMultiple(unsigned int value, unsigned int divisor);
+
   /// Return a string version of a bool.
   inline G4String BoolToString(const G4bool& in) {return in ? "true" : "false";}
   

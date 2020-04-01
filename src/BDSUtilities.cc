@@ -324,6 +324,11 @@ unsigned int BDS::LowestCommonMultiple(unsigned int a, unsigned int b)
   return a * b / BDS::GreatestCommonDivisor(a, b);
 }
 
+unsigned int BDS::NextMultiple(unsigned int value, unsigned int divisor)
+{
+  return value + value % divisor;
+}
+
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 {
   G4cout << "Rotation matrix - reference: \"" << keyName << "\"" << *rm << G4endl;
