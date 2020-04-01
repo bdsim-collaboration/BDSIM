@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4EllipticalTube.hh"
+#include "G4ExtrudedSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -247,9 +248,9 @@ G4VSolid* BDSApertureFactory::CreateRectangle() const
   if (!angledFaces)
     {
       G4VSolid* product = new G4Box(productName,
-				    ap->a,
-				    ap->b,
-				    0.5 * productLength + productLengthExtra);
+				                    ap->a,
+				                    ap->b,
+				                    0.5 * productLength + productLengthExtra);
       return product;
     }
   else
@@ -306,16 +307,118 @@ G4VSolid* BDSApertureFactory::CreateEllipse() const
     }
 }
 
+G4VSolid* BDSApertureFactory::CreateExtrudedSolid() const
+{
+  BDSPolygon p = productApertureIn->Polygon();
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1; // the scale at each end of the points = 1
+  if (!angledFaces)
+    {
+      G4VSolid* product = new G4ExtrudedSolid(productName,
+                                              p.Points(),
+                                              0.5 * productLength + productLengthExtra,
+                                              zOffsets, zScale,  // dx,dy offset for each face, scaling
+                                              zOffsets, zScale); // dx,dy offset for each face, scaling
+      return product;
+    }
+  else
+    {
+      G4double maxRadius = productApertureIn->RadiusToEncompass();
+      G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
+      G4VSolid* square = new G4ExtrudedSolid(productName + "_square",
+                                            p.Points(),
+                                            productLength + productLengthExtra,
+                                            zOffsets, zScale,  // dx,dy offset for each face, scaling
+                                            zOffsets, zScale); // dx,dy offset for each face, scaling
+      G4VSolid* product = new G4IntersectionSolid(productName, square, cut);
+      return product;
+    }
+}
+
 G4VSolid* BDSApertureFactory::CreateRectCircle() const
-{return CreateCircle();}
+{
+  const BDSApertureRectCircle* ap = dynamic_cast<const BDSApertureRectCircle*>(productApertureIn);
+  if (!ap)
+    {return nullptr;}
+  if (!angledFaces)
+    {
+      G4VSolid* circle = new G4Tubs(productName + "_circle",
+                                               0,
+                                               ap->radius,
+                                               0.5 * productLength + productLengthExtra,
+                                               0,
+                                               CLHEP::twopi);
+      G4VSolid* rect = new G4Box(productName + "_rectangle",
+                                 ap->a,
+                                 ap->b,
+                                 productLength + productLengthExtra);
+      G4VSolid* product = new G4IntersectionSolid(productName, circle, rect);
+      return product;
+    }
+  else
+    {
+      G4double maxRadius = ap->RadiusToEncompass();
+      G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
+      G4VSolid* circle = new G4Tubs(productName + "_circle",
+                                    0,
+                                    ap->radius,
+                                    productLength + productLengthExtra,
+                                    0,
+                                    CLHEP::twopi);
+      G4VSolid* rect = new G4Box(productName + "_rectangle",
+                                 ap->a,
+                                 ap->b,
+                                 1.5*productLength + productLengthExtra);
+      G4VSolid* ellipseRect = new G4IntersectionSolid(productName, circle, rect);
+      G4VSolid* product = new G4IntersectionSolid(productName, ellipseRect, cut);
+      return product;
+    }
+}
+
 G4VSolid* BDSApertureFactory::CreateRectEllipse() const
-{return CreateCircle();}
+{
+  const BDSApertureRectEllipse* ap = dynamic_cast<const BDSApertureRectEllipse*>(productApertureIn);
+  if (!ap)
+    {return nullptr;}
+  if (!angledFaces)
+    {
+      G4VSolid* ellipse = new G4EllipticalTube(productName + "_ellipse",
+                                               ap->ellipseA,
+                                               ap->ellipseB,
+                                               0.5 * productLength + productLengthExtra);
+      G4VSolid* rect = new G4Box(productName + "_rectangle",
+                                 ap->rectangleA,
+                                 ap->rectangleB,
+                                 productLength + productLengthExtra);
+      G4VSolid* product = new G4IntersectionSolid(productName, ellipse, rect);
+      return product;
+    }
+  else
+    {
+      G4double maxRadius = ap->RadiusToEncompass();
+      G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
+      G4VSolid* ellipse = new G4EllipticalTube(productName + "_ellipse",
+                                               ap->ellipseA,
+                                               ap->ellipseB,
+                                               productLength + productLengthExtra);
+      G4VSolid* rect = new G4Box(productName + "_rectangle",
+                                 ap->rectangleA,
+                                 ap->rectangleB,
+                                 1.5*productLength + productLengthExtra);
+      G4VSolid* ellipseRect = new G4IntersectionSolid(productName, ellipse, rect);
+      G4VSolid* product = new G4IntersectionSolid(productName, ellipseRect, cut);
+      return product;
+    }
+}
+
 G4VSolid* BDSApertureFactory::CreateRaceTrack() const
-{return CreateCircle();}
+{return CreateExtrudedSolid();}
+
 G4VSolid* BDSApertureFactory::CreateOctagonal() const
-{return CreateCircle();}
+{return CreateExtrudedSolid();}
+
 G4VSolid* BDSApertureFactory::CreateClicPCL() const
-{return CreateCircle();}
+{return CreateExtrudedSolid();}
 
 G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
 {

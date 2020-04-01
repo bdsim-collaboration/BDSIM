@@ -101,6 +101,9 @@ private:
   G4VSolid* CutSolid(const G4String& name,
                      G4double radiusToEncompass) const;
 
+  /// Create a solid as an extruded solid
+  G4VSolid* CreateExtrudedSolid() const;
+
   /// Create a shape with different ends.
   G4VSolid* CreateDifferentEnds() const;
   
