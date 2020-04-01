@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
 					 G4int    nPointsIn):
-  BDSAperture(BDSApertureType::circular),
+  BDSAperture(BDSApertureType::circle),
   radius(radiusIn),
   nPoints(nPointsIn)
 {

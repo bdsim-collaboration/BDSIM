@@ -62,8 +62,8 @@ BDSApertureFactory::BDSApertureFactory():
   angledFaces(false)
 {
   specialisations = {
-		     {MakePair(BDSApertureType::circular,
-			       BDSApertureType::circular), &BDSApertureFactory::CircularToCircular}
+		     {MakePair(BDSApertureType::circle,
+			       BDSApertureType::circle), &BDSApertureFactory::CircularToCircular}
   };
 }
 
@@ -109,7 +109,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
   BDSAperture* result = nullptr;
   switch (at.underlying())
     {
-    case BDSApertureType::circular:
+    case BDSApertureType::circle:
       {result = new BDSApertureCircular(a1, nPoints);       break;}
     case BDSApertureType::elliptical:
       {result = new BDSApertureElliptical(a1, a2, nPoints); break;}
@@ -178,7 +178,7 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
   G4VSolid* product = nullptr;
   switch (apertureIn->apertureType.underlying())
     {
-    case BDSApertureType::circular:
+    case BDSApertureType::circle:
       {product = CreateCircular();    break;}
     case BDSApertureType::rectangular:
       {product = CreateRectangular(); break;}

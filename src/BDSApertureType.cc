@@ -28,20 +28,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
   new std::map<BDSApertureType, std::string> ({
-   {BDSApertureType::circular,       "circular"},
-   {BDSApertureType::elliptical,     "elliptical"},
-   {BDSApertureType::rectangular,    "rectangular"},
-   {BDSApertureType::rectcircle,     "rectcircle"},
-   {BDSApertureType::rectellipse,    "rectellipse"},
-   {BDSApertureType::racetrack,      "racetrack"},
-   {BDSApertureType::octagonal,      "octagonal"},
-   {BDSApertureType::clicpcl,        "clicpcl"}
+   {BDSApertureType::circle,      "circular"},
+   {BDSApertureType::elliptical,  "elliptical"},
+   {BDSApertureType::rectangular, "rectangular"},
+   {BDSApertureType::rectcircle,  "rectcircle"},
+   {BDSApertureType::rectellipse, "rectellipse"},
+   {BDSApertureType::racetrack,   "racetrack"},
+   {BDSApertureType::octagonal,   "octagonal"},
+   {BDSApertureType::clicpcl,     "clicpcl"}
 });	
 
 BDSApertureType BDS::DetermineApertureType(G4String apertureType)
 {
   std::map<G4String, BDSApertureType> types;
-  types["circular"]       = BDSApertureType::circular;
+  types["circular"]       = BDSApertureType::circle;
   types["elliptical"]     = BDSApertureType::elliptical;
   types["rectangular"]    = BDSApertureType::rectangular;
   types["rectcircle"]     = BDSApertureType::rectcircle;
