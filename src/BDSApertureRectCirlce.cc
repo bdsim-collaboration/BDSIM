@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureCircular.hh"
+#include "BDSApertureCircle.hh"
 #include "BDSApertureRectangular.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureType.hh"
@@ -112,7 +112,7 @@ BDSPolygon BDSApertureRectCircle::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
-  BDSApertureCircular    ac = BDSApertureCircular(radius, np);
+  BDSApertureCircle    ac = BDSApertureCircle(radius, np);
   BDSApertureRectangular ar = BDSApertureRectangular(a, b);
   BDSPolygon pCircle    = ac.Polygon();
   BDSPolygon pRectangle = ar.Polygon();

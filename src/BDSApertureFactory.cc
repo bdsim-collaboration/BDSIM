@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureCircular.hh"
+#include "BDSApertureCircle.hh"
 #include "BDSApertureElliptical.hh"
 #include "BDSApertureFactory.hh"
 #include "BDSApertureRectangular.hh"
@@ -110,7 +110,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
   switch (at.underlying())
     {
     case BDSApertureType::circle:
-      {result = new BDSApertureCircular(a1, nPoints);       break;}
+      {result = new BDSApertureCircle(a1, nPoints);       break;}
     case BDSApertureType::ellipse:
       {result = new BDSApertureElliptical(a1, a2, nPoints); break;}
     case BDSApertureType::rectangle:
@@ -202,7 +202,7 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
 
 G4VSolid* BDSApertureFactory::CreateCircle() const
 {
-  const BDSApertureCircular* ap = dynamic_cast<const BDSApertureCircular*>(productApertureIn);
+  const BDSApertureCircle* ap = dynamic_cast<const BDSApertureCircle*>(productApertureIn);
   if (!ap)
     {return nullptr;}
   if (!angledFaces)

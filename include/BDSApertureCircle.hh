@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSAPERTURECIRCULAR_H
-#define BDSAPERTURECIRCULAR_H
+#ifndef BDSAPERTURECIRCLE_H
+#define BDSAPERTURECIRCLE_H
 
 #include "BDSAperture.hh"
 
@@ -27,17 +27,17 @@ class BDSExtent;
 class BDSPolygon;
 
 /**
- * @brief Circular aperture.
+ * @brief Circle aperture.
  *
  * @author Laurie Nevay
  */
 
-class BDSApertureCircular: public BDSAperture
+class BDSApertureCircle: public BDSAperture
 {
 public:
-  explicit BDSApertureCircular(G4double radiusIn,
-			       G4int    nPointsIn = 0);
-  virtual ~BDSApertureCircular(){;}
+  explicit BDSApertureCircle(G4double radiusIn,
+                             G4int    nPointsIn = 0);
+  virtual ~BDSApertureCircle(){;}
 
   G4double radius;
   G4int    nPoints;
@@ -48,15 +48,15 @@ public:
   virtual BDSExtent Extent()                           const;
   virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
 
-  BDSApertureCircular        operator+ (const G4double number) const;
-  const BDSApertureCircular& operator+=(const G4double number);
-  BDSApertureCircular        operator* (const G4double number) const;
-  const BDSApertureCircular& operator*=(const G4double number);
+  BDSApertureCircle        operator+ (const G4double number) const;
+  const BDSApertureCircle& operator+=(const G4double number);
+  BDSApertureCircle        operator* (const G4double number) const;
+  const BDSApertureCircle& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 
 private:
-  BDSApertureCircular() = delete;
+  BDSApertureCircle() = delete;
 };
 
 #endif

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureCircular.hh"
+#include "BDSApertureCircle.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -35,8 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <vector>
 
-BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
-					 G4int    nPointsIn):
+BDSApertureCircle::BDSApertureCircle(G4double radiusIn,
+                                     G4int    nPointsIn):
   BDSAperture(BDSApertureType::circle),
   radius(radiusIn),
   nPoints(nPointsIn)
@@ -45,7 +45,7 @@ BDSApertureCircular::BDSApertureCircular(G4double radiusIn,
     {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
 }
 
-G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
+G4bool BDSApertureCircle::Equals(const BDSAperture* other) const
 {
   if (!other)
     {return false;}
@@ -55,50 +55,50 @@ G4bool BDSApertureCircular::Equals(const BDSAperture* other) const
     {return false;}
   else
     {
-      const BDSApertureCircular* oc = dynamic_cast<const BDSApertureCircular*>(other);
+      const BDSApertureCircle* oc = dynamic_cast<const BDSApertureCircle*>(other);
       return BDS::DoublesAreEqual(oc->radius, radius);
     }
 }
 
-void BDSApertureCircular::CheckInfoOK() const
+void BDSApertureCircle::CheckInfoOK() const
 {
   CheckRequiredParametersSet(radius, true);
   CheckParameterIsPositive(radius, "radius");
 }
 
-BDSExtent BDSApertureCircular::Extent() const
+BDSExtent BDSApertureCircle::Extent() const
 {
   BDSExtent simpleExtent(radius, radius, 0);
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureCircular BDSApertureCircular::operator+ (const G4double number) const
+BDSApertureCircle BDSApertureCircle::operator+ (const G4double number) const
 {
-  BDSApertureCircular result = BDSApertureCircular(*this);
+  BDSApertureCircle result = BDSApertureCircle(*this);
   result += number;
   return result;
 }
 
-const BDSApertureCircular& BDSApertureCircular::operator+=(const G4double number)
+const BDSApertureCircle& BDSApertureCircle::operator+=(const G4double number)
 {
   radius += number;
   return *this;
 }
 
-BDSApertureCircular BDSApertureCircular::operator* (const G4double number) const
+BDSApertureCircle BDSApertureCircle::operator* (const G4double number) const
 {
-  BDSApertureCircular result = BDSApertureCircular(*this);
+  BDSApertureCircle result = BDSApertureCircle(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureCircular& BDSApertureCircular::operator*=(const G4double number)
+const BDSApertureCircle& BDSApertureCircle::operator*=(const G4double number)
 {
   radius *= number;
   return *this;
 }
 
-BDSPolygon BDSApertureCircular::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureCircle::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
   if (np < 3 || np < MinimumNumberOfPoints())
