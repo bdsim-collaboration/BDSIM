@@ -113,7 +113,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
       {result = new BDSApertureCircular(a1, nPoints);       break;}
     case BDSApertureType::elliptical:
       {result = new BDSApertureElliptical(a1, a2, nPoints); break;}
-    case BDSApertureType::rectangular:
+    case BDSApertureType::rectangle:
       {result = new BDSApertureRectangular(a1, a2);         break;}
     case BDSApertureType::rectcircle:
       {result = new BDSApertureRectCircle(a1, a2, a3);      break;}
@@ -180,7 +180,7 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
     {
     case BDSApertureType::circle:
       {product = CreateCircular();    break;}
-    case BDSApertureType::rectangular:
+    case BDSApertureType::rectangle:
       {product = CreateRectangular(); break;}
     case BDSApertureType::elliptical:
       {product = CreateElliptical();  break;}

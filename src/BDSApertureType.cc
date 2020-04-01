@@ -30,7 +30,7 @@ std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
   new std::map<BDSApertureType, std::string> ({
    {BDSApertureType::circle,      "circular"},
    {BDSApertureType::elliptical,  "elliptical"},
-   {BDSApertureType::rectangular, "rectangular"},
+   {BDSApertureType::rectangle,   "rectangular"},
    {BDSApertureType::rectcircle,  "rectcircle"},
    {BDSApertureType::rectellipse, "rectellipse"},
    {BDSApertureType::racetrack,   "racetrack"},
@@ -43,7 +43,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   std::map<G4String, BDSApertureType> types;
   types["circular"]       = BDSApertureType::circle;
   types["elliptical"]     = BDSApertureType::elliptical;
-  types["rectangular"]    = BDSApertureType::rectangular;
+  types["rectangular"]    = BDSApertureType::rectangle;
   types["rectcircle"]     = BDSApertureType::rectcircle;
   types["rectellipse"]    = BDSApertureType::rectellipse;
   types["racetrack"]      = BDSApertureType::racetrack;

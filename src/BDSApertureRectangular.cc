@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSApertureRectangular::BDSApertureRectangular(G4double aIn,
 					       G4double bIn):
-  BDSAperture(BDSApertureType::rectangular),
+  BDSAperture(BDSApertureType::rectangle),
   a(aIn),
   b(bIn)
 {;}
