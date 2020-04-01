@@ -34,7 +34,7 @@ std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
    {BDSApertureType::rectcircle,  "rectcircle"},
    {BDSApertureType::rectellipse, "rectellipse"},
    {BDSApertureType::racetrack,   "racetrack"},
-   {BDSApertureType::octagonal,   "octagon"},
+   {BDSApertureType::octagon,     "octagon"},
    {BDSApertureType::clicpcl,     "clicpcl"}
 });	
 
@@ -47,7 +47,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["rectcircle"]   = BDSApertureType::rectcircle;
   types["rectellipse"]  = BDSApertureType::rectellipse;
   types["racetrack"]    = BDSApertureType::racetrack;
-  types["octagon"]      = BDSApertureType::octagonal;
+  types["octagon"]      = BDSApertureType::octagon;
   types["clicpcl"]      = BDSApertureType::clicpcl;
 
   // alternatives

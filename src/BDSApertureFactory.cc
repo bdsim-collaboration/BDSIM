@@ -193,7 +193,7 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
       {product = CreateRectEllipse(); break;}
     case BDSApertureType::racetrack:
       {product = CreateRaceTrack();   break;}
-    case BDSApertureType::octagonal:
+    case BDSApertureType::octagon:
       {product = CreateOctagonal();   break;}
     case BDSApertureType::clicpcl:
       {product = CreateClicPCL();     break;}
