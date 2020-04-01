@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureRectangular.hh"
+#include "BDSApertureRectangle.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -28,14 +28,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
-BDSApertureRectangular::BDSApertureRectangular(G4double aIn,
-					       G4double bIn):
+BDSApertureRectangle::BDSApertureRectangle(G4double aIn,
+                                           G4double bIn):
   BDSAperture(BDSApertureType::rectangle),
   a(aIn),
   b(bIn)
 {;}
 
-G4bool BDSApertureRectangular::Equals(const BDSAperture* other) const
+G4bool BDSApertureRectangle::Equals(const BDSAperture* other) const
 {
   if (!other)
     {return false;}
@@ -45,53 +45,53 @@ G4bool BDSApertureRectangular::Equals(const BDSAperture* other) const
     {return false;}
   else
     {
-      const BDSApertureRectangular* oc = dynamic_cast<const BDSApertureRectangular*>(other);
+      const BDSApertureRectangle* oc = dynamic_cast<const BDSApertureRectangle*>(other);
       return BDS::DoublesAreEqual(oc->a, a) && BDS::DoublesAreEqual(oc->b, b);
     }
 }
 
-void BDSApertureRectangular::CheckInfoOK() const
+void BDSApertureRectangle::CheckInfoOK() const
 {
   CheckRequiredParametersSet(a, true, b, true);
   CheckParameterIsPositive(a, "a");
   CheckParameterIsPositive(b, "b");
 }
 
-BDSExtent BDSApertureRectangular::Extent() const
+BDSExtent BDSApertureRectangle::Extent() const
 {
   BDSExtent simpleExtent(a, b, 0);
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureRectangular BDSApertureRectangular::operator+ (const G4double number) const
+BDSApertureRectangle BDSApertureRectangle::operator+ (const G4double number) const
 {
-  BDSApertureRectangular result = BDSApertureRectangular(*this);
+  BDSApertureRectangle result = BDSApertureRectangle(*this);
   result += number;
   return result;
 }
 
-const BDSApertureRectangular& BDSApertureRectangular::operator+=(const G4double number)
+const BDSApertureRectangle& BDSApertureRectangle::operator+=(const G4double number)
 {
   a += number;
   b += number;
   return *this;
 }
 
-BDSApertureRectangular BDSApertureRectangular::operator* (const G4double number) const
+BDSApertureRectangle BDSApertureRectangle::operator* (const G4double number) const
 {
-  BDSApertureRectangular result = BDSApertureRectangular(*this);
+  BDSApertureRectangle result = BDSApertureRectangle(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureRectangular& BDSApertureRectangular::operator*=(const G4double number)
+const BDSApertureRectangle& BDSApertureRectangle::operator*=(const G4double number)
 {
   a *= number;
   b *= number;
   return *this;
 }
 
-BDSPolygon BDSApertureRectangular::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureRectangle::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())

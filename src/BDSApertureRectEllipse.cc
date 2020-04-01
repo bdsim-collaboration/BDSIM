@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
 #include "BDSApertureEllpse.hh"
-#include "BDSApertureRectangular.hh"
+#include "BDSApertureRectangle.hh"
 #include "BDSApertureRectEllipse.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
@@ -119,7 +119,7 @@ BDSPolygon BDSApertureRectEllipse::Polygon(G4int nPointsIn) const
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
   BDSApertureEllpse  ae = BDSApertureEllpse(ellipseA, ellipseB, np);
-  BDSApertureRectangular ar = BDSApertureRectangular(rectangleA, rectangleB);
+  BDSApertureRectangle ar = BDSApertureRectangle(rectangleA, rectangleB);
   BDSPolygon pEllipse = ae.Polygon();
   BDSPolygon pRectangle = ar.Polygon();
   BDSPolygon result = pEllipse.Intersection(pRectangle);

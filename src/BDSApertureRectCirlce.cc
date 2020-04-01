@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
 #include "BDSApertureCircle.hh"
-#include "BDSApertureRectangular.hh"
+#include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
@@ -113,7 +113,7 @@ BDSPolygon BDSApertureRectCircle::Polygon(G4int nPointsIn) const
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
   BDSApertureCircle    ac = BDSApertureCircle(radius, np);
-  BDSApertureRectangular ar = BDSApertureRectangular(a, b);
+  BDSApertureRectangle ar = BDSApertureRectangle(a, b);
   BDSPolygon pCircle    = ac.Polygon();
   BDSPolygon pRectangle = ar.Polygon();
   BDSPolygon result = pCircle.Intersection(pRectangle);

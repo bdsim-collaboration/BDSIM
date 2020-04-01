@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSAPERTURERECTANGULAR_H
-#define BDSAPERTURERECTANGULAR_H
+#ifndef BDSAPERTURERECTANGLE_H
+#define BDSAPERTURERECTANGLE_H
 
 #include "BDSAperture.hh"
 #include "BDSTiltOffset.hh"
@@ -35,12 +35,12 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureRectangular: public BDSAperture
+class BDSApertureRectangle: public BDSAperture
 {
 public:
-  BDSApertureRectangular(G4double aIn,
-			 G4double bIn);
-  virtual ~BDSApertureRectangular(){;}
+  BDSApertureRectangle(G4double aIn,
+                       G4double bIn);
+  virtual ~BDSApertureRectangle(){;}
 
   G4double a;
   G4double b;
@@ -51,15 +51,15 @@ public:
   virtual BDSExtent Extent()                           const;
   virtual G4int     MinimumNumberOfPoints()            const {return 4;}
 
-  BDSApertureRectangular        operator+ (const G4double number) const;
-  const BDSApertureRectangular& operator+=(const G4double number);
-  BDSApertureRectangular        operator* (const G4double number) const;
-  const BDSApertureRectangular& operator*=(const G4double number);
+  BDSApertureRectangle        operator+ (const G4double number) const;
+  const BDSApertureRectangle& operator+=(const G4double number);
+  BDSApertureRectangle        operator* (const G4double number) const;
+  const BDSApertureRectangle& operator*=(const G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 
 private:
-  BDSApertureRectangular() = delete;
+  BDSApertureRectangle() = delete;
 };
 
 #endif

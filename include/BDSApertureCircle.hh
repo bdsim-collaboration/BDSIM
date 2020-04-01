@@ -27,7 +27,7 @@ class BDSExtent;
 class BDSPolygon;
 
 /**
- * @brief Circle aperture.
+ * @brief Circular aperture.
  *
  * @author Laurie Nevay
  */

@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureCircle.hh"
 #include "BDSApertureEllpse.hh"
 #include "BDSApertureFactory.hh"
-#include "BDSApertureRectangular.hh"
+#include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureRectEllipse.hh"
 #include "BDSApertureType.hh"
@@ -114,7 +114,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
     case BDSApertureType::ellipse:
       {result = new BDSApertureEllpse(a1, a2, nPoints); break;}
     case BDSApertureType::rectangle:
-      {result = new BDSApertureRectangular(a1, a2);         break;}
+      {result = new BDSApertureRectangle(a1, a2);         break;}
     case BDSApertureType::rectcircle:
       {result = new BDSApertureRectCircle(a1, a2, a3);      break;}
     case BDSApertureType::rectellipse:
@@ -231,7 +231,7 @@ G4VSolid* BDSApertureFactory::CreateCircle() const
 
 G4VSolid* BDSApertureFactory::CreateRectangle() const
 {
-  const BDSApertureRectangular* ap = dynamic_cast<const BDSApertureRectangular*>(productApertureIn);
+  const BDSApertureRectangle* ap = dynamic_cast<const BDSApertureRectangle*>(productApertureIn);
   if (!ap)
     {return nullptr;}
   if (!angledFaces)
