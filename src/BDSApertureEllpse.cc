@@ -107,9 +107,10 @@ BDSPolygon BDSApertureEllpse::Polygon(G4int nPointsIn) const
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < 3.");}
 
   std::vector<G4TwoVector> r;
+  r.reserve(np);
   G4double dTheta = CLHEP::twopi / (G4double)np;
   for (G4int i = 0; i < np; i++)
-    {r.push_back(G4TwoVector(a * std::cos(i*dTheta), b * std::sin(i*dTheta)));}
+    {r.emplace_back(G4TwoVector(a * std::cos(i*dTheta), b * std::sin(i*dTheta)));}
   
   return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
 }

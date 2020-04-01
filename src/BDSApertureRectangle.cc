@@ -97,11 +97,12 @@ BDSPolygon BDSApertureRectangle::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
+  /// TODO deal with nPoints
   std::vector<G4TwoVector> r;
-  r.push_back(G4TwoVector( a,  b));
-  r.push_back(G4TwoVector(-a,  b));
-  r.push_back(G4TwoVector(-a, -b));
-  r.push_back(G4TwoVector( a, -b));
+  r.emplace_back(G4TwoVector( a,  b));
+  r.emplace_back(G4TwoVector(-a,  b));
+  r.emplace_back(G4TwoVector(-a, -b));
+  r.emplace_back(G4TwoVector( a, -b));
   
   return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
 }
