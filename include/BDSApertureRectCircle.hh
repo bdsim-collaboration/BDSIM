@@ -49,7 +49,7 @@ public:
   virtual void      CheckInfoOK()                    const;
   virtual G4double  RadiusToEncompass()              const {return radius + tiltOffset.Radius();}
   virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 4;}
+  virtual G4int     MinimumNumberOfPoints()          const {return 10;}
 
   BDSApertureRectCircle        operator+ (G4double number) const;
   const BDSApertureRectCircle& operator+=(G4double number);

@@ -53,7 +53,7 @@ public:
   virtual void      CheckInfoOK()                    const;
   virtual G4double  RadiusToEncompass()              const {return std::max(ellipseA, ellipseB) + tiltOffset.Radius();}
   virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 4;}
+  virtual G4int     MinimumNumberOfPoints()          const {return 10;}
 
   BDSApertureRectEllipse        operator+ (G4double number) const;
   const BDSApertureRectEllipse& operator+=(G4double number);
