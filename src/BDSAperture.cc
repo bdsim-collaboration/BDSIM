@@ -68,3 +68,23 @@ G4bool BDSAperture::LessThan(const BDSAperture* other) const
 
   return Polygon().Inside(other->Polygon());
 }
+
+void BDSAperture::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
+				     G4double startAngle,
+				     G4double finishAngle,
+				     G4double radiusA,
+				     G4double radiusB,
+				     G4int    nPoints,
+				     G4double xOffset,
+				     G4double yOffset)
+{
+  G4double diff = finishAngle - startAngle;
+  G4double delta = diff / (G4double)nPoints;
+  for (G4double ang = startAngle; ang < finishAngle;)
+    {// l for local
+      G4double xl = xOffset + radiusA*std::sin(ang);
+      G4double yl = yOffset + radiusB*std::cos(ang);
+      vec.emplace_back(xl, yl);
+      ang += delta;
+    }
+}

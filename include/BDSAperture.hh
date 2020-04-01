@@ -86,6 +86,16 @@ protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.
   inline BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}
+
+  /// Utility function to append points on an ellipse to a vector.
+  static void AppendAngleEllipse(std::vector<G4TwoVector>& vec,
+                                 G4double startAngle,
+				 G4double finishAngle,
+				 G4double radiusA,
+				 G4double radiusB,
+				 G4int    nPoints,
+				 G4double xOffset,
+				 G4double yOffset);
 };
 
 #endif
