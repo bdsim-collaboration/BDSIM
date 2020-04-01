@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
-#include "BDSApertureEllpse.hh"
+#include "BDSApertureEllipse.hh"
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectEllipse.hh"
 #include "BDSApertureType.hh"
@@ -112,7 +112,7 @@ BDSPolygon BDSApertureRectEllipse::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
-  BDSApertureEllpse  ae = BDSApertureEllpse(ellipseA, ellipseB, np);
+  BDSApertureEllipse  ae = BDSApertureEllipse(ellipseA, ellipseB, np);
   BDSApertureRectangle ar = BDSApertureRectangle(rectangleA, rectangleB);
   BDSPolygon pEllipse = ae.Polygon();
   BDSPolygon pRectangle = ar.Polygon();
