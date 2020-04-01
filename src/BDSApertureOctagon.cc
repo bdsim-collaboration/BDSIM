@@ -28,6 +28,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
 BDSApertureOctagon::BDSApertureOctagon(G4double xIn,
                                        G4double yIn,
                                        G4double xEdgeIn,
@@ -115,7 +119,7 @@ BDSPolygon BDSApertureOctagon::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
-  np = BDS::NextMultiple(np,8); // ensure multiple of 8
+  np = BDS::NextMultiple(np, 8); // ensure multiple of 8
   /// TODO deal with nPoints
   std::vector<G4TwoVector> r;
   r.emplace_back(G4TwoVector( x,      yEdge));

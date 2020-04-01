@@ -69,7 +69,6 @@ void BDSApertureRaceTrack::CheckInfoOK() const
 
 BDSExtent BDSApertureRaceTrack::Extent() const
 {
-  
   BDSExtent simpleExtent(x + radius, y + radius, 0);
   return ExtentOffsetTilt(simpleExtent);
 }
@@ -110,7 +109,7 @@ BDSPolygon BDSApertureRaceTrack::Polygon(G4int nPointsIn) const
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
-  np = BDS::NextMultiple(np,4); // ensure multiple of 4
+  np = BDS::NextMultiple(np, 4); // ensure multiple of 4
   std::vector<G4TwoVector> r;
   r.reserve(np);
   G4int pointsPerCurve = np / 4;

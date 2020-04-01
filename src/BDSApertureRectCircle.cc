@@ -28,16 +28,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
-#include "G4TwoVector.hh"
 #include "G4Types.hh"
 
-#include "CLHEP/Units/PhysicalConstants.h"
-
-#include <cmath>
-
 BDSApertureRectCircle::BDSApertureRectCircle(G4double aIn,
-					     G4double bIn,
-					     G4double radiusIn):
+					                         G4double bIn,
+					                         G4double radiusIn):
   BDSAperture(BDSApertureType::rectcircle),
   a(aIn),
   b(bIn),
@@ -56,8 +51,8 @@ G4bool BDSApertureRectCircle::Equals(const BDSAperture* other) const
     {
       const BDSApertureRectCircle* oc = dynamic_cast<const BDSApertureRectCircle*>(other);
       return BDS::DoublesAreEqual(oc->a, a) &&
-	  BDS::DoublesAreEqual(oc->b, b) &&
-	  BDS::DoublesAreEqual(oc->radius, radius);
+	         BDS::DoublesAreEqual(oc->b, b) &&
+	         BDS::DoublesAreEqual(oc->radius, radius);
     }
 }
 
@@ -71,7 +66,6 @@ void BDSApertureRectCircle::CheckInfoOK() const
 
 BDSExtent BDSApertureRectCircle::Extent() const
 {
-  
   BDSExtent simpleExtent(std::min(a, radius), std::min(b, radius), 0);
   return ExtentOffsetTilt(simpleExtent);
 }

@@ -28,12 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
-#include "G4TwoVector.hh"
 #include "G4Types.hh"
-
-#include "CLHEP/Units/PhysicalConstants.h"
-
-#include <cmath>
 
 BDSApertureRectEllipse::BDSApertureRectEllipse(G4double rectangleAIn,
 					       G4double rectangleBIn,
@@ -58,9 +53,9 @@ G4bool BDSApertureRectEllipse::Equals(const BDSAperture* other) const
     {
       const BDSApertureRectEllipse* oc = dynamic_cast<const BDSApertureRectEllipse*>(other);
       return BDS::DoublesAreEqual(oc->rectangleA, rectangleA) &&
-	BDS::DoublesAreEqual(oc->rectangleB, rectangleB) &&
-	BDS::DoublesAreEqual(oc->ellipseA, ellipseA) &&
-      	BDS::DoublesAreEqual(oc->ellipseB, ellipseB);
+	         BDS::DoublesAreEqual(oc->rectangleB, rectangleB) &&
+	         BDS::DoublesAreEqual(oc->ellipseA, ellipseA) &&
+      	     BDS::DoublesAreEqual(oc->ellipseB, ellipseB);
     }
 }
 
@@ -75,7 +70,6 @@ void BDSApertureRectEllipse::CheckInfoOK() const
 
 BDSExtent BDSApertureRectEllipse::Extent() const
 {
-  
   BDSExtent simpleExtent(std::min(rectangleA, ellipseA), std::min(rectangleB, ellipseB), 0);
   return ExtentOffsetTilt(simpleExtent);
 }
