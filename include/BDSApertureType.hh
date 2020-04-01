@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSAPERTURETYPE_H
 
 #include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+#include "G4String.hh"
 
 /**
  * @brief Type definition for aperture - used for comparison

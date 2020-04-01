@@ -51,7 +51,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["clicpcl"]      = BDSApertureType::clicpcl;
 
   // alternatives
-  types["lhc"]            = BDSApertureType::rectcircle;
+  types["lhc"]          = BDSApertureType::rectcircle;
   
   apertureType.toLower();
 
@@ -62,8 +62,8 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
       G4cerr << __METHOD_NAME__ << apertureType << " is not a valid apertureType" << G4endl;
 
       G4cout << "Available geometry types are:" << G4endl;
-      for (auto it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
+      for (const auto& it : types)
+	    {G4cout << "\"" << it.first << "\"" << G4endl;}
       throw BDSException(__METHOD_NAME__, "");
     }
   
