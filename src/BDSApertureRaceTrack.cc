@@ -36,7 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSApertureRaceTrack::BDSApertureRaceTrack(G4double xIn,
 					                       G4double yIn,
 					                       G4double radiusIn):
-  BDSAperture(BDSApertureType::rectcircle),
+  BDSAperture(BDSApertureType::racetrack),
   x(xIn),
   y(yIn),
   radius(radiusIn)
