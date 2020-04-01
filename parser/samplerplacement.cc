@@ -89,17 +89,17 @@ void SamplerPlacement::print()const
 	    << "referenceElementNumber" << referenceElementNumber << std::endl
 	    << "s"              << s             << std::endl
 	    << "x "             << x             << std::endl
-    	    << "y "             << y             << std::endl
-    	    << "z "             << z             << std::endl
-    	    << "phi "           << phi           << std::endl
-    	    << "theta "         << theta         << std::endl
-    	    << "psi "           << psi           << std::endl
-    	    << "axisX "         << axisX         << std::endl
-    	    << "axisY "         << axisY         << std::endl
-    	    << "axisZ "         << axisZ         << std::endl
-    	    << "angle "         << angle         << std::endl
+    	<< "y "             << y             << std::endl
+    	<< "z "             << z             << std::endl
+    	<< "phi "           << phi           << std::endl
+    	<< "theta "         << theta         << std::endl
+        << "psi "           << psi           << std::endl
+        << "axisX "         << axisX         << std::endl
+        << "axisY "         << axisY         << std::endl
+        << "axisZ "         << axisZ         << std::endl
+        << "angle "         << angle         << std::endl
 	    << "axisAngle "     << axisAngle     << std::endl
-    	    << "apertureMode "  << apertureModel << std::endl
+        << "apertureMode "  << apertureModel << std::endl
 	    << "shape "         << shape         << std::endl
 	    << "aper1 "         << aper1         << std::endl
 	    << "aper2 "         << aper2         << std::endl
