@@ -49,16 +49,16 @@ public:
   G4double ellipseA;
   G4double ellipseB;
 
-  virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual void      CheckInfoOK()                      const;
-  virtual G4double  RadiusToEncompass()                const {return std::max(ellipseA, ellipseB) + tiltOffset.Radius();}
-  virtual BDSExtent Extent()                           const;
-  virtual G4int     MinimumNumberOfPoints()            const {return 4;}
+  virtual G4bool    Equals(const BDSAperture* other) const;
+  virtual void      CheckInfoOK()                    const;
+  virtual G4double  RadiusToEncompass()              const {return std::max(ellipseA, ellipseB) + tiltOffset.Radius();}
+  virtual BDSExtent Extent()                         const;
+  virtual G4int     MinimumNumberOfPoints()          const {return 4;}
 
-  BDSApertureRectEllipse        operator+ (const G4double number) const;
-  const BDSApertureRectEllipse& operator+=(const G4double number);
-  BDSApertureRectEllipse        operator* (const G4double number) const;
-  const BDSApertureRectEllipse& operator*=(const G4double number);
+  BDSApertureRectEllipse        operator+ (G4double number) const;
+  const BDSApertureRectEllipse& operator+=(G4double number);
+  BDSApertureRectEllipse        operator* (G4double number) const;
+  const BDSApertureRectEllipse& operator*=(G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 };

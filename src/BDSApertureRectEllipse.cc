@@ -80,14 +80,14 @@ BDSExtent BDSApertureRectEllipse::Extent() const
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureRectEllipse BDSApertureRectEllipse::operator+ (const G4double number) const
+BDSApertureRectEllipse BDSApertureRectEllipse::operator+ (G4double number) const
 {
   BDSApertureRectEllipse result = BDSApertureRectEllipse(*this);
   result += number;
   return result;
 }
 
-const BDSApertureRectEllipse& BDSApertureRectEllipse::operator+=(const G4double number)
+const BDSApertureRectEllipse& BDSApertureRectEllipse::operator+=(G4double number)
 {
   rectangleA += number;
   rectangleB += number;
@@ -96,14 +96,14 @@ const BDSApertureRectEllipse& BDSApertureRectEllipse::operator+=(const G4double 
   return *this;
 }
 
-BDSApertureRectEllipse BDSApertureRectEllipse::operator* (const G4double number) const
+BDSApertureRectEllipse BDSApertureRectEllipse::operator* (G4double number) const
 {
   BDSApertureRectEllipse result = BDSApertureRectEllipse(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureRectEllipse& BDSApertureRectEllipse::operator*=(const G4double number)
+const BDSApertureRectEllipse& BDSApertureRectEllipse::operator*=(G4double number)
 {
   rectangleA *= number;
   rectangleB *= number;

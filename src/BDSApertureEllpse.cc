@@ -72,28 +72,28 @@ BDSExtent BDSApertureEllpse::Extent() const
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureEllpse BDSApertureEllpse::operator+ (const G4double number) const
+BDSApertureEllpse BDSApertureEllpse::operator+ (G4double number) const
 {
   BDSApertureEllpse result = BDSApertureEllpse(*this);
   result += number;
   return result;
 }
 
-const BDSApertureEllpse& BDSApertureEllpse::operator+=(const G4double number)
+const BDSApertureEllpse& BDSApertureEllpse::operator+=(G4double number)
 {
   a += number;
   b += number;
   return *this;
 }
 
-BDSApertureEllpse BDSApertureEllpse::operator* (const G4double number) const
+BDSApertureEllpse BDSApertureEllpse::operator* (G4double number) const
 {
   BDSApertureEllpse result = BDSApertureEllpse(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureEllpse& BDSApertureEllpse::operator*=(const G4double number)
+const BDSApertureEllpse& BDSApertureEllpse::operator*=(G4double number)
 {
   a *= number;
   b *= number;

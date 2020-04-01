@@ -72,27 +72,27 @@ BDSExtent BDSApertureCircle::Extent() const
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureCircle BDSApertureCircle::operator+ (const G4double number) const
+BDSApertureCircle BDSApertureCircle::operator+ (G4double number) const
 {
   BDSApertureCircle result = BDSApertureCircle(*this);
   result += number;
   return result;
 }
 
-const BDSApertureCircle& BDSApertureCircle::operator+=(const G4double number)
+const BDSApertureCircle& BDSApertureCircle::operator+=(G4double number)
 {
   radius += number;
   return *this;
 }
 
-BDSApertureCircle BDSApertureCircle::operator* (const G4double number) const
+BDSApertureCircle BDSApertureCircle::operator* (G4double number) const
 {
   BDSApertureCircle result = BDSApertureCircle(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureCircle& BDSApertureCircle::operator*=(const G4double number)
+const BDSApertureCircle& BDSApertureCircle::operator*=(G4double number)
 {
   radius *= number;
   return *this;

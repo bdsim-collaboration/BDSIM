@@ -63,28 +63,28 @@ BDSExtent BDSApertureRectangle::Extent() const
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureRectangle BDSApertureRectangle::operator+ (const G4double number) const
+BDSApertureRectangle BDSApertureRectangle::operator+ (G4double number) const
 {
   BDSApertureRectangle result = BDSApertureRectangle(*this);
   result += number;
   return result;
 }
 
-const BDSApertureRectangle& BDSApertureRectangle::operator+=(const G4double number)
+const BDSApertureRectangle& BDSApertureRectangle::operator+=(G4double number)
 {
   a += number;
   b += number;
   return *this;
 }
 
-BDSApertureRectangle BDSApertureRectangle::operator* (const G4double number) const
+BDSApertureRectangle BDSApertureRectangle::operator* (G4double number) const
 {
   BDSApertureRectangle result = BDSApertureRectangle(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureRectangle& BDSApertureRectangle::operator*=(const G4double number)
+const BDSApertureRectangle& BDSApertureRectangle::operator*=(G4double number)
 {
   a *= number;
   b *= number;

@@ -45,16 +45,16 @@ public:
   G4double a;
   G4double b;
 
-  virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual void      CheckInfoOK()                      const;
-  virtual G4double  RadiusToEncompass()                const {return std::hypot(a,b) + tiltOffset.Radius();}
-  virtual BDSExtent Extent()                           const;
-  virtual G4int     MinimumNumberOfPoints()            const {return 4;}
+  virtual G4bool    Equals(const BDSAperture* other) const;
+  virtual void      CheckInfoOK()                    const;
+  virtual G4double  RadiusToEncompass()              const {return std::hypot(a,b) + tiltOffset.Radius();}
+  virtual BDSExtent Extent()                         const;
+  virtual G4int     MinimumNumberOfPoints()          const {return 4;}
 
-  BDSApertureRectangle        operator+ (const G4double number) const;
-  const BDSApertureRectangle& operator+=(const G4double number);
-  BDSApertureRectangle        operator* (const G4double number) const;
-  const BDSApertureRectangle& operator*=(const G4double number);
+  BDSApertureRectangle        operator+ (G4double number) const;
+  const BDSApertureRectangle& operator+=(G4double number);
+  BDSApertureRectangle        operator* (G4double number) const;
+  const BDSApertureRectangle& operator*=(G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 

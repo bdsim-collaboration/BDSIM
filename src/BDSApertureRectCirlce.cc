@@ -76,14 +76,14 @@ BDSExtent BDSApertureRectCircle::Extent() const
   return ExtentOffsetTilt(simpleExtent);
 }
 
-BDSApertureRectCircle BDSApertureRectCircle::operator+ (const G4double number) const
+BDSApertureRectCircle BDSApertureRectCircle::operator+ (G4double number) const
 {
   BDSApertureRectCircle result = BDSApertureRectCircle(*this);
   result += number;
   return result;
 }
 
-const BDSApertureRectCircle& BDSApertureRectCircle::operator+=(const G4double number)
+const BDSApertureRectCircle& BDSApertureRectCircle::operator+=(G4double number)
 {
   a += number;
   b += number;
@@ -91,14 +91,14 @@ const BDSApertureRectCircle& BDSApertureRectCircle::operator+=(const G4double nu
   return *this;
 }
 
-BDSApertureRectCircle BDSApertureRectCircle::operator* (const G4double number) const
+BDSApertureRectCircle BDSApertureRectCircle::operator* (G4double number) const
 {
   BDSApertureRectCircle result = BDSApertureRectCircle(*this);
   result *= number;
   return result;
 }
 
-const BDSApertureRectCircle& BDSApertureRectCircle::operator*=(const G4double number)
+const BDSApertureRectCircle& BDSApertureRectCircle::operator*=(G4double number)
 {
   a *= number;
   b *= number;

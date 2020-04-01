@@ -42,16 +42,16 @@ public:
   G4double radius;
   G4int    nPoints;
 
-  virtual G4bool    Equals(const BDSAperture* other)   const;
-  virtual void      CheckInfoOK()                      const;
-  virtual G4double  RadiusToEncompass()                const {return radius;}
-  virtual BDSExtent Extent()                           const;
-  virtual G4int     MinimumNumberOfPoints()            const {return nPoints;}
+  virtual G4bool    Equals(const BDSAperture* other) const;
+  virtual void      CheckInfoOK()                    const;
+  virtual G4double  RadiusToEncompass()              const {return radius;}
+  virtual BDSExtent Extent()                         const;
+  virtual G4int     MinimumNumberOfPoints()          const {return nPoints;}
 
-  BDSApertureCircle        operator+ (const G4double number) const;
-  const BDSApertureCircle& operator+=(const G4double number);
-  BDSApertureCircle        operator* (const G4double number) const;
-  const BDSApertureCircle& operator*=(const G4double number);
+  BDSApertureCircle        operator+ (G4double number) const;
+  const BDSApertureCircle& operator+=(G4double number);
+  BDSApertureCircle        operator* (G4double number) const;
+  const BDSApertureCircle& operator*=(G4double number);
 
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
 
