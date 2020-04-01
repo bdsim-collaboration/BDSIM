@@ -86,9 +86,9 @@ private:
 			       G4double           lengthExtraForBoolean);
 
   /// @{ Flat faced construction function.
-  G4VSolid* CreateCircular()    const;
-  G4VSolid* CreateRectangular() const;
-  G4VSolid* CreateElliptical()  const;
+  G4VSolid* CreateCircle()    const;
+  G4VSolid* CreateRectangle() const;
+  G4VSolid* CreateEllipse()  const;
   G4VSolid* CreateRectCircle()  const;
   G4VSolid* CreateRectEllipse() const;
   G4VSolid* CreateRaceTrack()   const;
@@ -101,7 +101,7 @@ private:
   
   G4VSolid* CreateTubeByPoints()  const;
 
-  G4VSolid* CircularToCircular() const;
+  G4VSolid* CircleToCircle() const;
 
   /// Ratio of radii used for an intersection solid - greater than 1 and
   /// defined arbitrarily.

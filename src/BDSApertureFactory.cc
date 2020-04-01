@@ -63,7 +63,7 @@ BDSApertureFactory::BDSApertureFactory():
 {
   specialisations = {
 		     {MakePair(BDSApertureType::circle,
-			       BDSApertureType::circle), &BDSApertureFactory::CircularToCircular}
+			       BDSApertureType::circle), &BDSApertureFactory::CircleToCircle}
   };
 }
 
@@ -179,11 +179,11 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
   switch (apertureIn->apertureType.underlying())
     {
     case BDSApertureType::circle:
-      {product = CreateCircular();    break;}
+      {product = CreateCircle();    break;}
     case BDSApertureType::rectangle:
-      {product = CreateRectangular(); break;}
+      {product = CreateRectangle(); break;}
     case BDSApertureType::ellipse:
-      {product = CreateElliptical();  break;}
+      {product = CreateEllipse();  break;}
     case BDSApertureType::rectcircle:
       {product = CreateRectCircle();  break;}
     case BDSApertureType::rectellipse:
@@ -200,7 +200,7 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
   return product;
 }
 
-G4VSolid* BDSApertureFactory::CreateCircular() const
+G4VSolid* BDSApertureFactory::CreateCircle() const
 {
   const BDSApertureCircular* ap = dynamic_cast<const BDSApertureCircular*>(productApertureIn);
   if (!ap)
@@ -229,7 +229,7 @@ G4VSolid* BDSApertureFactory::CreateCircular() const
     }
 }
 
-G4VSolid* BDSApertureFactory::CreateRectangular() const
+G4VSolid* BDSApertureFactory::CreateRectangle() const
 {
   const BDSApertureRectangular* ap = dynamic_cast<const BDSApertureRectangular*>(productApertureIn);
   if (!ap)
@@ -263,18 +263,18 @@ G4VSolid* BDSApertureFactory::CreateRectangular() const
     }
 }
 
-G4VSolid* BDSApertureFactory::CreateElliptical() const
-{return CreateCircular();}
+G4VSolid* BDSApertureFactory::CreateEllipse() const
+{return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateRectCircle() const
-{return CreateCircular();}
+{return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateRectEllipse() const
-{return CreateCircular();}
+{return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateRaceTrack() const
-{return CreateCircular();}
+{return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateOctagonal() const
-{return CreateCircular();}
+{return CreateCircle();}
 G4VSolid* BDSApertureFactory::CreateClicPCL() const
-{return CreateCircular();}
+{return CreateCircle();}
 
 G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
 {
@@ -321,7 +321,7 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 		     nZ);
 }
 
-G4VSolid* BDSApertureFactory::CircularToCircular() const
+G4VSolid* BDSApertureFactory::CircleToCircle() const
 {return nullptr;}
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
