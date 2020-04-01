@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureCircle.hh"
 #include "BDSApertureEllpse.hh"
 #include "BDSApertureFactory.hh"
+#include "BDSApertureRaceTrack.hh"
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureRectEllipse.hh"
@@ -119,6 +120,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
       {result = new BDSApertureRectCircle(a1, a2, a3);      break;}
     case BDSApertureType::rectellipse:
       {result = new BDSApertureRectEllipse(a1, a2, a3, a4); break;}
+    case BDSApertureType::racetrack:
+      {result = new BDSApertureRaceTrack(a1, a2, a3);   break;}
     default:
       {break;}
     }
