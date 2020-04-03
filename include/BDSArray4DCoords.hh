@@ -69,7 +69,7 @@ public:
 			       const G4double t) const;
 
   /// Whether the spatial coordinates lie outside the range of the array or not and
-  /// warn and exit if so.  Sses OutsideCoords but warns and exits if the coordinates
+  /// warn and exit if so. Uses OutsideCoords but warns and exits if the coordinates
   /// are outside the array.
   virtual void OutsideCoordsWarn(const G4double x,
 				 const G4double y,
@@ -95,7 +95,7 @@ public:
 				   ArrayCoordsFromT(t));
   }
 
-  /// @{ Return sptial value from a continuous array coordinate in one dimension.
+  /// @{ Return spatial value from a continuous array coordinate in one dimension.
   inline G4double XFromArrayCoords(const G4double xCoord) const {return xMin + xCoord*xStep;}
   inline G4double YFromArrayCoords(const G4double yCoord) const {return yMin + yCoord*yStep;}
   inline G4double ZFromArrayCoords(const G4double zCoord) const {return zMin + zCoord*zStep;}
