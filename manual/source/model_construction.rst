@@ -950,7 +950,7 @@ volume is square.
 +--------------------+------------------------------+--------------+---------------+
 | `xsize`            | Horizontal half aperture [m] | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
-| `ysize`            | Half height of jaws [m]      | 0            | Yes           |
+| `ysize`            | Vertical half aperture [m]   | 0            | Yes           |
 +--------------------+------------------------------+--------------+---------------+
 | `material`         | Outer material               | None         | Yes           |
 +--------------------+------------------------------+--------------+---------------+
@@ -998,7 +998,7 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half-axes respectively.
+**half-axes** respectively.
 
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
