@@ -77,6 +77,8 @@ New Features
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
@@ -274,6 +276,8 @@ Bug Fixes
 * Fix generic element sensitivity. It never produced energy deposition.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from the run histograms.
 * The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
@@ -334,6 +338,7 @@ Bug Fixes
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 * Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Fixed a bug where the `lhcright` transverse extent was set incorrectly.
 * Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
