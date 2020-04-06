@@ -3125,6 +3125,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | conversionFactorFile    | No            | File name of conversion factor file to be used |
 |                         |               | in calculation                                 |
 +-------------------------+---------------+------------------------------------------------+
+| conversionFactorPath    | No            | Path to set of files per particle to be used   |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
 | materialToInclude       | No            | A space separated list of materials to be      |
 |                         |               | scored. Any materials not matching this will   |
 |                         |               | be ignored. (string, case sensitive).          |
