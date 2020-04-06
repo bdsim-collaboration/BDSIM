@@ -69,7 +69,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
 						     emptyMaterial,
 						     "container_lv");
-  // these are registered indpendently so aren't added to transient storage sets
+  // these are registered independently so aren't added to transient storage sets
   
   G4String token;
   G4String token1;
@@ -314,10 +314,10 @@ G4String BDSGeometryFactoryGMAD::GetWord(std::ifstream& inputf) const
   return str;
 }
 
-void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
-					  G4double&      x,
-					  G4String       name,
-					  G4String       lastToken) const
+void BDSGeometryFactoryGMAD::GetParameter(std::ifstream&  inputf,
+					                      G4double&       x,
+					                      const G4String& name,
+					                      const G4String& lastToken) const
 {
   G4String token;
 
@@ -332,10 +332,10 @@ void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
     }
 }
 
-void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
-					  G4String&      lval,
-					  G4String       name,
-					  G4String lastToken) const
+void BDSGeometryFactoryGMAD::GetParameter(std::ifstream&  inputf,
+					                      G4String&       lval,
+					                      const G4String& name,
+					                      const G4String& lastToken) const
 {
   G4String token;
 
