@@ -45,9 +45,14 @@ public:
 
   BDSHitsCollectionSamplerLink* SamplerHits() const {return allHits;}
   void ClearSamplerHits() {delete allHits; allHits = nullptr;}
+
+  inline G4int NSecondariesToReturn() const {return nSecondariesToReturn;}
+  inline G4int NPrimariesToReturn()   const {return nPrimariesToReturn;}
   
 private:
   BDSHitsCollectionSamplerLink* allHits;
+  G4int nSecondariesToReturn;
+  G4int nPrimariesToReturn;
 };
 
 #endif

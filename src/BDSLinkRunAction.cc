@@ -32,6 +32,8 @@ BDSLinkRunAction::~BDSLinkRunAction()
 
 void BDSLinkRunAction::BeginOfRunAction(const G4Run* /*aRun*/)
 {
+  nSecondariesToReturn = 0;
+  nPrimariesToReturn   = 0;
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   allHits = new BDSHitsCollectionSamplerLink();
   //output->InitialiseGeometryDependent();
@@ -60,6 +62,7 @@ void BDSLinkRunAction::AppendHits(G4int currentEventIndex,
     {
       auto hit = new BDSHitSamplerLink(*(*hits)[i]);
       hit->eventID = currentEventIndex;
+      hit->parentID == 0 ? nPrimariesToReturn++ : nSecondariesToReturn++;
       allHits->insert(hit);
     }
 }
