@@ -1268,7 +1268,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
+  G4bool circularOuter = false;
+  G4String apertureType = G4String(element->apertureType);
+  if (apertureType == "circular")
+    {circularOuter = true;}
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      PrepareHorizontalWidth(element),
@@ -1278,7 +1281,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      PrepareColour(element));
+				      PrepareColour(element),
+				      circularOuter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -1286,6 +1290,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
+  G4bool circularOuter = false;
+  G4String apertureType = G4String(element->apertureType);
+  if (apertureType == "circular")
+    {circularOuter = true;}
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
@@ -1295,7 +1303,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     PrepareColour(element));
+				     PrepareColour(element),
+				     circularOuter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()

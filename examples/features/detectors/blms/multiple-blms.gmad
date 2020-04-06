@@ -7,7 +7,6 @@ beam, particle="e-",
 
 option, physicsList="em";
 
-
 blmChrg: scorer, type="cellcharge";
 blmDose: scorer, type="depositeddose";
 blmEDep: scorer, type="depositedenergy";
