@@ -52,40 +52,37 @@ BDSLinkStackingAction::~BDSLinkStackingAction()
 G4ClassificationOfNewTrack BDSLinkStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
   G4ClassificationOfNewTrack result = fUrgent;
-  
-  // If beyond max number of tracks, kill it
+
   if (aTrack->GetTrackID() > maxTracksPerEvent)
     {result = fKill;}
-
-  if (aTrack->GetKineticEnergy() <= minimumEK)
+  else if (aTrack->GetKineticEnergy() <= minimumEK)
     {result = fKill;}
-
-  // kill secondaries
-  if (stopSecondaries && (aTrack->GetParentID() > 0))
+  else if (stopSecondaries && (aTrack->GetParentID() > 0))
     {result = fKill;}
-
-  auto definition = aTrack->GetDefinition();
-  G4int pdgID = definition->GetPDGEncoding();
-
-  // Kill all neutrinos
-  if (killNeutrinos)
+  else
     {
-      if (pdgID == 12 || pdgID == 14 || pdgID == 16)
-        {result = fKill;}
-    }
+      auto definition = aTrack->GetDefinition();
+      G4int pdgID = definition->GetPDGEncoding();
 
-  if (protonsAndIonsOnly)
-    {
-      if (!BDS::IsIon(definition) && pdgID != 2212)
-        {result = fKill;}
-      else if (pdgID == 2212)
-        {result = fUrgent;}
+      if (killNeutrinos)
+        {
+          if (pdgID == 12 || pdgID == 14 || pdgID == 16)
+            {result = fKill;}
+        }
+
+      if (protonsAndIonsOnly)
+        {
+          if (!BDS::IsIon(definition) && pdgID != 2212)
+            {result = fKill;}
+          else if (pdgID == 2212)
+            {result = fUrgent;}
+        }
+      else if (!pdgIDsToAllow.empty())
+        {
+          if (pdgIDsToAllow.find(pdgID) != pdgIDsToAllow.end())
+            {result = fKill;}
+        }
     }
-  else if (!pdgIDsToAllow.empty())
-     {
-        if (pdgIDsToAllow.find(pdgID) != pdgIDsToAllow.end())
-          {result = fKill;}
-     }
 
   if (result == fKill)
     {kineticEnergyKilled += aTrack->GetKineticEnergy() * aTrack->GetWeight();}
