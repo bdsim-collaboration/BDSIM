@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDetectorConstruction.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
+#include "BDSGeometryFactory.hh"
 #include "BDSParser.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
@@ -58,6 +59,15 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   if (blmPlacements.empty())
     {return nullptr;} // don't do anything - no placements
 
+  // loop over blm placements - if any have external geometry, force the loading of it now so any materials
+  // that could be used in the BDSScorerInfo filters will be defined first by the load. The geometry is cached
+  // so it won't be loaded twice.
+  for (const auto& bp : blmPlacements)
+    {
+      if (!bp.geometryFile.empty())
+        {BDSGeometryFactory::Instance()->BuildGeometry(G4String(bp.name), G4String(bp.geometryFile));}
+    }
+
   // we need to loop over all the blm definitions to work out the unique combinations of
   // scorers that need to created. multiple scorers for a single blm ultimately have to be
   // in one G4MultiFunctionalSD sensitive detector.
@@ -80,16 +90,14 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       for (const auto& name : scorersForThisBLM)
         {
           auto search = scorerRecipes.find(name);
-	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" for blm \"" + bp.name + "\" not found.");}
-	  else
-            {
-	      requiredScorers.insert(name);
+	      if (search == scorerRecipes.end())
+	        {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + name + "\" for blm \"" + bp.name + "\" not found.");}
+	      else
+            {requiredScorers.insert(name);}
 	    }
-	}
 	  // no BDS::Warning here as that slows down print out - could be all the blms turned off
       if (requiredScorers.empty())
-	{G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
+	    {G4cout << "Warning - no scoreQuantity specified for blm \"" << bp.name << "\" - it will only be passive material" << G4endl;}
       scorerSetsToMake.insert(requiredScorers);
 
       // the set by definition orders its contents, so we iterate through it to form a uniquely
