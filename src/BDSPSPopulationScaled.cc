@@ -68,9 +68,9 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
         BDSScorerConversionLoader<std::ifstream> loader;
 
-        //std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
         auto ang = (G4double) std::stod(dirnameAng);
         angles.push_back(ang); // Store the angle for interpolation
+        auto ang_index = (G4int) angles.size() - 1;
 
         std::vector<G4int> ionPIDs; // Store the ion particle ids vs. angle for interpolation
 
@@ -84,14 +84,14 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 #ifdef USE_GZSTREAM
                 BDSScorerConversionLoader<igzstream> loaderC;
 
-                conversionFactors[ang][pid] = loaderC.Load(filepathPDG);
+                conversionFactors[ang_index][pid] = loaderC.Load(filepathPDG);
 #else
                 throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
                 }
             else if (BDS::FileExists(filepathPDG))
                 {
-                conversionFactors[ang][pid] = loader.Load(filepathPDG);
+                conversionFactors[ang_index][pid] = loader.Load(filepathPDG);
                 }
 
 
@@ -100,7 +100,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
                 ionPIDs.push_back(pid);
                 }
             }
-        ionParticleIDs[ang] = ionPIDs;
+        ionParticleIDs[ang_index] = ionPIDs;
         }
 }
 
@@ -146,7 +146,7 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
     auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
 
-    G4double angle = momDirection.angle(blmUnitZ);
+    G4double angle = std::abs(momDirection.angle(blmUnitZ));
 
     G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
 
@@ -162,13 +162,13 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
 G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double kineticEnergy, G4double angle) const
 {
-    G4double angleNearest = NearestNeighbourAngle(angles, angle);
+    G4double angleNearestIndex = NearestNeighbourAngleIndex(angles, angle);
 
-    if (angleNearest < -1.e8)
+    if (angleNearestIndex < 0)
     { return 0;}
 
     std::map<G4int, G4PhysicsVector*> conversionFactorsPart;
-    auto searchAngle = conversionFactors.find(angleNearest);
+    auto searchAngle = conversionFactors.find(angleNearestIndex);
     if (searchAngle != conversionFactors.end())
         {
         conversionFactorsPart = searchAngle->second;
@@ -190,7 +190,7 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
         {
 
         // Get the nearest neighbour ion particle ID based on the ion Z
-        G4int particleIDNearest = NearestNeighbourIonPID(ionParticleIDs.find(angleNearest)->second, particleID);
+        G4int particleIDNearest = NearestNeighbourIonPID(ionParticleIDs.find(angleNearestIndex)->second, particleID);
         if (particleIDNearest < 0)
         {return 0;}
 
@@ -239,9 +239,9 @@ std::vector<G4String> BDSPSPopulationScaled::LoadDirectoryContents(const G4Strin
     return contents;
 }
 
-G4double BDSPSPopulationScaled::NearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const {
+G4int BDSPSPopulationScaled::NearestNeighbourAngleIndex(std::vector<G4double> const &vec, G4double value) const {
     if (vec.empty())
-    {return -1.e9;}
+    {return -1;}
 
     G4double nearestNeighbourAngle;
 
@@ -255,7 +255,10 @@ G4double BDSPSPopulationScaled::NearestNeighbourAngle(std::vector<G4double> cons
         nearestNeighbourAngle = *it;
     }
 
-    return nearestNeighbourAngle;
+    auto const itr = std::find(vec.begin(), vec.end(), nearestNeighbourAngle);
+    auto index = (G4int) std::distance(vec.begin(), itr);
+
+    return index;
 }
 
 G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const {
