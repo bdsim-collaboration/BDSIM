@@ -40,53 +40,51 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
-                                               G4int           depth):
+BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName):
         G4VPrimitiveScorer(scorerName),
         HCID(-1)
 {}
 
 BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
-                                             const G4String&   pathname,
-                                             G4int             depth):
-        BDSPSPopulationScaled(scorerName, depth)
+                                             const G4String&   pathname):
+        BDSPSPopulationScaled(scorerName)
 {
     G4String directory = BDS::GetFullPath(pathname);
     if (directory.back() != '/')
     {directory += '/';}
 
-    std::vector<G4String> dirs_angle;
-    std::vector<G4String> files_particle;
+    std::vector<G4String> dirsAngle;
+    std::vector<G4String> filesParticle;
 
-    dirs_angle = LoadDirectoryContents(directory);
+    dirsAngle = LoadDirectoryContents(directory);
 
     G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
 
-    for (auto dirname_ang : dirs_angle){
+    for (auto dirnameAng : dirsAngle){
 
-        G4String dir_ang = directory + dirname_ang;
+        G4String dirAng = directory + dirnameAng;
 
-        files_particle = LoadDirectoryContents(dir_ang);
+        filesParticle = LoadDirectoryContents(dirAng);
 
         BDSScorerConversionLoader<std::ifstream> loader;
 
         std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
 
-        for (const auto& filePDG : files_particle)
+        for (const auto& filePDG : filesParticle)
         {
-            G4String filepathPDG = dir_ang + '/' + filePDG;
+            G4String filepathPDG = dirAng + '/' + filePDG;
             if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
             {
 #ifdef USE_GZSTREAM
                 BDSScorerConversionLoader<igzstream> loaderC;
-                conversionFactors[(G4double) std::stod(dirname_ang)][(G4int) std::stoi(filePDG)] = loaderC.Load(filepathPDG);
+                conversionFactors[(G4double) std::stod(dirnameAng)][(G4int) std::stoi(filePDG)] = loaderC.Load(filepathPDG);
 #else
                 throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
             }
             else if (BDS::FileExists(filepathPDG))
             {
-                conversionFactors[(G4double) std::stod(dirname_ang)][(G4int) std::stoi(filePDG)] = loader.Load(filepathPDG);
+                conversionFactors[(G4double) std::stod(dirnameAng)][(G4int) std::stoi(filePDG)] = loader.Load(filepathPDG);
             }
         }
     }
@@ -155,10 +153,10 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
     G4double angleNearest = NearestNeighbourAngle(angles, angle);
 
     std::map<G4int, G4PhysicsVector*> conversionFactorsPart;
-    auto search_angle = conversionFactors.find(angleNearest);
-    if (search_angle != conversionFactors.end())
+    auto searchAngle = conversionFactors.find(angleNearest);
+    if (searchAngle != conversionFactors.end())
         {
-        conversionFactorsPart = search_angle->second;
+        conversionFactorsPart = searchAngle->second;
         }
     else
         {
@@ -193,10 +191,10 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
         // Get the ion Z in order to normalise the kinetic energy for table look-up
         G4double nearestIonZ = (G4double) GetZFromParticleID(particleIDNearest);
 
-        auto search_ion = conversionFactorsPart.find(particleID);
-        if (search_ion != conversionFactorsPart.end())
+        auto searchIon = conversionFactorsPart.find(particleID);
+        if (searchIon != conversionFactorsPart.end())
             {
-            return search_ion->second->Value(kineticEnergy/nearestIonZ);
+            return searchIon->second->Value(kineticEnergy/nearestIonZ);
             }
         else
             {
