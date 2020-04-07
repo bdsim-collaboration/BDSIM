@@ -138,13 +138,17 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {return false;}
 
     const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-    //G4VSolid* solid = touchable->GetSolid();
+    auto rot = touchable->GetRotation();
+    G4ThreeVector unitZ = G4ThreeVector(0,0,1);
+    G4ThreeVector blmUnitZ = unitZ.transform(*rot);
 
-    G4double weight = aStep->GetPreStepPoint()->GetWeight();
+    auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
+
+    G4double angle = std::acos(momDirection*blmUnitZ);
 
     G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
 
-    G4double  angle = 0.0;
+    G4double weight = aStep->GetPreStepPoint()->GetWeight();
 
     G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy, angle);
     radiationQuantity = weight * factor;
