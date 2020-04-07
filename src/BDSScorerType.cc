@@ -37,6 +37,7 @@ std::map<BDSScorerType, std::string>* BDSScorerType::dictionary =
 	    {BDSScorerType::depositedenergy, "depositedenergy3d"},
 	    {BDSScorerType::population,      "population"},
 	    {BDSScorerType::population3d,    "population3d"},
+        {BDSScorerType::populationscaled,"populationscaled"},
 	    {BDSScorerType::cellflux,        "cellflux"},
 	    {BDSScorerType::cellflux3d,      "cellflux3d"},
         {BDSScorerType::cellfluxscaled,  "cellfluxscaled"},
@@ -56,13 +57,14 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["depositedenergy3d"] = BDSScorerType::depositedenergy3d;
   types["population"]        = BDSScorerType::population;
   types["population3d"]      = BDSScorerType::population3d;
+  types["populationscaled"]  = BDSScorerType::populationscaled;
   types["cellflux"]          = BDSScorerType::cellflux;
   types["cellflux3d"]        = BDSScorerType::cellflux3d;
   types["cellfluxscaled"]    = BDSScorerType::cellfluxscaled;
   types["cellfluxscaled3d"]  = BDSScorerType::cellfluxscaled3d;
   types["cellfluxscaledperparticle"]   = BDSScorerType::cellfluxscaledperparticle;
   types["cellfluxscaledperparticle3d"] = BDSScorerType::cellfluxscaledperparticle3d;
-  
+
   scorerType.toLower();
   
   auto result = types.find(scorerType);
