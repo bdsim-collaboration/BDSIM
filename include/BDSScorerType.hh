@@ -35,7 +35,7 @@ struct scorertype_def
   enum type {cellcharge, cellcharge3d,
 	     depositeddose, depositeddose3d,
 	     depositedenergy, depositedenergy3d,
-	     population, population3d,
+	     population, population3d, populationscaled,
 	     cellflux, cellflux3d,
 	     cellfluxscaledperparticle, cellfluxscaledperparticle3d,
 	     cellfluxscaled, cellfluxscaled3d};
