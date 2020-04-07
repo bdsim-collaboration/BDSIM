@@ -87,6 +87,16 @@ public:
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
 
+  double x;
+  double xp;
+  double y;
+  double yp;
+  double ct;
+  double dp;
+
+  double beta0;
+  double gamma0;
+
 private:
   /// position in micrometre (transverse) and metre (longitudinal) and momentum in rad
   vector6 posmom;
