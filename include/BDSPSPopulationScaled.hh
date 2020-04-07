@@ -74,6 +74,7 @@ private:
 
     std::map< G4double, std::map<G4int, G4PhysicsVector*> > conversionFactors;
     std::map< G4double, std::vector<G4int> > ionParticleIDs;
+    std::vector<G4double> angles;
 
 };
 
