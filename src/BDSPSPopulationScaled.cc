@@ -59,7 +59,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
     std::vector<G4String> dirs_angle;
     std::vector<G4String> files_particle;
 
-    dirs_angle = loadDirectoryContents(directory);
+    dirs_angle = LoadDirectoryContents(directory);
 
     G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
 
@@ -67,7 +67,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
         G4String dir_ang = directory + dirname_ang;
 
-        files_particle = loadDirectoryContents(dir_ang);
+        files_particle = LoadDirectoryContents(dir_ang);
 
         BDSScorerConversionLoader<std::ifstream> loader;
 
@@ -108,6 +108,7 @@ void BDSPSPopulationScaled::Initialize(G4HCofThisEvent* HCE)
                                         GetName());
     if (HCID < 0)
     {HCID = GetCollectionID(0);}
+
     HCE->AddHitsCollection(HCID, EvtMap);
 }
 
@@ -148,109 +149,124 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
 {
     std::vector<G4double> angles;
     for(auto const& imap: conversionFactors)
-    {
+        {
         angles.push_back(imap.first);
-    }
+        }
 
-    G4double angleNearest = nearestNeighbourAngle(angles, angle);
+    G4double angleNearest = NearestNeighbourAngle(angles, angle);
 
     std::map<G4int, G4PhysicsVector*> conversionFactorsPart;
     auto search_angle = conversionFactors.find(angleNearest);
-    if (search_angle != conversionFactors.end()) {
+    if (search_angle != conversionFactors.end())
+        {
         conversionFactorsPart = search_angle->second;
-    }
-    else { return 0; }
+        }
+    else
+        {
+        return 0;
+        }
 
 
-    if (particleID < 1e7) {
+    if (particleID < 1e7)
+        {
         auto search = conversionFactorsPart.find(particleID);
 
         if (search != conversionFactorsPart.end()) { return search->second->Value(kineticEnergy); }
         else { return 0; }
-    }
-    else
-    {
-        std::vector<G4int> ionParticleIDs;  // Make a vector of all ion particle IDs
-        for(auto const& imap: conversionFactorsPart) {
-            G4int pid = imap.first;
-            if (pid > 1e7) {
-                ionParticleIDs.push_back(imap.first);
-            }
         }
+    else
+        {
+        std::vector<G4int> ionParticleIDs;  // Make a vector of all ion particle IDs
+        for(auto const& imap: conversionFactorsPart)
+            {
+            G4int pid = imap.first;
+            if (pid > 1e7)
+                {
+                ionParticleIDs.push_back(imap.first);
+                }
+            }
 
         // Get the nearest neighbour ion particle ID based on the ion Z
-        G4int particleIDNearest = nearestNeighbourIonPID(ionParticleIDs, particleID);
-        if (particleIDNearest < 0){ return 0; }
+        G4int particleIDNearest = NearestNeighbourIonPID(ionParticleIDs, particleID);
+        if (particleIDNearest < 0)
+        {return 0;}
 
         // Get the ion Z in order to normalise the kinetic energy for table look-up
-        G4double nearestIonZ = (G4double) getZFromParticleID(particleIDNearest);
+        G4double nearestIonZ = (G4double) GetZFromParticleID(particleIDNearest);
 
         auto search_ion = conversionFactorsPart.find(particleID);
-        if (search_ion != conversionFactorsPart.end()) {
+        if (search_ion != conversionFactorsPart.end())
+            {
             return search_ion->second->Value(kineticEnergy/nearestIonZ);
+            }
+        else
+            {
+            return 0;
+            }
         }
-        else { return 0; }
-    }
 }
 
-std::vector<G4String> BDSPSPopulationScaled::loadDirectoryContents(const G4String& dirname){
+std::vector<G4String> BDSPSPopulationScaled::LoadDirectoryContents(const G4String& dirname){
     std::vector<G4String> contents;
 
     struct dirent *entry = nullptr;
     DIR *dp = nullptr;
 
     dp = opendir(dirname.c_str());
-    if (dp == nullptr) {
+    if (dp == nullptr)
+        {
         throw BDSException(__METHOD_NAME__, "Cannot open directory " + dirname);
-    }
-    else{
-        while ((entry = readdir(dp)) != nullptr) {
-
-            //if (entry == NULL) {
-            //    break;
-            //}
+        }
+    else
+        {
+        while ((entry = readdir(dp)) != nullptr)
+            {
 
             std::string name_string(entry->d_name);
 
-            if (name_string.front() != '.') {
+            if (name_string.front() != '.')
+                {
                 contents.push_back(name_string);
+                }
             }
         }
-    }
 
     closedir(dp);
 
     return contents;
 }
 
-G4double BDSPSPopulationScaled::nearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const {
+G4double BDSPSPopulationScaled::NearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const {
     auto const it = std::lower_bound(vec.begin(), vec.end(), value);
-    if (it == vec.end()) { return -1.e9; }
+    if (it == vec.end())
+    { return -1.e9; }
 
     return *it;
 }
 
-G4int BDSPSPopulationScaled::nearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const {
+G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const {
 
     // Make a vector of the ion Z for all ion particles
     std::vector<G4int> vecZ;
-    for(auto pid: vec) {
-        vecZ.push_back(getZFromParticleID(pid));
-    }
+    for(auto pid: vec)
+        {
+        vecZ.push_back(GetZFromParticleID(pid));
+        }
 
-    if (!vecZ.size()){
-        return -1;
-    }
+    if (!vecZ.size())
+    {return -1;}
 
     G4int nearestNeighbourZ;
     // Perform nearest neighbour interpolation on the ion Z
-    auto const it = std::upper_bound(vecZ.begin(), vecZ.end(), getZFromParticleID(value)) -1;
-    if (it == vecZ.end()) {
+    auto const it = std::upper_bound(vecZ.begin(), vecZ.end(), GetZFromParticleID(value)) -1;
+    if (it == vecZ.end())
+        {
         nearestNeighbourZ = vecZ.back();
-    }
-    else{
+        }
+    else
+        {
         nearestNeighbourZ = *it;
-    }
+        }
 
     // Find the index of the nearest neighbour Z - used to look up the full particle ID
     auto const itr = std::find(vecZ.begin(), vecZ.end(), nearestNeighbourZ);
@@ -259,7 +275,7 @@ G4int BDSPSPopulationScaled::nearestNeighbourIonPID(std::vector<G4int> const& ve
     return vec.at(index);
 }
 
-G4int  BDSPSPopulationScaled::getZFromParticleID(G4int particleID) const {
+G4int  BDSPSPopulationScaled::GetZFromParticleID(G4int particleID) const {
     std::ostringstream pid_stream;
     pid_stream << particleID;
     std::string pid_string = pid_stream.str();
