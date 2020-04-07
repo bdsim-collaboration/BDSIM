@@ -70,7 +70,9 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
         //std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
         auto ang = (G4double) std::stod(dirnameAng);
-        std::vector<G4int> ionPIDs;
+        angles.push_back(ang); // Store the angle for interpolation
+
+        std::vector<G4int> ionPIDs; // Store the ion particle ids vs. angle for interpolation
 
         for (const auto& filePDG : filesParticle)
             {
@@ -160,13 +162,10 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
 G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double kineticEnergy, G4double angle) const
 {
-    std::vector<G4double> angles;
-    for(auto const& imap: conversionFactors)
-        {
-        angles.push_back(imap.first);
-        }
-
     G4double angleNearest = NearestNeighbourAngle(angles, angle);
+
+    if (angleNearest < -1.e8)
+    { return 0;}
 
     std::map<G4int, G4PhysicsVector*> conversionFactorsPart;
     auto searchAngle = conversionFactors.find(angleNearest);
@@ -241,11 +240,22 @@ std::vector<G4String> BDSPSPopulationScaled::LoadDirectoryContents(const G4Strin
 }
 
 G4double BDSPSPopulationScaled::NearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const {
-    auto const it = std::lower_bound(vec.begin(), vec.end(), value);
-    if (it == vec.end())
-    { return -1.e9; }
+    if (vec.empty())
+    {return -1.e9;}
 
-    return *it;
+    G4double nearestNeighbourAngle;
+
+    auto const it = std::upper_bound(vec.begin(), vec.end(), value) - 1;
+    if (it == vec.end())
+    {
+        nearestNeighbourAngle = vec.back();
+    }
+    else
+    {
+        nearestNeighbourAngle = *it;
+    }
+
+    return nearestNeighbourAngle;
 }
 
 G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const {
