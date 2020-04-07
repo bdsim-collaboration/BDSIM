@@ -42,13 +42,12 @@ class BDSPSPopulationScaled: public G4VPrimitiveScorer
 public:
     /// Constructor where no conversion factor file is provided and all cell fluxes just
     /// use conversion factor 1.0.
-    BDSPSPopulationScaled(const G4String& name, G4int depth=0);
+    BDSPSPopulationScaled(const G4String& name);
 
     /// Constructor where conversion factor file is provided and loaded into a map of maps of physics vectors.
     /// Population is multiplied by the factor as a function of the particle id, kinetic energy and angle.
     BDSPSPopulationScaled(const G4String&           scorerName,
-                          const G4String&           pathname,
-                          G4int depth=0);
+                          const G4String&           pathname);
 
     virtual ~BDSPSPopulationScaled() override;
 
