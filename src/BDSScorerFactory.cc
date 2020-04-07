@@ -16,11 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
+#include "BDSPSPopulationScaled.hh"
 #include "BDSPSCellFluxScaled3D.hh"
 #include "BDSSDFilterAnd.hh"
 #include "BDSSDFilterLogicalVolume.hh"
@@ -103,6 +105,8 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 	result = scorer;
 	break;
       }
+      case BDSScorerType::populationscaled:
+        {result = new BDSPSPopulationScaled(name, pathname); break;}
     case BDSScorerType::cellflux:
       {
 	G4PSCellFlux* scorer= new G4PSCellFlux(name, "percm2");
