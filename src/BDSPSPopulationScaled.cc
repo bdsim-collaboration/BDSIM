@@ -146,7 +146,7 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
     auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
 
-    G4double angle = std::acos(momDirection*blmUnitZ);
+    G4double angle = momDirection.angle(blmUnitZ);
 
     G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
 
