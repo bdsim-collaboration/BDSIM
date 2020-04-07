@@ -62,7 +62,7 @@ public:
                                          G4double kineticEnergy, G4double angle) const;
 
     static std::vector<G4String> LoadDirectoryContents(const G4String& dirname);
-    G4double NearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const;
+    G4int NearestNeighbourAngleIndex(std::vector<G4double> const& vec, G4double value) const;
     G4int NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const;
     G4int GetZFromParticleID(G4int particleID) const;
 
@@ -72,8 +72,8 @@ private:
 
     // void SetUnit(const G4String& unit) const;
 
-    std::map< G4double, std::map<G4int, G4PhysicsVector*> > conversionFactors;
-    std::map< G4double, std::vector<G4int> > ionParticleIDs;
+    std::map< G4int, std::map<G4int, G4PhysicsVector*> > conversionFactors;
+    std::map< G4int, std::vector<G4int> > ionParticleIDs;
     std::vector<G4double> angles;
 
 };
