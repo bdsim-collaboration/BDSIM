@@ -18,11 +18,11 @@ add_subdirectory(TrackingTestFiles)
 ## BDSTRKTest #
 #############
 
-add_executable(BDSTRKTest BDSTRKTest1.cc)
-set_target_properties(BDSTRKTest PROPERTIES OUTPUT_NAME "BDSTRKTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSTRKTest tracker)
+# add_executable(BDSTRKTest BDSTRKTest1.cc)
+# set_target_properties(BDSTRKTest PROPERTIES OUTPUT_NAME "BDSTRKTest" VERSION ${BDSIM_VERSION})
+# target_link_libraries(BDSTRKTest tracker)
 
 # set binary
-set (binary BDSTRKTest)
+# set (binary BDSTRKTest)
 
-add_subdirectory(BDSTRKTestFiles)
+# add_subdirectory(BDSTRKTestFiles)
