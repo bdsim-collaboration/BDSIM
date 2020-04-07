@@ -42,7 +42,7 @@ class BDSPSPopulationScaled: public G4VPrimitiveScorer
 public:
     /// Constructor where no conversion factor file is provided and all cell fluxes just
     /// use conversion factor 1.0.
-    BDSPSPopulationScaled(const G4String& name);
+    explicit BDSPSPopulationScaled(const G4String& name);
 
     /// Constructor where conversion factor file is provided and loaded into a map of maps of physics vectors.
     /// Population is multiplied by the factor as a function of the particle id, kinetic energy and angle.
@@ -61,16 +61,16 @@ public:
     virtual G4double GetConversionFactor(G4int    particleID,
                                          G4double kineticEnergy, G4double angle) const;
 
-    std::vector<G4String> LoadDirectoryContents(const G4String& dirname);
+    static std::vector<G4String> LoadDirectoryContents(const G4String& dirname);
     G4double NearestNeighbourAngle(std::vector<G4double> const& vec, G4double value) const;
     G4int NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const;
     G4int GetZFromParticleID(G4int particleID) const;
 
 private:
     G4int HCID;
-    G4THitsMap<G4double>* EvtMap;
+    G4THitsMap<G4double>* EvtMap{};
 
-    void SetUnit(const G4String& unit) const;
+    // void SetUnit(const G4String& unit) const;
 
     std::map< G4double, std::map<G4int, G4PhysicsVector*> > conversionFactors;
     std::map< G4double, std::vector<G4int> > ionParticleIDs;
