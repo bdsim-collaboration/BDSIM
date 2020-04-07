@@ -1079,6 +1079,19 @@ used, this is capable of reducing the beam energy. This happens only through int
 and the use of a physics list. Note, the default physics list in BDSIM is no physics and
 only magnetic tracking, in which case this component will have no effect.
 
+* If 1 wedge is specified, the degrader will be composed of 1 half wedge on each side.
+* If 2 wedges are specified, the degrader will be a half, a whole then a half wedge.
+* The above diagram shows a degrader with 3 wedges specified.
+
+.. warning:: The nominal beam energy of each magnet after the degrader is unchanged and
+	     is still the design energy of the machine. It is not possible to accurately
+	     calculate the degradation in kinetic energy for all materials and particles
+	     analytically. The user should use the :code:`scaling` parameter for any
+	     magnet placed after the degrader to linearly scale the field strength. Or in
+	     the case where there are no magnets before the degrader, set the design energy
+	     of using the beam command as the energy afterwards and the :code:`E0` to the
+	     higher input energy.
+
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
 ===================    =======================================  ==========  ===========
