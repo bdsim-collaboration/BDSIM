@@ -25,12 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4PhysicsVector.hh"
 #include "G4String.hh"
-#include "G4SystemOfUnits.hh"
+#include "G4IonTable.hh"
 #include "G4Types.hh"
 #include "G4VSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VPVParameterisation.hh"
-#include "G4UnitsTable.hh"
 
 #include <fstream>
 #include <string>
@@ -60,7 +59,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
     G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
 
-    for (auto dirnameAng : dirsAngle)
+    for (const auto& dirnameAng : dirsAngle)
         {
 
         G4String dirAng = directory + dirnameAng;
@@ -70,13 +69,13 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
         BDSScorerConversionLoader<std::ifstream> loader;
 
         //std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
-        G4double ang = (G4double) std::stod(dirnameAng);
+        auto ang = (G4double) std::stod(dirnameAng);
         std::vector<G4int> ionPIDs;
 
         for (const auto& filePDG : filesParticle)
             {
             G4String filepathPDG = dirAng + '/' + filePDG;
-            G4int pid = (G4int) std::stoi(filePDG);
+            auto pid = (G4int) std::stoi(filePDG);
 
             if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
                 {
@@ -105,7 +104,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
 BDSPSPopulationScaled::~BDSPSPopulationScaled()
 {
-    for (auto af : conversionFactors)
+    for (const auto& af : conversionFactors)
     {
         for (auto cf : af.second)
         {delete cf.second;}
@@ -123,7 +122,7 @@ void BDSPSPopulationScaled::Initialize(G4HCofThisEvent* HCE)
 }
 
 void BDSPSPopulationScaled::EndOfEvent(G4HCofThisEvent* /*HEC*/)
-{;}
+{}
 
 void BDSPSPopulationScaled::clear()
 {
@@ -193,7 +192,7 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
         {return 0;}
 
         // Get the ion Z in order to normalise the kinetic energy for table look-up
-        G4double nearestIonZ = (G4double) GetZFromParticleID(particleIDNearest);
+        auto nearestIonZ = (G4double) GetZFromParticleID(particleIDNearest);
 
         auto searchIon = conversionFactorsPart.find(particleID);
         if (searchIon != conversionFactorsPart.end())
@@ -227,7 +226,7 @@ std::vector<G4String> BDSPSPopulationScaled::LoadDirectoryContents(const G4Strin
 
             if (name_string.front() != '.')
                 {
-                contents.push_back(name_string);
+                contents.emplace_back(name_string);
                 }
             }
         }
@@ -254,7 +253,7 @@ G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& ve
         vecZ.push_back(GetZFromParticleID(pid));
         }
 
-    if (!vecZ.size())
+    if (vecZ.empty())
     {return -1;}
 
     G4int nearestNeighbourZ;
@@ -277,11 +276,11 @@ G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& ve
 }
 
 G4int  BDSPSPopulationScaled::GetZFromParticleID(G4int particleID) const {
-    std::ostringstream pid_stream;
-    pid_stream << particleID;
-    std::string pid_string = pid_stream.str();
-
-    G4int Z = (G4int) std::stoi(pid_string.substr(3, 3));
+    G4int Z = 0;
+    G4int A = 0;
+    G4double E = 0.0;
+    G4int lvl = 0;
+    G4IonTable::GetNucleusByEncoding(particleID, Z, A, E, lvl);
 
     return Z;
 }
