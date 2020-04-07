@@ -60,7 +60,8 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
     G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
 
-    for (auto dirnameAng : dirsAngle){
+    for (auto dirnameAng : dirsAngle)
+        {
 
         G4String dirAng = directory + dirnameAng;
 
@@ -68,26 +69,38 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
 
         BDSScorerConversionLoader<std::ifstream> loader;
 
-        std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
+        //std::map<G4int, G4PhysicsVector*> conversionFactorsPID;
+        G4double ang = (G4double) std::stod(dirnameAng);
+        std::vector<G4int> ionPIDs;
 
         for (const auto& filePDG : filesParticle)
-        {
-            G4String filepathPDG = dirAng + '/' + filePDG;
-            if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
             {
+            G4String filepathPDG = dirAng + '/' + filePDG;
+            G4int pid = (G4int) std::stoi(filePDG);
+
+            if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
+                {
 #ifdef USE_GZSTREAM
                 BDSScorerConversionLoader<igzstream> loaderC;
-                conversionFactors[(G4double) std::stod(dirnameAng)][(G4int) std::stoi(filePDG)] = loaderC.Load(filepathPDG);
+
+                conversionFactors[ang][pid] = loaderC.Load(filepathPDG);
 #else
                 throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
-            }
+                }
             else if (BDS::FileExists(filepathPDG))
-            {
-                conversionFactors[(G4double) std::stod(dirnameAng)][(G4int) std::stoi(filePDG)] = loader.Load(filepathPDG);
+                {
+                conversionFactors[ang][pid] = loader.Load(filepathPDG);
+                }
+
+
+            if (pid > 1e7)
+                {
+                ionPIDs.push_back(pid);
+                }
             }
+        ionParticleIDs[ang] = ionPIDs;
         }
-    }
 }
 
 BDSPSPopulationScaled::~BDSPSPopulationScaled()
@@ -173,18 +186,9 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
         }
     else
         {
-        std::vector<G4int> ionParticleIDs;  // Make a vector of all ion particle IDs
-        for(auto const& imap: conversionFactorsPart)
-            {
-            G4int pid = imap.first;
-            if (pid > 1e7)
-                {
-                ionParticleIDs.push_back(imap.first);
-                }
-            }
 
         // Get the nearest neighbour ion particle ID based on the ion Z
-        G4int particleIDNearest = NearestNeighbourIonPID(ionParticleIDs, particleID);
+        G4int particleIDNearest = NearestNeighbourIonPID(ionParticleIDs.find(angleNearest)->second, particleID);
         if (particleIDNearest < 0)
         {return 0;}
 
