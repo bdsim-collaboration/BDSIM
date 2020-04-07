@@ -2564,19 +2564,20 @@ appropriate parameters need to be defined for each individual distribution.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `xDistrType`                     | Horizontal distribution type                          |
-+----------------------------------+-------------------------------------------------------+
-| `yDistrType`                     | Vertical distribution type                            |
-+----------------------------------+-------------------------------------------------------+
-| `zDistrType`                     | Longitudinal distribution type                        |
-+----------------------------------+-------------------------------------------------------+
++---------------+--------------------------------+------------------------+
+| **Variable**  | **Description**                | **Coordinates Used**   |
++===============+================================+========================+
+| `xDistrType`  | Horizontal distribution type   | x,xp,weight            |
++---------------+--------------------------------+------------------------+
+| `yDistrType`  | Vertical distribution type     | y,yp                   |
++---------------+--------------------------------+------------------------+
+| `zDistrType`  | Longitudinal distribution type | z,zp,s,T,totalEnergy   |
++---------------+--------------------------------+------------------------+
 
 .. note:: It is currently not possible to use two differently specified versions of the same
 	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
-	  and gaussTwiss (parameter set 2) for y. They will have the same settings.
+	  and gaussTwiss (parameter set 2) for y. They will have the same settings as (for example)
+	  only one betx can be specified.
 
 Examples: ::
 
