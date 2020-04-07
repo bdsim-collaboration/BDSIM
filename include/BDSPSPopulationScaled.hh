@@ -73,6 +73,7 @@ private:
     void SetUnit(const G4String& unit) const;
 
     std::map< G4double, std::map<G4int, G4PhysicsVector*> > conversionFactors;
+    std::map< G4double, std::vector<G4int> > ionParticleIDs;
 
 };
 
