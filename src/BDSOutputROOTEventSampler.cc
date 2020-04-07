@@ -166,12 +166,12 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch)
   for (const auto& particle : bunch)
     {
       n++;
-      x.push_back((U &&) (particle.X() / CLHEP::m));
-      xp.push_back((U &&) (particle.Xp() / CLHEP::m));
-      y.push_back((U &&) (particle.Y() / CLHEP::m));
-      yp.push_back((U &&) (particle.Yp() / CLHEP::m));
-      z = (U) (particle.Z() / CLHEP::m);
-      zp.push_back((U &&) (particle.Zp() / CLHEP::m));
+      x.push_back(particle.X() / CLHEP::m);
+      xp.push_back(particle.Xp() / CLHEP::m);
+      y.push_back(particle.Y() / CLHEP::m);
+      yp.push_back(particle.Yp() / CLHEP::m);
+      z = (particle.Z() / CLHEP::m);
+      zp.push_back(particle.Zp() / CLHEP::m);
     }
 }
 
