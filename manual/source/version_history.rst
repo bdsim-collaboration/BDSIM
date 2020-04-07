@@ -158,6 +158,8 @@ New Features
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
