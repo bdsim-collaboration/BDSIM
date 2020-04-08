@@ -295,7 +295,7 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
   return new TRKDrift(element.name,
-		      element.l,
+		      element.l * CLHEP::m,
 		      aperture,
 		      placement);
 }
@@ -311,9 +311,9 @@ TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKQuadrupole(element.k1,
+  return new TRKQuadrupole(element.k1 / CLHEP::m2,
 			   element.name,
-			   element.l,
+			   element.l * CLHEP::m,
 			   aperture,
 			   placement);
 }
