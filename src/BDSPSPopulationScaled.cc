@@ -124,11 +124,15 @@ void BDSPSPopulationScaled::Initialize(G4HCofThisEvent* HCE)
 }
 
 void BDSPSPopulationScaled::EndOfEvent(G4HCofThisEvent* /*HEC*/)
-{}
+{
+    //PrintAll();
+    fCellTrackLogger.clear();
+}
 
 void BDSPSPopulationScaled::clear()
 {
     EvtMap->clear();
+    fCellTrackLogger.clear();
 }
 
 G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
@@ -139,24 +143,31 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     if (!BDS::IsFinite(stepLength))
     {return false;}
 
-    const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-    auto rot = touchable->GetRotation();
-    G4ThreeVector unitZ = G4ThreeVector(0,0,1);
-    G4ThreeVector blmUnitZ = unitZ.transform(*rot);
-
-    auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
-
-    G4double angle = std::abs(momDirection.angle(blmUnitZ));
-
-    G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
-
-    G4double weight = aStep->GetPreStepPoint()->GetWeight();
-
-    G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy, angle);
-    radiationQuantity = weight * factor;
     G4int index = GetIndex(aStep);
+    G4TrackLogger& tlog = fCellTrackLogger[index];
 
-    EvtMap->add(index, radiationQuantity);
+    if (tlog.FirstEnterance(aStep->GetTrack()->GetTrackID()))
+    {
+        const G4VTouchable *touchable = aStep->GetPreStepPoint()->GetTouchable();
+        auto rot = touchable->GetRotation();
+        G4ThreeVector unitZ = G4ThreeVector(0, 0, 1);
+        G4ThreeVector blmUnitZ = unitZ.transform(*rot);
+
+        auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
+
+        G4double angle = std::abs(momDirection.angle(blmUnitZ));
+
+        G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
+
+        G4double weight = aStep->GetPreStepPoint()->GetWeight();
+
+        G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy,
+                                              angle);
+        radiationQuantity = weight * factor;
+
+        EvtMap->add(index, radiationQuantity);
+    }
+
     return true;
 }
 
@@ -300,4 +311,18 @@ G4int  BDSPSPopulationScaled::GetZFromParticleID(G4int particleID) const {
     G4IonTable::GetNucleusByEncoding(particleID, Z, A, E, lvl);
 
     return Z;
+}
+
+void BDSPSPopulationScaled::PrintAll()
+{
+    G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
+    G4cout << " PrimitiveScorer " << GetName() << G4endl;
+    G4cout << " Number of entries " << EvtMap->entries() << G4endl;
+    std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
+    for(; itr != EvtMap->GetMap()->end(); itr++) {
+        G4cout << "  copy no.: " << itr->first
+               << "  population: " << *(itr->second)/GetUnitValue()
+               << " [quantity]"
+               << G4endl;
+    }
 }
