@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPSPOPULATIONSCALED_H
 #define BDSPSPOPULATIONSCALED_H
 
+#include <G4TrackLogger.hh>
 #include "globals.hh"
 #include "G4THitsMap.hh"
 #include "G4VPrimitiveScorer.hh"
@@ -65,12 +66,15 @@ public:
     G4int NearestNeighbourAngleIndex(std::vector<G4double> const& vec, G4double value) const;
     G4int NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const;
     G4int GetZFromParticleID(G4int particleID) const;
+    void PrintAll() override;
 
 private:
     G4int HCID;
     G4THitsMap<G4double>* EvtMap{};
 
     // void SetUnit(const G4String& unit) const;
+
+    std::map<G4int, G4TrackLogger>  fCellTrackLogger;
 
     std::map< G4int, std::map<G4int, G4PhysicsVector*> > conversionFactors;
     std::map< G4int, std::vector<G4int> > ionParticleIDs;
