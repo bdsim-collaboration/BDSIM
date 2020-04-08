@@ -45,7 +45,6 @@ public:
    */
   ///@{
   virtual void Track(TRKDrift*  el, TRKBunch* bunch);
-  virtual void Track(TRKDipole* el, TRKBunch* bunch);
   ///@}
 
   //  same as in TRKThin

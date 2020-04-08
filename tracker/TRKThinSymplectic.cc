@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TRK.hh"
 #include "TRKBunch.hh"
-#include "TRKDipole.hh"
 //#include "TRKDrift.hh"
 #include "TRKParticle.hh"
 
@@ -65,54 +64,4 @@ void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch)
       part.SetPosMom(dv+part.Pos(),part.Mom());
     }
   }
-}
-
-void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch)
-{ 
-  /// from Sixtrack Physics Manual 3.2.2 Thin Dipole exact Hamiltonian
-
-  // in order to represent a dipole of length L the map is combined with two surrounding drift spaces.
-
-  const double strength = el->GetStrength();
-  if (std::abs(strength)<=1e-12) {
-    return Track((TRKDrift*)el,bunch);
-  }
-
-  const double h = el->GetLength();///trackingSteps;
-
-  //  for (int i=0; i<trackingSteps; i++) {
-      
-  TRKBunch::iterator iter = bunch->begin();
-  TRKBunch::iterator end = bunch->end();
-  
-  // TODO how to use half? add option?
-  // half drift
-  Track((TRKDrift*)el,bunch);
-    
-  for (;iter!=end;++iter) {
-    TRKParticle& part = *iter;
-	
-    double x0 = part.X();
-    double y0 = part.Y();
-    // double z0 = part.Z();
-    double xp = part.Xp();
-    // double yp = part.Yp();
-    double zp = part.Zp();
-      
-    // 3 steps , T11(L/2) T1 (L),T11(L/2)
-
-    double v[6];
-
-    // todo 
-    double hx=0;
-
-    //      TRKParticle* v = new TRKParticle(part);
-    v[0] = x0 + hx*h/2* x0 * xp / zp;
-    v[1] = y0 + hx*h/2* x0 * xp / zp;
-
-  }
-
-  // TODO how to use half? add option?
-  // 2nd half drift
-  Track((TRKDrift*)el,bunch);
 }

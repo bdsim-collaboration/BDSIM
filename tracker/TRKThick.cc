@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
-#include "TRKDipole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
 #include "TRKOctupole.hh"
@@ -49,11 +48,6 @@ void TRKThick::Track(TRKDrift* el, TRKBunch* bunch)
     
     part.SetPosMom(dv+part.Pos(),part.Mom());     
   }
-}
-
-void TRKThick::Track(TRKDipole* el, TRKBunch* bunch) {
-  std::cout << "WARNING - METHOD NOT IMPLEMENTED" << std::endl;
-  return Track((TRKDrift*)el,bunch);
 }
 
 void TRKThick::Track(TRKSBend* el, TRKBunch* bunch) { 

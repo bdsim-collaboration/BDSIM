@@ -29,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKApertureRectangular.hh"
 #include "TRKApertureEllipsoidal.hh"
 #include "TRKFactory.hh"
-#include "TRKDipole.hh"
 #include "TRKElement.hh"
 #include "TRKDecapole.hh"
 #include "TRKLine.hh"
@@ -258,10 +257,6 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       //TEMPORARY
       trkelement = NULL;
       break;
-    case GMAD::ElementType::_VKICKER:
-    case GMAD::ElementType::_HKICKER:
-      trkelement = CreateDipole(element);
-      break;
     default:
       trkelement = NULL;
       break;
@@ -298,14 +293,6 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 		      element.l * CLHEP::m,
 		      aperture,
 		      placement);
-}
-
-TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
-{
-  // bfield , see componentfactory and bdskicker.cc
-  // strength (bprime)
-  //TRKAperture* aperture = CreateAperture(element);
-  return NULL;
 }
 
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)

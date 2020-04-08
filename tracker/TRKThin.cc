@@ -29,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKHybrid.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
-#include "TRKDipole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
 #include "TRKOctupole.hh"
@@ -59,38 +58,6 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
     
     part.SetPosMom(dv+part.Pos(),part.Mom());   
   }
-}
-
-void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) { 
-  // could use from Sixtrack Physics Manual 3.2.2 Thin Dipole expanded Hamiltonian
-  /// simple Dipole for now with half drifts
-
-  // use integrated strength
-  const double strength = el->GetIntStrength();
-  if (std::abs(strength)<=1e-12) {
-    return Track((TRKDrift*)el,bunch);
-  }
-
-  // TODO : multiple trackingsteps
-  //  const double h = el->GetLength()/trackingSteps;
-  // for (int i=0; i<trackingSteps; i++) {
-    
-  TRKBunch::iterator iter = bunch->begin();
-  TRKBunch::iterator end = bunch->end();
-  
-  // half drift
-  Track((TRKDrift*)el,bunch);
-  
-  for (;iter!=end;++iter) {
-    TRKParticle& part = *iter;
-    vector3 mom = part.Mom();
-    //double dx = mom.X() + strength / part.E(); // LN temporary to get to compile
-    double dx = mom.X() + strength / part.P();
-    vector3 momnew = vector3(dx,mom.Y(),mom.Z());
-    part.SetPosMom(part.Pos(),momnew);
-  }
-  // half drift
-  Track((TRKDrift*)el,bunch);
 }
 
 void TRKThin::Track(TRKSBend* el, TRKBunch* bunch) { 

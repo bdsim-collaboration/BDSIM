@@ -3,7 +3,6 @@
 
 #include "TRKStrategy.hh"
 
-class TRKDipole;
 class TRKOctupole;
 class TRKQuadrupole;
 class TRKRBend;
@@ -22,7 +21,6 @@ public:
   void Track(TRKDrift* el, TRKBunch* bunch) override;
   void Track(TRKRBend* el, TRKBunch* bunch) override;
   void Track(TRKSBend* el, TRKBunch* bunch) override;
-  void Track(TRKDipole* el, TRKBunch* bunch) override;
   void Track(TRKQuadrupole* el, TRKBunch* bunch) override;
   void Track(TRKSextupole* el, TRKBunch* bunch) override;
   void Track(TRKOctupole* el, TRKBunch* bunch) override;

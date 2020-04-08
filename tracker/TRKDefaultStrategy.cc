@@ -71,8 +71,6 @@ void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
   }
 }
 
-void TRKDefaultStrategy::Track(TRKDipole *, TRKBunch *) {}
-
 void TRKDefaultStrategy::Track(TRKQuadrupole *el, TRKBunch *bunch) {
   auto k1 = el->GetStrength();
   auto length = el->GetLength();
