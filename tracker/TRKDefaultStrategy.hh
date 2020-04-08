@@ -17,7 +17,7 @@ class TRKBunch;
 
 class TRKDefaultStrategy : public TRKStrategy {
 public:
-  TRKDefaultStrategy() : TRKStrategy(0){};
+  TRKDefaultStrategy() : TRKStrategy(0 /* Tracking steps */){};
 
   void Track(TRKDrift* el, TRKBunch* bunch) override;
   void Track(TRKRBend* el, TRKBunch* bunch) override;

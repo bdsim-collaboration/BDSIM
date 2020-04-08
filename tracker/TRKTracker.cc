@@ -120,12 +120,4 @@ void TRKTracker::Track(TRKBunch* bunch)
 			nullptr, nullptr, nullptr, nullptr, scorerhits, i);
     }// end of turns iteration
     
-    
-  Clock::time_point tEnd = Clock::now();
-  milliseconds timeDiff = std::chrono::duration_cast<milliseconds>(tEnd-tStart);
-  
-  std::cout << "Time taken: " << timeDiff.count() << "ms" << std::endl;
-    
-  std::cout << "All turns completed" << std::endl
-	    << "Thank you for using BDSIM Tracker" << std::endl;
 }
