@@ -28,7 +28,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonTable.hh"
 #include "G4Types.hh"
 #include "G4VSolid.hh"
-#include "G4VPhysicalVolume.hh"
 #include "G4VPVParameterisation.hh"
 
 #include <fstream>
@@ -39,14 +38,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName):
-        G4VPrimitiveScorer(scorerName),
-        HCID(-1)
+BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName, G4int depth):
+        G4VPrimitiveScorer(scorerName, depth),
+        HCID(-1),
+        EvtMap(nullptr)
 {}
 
 BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String&   scorerName,
-                                             const G4String&   pathname):
-        BDSPSPopulationScaled(scorerName)
+                                             const G4String&   pathname,
+                                             G4int depth):
+        BDSPSPopulationScaled(scorerName, depth)
 {
     G4String directory = BDS::GetFullPath(pathname);
     if (directory.back() != '/')
@@ -318,7 +319,7 @@ void BDSPSPopulationScaled::PrintAll()
     G4cout << " MultiFunctionalDet  " << detector->GetName() << G4endl;
     G4cout << " PrimitiveScorer " << GetName() << G4endl;
     G4cout << " Number of entries " << EvtMap->entries() << G4endl;
-    std::map<G4int,G4double*>::iterator itr = EvtMap->GetMap()->begin();
+    auto itr = EvtMap->GetMap()->begin();
     for(; itr != EvtMap->GetMap()->end(); itr++) {
         G4cout << "  copy no.: " << itr->first
                << "  population: " << *(itr->second)/GetUnitValue()
