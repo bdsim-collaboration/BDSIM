@@ -439,7 +439,8 @@ void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
 				  G4double aperture,
 				  G4double rotation,
 				  G4double xOffset,
-				  G4double yOffset)
+				  G4double yOffset,
+				  G4double crystalAngle)
 {
   G4GeometryManager* gm = G4GeometryManager::GetInstance();
   if (gm->IsGeometryClosed())
@@ -451,7 +452,8 @@ void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
 				  aperture,
 				  rotation,
 				  xOffset,
-				  yOffset);
+				  yOffset,
+				  crystalAngle);
   nameToElementIndex[collimatorName] = construction->NumberOfElements() - 1;
   
   /// Close the geometry in preparation for running - everything is now fixed.

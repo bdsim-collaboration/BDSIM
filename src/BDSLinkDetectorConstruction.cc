@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSCrystalInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
@@ -48,6 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <set>
 #include <vector>
+#include <include/BDSCrystalInfo.hh>
 
 class BDSParticleDefinition;
 
@@ -156,8 +158,11 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
 						    G4double aperture,
 						    G4double rotation,
 						    G4double xOffset,
-						    G4double yOffset)
+						    G4double yOffset,
+						    G4double crystalAngle)
 {
+  auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
+
   std::map<std::string, std::string> collimatorToCrystal =
     {
      {"cry.mio.b1", "stf75"},   //b1 h
@@ -165,7 +170,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
      {"tcpv.a6l7.b1", "qmp34"}, // b1 v
      {"tcpv.a6r7.b2", "qmp53"}  // b2 v
     };
-  G4bool isACrystal = collimatorToCrystal.find(collimatorName) != collimatorToCrystal.end();
+  auto searchC = collimatorToCrystal.find(collimatorName); // will use later if needed
+  G4bool isACrystal = searchC != collimatorToCrystal.end();
 
   std::map<std::string, std::string> sixtrackToBDSIM =
       {
@@ -197,23 +203,31 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   el.horizontalWidth = 2.0; // m
   if (isACrystal)
     {
+      // find the bending angle of this particular crystal
+      // so we can add half of that on for the BDSIM convention of the 0 about the centre for crystals
+      BDSCrystalInfo* ci = componentFactory->PrepareCrystalInfo(searchC->second);
+      crystalAngle *= CLHEP::rad;
+      crystalAngle += 0.5 * ci->bendingAngleYAxis;
+      delete ci; // no longer needed
+
       el.type = GMAD::ElementType::_CRYSTALCOL;
-      el.l += 1e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
+      el.apertureType = "circularvacuum";
+      // need a small margin in length as crystal may have angled face and be rotated
+      el.l += 10e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
       if (collimatorName.find("2") != std::string::npos) // b2
         {
           el.crystalLeft = collimatorToCrystal[collimatorName];
-          el.crystalAngleYAxisLeft = 50 * 1e-6;
+          el.crystalAngleYAxisLeft = crystalAngle + 0.5 * ci->bendingAngleYAxis;
         }
       else
         {
           el.crystalRight = collimatorToCrystal[collimatorName];
-          el.crystalAngleYAxisRight = -50 * 1e-6;
+          el.crystalAngleYAxisRight = crystalAngle - 0.5 * ci->bendingAngleYAxis;
         }
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
-  
-  auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
+
   BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el,
 									 nullptr,
 									 nullptr,
