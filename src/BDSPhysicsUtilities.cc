@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4AntiNeutron.hh"
 #include "G4AntiProton.hh"
 #include "G4Electron.hh"
+#include "G4EmParameters.hh"
 #include "G4EmStandardPhysics_option4.hh"
 #include "G4EmStandardPhysicsSS.hh"
 #include "G4DynamicParticle.hh"
@@ -536,6 +537,11 @@ void BDS::CheckAndSetEnergyValidityRange()
 	{
 	  G4cout << __METHOD_NAME__ << "set high energy limit: "
 		 << elHigh/CLHEP::TeV << " TeV" << G4endl;
+      if (elHigh > G4EmParameters::Instance()->MaxKinEnergy())
+        {
+          G4cout << "Upping EM Ek limit to " << elHigh/CLHEP::TeV << " TeV" << G4endl;
+          G4EmParameters::Instance()->SetMaxEnergy(elHigh);
+        }
 	}
     }
 }
