@@ -9,17 +9,7 @@
 #include <cmath>
 
 void TRKDefaultStrategy::Track(TRKDrift* el, TRKBunch* bunch) {
-  double length = el->GetLength();
-
-  trk::maps::drift(*bunch, length)
-
-  // for (auto &p : *bunch)
-  //   {
-  //     p.x += p.xp * length;
-  //     p.y += p.yp * length;
-  //     p.ct += p.dp * length / std::pow(p.beta0*p.gamma0, 2);
-  //   }
-
+  trk::maps::drift(*bunch, el->GetLength());
 }
 
 void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
