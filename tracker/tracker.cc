@@ -94,6 +94,7 @@ int main (int argc, char** argv)
   /// Write primaries to output file
   output->InitialiseGeometryDependent();
   output->NewFile();
+  output->FillModel();
   output->WriteTrackerBunch("primaries",bunch,true);
 
   /// Build tracker
