@@ -373,23 +373,9 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
-  double angle;
-  // B Field used to define bend: theta = qBl / p 
-  if(element.B != 0)
-  {    
-    angle = charge * (element.B * CLHEP::tesla) * element.l / momentum;
-  }
-  else
-  {
-    angle = element.angle;
-  }
-  
-  TRKAperture* aperture = CreateAperture(element);
-  return new TRKSBend(angle,
-      element.name,
-      element.l,
-      aperture,
-      placement);
+  TRKAperture *aperture = CreateAperture(element);
+  return new TRKSBend(element.angle, element.name, element.l, aperture,
+                      placement);
 }
 
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)

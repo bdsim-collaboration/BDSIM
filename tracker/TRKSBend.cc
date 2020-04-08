@@ -16,10 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include <string>
+
 #include "TRKSBend.hh"
 #include "TRKStrategy.hh"
 
 TRKSBend::TRKSBend(double        angleIn,
+		   double k1,
 		   std::string   nameIn,
 		   double        lengthIn,
 		   TRKAperture*  apertureIn,
@@ -33,7 +37,7 @@ TRKSBend::~TRKSBend()
 
 void TRKSBend::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
-  strategy->Track(this,bunch);
+  strategy->Track(this, bunch);
 }
 
 void TRKSBend::Print(std::ostream &out) const

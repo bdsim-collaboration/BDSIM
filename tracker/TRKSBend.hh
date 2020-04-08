@@ -31,9 +31,11 @@ class TRKSBend: public TRKElement
 private: 
   /// bending angle in rad
   double angle;
+  double k1;
 
 public:
   TRKSBend(double        angle,
+	   double k1,
 	   std::string   name,
 	   double        length,
 	   TRKAperture  *aperture,
@@ -41,6 +43,7 @@ public:
   virtual ~TRKSBend();
   
   inline double GetAngle()const{return angle;}
+  inline double GetK1()const{return k1;}
   
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
