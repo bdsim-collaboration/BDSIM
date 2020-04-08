@@ -176,10 +176,10 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  
           // Copy into array - we can always use 4d coords even for lower d arrays
           // as they all inherit 4d.
-	  // We always use indX, indY etc as array is independent of looping here.
-	  // References to indicies update them as we loop appropriately. The array
-	  // is constructed with the right dimensions and can therefore be filled in
-	  // any order.
+	      // We always use indX, indY etc as array is independent of looping here.
+	      // References to indices update them as we loop appropriately. The array
+	      // is constructed with the right dimensions and can therefore be filled in
+	      // any order.
           (*result)(indX, indY, indZ, indT) = fv;
 	  
           (*ind1)++; // increment counter
@@ -194,7 +194,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               (*ind3)++;   // advance ind3
 	    }
           if ((*ind3) == (*n3))
-	    {// we've copmleted one set of ind3
+	    {// we've completed one set of ind3
               (*ind3) = 0; // reset back to 0
               (*ind4)++;   // advance ind4
 	    }

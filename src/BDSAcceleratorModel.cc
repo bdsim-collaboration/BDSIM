@@ -108,8 +108,8 @@ void BDSAcceleratorModel::RegisterBeamlineSetMain(const BDSBeamlineSet& setIn)
   MapBeamlineSet(setIn);
 }
 
-void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String              name,
-						   const BDSBeamlineSet& setIn)
+void BDSAcceleratorModel::RegisterBeamlineSetExtra(const G4String&       name,
+						                           const BDSBeamlineSet& setIn)
 {
   auto search = extraBeamlines.find(name);
   if (search != extraBeamlines.end()) // already exists!
@@ -118,7 +118,7 @@ void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String              name,
   MapBeamlineSet(setIn);
 }
 
-const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
+const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(const G4String& name) const
 {
   if (name == "main")
     {return mainBeamlineSet;}
