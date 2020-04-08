@@ -361,7 +361,7 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKSBend(element.angle, element.name, element.l, aperture,
+  return new TRKSBend(element.angle, 0.0, element.name, element.l, aperture,
                       placement);
 }
 

@@ -23,13 +23,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKStrategy.hh"
 
 TRKSBend::TRKSBend(double        angleIn,
-		   double k1,
+		   double        k1In,
 		   std::string   nameIn,
 		   double        lengthIn,
 		   TRKAperture*  apertureIn,
 		   TRKPlacement* placementIn):
   TRKElement(nameIn,lengthIn,apertureIn,placementIn),
-  angle(angleIn)
+  angle(angleIn),
+  k1(k1In)
 {;}
 
 TRKSBend::~TRKSBend()

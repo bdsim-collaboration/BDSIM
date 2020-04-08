@@ -35,7 +35,7 @@ private:
 
 public:
   TRKSBend(double        angle,
-	   double k1,
+	   double        k1,
 	   std::string   name,
 	   double        length,
 	   TRKAperture  *aperture,
