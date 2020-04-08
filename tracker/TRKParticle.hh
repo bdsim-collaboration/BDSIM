@@ -40,6 +40,10 @@ public:
   //  TRKParticle();
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
   TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
+  TRKParticle(double xIn, double xpIn, double yIn, double ypIn, double ctIn,
+              double dpIn)
+      : x(xIn), xp(xpIn), y(yIn), yp(ypIn), ct(ctIn), dp(dpIn) {}
+
   ~TRKParticle();
   
   //accessors

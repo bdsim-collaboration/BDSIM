@@ -94,16 +94,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
       // p = sqrt( (E + m)^2 - m^2 )
       double p = sqrt( energy*energy + 2*energy*mass );
 
-      double paramsIn[8] = {c.local.x,
-                            c.local.y,
-                            c.local.s,
-                            c.local.xp,
-                            c.local.yp,
-                            c.local.zp,
-                            p,
-                            mass};
-
-      bunch.push_back(TRKParticle(paramsIn, charge, i));
+      bunch.emplace_back(c.local.x, c.local.xp, c.local.y, c.local.yp, 0, 0);
 
       //weight not required - maybe should be kept though to pass on to bdsim
     }
