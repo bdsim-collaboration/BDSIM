@@ -5,13 +5,17 @@
 #include "TRKQuadrupole.hh"
 #include "TRKSBend.hh"
 
-// void TRKDefaultStrategy::Track(
-
+#include <cmath>
 
 void TRKDefaultStrategy::Track(TRKDrift* el, TRKBunch* bunch) {
   double length = el->GetLength();
-  std::cout << "DRIFT LENGTH = " << length << "\n";
 
+  for (auto &p : *bunch)
+    {
+      p.x += p.xp * length;
+      p.y += p.yp * length;
+      p.ct += p.dp * length / std::pow(p.beta0*p.gamma0, 2);
+    }
 
 }
 
