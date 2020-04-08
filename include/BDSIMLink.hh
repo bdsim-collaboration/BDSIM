@@ -93,7 +93,8 @@ public:
 			 G4double aperture,
 			 G4double rotation = 0,
 			 G4double xOffset  = 0,
-			 G4double yOffset  = 0);
+			 G4double yOffset  = 0,
+			 G4double crystalAngle = 0);
 
   BDSHitsCollectionSamplerLink* SamplerHits() const;
   void ClearSamplerHits() {runAction->ClearSamplerHits();}

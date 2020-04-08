@@ -53,7 +53,8 @@ public:
 			 G4double aperture,
 			 G4double rotation,
 			 G4double xOffset,
-			 G4double yOffset);
+			 G4double yOffset,
+			 G4double crystalAngle);
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
