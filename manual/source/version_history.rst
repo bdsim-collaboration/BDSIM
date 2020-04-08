@@ -451,6 +451,10 @@ Bug Fixes
   through the thick sections of the element.
 * Fix segfault in rebdsimOptics when supplying a BDSIM root file in which only primaries are generated, the model
   isn't constructed in this case so it isn't written, therefore can't be copied to the rebdsimOptics output.
+* Fix wrongly sized container volume for ggmad geometry for Cons and Tubs solids as well as reported extents that
+  would cause overlaps with neighbouring elements.
+* Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
+  to degenerate naming of parallel worlds.
 
 Output Changes
 --------------
