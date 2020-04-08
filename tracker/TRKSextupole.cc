@@ -34,11 +34,6 @@ TRKSextupole::~TRKSextupole()
 
 void TRKSextupole::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
-#ifdef TRKDEBUG
-  std::cout << "Tracking through element named: " << name << std::endl;
-  std::cout << "before tracking" << std::endl;
-  std::cout << *bunch;
-#endif
 
   if (offsetIn && offsetOut)
     {strategy->Track(offsetIn,bunch);}
@@ -48,10 +43,6 @@ void TRKSextupole::Track(TRKBunch* bunch, TRKStrategy* strategy)
   if (offsetIn && offsetOut)
     {strategy->Track(offsetOut,bunch);}
 
-#ifdef TRKDEBUG
-  std::cout << "after tracking" << std::endl;
-  std::cout << *bunch;
-#endif
 }
 
 void TRKSextupole::Print(std::ostream &out) const

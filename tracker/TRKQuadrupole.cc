@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -34,24 +34,14 @@ TRKQuadrupole::~TRKQuadrupole()
 
 void TRKQuadrupole::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
-#ifdef TRKDEBUG
-  std::cout << "Tracking through element named: " << name << std::endl;
-  std::cout << "before tracking" << std::endl;
-  std::cout << *bunch;
-#endif
 
   if (offsetIn && offsetOut)
     {strategy->Track(offsetIn,bunch);}
 
   strategy->Track(this,bunch);
-  
+
   if (offsetIn && offsetOut)
     {strategy->Track(offsetOut,bunch);}
-
-#ifdef TRKDEBUG
-  std::cout << "after tracking" << std::endl;
-  std::cout << *bunch;
-#endif
 }
 
 void TRKQuadrupole::Print(std::ostream &out) const
