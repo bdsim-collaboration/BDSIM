@@ -57,22 +57,16 @@ TRKTracker::~TRKTracker()
 
 void TRKTracker::Track(TRKBunch* bunch) 
 {
-  std::cout << __METHOD_NAME__ << "starting tracking" << std::endl;
-  
-  Clock::time_point tStart = Clock::now(); 
   
   if (!bunch)
-    {return;} //can't track nothing
+    {return;} // can't track nothing
   if (bunch->empty())
-    {return;} //even if bunch exists, there must be particles in it
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << " bunch before any tracking " << std::endl;
-  std::cout << *bunch << std::endl;
-#endif
+    {return;} // even if bunch exists, there must be particles in it
+
   TRKLineConstIter elIter = line->begin();
-  //iterate over number of turns - if linear, just 1 'turn'
+  // iterate over number of turns - if linear, just 1 'turn'
   BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
-  for (unsigned int i=0; i<maxTurns; i++) 
+  for (unsigned int i = 0; i < maxTurns; i++) 
     {
       //check if all particles have been lost before turns completed
       if (bunch->empty())
@@ -90,21 +84,21 @@ void TRKTracker::Track(TRKBunch* bunch)
 	  //track all particles through an element
 	  (*elIter)->Track(bunch,strategy);
 	  
-	  //check the aperture and decide whether to shift to bdsim
-	  if (!dontuseaperture) //is aperture checking turned on?
-	    {
-	      TRKBunch* lostParticles = (*elIter)->CheckAperture(bunch);
-	      if (lostParticles)
-		{
-		  int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
-		  output->WriteTrackerPrimaryLoss(lostParticles, turnsTaken);
-		  delete lostParticles;
-		}
-	    }
+	  // //check the aperture and decide whether to shift to bdsim
+	  // if (!dontuseaperture) //is aperture checking turned on?
+	  //   {
+	  //     TRKBunch* lostParticles = (*elIter)->CheckAperture(bunch);
+	  //     if (lostParticles)
+	  // 	{
+	  // 	  int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
+	  // 	  output->WriteTrackerPrimaryLoss(lostParticles, turnsTaken);
+	  // 	  delete lostParticles;
+	  // 	}
+	  //   }
 	  
 	  //confirm coordinates for particles that didn't 'hit' aperture
-	  (*elIter)->ConfirmCoordinates(bunch);
-	}// end of beamline iteration
+	  // (*elIter)->ConfirmCoordinates(bunch);
+	} // end of beamline iteration
       
       BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
       if (bunch->empty())
