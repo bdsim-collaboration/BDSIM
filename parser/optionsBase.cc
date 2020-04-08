@@ -318,7 +318,7 @@ OptionsBase::OptionsBase()
   useScoringMap = false;
 
   // tracker options
-  trackingType             = "hybrid";
+  trackingType             = "default";
   trackingSteps            = 1;
   dontUseAperture          = false;
 }
