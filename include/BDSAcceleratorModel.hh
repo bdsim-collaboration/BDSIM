@@ -73,12 +73,12 @@ public:
   void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn);
 
   /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
-  void RegisterBeamlineSetExtra(G4String              name,
-				const BDSBeamlineSet& setIn);
+  void RegisterBeamlineSetExtra(const G4String&       name,
+				                const BDSBeamlineSet& setIn);
   
   /// @{ Accessor.
   inline const BDSBeamlineSet& BeamlineSetMain() const {return mainBeamlineSet;}
-  const BDSBeamlineSet& BeamlineSet(G4String name) const;
+  const BDSBeamlineSet& BeamlineSet(const G4String& name) const;
   inline const std::map<G4String, BDSBeamlineSet>& ExtraBeamlines() const {return extraBeamlines;}
   const BDSBeamline* BeamlineMain() const {return mainBeamlineSet.massWorld;}
   /// @}
