@@ -29,9 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-//#include "Rtypes.h" // for classdef
-//#include "TObject.h"
-
 class Event;
 class HistogramDef;
 class TChain;
@@ -56,7 +53,7 @@ namespace BDS
 }
 
 /**
- * @brief Histgram over a set of integers not number line.
+ * @brief Histogram over a set of integers not number line.
  *
  * @author L. Nevay
  */
@@ -74,7 +71,6 @@ public:
   virtual void Write(TDirectory* dir = nullptr);
 
 protected:
-  ///TH1* CreateHistogram(long long int pdgID);
   inline bool IsIon(long long int pdgID) const {return pdgID > 100000000;}
 
   void CreatePerEntryHistogram(long long int pdgID);

@@ -41,7 +41,7 @@ class TH1;
  * objects in the currently open file (lots of static stuff) and therefore
  * this should be unique from the supplied base histogram name!
  * 
- * Each instance is single use. Once termianted, the accumulation should
+ * Each instance is single use. Once terminated, the accumulation should
  * not be used.
  * 
  * The algorithm used to calculate the mean and variance is one that supports

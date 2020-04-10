@@ -33,7 +33,7 @@ class TH1;
 /**
  * @brief Holder for information to calculate per entry histograms.
  *
- * This creates a histogram per event and accumualtes the mean and variance
+ * This creates a histogram per event and accumulates the mean and variance
  * for every bin in a cloned histogram. In the case of 1 event, the bin error
  * is 0. 
  * 
@@ -46,7 +46,7 @@ class TH1;
 class PerEntryHistogram
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   PerEntryHistogram();
   
   /// Constructor with a histogram definition and the chain to operate on.
@@ -69,7 +69,7 @@ public:
   /// ie just increment n.
   inline void AddNEmptyEntries(unsigned long i){accumulator->AddNEmptyEntries(i);}
 
-  /// Get the Integral() from the reuslt member histogram if it exists, otherwise 0.
+  /// Get the Integral() from the result member histogram if it exists, otherwise 0.
   double Integral() const;
 
 protected:
