@@ -43,7 +43,7 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	           const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -58,8 +58,8 @@ Config::Config(const std::string& inputFilePathIn,
 }
 
 Config::Config(const std::string& fileNameIn,
-	       const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	           const std::string& inputFilePathIn,
+	           const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);  
@@ -78,7 +78,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	{delete histoDef;}
+	    {delete histoDef;}
     }
   for (auto def : eventHistoDefSetsSimple)
     {delete def;}
@@ -126,8 +126,8 @@ void Config::InitialiseOptions(const std::string& analysisFile)
 }
 
 Config* Config::Instance(const std::string& fileName,
-			 const std::string& inputFilePath,
-			 const std::string& outputFileName)
+			             const std::string& inputFilePath,
+			             const std::string& outputFileName)
 {
   if(!instance && !fileName.empty())
     {instance = new Config(fileName, inputFilePath, outputFileName);}
@@ -435,9 +435,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     {
       histoDefs[treeName].push_back(result);
       if (perEntry)
-	{histoDefsPerEntry[treeName].push_back(result);}
+	    {histoDefsPerEntry[treeName].push_back(result);}
       else
-	{histoDefsSimple[treeName].push_back(result);}
+	    {histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
 }
