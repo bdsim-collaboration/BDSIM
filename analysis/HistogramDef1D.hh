@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class HistogramDef1D: public HistogramDef
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   HistogramDef1D();
 
   /// Use this constructor.
