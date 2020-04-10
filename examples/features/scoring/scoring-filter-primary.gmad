@@ -10,7 +10,7 @@ meshCol: scorermesh, nx=10, ny=10, nz=5, scoreQuantity="ddose",
 	 xsize=1*m, ysize=1*m, zsize=2*m,
 	 z=10*cm;
 
-beam, particle="proton",
+beam, particle="e-",
       energy=5*GeV,
       distrType="square",
       envelopeX=5*cm,
@@ -20,4 +20,5 @@ option, physicsList="em",
 	defaultRangeCut=1*cm,
 	elossHistoBinWidth=5*mm,
 	seed=123,
-	ngenerate=20;
+	ngenerate=1,
+	minimumKineticEnergy=100*MeV;
