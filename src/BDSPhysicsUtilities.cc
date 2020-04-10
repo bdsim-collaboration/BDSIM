@@ -166,7 +166,6 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
   // force construction of the particles - does no harm and helps with
   // usage of exotic particle beams
   result->ConstructParticle();
-  result->DumpCutValuesTable(verbosity);
   result->SetVerboseLevel(verbosity);
 
   G4VUserPhysicsList* resultAsUserPhysicsList = dynamic_cast<G4VUserPhysicsList*>(result);
