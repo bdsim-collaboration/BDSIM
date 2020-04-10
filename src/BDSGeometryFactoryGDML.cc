@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
+#include "G4Colour.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <fstream>
@@ -86,10 +87,39 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
   BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
 
-  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  auto* gdmlColours = new std::map<G4String, G4Colour*>;
+
+  for (auto lv:  lvsGDML)
+  {
+      auto auxInfo = parser->GetVolumeAuxiliaryInformation(lv);
+      for (const auto& af : auxInfo)
+      {
+          if (af.type == "colour")
+          {
+                std::stringstream ss(af.value);
+                std::vector<G4double> colVals((std::istream_iterator<G4double>(ss)), std::istream_iterator<G4double>());
+
+                auto *colour = new G4Colour(colVals.at(0), colVals.at(1), colVals.at(2), colVals.at(3));
+                gdmlColours->insert(std::pair<G4String, G4Colour *>(lv->GetName(), colour));
+          }
+      }
+  }
+
+
+    G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
-  auto visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
+
+  std::set<G4VisAttributes*> visesGDML;
+  if (gdmlColours->empty())
+    {
+        visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
+    }
+  else
+      {
+        G4cout << "Loaded " << gdmlColours->size() << " logical volume colours from GDML auxiliary tags" << G4endl;
+        visesGDML = ApplyColourMapping(lvsGDML, gdmlColours, FALSE);
+      }
 
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
 
@@ -106,7 +136,11 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
   result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
-  
+
+  for (auto & gdmlColour : *gdmlColours)
+    { delete gdmlColour.second; }
+  gdmlColours->clear();
+
   delete parser;
   return result;
 }
