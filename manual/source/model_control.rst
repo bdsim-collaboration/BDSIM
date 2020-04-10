@@ -746,19 +746,20 @@ appropriate parameters need to be defined for each individual distribution.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `xDistrType`                     | Horizontal distribution type                          |
-+----------------------------------+-------------------------------------------------------+
-| `yDistrType`                     | Vertical distribution type                            |
-+----------------------------------+-------------------------------------------------------+
-| `zDistrType`                     | Longitudinal distribution type                        |
-+----------------------------------+-------------------------------------------------------+
-
++---------------+--------------------------------+------------------------+
+| **Variable**  | **Description**                | **Coordinates Used**   |
++===============+================================+========================+
+| `xDistrType`  | Horizontal distribution type   | x,xp,weight            |
++---------------+--------------------------------+------------------------+
+| `yDistrType`  | Vertical distribution type     | y,yp                   |
++---------------+--------------------------------+------------------------+
+| `zDistrType`  | Longitudinal distribution type | z,zp,s,T,totalEnergy   |
++---------------+--------------------------------+------------------------+
+ 
 .. note:: It is currently not possible to use two differently specified versions of the same
-	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
-	  and gaussTwiss (parameter set 2) for y. They will have the same settings.
+ 	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
+	  and gaussTwiss (parameter set 2) for y. They will have the same settings as (for example)
+	  only one betx can be specified.
 
 Examples: ::
 
@@ -1731,7 +1732,7 @@ information from the `placements`. The full list of accepted parameters is given
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | apertureType            | The shape of the sampler desired as described using the aperture   |
@@ -1961,6 +1962,8 @@ described in :ref:`tunnel-geometry`.
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| apertureType                     | Default aperture type for all elements.               |
++----------------------------------+-------------------------------------------------------+
 | aper1                            | Default aper1 parameter                               |
 +----------------------------------+-------------------------------------------------------+
 | aper2                            | Default aper2 parameter                               |
@@ -2243,6 +2246,8 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | physicsVerbose                   | Prints out all processes linked to primary particle   |
 |                                  | and all physics processes registered in general       |
++----------------------------------+-------------------------------------------------------+
+| physicsVerbosity                 | Set the physics verbosity for Geant4 (0,1,2).         |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m]                                    |
@@ -2637,7 +2642,7 @@ Examples: ::
           verboseEventLevel=2;
 
 This will print out verbose stepping information for the primary particle (default is only the primary)
-for the 4th event onwwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
+for the 4th event onwards (3 in 0 counting) with a verbose stepping level of 2 showing individual volumes. This
 example is in :code:`bdsim/examples/features/options/verboseEvent-primaries.gmad`. This will print out for
 every event after this.  Another example is: ::
 
@@ -3121,6 +3126,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | conversionFactorFile    | No            | File name of conversion factor file to be used |
 |                         |               | in calculation                                 |
 +-------------------------+---------------+------------------------------------------------+
+| conversionFactorPath    | No            | Path to set of files per particle to be used   |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
 | materialToInclude       | No            | A space separated list of materials to be      |
 |                         |               | scored. Any materials not matching this will   |
 |                         |               | be ignored. (string, case sensitive).          |
@@ -3134,6 +3142,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 |                         |               | overlap a piece of geometry but not score from |
 |                         |               | that specific geometry allowing tight fitting  |
 |                         |               | scoring.                                       |
++-------------------------+---------------+------------------------------------------------+
+| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
+|                         |               | the primary particle(s) with Parent ID == 0.   |
 +-------------------------+---------------+------------------------------------------------+
 
 .. _scorer-types:

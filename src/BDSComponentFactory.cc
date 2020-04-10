@@ -1121,7 +1121,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
   if (!HasSufficientMinimumLength(element)) 
-    {return nullptr;}
+    {throw BDSException(__METHOD_NAME__, "insufficient length for element \"" + element->name + "\" - must specify a suitable length");}
 
   // we don't specify the field explicitly here - this is done generically
   // in the main CreateComponent method with SetFieldDefinitions.
@@ -1264,7 +1264,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
+  G4bool circularOuter = false;
+  G4String apertureType = G4String(element->apertureType);
+  if (apertureType == "circular")
+    {circularOuter = true;}
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      PrepareHorizontalWidth(element),
@@ -1274,7 +1277,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      PrepareColour(element));
+				      PrepareColour(element),
+				      circularOuter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -1282,6 +1286,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
+  G4bool circularOuter = false;
+  G4String apertureType = G4String(element->apertureType);
+  if (apertureType == "circular")
+    {circularOuter = true;}
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
@@ -1291,7 +1299,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     PrepareColour(element));
+				     PrepareColour(element),
+				     circularOuter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
@@ -1818,7 +1827,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
   if (el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
-	{BDS::Warning("---> NOT creating element \"" + el->name + "\" -> l < 1e-7 m: l = " + std::to_string(el->l) + " m");} // already in m
+	{BDS::Warning("---> NOT creating element \"" + el->name + "\" -> l < 1e-7 m: l = " + std::to_string(el->l) + " m");}
       return false;
     }
   else
