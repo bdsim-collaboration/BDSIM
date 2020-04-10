@@ -54,6 +54,7 @@ private:
   G4bool stopSecondaries;   ///< Whether particles with parentID > 0 will be killed.
   G4long maxTracksPerEvent; ///< Maximum number of tracks before start killing.
   std::set<G4int> pdgIDsToAllow;
+  G4bool emptyPDGIDs;
   G4bool protonsAndIonsOnly;
   G4double minimumEK;       ///< Minimum kinetic energy to generate a hit for.
  };

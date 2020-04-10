@@ -36,6 +36,7 @@ BDSLinkStackingAction::BDSLinkStackingAction(const BDSGlobalConstants* globals,
                                              G4bool                    protonsAndIonsOnlyIn,
                                              G4double                  minimumEKIn):
   pdgIDsToAllow(pdgIDsToAllowIn),
+  emptyPDGIDs(pdgIDsToAllow.empty()),
   protonsAndIonsOnly(protonsAndIonsOnlyIn),
   minimumEK(minimumEKIn)
 {
@@ -77,7 +78,7 @@ G4ClassificationOfNewTrack BDSLinkStackingAction::ClassifyNewTrack(const G4Track
           else if (pdgID == 2212)
             {result = fUrgent;}
         }
-      else if (!pdgIDsToAllow.empty())
+      else if (!emptyPDGIDs)
         {
           if (pdgIDsToAllow.find(pdgID) != pdgIDsToAllow.end())
             {result = fKill;}
