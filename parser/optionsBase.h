@@ -328,7 +328,7 @@ namespace GMAD
     double      trajCutLTR;
     bool        trajConnect;
 
-    bool        writePrimaries;
+    bool        storePrimaries;
     bool        storeModel;
 
     // circular options

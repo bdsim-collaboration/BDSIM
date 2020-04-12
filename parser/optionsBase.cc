@@ -291,7 +291,7 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   
-  writePrimaries           = true;
+  storePrimaries           = true;
   storeModel               = true;
 
   // circular options

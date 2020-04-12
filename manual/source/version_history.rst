@@ -1122,7 +1122,7 @@ Bug Fixes
 * Fixed possible overlap in vkicker, hkicker, and h-style dipole geometry with highly asymmetric
   beam pipes.
 * Fixed incorrect report that beam pipe wouldn't fit in magnet for various aperture shapes. Issue #253.
-* Fixed issue where the option :code:`writePrimaries = 0` would result in the hits for the first sampler
+* Fixed issue where the option :code:`storePrimaries = 0` would result in the hits for the first sampler
   being written to the primary sampler structure. Issue #245.
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
