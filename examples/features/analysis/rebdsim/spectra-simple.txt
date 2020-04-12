@@ -1,0 +1,9 @@
+Debug						0
+InputFilePath					s2.root
+OutputFileName					./ana_spectra_1.root
+
+#Object   Sampler Name  # Bins  Binning     Particles        Selection
+SimpleSpectra   	c1	30	{1e-3:200}    {11,-11,22,-22}  1
+SimpleSpectra   	c1	30	{1e-3:200     {11,-11,22,-22}  PrimaryFirstHit.S>3.5
+SimpleSpectraLog   	c1	30	{-4:2}        {11,-11,22,-22}  1
+SimpleSpectraTE   	c1	30	{1e-3:200}    {11,-11,22,-22}  1
