@@ -144,15 +144,13 @@ protected:
   /// Get the next file name based on the base file name and the accrued number of files.
   G4String GetNextFileName();
 
-  /// Whether primaries are to be written to file or not.
-  inline G4bool StorePrimaries() const {return storePrimaries;}
-
   /// Whether to create the collimator structures in the output or not.
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
 
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
+  G4bool storePrimaries;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
@@ -262,7 +260,6 @@ private:
   const G4String fileExtension; ///< File extension to add to each file.
   G4int numberEventPerFile; ///< Number of events stored per file.
   G4int outputFileNumber;   ///< Number of output file.
-  G4bool storePrimaries;    ///< Whether to write primaries or not.
 
   /// Invalid names for samplers - kept here as this is where the output structures are created.
   const static std::set<G4String> protectedNames;
