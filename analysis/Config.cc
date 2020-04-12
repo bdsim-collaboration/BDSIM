@@ -599,11 +599,13 @@ void Config::ParseBinning(const std::string& binning,
 
 std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
 {
-  // if there are non-digits (more than one together) - will parse later on for 'top10' or 'all' etc
-  std::regex anyNonDigit("^[a-zA-Z]+");
-  std::smatch matchAnyNonDigit;
-  if (std::regex_search(word, matchAnyNonDigit, anyNonDigit))
-    {return std::set<ParticleSpec>();}
+  std::string wordLower = LowerCase(word);
+  std::vector<std::string> specialKeys = {"top", "particles", "all", "ions"};
+  for (const auto& key : specialKeys)
+    {
+      if (wordLower.find(key) != std::string::npos)
+        {return std::set<ParticleSpec>();}
+    }
 
   // some numbers in brackets -> try to split up
   // detect brackets and strip off
