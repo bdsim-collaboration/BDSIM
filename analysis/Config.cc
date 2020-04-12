@@ -293,7 +293,14 @@ void Config::ParseSpectraLine(const std::string& line)
   
   Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
 
-  std::set<ParticleSpec> particles = ParseParticles(results[4]);
+  std::set<ParticleSpec> particles;
+  try
+    {particles = ParseParticles(results[4]);}
+  catch (std::string& e)
+    {
+      e += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
+      throw e;
+    }
 
   // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
   // per event so we should warn the user about this as it'll create no histograms
