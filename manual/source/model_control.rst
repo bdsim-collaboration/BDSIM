@@ -2460,6 +2460,9 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
 +------------------------------------+--------------------------------------------------------------------+
+| storePrimaries                     | Whether to store primary particle coordinates in the Event tree.   |
+|                                    | Default on.                                                        |
++------------------------------------+--------------------------------------------------------------------+
 | storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
 |                                    | Equivalent to turning on `storeSamplerCharge`,                     |
 |                                    | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
