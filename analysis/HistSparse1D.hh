@@ -30,6 +30,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * and couldn't get to work - overly complex for what we need. Boost histograms are
  * better but we don't have a dependency on that yet, so for now a super simple one
  * of our own.
+ * 
+ * This doesn't have any limits and just accumulates for each unique key forming a
+ * set of keys.
  *
  * @author L. Nevay
  */
