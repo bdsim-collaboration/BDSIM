@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
+#include "RBDSException.hh"
 #include "RebdsimTypes.hh"
 #include "Run.hh"
 
@@ -120,7 +121,7 @@ void DataLoader::CommonCtor(std::string fileName)
 void DataLoader::BuildInputFileList(std::string inputPath)
 {
   if(inputPath.empty())
-    {throw std::string("DataLoader::BuildInputFileList> no file specified");}
+    {throw RBDSException("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
   std::vector<std::string> fileNamesTemp;

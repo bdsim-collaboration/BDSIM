@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramDef.hh"
 #include "HistogramDefSet.hh"
+#include "RBDSException.hh"
 #include "SpectraParticles.hh"
 
 #include <map>
@@ -100,7 +101,7 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
                 {what = writewhat::topN;}
             }
           else // this will happen if 'top' isn't in the specification or it generally doesn't match
-            {throw std::string("Invalid particle specifier \"" + particleSpecificationIn + "\"");}
+            {throw RBDSException("Invalid particle specifier \"" + particleSpecificationIn + "\"");}
         }
     }
 }

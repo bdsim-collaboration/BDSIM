@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Event.hh"
+#include "RBDSException.hh"
 #include "RebdsimTypes.hh"
 
 #include "BDSOutputROOTEventAperture.hh"
@@ -245,7 +246,7 @@ void Event::SetBranchAddress(TTree* t,
 	  if (debug)
 	    {std::cout << "Event::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  if (branchList->FindObject((name + ".").c_str()) == nullptr)
-        {throw std::string("Unkown branch name \"" + name + "\"");}
+        {throw RBDSException("Unkown branch name \"" + name + "\"");}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 
 	  // we can't automatically do this as SetBranchAddress must use the pointer
