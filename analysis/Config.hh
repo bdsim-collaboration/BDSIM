@@ -146,10 +146,14 @@ public:
   /// Parse a line beginning with histogram. Uses other functions if appropriately defined.
   void ParseHistogramLine(const std::string& line);
 
+  /// Parse a spectra definition line.
+  void ParseSpectraLine(const std::string& line);
+
+  /// Parse a particle set line.
+  void ParseParticleSetLine(const std::string& line);
+
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string& line, const int nDim);
-
-  void ParseSpectraLine(const std::string& line);
 
   /// Check whether a histogram definition word contains the world 'simple' and
   /// if so, it's not a per-entry histogram.

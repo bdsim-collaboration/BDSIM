@@ -160,6 +160,8 @@ void Config::ParseInputFile()
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
   std::regex spectra("(?:simple)*spectra(?:TE|rigidity)*(?:log)*(?:\\s+)", std::regex_constants::icase);
+  // match particleset ignoring case
+  std::regex particleSet("particleset", std::regex_constants::icase);
 
   while (std::getline(f, line))
     {
@@ -172,6 +174,8 @@ void Config::ParseInputFile()
 	{ParseHistogramLine(line);} // any histogram - must be before settings
       else if (std::regex_search(line, spectra))
 	{ParseSpectraLine(line);}
+	  else if (std::regex_search(line, particleSet))
+        {ParseParticleSetLine(line);}
       else
 	{ParseSetting(line);} // any setting
     }
@@ -315,6 +319,13 @@ void Config::ParseSpectraLine(const std::string& line)
     {eventHistoDefSetsSimple.push_back(result);}
 
   SetBranchToBeActivated("Event.", samplerName);
+}
+
+void Config::ParseParticleSetLine(const std::string& line)
+{
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
+  if (results.size() < 2)
+    {;}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
@@ -469,7 +480,7 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
 }
 
 void Config::UpdateRequiredBranches(const std::string& treeName,
-				    const std::string& var)
+				                    const std::string& var)
 {
   // This won't work properly for the options Tree that has "::" in the class
   // as well as double splitting. C++ regex does not support lookahead / behind
@@ -488,7 +499,7 @@ void Config::UpdateRequiredBranches(const std::string& treeName,
 }
 
 void Config::SetBranchToBeActivated(const std::string& treeName,
-				    const std::string& branchName)
+				                    const std::string& branchName)
 {
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
