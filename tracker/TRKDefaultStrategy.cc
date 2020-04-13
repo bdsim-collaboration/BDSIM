@@ -26,10 +26,10 @@ void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
   auto rooty = std::sqrt(k1);
   auto rootyl = rooty * length;
 
-  auto sx = std::sin(rootxl) / rootx;
+  auto sx = (rootx == 0) ? 1 : std::sin(rootxl) / rootx;
   auto cx = std::cos(rootxl);
 
-  auto sy = std::sinh(rootyl) / rooty;
+  auto sy = (rooty == 0) ? 1 : std::sinh(rootyl) / rooty;
   auto cy = std::cosh(rootyl);
 
   for (auto &p : *bunch) {
