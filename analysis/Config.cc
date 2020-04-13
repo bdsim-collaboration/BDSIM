@@ -31,7 +31,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <regex>
 #include <set>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -90,7 +89,7 @@ void Config::InitialiseOptions(const std::string& analysisFile)
 {
   optionsString["analysisfile"] = analysisFile;
   
-  // for backwards compatability / verbose names
+  // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
@@ -499,7 +498,7 @@ void Config::UpdateRequiredBranches(const std::string& treeName,
   // which makes it nigh on impossible to correctly identify the single : with
   // regex. For now, only the Options tree has this and we turn it all on, so it
   // it shouldn't be a problem (it only ever has one entry).
-  // match word; '.'; word -> here we match the token rather than the bits inbetween
+  // match word; '.'; word -> here we match the token rather than the bits in-between
   std::regex branchLeaf("(\\w+)\\.(\\w+)");
   auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
   auto words_end   = std::sregex_iterator();
@@ -637,7 +636,7 @@ std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
       if (std::regex_search(res, matchSelection, selection))
 	{
 	  auto keySearch = RBDS::spectraParticlesKeys.find(matchSelection[1]);
-	  auto which = RBDS::SpectraParticles::all;
+      RBDS::SpectraParticles which;
 	  if (keySearch != RBDS::spectraParticlesKeys.end())
 	    {which = keySearch->second;}
 	  else
