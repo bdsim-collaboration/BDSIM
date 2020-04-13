@@ -1,6 +1,5 @@
-Debug						0
-InputFilePath					../../data/sample1.root
-OutputFileName					./ana_spectra_1.root
+InputFilePath	../../data/shower1.root
+OutputFileName	ana_spectra.root
 
 #Object   Sampler Name  # Bins  Binning     Particles        Selection
 Spectra   	d3_1	30	{1e-3:1}    {11,-11,22,-22}  1
