@@ -200,6 +200,9 @@ public:
 		    double& yLow, double& yHigh,
 		    double& zLow, double& zHigh) const;
 
+  /// Return a vector of strings by splitting on whitespace.
+  std::vector<std::string> SplitOnWhiteSpace(const std::string& line) const;
+
   /// Simple struct to hold bin numbers and ranges.
   struct Binning
   {
