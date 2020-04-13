@@ -235,19 +235,9 @@ void Config::ParseHistogramLine(const std::string& line)
 }
 
 void Config::ParseSpectraLine(const std::string& line)
-
 {
   // split line on white space
-  std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitespace
-  // -1 here makes it point to the suffix, ie the word rather than the wspace
-  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
-  std::sregex_token_iterator end;
-  for (; iter != end; ++iter)
-    {
-      std::string res = (*iter).str();
-      results.push_back(res);
-    }
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
   
   if (results.size() < 6)
     {// ensure enough columns
@@ -326,21 +316,8 @@ void Config::ParseSpectraLine(const std::string& line)
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
-{  
-  // split line on white space
-  // doesn't inspect words themselves
-  // checks number of words, ie number of columns is correct
-  std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitespace
-  // -1 here makes it point to the suffix, ie the word rather than the wspace
-  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
-  std::sregex_token_iterator end;
-  for (; iter != end; ++iter)
-    {
-      std::string res = (*iter).str();
-      results.push_back(res);
-    }
-  
+{
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
   if (results.size() < 7)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
@@ -601,6 +578,21 @@ void Config::ParseBinning(const std::string& binning,
 	+ binning + "\n";
       throw std::string(errString);
     }
+}
+
+std::vector<std::string> Config::SplitOnWhiteSpace(const std::string& line) const
+{
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitespace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  return results;
 }
 
 std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
