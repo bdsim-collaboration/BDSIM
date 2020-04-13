@@ -17,6 +17,11 @@ fodo.root - generated from originalmodels/fodo.gmad with seed 456, 100 particles
 
 optics.root - generated from fodo.root
 
+# Sample Data from a shower (large particle variety)
+Based on originalmodels/shower.gmad
+1 file of 10 events; seed specified in file; various bits of output turned off to save space
+shower1.root - seed=123
+
 =========================
 In directory dataVersions
 =========================
