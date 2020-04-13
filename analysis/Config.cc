@@ -65,9 +65,9 @@ Config::Config(const std::string& fileNameIn,
   InitialiseOptions(fileNameIn);  
   ParseInputFile();
 
-  if (inputFilePathIn != "")
+  if (!inputFilePathIn.empty())
     {optionsString["inputfilepath"] = inputFilePathIn;}
-  if (outputFileNameIn != "")
+  if (!outputFileNameIn.empty())
     {optionsString["outputfilename"] = outputFileNameIn;}
 }
 
