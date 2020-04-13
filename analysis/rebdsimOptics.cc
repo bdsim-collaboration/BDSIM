@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
+#include "RBDSException.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventOptions.hh"
@@ -75,8 +76,10 @@ int main(int argc, char* argv[])
   DataLoader* dl = nullptr;
   try
     {dl = new DataLoader(inputFileName, false, true);}
-  catch (const std::string& e)
-    {std::cerr << e << std::endl; exit(1);}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
   EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
 						 false, true, false, -1, emittanceOnFly);
   evtAnalysis->Execute();
