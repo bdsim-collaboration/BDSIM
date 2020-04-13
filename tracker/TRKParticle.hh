@@ -44,8 +44,6 @@ public:
               double dpIn)
       : x(xIn), xp(xpIn), y(yIn), yp(ypIn), ct(ctIn), dp(dpIn) {}
 
-  ~TRKParticle();
-  
   //accessors
   /// return coordinate in micrometres
   ///@{

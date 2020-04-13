@@ -34,8 +34,6 @@ TRKParticle::TRKParticle(double vIn[], int chargeIn, int eventIDIn):charge(charg
   mass         = vIn[7];
 }
 
-TRKParticle::~TRKParticle() {}
-
 void TRKParticle::SetPosMom(vector6 posmomIn)
 {
   posmom = posmomIn;
