@@ -182,10 +182,13 @@ std::vector<long long int> PerEntryHistogramSet::TopUtility(const std::set<long 
   // multiple integrals of the same value (ie same rate)
   std::multimap<double, long long int> sorted = BDS::flip_map(integrals);
 
-  // take advantage of a set being (by definition) ordered - reverse iterate.
+  // take advantage of a multimap being (by definition) ordered - therefore, the integrals
+  // are ordered low to high, so reverse iterate to get in decreasing order.
   std::vector<long long int> result;
   int i = 0;
-  for (auto it = sorted.rbegin(); i < (int)n; i++, it++)
+  int nInt = (int)n;
+  // reverse iterate up to the end of the result or n, whichever is smaller
+  for (auto it = sorted.rbegin(); it != sorted.rend() && i < nInt; it++, i++)
     {result.push_back(it->second);}
   return result;
 }
