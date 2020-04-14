@@ -190,15 +190,20 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       // if the particle definition isn't found from the pdgcode in the construction
       // of G4PrimaryParticle, it means the mass, charge, etc will be wrong - don't
       // stack this particle into the vertex.
-      if (!g4prim->GetParticleDefinition())
-	{
+      const G4ParticleDefinition* pd = g4prim->GetParticleDefinition();
+      G4bool deleteIt = !pd;
+      if (pd)
+        {deleteIt = !(pd->GetPDGStable()) && !pd->GetDecayTable();}
+
+      if (deleteIt)
+        {
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
+          G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
 #endif
-	  delete g4prim;
-	  nParticlesSkipped++;
-	  continue;
-	}
+          delete g4prim;
+          nParticlesSkipped++;
+          continue;
+        }
 
       BDSParticleCoordsFull local(centralCoords.x,
 				  centralCoords.y,
