@@ -44,11 +44,11 @@ TRKBunch::TRKBunch(const GMAD::Beam& beam,
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
-  mass   = particle->Mass()*0.001; //mass converted from MeV to GeV manually without CLHEP
+  mass   = particle->Mass();
   charge = particle->Charge();
   totalEnergy   = particle->TotalEnergy();
   kineticEnergy = particle->KineticEnergy();
-  
+
   //populate particles using options & random number generator
   Populate(beam, particle);
 }
@@ -85,6 +85,13 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
   //initialise the vector of particles
   bunch.reserve(population);
 
+  BDSParticleDefinition const *referenceParticle =
+      bdsbunch->ParticleDefinition();
+
+  auto p0 = referenceParticle->Momentum();
+  auto gamma0 = referenceParticle->Gamma();
+  auto beta0 = referenceParticle->Beta();
+
   for (int i = 0; i < population; i++)
     {
       // bdsbunch generates values in CLHEP mm standard.
@@ -94,7 +101,18 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
       // p = sqrt( (E + m)^2 - m^2 )
       double p = sqrt( energy*energy + 2*energy*mass );
 
-      bunch.emplace_back(c.local.x, c.local.xp, c.local.y, c.local.yp, 0, 0);
+      // Momenta from BDSBunch are px/|p|, but we want px/p0
+      // (i.e. normalised w.r.t reference momentum, not particle momentum).
+      auto px = c.local.xp * p / p0;
+      auto py = c.local.xp * p / p0;
+
+      auto z = 0; // ???  Not sure what to do with this one yet.
+      auto pz = energy / p0 - 1/beta0;
+
+      bunch.emplace_back(c.local.x, px, c.local.y, py,
+			 z, pz,  // longitudinal coordinates
+			 beta0, gamma0 // reference relativistic
+			 );
 
       //weight not required - maybe should be kept though to pass on to bdsim
     }

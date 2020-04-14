@@ -35,28 +35,28 @@ void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
   for (auto &p : *bunch) {
     auto hbar = h / p.beta0;
     auto x = p.x;
-    auto xp = p.xp;
+    auto px = p.px;
     auto y = p.y;
-    auto yp = p.yp;
-    auto dp = p.dp;
+    auto py = p.py;
+    auto pz = p.pz;
 
     // Matrix multiplication part
     p.x = (x * cx
-	   + xp * sx
-	   + dp * hbar * (1 - cx) / std::pow(rootx, 2));
+	   + px * sx
+	   + pz * hbar * (1 - cx) / std::pow(rootx, 2));
 
-    p.xp = (x * -std::pow(rootx, 2) * sx
-	    + xp * cx
-	    + dp * hbar * sx);
+    p.px = (x * -std::pow(rootx, 2) * sx
+	    + px * cx
+	    + pz * hbar * sx);
 
-    p.y = y * cy + yp * sy;
-    p.yp = y * std::pow(rooty, 2) * sy + yp * cy;
+    p.y = y * cy + py * sy;
+    p.py = y * std::pow(rooty, 2) * sy + py * cy;
 
     // Vector addition part
     p.x += (h - k0) * (1 - cx) / std::pow(rootxl, 2);
-    p.xp += (h - k0) * sx;
+    p.px += (h - k0) * sx;
 
-    // TODO: ct (longitudinal path lenght difference)
+    // TODO: z (longitudinal path lenght difference)
 
   }
 }
@@ -83,17 +83,17 @@ void TRKDefaultStrategy::Track(TRKQuadrupole *el, TRKBunch *bunch) {
   for (auto &p : *bunch)
     {
       auto x = p.x;
-      auto xp = p.xp;
+      auto px = p.px;
       auto y = p.y;
-      auto yp = p.yp;
+      auto py = p.py;
 
-      p.x = x * f11 + xp * f12;
-      p.xp += x * f21 + xp * f22;
+      p.x = x * f11 + px * f12;
+      p.px += x * f21 + px * f22;
 
-      p.y = y * df11 + yp * df12;
-      p.yp += y * df21 + yp * df22;
+      p.y = y * df11 + py * df12;
+      p.py += y * df21 + py * df22;
 
-      p.ct += p.dp * length / std::pow(p.beta0*p.gamma0, 2);
+      p.z += p.pz * length / std::pow(p.beta0*p.gamma0, 2);
     }
 
   // Calculate matrix terms

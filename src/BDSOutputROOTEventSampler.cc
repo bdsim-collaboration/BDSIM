@@ -167,11 +167,11 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch)
     {
       n++;
       x.push_back(particle.x / CLHEP::m);
-      xp.push_back(particle.xp / CLHEP::rad);
+      xp.push_back(particle.px / CLHEP::rad);
       y.push_back(particle.y / CLHEP::m);
-      yp.push_back(particle.yp / CLHEP::rad);
-      z = (particle.ct / CLHEP::m);
-      zp.push_back(particle.dp / CLHEP::rad);
+      yp.push_back(particle.py / CLHEP::rad);
+      z = (particle.z / CLHEP::m);
+      zp.push_back(particle.pz / CLHEP::rad);
     }
 }
 

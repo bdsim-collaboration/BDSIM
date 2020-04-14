@@ -40,9 +40,10 @@ public:
   //  TRKParticle();
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
   TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
-  TRKParticle(double xIn, double xpIn, double yIn, double ypIn, double ctIn,
-              double dpIn)
-      : x(xIn), xp(xpIn), y(yIn), yp(ypIn), ct(ctIn), dp(dpIn) {}
+  TRKParticle(double xIn, double pxIn, double yIn, double pyIn, double zIn,
+              double pzIn, double beta0In, double gamma0In)
+      : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
+        gamma0(gamma0In) {}
 
   //accessors
   /// return coordinate in micrometres
@@ -90,11 +91,11 @@ public:
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
 
   double x;
-  double xp;
+  double px;
   double y;
-  double yp;
-  double ct;
-  double dp;
+  double py;
+  double z;
+  double pz;
 
   double beta0;
   double gamma0;
