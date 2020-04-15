@@ -52,6 +52,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
 
   G4EMDissociation* emdModel = new G4EMDissociation();
   emdModel->SetMaxEnergy(100*CLHEP::TeV);
+    emdModel->SetMinEnergy(0*CLHEP::MeV);
   //emdModel->SetVerboseLevel(2);
   inelProcIon->RegisterMe(emdModel);
 
