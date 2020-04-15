@@ -44,7 +44,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
   if (Activated())
     {return;}
 
-  G4HadronInelasticProcess* inelProcIon = new G4HadronInelasticProcess("ionInelastic", G4GenericIon::GenericIon());
+  G4HadronInelasticProcess* inelProcIon = new G4HadronInelasticProcess("ionEMD", G4GenericIon::GenericIon());
 
   G4EMDissociationCrossSection* crossSectionData = new G4EMDissociationCrossSection();
   inelProcIon->AddDataSet(crossSectionData);
