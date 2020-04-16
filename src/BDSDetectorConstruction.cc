@@ -308,14 +308,18 @@ void BDSDetectorConstruction::BuildBeamlines()
       G4double      startS         = mbl->back()->GetSPositionEnd(); 
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
+      // TODO - the naming convention here is repeated in BDSParallelWorldInfo which is registered
+      // beforehand separately - fix by making the information originate in one place despite
+      // the parallel world instantiated first before Construct() in this class is called.
+      G4String beamlineName = placement.name + "_" + placement.sequence;
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
-						   placement.sequence,
-						   startTransform,
-						   startS,
-						   false,
-						   true);
+                                                   beamlineName,
+						                           startTransform,
+						                           startS,
+						                           false, // circular
+						                           true); // is placement
       
-      acceleratorModel->RegisterBeamlineSetExtra(placement.sequence, extraBeamline);
+      acceleratorModel->RegisterBeamlineSetExtra(beamlineName, extraBeamline);
     }
 }
 
