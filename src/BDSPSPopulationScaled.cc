@@ -60,7 +60,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String &scorerName,
 
     dirsAngle = LoadDirectoryContents(directory);
 
-    G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles:" << G4endl;
+    G4cout << "Scorer \"" << GetName() << "\" - adding conversionFiles from: " + directory << G4endl;
 
     for (const auto &dirnameAng : dirsAngle)
     {
@@ -87,14 +87,14 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String &scorerName,
 #ifdef USE_GZSTREAM
                 BDSScorerConversionLoader<igzstream> loaderC;
 
-                conversionFactors[ang_index][pid] = loaderC.Load(filepathPDG);
+                conversionFactors[ang_index][pid] = loaderC.Load(filepathPDG, 1);
 #else
                 throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
             }
             else if (BDS::FileExists(filepathPDG))
             {
-                conversionFactors[ang_index][pid] = loader.Load(filepathPDG);
+                conversionFactors[ang_index][pid] = loader.Load(filepathPDG, 1);
             }
 
 
@@ -105,6 +105,14 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String &scorerName,
         }
         ionParticleIDs[ang_index] = ionPIDs;
     }
+
+    G4cout << "Scorer \"" << GetName()  << " Loaded data for " << angles.size() << " angles: [";
+    for (auto a : angles){
+        G4cout << a;
+        if (a == angles.back()){ break;}
+        G4cout << ", ";
+    }
+    G4cout << "]*rad" << G4endl;
 }
 
 BDSPSPopulationScaled::~BDSPSPopulationScaled()
