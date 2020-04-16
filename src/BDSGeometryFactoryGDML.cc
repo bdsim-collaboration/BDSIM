@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <set>
 #include <string>
 #include <utility>
