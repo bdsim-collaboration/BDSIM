@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -139,6 +139,7 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
   
   //create hits and put in hits collection of the event
   G4Track* track = aStep->GetTrack();
+  G4int nElectrons = track->GetDynamicParticle()->GetTotalOccupancy();
   BDSHitApertureImpact* hit = new BDSHitApertureImpact(preStepPoint->GetTotalEnergy(),
                                                        preStepPoint->GetKineticEnergy(),
                                                        S,
@@ -152,7 +153,8 @@ G4bool BDSSDApertureImpacts::ProcessHits(G4Step* aStep,
                                                        track->GetTrackID(),
                                                        track->GetParentID(),
                                                        turnsTaken,
-                                                       beamlineIndex);
+                                                       beamlineIndex,
+						       nElectrons);
 
   hits->insert(hit);
    

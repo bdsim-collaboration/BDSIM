@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,7 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
-#include <cstdlib>      // standard headers 
+#include <algorithm>
+#include <cstdlib>
 #include <cstdio>
 #include <signal.h>
 
@@ -73,6 +74,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
+#include "BDSWarning.hh"
 
 BDSIM::BDSIM():
   ignoreSIGINT(false),
@@ -117,9 +119,11 @@ int BDSIM::Initialise()
 {
   /// Print header & program information
   G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
-  G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"<<G4endl;
+  G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"  << G4endl;
   G4cout<<G4endl;
-  G4cout<<"        Reference: https://arxiv.org/abs/1808.10745"<<G4endl;
+  G4cout<<"        Reference: Computer Physics Communications, 107200 (2020)" << G4endl;
+  G4cout<<"                   https://doi.org/10.1016/j.cpc.2020.107200"      << G4endl;
+  G4cout<<"                   https://arxiv.org/abs/1808.10745"               << G4endl;
   G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
@@ -200,7 +204,8 @@ int BDSIM::Initialise()
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
+  G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
+  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
@@ -290,15 +295,19 @@ int BDSIM::Initialise()
     }
   /// Set user action classes
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, bdsBunch->ParticleDefinition()->IsAnIon()));
-
-#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
 #endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
+
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
+#endif
+  runManager->SetUserAction(new BDSRunAction(bdsOutput,
+					     bdsBunch,
+					     bdsBunch->ParticleDefinition()->IsAnIon(),
+					     eventAction,
+					     globalConstants->StoreTrajectorySamplerID()));
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
@@ -321,7 +330,7 @@ int BDSIM::Initialise()
 						  globalConstants->StoreTrajectory(),
 						  globalConstants->StoreTrajectoryLocal(),
 						  globalConstants->StoreTrajectoryLinks(),
-						  globalConstants->StoreTrajectoryIons(),
+						  globalConstants->StoreTrajectoryIon(),
 						  !globalConstants->StoreTrajectoryTransportationSteps(),
 						  eventAction,
 						  verboseSteppingEventStart,
@@ -360,7 +369,7 @@ int BDSIM::Initialise()
   /// Set verbosity levels at run and G4 event level. Per event and stepping are controlled
   /// in event, tracking and stepping action. These have to be done here due to the order
   /// of construction in Geant4.
-  runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
+  runManager->SetVerboseLevel(std::min(globalConstants->VerboseRunLevel(), globalConstants->PhysicsVerbosity()));
   G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
   
@@ -438,6 +447,7 @@ BDSIM::~BDSIM()
   try
     {
       // order important here because of singletons relying on each other
+	  delete BDSSDManager::Instance();
       delete BDSBeamPipeFactory::Instance();
       delete BDSCavityFactory::Instance();
       delete BDSGeometryFactory::Instance();
@@ -452,7 +462,6 @@ BDSIM::~BDSIM()
 	{
 	  delete BDSColours::Instance();
 	  delete BDSFieldLoader::Instance();
-	  delete BDSSDManager::Instance();
 	  delete BDSSamplerRegistry::Instance();
 	}
     }
@@ -471,10 +480,7 @@ void BDSIM::RegisterUserComponent(G4String componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
-    {
-      G4cout << __METHOD_NAME__ << "warning - BDSIM kernel already initialised - "
-	     << "this component will not be available" << G4endl;
-    }
+    {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
   if (!userComponentFactory)
     {userComponentFactory = new BDSComponentFactoryUser();}
 

@@ -1,6 +1,6 @@
-/*
+/* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,9 +17,6 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "optionsBase.h"
-
-// include git commit version.
-#include "version.h"
 
 #include <iostream>
 
@@ -82,6 +79,7 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList                    = ""; //default - only transportation
   physicsVerbose                 = false;
+  physicsVerbosity               = 1;
   physicsEnergyLimitLow          = 0;
   physicsEnergyLimitHigh         = 0;
   g4PhysicsUseBDSIMRangeCuts     = true;
@@ -150,6 +148,7 @@ OptionsBase::OptionsBase()
   emptyMaterial        = "G4_Galactic";
   worldMaterial        = "G4_AIR";
   worldGeometryFile    = "";
+  autoColourWorldGeometryFile = true;
   importanceWorldGeometryFile = "";
   importanceVolumeMap  = "";
   worldVolumeMargin = 5; //m
@@ -228,7 +227,7 @@ OptionsBase::OptionsBase()
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
-  killNeutrinos            = true;
+  killNeutrinos            = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
@@ -241,11 +240,13 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
   storeCollimatorHitsLinks   = false;
   storeCollimatorHitsIons    = false;
   storeCollimatorHitsAll     = false;
+  collimatorHitsMinimumKE    = 0;
   storeEloss                 = true;
   storeElossHistograms       = true;
   storeElossVacuum           = false;
@@ -265,17 +266,18 @@ OptionsBase::OptionsBase()
   storeParticleData          = true;
   
   storeTrajectory                = false;
-  storeTrajectoryDepth           = 1000000;
+  storeTrajectoryDepth           = 0;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
   storeTrajectoryTransportationSteps = true;
-  trajNoTransportation               = false;
+  trajNoTransportation               = false; ///< kept only for backwards compatibility.
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
-  storeTrajectoryIons            = false;
+  storeTrajectoryIon             = false;
+  trajectoryFilterLogicAND       = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;

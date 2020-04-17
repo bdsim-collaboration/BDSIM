@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 class BDSExtent;
 
@@ -96,9 +97,9 @@ namespace BDS
 			    G4String& filename);
 
   /// Split a filename.ext into filename and extension. Extension includes '.'.
-  void SplitFileAndExtention(const G4String& fileName,
-			     G4String&       file,
-			     G4String&       extension);
+  void SplitFileAndExtension(const G4String& fileName,
+                             G4String&       file,
+                             G4String&       extension);
 
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.
@@ -133,7 +134,7 @@ namespace BDS
   G4int Sign(T val)
   {return G4int((T(0) < val) - (val < T(0)));}
 
-  inline G4String BoolToString(const G4bool& in)
+  inline G4String BoolToString(G4bool in)
   {return in ? "true" : "false";}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
@@ -158,6 +159,9 @@ namespace BDS
   G4int    GetParameterValueInt(G4String spec, G4String name);
   ///@}
 
+  /// Split a string on whitespace and return a vector of these 'words'.
+  std::vector<G4String> GetWordsFromString(const G4String& input);
+  
   /// Rotate a two vector in polar coordinates by an angle.
   G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
 

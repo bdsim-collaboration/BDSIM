@@ -43,6 +43,8 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 The absolute path is not necessary, as the above environmental variables are used by ROOT
 to find the library.
 
+.. _output-analysis-quick-recipes:
+
 Quick Recipes
 =============
 
@@ -66,10 +68,25 @@ Plot Energy Deposition \& Losses
 ::
    
    rebdsimHistoMerge output.root results.root
-   ipython
+
+.. code-block:: python
+   
    >>> import pybdsim
    >>> pybdsim.Plot.LossAndEnergyDeposition("results.root")
 
+
+Load Raw Data
+-------------
+
+.. code-block:: python
+   
+   >>> import pybdsim
+   >>> d = pybdsim.Data.Load("results.root")
+   >>> for event in d.GetEventTree():
+   ...:    print(event.Summary.duration)
+
+
+.. _rebdsim-analysis-tool:
 
 rebdsim - General Analysis Tool
 ===============================
@@ -143,6 +160,19 @@ where :math:`\sigma` is the standard deviation of the values in that bin for all
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than two events.
 
+Standard Error On The Mean
+--------------------------
+
+The errors in the per-event histograms from BDSIM as the standard error on the mean and **not**
+the standard deviation. These errors represent how well the central value, the mean, is
+estimated statistically. This is typically what is desired when performing a simulation to
+see that the simulation (a Monte Carlo) has converged to specific value. If we were to provide
+the standard deviation, it would be unclear whether the simulation has converged or whether there
+is just a large variation from event to event in that bin.
+
+If the standard deviation is required, the user should multiply the errors by :math:`\sqrt{N_{events}}`.
+See :ref:`numerical-methods` for a mathematical description of how the errors are calculated.
+
 .. _output-analysis-configuration-file:
 	  
 Analysis Configuration File
@@ -164,16 +194,21 @@ Examples can be found in:
   CalculateOpticalFunctions               True
   CalculateOpticalFunctionsFileName       ./ana_1.dat
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
-  Histogram1D  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
-  Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
-  Histogram1D  Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram1D  Model.    componentLength {100}      {0.0:100}           Model.length        1
-  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Summary.duration    1
-  Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
-  Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
-  Histogram1DLog Event.  PrimaryXAbs     {20}       {-9:-3}      abs(Primary.x)                 1
-  Histogram2DLinLog Event. PhaseSpaceAbs {20,20}    {-1e-6:1e-5,-9:-3} Primary.x:abs(Primary.y) 1
-  Histogram2DLog    Event. PhaseSpaceAbs2 {20,20}   {-9:-3,-1e-6:1e-5} abs(Primary.x):Primary.y 1
+  Histogram1D  Event.    Primaryx         {100}      {-0.1:0.1}          Primary.x           1
+  Histogram1D  Event.    Primaryy         {100}      {-0.1:0.1}          Primary.y           1
+  Histogram1D  Options.  seedState        {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram1D  Model.    componentLength  {100}      {0.0:100}           Model.length        1
+  Histogram1D  Run.      runDuration      {1000}     {0:1000}            Summary.duration    1
+  Histogram2D  Event.    XvsY             {100,100}  {-0.1:0.1,-0.1:0.1} Primary.y:Primary.x 1
+  Histogram3D  Event.    PhaseSpace3D     {20,30,40} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1DLog  Event. PrimaryXAbs      {20}       {-9:-3}             abs(Primary.x)                 1
+  Histogram2D     Event. PhaseSpaceXXP    {20,30}    {-1e-6:1e-6,-1e-4:1e-4} Primary.xp:Primaryx 1
+  Histogram2DLog  Event. PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
+
+.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
+	     method.  This is **totally inconsistent**.  If 1D, there is just :code:`x`.  If 2D, it's
+	     :code:`y : x`. If 3D, it's :code:`x : y : z`.  This **only** applies to the variable and
+	     **not** to the bin specification. 
 
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
@@ -226,11 +261,6 @@ a 1D histogram with thirty logarithmically spaced bins from 1e-3 to 1e3, the fol
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
-
-.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
-	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
-	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
-	     not to the bin specification.
 
 
 Analysis Configuration Options
@@ -447,6 +477,7 @@ file. This is numerically equivalent to analysing all the data in one execution 
 	    into a final output identical to what would have been produced from analysing
 	    all data at once, but in vastly reduced time.
 
+.. _output-user-analysis:
 
 User Analysis
 =============
@@ -503,7 +534,7 @@ associated with it. ::
   >>> d.
   d.ConvertToPybdsimHistograms d.histograms2d                
   d.filename                   d.histograms2dpy              
-  d.histograms                 d.histograms3d               >
+  d.histograms                 d.histograms3d
   d.histograms1d               d.histograms3dpy              
   d.histograms1dpy             d.histogramspy 
 
@@ -768,6 +799,8 @@ The following classes are used for data loading and can be found in `bdsim/analy
 * Options.hh
 * Run.hh
 
+.. _numerical-methods:
+
 Numerical Methods
 =================
 
@@ -784,7 +817,7 @@ To calculate the mean in the per-entry histograms as well as the associated erro
 .. math::
 
    \bar{x} &= \sum_{i = 0}^{n} x_{i}\\
-   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
+   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n-1}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
 
 These equations are however problematic to implement computationally. The formula above
 for the variance requires two passes through the data to first calculate the mean,
@@ -822,8 +855,8 @@ After processing all entries, the variance is used to calculate the standard err
 with:
 
 .. math::
-
-   \sigma_{\bar{x}} = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{\sqrt{n-1}} Var\,(x)}
+   
+   \sigma_{\bar{x}} = \sqrt{\frac{1}{n}}\sqrt{\frac{1}{(n-1)} Var\,(x)}
 
 
 Merging Histograms

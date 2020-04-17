@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "blmplacement.h"
 #include "placement.h"
 #include "samplerplacement.h"
+#include "scorermesh.h"
 
 using namespace GMAD;
 
@@ -48,6 +49,7 @@ void Placement::clear()
   angle = 0;
   sensitive     = true;
   axisAngle     = false;
+  autoColour    = true;
 }
 
 void Placement::PublishMembers()
@@ -70,6 +72,9 @@ void Placement::PublishMembers()
   publish("angle",         &Placement::angle);
   publish("sensitive",     &Placement::sensitive);
   publish("axisAngle",     &Placement::axisAngle);
+  publish("side",          &Placement::side);
+  publish("sideOffset",    &Placement::sideOffset);
+  publish("autoColour",    &Placement::autoColour);
 }
 
 void Placement::print()const
@@ -91,14 +96,20 @@ void Placement::print()const
     	    << "axisY "         << axisY         << std::endl
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
-	    << "sensitive "     << sensitive     << std::endl
-	    << "axisAngle "     << axisAngle     << std::endl;
+	        << "sensitive "     << sensitive     << std::endl
+	        << "axisAngle "     << axisAngle     << std::endl
+	        << "side "          << side          << std::endl
+            << "sideOffset "    << sideOffset    << std::endl
+	        << "axisAngle "     << axisAngle     << std::endl
+	        << "autoColour "    << autoColour    << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
   geometryFile(""),
   sequence(""),
-  sensitive(false)
+  sensitive(false),
+  side(""),
+  sideOffset(0)
 {
   name      = sp.name;
   referenceElement       = sp.referenceElement;
@@ -115,6 +126,31 @@ Placement::Placement(const SamplerPlacement& sp):
   axisZ     = sp.axisZ;
   angle     = sp.angle;
   axisAngle = sp.axisAngle;
+  autoColour = false;
+}
+
+Placement::Placement(const ScorerMesh& sm):
+  geometryFile(""),
+  sensitive(false),
+  side(""),
+  sideOffset(0)
+{
+  name      = sm.name;
+  sequence  = sm.sequence;
+  referenceElement       = sm.referenceElement;
+  referenceElementNumber = sm.referenceElementNumber;
+  s         = sm.s;
+  x         = sm.x;
+  y         = sm.y;
+  z         = sm.z;
+  phi       = sm.phi;
+  theta     = sm.theta;
+  psi       = sm.psi;
+  axisX     = sm.axisX;
+  axisY     = sm.axisY;
+  axisZ     = sm.axisZ;
+  angle     = sm.angle;
+  axisAngle = sm.axisAngle;
 }
 
 Placement::Placement(const BLMPlacement& bp):
@@ -125,16 +161,19 @@ Placement::Placement(const BLMPlacement& bp):
   name      = bp.name;
   referenceElement       = bp.referenceElement;
   referenceElementNumber = bp.referenceElementNumber;
-  s         = bp.s;
-  x         = bp.x;
-  y         = bp.y;
-  z         = bp.z;
-  phi       = bp.phi;
-  theta     = bp.theta;
-  psi       = bp.psi;
-  axisX     = bp.axisX;
-  axisY     = bp.axisY;
-  axisZ     = bp.axisZ;
-  angle     = bp.angle;
-  axisAngle = bp.axisAngle;
+  s          = bp.s;
+  x          = bp.x;
+  y          = bp.y;
+  z          = bp.z;
+  phi        = bp.phi;
+  theta      = bp.theta;
+  psi        = bp.psi;
+  axisX      = bp.axisX;
+  axisY      = bp.axisY;
+  axisZ      = bp.axisZ;
+  angle      = bp.angle;
+  axisAngle  = bp.axisAngle;
+  side       = bp.side;
+  sideOffset = bp.sideOffset;
+  autoColour = false;
 }

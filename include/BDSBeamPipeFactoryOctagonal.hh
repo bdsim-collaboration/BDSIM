@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBEAMPIPEFACTORYOCTAGONAL_H
 
 #include "BDSBeamPipeFactoryPoints.hh"
+
+namespace BDS
+{
+  struct FourPoints
+  {
+    G4double aper1;
+    G4double aper2;
+    G4double aper3;
+    G4double aper4;
+  };
+}
 
 /**
  * @brief Factory for octagonal aperture model beampipes.
@@ -60,11 +71,22 @@ private:
 					       G4double aper4,
 					       G4double beamPipeThickness);
 
+  /// Append 2D points on an octagon in a clockwise direction into the vector argument.
   void GenerateOctagonal(std::vector<G4TwoVector>& vec,
 			 G4double x1,
 			 G4double y1,
 			 G4double x2,
 			 G4double y2);
+
+  /// Calculate the corresponding aper1234 values if the octagonal beam pipe shape were
+  /// to be expanded by "distance". This calculates the points, then works out the corresponding
+  /// x,y coordinates for the expanded points such that each side of the octagon is expanded by
+  /// "distance". The aper1234 parameterisation is then calculated from these x,y, coordinates.
+  BDS::FourPoints ExpandOctagon(G4double aper1,
+			   G4double aper2,
+			   G4double aper3,
+			   G4double aper4,
+			   G4double distance);
 };
   
 #endif

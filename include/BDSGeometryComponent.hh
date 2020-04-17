@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -93,12 +93,12 @@ public:
   inline std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtent.ExtentX();}   
   inline std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtent.ExtentY();}
   inline std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtent.ExtentZ();}
-  inline std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
-  inline std::set<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
-  inline std::set<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
-  inline std::set<G4UserLimits*>      GetAllUserLimits()       const {return allUserLimits;}
-  inline std::set<BDSGeometryComponent*> GetAllDaughters()     const {return allDaughters;};
-  inline std::set<G4VSolid*>          GetAllSolids()           const {return allSolids;};
+  virtual std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
+  virtual std::set<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
+  virtual std::set<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
+  virtual std::set<G4UserLimits*>      GetAllUserLimits()       const {return allUserLimits;}
+  virtual std::set<BDSGeometryComponent*> GetAllDaughters()     const {return allDaughters;}
+  virtual std::set<G4VSolid*>          GetAllSolids()           const {return allSolids;}
   /// @}
   
   /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
@@ -117,6 +117,11 @@ public:
 
   /// Update the extents of this object with those of another object
   void InheritExtents(BDSGeometryComponent const * const anotherComponent);
+
+  /// Update the extents of this object with those of another object
+  /// whilst accounting for any offset.
+  void InheritExtents(BDSGeometryComponent const * const anotherComponent,
+		      const G4ThreeVector &offset);
 
   /// Register another geometry component as belonging to this one. This component will
   /// then own and delete it as necessary.
@@ -185,9 +190,9 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all logical volumes belonging to this component
-  std::set<G4LogicalVolume*> GetAllLogicalVolumes() const;
+  virtual std::set<G4LogicalVolume*> GetAllLogicalVolumes() const;
 
-  /// Return all logical volumes that should be used for biasing minus any that are excluded.
+  /// Return all logical volumes that should be used for biasing minus any that are in the excluded set.
   virtual std::set<G4LogicalVolume*> GetAllBiasingVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
@@ -198,18 +203,18 @@ public:
   inline void MakeAllVolumesSensitive(BDSSDType stype = BDSSDType::energydep) {RegisterSensitiveVolume(GetAllLogicalVolumes(), stype);}
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
-  void AttachSensitiveDetectors();
+  virtual void AttachSensitiveDetectors();
 
   /// Remove a particular logical volume from the logical volumes that will be
   /// returned for biasing.
-  void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
+  virtual void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
 
 protected:
   
-  G4VSolid*                 containerSolid;
-  G4LogicalVolume*          containerLogicalVolume;
-  BDSExtent outerExtent;
-  BDSExtent innerExtent;
+  G4VSolid*        containerSolid;
+  G4LogicalVolume* containerLogicalVolume;
+  BDSExtent        outerExtent;
+  BDSExtent        innerExtent;
   
   /// registry of all daughter geometry components
   std::set<BDSGeometryComponent*> allDaughters;
@@ -252,10 +257,8 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 
-  /// Volumes to use for biasing. By default this is nullptr and the accessor returns
-  /// allLogicalVolumes. However, if ExcludeLogicalVolumeFromBiasing is used, the set
-  /// is copied and this pointer set to that set. This is memory efficient solution.
-  std::set<G4LogicalVolume*>* allBiasingVolumes;
+  /// Volumes that should not be included when return GetAllBiasingVolumes().
+  std::set<G4LogicalVolume*>* lvsExcludedFromBiasing;
 };
 
 inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const

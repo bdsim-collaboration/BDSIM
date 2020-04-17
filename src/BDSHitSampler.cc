@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -26,6 +26,7 @@ G4Allocator<BDSHitSampler> BDSAllocatorSampler;
 
 BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
 			     const BDSParticleCoordsFull& coordsIn,
+			     G4double momentumIn,
 			     G4double massIn,
 			     G4double chargeIn,
 			     G4double rigidityIn,
@@ -37,6 +38,7 @@ BDSHitSampler::BDSHitSampler(G4int samplerIDIn,
 			     G4int    nElectronsIn):
   samplerID(samplerIDIn),
   coords(coordsIn),
+  momentum(momentumIn),
   mass(massIn),
   charge(chargeIn),
   rigidity(rigidityIn),

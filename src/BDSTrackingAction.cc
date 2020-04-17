@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorMag.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
@@ -38,7 +39,7 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     G4bool storeTrajectoryIn,
 				     G4bool storeTrajectoryLocalIn,
 				     G4bool storeTrajectoryLinksIn,
-				     G4bool storeTrajectoryIonsIn,
+				     G4bool storeTrajectoryIonIn,
 				     G4bool suppressTransportationStepsIn,
 				     BDSEventAction* eventActionIn,
 				     G4int  verboseSteppingEventStartIn,
@@ -49,7 +50,7 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
   storeTrajectory(storeTrajectoryIn),
   storeTrajectoryLocal(storeTrajectoryLocalIn),
   storeTrajectoryLinks(storeTrajectoryLinksIn),
-  storeTrajectoryIons(storeTrajectoryIonsIn),
+  storeTrajectoryIon(storeTrajectoryIonIn),
   suppressTransportationSteps(suppressTransportationStepsIn),
   eventAction(eventActionIn),
   verboseSteppingEventStart(verboseSteppingEventStartIn),
@@ -60,9 +61,11 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
+  eventAction->IncrementNTracks();
   G4int  eventIndex = eventAction->CurrentEventIndex();
   G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);
   G4bool primaryParticle  = track->GetParentID() == 0;
+  BDSIntegratorMag::currentTrackIsPrimary = primaryParticle;
 
   if (primaryParticle && verboseSteppingThisEvent)
     {fpTrackingManager->GetSteppingManager()->SetVerboseLevel(verboseSteppingLevel);}
@@ -79,7 +82,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 					suppressTransportationSteps,
 					storeTrajectoryLocal,
 					storeTrajectoryLinks,
-					storeTrajectoryIons);
+					storeTrajectoryIon);
 	  fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
@@ -97,7 +100,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 					   suppressTransportationSteps,
 					   storeTrajectoryLocal,
 					   storeTrajectoryLinks,
-					   storeTrajectoryIons,
+					   storeTrajectoryIon,
 					   storePoints);
       fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);

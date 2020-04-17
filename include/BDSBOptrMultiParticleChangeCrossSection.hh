@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -45,9 +45,13 @@ public:
   BDSBOptrMultiParticleChangeCrossSection();
   virtual ~BDSBOptrMultiParticleChangeCrossSection();
   
-  void AddParticle(G4String particleName);
-  void SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary);
-  void StartTracking( const G4Track* track ) override;
+  void AddParticle(const G4String& particleName);
+  void SetBias(const G4String& biasObjectName,
+	       const G4String& particleName,
+	       const G4String& process,
+	       G4double        dBias,
+	       G4int           iPrimary);
+  void StartTracking(const G4Track* track) override;
 
 private: 
   virtual G4VBiasingOperation* ProposeOccurenceBiasingOperation(const G4Track*                   track,

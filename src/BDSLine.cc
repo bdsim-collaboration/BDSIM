@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -27,6 +27,44 @@ BDSLine::BDSLine(G4String nameIn):
 
 void BDSLine::AddComponent(BDSAcceleratorComponent* component)
 {line.push_back(component);}
+
+G4double BDSLine::GetArcLength() const
+{
+  G4double result = 0;
+  for (auto component : *this)
+    {result += component->GetArcLength();}
+  return result;
+}
+
+G4double BDSLine::GetChordLength() const
+{
+  G4double result = 0;
+  for (auto component : *this)
+    {result += component->GetChordLength();}
+  return result;
+}
+
+std::set<G4LogicalVolume*> BDSLine::GetAcceleratorVacuumLogicalVolumes() const
+{
+  std::set<G4LogicalVolume*> result;
+  for (auto component : *this)
+    {
+      auto vlvs = component->GetAcceleratorVacuumLogicalVolumes();
+      result.insert(vlvs.begin(), vlvs.end());
+    }
+  return result;
+}
+
+std::set<G4LogicalVolume*> BDSLine::GetAcceleratorMaterialLogicalVolumes() const
+{
+  std::set<G4LogicalVolume*> result;
+  for (auto component : *this)
+    {
+      auto vlvs = component->GetAcceleratorMaterialLogicalVolumes();
+      result.insert(vlvs.begin(), vlvs.end());
+    }
+  return result;
+}
 
 void BDSLine::Initialise()
 {
@@ -59,5 +97,4 @@ void BDSLine::SetRegion(G4String regionIn)
   for (auto component: *this)
     {component->SetRegion(regionIn);}
 }
-
   

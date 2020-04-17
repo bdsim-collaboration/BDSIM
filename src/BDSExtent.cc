@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -221,4 +221,18 @@ BDSExtent BDSExtent::ExpandTransverselyBy(G4double margin) const
   result.extYNeg -= margin;
   result.extYPos += margin;
   return result;
+}
+
+namespace BDS
+{
+  BDSExtent MaximumCombinedExtent(const BDSExtent& first,
+				  const BDSExtent& second)
+  {
+    return BDSExtent(std::min(first.XNeg(), second.XNeg()),
+		     std::max(first.XPos(), second.XPos()),
+		     std::min(first.YNeg(), second.YNeg()),
+		     std::max(first.YPos(), second.YPos()),
+		     std::min(first.ZNeg(), second.ZNeg()),
+		     std::max(first.ZPos(), second.ZPos()));
+  }
 }

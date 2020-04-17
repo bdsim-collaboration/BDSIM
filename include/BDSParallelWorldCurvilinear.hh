@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -36,8 +36,10 @@ class G4VisAttributes;
 class BDSParallelWorldCurvilinear: public G4VUserParallelWorld
 {
 public:
+  /// No default constructor.
+  BDSParallelWorldCurvilinear() = delete;
   /// Constructor with name of sequence this world is for.
-  explicit BDSParallelWorldCurvilinear(G4String name);
+  explicit BDSParallelWorldCurvilinear(const G4String& name);
   virtual ~BDSParallelWorldCurvilinear();
 
   /// Construct the required parallel world geometry. This must
@@ -45,9 +47,6 @@ public:
   virtual void Construct();
 
 private:
-  /// No default constructor.
-  BDSParallelWorldCurvilinear() = delete;
-
   /// Just the input part of the name.
   G4String suffix;
   

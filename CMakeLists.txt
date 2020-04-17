@@ -10,7 +10,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 3 )
+set( BDSIM_MINOR_VERSION 4 )
 set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -124,6 +124,7 @@ include(bdsim_install)
 
 # Before any linkages we define library names
 set(BDSIM_LIB_NAME "bdsim")
+set(BDSIM_LIB_NAME_STATIC "bdsim-static")
 
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
@@ -173,15 +174,22 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
 
 # BDSIM library and binaries
-add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
+option( BDSIM_BUILD_STATIC_LIBS "Build static BDSIM library."  OFF )
+if (BDSIM_BUILD_STATIC_LIBS)
+  add_library(${BDSIM_LIB_NAME_STATIC} STATIC ${root_dicts} ${bdsim_sources})
+  generate_export_header(${BDSIM_LIB_NAME_STATIC})
+endif()
+add_library(${BDSIM_LIB_NAME} SHARED ${root_dicts} ${bdsim_sources})
+target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
-target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
-target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
+
 if (USE_GZSTREAM)
   #preprocessor flag
   add_definitions("-DUSE_GZSTREAM")
@@ -223,7 +231,11 @@ add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
+if (BDSIM_BUILD_STATIC_LIBS)
+  set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
+else()
+  set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
+endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
@@ -233,12 +245,13 @@ bdsim_install_headers(${headers} ${root_dicts_headers})
 include(CPack)
 
 option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+mark_as_advanced(BUILD_MACOSX_APP)
 
 if (BUILD_MACOSX_APP AND APPLE)
     # building a macos executablemaking a bundle of 
     add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-    target_link_libraries(bdsimapp bdsim gmad)
+    target_link_libraries(bdsimapp ${BDSIM_LIB_NAME} gmad)
     bdsim_install_bundle(bdsim)
 endif()
 

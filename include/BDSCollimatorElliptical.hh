@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -42,7 +42,8 @@ public:
 			  G4double    yAperture    = 0,
 			  G4double    xOutAperture = 0,
 			  G4double    yOutAperture = 0,
-			  G4Colour*   colour         = nullptr);
+			  G4Colour*   colour         = nullptr,
+			  G4bool      circularOuter = false);
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();

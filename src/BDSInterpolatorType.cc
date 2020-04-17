@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -77,4 +77,31 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
   G4cout << __METHOD_NAME__ << "determined interpolator type to be " << result->second << G4endl;
 #endif
   return result->second;
+}
+
+G4int BDS::NDimensionsOfInterpolatorType(const BDSInterpolatorType& it)
+{
+  G4int result = 0;
+  switch (it.underlying())
+    {
+      case BDSInterpolatorType::nearest1d:
+      case BDSInterpolatorType::linear1d:
+      case BDSInterpolatorType::cubic1d:
+        {result = 1; break;}
+      case BDSInterpolatorType::nearest2d:
+      case BDSInterpolatorType::linear2d:
+      case BDSInterpolatorType::cubic2d:
+        {result = 2; break;}
+      case BDSInterpolatorType::nearest3d:
+      case BDSInterpolatorType::linear3d:
+      case BDSInterpolatorType::cubic3d:
+        {result = 3; break;}
+      case BDSInterpolatorType::nearest4d:
+      case BDSInterpolatorType::linear4d:
+      case BDSInterpolatorType::cubic4d:
+        {result = 4; break;}
+      default:
+        {result = 0; break;}
+    }
+  return result;
 }

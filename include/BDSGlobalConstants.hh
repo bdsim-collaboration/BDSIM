@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
+#include "BDSTrajectoryFilter.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -32,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/options.h"
 
+#include <bitset>
 #include <map>
 #include <utility>
 #include <vector>
@@ -131,6 +133,7 @@ public:
   G4int PrintModuloEvents()                  const;
   G4int PrintModuloTurns()                   const;
   inline G4bool   PhysicsVerbose()           const {return G4bool  (options.physicsVerbose);}
+  inline G4int    PhysicsVerbosity()         const {return G4int   (options.physicsVerbosity);}
   inline G4double PhysicsEnergyLimitLow()    const {return G4double(options.physicsEnergyLimitLow)*CLHEP::GeV;}
   inline G4double PhysicsEnergyLimitHigh()   const {return G4double(options.physicsEnergyLimitHigh)*CLHEP::GeV;}
   
@@ -198,17 +201,19 @@ public:
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
   inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
+  inline G4double ApertureImpactsMinimumKE() const {return G4double(options.apertureImpactsMinimumKE*CLHEP::GeV);}
   inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
   inline G4bool   StoreCollimatorHits()      const {return G4bool  (options.storeCollimatorHits);}
   inline G4bool   StoreCollimatorHitsLinks() const {return G4bool  (options.storeCollimatorHitsLinks);}
   inline G4bool   StoreCollimatorHitsIons()  const {return G4bool  (options.storeCollimatorHitsIons);}
   inline G4bool   StoreCollimatorHitsAll()   const {return G4bool  (options.storeCollimatorHitsAll);}
+  inline G4double CollimatorHitsMinimumKE()  const {return G4double(options.collimatorHitsMinimumKE*CLHEP::GeV);}
   inline G4bool   StoreELoss()               const {return G4bool  (options.storeEloss);}
   inline G4bool   StoreELossHistograms()     const {return G4bool  (options.storeElossHistograms);}
   inline G4bool   StoreELossVacuum()         const {return G4bool  (options.storeElossVacuum);}
-  inline G4bool   StoreELossVacuumHistograms() const {return G4bool (options.storeElossVacuumHistograms);}
+  inline G4bool   StoreELossVacuumHistograms()const{return G4bool  (options.storeElossVacuumHistograms);}
   inline G4bool   StoreELossTunnel()         const {return G4bool  (options.storeElossTunnel);}
-  inline G4bool   StoreELossTunnelHistograms() const {return G4bool (options.storeElossTunnelHistograms);}
+  inline G4bool   StoreELossTunnelHistograms()const{return G4bool  (options.storeElossTunnelHistograms);}
   inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
   inline G4bool   StoreELossWorldContents()  const {return G4bool  (options.storeElossWorldContents);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
@@ -217,23 +222,26 @@ public:
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreELossTime()           const {return G4bool  (options.storeElossTime);}
   inline G4bool   StoreELossStepLength()     const {return G4bool  (options.storeElossStepLength);}
-  inline G4bool   StoreELossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
+  inline G4bool   StoreELossPreStepKineticEnergy() const {return G4bool (options.storeElossPreStepKineticEnergy);}
   inline G4bool   StoreELossModelID()        const {return G4bool  (options.storeElossModelID);}
   inline G4bool   StoreParticleData()        const {return G4bool  (options.storeParticleData);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
+  inline G4bool   StoreTrajectoryAll()       const {return          options.storeTrajectoryDepth == -1;}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
-  inline G4bool   StoreTrajectoryIons()      const {return G4bool  (options.storeTrajectoryIons);}
-  inline std::vector<G4int>                          StoreTrajectorySamplerIDs()  const {return samplerIDs;}
+  inline G4bool   StoreTrajectoryIon()       const {return G4bool  (options.storeTrajectoryIon);}
+  inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
+  inline G4bool   TrajectoryFilterLogicAND() const {return G4bool  (options.trajectoryFilterLogicAND);}
+  inline std::bitset<BDS::NTrajectoryFilters> TrajectoryFiltersSet() const {return trajectoryFiltersSet;}
   inline G4bool   StoreSamplerAll()          const {return G4bool  (options.storeSamplerAll);}
   inline G4bool   StoreSamplerPolarCoords()  const {return G4bool  (options.storeSamplerPolarCoords);}
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
-  inline G4bool   StoreSamplerKineticEnergy() const {return G4bool  (options.storeSamplerKineticEnergy);}
+  inline G4bool   StoreSamplerKineticEnergy()const {return G4bool  (options.storeSamplerKineticEnergy);}
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
@@ -255,6 +263,7 @@ public:
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   inline G4String WorldGeometryFile()        const {return G4String(options.worldGeometryFile);}
+  inline G4bool   AutoColourWorldGeometryFile()  const {return G4bool  (options.autoColourWorldGeometryFile);}
   inline G4String ImportanceWorldGeometryFile()  const {return G4String(options.importanceWorldGeometryFile);}
   inline G4String ImportanceVolumeMapFile()      const {return G4String(options.importanceVolumeMap);}
   inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
@@ -291,7 +300,7 @@ public:
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
 
   /// @{ options that require some implementation.
-  G4bool   StoreTrajectoryTransportationSteps() const;
+  G4bool StoreTrajectoryTransportationSteps() const;
   /// @}
 
   // options that require members in this class (for value checking or because they're from another class)
@@ -371,12 +380,8 @@ private:
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
 
-  /// Process the option string and fill the below vector.
-  void ProcessTrajectorySamplerIDs();
-
-  /// IDs of samplers to link trajectories from.
-  std::vector<G4int> samplerIDs;
-
+  std::bitset<BDS::NTrajectoryFilters> trajectoryFiltersSet; ///< Which filters were used in the options.
+  
   /// Process the option string and fill the below vector.
   void ProcessTrajectoryELossSRange();
   

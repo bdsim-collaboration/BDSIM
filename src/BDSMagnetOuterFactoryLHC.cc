@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -926,7 +926,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   SetFaceNormals(outer);
 
   // register objects
-  outer->InheritObjects(secondBP);
+  outer->RegisterDaughter(secondBP);
   outer->RegisterLogicalVolume(allLogicalVolumes);
   outer->RegisterSensitiveVolume(allLogicalVolumes, BDSSDType::energydep);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
@@ -1520,7 +1520,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   SetFaceNormals(outer);
   
   // register objects
-  outer->InheritObjects(secondBP);
+  outer->RegisterDaughter(secondBP);
   outer->RegisterSolid(allSolids);
   outer->RegisterLogicalVolume(allLogicalVolumes);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);

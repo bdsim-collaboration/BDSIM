@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -24,13 +24,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
-#include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -41,7 +41,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iterator>
 #include <ostream>
 #include <set>
-#include <utility>  // for std::pair
 #include <vector>
 
 G4double BDSBeamline::paddingLength = -1;
@@ -381,8 +380,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       if (hasFiniteOffset && hasFiniteAngle) 
 	{// do not allow x offsets for bends as this will cause overlaps
 	  G4String name = component->GetName();
-	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
-		 << " overlaps: " << name << " - omitting x offset" << G4endl;
+	  G4String message = "element has x offset, but this will cause geometry overlaps: " + name
+	    + " - omitting x offset";
+	  BDS::Warning(__METHOD_NAME__, message);
 	  offset.setX(0.0);
 	}
       // note the displacement is applied in the accelerator x and y frame so use
@@ -600,23 +600,20 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   if (s-previousSPositionEnd > totalArcLength) // need to offset start S position 
     {
       G4cout << __METHOD_NAME__
-	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;
-      G4cout << "Returning 0 transform" << G4endl;
+	     << "s position " << s/CLHEP::m << " m is beyond length of accelerator ("
+	     << totalArcLength/CLHEP::m << " m)" << G4endl;
+      G4cout << "Returning identify transform" << G4endl;
       return G4Transform3D();
     }
 
-  // find element that s position belongs to
-  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
-  G4int index = lower - sEnd.begin(); // subtract iterators to get index
-  const BDSBeamlineElement* element = beamline.at(index);
+  const auto element = GetElementFromGlobalS(s, indexOfFoundElement);
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "S position requested: " << s     << G4endl;
-  G4cout << "Index:                " << index << G4endl;
+  G4cout << "Index:                " << indexOfFoundElement << G4endl;
   G4cout << "Element: " << *element << G4endl;
 #endif
-  if (indexOfFoundElement)
-    {*indexOfFoundElement = index;}
 
   G4double dx = 0;
   // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
@@ -663,6 +660,25 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4cout << "Resultant global position: " << globalPos << G4endl;
 #endif
   return result;
+}
+
+const BDSBeamlineElement* BDSBeamline::GetElementFromGlobalS(G4double S,
+							     G4int*   indexOfFoundElement) const
+{
+  // find element that s position belongs to
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
+  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  if (indexOfFoundElement)
+    {*indexOfFoundElement = index;}
+  return beamline.at(index);
+}
+
+BDSBeamline::const_iterator BDSBeamline::FindFromS(G4double S) const
+{
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
+  auto iter = begin();
+  std::advance(iter, std::distance(sEnd.begin(), lower));
+  return iter;
 }
 
 const BDSBeamlineElement* BDSBeamline::GetPrevious(const BDSBeamlineElement* element) const
@@ -892,6 +908,8 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
   sPos.push_back(0.0);
   for (auto element : beamline)
     {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
+    if (sPos.size() == 1)
+      {sPos.push_back(1*CLHEP::m);}
   return sPos;
 }
 
@@ -902,7 +920,7 @@ G4bool BDSBeamline::ElementAnglesSumToCircle()
 
 BDSExtentGlobal BDSBeamline::GetExtentGlobal() const
 {
-  const BDSExtent ext = BDSExtent(maximumExtentPositive, maximumExtentNegative);
+  const BDSExtent ext = BDSExtent(maximumExtentNegative, maximumExtentPositive);
   BDSExtentGlobal extG = BDSExtentGlobal(ext, G4Transform3D());
   return extG;
 }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -163,8 +163,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 		options.set_value("verboseSteppingBDSIM", true); 
 		options.set_value("verboseEventBDSIM",    true);
 	      }
-	    else if ( !strcmp(optionName , "verbose_event") )
-	      {options.set_value("verboseEvent", true);}
+	    else if ( !strcmp(optionName , "verbose_event") || !strcmp(optionName, "verboseEventBDSIM") )
+	      {options.set_value("verboseEventBDSIM", true);}
 	    else if ( !strcmp(optionName , "verbose_event_num") || !strcmp(optionName , "verboseEventNumber"))
 	      {
 		int result = -1;
@@ -317,7 +317,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    else if ( !strcmp(optionName, "ignoresigint") )
 	      {ignoreSIGINT = true;}
 	    else if ( !strcmp(optionName, "exportGeometryTo") )
-	      {// TBC - this should be put into geometry classes
+	      {// TODO - this should be put into geometry classes
 		std::string fn = optarg;
 		if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 		  {
@@ -347,7 +347,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  }
 	default:
 	  {
-	    G4cout << "Warning unknown returned character code " <<  c << G4endl;
+	    G4cout << "WARNING unknown returned character code " <<  c << G4endl;
 	    break;
 	  }
 	}
@@ -430,9 +430,10 @@ void BDSExecOptions::Usage() const
 
 void BDSExecOptions::Print() const
 {
-  std::vector<std::string> setKeys = options.KeysOfSetValues();
-  for (const auto& key : setKeys)
+  for (const auto& key : options.KeysOfSetValues())
     {G4cout << "Executable option> " << std::setw(27) << std::left << key << ": " << std::setw(15) << std::left << options.get_value_string(key) << G4endl;}
+  for (const auto& key : beam.KeysOfSetValues())
+    {G4cout << "Executable option> " << std::setw(27) << std::left << key << ": " << std::setw(15) << std::left << beam.get_value_string(key)    << G4endl;}
 }
 
 G4String BDSExecOptions::GetPath(G4String fileName)

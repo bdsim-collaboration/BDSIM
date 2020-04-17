@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -144,8 +144,10 @@ void BDSGeometryFactorySQL::CleanUpSQL()
 BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
 						  G4String fileName,
 						  std::map<G4String, G4Colour*>* colourMapping,
-						  G4double suggestedLength,
-						  G4double suggestedHorizontalWidth)
+						  G4bool                   autoColour,
+						  G4double                 suggestedLength,
+						  G4double                 suggestedHorizontalWidth,
+						  std::vector<G4String>* /*vacuumBiasVolumeNames*/)
 {
   CleanUp();
   
@@ -203,7 +205,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
   std::set<G4LogicalVolume*> tempVols;
   for (auto lv : VOL_LIST)
     {tempVols.insert(lv);}
-  ApplyColourMapping(tempVols, colourMapping);
+  ApplyColourMapping(tempVols, colourMapping, autoColour);
 
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, itsMarkerVol, Extent());
   result->RegisterRotationMatrix(allRotationMatrices);
@@ -367,7 +369,7 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
   AssignVariable(aSQLTable,k,"INHERITSTYLE",InheritStyle);
   AssignVariable(aSQLTable,k,"PARAMETERISATION",Parameterisation);
 
-  // TBC
+  // TODO
   //if(PARENTNAME=="")
   //  {PosZ-=Length()/2.0;} //Move position to beginning of element
 

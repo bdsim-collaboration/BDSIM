@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -194,7 +194,8 @@ void Element::PublishMembers()
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
-
+  publish("autoColour",          &Element::autoColour);
+  publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -496,7 +497,9 @@ void Element::flush()
   theta = 0;
   psi = 0;
 
-  bias = ""; biasMaterial=""; biasVacuum="";
+  bias         = "";
+  biasMaterial = "";
+  biasVacuum   = "";
   biasMaterialList.clear();
   biasVacuumList.clear();
   minimumKineticEnergy = 0;
@@ -510,8 +513,10 @@ void Element::flush()
   fieldVacuum = "";
   fieldAll    = "";
 
-  geometryFile ="";
-  material="";  
+  geometryFile = "";
+  autoColour   = true;
+  material="";
+  namedVacuumVolumes = "";
   windowmaterial = "vacuum";
   mountmaterial="";
   scintmaterial = "";

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -56,11 +56,13 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								placement.geometryFile,
 								nullptr,
+								placement.autoColour,
 								0, 0,
+								nullptr,
 								placement.sensitive);
 
       G4double length = geom->GetExtent().DZ();
-      BDSSimpleComponent* comp = new BDSSimpleComponent(geom->GetName(),
+      BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
 							geom,
 							length);
 

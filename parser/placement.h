@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -29,6 +29,7 @@ namespace GMAD
 {
   class BLMPlacement;
   class SamplerPlacement;
+  class ScorerMesh;
   
   /**
    * @brief Placement class for parser
@@ -60,6 +61,9 @@ namespace GMAD
     /// @}
     bool   sensitive;     ///< Whether to record hits or not.
     bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
+    std::string side;     ///< which side to attach to: top, bottom, left, right.
+    double sideOffset;    ///< Gap between side and component.
+    bool   autoColour;    ///< Whether to auto colour the geometry.
     
     /// constructor
     Placement();
@@ -73,7 +77,8 @@ namespace GMAD
 
     /// @{ Conversion constructor.
     Placement(const SamplerPlacement& samplerPlacement);
-    Placement(const BLMPlacement&   blmPlacement);
+    Placement(const ScorerMesh&       scorerMesh);
+    Placement(const BLMPlacement&     blmPlacement);
     /// @}
 
   private:

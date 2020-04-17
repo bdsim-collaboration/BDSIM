@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -38,6 +38,8 @@ namespace GMAD
 /**
  * @brief The base class for bunch distribution generators.
  *
+ * After instantiation of a class, use SetOptions(), then CheckParmeters(), then Initialise().
+ *
  * @author Stewart Boogert
  */
 
@@ -64,6 +66,9 @@ public:
   /// Check the parameters for the given bunch distribution and exit if they're
   /// problematic or unphysical.
   virtual void CheckParameters();
+
+  /// Any initialisation - to be used after SetOptions, then CheckParameters.
+  virtual void Initialise();
 
   /// Main interface. Calls GetNextParticleLocal() and then applies the curvilinear
   /// transform if required.
@@ -117,6 +122,16 @@ public:
   /// GetNextParticle() or GetNextParticleValid().
   inline G4bool ParticleDefinitionHasBeenUpdated() const {return particleDefinitionHasBeenUpdated;}
 
+  /// Work out whether either the geometric or normalised emittances are set and update
+  /// the variables by reference with the values. Can throw exception if more than
+  /// one set in either x and y.
+  static void SetEmittances(const BDSParticleDefinition* beamParticle,
+			    const GMAD::Beam& beam,
+			    G4double&         emittGeometricX,
+			    G4double&         emittGeometricY,
+			    G4double&         emittNormalisedX,
+			    G4double&         emittNormalisedY);
+
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
   /// just apply the general beam line offset in global coordinates to the 'local'
@@ -147,6 +162,7 @@ protected:
   G4double sigmaT;
   G4double sigmaP;
   G4double sigmaE;
+  G4double sigmaEk;
   ///@}
   
   /// Whether to ignore z and use s and transform for curvilinear coordinates

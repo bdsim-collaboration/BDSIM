@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 
 #include <iterator>
+#include <set>
 #include <vector>
 
 /**
@@ -49,6 +50,16 @@ public:
 
   /// Add a component to the line.
   void AddComponent(BDSAcceleratorComponent* component);
+
+  /// @{ Override base class method as BDSAcceleratorComponent::chordLength etc variables are const and we append to this.
+  virtual G4double GetArcLength() const;
+  virtual G4double GetChordLength() const;
+  /// @}
+
+  /// @{ Re-implement from BDSAcceleratorComponent.
+  virtual std::set<G4LogicalVolume*> GetAcceleratorVacuumLogicalVolumes() const;
+  virtual std::set<G4LogicalVolume*> GetAcceleratorMaterialLogicalVolumes() const;
+  /// @}
 
   /// @{ Iterator mechanics
   typedef BDSLineVector::iterator       iterator;

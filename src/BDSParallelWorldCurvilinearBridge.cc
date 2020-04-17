@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -49,7 +49,7 @@ void BDSParallelWorldCurvilinearBridge::Construct()
 
   G4VPhysicalVolume* clbWorld = GetWorld();
 
-  // TBC - only register main one for now
+  // TODO - only register main one for now
   // Register read out world PV with our auxiliary navigator.
   if (suffix == "main")
     {BDSAuxiliaryNavigator::RegisterCurvilinearBridgeWorld(clbWorld);}

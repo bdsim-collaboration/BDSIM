@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -82,18 +82,19 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
       {
 	G4cout << "Unsupported factory type " << type;
 	return nullptr;
-	break;
       }
     }
 }
 
-BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
-						       G4String  formatAndFileName,
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componentName,
+						       const G4String&  formatAndFileName,
 						       std::map<G4String, G4Colour*>* colourMapping,
-						       G4double  suggestedLength,
-						       G4double  suggestedHorizontalWidth,
-						       G4bool    makeSensitive,
-						       BDSSDType sensitivityType)
+						       G4bool                 autoColour,
+						       G4double               suggestedLength,
+						       G4double               suggestedHorizontalWidth,
+						       std::vector<G4String>* namedVacuumVolumes,
+						       G4bool                 makeSensitive,
+						       BDSSDType              sensitivityType)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String fileName = BDS::GetFullPath(ff.second);
@@ -112,8 +113,9 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
   if (!factory)
     {return nullptr;}
   
-  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping,
-					       suggestedLength, suggestedHorizontalWidth);
+  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping, autoColour,
+					       suggestedLength, suggestedHorizontalWidth,
+					       namedVacuumVolumes);
   
   if (result)
     {
@@ -122,7 +124,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 	{result->MakeAllVolumesSensitive(sensitivityType);}
       
       registry[(std::string)fileName] = result;
-      storage.push_back(result);
+      storage.insert(result);
     }
   
   return result;

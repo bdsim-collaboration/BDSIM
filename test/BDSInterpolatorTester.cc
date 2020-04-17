@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -130,7 +130,11 @@ int main(int /*argc*/, char** /*argv*/)
 					       BDSFieldFormat::poisson2dquad,
 					       BDSInterpolatorType::cubic2d);
   
-  BDSFieldMag* biCubic = BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);
+  BDSFieldMag* biCubic = nullptr;
+  try
+    {BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);}
+  catch (const BDSException& e)
+    {std::cout << e.what() << std::endl; return 1;}
 
   // Get the raw data
   BDSFieldMagInterpolated2D* fieldInterp = dynamic_cast<BDSFieldMagInterpolated2D*>(biNearest);

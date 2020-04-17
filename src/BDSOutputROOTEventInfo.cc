@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -25,8 +25,8 @@ ClassImp(BDSOutputROOTEventInfo)
 BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   startTime(time_t()),
   stopTime(time_t()),
-  duration(0),
-  cpuTime(std::clock_t()),
+  durationWall(0),
+  durationCPU(0),
   seedStateAtStart(""),
   index(-1),
   aborted(false),
@@ -42,7 +42,8 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   energyImpactingAperture(0),
   energyKilled(0),
   energyTotal(0),
-  nCollimatorsInteracted(0)
+  nCollimatorsInteracted(0),
+  nTracks(0)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -52,8 +53,8 @@ void BDSOutputROOTEventInfo::Flush()
 {
   startTime         = time_t();
   stopTime          = time_t();
-  duration          = 0;
-  cpuTime           = std::clock_t();
+  durationWall      = 0;
+  durationCPU       = 0;
   seedStateAtStart  = "";
   index             = -1;
   aborted           = false;
@@ -69,6 +70,7 @@ void BDSOutputROOTEventInfo::Flush()
   energyKilled          = 0;
   energyTotal           = 0;
   nCollimatorsInteracted = 0;
+  nTracks                = 0;
 }
 
 void BDSOutputROOTEventInfo::Fill(const BDSOutputROOTEventInfo* other)
@@ -76,23 +78,24 @@ void BDSOutputROOTEventInfo::Fill(const BDSOutputROOTEventInfo* other)
   if (!other)
     {return;}
 
-  startTime              = other->startTime;
-  stopTime               = other->stopTime;
-  duration               = other->duration;
-  cpuTime                = other->cpuTime;
-  seedStateAtStart       = other->seedStateAtStart;
-  index                  = other->index;
-  aborted                = other->aborted;
-  primaryHitMachine      = other->primaryHitMachine;
+  startTime               = other->startTime;
+  stopTime                = other->stopTime;
+  durationWall            = other->durationWall;
+  durationCPU             = other->durationCPU;
+  seedStateAtStart        = other->seedStateAtStart;
+  index                   = other->index;
+  aborted                 = other->aborted;
+  primaryHitMachine       = other->primaryHitMachine;
   primaryAbsorbedInCollimator = other->primaryAbsorbedInCollimator;
-  memoryUsageMb          = other->memoryUsageMb;
-  energyDeposited        = other->energyDeposited;
-  energyDepositedVacuum  = other->energyDepositedVacuum;
-  energyDepositedWorld   = other->energyDepositedWorld;
+  memoryUsageMb           = other->memoryUsageMb;
+  energyDeposited         = other->energyDeposited;
+  energyDepositedVacuum   = other->energyDepositedVacuum;
+  energyDepositedWorld    = other->energyDepositedWorld;
   energyDepositedWorldContents = other->energyDepositedWorldContents;
-  energyDepositedTunnel  = other->energyDepositedTunnel;
+  energyDepositedTunnel   = other->energyDepositedTunnel;
   energyImpactingAperture = other->energyImpactingAperture;
-  energyKilled           = other->energyKilled;
-  energyTotal            = other->energyTotal;
-  nCollimatorsInteracted = other->nCollimatorsInteracted;
+  energyKilled            = other->energyKilled;
+  energyTotal             = other->energyTotal;
+  nCollimatorsInteracted  = other->nCollimatorsInteracted;
+  nTracks                 = other->nTracks;
 }

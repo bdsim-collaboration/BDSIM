@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -46,6 +46,7 @@ public:
   
   inline size_t size()  const {return (size_t)numberOfEntries;}
   inline G4int  NBLMs() const {return numberOfEntries;}
+  inline const std::set<BDSBLM*>& BLMs() const {return blms;}
   
 private:
   /// Private constructor to enforce singleton pattern

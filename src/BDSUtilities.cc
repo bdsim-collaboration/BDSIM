@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -218,9 +218,9 @@ void BDS::SplitPathAndFileName(const G4String& filePath,
     }
 }
 
-void BDS::SplitFileAndExtention(const G4String& fileName,
-				G4String&       file,
-				G4String&       extension)
+void BDS::SplitFileAndExtension(const G4String& fileName,
+                                G4String&       file,
+                                G4String&       extension)
 {
   G4String::size_type found = fileName.rfind("."); // fine the last '.'
   if (found != G4String::npos)
@@ -407,6 +407,20 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
       value = spec.substr(pos + param.length(), llen);
   }
   return value;
+}
+
+std::vector<G4String> BDS::GetWordsFromString(const G4String& input)
+{
+  std::vector<G4String> result;
+  if (input.empty())
+    {return result;}
+  
+  std::istringstream ss(input);
+
+  G4String word;
+  while (ss >> word)
+    {result.push_back(word);}
+  return result;
 }
 
 G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)

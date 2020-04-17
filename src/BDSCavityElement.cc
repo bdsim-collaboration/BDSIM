@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -83,6 +83,6 @@ void BDSCavityElement::Build()
 void BDSCavityElement::BuildField()
 {
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-							    GetAcceleratorVacuumLogicalVolume(),
-							    true);
+                                                            GetAcceleratorVacuumLogicalVolumes(),
+                                                            true);
 }

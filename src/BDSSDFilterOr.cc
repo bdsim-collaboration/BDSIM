@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -25,9 +25,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-BDSSDFilterOr::BDSSDFilterOr(const G4String& name):
-  G4VSDFilter(name)
+BDSSDFilterOr::BDSSDFilterOr(const G4String& name,
+			     G4bool ownsTheFiltersIn):
+  G4VSDFilter(name),
+  ownsTheFilters(ownsTheFiltersIn)
 {;}
+
+BDSSDFilterOr::~BDSSDFilterOr()
+{
+  if (ownsTheFilters)
+    {
+      for (auto filter : filters)
+	{delete filter;}
+    }
+}
 
 G4bool BDSSDFilterOr::Accept(const G4Step* step) const
 {

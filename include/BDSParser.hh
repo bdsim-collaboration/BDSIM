@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -106,6 +106,12 @@ public:
 
   /// Return sampler placement list.
   inline const std::vector<GMAD::SamplerPlacement>& GetSamplerPlacements() const {return samplerplacement_list;}
+
+  /// Return scorer list.
+  inline const std::vector<GMAD::Scorer>& GetScorers() const {return scorer_list;}
+
+  /// Return scorermesh list.
+  inline const std::vector<GMAD::ScorerMesh>& GetScorerMesh() const {return scorermesh_list;}
 
   /// Return blm list.
   inline const std::vector<GMAD::BLMPlacement>& GetBLMs() const {return blm_list;}
