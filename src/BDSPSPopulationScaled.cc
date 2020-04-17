@@ -219,7 +219,7 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int particleID, G4double k
         { return 0; }
 
         // Get the ion Z in order to normalise the kinetic energy for table look-up
-        auto nearestIonZ = (G4double) GetZFromParticleID(particleIDNearest);
+        auto nearestIonZ = (G4double) GetZFromParticleID(particleID);
 
         auto searchIon = conversionFactorsPart.find(particleIDNearest);
         if (searchIon != conversionFactorsPart.end())
