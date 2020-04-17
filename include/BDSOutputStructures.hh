@@ -72,8 +72,8 @@ protected:
   /// Construct collimtors.
   void InitialiseCollimators();
 
-  /// Clear the local geant4 data structure.
-  void ClearStructuresGeant4Data();
+  /// Clear the local particle data structure.
+  void ClearStructuresParticleData();
 
   /// Clear the local header structure.
   void ClearStructuresHeader();
@@ -109,7 +109,7 @@ protected:
 			  G4int    nBinsZ, G4double zMin, G4double zMax);
   ///@}
 
-  BDSOutputROOTEventParticleData*   geant4DataOutput; ///< Geant4 information / particle tables.
+  BDSOutputROOTEventParticleData* particleDataOutput; ///< Geant4 information / particle tables.
   BDSOutputROOTEventHeader*  headerOutput;     ///< Information about the file.
   BDSOutputROOTEventBeam*    beamOutput;       ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput;    ///< Options output.
