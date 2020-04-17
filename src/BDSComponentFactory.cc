@@ -1368,24 +1368,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
     {return nullptr;}
 
   G4double degraderOffset;
-  if ((element->materialThickness <= 0) && (element->degraderOffset <= 0))
-    {throw BDSException(__METHOD_NAME__, "both \"materialThickness\" and \"degraderOffset\" are either undefined or <= 0");}
+  if ((element->materialThickness < 0) && (element->degraderOffset < 0))
+    {throw BDSException(__METHOD_NAME__, "both \"materialThickness\" and \"degraderOffset\" are either undefined or < 0");}
+  if (element->degraderOffset < 0)
+    {throw BDSException(__METHOD_NAME__, "\"degraderOffset\" cannot be < 0");}
+  if (element->materialThickness > element->l)
+    {throw BDSException(__METHOD_NAME__, "\"materialThickness\" cannot be greater than the element length");}
 
-  if ((element->materialThickness <= 0) && (element->degraderOffset > 0))
+  if ((element->materialThickness <= 0) && (element->degraderOffset >= 0))
     {degraderOffset = element->degraderOffset*CLHEP::m;}
   else
     {
       //Width of wedge base
       G4double wedgeBasewidth = (element->l*CLHEP::m /element->numberWedges) - lengthSafety;
-      
+
       //Angle between hypotenuse and height (in the triangular wedge face)
       G4double theta = std::atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
-      
+
       //Overlap distance of wedges
-      G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (std::sin(CLHEP::halfpi - theta) / std::sin(theta));
-      
-      degraderOffset = overlap * -0.5;
+      G4double thicknessPerWedge = (wedgeBasewidth - element->materialThickness*CLHEP::m/element->numberWedges);
+      degraderOffset = (0.5*thicknessPerWedge) * (std::sin(CLHEP::halfpi - theta) / std::sin(theta));
     }
+
+  // include base thickness in each wedge so it covers the whole beam aperture when set to the thickest
+  // possible amount of material, otherwise a fraction of the beam wouldn't pass through the wedges.
+  G4double baseWidth = PrepareBeamPipeInfo(element)->aper1;
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
@@ -1394,7 +1401,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
+			  baseWidth,
 			  PrepareMaterial(element, "carbon"),
+			  PrepareVacuumMaterial(element),
 			  PrepareColour(element)));
 }
 
