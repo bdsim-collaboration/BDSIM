@@ -72,21 +72,6 @@ using namespace std::chrono;
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
-namespace {
-  // Function to recursively connect t
-  void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
-  {
-    BDSTrajectory* t2 = t->GetParent();
-    if (t2)
-      {
-	interestingTraj[t2] = true;
-	connectTraj(interestingTraj, t2);
-      }
-    else
-      {return;}
-  }
-}
-
 BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   output(outputIn),
   samplerCollID_plane(-1),
@@ -637,15 +622,30 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
       
       // Connect trajectory graphs
       if (trajConnect && trackIDMap.size() > 1)
-	{
-	  for (auto i : interestingTraj)
-	    if (i.second) 
-	      {connectTraj(interestingTraj, i.first);}
-	}
+        {
+          for (auto i : interestingTraj)
+            if (i.second)
+              {ConnectTrajectory(interestingTraj, i.first, trajectoryFilters);}
+        }
       // Output interesting trajectories
       if (verbose)
-	{G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
+	    {G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
   
   return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
+}
+
+void BDSEventAction::ConnectTrajectory(std::map<BDSTrajectory*, bool>& interestingTraj,
+                                       BDSTrajectory*                  trajectoryToConnect,
+                                       std::map<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> >& trajectoryFilters) const
+{
+  BDSTrajectory* parentTrajectory = trajectoryToConnect->GetParent();
+  if (parentTrajectory)
+    {
+      interestingTraj[parentTrajectory] = true;
+      trajectoryFilters[parentTrajectory][BDSTrajectoryFilter::connect] = true;
+      ConnectTrajectory(interestingTraj, parentTrajectory, trajectoryFilters);
+    }
+  else
+    {return;}
 }
