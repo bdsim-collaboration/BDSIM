@@ -22,7 +22,9 @@ endif()
 
 # Check for lxplus. We use afs version of Geant4/CLHEP if we are on lxplus by default:
 if(EXISTS "/afs/cern.ch" AND LXPLUS)
-    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" ON)
+    # TODO - set to OFF always as it doesn't work for now.
+    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" OFF)
+    #option(USE_AFS "Use Geant4/CLHEP libraries from AFS" ON)
     if($ENV{VERBOSE})
          message(STATUS "Use Libraries from LXPLUS")
     endif()
