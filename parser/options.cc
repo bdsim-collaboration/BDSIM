@@ -410,6 +410,7 @@ void Options::PublishMembers()
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeParticleData",              &Options::storeParticleData);
+  publish("storeGeant4Data",                &Options::storeParticleData);
   
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
