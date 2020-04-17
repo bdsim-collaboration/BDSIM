@@ -168,22 +168,22 @@ void BDSOutput::FillHeader()
   ClearStructuresHeader();
 }
 
-void BDSOutput::FillGeant4Data(G4bool writeIons)
+void BDSOutput::FillParticleData(G4bool writeIons)
 {
-  // always prepare geant4 data and link to other classes, but optionally fill it
-  geant4DataOutput->Flush();
-  geant4DataOutput->Fill(writeIons);
+  // always prepare particle data and link to other classes, but optionally fill it
+  particleDataOutput->Flush();
+  particleDataOutput->Fill(writeIons);
 
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<double>::particleTable = particleDataOutput;
 #else
-  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<float>::particleTable = particleDataOutput;
 #endif
-  BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
-  BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
+  BDSOutputROOTEventCollimator::particleTable = particleDataOutput;
+  BDSOutputROOTEventAperture::particleTable   = particleDataOutput;
   
-  if (storeGeant4Data)
-    {WriteGeant4Data();}
+  if (storeParticleData)
+    {WriteParticleData();}
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)

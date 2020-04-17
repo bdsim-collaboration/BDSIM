@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
-class BDSOutputROOTParticleData;
+class BDSOutputROOTEventParticleData;
 class TTree;
 
 /**

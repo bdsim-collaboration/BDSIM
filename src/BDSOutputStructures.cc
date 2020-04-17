@@ -68,7 +68,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 
-  geant4DataOutput = new BDSOutputROOTEventParticleData();
+  particleDataOutput = new BDSOutputROOTEventParticleData();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
@@ -110,7 +110,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
-  delete geant4DataOutput;
+  delete particleDataOutput;
   delete headerOutput;
   delete beamOutput;
   delete optionsOutput;
@@ -227,9 +227,9 @@ void BDSOutputStructures::InitialiseCollimators()
     }
 }
 
-void BDSOutputStructures::ClearStructuresGeant4Data()
+void BDSOutputStructures::ClearStructuresParticleData()
 {
-  geant4DataOutput->Flush();
+  particleDataOutput->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresHeader()

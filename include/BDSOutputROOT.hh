@@ -51,7 +51,7 @@ private:
   virtual void WriteHeader();
 
   /// Copy geant4 data to file.
-  virtual void WriteGeant4Data();
+  virtual void WriteParticleData();
   
   /// Copy beam and write to file.
   virtual void WriteBeam();
@@ -75,7 +75,7 @@ private:
   
   TFile* theRootOutputFile;    ///< Output file.
   TTree* theHeaderOutputTree;  ///< Header Tree.
-  TTree* theGeant4DataTree;    ///< Geant4 Data Tree.
+  TTree* theParticleDataTree;  ///< Geant4 Data Tree.
   TTree* theBeamOutputTree;    ///< Beam Tree.
   TTree* theOptionsOutputTree; ///< Options tree.
   TTree* theModelOutputTree;   ///< Model tree.

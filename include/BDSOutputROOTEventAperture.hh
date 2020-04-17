@@ -28,7 +28,7 @@ class BDSHitApertureImpact;
 
 #include <vector>
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTEventParticleData;
 
 /**
  * @brief Data stored for energy deposition hits per event.
@@ -76,7 +76,7 @@ public:
   /// version here that doesn't override the one from TObject.
   void FlushLocal();
 
-  static BDSOutputROOTGeant4Data* particleTable;
+  static BDSOutputROOTEventParticleData* particleTable;
 
   ClassDef(BDSOutputROOTEventAperture,1);
 };

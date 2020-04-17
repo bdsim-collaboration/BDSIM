@@ -141,7 +141,7 @@ public:
   std::map<int, ParticleInfo> particles;
   std::map<int, IonInfo>      ions;
 
-  ClassDef(BDSOutputROOTEventParticleData,3);
+  ClassDef(BDSOutputROOTEventParticleData,1);
 };
 
 #endif

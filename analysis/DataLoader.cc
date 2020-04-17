@@ -54,7 +54,7 @@ DataLoader::DataLoader(std::string fileName,
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn),
   backwardsCompatible(backwardsCompatibleIn),
-  g4dChain(nullptr),
+  parChain(nullptr),
   dataVersion(BDSIM_DATA_VERSION)
 {
   CommonCtor(fileName);
@@ -63,7 +63,7 @@ DataLoader::DataLoader(std::string fileName,
 DataLoader::~DataLoader()
 {
   delete hea;
-  delete g4d;
+  delete par;
   delete bea;
   delete opt;
   delete mod;

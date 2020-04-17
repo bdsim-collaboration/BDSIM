@@ -46,7 +46,7 @@ BDSOutputROOT::BDSOutputROOT(G4String fileName,
   BDSOutput(fileName, ".root", fileNumberOffset),
   theRootOutputFile(nullptr),
   theHeaderOutputTree(nullptr),
-  theGeant4DataTree(nullptr),
+  theParticleDataTree(nullptr),
   theBeamOutputTree(nullptr),
   theOptionsOutputTree(nullptr),
   theModelOutputTree(nullptr),
@@ -71,7 +71,7 @@ void BDSOutputROOT::NewFile()
   theRootOutputFile->cd();
   
   theHeaderOutputTree  = new TTree("Header", "BDSIM Header");           // header
-  theGeant4DataTree    = new TTree("ParticleData", "BDSIM Geant4 Data");  // geant4 data
+  theParticleDataTree  = new TTree("ParticleData", "Particle Data");    // particle data
   theBeamOutputTree    = new TTree("Beam", "BDSIM beam");               // beam data tree
   theOptionsOutputTree = new TTree("Options","BDSIM options");          // options data tree
   theModelOutputTree   = new TTree("Model","BDSIM model");              // model data tree
@@ -79,13 +79,13 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree   = new TTree("Event","BDSIM event");              // event data tree
 
   // Build branches for each object
-  theHeaderOutputTree->Branch("Header.",   "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theGeant4DataTree->Branch("ParticleData.", "BDSOutputROOTEventParticleData", geant4DataOutput, 32000, 1);
-  theBeamOutputTree->Branch("Beam.",       "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
-  theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
-  theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
-  theRunOutputTree->Branch("Histos.",      "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
-  theRunOutputTree->Branch("Summary.",     "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
+  theHeaderOutputTree->Branch("Header.",       "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
+  theParticleDataTree->Branch("ParticleData.", "BDSOutputROOTEventParticleData", particleDataOutput, 32000, 1);
+  theBeamOutputTree->Branch("Beam.",           "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
+  theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
+  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
+  theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
+  theRunOutputTree->Branch("Summary.",         "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
   // Branches for event...
   // Event info output
@@ -151,9 +151,9 @@ void BDSOutputROOT::WriteHeader()
   theHeaderOutputTree->Fill();
 }
 
-void BDSOutputROOT::WriteGeant4Data()
+void BDSOutputROOT::WriteParticleData()
 {
-  theGeant4DataTree->Fill();
+  theParticleDataTree->Fill();
 }
 
 void BDSOutputROOT::WriteBeam()
