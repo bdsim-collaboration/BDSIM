@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 			  branchesToActivate,
 			  config->GetOptionBool("backwardscompatible"));
     }
-  catch (const std::string e)
+  catch (const std::string& e)
     {std::cerr << e << std::endl; exit(1);}
   
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
       // add header for file type and version details
       outputFile->cd();
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-      headerOut->Fill(); // updates time stamp
+      headerOut->Fill(dl->GetFileNames()); // updates time stamp
       headerOut->SetFileType("REBDSIM");
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
@@ -136,8 +136,9 @@ int main(int argc, char *argv[])
 
       outputFile->Close();
       delete outputFile;
+      std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
-  catch (std::string error)
+  catch (const std::string& error)
     {
       std::cout << error << std::endl;
       exit(1);

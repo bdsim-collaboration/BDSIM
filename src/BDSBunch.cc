@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Geometry/Point3D.h"
 
 #include <cmath>
+#include <set>
 #include <string>
 
 
@@ -74,7 +75,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  G4Transform3D beamlineTransformIn,
 			  G4double beamlineSIn)
 {
-  particleDefinition = new BDSParticleDefinition(*beamParticle);
+  particleDefinition = new BDSParticleDefinition(*beamParticle); // copy it so this instance owns it
 
   // back the starting point up by length safety to avoid starting on a boundary
   G4ThreeVector unitZBeamline = G4ThreeVector(0,0,-1).transform(beamlineTransformIn.getRotation());
@@ -90,24 +91,47 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   T0     = beam.T0 * CLHEP::s;
   Xp0    = beam.Xp0 * CLHEP::rad;
   Yp0    = beam.Yp0 * CLHEP::rad;
-  E0     = beam.E0  * CLHEP::GeV;
+  E0     = particleDefinition->TotalEnergy(); // already calculated and set earlier depending on available parameters
+  P0     = particleDefinition->Momentum();
   tilt   = beam.tilt * CLHEP::rad;
-  sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
+  sigmaP = beam.sigmaP;
+  sigmaE = beam.sigmaE;
+  sigmaEk = beam.sigmaEk;
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
   finiteSigmaT = BDS::IsFinite(sigmaT);
-  
-  // calculate momentum - used by some bunch distributions
-  G4double mass = beamParticle->Mass();
-  mass2 = std::pow(mass,2);
-  if (E0 <= mass)
-    {throw BDSException(__METHOD_NAME__, "E0 (central total energy) " + std::to_string(E0) + " MeV lower than mass of particle! " + std::to_string(mass) + " MeV");}
-  P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
-  sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
+  G4bool finiteSigmaP = BDS::IsFinite(sigmaP);
+  G4bool finiteSigmaEk = BDS::IsFinite(sigmaEk);
+
+  std::set<std::string> keysDesign = {"sigmaE", "sigmaEk", "sigmaP"};
+  G4int nSetDesign = BDS::NBeamParametersSet(beam, keysDesign);
+  BDS::ConflictingParametersSet(beam, keysDesign, nSetDesign, false);// warn only if too many set
   if (finiteSigmaE)
-    {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
+    {
+      sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
+      sigmaEk = (beamParticle->TotalEnergy() / beamParticle->KineticEnergy()) * sigmaE;
+    }
+  else if (finiteSigmaP)
+    {
+      sigmaE = std::pow(beamParticle->Beta(),2) * sigmaP;
+      sigmaEk = (beamParticle->TotalEnergy() / beamParticle->KineticEnergy()) * sigmaE;
+    }
+  else if (finiteSigmaEk)
+    {
+      sigmaE = sigmaEk * (beamParticle->KineticEnergy() / beamParticle->TotalEnergy());
+      sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = (beta^2) dP/P
+    }
+  // else they'll all be 0 - no need for a calculation
+  
+  finiteSigmaE = finiteSigmaE || finiteSigmaP || finiteSigmaEk; // finiteSigmaE used to know whether any variation in other classes
+  if (finiteSigmaE)
+    {
+      G4cout << "Beam> sigmaP:    " << sigmaP  << G4endl;
+      G4cout << "Beam> sigmaE:    " << sigmaE  << G4endl;
+      G4cout << "Beam> sigmaEk:   " << sigmaEk << G4endl;
+    }
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
@@ -122,6 +146,46 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
     } 
 }
 
+void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
+			     const GMAD::Beam& beam,
+			     G4double&         emittGeometricX,
+			     G4double&         emittGeometricY,
+			     G4double&         emittNormalisedX,
+			     G4double&         emittNormalisedY)
+{
+  std::set<std::string> keysDesignX = {"emitx", "emitnx"};
+  G4int nSetDesignX = BDS::NBeamParametersSet(beam, keysDesignX);
+  BDS::ConflictingParametersSet(beam, keysDesignX, nSetDesignX);
+  if (BDS::IsFinite(beam.emitNX))
+    {
+      emittNormalisedX = G4double(beam.emitNX);
+      emittGeometricX  = G4double(beam.emitNX) / beamParticle->Gamma();
+    }
+  else
+    {
+      emittGeometricX  = G4double(beam.emitx);
+      emittNormalisedX = G4double(beam.emitx) * beamParticle->Gamma();
+    }
+  
+  std::set<std::string> keysDesignY = {"emity", "emitny"};
+  G4int nSetDesignY = BDS::NBeamParametersSet(beam, keysDesignY);
+  BDS::ConflictingParametersSet(beam, keysDesignY, nSetDesignY);
+  if (BDS::IsFinite(beam.emitNY))
+    {
+      emittNormalisedY = G4double(beam.emitNY);
+      emittGeometricY  = G4double(beam.emitNY) / beamParticle->Gamma();}
+  else
+    {
+      emittGeometricY  = G4double(beam.emity);
+      emittNormalisedY = G4double(beam.emity) * beamParticle->Gamma();
+    }
+
+  G4cout << __METHOD_NAME__ << "Geometric (x): " << emittGeometricX
+	 << ", Normalised (x): " << emittNormalisedX << G4endl;
+  G4cout << __METHOD_NAME__ << "Geometric (y): " << emittGeometricY
+	 << ", Normalised (y): " << emittNormalisedY << G4endl;
+}
+
 void BDSBunch::CheckParameters()
 {
   if (sigmaE < 0)
@@ -129,6 +193,9 @@ void BDSBunch::CheckParameters()
   if (sigmaT < 0)
     {throw BDSException(__METHOD_NAME__, "sigmaT " + std::to_string(sigmaT) + " < 0!");}
 }
+
+void BDSBunch::Initialise()
+{;}
 
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
 {

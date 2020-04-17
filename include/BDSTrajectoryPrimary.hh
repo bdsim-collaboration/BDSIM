@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -53,7 +53,7 @@ public:
 		       G4bool         suppressTransportationSteps,
 		       G4bool         storeTrajectoryLocal,
 		       G4bool         storeTrajectoryLinks,
-		       G4bool         storeTrajectoryIons,
+		       G4bool         storeTrajectoryIon,
 		       G4bool         storeTrajectoryPointsIn);
   
   /// copy constructor is not needed

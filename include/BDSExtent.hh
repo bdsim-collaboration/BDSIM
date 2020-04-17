@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -186,6 +186,12 @@ inline G4bool BDSExtent::TransverselyLessThan(const BDSExtent& r) const
   G4bool xOK = (extXNeg > r.extXNeg) && (extXPos < r.extXPos);
   G4bool yOK = (extYNeg > r.extYNeg) && (extYPos < r.extYPos);
   return xOK && yOK;
+}
+
+namespace BDS
+{
+  /// Returns the extent which is the greatest extent in all six directions.
+  BDSExtent MaximumCombinedExtent(const BDSExtent& first, const BDSExtent& second);
 }
 
 #endif

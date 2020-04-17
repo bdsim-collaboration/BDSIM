@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -65,7 +65,7 @@ public:
   /// Main interface to load a magnetic field.
   BDSFieldMagInterpolated* LoadMagField(const BDSFieldInfo& info,
 					const BDSMagnetStrength* scalingStrength = nullptr,
-					const G4String           scalingKey      = "none");
+					const G4String&          scalingKey      = "none");
 
   /// Main interface to load an electric field.
   BDSFieldEInterpolated*   LoadEField(const BDSFieldInfo& info);

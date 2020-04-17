@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -56,8 +56,10 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   betaY  = beam.bety;
   alphaX = beam.alfx;
   alphaY = beam.alfy;
-  emitX  = beam.emitx;
-  emitY  = beam.emity;
+
+  G4double ex,ey; // dummy variables we don't need
+  SetEmittances(beamParticle, beam, emitX, emitY, ex, ey);
+
   dispX  = beam.dispx;
   dispY  = beam.dispy;
   dispXP = beam.dispxp;

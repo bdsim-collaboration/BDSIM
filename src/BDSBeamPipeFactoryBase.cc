@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -133,19 +133,19 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4  
-  vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
-			       (G4ThreeVector)0,             // position
-			       vacuumLV,                     // lv to be placed
-			       nameIn + "_vacuum_pv",        // name
-			       containerLV,                  // mother lv to be placed in
-			       false,                        // no boolean operation
-			       0,                            // copy number
-			       checkOverlaps);               // whether to check overlaps
+  vacuumPV = new G4PVPlacement(nullptr,                  // no rotation
+			       G4ThreeVector(),          // position
+			       vacuumLV,                 // lv to be placed
+			       nameIn + "_vacuum_pv",    // name
+			       containerLV,              // mother lv to be placed in
+			       false,                    // no boolean operation
+			       0,                        // copy number
+			       checkOverlaps);           // whether to check overlaps
   
-  beamPipePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
-				 (G4ThreeVector)0,             // position
+  beamPipePV = new G4PVPlacement(nullptr,                      // no rotation
+				 G4ThreeVector(),              // position
 				 beamPipeLV,                   // lv to be placed
-				 nameIn + "_beampipe_pv",      // name
+				 nameIn + "_beampipe_pipe_pv", // name
 				 containerLV,                  // mother lv to be placed in
 				 false,                        // no boolean operation
 				 0,                            // copy number

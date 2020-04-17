@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -203,13 +204,13 @@ G4Colour* BDSColours::GetColour(G4String type)
       G4double b = 240; // default rgb is almost white but visible
       G4String rgb = type.substr(type.find(":")+1); // everything after ':'
       std::stringstream ss(rgb);
+      G4double a = 1;
       ss >> r >> g >> b;
-      DefineColour(colourName,r,g,b);
+      if (ss.rdbuf()->in_avail() != 0)
+	{ss >> a;}
+      DefineColour(colourName,r,g,b,a);
       return colours[colourName];
     }
   else
-    {// colour not found
-      G4cout << __METHOD_NAME__ << "WARNING: unknown colour \"" << type << "\"" << G4endl;
-      return colours.at("default");
-    }
+    {throw BDSException(__METHOD_NAME__, "unknown colour \"" + type + "\"");}
 }

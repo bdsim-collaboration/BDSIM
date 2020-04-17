@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -27,6 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventAnalysis.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
+#include "BDSOutputROOTEventOptions.hh"
+
+#include "Options.hh"
 
 #include "TFile.h"
 #include "TChain.h"
@@ -83,7 +86,7 @@ int main(int argc, char* argv[])
   // add header for file type and version details
   outputFile->cd();
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(); // updates time stamp
+  headerOut->Fill(dl->GetFileNames()); // updates time stamp
   headerOut->SetFileType("REBDSIM");
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
@@ -93,13 +96,22 @@ int main(int argc, char* argv[])
   // write merged histograms and optics
   evtAnalysis->Write(outputFile);
 
-  // clone model tree for nice built in optics plotting
-  auto modelTree = dl->GetModelTree();
-  auto newTree   = modelTree->CloneTree();
-  newTree->Write("", TObject::kOverwrite);
+  // Don't clone the model tree if only primaries are generated - model not created in BDSIM
+  Options* options = dl->GetOptions();
+  TChain*  optionsTree = dl->GetOptionsTree();
+  BDSOutputROOTEventOptions* ob = options->options;
+  optionsTree->GetEntry(0);
+  if (!ob->generatePrimariesOnly)
+    {
+      // clone model tree for nice built in optics plotting
+      auto modelTree = dl->GetModelTree();
+      auto newTree = modelTree->CloneTree();
+      newTree->Write("", TObject::kOverwrite);
+    }
   
   outputFile->Close();
   delete outputFile;
+  std::cout << "Result written to: " << outputFileName << std::endl;
   delete dl;
   
   return 0;

@@ -9,7 +9,7 @@ BDSIM is developed and used on Mac OSX and Linux.
 
 Tested systems:
 
-* Mac OSX 10.14.4 (Mojave), XCode 10.2.1 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.5.p01, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.1
+* Mac OSX 10.14.6 (Mojave), XCode 10.2.1 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.5.p01, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.1
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
 * SLC6, GCC 4.9.3, Geant4.10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
@@ -95,7 +95,7 @@ Requirements \& Environment
 6) *Optional* - Qt5 libraries for best Geant4 visualiser.
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
 8) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or
-   higher (latest patch of that release). See `Geant4 Installation Guide`_
+   higher (latest patch of that release). **Recommend 10.4.p03**. Avoid 10.5.p0-1. See `Geant4 Installation Guide`_
 9) Flex 2.5.37 or higher.
 10) Bison 2.3 or higher.
 11) *Optional* - HepMC3 for loading event generator output.
@@ -114,7 +114,7 @@ problems we have found:
 
 * Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
-* Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensivly in BDSIM.
+* Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
 * Geant4.10.5.0  - the cashkarp integrator for fields will always crash.
 
 .. _mac-osx-issues:
@@ -367,31 +367,34 @@ Optional Configuration Options
 BDSIM has a few optional configuration options. These can be specified with a value when
 running CMake by prefixing them with "-D". The following options are available.
 
-+------------------------+------------+-------------------------------------------------------------+
-| **Option**             | **Type**   | **Description**                                             |
-+------------------------+------------+-------------------------------------------------------------+
-| **HepMC3_DIR**         | string     | Optional way to give a hint to CMake where to find your     |
-|                        |            | HepMC3 installation. This should point to the directory     |
-|                        |            | with the CMake configuration file which is usually          |
-|                        |            | `<installdir>/share/HepMC3/cmake`.                          |
-+------------------------+------------+-------------------------------------------------------------+
-| **ROOT_DOUBLE_OUTPUT** | Boolean    | Whether to use double precision for all output. Note this   |
-|                        |            | will roughly double the size of the output files. Useful    |
-|                        |            | only for precision tracking tests using samplers. Note,     |
-|                        |            | data generated with this build cannot be used with a        |
-|                        |            | normal build with this turned off.                          |
-+------------------------+------------+-------------------------------------------------------------+
-| **USE_AWAKE**          | Boolean    | Use AWAKE model components. (default off)                   |
-+------------------------+------------+-------------------------------------------------------------+
-| **USE_EVENTDISPLAY**   | Boolean    | Turn off event display - useful as the EVE libraries in     |
-|                        |            | are not installed correctly on AFS. (default on)            |
-+------------------------+------------+-------------------------------------------------------------+
-| **USE_GDML**           | Boolean    | Control over use of GDML. On if Geant4 has GDML support.    |
-+------------------------+------------+-------------------------------------------------------------+
-| **USE_GZSTREAM**       | Boolean    | Control over using GZip library. (default on)               |
-+------------------------+------------+-------------------------------------------------------------+
-| **USE_HEPMC3**         | Boolean    | Whether to link against HepMC3. (default off)               |
-+------------------------+------------+-------------------------------------------------------------+
++-----------------------------+------------+-------------------------------------------------------------+
+| **Option**                  | **Type**   | **Description**                                             |
++=============================+============+=============================================================+
+| **HepMC3_DIR**              | string     | Optional way to give a hint to CMake where to find your     |
+|                             |            | HepMC3 installation. This should point to the directory     |
+|                             |            | with the CMake configuration file which is usually          |
+|                             |            | `<installdir>/share/HepMC3/cmake`.                          |
++-----------------------------+------------+-------------------------------------------------------------+
+| **ROOT_DOUBLE_OUTPUT**      | Boolean    | Whether to use double precision for all output. Note this   |
+|                             |            | will roughly double the size of the output files. Useful    |
+|                             |            | only for precision tracking tests using samplers. Note,     |
+|                             |            | data generated with this build cannot be used with a        |
+|                             |            | normal build with this turned off.                          |
++-----------------------------+------------+-------------------------------------------------------------+
+| **USE_AWAKE**               | Boolean    | Use AWAKE model components. (default off)                   |
++-----------------------------+------------+-------------------------------------------------------------+
+| **USE_EVENTDISPLAY**        | Boolean    | Turn off event display - useful as the EVE libraries in     |
+|                             |            | are not installed correctly on AFS. (default on)            |
++-----------------------------+------------+-------------------------------------------------------------+
+| **USE_GDML**                | Boolean    | Control over use of GDML. On if Geant4 has GDML support.    |
++-----------------------------+------------+-------------------------------------------------------------+
+| **USE_GZSTREAM**            | Boolean    | Control over using GZip library. (default on)               |
++-----------------------------+------------+-------------------------------------------------------------+
+| **USE_HEPMC3**              | Boolean    | Whether to link against HepMC3. (default off)               |
++-----------------------------+------------+-------------------------------------------------------------+
+| **BDSIM_BUILD_STATIC_LIBS** | Boolean    | Whether to build the static library in addition to the main |
+|                             |            | shared one.                                                 |
++-----------------------------+------------+-------------------------------------------------------------+
 
 * Booleans can be either specified as 0 or 1 or OFF or ON.
 
@@ -430,14 +433,29 @@ Python Utilities
 * Quick setup: simply run ``make`` from the ``bdsim/utils`` directory.
   
 BDSIM includes copies of our accompanying Python utilities (pytransport, pymad8, pymadx
-and pybdsim) that can now be installed. These all exist in separate git repositories in
-the following locations:
+and pybdsim) that can now be installed. These are included as "subrepositories" in
+:code:`bdsim/utils/`. One should do the following from the root bdsim source directory
+to get git to download these. ::
+
+  pwd
+  > bdsim
+  git submodule init
+  git submodule update
+
+This prepares and downloads the copies of other respositories. If you intend to edit these
+(as it's all open source), it is better to clone these elsewhere outside of the bdsim source.
+These all exist in separate git repositories in the following locations:
 
 * https://bitbucket.org/jairhul/pybdsim
 * https://bitbucket.org/jairhul/pymadx
 * https://bitbucket.org/jairhul/pymad8
 * https://bitbucket.org/jairhul/pytransport
 
+.. warning:: Do not edit the copies in :code:`bdsim/utils` - this will result in problems
+	     with git and make it harder to update bdsim later on. It is strongly recommended
+	     to clone each utility separately outside the BDSIM source directory and edit that version,
+	     leaving the included one untouched.
+  
 These can all be set up separately, or alternatively the user can install all at
 once with the MakeFile added for convenience (running make command).  The Python package
 installer ("PIP") is required for this.
@@ -459,10 +477,11 @@ The utilities should now be available through Python::
   >>> import pymad8
   >>> import pytransport
 
-.. note:: If it's required to edit these utilities, please do not edit the copy in bdsim/utils,
-	  as this will cause problems with git and pulling changes. It is strongly recommended
-	  to clone each utility separately outside the BDSIM source directory and edit that version,
-	  leaving the included one untouched.
+In each utility we use PIP to get any dependencies required. Using our MakeFile
+(:code:`make develop`)just does it in such a way
+(:code:`pip install --editable . --user`) that this copy is used and not copied
+somewhere else into the Pytho installation, so if you edit or git pull next time
+you import the utility in Python it will be automatically up to date.
 
 .. _configuring-bdsim:
 
@@ -558,25 +577,28 @@ Make and install::
 Geant4 Installation Guide
 -------------------------
 
+* **Recommend** using Geant4.10.4.p03
+* Do not recommend using Geant4.10.5 and Geant4.10.5.p01
+
 BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
 get Geant4 through a package manager such as MacPorts or Brew, but often a manual installation
 is more flexible to allow choice of visualiser and use of GDML (necessary for external
 geometry). For manual installation, download the latest patch version 4.10.2 from the
 Geant website. Move and unpack to a suitable place ::
 
-  > tar -xzf geant4.10.5.tar.gz
+  > tar -xzf geant4.10.4.p03.tar.gz
   > ls
-  geant4.10.5
+  geant4.10.4.p03
 
 Make a build and installation directory **outside** that directory ::
 
-  > mkdir geant4.10.5-build
-  > mkdir geant4.10.5-install
+  > mkdir geant4.10.4.p03-build
+  > mkdir geant4.10.4.p03-install
 
 Configure Geant4 using CMake ::
 
-  > cd geant4.10.5-build
-  > cmake ../geant4.10.5
+  > cd geant4.10.4.p03-build
+  > cmake ../geant4.10.4.p03
 
 At this point it's useful to define the installation directory for Geant4 by
 modifying the CMake configuration as generally described in
@@ -660,7 +682,7 @@ in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
 
-  > source path/to/geant4.10.5-install/bin/geant4.sh
+  > source path/to/geant4.10.4.p03-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
@@ -777,7 +799,7 @@ please contact us (see :ref:`support-section`).
      #define _BACKWARD_BACKWARD_WARNING_H
      /* 
      Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-     University of London 2001 - 2019.
+     University of London 2001 - 2020.
      
      This file is part of BDSIM.
      

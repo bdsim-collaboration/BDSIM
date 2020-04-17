@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchCircle.hh"
 #include "BDSBunchComposite.hh"
 #include "BDSBunchEShell.hh"
+#include "BDSBunchEventGenerator.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSBunchHalo.hh"
 #include "BDSBunchPtc.hh"
@@ -44,10 +45,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       const GMAD::Beam& beam,
-				       G4Transform3D beamlineTransform,
-				       G4double      beamlineS,
-				       const G4bool& generatePrimariesOnlyIn)  
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)  
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
@@ -70,18 +71,17 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 }
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       BDSBunchType      distrType,
-				       const GMAD::Beam& beam,
-				       G4Transform3D beamlineTransform,
-				       G4double beamlineS,
-				       const G4bool& generatePrimariesOnlyIn)
+				       BDSBunchType                 distrType,
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)
 { 
   BDSBunch* bdsBunch = nullptr;
 
   switch (distrType.underlying())
     {
     case BDSBunchType::reference:
-    case BDSBunchType::eventgeneratorfile:
       {bdsBunch = new BDSBunch(); break;}
     case BDSBunchType::gaussmatrix:
     case BDSBunchType::gauss:
@@ -125,6 +125,8 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchSixTrack(); break;}
     case BDSBunchType::sphere:
       {bdsBunch = new BDSBunchSphere(); break;}
+    case BDSBunchType::eventgeneratorfile:
+      {bdsBunch = new BDSBunchEventGenerator(); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "distrType \"" + distrType.ToString() + "\" not found");
@@ -135,6 +137,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
   bdsBunch->SetOptions(beamParticle, beam, distrType, beamlineTransform, beamlineS);
   bdsBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
   bdsBunch->CheckParameters();
-  
+  bdsBunch->Initialise();
+
   return bdsBunch;
 }

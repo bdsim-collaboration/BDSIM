@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -51,7 +51,7 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* step)
   if (!verboseStep)
     {return;}
   G4int eventID = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
-  if (BDS::VerboseThisEvent(eventID, verboseEventStart, verboseEventStop))
+  if (BDS::VerboseThisEvent(eventID, verboseEventStart, verboseEventStop) || verboseStep)
     {VerboseSteppingAction(step);}
 }
 

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -69,4 +69,27 @@ BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
   G4cout << __METHOD_NAME__ << "determined field format to be " << result->second << G4endl;
 #endif
   return result->second;
+}
+
+G4int BDS::NDimensionsOfFieldFormat(const BDSFieldFormat& ff)
+{
+  G4int result = 0;
+  switch (ff.underlying())
+    {
+      case BDSFieldFormat::bdsim1d:
+        {result = 1; break;}
+      case BDSFieldFormat::bdsim2d:
+      case BDSFieldFormat::poisson2d:
+      case BDSFieldFormat::poisson2dquad:
+      case BDSFieldFormat::poisson2ddipole:
+        {result = 2; break;}
+      case BDSFieldFormat::bdsim3d:
+        {result = 3; break;}
+      case BDSFieldFormat::bdsim4d:
+        {result = 4; break;}
+      case BDSFieldFormat::none:
+      default:
+        {result = 0; break;}
+    }
+  return result;
 }

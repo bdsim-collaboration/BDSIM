@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray2DCoordsRDipole.hh"
 #include "BDSArray2DCoordsRQuad.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldEInterpolated.hh"
 #include "BDSFieldEInterpolated1D.hh"
 #include "BDSFieldEInterpolated2D.hh"
@@ -106,7 +107,7 @@ void BDSFieldLoader::DeleteArrays()
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      info,
 						      const BDSMagnetStrength* scalingStrength,
-						      const G4String           scalingKey)
+						      const G4String&          scalingKey)
 {
   G4String                    filePath = info.MagneticFile();
   BDSFieldFormat                format = info.MagneticFormat();
@@ -429,11 +430,7 @@ BDSInterpolator1D* BDSFieldLoader::CreateInterpolator1D(BDSArray1DCoords*   arra
     case BDSInterpolatorType::cubic1d:
       {result = new BDSInterpolator1DCubic(array); break;}
     default:
-      {
-	G4cout << "Invalid interpolator type for 1D field: " << interpolatorType << G4endl;
-	exit(1);
-	break;
-      }
+      {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 1D field: " + interpolatorType.ToString()); break;}
     }
   return result;
 }
@@ -451,11 +448,7 @@ BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   arra
     case BDSInterpolatorType::cubic2d:
       {result = new BDSInterpolator2DCubic(array); break;}
     default:
-      {
-	G4cout << "Invalid interpolator type for 2D field: " << interpolatorType << G4endl;
-	exit(1);
-	break;
-      }
+      {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 2D field: " + interpolatorType.ToString()); break;}
     }
   return result;
 }
@@ -473,11 +466,7 @@ BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   arra
     case BDSInterpolatorType::cubic3d:
       {result = new BDSInterpolator3DCubic(array); break;}
     default:
-      {
-	G4cout << "Invalid interpolator type for 3D field: " << interpolatorType << G4endl;
-	exit(1);
-	break;
-      }
+      {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 3D field: " + interpolatorType.ToString()); break;}
     }
   return result;
 }
@@ -495,11 +484,7 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
     case BDSInterpolatorType::cubic4d:
       {result = new BDSInterpolator4DCubic(array); break;}
     default:
-      {
-	G4cout << "Invalid interpolator type for 4D field: " << interpolatorType << G4endl;
-	exit(1);
-	break;
-      }
+      {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 4D field: " + interpolatorType.ToString()); break;}
     }
   return result;	
 }
@@ -573,12 +558,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String     
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   if (std::abs(array->XStep() - array->YStep()) > 1e-9)
-    {
-      G4cerr << G4endl
-	     << "Warning - asymmetric grid spacing for reflected quadrupole will result in"
-	     << " a distorted field map - please regenerate the map with even spatial samples."
-	     << G4endl;
-    }
+    {throw BDSException(__METHOD_NAME__, "asymmetric grid spacing for reflected quadrupole will result in a distorted field map - please regenerate the map with even spatial samples.");}
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
   BDSFieldMagInterpolated* result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);

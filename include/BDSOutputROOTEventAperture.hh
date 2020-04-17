@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -56,6 +56,7 @@ public:
   std::vector<bool>         isIon;
   std::vector<int>          ionA;
   std::vector<int>          ionZ;
+  std::vector<int>          nElectrons;
   
   std::vector<int>          trackID; ///< TrackID that created the deposit
   std::vector<int>          parentID;///< ParentID that created the deposit

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -26,12 +26,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
@@ -47,7 +49,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
 			     G4double    yApertureIn,
 			     G4double    xApertureOutIn,
 			     G4double    yApertureOutIn,
-			     G4Colour*   colourIn):
+			     G4Colour*   colourIn,
+			     G4bool      circularOuterIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   collimatorSolid(nullptr),
   innerSolid(nullptr),
@@ -60,7 +63,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   xApertureOut(xApertureOutIn),
   yApertureOut(yApertureOutIn),
   colour(colourIn),
-  minKineticEnergy(0)
+  minKineticEnergy(0),
+  circularOuter(circularOuterIn)
 {
   if (!BDS::IsFinite(horizontalWidth))
     {horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
@@ -68,36 +72,29 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   if ((xAperture > 0.5 * horizontalWidth) || (yAperture > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
-      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
+      G4cerr << "Full horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
-      G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
+      G4cerr << "x (half) aperture " << xAperture << " mm, y (half) aperture " << yAperture << " mm" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
 
   if ((xApertureOut > 0.5 * horizontalWidth) || (yApertureOut > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture exit bigger than width!" << G4endl;
-      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
+      G4cerr << "Full horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
-      G4cerr << "x aperture " << xApertureOut << " mm, y aperture " << yApertureOut << " mm" << G4endl;
+      G4cerr << "x (half) aperture " << xApertureOut << " mm, y (half) aperture " << yApertureOut << " mm" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
 
   if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
-    {
-      G4cout << __METHOD_NAME__
-             << "Warning - no entrance aperture set for collimator - exit aperture parameters will be ignored"
-             << G4endl;
-    }
+    {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": no entrance aperture set for collimator - exit aperture parameters will be ignored");}
 
   if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
       BDS::IsFinite(yAperture))
     {
       if ((xApertureOut / yApertureOut) != (xAperture / yAperture))
-        {
-          G4cout << __METHOD_NAME__ << "Warning - X/Y half axes ratio at entrance and exit apertures are not equal"
-                 << G4endl;
-        }
+        {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": X/Y half axes ratio at entrance and exit apertures are not equal");}
     }
 
   tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
@@ -124,10 +121,22 @@ G4String BDSCollimator::Material() const
 
 void BDSCollimator::BuildContainerLogicalVolume()
 {
-  containerSolid = new G4Box(name + "_container_solid",
-			     horizontalWidth*0.5,
-			     horizontalWidth*0.5,
-			     chordLength*0.5);
+  if(circularOuter)
+    {
+      containerSolid = new G4Tubs(name + "_solid",
+				  0,
+				  0.5*horizontalWidth,
+				  0.5*chordLength,
+				  0,
+				  CLHEP::twopi);
+    }
+  else
+    {
+      containerSolid = new G4Box(name + "_container_solid",
+				 horizontalWidth*0.5,
+				 horizontalWidth*0.5,
+				 chordLength*0.5);
+    }
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
@@ -156,12 +165,25 @@ void BDSCollimator::Build()
   else
     {colRotate = nullptr;}
 
-  G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
-                                   horizontalWidth * 0.5 - lengthSafety,
-                                   horizontalWidth * 0.5 - lengthSafety,
-                                   chordLength * 0.5   - lengthSafety);
+  G4VSolid* outerSolid = nullptr;
+  if (circularOuter)
+    {
+      outerSolid = new G4Tubs(name + "_outer_solid",
+			      0,
+			      horizontalWidth * 0.5 - lengthSafety,
+			      chordLength * 0.5 - lengthSafety,
+			      0,
+			      CLHEP::twopi);
+    }
+  else
+    {
+      outerSolid = new G4Box(name + "_outer_solid",
+                             horizontalWidth * 0.5 - lengthSafety,
+                             horizontalWidth * 0.5 - lengthSafety,
+                             chordLength * 0.5 - lengthSafety);
+    }
   RegisterSolid(outerSolid);
-
+  
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set
@@ -196,7 +218,7 @@ void BDSCollimator::Build()
     {RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
-                                            (G4ThreeVector)0,        // position
+                                            G4ThreeVector(),         // position
                                             collimatorLV,            // its logical volume
                                             name + "_collimator_pv", // its name
                                             containerLogicalVolume,  // its mother  volume

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -91,6 +91,7 @@ BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
                                      yBunch->ParticleDefinitionHasBeenUpdated() ||
                                      zBunch->ParticleDefinitionHasBeenUpdated();
 
+  // TODO - the weight only comes from the x distribution here... should it be product of all?
   BDSParticleCoordsFull result(x.x, y.y, z.z,
                                x.xp, y.yp, z.zp,
 			       z.T, z.s,

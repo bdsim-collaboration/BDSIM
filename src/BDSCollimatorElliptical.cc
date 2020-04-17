@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -32,10 +32,11 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String    nameIn,
                                                  G4double    yApertureIn,
                                                  G4double    xApertureOutIn,
                                                  G4double    yApertureOutIn,
-                                                 G4Colour*   colourIn):
+                                                 G4Colour*   colourIn,
+                                                 G4bool      circularOuterIn):
   BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "ecol",
                 collimatorMaterialIn, vacuumMaterialIn,
-                xApertureIn, yApertureIn, xApertureOutIn, yApertureOutIn, colourIn)
+                xApertureIn, yApertureIn, xApertureOutIn, yApertureOutIn, colourIn, circularOuterIn)
 {;}
 
 void BDSCollimatorElliptical::BuildInnerCollimator()

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -34,7 +34,7 @@ BDSTunnelSection::BDSTunnelSection(G4String              nameIn,
 
   // copy special bits from BDSGeometryComponent.  Can't use BDSGeometryComponent in
   // initialiser list as c++ only allows you to use constructors one up in the inheritance.
-  InheritObjects(tunnelGeometry);
+  RegisterDaughter(tunnelGeometry);
   InheritExtents(tunnelGeometry);
   containerSolid         = tunnelGeometry->GetContainerSolid();
   containerLogicalVolume = tunnelGeometry->GetContainerLogicalVolume();

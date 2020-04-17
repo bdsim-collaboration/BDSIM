@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -66,7 +66,7 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
 		  break; // no need to loop over rest of sequence
 		}
 	    }
-	  BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired);
+	  BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired, pl.name);
 	  worlds.push_back(info);
 	}
     }
@@ -107,8 +107,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       if (info.curvilinearWorld)
 	{
-	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.sequenceName);
-	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
+	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.curvilinearWorldName);
+	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.curvilinearWorldName);
 	  massWorld->RegisterParallelWorld(cLWorld);
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
 	  acceleratorModel->RegisterParallelWorld(cLWorld);

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <regex>
 #include <stdexcept>
 
-BDSIonDefinition::BDSIonDefinition(G4String definition):
+BDSIonDefinition::BDSIonDefinition(const G4String& definition):
   a(1),
   z(1),
   charge(1),

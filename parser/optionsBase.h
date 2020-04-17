@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -107,6 +107,7 @@ namespace GMAD
     /// list of physics processes
     std::string physicsList;
     bool        physicsVerbose;
+    int         physicsVerbosity;
     double      physicsEnergyLimitLow;
     double      physicsEnergyLimitHigh;
     bool        g4PhysicsUseBDSIMRangeCuts;
@@ -179,6 +180,7 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
     std::string worldGeometryFile;
+    bool        autoColourWorldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
     // see verboseImportance
@@ -275,11 +277,13 @@ namespace GMAD
     bool        storeApertureImpacts;
     bool        storeApertureImpactsIons;
     bool        storeApertureImpactsAll;
+    double      apertureImpactsMinimumKE;
     bool        storeCollimatorInfo;
     bool        storeCollimatorHits;
     bool        storeCollimatorHitsLinks;
     bool        storeCollimatorHitsIons;
     bool        storeCollimatorHitsAll;
+    double      collimatorHitsMinimumKE;
     bool        storeEloss;
     bool        storeElossHistograms;
     bool        storeElossVacuum;
@@ -309,7 +313,8 @@ namespace GMAD
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
-    bool        storeTrajectoryIons;
+    bool        storeTrajectoryIon;
+    bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
     bool        storeSamplerPolarCoords;

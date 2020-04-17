@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -58,8 +58,9 @@ public:
 		     G4bool                buildEndPiecesIn      = true,
 		     G4double              coilWidthFractionIn   = 0.65,
 		     G4double              coilHeightFractionIn  = 0.8,
-		     G4String              geometryTypeAndPathIn = "",
-		     G4Colour*             colourIn              = nullptr);
+		     const G4String&       geometryTypeAndPathIn = "",
+		     G4Colour*             colourIn              = nullptr,
+		     G4bool                autoColour            = true);
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
@@ -76,9 +77,7 @@ public:
   G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
   G4Colour*             colour;
-
-  /// Output stream operator implementation.
-  friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
+  G4bool                autoColour;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -120,9 +120,6 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 							 G4double            containerLength,
 							 BDSBeamPipe*        beamPipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<  *outerInfo << G4endl;
-#endif
   BDSMagnetOuter* outer = nullptr;
 
   G4String name                      = outerInfo->name;
@@ -136,7 +133,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 	{
 	  G4cerr << "External geometry of length " << loadedLength/CLHEP::m
 		 << "m too long for magnet of length " << outerLength/CLHEP::m
-		 << "m. Geometry Specification:" << G4endl << *outerInfo;
+		 << "m. " << G4endl;
 	  exit(1);
 	}
       return outer;
@@ -241,7 +238,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
   };
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
 									    info->geometryTypeAndPath,
-									    &defaultMap);
+									    &defaultMap,
+									    info->autoColour);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();

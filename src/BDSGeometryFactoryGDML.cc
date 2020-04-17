@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryInspector.hh"
 #include "BDSGDMLPreprocessor.hh"  // also only available with USE_GDML
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 
 #include "globals.hh"
 #include "G4GDMLParser.hh"
@@ -45,8 +46,10 @@ BDSGeometryFactoryGDML::BDSGeometryFactoryGDML()
 BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
-						   G4double /*suggestedLength*/,
-						   G4double /*suggestedHorizontalWidth*/)
+						   G4bool                 autoColour,
+						   G4double             /*suggestedLength*/,
+						   G4double             /*suggestedHorizontalWidth*/,
+						   std::vector<G4String>* namedVacuumVolumes)
 {
   CleanUp();
 
@@ -79,9 +82,14 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   // record all pvs and lvs used in this loaded geometry
   std::set<G4VPhysicalVolume*> pvsGDML;
   std::set<G4LogicalVolume*>   lvsGDML;
-  GetAllLogicalAndPhysical(containerPV, pvsGDML, lvsGDML);
+  std::map<G4String, G4Material*> materialsGDML;
+  GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
+  BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
 
-  auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
+  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
+
+  auto visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
 
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
 
@@ -97,22 +105,30 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterLogicalVolume(lvsGDML);
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
-
+  result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
+  
   delete parser;
   return result;
 }
 
-void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*      volume,
-						      std::set<G4VPhysicalVolume*>& pvsIn,
-						      std::set<G4LogicalVolume*>&   lvsIn)
+G4String BDSGeometryFactoryGDML::PreprocessedName(const G4String& objectName,
+						  const G4String& acceleratorComponentName) const
+{return BDSGDMLPreprocessor::ProcessedNodeName(objectName, acceleratorComponentName);}
+
+void BDSGeometryFactoryGDML::GetAllLogicalPhysicalAndMaterials(const G4VPhysicalVolume*         volume,
+						                                       std::set<G4VPhysicalVolume*>&    pvsIn,
+						                                       std::set<G4LogicalVolume*>&      lvsIn,
+                                                               std::map<G4String, G4Material*>& materialsGDML)
 {
   const auto& lv = volume->GetLogicalVolume();
   lvsIn.insert(lv);
-  for (G4int i = 0; i < lv->GetNoDaughters(); i++)
+  G4Material* mat = lv->GetMaterial();
+  materialsGDML[mat->GetName()] = mat;
+  for (G4int i = 0; i < (G4int)lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
       pvsIn.insert(pv);
-      GetAllLogicalAndPhysical(pv, pvsIn, lvsIn); // recurse into daughter
+      GetAllLogicalPhysicalAndMaterials(pv, pvsIn, lvsIn, materialsGDML); // recurse into daughter
     }
 }
 

@@ -26,11 +26,18 @@ Model Customisation
 Fields
 ------
 
-BDSIM provides the facility to overlay pure magnetic, pure electric or combined electromagnetic fields
-on an element, as defined by an externally provided field map. This can be done for 1) only the vacuum
-volume; 2) only the volume outside the vacuum (i.e. the yoke); 3) or one full map for the whole
-element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
-can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
+BDSIM provides the facility to overlay magnetic, electric, or combined electromagnetic fields
+on an element, as defined by an externally provided field map. A field map is an array of evenly
+space points in **Cartesian** coordinates that define the field as a 3-vector at that point.
+A field can be applied to an element of piece of geometry for
+
+1) only the "vacuum" volume
+2) only the volume outside the vacuum (i.e. the yoke)
+3) or one full map for the whole element.
+
+BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
+can be chosen given knowledge of the smoothness of the field or the application (default is
+a 4th order Runge Kutta). BDSIM also provides
 a selection of 1-4D interpolators that are used to provide the field value in between the data points
 in the supplied field map.
 
@@ -41,9 +48,9 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to four dimensions.
-
-The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
-:math:`x,y,z` and a 2D field :math:`x,y`.
+* The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
+  :math:`x,y,z` and a 2D field :math:`x,y`.
+* Cubic interpolation is used by default unless otherwise specified.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -58,6 +65,14 @@ ascending or descending order.
 	  recommended the user re-sample any existing field map into a regular grid. A regular
 	  grid is also much faster for tracking purposes.
 
+Here is a minimal example of a magnetic field in BDSIM format::
+
+  detfield: field, type="bmap3d",
+                   magneticFile="bdsim3d:fieldmap.dat.gz";
+
+This will use the "g4classicalrk4" integrator for the particle motion and the "cubic3d" interpolation
+by default.
+	  
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
 
@@ -422,7 +437,7 @@ componentsFractions Mass fraction of each component in material unit
 
 Example::
 
-  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
+  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentsFractions = {0.338,0.662};
 
 The second syntax can also be used to define materials which are composed by
 other materials (and not by atoms).
@@ -561,7 +576,7 @@ following fractions:
 | O            | 0.297             |
 +--------------+-------------------+
 
-The default pressure is 1e-12 bar, the temperature is 300K and the density os 1.16336e-9 g/cm3.
+The default pressure is 1e-12 bar, the temperature is 300K and the density is 1.16336e-15 g/cm3.
 
 "air" is the G4_AIR material. As of Geant4.10.04.p02
 (see geant4/source/materials/src/G4NistMaterialBuilder.cc), it is composed of C, N, O, Ar
@@ -612,6 +627,11 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
+.. note:: If no beam pipe is desired, :code:`apertureType="circularvacuum"` can be used that makes
+	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
+	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
+	  a magnet with air and no beam pipe.
+
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
 |                   | parameters   |                   |                 |                |                  |
@@ -639,6 +659,8 @@ The required parameters and their meaning are given in the following table.
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
 |                   |              |                   | y half-height   | y half-height  | between ellipses |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 These parameters can be set with the *option* command, as the default parameters
@@ -1040,6 +1062,8 @@ format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the ge
 file. See :ref:`externally-provided-geometry` for more details.
 
 * See also :ref:`physics-bias-importance-sampling` for usage of this.
+* The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
+  the supplied geometry by density. See :ref:`automatic-colours` for details.
 
 .. _placements:
 
@@ -1125,11 +1149,14 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
+| autoColour              | Boolean whether the geometry should be automatically coloured by   |
+|                         | density if no colour information is supplied. (default true)       |
++-------------------------+--------------------------------------------------------------------+
 
-`referenceElementNumber` is the occurence of that element in the sequence. For example, if a sequence
+`referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
 was: ::
 
   l1: line=(d1,sb1,d2,qd1,d2,df1,d2,sb1,d1);
@@ -1198,6 +1225,14 @@ This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `oct
 Example::
 
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+* :code:`autoColour=1` can also be used to automatically colour the supplied geometry by
+  density if desired. This is on by default.  Example to turn it off:
+
+::
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
+
 
 .. _element-external-geometry:
 
@@ -1591,6 +1626,18 @@ For convenience the predefined colours in BDSIM are:
 |               yellow| 255 | 255 |   0 |   1 |
 +---------------------+-----+-----+-----+-----+
 
+.. _automatic-colours:
+
+Automatic Colours
+-----------------
+
+In the case where an automatic colouring option is used, BDSIM can automatically assign a colour
+to volumes based on their material for visualisation purposes. This is done with a set of predefined
+ones for common elements and materials, and then the fall back is to use the state and the density. The
+materials state sets the opacity and the density is used to scale a grey colour. In all cases, the geometry
+will be visible.
+
+
 .. _regions:
 			
 Regions
@@ -1650,13 +1697,11 @@ density.
   will be the default for `prodCutProtons` in a `cutsregion` object if `defaultRangeCut`
   is not specified in the object.
 * See :code:`bdsim/examples/features/processes/regions` for documented examples.
-  
-.. rubric:: Footnotes
 
 .. _one-turn-map:
 
 One Turn Map
-^^^^^^^^^^^^
+------------
 
 Geant4 mandates that there are no overlaps between solids, which in
 BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice

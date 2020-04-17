@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -66,8 +66,8 @@ private:
   BeamlineVector beamline;
   
 public:
-  /// Versatile basic constructor that allows a finite poition and rotation to be applied
-  /// at the beginning of the beamline in global coordinates. Rembmer the maximum
+  /// Versatile basic constructor that allows a finite position and rotation to be applied
+  /// at the beginning of the beamline in global coordinates. Remember the maximum
   /// extents of the beamline will also be displaced. The default constructor is in effect
   /// achieved via defaults
   BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
@@ -96,12 +96,12 @@ public:
   /// of coordinates
   void ApplyTransform3D(BDSTransform3D* component);
 
-  /// Add a preassembled beam line element. In this case, the coordinates will have been
+  /// Add a pre-assembled beam line element. In this case, the coordinates will have been
   /// calculated external to this class and as such, it's the responsibility of the
   /// developer to make sure the coordinates are correct and do not cause overlaps. This
   /// will be useful for tunnel construction for example or for a non-contiguous beamline.
   /// Subsequent components added via the AddComponent() method will be appended in the usual
-  /// way to the end cooridinates of this element.
+  /// way to the end coordinates of this element.
   void AddBeamlineElement(BDSBeamlineElement* element);
 
   /// Iterate over the beamline and print out the name, position, rotation
@@ -155,18 +155,6 @@ public:
   /// Get the global extents for this beamline
   BDSExtentGlobal GetExtentGlobal() const;
 
-  /// Get the local to global transform for curvilinear coordinates
-  /// to global coordinates. 0,0 transverse position by default. Optionally returns
-  /// the index of the found element in the beam line (by reference variable).
-  G4Transform3D GetGlobalEuclideanTransform(G4double s,
-					    G4double x = 0,
-					    G4double y = 0,
-					    G4int* indexOfFoundElement = nullptr) const;
-
-  /// Get the global s position of each element all in one - used for histograms.
-  /// For convenience, s positions are converted to metres in this function.
-  std::vector<G4double> GetEdgeSPositions() const;
-
   ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
@@ -180,9 +168,27 @@ public:
   reverse_iterator       rend()         {return beamline.rend();}
   const_reverse_iterator rbegin() const {return beamline.rbegin();}
   const_reverse_iterator rend()   const {return beamline.rend();}
-
-  G4bool         empty() const {return beamline.empty();}
+  G4bool                 empty()  const {return beamline.empty();}
   ///@}
+
+  /// Get the local to global transform for curvilinear coordinates
+  /// to global coordinates. 0,0 transverse position by default. Optionally returns
+  /// the index of the found element in the beam line (by reference variable).
+  G4Transform3D GetGlobalEuclideanTransform(G4double s,
+					    G4double x = 0,
+					    G4double y = 0,
+					    G4int* indexOfFoundElement = nullptr) const;
+
+  /// Return the element in this beam line according to a given s coordinate.
+  const BDSBeamlineElement* GetElementFromGlobalS(G4double S,
+						  G4int* indexOfFoundElement = nullptr) const;
+  
+  /// Returns an iterator to the beamline element at s.
+  const_iterator FindFromS(G4double S) const;
+
+  /// Get the global s position of each element all in one - used for histograms.
+  /// For convenience, s positions are converted to metres in this function.
+  std::vector<G4double> GetEdgeSPositions() const;
 
   /// Return a pointer to the previous element. First this beamline is
   /// searched for the vector. If there is no such element or no previous

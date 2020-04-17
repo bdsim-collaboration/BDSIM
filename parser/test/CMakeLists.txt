@@ -167,6 +167,10 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
+# test extending a multipole with list syntax
+add_test(gmad-extend-list ${gmadBinary} extendlist.gmad)
+set_tests_properties(gmad-extend-list PROPERTIES PASS_REGULAR_EXPRESION 1234)
+
 # test non valid extension
 add_test(gmad-extend-nonvalid ${gmadBinary} extendnonvalid.gmad)
 set_tests_properties(gmad-extend-nonvalid PROPERTIES WILL_FAIL 1)
@@ -188,6 +192,8 @@ add_test(gmad-placement          ${gmadBinary} placement.gmad)
 add_test(gmad-placement-sequence ${gmadBinary} placement_sequence.gmad)
 add_test(gmad-region             ${gmadBinary} region.gmad)
 add_test(gmad-samplerplacement   ${gmadBinary} samplerplacement.gmad)
+add_test(gmad-scorer             ${gmadBinary} scorer.gmad)
+add_test(gmad-scorermesh         ${gmadBinary} scorermesh.gmad)	
 add_test(gmad-tunnel             ${gmadBinary} tunnel.gmad)
 
 # test object extensions
@@ -203,6 +209,8 @@ add_test(gmad-extend-physics-biasing  ${gmadBinary} extendphysicsbiasing.gmad)
 add_test(gmad-extend-placement        ${gmadBinary} extendplacement.gmad)
 add_test(gmad-extend-region           ${gmadBinary} extendregion.gmad)
 add_test(gmad-extend-samplerplacement ${gmadBinary} extendsamplerplacement.gmad)
+add_test(gmad-extend-scorer           ${gmadBinary} extendscorer.gmad)
+add_test(gmad-extend-scorermesh       ${gmadBinary} extendscorermesh.gmad)
 add_test(gmad-extend-tunnel           ${gmadBinary} extendtunnel.gmad)
 
 # test string (issue #126)

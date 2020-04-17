@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -35,7 +35,7 @@ void Field::clear()
   integrator           = "g4classicalrk4";
   globalTransform      = true;
   magneticFile         = "";
-  magneticInterpolator = "nearest";
+  magneticInterpolator = "";
   electricFile         = "";
   electricInterpolator = "";
   x         = 0;

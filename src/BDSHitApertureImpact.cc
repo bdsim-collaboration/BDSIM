@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -37,7 +37,8 @@ BDSHitApertureImpact::BDSHitApertureImpact():
   trackID(0),
   parentID(0),
   turnsTaken(0),
-  beamlineIndex(0)
+  beamlineIndex(0),
+  nElectrons(0)
 {;}
 
 BDSHitApertureImpact::BDSHitApertureImpact(G4double totalEnergyIn,
@@ -53,7 +54,8 @@ BDSHitApertureImpact::BDSHitApertureImpact(G4double totalEnergyIn,
 					   G4int    trackIDIn,
 					   G4int    parentIDIn,
 					   G4int    turnsTakenIn,
-					   G4int    beamlineIndexIn):
+					   G4int    beamlineIndexIn,
+					   G4int    nElectronsIn):
   totalEnergy(totalEnergyIn),
   preStepKineticEnergy(preStepKineticEnergyIn),
   S(SIn),
@@ -67,7 +69,8 @@ BDSHitApertureImpact::BDSHitApertureImpact(G4double totalEnergyIn,
   trackID(trackIDIn),
   parentID(parentIDIn),
   turnsTaken(turnsTakenIn),
-  beamlineIndex(beamlineIndexIn)
+  beamlineIndex(beamlineIndexIn),
+  nElectrons(nElectronsIn)
 {;}
 
 BDSHitApertureImpact::~BDSHitApertureImpact()

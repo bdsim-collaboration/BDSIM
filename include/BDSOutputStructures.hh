@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -102,6 +102,11 @@ protected:
   G4int Create1DHistogram(G4String name,
 			  G4String title,
 			  std::vector<double>& edges);
+  G4int Create3DHistogram(G4String name,
+			  G4String title,
+			  G4int    nBinsX, G4double xMin, G4double xMax,
+			  G4int    nBinsY, G4double yMin, G4double yMax,
+			  G4int    nBinsZ, G4double zMin, G4double zMax);
   ///@}
 
   BDSOutputROOTEventParticleData*   geant4DataOutput; ///< Geant4 information / particle tables.
