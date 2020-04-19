@@ -7,11 +7,11 @@ list(REMOVE_ITEM comparatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/comparator.cc)
 
 add_library(comparator SHARED ${comparatorLibSources})
 target_compile_features(comparator PUBLIC cxx_std_11)
-target_link_libraries(comparator bdsimRootEvent rebdsim)
+target_link_libraries(comparator bdsimRootEvent rebdsim ${ROOT_LIBRARIES})
 
 add_executable(comparatorexec comparator.cc)
 set_target_properties(comparatorexec PROPERTIES OUTPUT_NAME "comparator" VERSION ${BDSIM_VERSION})
-target_link_libraries(comparatorexec comparator ${BDSIM_LIB_NAME})
+target_link_libraries(comparatorexec comparator ${BDSIM_LIB_NAME} ${ROOT_LIBRARIES})
 
 # Installation
 bdsim_install_targets(comparatorexec comparator)
