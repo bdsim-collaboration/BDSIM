@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -26,19 +26,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TRKAperture.hh"
 #include "TRKApertureCircular.hh"
-#include "TRKApertureRectangular.hh"
 #include "TRKApertureEllipsoidal.hh"
-#include "TRKFactory.hh"
-#include "TRKElement.hh"
+#include "TRKApertureRectangular.hh"
 #include "TRKDecapole.hh"
+#include "TRKElement.hh"
+#include "TRKFactory.hh"
+#include "TRKKicker.hh"
 #include "TRKLine.hh"
 #include "TRKOctupole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKRBend.hh"
+#include "TRKSBend.hh"
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
-#include "TRKSBend.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
@@ -70,14 +71,14 @@ TRKFactory::TRKFactory(const GMAD::Options&   options,
   momentum = particle->Momentum();
   energy   = particle->TotalEnergy();
   brho     = particle->BRho();
-  
+
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Rigidity (Brho) : " << brho/(CLHEP::tesla*CLHEP::m) << " T*m" << std::endl;
   std::cout << "ffact    : " << options.ffact << std::endl;
   std::cout << "momentum : " << momentum << " GeV" << std::endl;
   std::cout << "charge   : " << charge << std::endl;
 #endif
-  
+
   /// start placement, could be updated after every new element
   placement = nullptr;//new TRKPlacement();
 
@@ -159,10 +160,10 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
 {
   //this is annoyingly complex because of the poor implementation of aperture
   //in bdsim.  this is made to allow both general form and individual elements
-  //to have their own aperture definitions. individual aperture type is not 
+  //to have their own aperture definitions. individual aperture type is not
   //possible. it will just default to the general kind.
   //default case = aperturetype
-  
+
   if (dontuseaperture)
     {return NULL;} //no aperture at all - will never be check with this setting so no seg fault
   else
@@ -190,18 +191,20 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 {
   TRKLine* line = new TRKLine("beamline",circular);
   // Quick fix to get Primary branch filled.  index=-1 being key here.
-  line->AddElement(new TRKSampler("primaries", -1, output));
+  line->AddElement(new TRKSampler("primaries", -1, output, 0.0));
+  auto s = 0.0;
   for (auto it : beamline_list)
     {
       TRKElement* element = CreateElement(it);
       if (element)
 	{
 	  line->AddElement(element);
+	  s += element->GetLength();
 	  // if the element is flagged as a sampler, we create
 	  // a sampler element and put it in the beam line
 	  if (it.samplerType != "none")
 	    {
-	      TRKElement* sampler = CreateSampler(it);
+	      TRKElement* sampler = CreateSampler(it, s);
 	      line->AddElement(sampler);
 	    }
 	}
@@ -250,6 +253,8 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       //TEMPORARY
       trkelement = CreateDrift(element);
       break;
+    case GMAD::ElementType::_ECOL:
+    case GMAD::ElementType::_JCOL:
     case GMAD::ElementType::_RCOL:
       trkelement = CreateDrift(element);
       break;
@@ -257,11 +262,17 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       //TEMPORARY
       trkelement = NULL;
       break;
+    case GMAD::ElementType::_KICKER:
+    case GMAD::ElementType::_TKICKER:
+      trkelement = CreateKicker(element);
+    case GMAD::ElementType::_HKICKER:
+      trkelement = CreateHKicker(element);
+    case GMAD::ElementType::_VKICKER:
+      trkelement = CreateVKicker(element);
     default:
       trkelement = NULL;
       break;
   }
-  // TBC - thin hkicker and vkicker
   // TBC - implement sampler here based on element.samplerType - str - defualt 'none'
 
   if (trkelement)
@@ -298,7 +309,7 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKQuadrupole(element.k1 / CLHEP::m2,
+  return new TRKQuadrupole(element.k1 / CLHEP::m2,  // m^-2
 			   element.name,
 			   element.l * CLHEP::m,
 			   aperture,
@@ -307,22 +318,20 @@ TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 
 TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 {
-  double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKSextupole(bPrime,
+  return new TRKSextupole(element.k2 / CLHEP::m3,
 			  element.name,
-			  element.l,
+			  element.l * CLHEP::m,
 			  aperture,
 			  placement);
 }
 
 TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 {
-  double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKOctupole(bPrime,
+  return new TRKOctupole(element.k3 / CLHEP::m2 / CLHEP::m2,
 			 element.name,
-			 element.l,
+			 element.l * CLHEP::m,
 			 aperture,
 			 placement);
 }
@@ -353,7 +362,7 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
   TRKAperture* aperture = CreateAperture(element);
   return new TRKSolenoid(bField,
 			 element.name,
-			 element.l,
+			 element.l * CLHEP::m,
 			 aperture,
 			 placement);
 }
@@ -361,24 +370,42 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKSBend(element.angle, 0.0, element.name, element.l, aperture,
-                      placement);
+  return new TRKSBend(element.angle * CLHEP::rad, element.k1 / CLHEP::m2,
+                      element.name, element.l * CLHEP::m, aperture, placement);
 }
 
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKRBend(element.angle,
+  return new TRKRBend(element.angle * CLHEP::rad,
       element.name,
-      element.l,
+      element.l * CLHEP::m,
       aperture,
       placement);
 }
 
-TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
+TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 {
   std::string name = element.name;
   int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
-  TRKElement* result = new TRKSampler(name, samplerIndex, output);
+  TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
   return result;
+}
+
+TRKElement *TRKFactory::CreateKicker(GMAD::Element& element) {
+  TRKAperture *aperture = CreateAperture(element);
+  return new TRKKicker(element.hkick, element.vkick, element.name,
+                       element.l * CLHEP::m, aperture, nullptr);
+}
+
+TRKElement *TRKFactory::CreateHKicker(GMAD::Element& element) {
+  TRKAperture *aperture = CreateAperture(element);
+  return new TRKKicker(element.hkick, 0, element.name, element.l * CLHEP::m,
+                       aperture, nullptr);
+}
+
+TRKElement *TRKFactory::CreateVKicker(GMAD::Element& element) {
+  TRKAperture *aperture = CreateAperture(element);
+  return new TRKKicker(0., element.vkick, element.name, element.l * CLHEP::m,
+                       aperture, nullptr);
 }

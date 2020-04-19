@@ -29,6 +29,7 @@ class TRKQuadrupole;
 class TRKSextupole;
 class TRKOctupole;
 class TRKSolenoid;
+class TRKKicker;
 class TRKSampler;
 class TRKTiltOffset;
 
@@ -61,6 +62,7 @@ public:
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch)=0;
   virtual void Track(TRKSextupole*  el, TRKBunch* bunch)=0;
   virtual void Track(TRKOctupole*   el, TRKBunch* bunch)=0;
+  virtual void Track(TRKKicker*     el, TRKBunch* bunch)=0;
   virtual void Track(TRKSolenoid*   el, TRKBunch* bunch)=0;
   void         Track(TRKTiltOffset* el, TRKBunch* bunch);
   ///@}

@@ -1,110 +1,59 @@
-
 #include "TRKDefaultStrategy.hh"
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
-#include "TRKQuadrupole.hh"
-#include "TRKSBend.hh"
+#include "TRKKicker.hh"
 #include "TRKMaps.hh"
+#include "TRKQuadrupole.hh"
+#include "TRKSextupole.hh"
+#include "TRKOctupole.hh"
+#include "TRKSBend.hh"
+#include "TRKRBend.hh"
+#include "TRKSolenoid.hh"
 
 #include <cmath>
 
-void TRKDefaultStrategy::Track(TRKDrift* el, TRKBunch* bunch) {
+void TRKDefaultStrategy::Track(TRKDrift *el, TRKBunch *bunch) {
   trk::maps::drift(*bunch, el->GetLength());
 }
 
 void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
+  trk::maps::sbend(*bunch, el->GetLength(), el->GetAngle(), el->GetK1());
+}
 
+void TRKDefaultStrategy::Track(TRKRBend *el, TRKBunch *bunch) {
   auto angle = el->GetAngle();
-  auto length = el->GetLength();
-  auto rho = angle / length;
-  auto k0 = 1. / rho;
-  auto h = k0;
-  auto k1 = el->GetK1();
-
-  auto rootx = std::sqrt(h * k0 + k1);
-  auto rootxl = rootx * length;
-  auto rooty = std::sqrt(k1);
-  auto rootyl = rooty * length;
-
-  auto sx = (rootx == 0) ? 1 : std::sin(rootxl) / rootx;
-  auto cx = std::cos(rootxl);
-
-  auto sy = (rooty == 0) ? 1 : std::sinh(rootyl) / rooty;
-  auto cy = std::cosh(rootyl);
-
-  for (auto &p : *bunch) {
-    auto hbar = h / p.beta0;
-    auto x = p.x;
-    auto px = p.px;
-    auto y = p.y;
-    auto py = p.py;
-    auto pz = p.pz;
-
-    // Matrix multiplication part
-    p.x = (x * cx
-	   + px * sx
-	   + pz * hbar * (1 - cx) / std::pow(rootx, 2));
-
-    p.px = (x * -std::pow(rootx, 2) * sx
-	    + px * cx
-	    + pz * hbar * sx);
-
-    p.y = y * cy + py * sy;
-    p.py = y * std::pow(rooty, 2) * sy + py * cy;
-
-    // Vector addition part
-    p.x += (h - k0) * (1 - cx) / std::pow(rootxl, 2);
-    p.px += (h - k0) * sx;
-
-    // TODO: z (longitudinal path lenght difference)
-
-  }
+  auto k0 = el->GetStrength();
+  auto poleface = angle / 2;
+  trk::maps::dipole_fringe(*bunch, k0, poleface);
+  trk::maps::sbend(*bunch, el->GetLength(), k0, el->GetK1());
+  trk::maps::dipole_fringe(*bunch, k0, poleface);
 }
 
 void TRKDefaultStrategy::Track(TRKQuadrupole *el, TRKBunch *bunch) {
-  auto k1 = el->GetStrength();
-  auto length = el->GetLength();
-
-  auto rootk = std::sqrt(k1);
-  auto rootkl = rootk * length;
-
-  // Focusing 2x2 matrix terms
-  auto f11 = std::cos(rootkl);
-  auto f12 = std::sin(rootkl) / rootk;
-  auto f21 = std::sin(rootkl) *-rootk;
-  auto f22 = f11;
-
-  // Defocusing 2x2 matrix terms
-  auto df11 = std::cosh(rootkl);
-  auto df12 = std::sinh(rootkl) / rootk;
-  auto df21 = std::sinh(rootkl) * rootk;
-  auto df22 = df11;
-
-  for (auto &p : *bunch)
-    {
-      auto x = p.x;
-      auto px = p.px;
-      auto y = p.y;
-      auto py = p.py;
-
-      p.x = x * f11 + px * f12;
-      p.px += x * f21 + px * f22;
-
-      p.y = y * df11 + py * df12;
-      p.py += y * df21 + py * df22;
-
-      p.z += p.pz * length / std::pow(p.beta0*p.gamma0, 2);
-    }
-
-  // Calculate matrix terms
+  trk::maps::quadrupole(*bunch, el->GetLength(), el->GetStrength());
 }
 
-void TRKDefaultStrategy::Track(TRKSextupole *, TRKBunch *) {}
+void TRKDefaultStrategy::Track(TRKSextupole *el, TRKBunch *b) {
+  for (auto &p : *b) {
+    trk::maps::drift(p, el->GetLength() / 2);
+    trk::maps::sextupole(p, el->GetLength(), el->GetStrength());
+    trk::maps::drift(p, el->GetLength() / 2);
+  }
+}
 
-void TRKDefaultStrategy::Track(TRKOctupole *, TRKBunch *) {}
+void TRKDefaultStrategy::Track(TRKOctupole *el, TRKBunch *bunch) {
+  trk::maps::drift(*bunch, el->GetLength());
+}
 
-void TRKDefaultStrategy::Track(TRKSolenoid *, TRKBunch *) {}
+void TRKDefaultStrategy::Track(TRKSolenoid *el, TRKBunch *bunch) {
+  trk::maps::drift(*bunch, el->GetLength());
+}
 
-void TRKDefaultStrategy::Track(TRKRBend *, TRKBunch *) {
-
+void TRKDefaultStrategy::Track(TRKKicker *el, TRKBunch *bunch) {
+  trk::maps::drift(*bunch, el->GetLength());
+  auto hkick = el->GetHKick();
+  auto vkick = el->GetVKick();
+  for (auto &p : *bunch) {
+    trk::maps::kicker(p, hkick, vkick);
+  }
 }

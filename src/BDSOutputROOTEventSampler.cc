@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -72,7 +72,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   n++;
   z = (U) (hit->coords.z / CLHEP::m);
   S = (U) (hit->coords.s / CLHEP::m);
-  
+
   energy.push_back((U &&) (hit->coords.totalEnergy / CLHEP::GeV));
   x.push_back((U &&) (hit->coords.x / CLHEP::m));
   y.push_back((U &&) (hit->coords.y / CLHEP::m));
@@ -82,9 +82,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   zp.push_back((U &&) (hit->coords.zp / CLHEP::radian));
   p.push_back((U &&) (hit->momentum / CLHEP::GeV));
   T.push_back((U &&) (hit->coords.T / CLHEP::ns));
-  
+
   modelID = hit->beamlineIndex;
-  
+
   weight.push_back((U) (hit->coords.weight));
   partID.push_back(hit->pdgID);
   parentID.push_back(hit->parentID);
@@ -127,7 +127,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 {
   trackID.push_back(n); // we assume multiple primaries are linearly increasing in track number
   n++;
-  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
+  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));
   x.push_back((U &&)  (coords.x  / CLHEP::m));
   y.push_back((U &&)  (coords.y  / CLHEP::m));
   z = (U) (coords.z / CLHEP::m);
@@ -161,8 +161,11 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 }
 
 template <class U>
-void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch)
+void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
 {
+  S = sIn;
+  auto mass_ = bunch.mass;
+  auto e0 = bunch.totalEnergy;
   for (const auto& particle : bunch)
     {
       n++;
@@ -170,8 +173,28 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch)
       xp.push_back(particle.px / CLHEP::rad);
       y.push_back(particle.y / CLHEP::m);
       yp.push_back(particle.py / CLHEP::rad);
-      z = (particle.z / CLHEP::m);
-      zp.push_back(particle.pz / CLHEP::rad);
+      z = particle.z / CLHEP::m;
+      auto zp_ = particle.pz / CLHEP::rad;
+      zp.push_back(zp_);
+
+
+      auto gamma0 = particle.gamma0;
+      auto beta0 = particle.beta0;
+      auto p0 = mass_ * std::sqrt(gamma0*gamma0 - 1);
+      auto energy_ = p0 * (zp_ + 1./beta0);
+
+      auto momentum = std::sqrt(energy_*energy_ - mass_*mass_);
+
+
+      weight.push_back(1);
+
+
+      partID.push_back(2212);
+      parentID.push_back(0);
+      trackID.push_back(0);
+      turnNumber.push_back(0);
+      energy.push_back(energy_);
+      p.push_back(momentum);
     }
 }
 
@@ -191,7 +214,7 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
   if (isntSafe(rValue))
     {rValue = 0;}
   r.push_back(static_cast<U>(rValue));
-  
+
   double rpValue = std::hypot(xpCoord, ypCoord);
   if (isntSafe(rpValue))
     {rpValue = 0;}

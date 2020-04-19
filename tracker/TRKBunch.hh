@@ -63,6 +63,12 @@ public:
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);
 
+  double mass;
+  double charge;
+  double totalEnergy;
+  double kineticEnergy;
+
+  
 private:
   TRKBunch(); /// bunch must be instantiated with a number of particles
 
@@ -75,10 +81,6 @@ private:
   
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 
-  double mass;
-  double charge;
-  double totalEnergy;
-  double kineticEnergy;
 };
 
 #endif

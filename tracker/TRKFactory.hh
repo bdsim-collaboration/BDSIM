@@ -76,9 +76,13 @@ private:
   TRKElement* CreateOctupole(GMAD::Element& element);
   TRKElement* CreateDecapole(GMAD::Element& element);
   TRKElement* CreateSolenoid(GMAD::Element& element);
+  TRKElement *CreateKicker(GMAD::Element& element);
+  TRKElement *CreateHKicker(GMAD::Element& element);
+  TRKElement *CreateVKicker(GMAD::Element& element);
+  
   //TRKElement* CreateMultipole(GMAD::Element& element);
   //TRKElement* CreateGmadElement(GMAD::Element& element);
-  TRKElement* CreateSampler(GMAD::Element& element);
+  TRKElement* CreateSampler(GMAD::Element& element, double s);
   //TRKElement* CreateTransform3D(GMAD::Element& element);
 
   /// set common properties

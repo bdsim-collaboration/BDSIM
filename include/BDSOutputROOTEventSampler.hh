@@ -125,7 +125,7 @@ public:
   void Fill(const BDSPrimaryVertexInformationV* vertexInfos,
 	    const G4int turnsTaken); ///< Fill a vertex directly.
     
-  void Fill(const TRKBunch& bunch);
+  void Fill(const TRKBunch& bunch, double s);
 #endif
   void Fill(const BDSOutputROOTEventSampler<U>* other);
 

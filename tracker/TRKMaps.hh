@@ -8,11 +8,12 @@ namespace maps {
 
 void drift(TRKParticle &, double length) noexcept;
 void drift(TRKBunch &, double length) noexcept;
-
-// void quadrupole(particle, length, k1l);
-// void drift(particle, length, k1l);
-// void drift(particle, length, k1l);
-// void sbend(particle, length, angle);
+void sbend(TRKBunch &, double length, double angle, double k1 = 0.0) noexcept;
+void dipole_fringe(TRKParticle &, double k0, double angle) noexcept;
+void dipole_fringe(TRKBunch &, double k0, double angle) noexcept;
+void quadrupole(TRKBunch &, double length, double k1) noexcept;
+void sextupole(TRKParticle &, double length, double k1) noexcept;
+void kicker(TRKParticle &, double hkick, double vkick) noexcept;
 
 } // namespace maps
 

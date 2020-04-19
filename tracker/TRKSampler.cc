@@ -26,15 +26,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 TRKSampler::TRKSampler(std::string nameIn,
 		       int         indexIn,
-		       BDSOutput*  outputIn):
+		       BDSOutput*  outputIn,
+		       double sIn):
   TRKElement(nameIn+"_sampler",0,nullptr,nullptr),
   index(indexIn),
-  output(outputIn)
+  output(outputIn),
+  s(sIn)
 {;}
 
 void TRKSampler::Track(TRKBunch* bunch, TRKStrategy* /*strategy*/)
 {
-  output->FillSamplerHitsTracker(index, bunch);
+  output->FillSamplerHitsTracker(index, bunch, s);
 }
 
 void TRKSampler::Print(std::ostream &out) const

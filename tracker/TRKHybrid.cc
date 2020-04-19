@@ -324,3 +324,5 @@ void TRKHybrid::Track(TRKSolenoid* el, TRKBunch* bunch)
   std::cout << "DANGER WILL ROBINSON - NOT FINISHED" << std::endl;
   Track((TRKDrift*)el,bunch);
 }
+
+void TRKHybrid::Track(TRKKicker *el, TRKBunch *bunch) {}

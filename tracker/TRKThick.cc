@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
+#include "TRKKicker.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
 #include "TRKOctupole.hh"
@@ -147,4 +148,9 @@ void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* bunch)
 void TRKThick::Track(TRKSolenoid* el, TRKBunch* bunch)
 { 
   Track((TRKDrift*)el,bunch);
+}
+
+void TRKThick::Track(TRKKicker* el, TRKBunch* bunch) { 
+  std::cout << "WARNING - METHOD NOT IMPLEMENTED" << std::endl;
+  return Track((TRKDrift*)el,bunch);
 }

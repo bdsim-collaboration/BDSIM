@@ -34,7 +34,8 @@ class TRKSampler: public TRKElement
 public:
   TRKSampler(std::string nameIn,
 	     int         indexIn,
-	     BDSOutput*  outputIn);
+	     BDSOutput*  outputIn,
+	     double s);
   virtual ~TRKSampler(){;}
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* /*strategy*/);
@@ -48,6 +49,7 @@ private:
 
   int        index;
   BDSOutput* output;
+  double s;
 };
 
 #endif

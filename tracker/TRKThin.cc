@@ -61,12 +61,17 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
 }
 
 void TRKThin::Track(TRKSBend* el, TRKBunch* bunch) { 
-  return Track((TRKDrift*)el,bunch);
+  Track((TRKDrift*)el,bunch);
 }
 
 void TRKThin::Track(TRKRBend* el, TRKBunch* bunch) { 
-  return Track((TRKDrift*)el,bunch);
+  Track((TRKDrift*)el,bunch);
 }
+
+void TRKThin::Track(TRKKicker* el, TRKBunch* bunch) { 
+  Track((TRKDrift*)el,bunch);
+}
+
 
 void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
   const double strength = el->GetStrength();
