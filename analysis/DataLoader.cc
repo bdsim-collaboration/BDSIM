@@ -80,7 +80,7 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor(std::string fileName)
 {
-  BuildInputFileList(fileName);
+  BuildInputFileList(fileName); // updates dataVersion
 
   hea = new Header(debug);
   par = new ParticleData(debug);
@@ -91,7 +91,7 @@ void DataLoader::CommonCtor(std::string fileName)
   run = new Run(debug, dataVersion);
   
   heaChain = new TChain("Header",      "Header");
-  if (!backwardsCompatible)
+  if (dataVersion > 5)
     {parChain = new TChain("ParticleData", "ParticleData");}
   beaChain = new TChain("Beam",       "Beam");
   optChain = new TChain("Options",    "Options");
@@ -104,7 +104,7 @@ void DataLoader::CommonCtor(std::string fileName)
   ChainTrees();
   SetBranchAddress(allBranchesOn, branchesToTurnOn);
 
-  if (!backwardsCompatible)
+  if (dataVersion > 5)
     {
       parChain->GetEntry(0); // load particle data
 #ifdef __ROOTDOUBLE__
@@ -241,7 +241,7 @@ void DataLoader::BuildEventBranchNameList()
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
-  if (!backwardsCompatible)
+  if (dataVersion > 5)
     {parChain->Add(fileNames[0].c_str());} // only require 1 copy
   for (const auto& filename : fileNames)
     {
@@ -257,7 +257,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
-  if (!backwardsCompatible)
+  if (dataVersion > 5)
     {par->SetBranchAddress(parChain);}
   hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
