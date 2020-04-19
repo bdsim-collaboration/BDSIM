@@ -242,6 +242,8 @@ General
 * Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
   the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
   and the length of the element.
+* Degrader wedges are no longer connected with geometry to prevent overlaps. Degrader can now be fully open
+  when using the element parameter :code:`degraderOffset`.
   
 Bug Fixes
 ---------
