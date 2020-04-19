@@ -18,10 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCollimatorRectangular.hh"
 
-#include "globals.hh" // geant4 globals / types
+#include "globals.hh"
 #include "G4Box.hh"
 #include "G4Trd.hh"
-#include "G4VSolid.hh"
 
 #include <cmath>
 

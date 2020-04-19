@@ -158,6 +158,8 @@ New Features
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
@@ -323,6 +325,8 @@ General
 * Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
   the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
   and the length of the element.
+* Degrader wedges are no longer connected with geometry to prevent overlaps. Degrader can now be fully open
+  when using the element parameter :code:`degraderOffset`.
   
 Bug Fixes
 ---------
@@ -425,6 +429,8 @@ Bug Fixes
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
 * Unintialised variables reported by Coverity.
+* Fix erroneous warnings with jcol that would prevent it being built. These were due to double
+  parameter checks from a base class that don't appy.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
@@ -449,6 +455,12 @@ Bug Fixes
   through the thick sections of the element.
 * Fix segfault in rebdsimOptics when supplying a BDSIM root file in which only primaries are generated, the model
   isn't constructed in this case so it isn't written, therefore can't be copied to the rebdsimOptics output.
+* Fix wrongly sized container volume for ggmad geometry for Cons and Tubs solids as well as reported extents that
+  would cause overlaps with neighbouring elements.
+* Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
+  to degenerate naming of parallel worlds.
+* Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
+  must now be different.
 
 Output Changes
 --------------
