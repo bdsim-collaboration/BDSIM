@@ -746,19 +746,20 @@ appropriate parameters need to be defined for each individual distribution.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `xDistrType`                     | Horizontal distribution type                          |
-+----------------------------------+-------------------------------------------------------+
-| `yDistrType`                     | Vertical distribution type                            |
-+----------------------------------+-------------------------------------------------------+
-| `zDistrType`                     | Longitudinal distribution type                        |
-+----------------------------------+-------------------------------------------------------+
-
++---------------+--------------------------------+------------------------+
+| **Variable**  | **Description**                | **Coordinates Used**   |
++===============+================================+========================+
+| `xDistrType`  | Horizontal distribution type   | x,xp,weight            |
++---------------+--------------------------------+------------------------+
+| `yDistrType`  | Vertical distribution type     | y,yp                   |
++---------------+--------------------------------+------------------------+
+| `zDistrType`  | Longitudinal distribution type | z,zp,s,T,totalEnergy   |
++---------------+--------------------------------+------------------------+
+ 
 .. note:: It is currently not possible to use two differently specified versions of the same
-	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
-	  and gaussTwiss (parameter set 2) for y. They will have the same settings.
+ 	  distribution within the composite distribution, i.e. gaussTwiss (parameter set 1) for x
+	  and gaussTwiss (parameter set 2) for y. They will have the same settings as (for example)
+	  only one betx can be specified.
 
 Examples: ::
 
@@ -3125,6 +3126,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | conversionFactorFile    | No            | File name of conversion factor file to be used |
 |                         |               | in calculation                                 |
 +-------------------------+---------------+------------------------------------------------+
+| conversionFactorPath    | No            | Path to set of files per particle to be used   |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
 | materialToInclude       | No            | A space separated list of materials to be      |
 |                         |               | scored. Any materials not matching this will   |
 |                         |               | be ignored. (string, case sensitive).          |
@@ -3138,6 +3142,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 |                         |               | overlap a piece of geometry but not score from |
 |                         |               | that specific geometry allowing tight fitting  |
 |                         |               | scoring.                                       |
++-------------------------+---------------+------------------------------------------------+
+| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
+|                         |               | the primary particle(s) with Parent ID == 0.   |
 +-------------------------+---------------+------------------------------------------------+
 
 .. _scorer-types:

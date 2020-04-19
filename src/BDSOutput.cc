@@ -325,7 +325,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillScorerHits(scorerHits); // map always exists
 
   // we do this after energy loss and collimator hits as the energy loss
-  // is integrated for putting in event info and the number of colliamtors
+  // is integrated for putting in event info and the number of collimators
   // interacted with counted
   if (info)
     {FillEventInfo(info);}
@@ -548,11 +548,11 @@ void BDSOutput::CreateHistograms()
   if (nBLMs > 0)
     {     
       // the same primitive scorers for BLMs may be used in multiple SDs (each representing
-      // a unique combination of primtivie scorers. However, we want 1 histogram per primitive
+      // a unique combination of primitive scorers. However, we want 1 histogram per primitive
       // scorer for all BLMs. We want to fill the same scoring quantity into the one histogram
       // even from different collections ("SD/PS"). Determine 'set' of histogram names, which is
       // set of primitive scorers use for BLMs.
-      // note there may be scorers from genral 3d meshes and not just blms
+      // note there may be scorers from general 3d meshes and not just blms
       std::vector<G4String> psnamesc = BDSSDManager::Instance()->PrimitiveScorerNamesComplete();
       std::vector<G4String> psnames  = BDSSDManager::Instance()->PrimitiveScorerNames();
       std::map<G4String, G4double> scorerUnits = BDSSDManager::Instance()->PrimitiveScorerUnits();
@@ -565,10 +565,10 @@ void BDSOutput::CreateHistograms()
               for (const auto& scorerName : psnames)
                 {
                   if (scorerNameComplete.contains("/"+scorerName)) // only match end of full name with '/'
-		    {
-		      blmHistoNames.insert(scorerName);
-		      psFullNameToPS[scorerNameComplete] = scorerName;
-		    }
+                    {
+                      blmHistoNames.insert(scorerName);
+                      psFullNameToPS[scorerNameComplete] = scorerName;
+                    }
                 }
             }
         }
@@ -580,7 +580,7 @@ void BDSOutput::CreateHistograms()
           G4String blmHistName = "BLM_" + hn;
           G4int hind = Create1DHistogram(blmHistName, blmHistName, nBLMs, 0, nBLMs);
           histIndices1D[blmHistName] = hind;
-	  histIndexToUnits1D[hind]   = scorerUnits[hn];
+	      histIndexToUnits1D[hind]   = scorerUnits[hn];
           for (const auto& kv : psFullNameToPS)
             {
               if (hn == kv.second)
