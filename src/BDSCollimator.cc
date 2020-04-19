@@ -63,9 +63,6 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   colour(colourIn),
   minKineticEnergy(0)
 {
-  if (!BDS::IsFinite(horizontalWidth))
-    {horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
-
   if ((xAperture > 0.5 * horizontalWidth) || (yAperture > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
