@@ -64,15 +64,15 @@ protected:
   /// To fulfill inheritance but unused.
   virtual void BuildInnerCollimator() final {;}
   
-  G4VSolid* jawSolid;             ///< Jaw solid.
-  G4double    xSizeLeft;          ///< Offset of jaw 1
-  G4double    xSizeRight;         ///< Offset of jaw 2
-  G4double    xHalfGap;           ///< Half gap separation between jaws.
-  G4double    jawHalfWidth;       ///< Half width of each jaw.
-  G4double    yHalfHeight;        ///< Half height of each jaw.
-  G4bool      buildLeftJaw;       ///< Build left jaw or not.
-  G4bool      buildRightJaw;      ///< Build right jaw or not.
-  G4bool      buildAperture;	  ///< Build aperture or not.
+  G4VSolid* jawSolid;        ///< Jaw solid.
+  G4double  xSizeLeft;       ///< Offset of jaw 1
+  G4double  xSizeRight;      ///< Offset of jaw 2
+  G4double  xHalfGap;        ///< Half gap separation between jaws.
+  G4double  jawHalfWidth;    ///< Half width of each jaw.
+  G4double  yHalfHeight;     ///< Half height of each jaw.
+  G4bool    buildLeftJaw;    ///< Build left jaw or not.
+  G4bool    buildRightJaw;   ///< Build right jaw or not.
+  G4bool    buildAperture;   ///< Build aperture or not.
 
 private:
   /// Private default constructor to force the use of the supplied one.
