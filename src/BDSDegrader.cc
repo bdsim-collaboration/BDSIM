@@ -77,7 +77,7 @@ void BDSDegrader::BuildContainerLogicalVolume()
     {throw BDSException(__METHOD_NAME__, "option \"degraderHeight\" must be less than 0.5 times \"horizontalWidth\" for element \"" + name + "\"");}
 
   if ((degraderOffset + baseWidth) > 0.5*horizontalWidth)
-	{throw BDSException(__METHOD_NAME__, "option \"degraderOffset\" must be less than 0.5 times \"horizontalWidth\" for element \"" + name + "\"");}
+	{throw BDSException(__METHOD_NAME__, "option \"degraderOffset\" must be less than (0.5 times \"horizontalWidth\", minus aper1) for element \"" + name + "\"");}
 
   // adjust wedge offset to account for added base width
   degraderOffset += baseWidth;
