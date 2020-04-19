@@ -18,10 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCollimatorRectangular.hh"
 
-#include "globals.hh" // geant4 globals / types
+#include "globals.hh"
 #include "G4Box.hh"
 #include "G4Trd.hh"
-#include "G4VSolid.hh"
 
 #include <cmath>
 
@@ -34,10 +33,11 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String    nameIn,
                                                    G4double    yApertureIn,
                                                    G4double    xApertureOutIn,
                                                    G4double    yApertureOutIn,
-                                                   G4Colour*   colourIn):
+                                                   G4Colour*   colourIn,
+                                                   G4bool      circularOuterIn):
   BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "rcol",
                 collimatorMaterialIn, vacuumMaterialIn, xApertureIn,
-                yApertureIn, xApertureOutIn, yApertureOutIn, colourIn)
+                yApertureIn, xApertureOutIn, yApertureOutIn, colourIn, circularOuterIn)
 {;}
 
 void BDSCollimatorRectangular::BuildInnerCollimator()

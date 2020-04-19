@@ -133,6 +133,7 @@ public:
   G4int PrintModuloEvents()                  const;
   G4int PrintModuloTurns()                   const;
   inline G4bool   PhysicsVerbose()           const {return G4bool  (options.physicsVerbose);}
+  inline G4int    PhysicsVerbosity()         const {return G4int   (options.physicsVerbosity);}
   inline G4double PhysicsEnergyLimitLow()    const {return G4double(options.physicsEnergyLimitLow)*CLHEP::GeV;}
   inline G4double PhysicsEnergyLimitHigh()   const {return G4double(options.physicsEnergyLimitHigh)*CLHEP::GeV;}
   

@@ -47,7 +47,8 @@ public:
 		G4double    yApertureIn    = 0,
 		G4double    xApertureOutIn = 0,
 		G4double    yApertureOutIn = 0,
-		G4Colour*   colourIn       = nullptr);
+		G4Colour*   colourIn       = nullptr,
+		G4bool      circularOuterIn = false);
   virtual ~BDSCollimator();
 
   /// @{ Accessor.
@@ -61,10 +62,14 @@ public:
   virtual void SetMinimumKineticEnergy(G4double minimimumKineticEnergyIn) {minKineticEnergy = minimimumKineticEnergyIn;}
 
 protected:
+  /// Check and update parameters before construction. Called at the start of Build() as
+  /// we can't call a virtual function in a constructor.
+  virtual void CheckParameters();
+  
   virtual void Build();
 
   virtual void BuildContainerLogicalVolume();
-
+  
   /// Pure virtual function to be provided by derived classes.
   /// Must produce vacuumSolid and innerSolid - the inner is used
   /// to subtract from the mass and the vacuum is placed inside it all
@@ -88,7 +93,7 @@ protected:
   G4bool      tapered;            ///< Flag for tapered collimator.
   G4Colour*   colour;             ///< Colour of collimator.
   G4double    minKineticEnergy;   ///< Optional minmum kinetic energy for collimator materials.
-  
+  G4bool      circularOuter;      ///< Aperture type of the collimator
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSCollimator() = delete;

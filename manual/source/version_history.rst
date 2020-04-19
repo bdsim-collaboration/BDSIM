@@ -30,6 +30,15 @@ New Features
   The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
   generic beam line element as well as placements and magnet outer geometry.
+* Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
+  created per event 3D histograms for various quantities. Ability to score multiple quantities,
+  per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
+* BLMs now must use a :code:`scoreQuantity` to name a scorer object to decide what they record
+  as opposed to previously just recording energy deposition.
+* BLMs now have a parameter :code:`bias` that allows a cross-section biasing object to be attached
+  to all logical volumes in that BLM.
+* Cubic is now the default interpolation for fields and is automatically matched to the number
+  of dimensions in the field map file.
 
 
 General
@@ -149,9 +158,13 @@ New Features
   the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
 * Revised executable options for verbosity. These are now the exact same as the input options. Old
   options are still functional but undocumented.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New internal region class allows better setting of defaults when defining custom regions. Previously,
   these would just be the default in the class if they weren't specified, which was 0. The global ones
   will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
 * New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
   energy a particle must have for either an aperture impact or collimator hit respectively to
   be generated.
@@ -240,7 +253,7 @@ New Features
 |                                    | and `verboseSteppingEventContinueFor`. Default is all events.      |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 print out per step of each particle. This    |
-|                                    | done according to the range of `verboseSteppingEventStart, and     |
+|                                    | done according to the range of `verboseSteppingEventStart`, and    |
 |                                    | `verboseSteppingEventContinueFor`. Default is all events and all   |
 |                                    | particles.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
@@ -258,7 +271,7 @@ New Features
 |                                    | step. Note, this is a lot of output.                               |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseSteppingLevel               | (0-5) level of Geant4 stepping level print out. The same           |
-|                                    |  as `-\\-verbose_G4stepping=X` executable option.                  |
+|                                    | as `-\\-verbose_G4stepping=X` executable option.                   |
 +------------------------------------+--------------------------------------------------------------------+
 | verboseTrackingLevel               | (0-5) level of Geant4 tracking level print out. The same           |
 |                                    | as `-\\-verbose_G4tracking=X` executable option.                   |
@@ -312,6 +325,8 @@ General
 * Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
   the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
   and the length of the element.
+* Degrader wedges are no longer connected with geometry to prevent overlaps. Degrader can now be fully open
+  when using the element parameter :code:`degraderOffset`.
   
 Bug Fixes
 ---------
@@ -343,8 +358,11 @@ Bug Fixes
   required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
   instead.
 * Fix wire scanner sensitivity. The wire was never sensitive.
+* Fix generic element sensitivity. It never produced energy deposition.
 * Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
   and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from the run histograms.
 * The rigidity was corrected for partially stripped ions in the sampler output.
 * The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
   the nuclear mass not including the mass of the electrons. The magnetic fields were however
@@ -405,11 +423,14 @@ Bug Fixes
   the primary as impacting the wire as the PrimaryFirstHit location.
 * Fixed a bug where the terminator and teleporters would overlap with the tunnel.
 * Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Fixed a bug where the `lhcright` transverse extent was set incorrectly.
 * Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
   where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
 * Unintialised variables reported by Coverity.
+* Fix erroneous warnings with jcol that would prevent it being built. These were due to double
+  parameter checks from a base class that don't appy.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
@@ -434,6 +455,12 @@ Bug Fixes
   through the thick sections of the element.
 * Fix segfault in rebdsimOptics when supplying a BDSIM root file in which only primaries are generated, the model
   isn't constructed in this case so it isn't written, therefore can't be copied to the rebdsimOptics output.
+* Fix wrongly sized container volume for ggmad geometry for Cons and Tubs solids as well as reported extents that
+  would cause overlaps with neighbouring elements.
+* Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
+  to degenerate naming of parallel worlds.
+* Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
+  must now be different.
 
 Output Changes
 --------------

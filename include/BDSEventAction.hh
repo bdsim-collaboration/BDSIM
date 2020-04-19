@@ -26,13 +26,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4UserEventAction.hh"
 
-#include <ctime>
 #include <bitset>
+#include <ctime>
+#include <map>
 #include <string>
 #include <vector>
 
 class BDSEventInfo;
 class BDSOutput;
+class BDSTrajectory;
 class BDSTrajectoriesToStore;
 class G4Event;
 class G4PrimaryVertex;
@@ -70,6 +72,12 @@ protected:
 							 BDSHitsCollectionEnergyDeposition* eCounterFullHits,
 							 BDSHitsCollectionSampler*          SampHC,
 							 G4int                              nChar = 50) const;
+
+  /// Recursively (using this function) mark each parent trajectory as true - to be stored,
+  /// and also flag the bitset for 'connect' as true.
+  void ConnectTrajectory(std::map<BDSTrajectory*, bool>& interestingTraj,
+                         BDSTrajectory* trajectoryToConnect,
+                         std::map<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> >& trajectoryFilters) const;
   
 private:
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
@@ -92,6 +100,7 @@ private:
   G4int collimatorCollID;         ///< Collection ID for the collimator hits.
   G4int apertureCollID;           ///< Collection ID for the aperture hits.
   G4int thinThingCollID;          ///< Collection ID for the thin thing hits.
+  std::map<G4String, G4int> scorerCollectionIDs; ///< Collection IDs for all scorers.
 
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
