@@ -51,6 +51,10 @@ public:
   virtual ~BDSCollimatorJaw();
 
 protected:
+  /// Check and update parameters before construction. Called at the start of Build() as
+  /// we can't call a virtual function in a constructor.
+  virtual void CheckParameters() override;
+  
   /// Override function in BDSCollimator for totally different construction.
   virtual void Build() override;
 
