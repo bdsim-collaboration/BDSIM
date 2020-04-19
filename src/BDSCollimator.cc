@@ -60,8 +60,15 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   yAperture(yApertureIn),
   xApertureOut(xApertureOutIn),
   yApertureOut(yApertureOutIn),
+  tapered(false),
   colour(colourIn),
   minKineticEnergy(0)
+{;}
+
+BDSCollimator::~BDSCollimator()
+{;}
+
+void BDSCollimator::CheckParameters()
 {
   if ((xAperture > 0.5 * horizontalWidth) || (yAperture > 0.5 * horizontalWidth))
     {
@@ -69,7 +76,7 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
       G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
-      throw BDSException(__METHOD_NAME__, "");
+      throw BDSException(__METHOD_NAME__, "Error in collimator");
     }
 
   if ((xApertureOut > 0.5 * horizontalWidth) || (yApertureOut > 0.5 * horizontalWidth))
@@ -102,9 +109,6 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
     {colour = BDSColours::Instance()->GetColour("collimator");}
 }
 
-BDSCollimator::~BDSCollimator()
-{;}
-
 G4String BDSCollimator::Material() const
 {
   if (collimatorMaterial)
@@ -130,6 +134,7 @@ void BDSCollimator::BuildContainerLogicalVolume()
 
 void BDSCollimator::Build()
 {
+  CheckParameters();
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
   // Swap variables around if exit size is larger than entrance size
