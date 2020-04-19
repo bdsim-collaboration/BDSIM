@@ -41,7 +41,9 @@ public:
 	      G4double wedgeLengthIn,
 	      G4double degraderHeightIn,
 	      G4double degraderOffsetIn,
-	      G4Material* materialIn,
+	      G4double baseWidthIn,
+	      G4Material* degraderMaterialIn,
+	      G4Material* vacuumMaterialIn,
 	      G4Colour*   colourIn);
   virtual ~BDSDegrader();
   
@@ -55,7 +57,9 @@ protected:
   G4double    wedgeLength;
   G4double    degraderHeight;
   G4double    degraderOffset;
-  G4Material* material;
+  G4double    baseWidth;
+  G4Material* degraderMaterial;
+  G4Material* vacuumMaterial;
   G4Colour*   colour;
   
   bool isOdd(G4int integer)
@@ -82,6 +86,14 @@ private:
   BDSDegrader& operator=(const BDSDegrader&) = delete;
   BDSDegrader(BDSDegrader&) = delete;
   ///@}
+
+  /// Register physical placement of the degrader wedges. zOffset is the wedge offset from the start
+  /// of the element, i.e from -l/2.
+  void PlaceWedge(G4bool placeRight,
+                  G4double zOffset,
+                  G4String name,
+                  G4LogicalVolume* lv,
+                  G4RotationMatrix* rot);
 };
 
 #endif

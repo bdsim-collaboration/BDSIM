@@ -70,6 +70,7 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   minimumTime   = scorer.minimumTime*CLHEP::second;
   maximumTime   = scorer.maximumTime*CLHEP::second;
   worldVolumeOnly = scorer.scoreWorldVolumeOnly;
+  primariesOnly = scorer.scorePrimariesOnly;
 
   if (scorer.particlePDGID != 0)
     {
