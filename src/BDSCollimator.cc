@@ -78,7 +78,7 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
       G4cerr << "x aperture " << xApertureOut << " mm, y aperture " << yApertureOut << " mm" << G4endl;
-      throw BDSException(__METHOD_NAME__, "");
+      throw BDSException(__METHOD_NAME__, "Error in collimator.");
     }
 
   if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
