@@ -61,11 +61,20 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
   xSizeLeft(xSizeLeftIn),
   xSizeRight(xSizeRightIn),
   xHalfGap(xHalfGapIn),
+  jawHalfWidth(0),
   yHalfHeight(yHalfHeightIn),
   buildLeftJaw(buildLeftJawIn),
-  buildRightJaw(buildRightJawIn)
+  buildRightJaw(buildRightJawIn),
+  buildAperture(true)
 {
   jawHalfWidth = 0.5 * (0.5*horizontalWidth - lengthSafetyLarge - xHalfGap);
+}
+
+BDSCollimatorJaw::~BDSCollimatorJaw()
+{;}
+
+void BDSCollimatorJaw::CheckParameters()
+{
   if (jawHalfWidth < 1e-3) // 1um minimum, could also be negative
     {throw BDSException(__METHOD_NAME__, "horizontalWidth insufficient given xsize of jcol \"" + name + "\"");}
 
@@ -102,13 +111,9 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
   if (!buildLeftJaw && !buildRightJaw)
     {throw BDSException(__METHOD_NAME__, "no jaws being built: \"" + name + "\"");}
   
-  buildAperture = true;
   if (!BDS::IsFinite(xHalfGap) && !BDS::IsFinite(xSizeLeft) && !BDS::IsFinite(xSizeRight))
     {buildAperture = false;}
 }
-
-BDSCollimatorJaw::~BDSCollimatorJaw()
-{;}
 
 void BDSCollimatorJaw::BuildContainerLogicalVolume()
 {
@@ -126,6 +131,7 @@ void BDSCollimatorJaw::BuildContainerLogicalVolume()
 
 void BDSCollimatorJaw::Build()
 {
+  CheckParameters();
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
   // set each jaws half gap default to aperture half size

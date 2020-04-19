@@ -1115,10 +1115,18 @@ Parameter              Description                              Default     Requ
 
 .. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
 	  lateral wedge position, and consequently the total material thickness the beam can propagate
-	  through. If both are specified, `degraderOffset` will be ignored. When numberWedges is specified
-	  to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges. When viewed from
-	  above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a
-	  right-angled triangle.
+	  through. An offset of zero will corresponds to a full closed degrader, and is equivalent to a
+	  materialThickness being the degrader length. If both are specified, `degraderOffset` will be ignored.
+.. note:: When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and
+      two `half` wedges. When viewed from above, a `full` wedge appears as an isosceles triangle, and
+      a `half` wedge appears as a right-angled triangle.
+.. note:: A base is included with each wedge. Without it, if the materialThickness were to be set to
+      the same as the degrader length, only half the beam would be degraded when passing through a wedge.
+      The base provides material such that the whole width of the beam pipe would see material when the
+      degrader is fully closed. As such, the degrader offset must be greater than or equal to zero.
+      Negative offsets causes BDSIM to exit.
+.. note:: If the user wants a fully open degrader, the degrader offset should be set to a value larger
+      than the wedgeLength.
 
 
 Examples: ::
