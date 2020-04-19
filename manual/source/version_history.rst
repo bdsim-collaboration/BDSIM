@@ -374,6 +374,8 @@ Bug Fixes
   would cause overlaps with neighbouring elements.
 * Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
   to degenerate naming of parallel worlds.
+* Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
+  must now be different.
 
 Output Changes
 --------------
