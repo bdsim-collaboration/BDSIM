@@ -30,6 +30,7 @@ class BDSOutputROOTGeant4Data;
 #include "BDSPrimaryVertexInformationV.hh"
 #include "tracker/TRKBunch.hh"
 
+#include <iostream>
 #include "globals.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
 #include <cmath>

@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cmath>
+#include <iostream>
 
 #include "TRKBunch.hh"
 #include "TRKMaps.hh"
@@ -66,8 +68,16 @@ void trk::maps::sbend(TRKBunch &bunch, double length, double angle,
 }
 
 void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {
-
   // Calculate matrix terms
+  if (k1 == 0) {
+    trk::maps::drift(bunch, length);
+    return;
+  }
+
+  bool xdefocusing = k1 < 0;
+
+  k1 = std::abs(k1);
+
   auto rootk = std::sqrt(k1);
   auto rootkl = rootk * length;
 
@@ -82,6 +92,13 @@ void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {
   auto df12 = std::sinh(rootkl) / rootk;
   auto df21 = std::sinh(rootkl) * rootk;
   auto df22 = df11;
+
+  if (xdefocusing) {
+    std::swap(f11, df11);
+    std::swap(f12, df12);
+    std::swap(f21, df21);
+    std::swap(f22, df22);
+  }
 
   for (auto &p : bunch) {
     auto x = p.x;
