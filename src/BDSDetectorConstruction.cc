@@ -136,7 +136,7 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
       G4double length = elementIt->l;
       G4double angle  = elementIt->angle;
       if (!BDS::IsFinite(length))
-	{continue;} // avoid divide by 0
+	    {continue;} // avoid divide by 0
       G4double ratio  = angle / length;
       maxBendingRatio = std::max(maxBendingRatio, ratio);
     }
