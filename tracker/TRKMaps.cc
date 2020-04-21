@@ -107,12 +107,12 @@ void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {
     auto py = p.py;
 
     p.x = x * f11 + px * f12;
-    p.px += x * f21 + px * f22;
+    p.px = x * f21 + px * f22;
 
     p.y = y * df11 + py * df12;
-    p.py += y * df21 + py * df22;
+    p.py = y * df21 + py * df22;
 
-    p.z += p.pz * length / std::pow(p.beta0 * p.gamma0, 2);
+    p.z = p.z + p.pz * length / std::pow(p.beta0 * p.gamma0, 2);
   }
 }
 
