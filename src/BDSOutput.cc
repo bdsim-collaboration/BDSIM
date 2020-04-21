@@ -326,7 +326,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   FillScorerHits(scorerHits); // map always exists
 
   // we do this after energy loss and collimator hits as the energy loss
-  // is integrated for putting in event info and the number of colliamtors
+  // is integrated for putting in event info and the number of collimators
   // interacted with counted
   if (info)
     {FillEventInfo(info);}

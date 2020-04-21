@@ -3143,6 +3143,9 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 |                         |               | that specific geometry allowing tight fitting  |
 |                         |               | scoring.                                       |
 +-------------------------+---------------+------------------------------------------------+
+| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
+|                         |               | the primary particle(s) with Parent ID == 0.   |
++-------------------------+---------------+------------------------------------------------+
 
 .. _scorer-types:
 
