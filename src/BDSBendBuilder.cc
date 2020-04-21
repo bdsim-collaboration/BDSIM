@@ -199,7 +199,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 
   // unlike an rbend, the sbend will mostly likely be split up into segments.
   // we must check that the faces of each segment (varying from e1 to e2) will
-  // not overlap given the outer diamter.
+  // not overlap given the outer diameter.
   // calculate extent along z due poleface rotation at half the horizontal width.
   G4double horizontalWidth = BDSComponentFactory::PrepareHorizontalWidth(element);
   if (incomingFaceAngle > 0)

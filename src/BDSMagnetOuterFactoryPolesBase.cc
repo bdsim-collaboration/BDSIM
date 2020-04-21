@@ -47,11 +47,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-#include <algorithm>                       // for std::max, std::swap
+#include <algorithm>
 #include <cmath>
 #include <set>
-#include <string>                          // for std::to_string
-#include <utility>                         // for std::pair
+#include <string>
+#include <utility>
 #include <vector>
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
@@ -264,7 +264,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(const G4String
     {PlaceComponentsCoils(name, order);}
   
   // record extents
-  // container radius is just outerDiamter as yoke is circular
+  // container radius is just outerDiameter as yoke is circular
   G4double containerRadius = horizontalWidth + lengthSafety;
   BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   

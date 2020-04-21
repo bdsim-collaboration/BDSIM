@@ -1949,7 +1949,6 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  // name
   info->name = elementNameIn;
   
   // magnet geometry type
@@ -2115,7 +2114,7 @@ G4Transform3D BDSComponentFactory::CreateFieldTransform(Element const* el)
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
 							 G4double horizontalWidth,
-							 G4String name)
+							 const G4String& name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
 #ifdef BDSDEBUG
@@ -2125,7 +2124,7 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
     {
       G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
 	     << name
-	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+	     << "\" will result in overlapping faces!" << G4endl << "Please reduce the horizontalWidth" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
 }

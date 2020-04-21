@@ -18,10 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSMAGNETOUTERINFO_H
 #define BDSMAGNETOUTERINFO_H
-
 #include "BDSMagnetGeometryType.hh"
 
-#include "globals.hh"         // geant4 types / globals
+#include "globals.hh"
 
 #include <ostream>
 
@@ -45,7 +44,7 @@ public:
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(G4String              nameIn,
+  BDSMagnetOuterInfo(const G4String&         nameIn,
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              horizontalWidthIn,
 		     G4Material*           outerMaterialIn,
