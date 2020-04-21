@@ -25,11 +25,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
+#include "G4PVPlacement.hh"
+#include "G4RotationMatrix.hh"
+#include "G4TwoVector.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include <string>
 #include <vector>
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -79,7 +82,7 @@ void BDSDegrader::BuildContainerLogicalVolume()
     {throw BDSException(__METHOD_NAME__, "option \"degraderHeight\" must be less than 0.5 times \"horizontalWidth\" for element \"" + name + "\"");}
 
   if ((degraderOffset + baseWidth) > 0.5*horizontalWidth)
-	{throw BDSException(__METHOD_NAME__, "option \"degraderOffset\" must be less than (0.5 times \"horizontalWidth\", minus aper1) for element \"" + name + "\"");}
+    {throw BDSException(__METHOD_NAME__, "option \"degraderOffset\" must be less than (0.5 times \"horizontalWidth\", minus aper1) for element \"" + name + "\"");}
 
   // adjust wedge offset to account for added base width
   degraderOffset += baseWidth;
@@ -91,13 +94,13 @@ void BDSDegrader::BuildContainerLogicalVolume()
     {containerWidth = minimumWidth;}
 
   containerSolid = new G4Box(name + "_container_solid",
-                 containerWidth + lengthSafety,
-                 degraderHeight*0.5,
-		 chordLength*0.5);
+			     containerWidth + lengthSafety,
+			     degraderHeight*0.5,
+			     chordLength*0.5);
 
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
-                           vacuumMaterial,
-			   name + "_container_lv");
+					       vacuumMaterial,
+					       name + "_container_lv");
 }
 
 void BDSDegrader::Build()
@@ -153,12 +156,12 @@ void BDSDegrader::Build()
   RegisterVisAttributes(degraderVisAttr);
 
   // Rotation  of wedges. Left taken to be +VE x direction, right is -VE x direction.
-  G4RotationMatrix* rightRot = new G4RotationMatrix;
+  G4RotationMatrix* rightRot = new G4RotationMatrix();
   rightRot->rotateY(-CLHEP::halfpi);
   rightRot->rotateX(-CLHEP::halfpi);
   RegisterRotationMatrix(rightRot);
 
-  G4RotationMatrix* leftRot = new G4RotationMatrix;
+  G4RotationMatrix* leftRot = new G4RotationMatrix();
   leftRot->rotateY(CLHEP::halfpi);
   leftRot->rotateX(-CLHEP::halfpi);
   RegisterRotationMatrix(leftRot);
