@@ -1,3 +1,5 @@
 include sbend_poleface.gmad;
 
 option, integratorSet="bdsimtwo";
+
+option, checkOverlaps=0;
