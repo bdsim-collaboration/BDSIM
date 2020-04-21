@@ -269,10 +269,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeElementFromComponent(BDSA
 									    BDSBeamline::const_iterator end,
 									    const G4int                 beamlineIndex)
 {
-  G4bool last = false;
-  if (nextElement == end)
-    {last = true;}
-  
+  G4bool last = nextElement == end;
   BDSBeamlineElement* pel = (*element);     // convenience
 
   BDSTiltOffset* copyTiltOffset = nullptr;
