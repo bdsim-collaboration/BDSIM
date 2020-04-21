@@ -305,6 +305,7 @@ public:
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}
   inline G4double              CurvilinearDiameter()     const {return curvilinearDiameter;}
+  inline G4bool                CurvilinearDiameterShrunkForBends() const {return curvilinearDiameterShrunkForBends;}
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -319,6 +320,7 @@ public:
   /// @{ Setter
   inline void SetSamplerDiameter(G4double samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
   inline void SetCurvilinearDiameter(G4double curvilinearDiameterIn) {curvilinearDiameter = curvilinearDiameterIn;}
+  inline void SetCurvilinearDiameterShrunkForBends() {curvilinearDiameterShrunkForBends = true;}
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -343,6 +345,7 @@ private:
 
   G4double samplerDiameter;     ///< Cache of sampler diameter in this class so it can be updated.
   G4double curvilinearDiameter; ///< Curvilinear diameter for CL volumes - defaults to samplerDiameter.
+  G4bool   curvilinearDiameterShrunkForBends;
 
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
