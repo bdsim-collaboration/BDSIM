@@ -34,7 +34,7 @@ class G4Material;
 class BDSDegrader: public BDSAcceleratorComponent
 {
 public:
-  BDSDegrader(G4String nameIn, 
+  BDSDegrader(const G4String& nameIn, 
 	      G4double lengthIn,
 	      G4double horizontalWidthIn,
 	      G4int    numberWedgesIn,

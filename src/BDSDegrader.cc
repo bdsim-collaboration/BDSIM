@@ -32,7 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 globals / types
 #include <vector>
 
-BDSDegrader::BDSDegrader(G4String   nameIn,
+#include "CLHEP/Units/SystemOfUnits.h"
+
+BDSDegrader::BDSDegrader(const G4String&   nameIn,
 			 G4double   lengthIn,
 			 G4double   horizontalWidthIn,
 			 G4int      numberWedgesIn,
