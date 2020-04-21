@@ -49,7 +49,17 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
       BDSExtent tunnelExtent = globals->TunnelInfo()->IndicativeExtent();
       tunnelExtent = tunnelExtent.Translate(globals->TunnelOffsetX(), globals->TunnelOffsetY(), 0);
       G4double maxTunnelR = tunnelExtent.MaximumAbs();
-      curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
+      if (curvilinearRadius < maxTunnelR)
+        {
+          if (globals->CurvilinearDiameterShrunkForBends())
+            {
+              G4String message = "Strong bends necessitate smaller curvilinear geometry than the tunnel size, but\n";
+              message += "tunnel hits will need transform for curvilinear coordinates.";
+              BDS::Warning(message);
+            }
+          else
+            {curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);}
+        }
     }
   bonusChordLength = 1*CLHEP::m;
 
