@@ -1138,12 +1138,7 @@ described in :ref:`tunnel-geometry`.
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of samplers (default 5 m) [m]. This is also  |
-|                                  | the diameter of the curvilinear world volumes used in |
-|                                  | curvilinear transforms. In the case of lower energy   |
-|                                  | machines with strong bending angles (10s of degrees), |
-|                                  | this should be reduced to prevent overlaps between    |
-|                                  | curvilinear volumes along the beam line.              |
+| samplerDiameter                  | Diameter of samplers (default 5 m) [m].               |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
 |                                  | includes cavities.                                    |

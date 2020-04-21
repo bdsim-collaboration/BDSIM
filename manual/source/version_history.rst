@@ -378,6 +378,12 @@ Bug Fixes
   to degenerate naming of parallel worlds.
 * Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
   must now be different.
+* Fix potentially bad geometry being built with exceptionally tightly bent dipoles with a short length. The
+  check on length, angle and horizontalWidth was symmetric whereas for C-shaped poled dipoles the yoke can
+  be shifted.
+* Fix a bug where if the :code:`samplerDiameter` option was made incredibly small, the linked curvilinear
+  volumes would also be shrunk and therefore result in a lack of transforms in incorrect fields and therefore
+  tracking. The size of curvilinear world cylinders for field transforms is now determined independently.
 
 Output Changes
 --------------
