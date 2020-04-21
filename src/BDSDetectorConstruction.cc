@@ -143,14 +143,16 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
 
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   G4double curvilinearRadius = 0.5*globals->CurvilinearDiameter();
-  if (maxBendingRatio > 0.4) // max ratio for a 2.5m sampler diameter
+  G4double tolerance = 0.9; // 10% tolerance -> factor of 0.9
+  if (maxBendingRatio > 0.4*tolerance) // max ratio for a 2.5m sampler diameter
     {
-      G4double curvilinearRadiusBends = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
+      G4double curvilinearRadiusBends = (tolerance / maxBendingRatio)*CLHEP::m;
       if (curvilinearRadiusBends < curvilinearRadius)
         {
           G4cout << __METHOD_NAME__ << "Reducing curvilinear diameter from " << 2*curvilinearRadius / CLHEP::m
                  << "m to " << 2*curvilinearRadiusBends / CLHEP::m << "m" << G4endl;
           globals->SetCurvilinearDiameter(2*curvilinearRadiusBends);
+          globals->SetCurvilinearDiameterShrunkForBends();
         }
       G4double sd = globals->SamplerDiameter();
       if (curvilinearRadius*2 < sd)
