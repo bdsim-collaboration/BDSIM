@@ -2122,13 +2122,9 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 const G4String& name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
-#endif
   if (horizontalWidth > 2*radiusFromAngleLength)
     {
-      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
-	     << name
+      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \"" << name
 	     << "\" will result in overlapping faces!" << G4endl << "Please reduce the horizontalWidth" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
