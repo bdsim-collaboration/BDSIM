@@ -93,6 +93,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
     {
       G4String name = (*element)->GetName() + "_cl_" + std::to_string(i);
       i++;
+      if ((*element)->GetArcLength() < 0.01)
+        {continue;}
       const BDSBeamlineElement* pstEl = nullptr;
       const BDSBeamlineElement* nxtEl = nullptr;
       PreviousAndNext(element, beamline->begin(), beamline->end(), pstEl, nxtEl);
