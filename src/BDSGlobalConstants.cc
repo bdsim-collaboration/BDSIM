@@ -69,6 +69,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
   curvilinearDiameter = 5*CLHEP::m;
+  curvilinearDiameterShrunkForBends = false;
 
   // beam pipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
