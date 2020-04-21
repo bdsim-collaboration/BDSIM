@@ -41,9 +41,9 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
 
-  paddingLength     = BDSBeamline::PaddingLength();
+  paddingLength       = BDSBeamline::PaddingLength();
   defaultBridgeLength = paddingLength + 4*globals->LengthSafety();
-  curvilinearRadius = globals->SamplerDiameter()*0.5;
+  curvilinearRadius   = globals->CurvilinearDiameter()*0.5;
   if (globals->BuildTunnel() || globals->BuildTunnelStraight())
     {// query the default tunnel model
       BDSExtent tunnelExtent = globals->TunnelInfo()->IndicativeExtent();
