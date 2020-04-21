@@ -384,6 +384,9 @@ Bug Fixes
 * Fix a bug where if the :code:`samplerDiameter` option was made incredibly small, the linked curvilinear
   volumes would also be shrunk and therefore result in a lack of transforms in incorrect fields and therefore
   tracking. The size of curvilinear world cylinders for field transforms is now determined independently.
+* Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
+  is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
+  to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
 
 Output Changes
 --------------
