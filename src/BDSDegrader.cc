@@ -207,20 +207,20 @@ void BDSDegrader::Build()
     }
 }
 
-void BDSDegrader::PlaceWedge(G4bool placeRight,
+void BDSDegrader::PlaceWedge(G4bool            placeRight,
                              G4double          zOffset,
-                             G4String          name,
+                             const G4String&   placementName,
                              G4LogicalVolume*  lv,
-                             G4RotationMatrix* rot)
+                             G4RotationMatrix* rotation)
 {
   G4double xOffset = -degraderOffset;  // default is right placement
   if (!placeRight)
     {xOffset = degraderOffset;}
 
-  G4VPhysicalVolume* wedgePV = new G4PVPlacement(rot,
+  G4VPhysicalVolume* wedgePV = new G4PVPlacement(rotation,
                                                  G4ThreeVector(xOffset, 0, -0.5*arcLength + zOffset),
 	                                         lv,
-	                                         name,
+	                                         placementName,
 	                                         containerLogicalVolume,
 	                                         false,
 	                                         0,

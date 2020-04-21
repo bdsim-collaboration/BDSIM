@@ -76,11 +76,11 @@ private:
 
   /// Register physical placement of the degrader wedges. zOffset is the wedge offset from the start
   /// of the element, i.e from -l/2.
-  void PlaceWedge(G4bool placeRight,
-                  G4double zOffset,
-                  G4String name,
-                  G4LogicalVolume* lv,
-                  G4RotationMatrix* rot);
+  void PlaceWedge(G4bool            placeRight,
+                  G4double          zOffset,
+                  const G4String&   placementName,
+                  G4LogicalVolume*  lv,
+                  G4RotationMatrix* rotation);
 };
 
 #endif
