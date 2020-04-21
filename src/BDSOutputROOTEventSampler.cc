@@ -164,7 +164,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
 {
-  S = sIn;
+  S = sIn / CLHEP::m;
   auto mass_ = bunch.mass;
   auto e0 = bunch.totalEnergy;
   for (const auto& particle : bunch)
