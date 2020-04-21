@@ -169,14 +169,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
   auto e0 = bunch.totalEnergy;
   for (const auto& particle : bunch)
     {
-      n++;
-      x.push_back(particle.x / CLHEP::m);
-      xp.push_back(particle.px / CLHEP::rad);
-      y.push_back(particle.y / CLHEP::m);
-      yp.push_back(particle.py / CLHEP::rad);
-      z = particle.z / CLHEP::m;
       auto zp_ = particle.pz / CLHEP::rad;
-      zp.push_back(zp_);
 
 
       auto gamma0 = particle.gamma0;
@@ -185,6 +178,17 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
       auto energy_ = p0 * (zp_ + 1./beta0);
 
       auto momentum = std::sqrt(energy_*energy_ - mass_*mass_);
+      // convert back to bdsim standard momenta coordinates:  p/|p|
+
+      n++;
+      x.push_back(particle.x / CLHEP::m);
+      // std::cout << particle.x / CLHEP::m << "\n";
+      xp.push_back((p0 / momentum) * particle.px / CLHEP::rad);
+      y.push_back(particle.y / CLHEP::m);
+      yp.push_back((p0 / momentum) * particle.py / CLHEP::rad);
+      z = particle.z / CLHEP::m;
+      zp.push_back(zp_);
+
 
 
       weight.push_back(1);
