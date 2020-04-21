@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-#include <ostream>
+#include <cmath>
 
 class G4Colour;
 class G4Material;
@@ -75,6 +75,8 @@ public:
   G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
   G4Colour*             colour;
+
+  inline G4double MinimumIntersectionRadiusRequired() const {return std::hypot(0.5*horizontalWidth, 0.05*horizontalWidth*vhRatio);}
 };
 
 #endif
