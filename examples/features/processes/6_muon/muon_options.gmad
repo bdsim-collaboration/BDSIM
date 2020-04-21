@@ -7,7 +7,6 @@ option, prodCutPhotons   = 10*m,
 option, minimumKineticEnergy=10*GeV:
 
 muannibias: xsecBias, particle="e+", process="AnnihiToMuPair", xsecfact={1e8}, flag={2};
-
 mueebias: xsecBias, particle="e+", process="ee2hadr", xsecfact={1e8}, flag={2};
 
 option, defaultBiasMaterial="muannibias mueebias";

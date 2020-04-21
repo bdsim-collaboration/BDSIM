@@ -47,11 +47,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-#include <algorithm>                       // for std::max, std::swap
+#include <algorithm>
 #include <cmath>
 #include <set>
-#include <string>                          // for std::to_string
-#include <utility>                         // for std::pair
+#include <string>
+#include <utility>
 #include <vector>
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
@@ -264,7 +264,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(const G4String
     {PlaceComponentsCoils(name, order);}
   
   // record extents
-  // container radius is just outerDiamter as yoke is circular
+  // container radius is just outerDiameter as yoke is circular
   G4double containerRadius = horizontalWidth + lengthSafety;
   BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
@@ -1064,7 +1064,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(const G4String&   
   G4double extYPos = 0;
   G4double extYNeg = 0;
   // Typically we have a positive bend angle that (by convention) causes a
-  // bend to the -ve x direction in right hadned coordinates. Also, typically,
+  // bend to the -ve x direction in right handed coordinates. Also, typically,
   // a C shaped magnet has the yoke to the inside so there is an aperture for
   // any radiation to escape to the outside. Therefore, we build the yoke like this
   // and flip it if required. Points are done in clock wise order from the bottom left

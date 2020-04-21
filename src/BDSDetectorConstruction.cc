@@ -150,26 +150,30 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
       G4double length = elementIt->l;
       G4double angle  = elementIt->angle;
       if (!BDS::IsFinite(length))
-	{continue;} // avoid divide by 0
+	    {continue;} // avoid divide by 0
       G4double ratio  = angle / length;
       maxBendingRatio = std::max(maxBendingRatio, ratio);
     }
-  
-  G4double curvilinearRadius = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
-  if (maxBendingRatio > 0.4) // max ratio for a 2.5m sampler diameter
-    {
-      G4double curvilinearRadiusBends = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
 
-      // check it's smaller - the user may have already specified a smaller sampler diameter
-      // and that should take precedence
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  G4double curvilinearRadius = 0.5*globals->CurvilinearDiameter();
+  G4double tolerance = 0.9; // 10% tolerance -> factor of 0.9
+  if (maxBendingRatio > 0.4*tolerance) // max ratio for a 2.5m sampler diameter
+    {
+      G4double curvilinearRadiusBends = (tolerance / maxBendingRatio)*CLHEP::m;
       if (curvilinearRadiusBends < curvilinearRadius)
-	{
-	  curvilinearRadius = curvilinearRadiusBends;
-	  G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
-		 << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
-		 << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
-	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
-	}
+        {
+          G4cout << __METHOD_NAME__ << "Reducing curvilinear diameter from " << 2*curvilinearRadius / CLHEP::m
+                 << "m to " << 2*curvilinearRadiusBends / CLHEP::m << "m" << G4endl;
+          globals->SetCurvilinearDiameter(2*curvilinearRadiusBends);
+          globals->SetCurvilinearDiameterShrunkForBends();
+        }
+      G4double sd = globals->SamplerDiameter();
+      if (curvilinearRadius*2 < sd)
+        {
+          G4cout << __METHOD_NAME__ << "Reducing sampler diameter from " << sd / CLHEP::m << "m to the same" << G4endl;
+          globals->SetSamplerDiameter(2*curvilinearRadius);
+        }
     }
 
     // add number of sampler placements to count of samplers

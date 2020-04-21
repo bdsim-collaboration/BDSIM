@@ -179,7 +179,7 @@ public:
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double horizontalWidth,
-					     G4String name = "not given");
+					     const G4String& name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
