@@ -188,6 +188,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
 
       weight.push_back(1);
 
+      T.push_back(-1); // dummy value for now
 
       partID.push_back(2212);
       parentID.push_back(0);
