@@ -1138,7 +1138,7 @@ described in :ref:`tunnel-geometry`.
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of samplers (default 5 m) [m].               |
+| samplerDiameter                  | Diameter of all samplers (default 5 m) [m].           |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
 |                                  | includes cavities.                                    |
