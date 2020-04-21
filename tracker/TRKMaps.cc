@@ -55,13 +55,13 @@ void trk::maps::sbend(TRKBunch &bunch, double length, double angle,
 	    + py * cy);
 
 
-    p.z + (x * -hbar * sx
+    p.z = (x * -hbar * sx
 	    + px * -hbar * (1 - cx) / std::pow(rootx, 2)
 	    + pz * (length / std::pow(p.beta0 * p.gamma0, 2)
 		    - std::pow(hbar, 2)
 		    * (length - sx)
 		    / std::pow(rootx, 2))
-	   + z);
+	   + p.z);
   }
 }
 
