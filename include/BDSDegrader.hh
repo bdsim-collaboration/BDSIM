@@ -62,21 +62,8 @@ protected:
   G4Material* vacuumMaterial;
   G4Colour*   colour;
   
-  bool isOdd(G4int integer)
-  {
-    if (integer % 2 != 0)
-      return true;
-    else
-      return false;
-  }
-  
-  bool isEven(G4int integer)
-  {
-    if (integer % 2 == 0)
-      return true;
-    else
-      return false;
-  }
+  inline G4bool IsOdd(G4int integer) const {return integer % 2 != 0;}
+  inline G4bool IsEven(G4int integer)const {return integer % 2 == 0;}
   
 private:
   /// Private default constructor to force the use of the supplied one.
