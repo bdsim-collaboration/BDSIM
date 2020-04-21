@@ -166,7 +166,13 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step *aStep, G4TouchableHistory *)
 
         auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
 
-        G4double angle = std::abs(momDirection.angle(blmUnitZ));
+        /// The angle used for the lookup is sign-independent and spans the range 0 to pi/2
+        G4double angle = fmod(std::abs(momDirection.angle(blmUnitZ)), CLHEP::pi);
+        if (angle > CLHEP::pi/2.)
+        {
+            angle = CLHEP::pi - angle;
+        }
+
 
         G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
 
