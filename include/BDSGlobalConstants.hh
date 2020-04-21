@@ -304,6 +304,7 @@ public:
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4double              SamplerDiameter()         const {return samplerDiameter;}
+  inline G4double              CurvilinearDiameter()     const {return curvilinearDiameter;}
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -316,7 +317,8 @@ public:
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
-  inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
+  inline void SetSamplerDiameter(G4double samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
+  inline void SetCurvilinearDiameter(G4double curvilinearDiameterIn) {curvilinearDiameter = curvilinearDiameterIn;}
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -339,8 +341,8 @@ private:
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
 
-  /// Cache of sampler diameter in this class so it can be updated.
-  G4double samplerDiameter;
+  G4double samplerDiameter;     ///< Cache of sampler diameter in this class so it can be updated.
+  G4double curvilinearDiameter; ///< Curvilinear diameter for CL volumes - defaults to samplerDiameter.
 
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
