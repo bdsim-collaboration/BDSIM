@@ -171,26 +171,26 @@ void BDSDegrader::Build()
   for (G4int i = 0; i < (numberWedges + 1); i++)
     {
       G4String wedgeName = name + "_" + std::to_string(i)+"_pv";
-      if (isEven(numberWedges))
+      if (IsEven(numberWedges))
 	{
 	  if (i == 0)
 	    {PlaceWedge(true, lengthSafety, wedgeName, halfWedgeLV, altRightRot);}
 	  else if (i==numberWedges)
 	    {PlaceWedge(true, arcLength-lengthSafety, wedgeName, halfWedgeLV, rightRot);}
-	  else if(isEven(i))
+	  else if(IsEven(i))
 	    {PlaceWedge(true, i*wedgeWidth, wedgeName, fullWedgeLV, rightRot);}
-	  else if (isOdd(i))
+	  else if (IsOdd(i))
 	    {PlaceWedge(false, i*wedgeWidth, wedgeName, fullWedgeLV, leftRot);}
 	}
-      else if (isOdd(numberWedges))
+      else if (IsOdd(numberWedges))
         {
 	  if (i == 0)
 	    {PlaceWedge(false, lengthSafety, wedgeName, halfWedgeLV, leftRot);}
 	  else if (i == numberWedges)
 	    {PlaceWedge(true, arcLength-lengthSafety, wedgeName, halfWedgeLV, rightRot);}
-	  else if (isEven(i))
+	  else if (IsEven(i))
 	    {PlaceWedge(false, i*wedgeWidth, wedgeName, fullWedgeLV, leftRot);}
-	  else if (isOdd(i))
+	  else if (IsOdd(i))
 	    {PlaceWedge(true, i*wedgeWidth, wedgeName, fullWedgeLV, rightRot);}
 	}
     }
