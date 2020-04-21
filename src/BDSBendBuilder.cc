@@ -249,17 +249,31 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					  semiOuterField); // minus for 3d cartesian conversion
   
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo("checking", element,
-											 -incomingFaceAngle,
-                                                                                         -outgoingFaceAngle,
-											 bpInfo,
-											 yokeOnLeft);
+  auto magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo("checking", element,
+											                              -incomingFaceAngle,
+                                                                          -outgoingFaceAngle,
+											                              bpInfo, yokeOnLeft);
   // minus for conversion to 3d cartesian
-  BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
-						      magnetOuterInfoCheck->horizontalWidth,
-						      centralName);
-  // clean up
-  delete magnetOuterInfoCheck;
+  G4double minimalRadius = 2*magnetOuterInfoCheck->MinimumIntersectionRadiusRequired();
+  // extra pedantic check for dipoles with certain geometry types
+  if (!magnetOuterInfoCheck->hStyle)
+    {// in the case of C-shaped poled dipoles, the full 'horizontalWidth' is shifted to the yoke side
+      switch (magnetOuterInfoCheck->geometryType.underlying())
+        {
+          case BDSMagnetGeometryType::polescircular:
+          case BDSMagnetGeometryType::polesfacet:
+          case BDSMagnetGeometryType::polesfacetcrop:
+          case BDSMagnetGeometryType::polessquare:
+            {
+              minimalRadius *= element->yokeOnInside ? 2.0 : 0.5;
+              break;
+            }
+          default:
+            {break;}
+        }
+    }
+  BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle, minimalRadius, element->name);
+  delete magnetOuterInfoCheck; // clean up
   
   // build incoming fringe field if required
   if (buildFringeIncoming)
