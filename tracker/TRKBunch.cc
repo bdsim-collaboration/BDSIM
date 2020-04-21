@@ -104,7 +104,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
       // Momenta from BDSBunch are px/|p|, but we want px/p0
       // (i.e. normalised w.r.t reference momentum, not particle momentum).
       auto px = c.local.xp * p / p0;
-      auto py = c.local.xp * p / p0;
+      auto py = c.local.yp * p / p0;
 
       auto z = 0; // ???  Not sure what to do with this one yet.
       auto pz = energy / p0 - 1/beta0;
