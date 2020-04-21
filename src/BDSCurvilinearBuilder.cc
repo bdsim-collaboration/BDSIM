@@ -122,7 +122,7 @@ void BDSCurvilinearBuilder::PreviousAndNext(BDSBeamline::const_iterator it,
   G4bool isFirst = it == startIt;
   G4bool isLast  = std::next(it) == endIt; // end is one beyond the last
 
-  G4double minimumSize = 1*CLHEP::mm;
+  G4double minimumSize = 0.1*CLHEP::mm;
   auto pst = std::prev(it);
   if (isFirst)
     {previous = nullptr;}
