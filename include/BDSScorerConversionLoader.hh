@@ -44,7 +44,7 @@ public:
   ~BDSScorerConversionLoader();
 
   /// Load the file.
-  G4PhysicsVector* Load(const G4String& fileName, G4bool silent=0);
+  G4PhysicsVector* Load(const G4String& fileName, G4bool silent=false);
 private:
 
   /// Templated iostream for std::ifstream and gzstream as well
