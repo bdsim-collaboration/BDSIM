@@ -692,10 +692,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["length"] = arcLength;
   (*st)["scaling"]= element->scaling;
 
-  // Check the faces won't overlap due to too strong an angle with too short a magnet
-  G4double horizontalWidth = PrepareHorizontalWidth(element);
-  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], horizontalWidth, elementName);
-
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->scaling * element->k1 / CLHEP::m2;}
@@ -703,6 +699,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
+
+  // Check the faces won't overlap due to too strong an angle with too short a magnet
+  auto bp = PrepareBeamPipeInfo(element);
+  BDSMagnetOuterInfo* oiCheck = PrepareMagnetOuterInfo("checking", element,
+                                                       -incomingFaceAngle, -outgoingFaceAngle,
+                                                       bp, element->yokeOnInside);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], oiCheck->MinimumIntersectionRadiusRequired(), elementName);
+  delete oiCheck;
+  delete bp;
 
   // the above in / out face angles are not w.r.t. the local coords - subtract angle/2 to convert
   // this may seem like undoing the += in the functions, but they're used for the beam pipes
@@ -1382,24 +1387,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
     {return nullptr;}
 
   G4double degraderOffset;
-  if ((element->materialThickness <= 0) && (element->degraderOffset <= 0))
-    {throw BDSException(__METHOD_NAME__, "both \"materialThickness\" and \"degraderOffset\" are either undefined or <= 0");}
+  if ((element->materialThickness < 0) && (element->degraderOffset < 0))
+    {throw BDSException(__METHOD_NAME__, "both \"materialThickness\" and \"degraderOffset\" are either undefined or < 0");}
+  if (element->degraderOffset < 0)
+    {throw BDSException(__METHOD_NAME__, "\"degraderOffset\" cannot be < 0");}
+  if (element->materialThickness > element->l)
+    {throw BDSException(__METHOD_NAME__, "\"materialThickness\" cannot be greater than the element length");}
 
-  if ((element->materialThickness <= 0) && (element->degraderOffset > 0))
+  if ((element->materialThickness <= 0) && (element->degraderOffset >= 0))
     {degraderOffset = element->degraderOffset*CLHEP::m;}
   else
     {
       //Width of wedge base
       G4double wedgeBasewidth = (element->l*CLHEP::m /element->numberWedges) - lengthSafety;
-      
+
       //Angle between hypotenuse and height (in the triangular wedge face)
       G4double theta = std::atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
-      
+
       //Overlap distance of wedges
-      G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (std::sin(CLHEP::halfpi - theta) / std::sin(theta));
-      
-      degraderOffset = overlap * -0.5;
+      G4double thicknessPerWedge = (wedgeBasewidth - element->materialThickness*CLHEP::m/element->numberWedges);
+      degraderOffset = (0.5*thicknessPerWedge) * (std::sin(CLHEP::halfpi - theta) / std::sin(theta));
     }
+
+  // include base thickness in each wedge so it covers the whole beam aperture when set to the thickest
+  // possible amount of material, otherwise a fraction of the beam wouldn't pass through the wedges.
+  G4double baseWidth = PrepareBeamPipeInfo(element)->aper1;
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
@@ -1408,7 +1420,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
+			  baseWidth,
 			  PrepareMaterial(element, "carbon"),
+			  PrepareVacuumMaterial(element),
 			  PrepareColour(element)));
 }
 
@@ -1954,7 +1968,6 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  // name
   info->name = elementNameIn;
   
   // magnet geometry type
@@ -2121,17 +2134,13 @@ G4Transform3D BDSComponentFactory::CreateFieldTransform(Element const* el)
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
 							 G4double horizontalWidth,
-							 G4String name)
+							 const G4String& name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
-#endif
   if (horizontalWidth > 2*radiusFromAngleLength)
     {
-      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
-	     << name
-	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \"" << name
+	     << "\" will result in overlapping faces!" << G4endl << "Please reduce the horizontalWidth" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
 }
