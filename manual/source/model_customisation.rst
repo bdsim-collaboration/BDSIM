@@ -1103,7 +1103,7 @@ There are 3 possible ways to place a piece of geometry.
 
 3) In curvilinear coordinates with respect to a beam line element by name.
 
-   - The name of an element is used to look up its `s` coordinate. `s`, `x`, `y` and the rotation
+   - The name of an element is used to look up its (mid-point) `s` coordinate. `s`, `x`, `y` and the rotation
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
