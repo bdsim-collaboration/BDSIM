@@ -558,7 +558,7 @@ sextupole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{2}B_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -592,7 +592,7 @@ octupole
 
 .. math::
 
-   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
+   k_{3} = \frac{1}{B \rho}\,\frac{d^{3}B_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -625,7 +625,7 @@ decapole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{4}B_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -653,7 +653,7 @@ multipole
 
 .. math::
 
-   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+   knl[n] = \frac{1}{B \rho} \frac{d^{n}B_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
 starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
@@ -1115,10 +1115,18 @@ Parameter              Description                              Default     Requ
 
 .. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
 	  lateral wedge position, and consequently the total material thickness the beam can propagate
-	  through. If both are specified, `degraderOffset` will be ignored. When numberWedges is specified
-	  to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges. When viewed from
-	  above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a
-	  right-angled triangle.
+	  through. An offset of zero will corresponds to a full closed degrader, and is equivalent to a
+	  materialThickness being the degrader length. If both are specified, `degraderOffset` will be ignored.
+.. note:: When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and
+      two `half` wedges. When viewed from above, a `full` wedge appears as an isosceles triangle, and
+      a `half` wedge appears as a right-angled triangle.
+.. note:: A base is included with each wedge. Without it, if the materialThickness were to be set to
+      the same as the degrader length, only half the beam would be degraded when passing through a wedge.
+      The base provides material such that the whole width of the beam pipe would see material when the
+      degrader is fully closed. As such, the degrader offset must be greater than or equal to zero.
+      Negative offsets causes BDSIM to exit.
+.. note:: If the user wants a fully open degrader, the degrader offset should be set to a value larger
+      than the wedgeLength.
 
 
 Examples: ::
