@@ -1003,7 +1003,7 @@ the aperture is elliptical and the `xsize` and `ysize` define the horizontal and
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
 * When tapered, the ratio between the horizontal and vertical half-axes of the entrance
-  aperture must be the same ratio for the exit aperture.
+  aperture (xsize and ysize) must be the same ratio for the exit aperture (xsizeOut and ysizeOut).
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol
