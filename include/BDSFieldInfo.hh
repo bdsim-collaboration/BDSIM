@@ -113,7 +113,7 @@ public:
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(const G4Transform3D& transformIn) {transform = transformIn;}
-
+  inline void SetFieldType(BDSFieldType fieldTypeIn) {fieldType = fieldTypeIn;}
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
   inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
