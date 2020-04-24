@@ -74,7 +74,8 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewmultipoleoutersextupole,  "skewmultipoleoutersextupole"},
       {BDSFieldType::skewmultipoleouteroctupole,   "skewmultipoleouteroctupole"},
       {BDSFieldType::skewmultipoleouterdecapole,   "skewmultipoleouterdecapole"},
-      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"}
+      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"},
+      {BDSFieldType::lhcouterdipole,               "lhcouterdipole"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -128,6 +129,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewmultipoleouteroctupole"]   = BDSFieldType::skewmultipoleouteroctupole;
   types["skewmultipoleouterdecapole"]   = BDSFieldType::skewmultipoleouterdecapole;
   types["multipoleouterdipole3d"]       = BDSFieldType::multipoleouterdipole3d;
+  types["lhcouterdipole"]               = BDSFieldType::lhcouterdipole;
   
   bType.toLower();
 
