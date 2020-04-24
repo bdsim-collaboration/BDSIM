@@ -44,7 +44,7 @@ public:
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(const G4String&         nameIn,
+  BDSMagnetOuterInfo(const G4String&       nameIn,
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              horizontalWidthIn,
 		     G4Material*           outerMaterialIn,

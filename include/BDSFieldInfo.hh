@@ -137,8 +137,7 @@ public:
 
   static G4UserLimits* defaultUL; ///< Cache of default user limits
   
-private:
-  
+private: 
   BDSFieldType             fieldType;
   G4double                 brho;
   BDSIntegratorType        integratorType;
