@@ -636,7 +636,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   // don't check here on whether the possibly next / previous sbend will clash with
   // pole face angles - let that be checked after element construction in the beamline
-
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double angle = 0;
@@ -1927,7 +1926,14 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 
   outerField->SetChordStepMinimum(BDSGlobalConstants::Instance()->ChordStepMinimumYoke());
   if (outerInfo)
-    {outerField->SetScalingRadius(outerInfo->innerRadius);}
+    {
+      outerField->SetScalingRadius(outerInfo->innerRadius);
+      outerField->SetLeft(outerInfo->yokeOnLeft);
+      auto gt = outerInfo->geometryType;
+      if (fieldType == BDSFieldType::dipole &&
+	  (gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright))
+	{outerField->SetFieldType(BDSFieldType::lhcouterdipole);}
+    }
   if (bpInfo)
     {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
   return outerField;
