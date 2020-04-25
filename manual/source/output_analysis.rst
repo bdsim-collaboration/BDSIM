@@ -49,19 +49,22 @@ Quick Recipes
 Inspect Histograms
 ------------------
 
-* Run rebdsimHistoMerge on BDSIM output file (quick).
-* Browse output of rebdsimHistoMerge in TBrowser in ROOT.
-* See :ref:`rebdsim-histo-merge` for details.
+1. Run rebdsimHistoMerge on BDSIM output file (quick).
+2. Browse output of rebdsimHistoMerge in TBrowser in ROOT.
+
+See :ref:`rebdsim-histo-merge` for details.
 
 ::
 
    rebdsimHistoMerge output.root results.root
+   root -l results.root
+   > TBrowser tb;
 
 Plot Energy Deposition \& Losses
 --------------------------------
 
-* Run rebdsimHistoMerge on BDSIM output file (quick).
-* Plot in Python using `pybdsim` using dedicated plotting function.
+1. Run rebdsimHistoMerge on BDSIM output file (quick).
+2. Plot in Python using `pybdsim` using dedicated plotting function.
 
 ::
    
