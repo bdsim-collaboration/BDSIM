@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSFIELDMAGLHCDIPOLEOUTER_H
-#define BDSFIELDMAGLHCDIPOLEOUTER_H
+#ifndef BDSFIELDMAGMULTIPOLEOUTERDUAL_H
+#define BDSFIELDMAGMULTIPOLEOUTERDUAL_H
 #include "BDSFieldMag.hh"
 
 #include "G4ThreeVector.hh"
@@ -27,21 +27,22 @@ class BDSFieldMagMultipoleOuter;
 class BDSMagnetStrength;
 
 /**
- * @brief A simple LHC dipole yoke field from the sum of two fields
+ * @brief Sum of two multipole fields spaced by a distance in x.
  *
  * @author Laurie Nevay
  */
 
-class BDSFieldMagLHCDipoleOuter: public BDSFieldMag
+class BDSFieldMagMultipoleOuterDual: public BDSFieldMag
 {
 public:
-  BDSFieldMagLHCDipoleOuter(G4int              orderIn,
-			    G4double           poleTipRadius,
-			    const BDSFieldMag* innerFieldIn,
-			    G4bool             kPositive,
-			    G4bool             left = true);
+  BDSFieldMagMultipoleOuterDual(G4int              orderIn,
+			       G4double           poleTipRadius,
+			       const BDSFieldMag* innerFieldIn,
+			       G4bool             kPositive,
+			       G4double           separation,
+			       G4bool             left = true);
 
-  virtual ~BDSFieldMagLHCDipoleOuter();
+  virtual ~BDSFieldMagMultipoleOuterDual();
 
   /// Access the field value.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
