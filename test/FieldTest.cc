@@ -112,6 +112,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDipole(st);
   positiveField = (*st)["field"] > 0;
   field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterdipole");
 
@@ -124,6 +125,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st, brho);
   positiveField = (*st)["k1"] > 0;
   field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterquadrupole");
   
@@ -131,6 +133,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagSextupole(st, brho);
   positiveField = (*st)["k2"] > 0;
   field = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleoutersextupole");
   
@@ -138,6 +141,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagOctupole(st, brho);
   positiveField = (*st)["k3"] > 0;
   field = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouteroctupole");
   
@@ -145,6 +149,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDecapole(st, brho);
   positiveField = (*st)["k4"] > 0;
   field = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterdecapole");
   
@@ -152,6 +157,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st3, brho); // -ve k1
   positiveField = (*st3)["k1"] > 0;
   field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterquadrupole-ve");
   
@@ -160,6 +166,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st, brho);
   positiveField = (*st)["k1"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterquadrupole");
@@ -168,6 +175,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagSextupole(st, brho);
   positiveField = (*st)["k2"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterssextupole");
@@ -176,6 +184,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagOctupole(st, brho);
   positiveField = (*st)["k3"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
   fields.push_back(field);
   names.push_back("skewmultipoleouteroctupole");
@@ -184,6 +193,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDecapole(st, brho);
   positiveField = (*st)["k4"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterdecapole");
