@@ -491,10 +491,26 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::multipoleouterdipole3d:
       {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius); break;}
     case BDSFieldType::multipoleouterdipolelhc:
-      {// suitable only for querying transversely in x,y - no 3d nature
-	BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
-	G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
-	field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+      {
+        BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
+        G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
+        field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+        delete innerField; // no longer required
+        break;
+      }
+    case BDSFieldType::multipoleouterquadrupolelhc:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+        G4bool positiveField = (*strength)["k1"] > 0;
+        field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+        delete innerField; // no longer required
+        break;
+      }
+    case BDSFieldType::multipoleoutersextupolelhc:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	G4bool positiveField = (*strength)["k2"] > 0;
+	field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
 	delete innerField; // no longer required
 	break;
       }
