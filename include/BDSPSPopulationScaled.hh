@@ -39,48 +39,45 @@ class G4PhysicsVector;
 
 class BDSPSPopulationScaled: public G4VPrimitiveScorer
 {
+public:
+  /// Constructor where no conversion factor file is provided and all cell fluxes just
+  /// use conversion factor 1.0.
+  explicit BDSPSPopulationScaled(const G4String& name, G4int depth=0);
+  
+  /// Constructor where conversion factor file is provided and loaded into a map of maps of physics vectors.
+  /// Population is multiplied by the factor as a function of the particle id, kinetic energy and angle.
+  BDSPSPopulationScaled(const G4String& scorerName,
+			const G4String& pathname,
+			G4int           depth=0);
+
+  virtual ~BDSPSPopulationScaled() override;
 
 public:
-    /// Constructor where no conversion factor file is provided and all cell fluxes just
-    /// use conversion factor 1.0.
-    explicit BDSPSPopulationScaled(const G4String& name, G4int depth=0);
+  void Initialize(G4HCofThisEvent* HCE) override;
+  void EndOfEvent(G4HCofThisEvent* HCE) override;
+  void clear() override;
 
-    /// Constructor where conversion factor file is provided and loaded into a map of maps of physics vectors.
-    /// Population is multiplied by the factor as a function of the particle id, kinetic energy and angle.
-    BDSPSPopulationScaled(const G4String&           scorerName,
-                          const G4String&           pathname,
-                          G4int depth=0);
+  G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
 
-    virtual ~BDSPSPopulationScaled() override;
+  virtual G4double GetConversionFactor(G4int    particleID,
+				       G4double kineticEnergy,
+				       G4double angle) const;
 
-public:
-    void   Initialize(G4HCofThisEvent* HCE) override;
-    void   EndOfEvent(G4HCofThisEvent* HCE) override;
-    void   clear() override;
-
-    G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*) override;
-
-    virtual G4double GetConversionFactor(G4int    particleID,
-                                         G4double kineticEnergy, G4double angle) const;
-
-    static std::vector<G4String> LoadDirectoryContents(const G4String& dirname);
-    G4int NearestNeighbourAngleIndex(std::vector<G4double> const& vec, G4double value) const;
-    G4int NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const;
-    G4int GetZFromParticleID(G4int particleID) const;
-    void PrintAll() override;
-
+  static std::vector<G4String> LoadDirectoryContents(const G4String& dirname);
+  G4int NearestNeighbourAngleIndex(std::vector<G4double> const& vec, G4double value) const;
+  G4int NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const;
+  G4int GetZFromParticleID(G4int particleID) const;
+  void PrintAll() override;
+  
 private:
-    G4int HCID;
-    G4THitsMap<G4double>* EvtMap;
-
-    // void SetUnit(const G4String& unit) const;
-
-    std::map<G4int, G4TrackLogger>  fCellTrackLogger;
-
-    std::map< G4int, std::map<G4int, G4PhysicsVector*> > conversionFactors;
-    std::map< G4int, std::vector<G4int> > ionParticleIDs;
-    std::vector<G4double> angles;
-
+  G4int HCID;
+  G4THitsMap<G4double>* EvtMap;
+  
+  // void SetUnit(const G4String& unit) const
+  std::map<G4int, G4TrackLogger>  fCellTrackLogger;
+  std::map< G4int, std::map<G4int, G4PhysicsVector*> > conversionFactors;
+  std::map< G4int, std::vector<G4int> > ionParticleIDs;
+  std::vector<G4double> angles;
 };
 
 #endif
