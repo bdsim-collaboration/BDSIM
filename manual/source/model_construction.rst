@@ -336,6 +336,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
@@ -471,6 +476,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
@@ -538,6 +548,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in :ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -558,7 +570,7 @@ sextupole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{2}B_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -572,6 +584,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in ref:`fields-multipole-outer-lhc`.
 
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -592,7 +606,7 @@ octupole
 
 .. math::
 
-   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
+   k_{3} = \frac{1}{B \rho}\,\frac{d^{3}B_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -625,7 +639,7 @@ decapole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{4}B_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -653,7 +667,7 @@ multipole
 
 .. math::
 
-   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+   knl[n] = \frac{1}{B \rho} \frac{d^{n}B_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
 starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
@@ -1003,7 +1017,7 @@ the aperture is elliptical and the `xsize` and `ysize` define the horizontal and
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
 * When tapered, the ratio between the horizontal and vertical half-axes of the entrance
-  aperture must be the same ratio for the exit aperture.
+  aperture (xsize and ysize) must be the same ratio for the exit aperture (xsizeOut and ysizeOut).
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol

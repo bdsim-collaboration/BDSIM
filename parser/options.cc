@@ -249,6 +249,7 @@ void Options::PublishMembers()
   publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
+  publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);

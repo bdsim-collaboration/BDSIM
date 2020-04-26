@@ -39,6 +39,23 @@ New Features
   to all logical volumes in that BLM.
 * Cubic is now the default interpolation for fields and is automatically matched to the number
   of dimensions in the field map file.
+* LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
+  and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
+* Ability to filter out unstable particles with no default decay table in Geant4 when loading event
+  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  :code:`removeUnstableWithoutDecay`.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
+|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
+|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -461,6 +478,15 @@ Bug Fixes
   to degenerate naming of parallel worlds.
 * Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
   must now be different.
+* Fix potentially bad geometry being built with exceptionally tightly bent dipoles with a short length. The
+  check on length, angle and horizontalWidth was symmetric whereas for C-shaped poled dipoles the yoke can
+  be shifted.
+* Fix a bug where if the :code:`samplerDiameter` option was made incredibly small, the linked curvilinear
+  volumes would also be shrunk and therefore result in a lack of transforms in incorrect fields and therefore
+  tracking. The size of curvilinear world cylinders for field transforms is now determined independently.
+* Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
+  is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
+  to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
 
 Output Changes
 --------------
