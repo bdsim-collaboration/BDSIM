@@ -76,7 +76,8 @@ public:
 	       G4bool                   autoScaleIn                = false,
 	       G4UserLimits*            stepLimitIn                = nullptr,
 	       G4double                 poleTipRadiusIn            = 1,
-	       G4double                 beamPipeRadiusIn           = 0);
+	       G4double                 beamPipeRadiusIn           = 0,
+	       G4bool                   left                       = true);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -107,17 +108,19 @@ public:
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   inline G4double            Tilt()                     const {return tilt;}
+  inline G4bool              Left()                     const {return left;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(const G4Transform3D& transformIn) {transform = transformIn;}
-
+  inline void SetFieldType(BDSFieldType fieldTypeIn) {fieldType = fieldTypeIn;}
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
   inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
   inline void SetScalingRadius(G4double poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
   inline void SetBeamPipeRadius(G4double beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
   inline void SetChordStepMinimum(G4double chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
+  inline void SetLeft(G4bool leftIn) {left = leftIn;}
 
   /// Delete and replace the user limits which this class owns (only if not default ul).
   void SetUserLimits(G4UserLimits* userLimitsIn);
@@ -134,8 +137,7 @@ public:
 
   static G4UserLimits* defaultUL; ///< Cache of default user limits
   
-private:
-  
+private: 
   BDSFieldType             fieldType;
   G4double                 brho;
   BDSIntegratorType        integratorType;
@@ -158,6 +160,7 @@ private:
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
   G4double                 chordStepMinimum;
   G4double                 tilt;           ///< Cache of tilt of field.
+  G4bool                   left; ///< Flag for case of two-beam field - if not left, it's right.
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;
