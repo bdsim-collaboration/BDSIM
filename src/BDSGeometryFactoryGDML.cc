@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
@@ -27,19 +28,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 
 #include "globals.hh"
+#include "G4Colour.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Colour.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <set>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+class G4VisAttributes;
 class G4VSolid;
 
 BDSGeometryFactoryGDML::BDSGeometryFactoryGDML()
