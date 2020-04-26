@@ -41,6 +41,9 @@ New Features
   of dimensions in the field map file.
 * LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
   and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
+* Ability to filter out unstable particles with no default decay table in Geant4 when loading event
+  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  :code:`removeUnstableWithoutDecay`.
 
 * New options:
 
