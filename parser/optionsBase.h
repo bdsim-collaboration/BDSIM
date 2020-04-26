@@ -162,6 +162,7 @@ namespace GMAD
     bool      dontSplitSBends;
 
     bool      yokeFields;
+    bool      yokeFieldsMatchLHCGeometry;
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
 
