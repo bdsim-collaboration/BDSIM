@@ -2039,12 +2039,7 @@ described in :ref:`tunnel-geometry`.
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of samplers (default 5 m) [m]. This is also  |
-|                                  | the diameter of the curvilinear world volumes used in |
-|                                  | curvilinear transforms. In the case of lower energy   |
-|                                  | machines with strong bending angles (10s of degrees), |
-|                                  | this should be reduced to prevent overlaps between    |
-|                                  | curvilinear volumes along the beam line.              |
+| samplerDiameter                  | Diameter of all samplers (default 5 m) [m].           |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
 |                                  | includes cavities.                                    |
@@ -2109,6 +2104,12 @@ described in :ref:`tunnel-geometry`.
 |                                  | the yoke of each magnet (using a fourth order         |
 |                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
+| yokeFieldsMatchLHCGeometry       | Boolean whether to use yoke fields that are the sum   |
+|                                  | of two multipole yoke fields with the LHC separation  |
+|                                  | of 194 mm. Default true. Applies to rbend, sbend,     |
+|                                  | quadrupole and sextupole.                             |
++----------------------------------+-------------------------------------------------------+
+
 
 .. _options-tracking:
 
