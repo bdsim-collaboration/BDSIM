@@ -3,3 +3,7 @@ add_subdirectory(maps_poisson)
 add_subdirectory(maps_bdsim)
 add_subdirectory(low_energy_high_field)
 add_subdirectory(integrators)
+
+
+simple_testing(field-lhc-on  "--file=lhc-fields-on"  "")
+simple_testing(field-lhc-off "--file=lhc-fields-off" "")
