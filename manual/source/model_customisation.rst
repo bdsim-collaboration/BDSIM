@@ -693,6 +693,11 @@ The magnet geometry is controlled by the following parameters.
 	  per-element magnet geometry definitions will be ignored and the ones specified
 	  in Options will be used.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this. These are described in :ref:`fields-multipole-outer-lhc`.
+
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +=======================+==============================================================+===============+===========+

@@ -2104,6 +2104,12 @@ described in :ref:`tunnel-geometry`.
 |                                  | the yoke of each magnet (using a fourth order         |
 |                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
+| yokeFieldsMatchLHCGeometry       | Boolean whether to use yoke fields that are the sum   |
+|                                  | of two multipole yoke fields with the LHC separation  |
+|                                  | of 194 mm. Default true. Applies to rbend, sbend,     |
+|                                  | quadrupole and sextupole.                             |
++----------------------------------+-------------------------------------------------------+
+
 
 .. _options-tracking:
 
