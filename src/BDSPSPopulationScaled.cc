@@ -68,16 +68,16 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
       
       BDSScorerConversionLoader<std::ifstream> loader;
       
-      auto ang = (G4double) std::stod(dirnameAng);
+      G4double ang = (G4double)std::stod(dirnameAng);
       angles.push_back(ang); // Store the angle for interpolation
-      auto ang_index = (G4int) angles.size() - 1;
+      G4int angleIndex = (G4int)angles.size() - 1;
       
       std::vector<G4int> ionPIDs; // Store the ion particle ids vs. angle for interpolation
       
       for (const auto &filePDG : filesParticle)
         {
 	  G4String filepathPDG = dirAng + '/' + filePDG;
-	  auto pid = (G4int) std::stoi(filePDG);
+	  G4int pid = (G4int)std::stoi(filePDG);
 	  
 	  if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
             {
@@ -97,7 +97,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
 	  if (pid > 1e7)
             {ionPIDs.push_back(pid);}
         }
-      ionParticleIDs[ang_index] = ionPIDs;
+      ionParticleIDs[angleIndex] = ionPIDs;
     }
   
   G4cout << "Scorer \"" << GetName()  << " Loaded data for " << angles.size() << " angles: [";
@@ -215,7 +215,7 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int    particleID,
         {return 0;}
 
       // Get the ion Z in order to normalise the kinetic energy for table look-up
-      auto nearestIonZ = (G4double) GetZFromParticleID(particleID);
+      G4double nearestIonZ = (G4double)GetZFromParticleID(particleID);
       
       auto searchIon = conversionFactorsPart.find(particleIDNearest);
       if (searchIon != conversionFactorsPart.end())
