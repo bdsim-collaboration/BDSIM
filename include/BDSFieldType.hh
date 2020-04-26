@@ -55,7 +55,7 @@ struct fieldtypes_def
 	     multipoleouterdecapole,
 	     skewmultipoleouterquadrupole, skewmultipoleoutersextupole,
 	     skewmultipoleouteroctupole, skewmultipoleouterdecapole,
-	     multipoleouterdipole3d, lhcouterdipole};
+	     multipoleouterdipole3d, multipoleouterdipolelhc};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated

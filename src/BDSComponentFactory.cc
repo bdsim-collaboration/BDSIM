@@ -1932,7 +1932,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       auto gt = outerInfo->geometryType;
       if (fieldType == BDSFieldType::dipole &&
 	  (gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright))
-	{outerField->SetFieldType(BDSFieldType::lhcouterdipole);}
+	{outerField->SetFieldType(BDSFieldType::multipoleouterdipolelhc);}
     }
   if (bpInfo)
     {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
