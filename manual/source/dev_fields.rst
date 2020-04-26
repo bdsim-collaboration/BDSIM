@@ -469,6 +469,26 @@ Multipole Yoke - Skew Quadrupole
    :width: 70%
    :align: center
 
+Multipole Yoke - Dual
++++++++++++++++++++++
+
+This field is the addition of two multipole yoke fields at a specified separation. The field is built
+with one of the fields at the centre of the coordinate system (x,y = 0,0) with the second field either
+to the left or the right. Like the other multipole yoke fields, a pole tip radius is required to normalise
+the field against a perfect one of the same type.
+
+This field can be used as an approximate field for joint two beam magnets such as those of the LHC. In
+the case of the LHC, the separatio is 194 mm.
+
+.. figure:: dev_figures/multipoleouterdipolelhc_radial.pdf
+   :width: 70%
+   :align: center
+
+.. figure:: dev_figures/multipoleouterquadrupolelhc_radial.pdf
+   :width: 70%
+   :align: center
+
+
 Electric Fields From Equations
 ==============================
 
