@@ -60,8 +60,7 @@ G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName, G4
 #endif
   if (!validFile)
     {throw BDSException(__METHOD_NAME__, "Invalid file name or no such file named \"" + fileName + "\"");}
-
-    if (!silent)
+  if (!silent)
     {G4cout << "Scorer conversion factors - loading \"" << fileName << "\"" << G4endl;}
 
   G4int lineNumber = 1;
