@@ -1930,7 +1930,8 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       outerField->SetScalingRadius(outerInfo->innerRadius);
       outerField->SetLeft(outerInfo->yokeOnLeft);
       auto gt = outerInfo->geometryType;
-      if (gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright)
+      G4bool yfmLHC = BDSGlobalConstants::Instance()->YokeFieldsMatchLHCGeometry();
+      if ((gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright) && yfmLHC)
         {
           if (fieldType == BDSFieldType::dipole)
             {outerField->SetFieldType(BDSFieldType::multipoleouterdipolelhc);}
