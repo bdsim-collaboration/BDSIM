@@ -42,9 +42,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagInterpolated.hh"
-#include "BDSFieldMagLHCDipoleOuter.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
+#include "BDSFieldMagMultipoleOuterDual.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
@@ -496,7 +496,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       {// suitable only for querying transversely in x,y - no 3d nature
 	BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
 	G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
-	field = new BDSFieldMagLHCDipoleOuter(1, poleTipRadius, innerField, positiveField, info.Left());
+	field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, info.Left());
 	delete innerField; // no longer required
 	break;
       }

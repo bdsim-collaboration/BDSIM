@@ -16,33 +16,31 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSFieldMagLHCDipoleOuter.hh"
+#include "BDSFieldMagMultipoleOuterDual.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
 
 #include "G4ThreeVector.hh"
 
-#include "CLHEP/Units/SystemOfUnits.h"
-
-
-BDSFieldMagLHCDipoleOuter::BDSFieldMagLHCDipoleOuter(G4int              orderIn,
-						     G4double           poleTipRadiusIn,
-						     const BDSFieldMag* innerFieldIn,
-						     G4bool             kPositive,
-						     G4bool             left):
+BDSFieldMagMultipoleOuterDual::BDSFieldMagMultipoleOuterDual(G4int              orderIn,
+							   G4double           poleTipRadiusIn,
+							   const BDSFieldMag* innerFieldIn,
+							   G4bool             kPositive,
+							   G4double           separation,
+							   G4bool             left):
   fieldBase(nullptr)
 {
   fieldBase = new BDSFieldMagMultipoleOuter(orderIn, poleTipRadiusIn, innerFieldIn, kPositive);
-  G4double offsetX = left ? -194*CLHEP::mm : 194*CLHEP::mm;
+  G4double offsetX = left ? -separation : separation;
   offset = G4ThreeVector(offsetX,0,0);
 }
 
-BDSFieldMagLHCDipoleOuter::~BDSFieldMagLHCDipoleOuter()
+BDSFieldMagMultipoleOuterDual::~BDSFieldMagMultipoleOuterDual()
 {
   delete fieldBase;
 }
 
-G4ThreeVector BDSFieldMagLHCDipoleOuter::GetField(const G4ThreeVector& position,
-						  const G4double       t) const
+G4ThreeVector BDSFieldMagMultipoleOuterDual::GetField(const G4ThreeVector& position,
+						     const G4double       t) const
 {
   G4ThreeVector aSide      = fieldBase->GetField(position, t);
   G4ThreeVector shiftedPos = position + offset;
