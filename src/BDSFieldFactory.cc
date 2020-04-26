@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSPrimaryGeneratorAction.hh"
-#include "BDSExecOptions.hh"
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
@@ -44,6 +43,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
+#include "BDSFieldMagMultipoleOuterDual.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
@@ -52,7 +52,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
-#include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorCavityFringe.hh"
 #include "BDSIntegratorDecapole.hh"
@@ -491,6 +490,30 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleouterdipole3d:
       {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius); break;}
+    case BDSFieldType::multipoleouterdipolelhc:
+      {
+        BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
+        G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
+        field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+        delete innerField; // no longer required
+        break;
+      }
+    case BDSFieldType::multipoleouterquadrupolelhc:
+      {
+	    BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+        G4bool positiveField = (*strength)["k1"] > 0;
+        field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+        delete innerField; // no longer required
+        break;
+      }
+    case BDSFieldType::multipoleoutersextupolelhc:
+      {
+	    BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	    G4bool positiveField = (*strength)["k2"] > 0;
+	    field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+	    delete innerField; // no longer required
+	    break;
+	  }
     case BDSFieldType::paralleltransporter:
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
