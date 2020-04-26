@@ -336,6 +336,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
@@ -471,6 +476,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
@@ -538,6 +548,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -572,6 +584,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in ref:`fields-multipole-outer-lhc`.
 
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.

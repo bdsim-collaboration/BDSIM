@@ -39,6 +39,20 @@ New Features
   to all logical volumes in that BLM.
 * Cubic is now the default interpolation for fields and is automatically matched to the number
   of dimensions in the field map file.
+* LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
+  and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
+|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
+|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General

@@ -469,6 +469,8 @@ Multipole Yoke - Skew Quadrupole
    :width: 70%
    :align: center
 
+.. _fields-multipole-outer-lhc:
+	   
 Multipole Yoke - Dual
 +++++++++++++++++++++
 
@@ -478,7 +480,8 @@ to the left or the right. Like the other multipole yoke fields, a pole tip radiu
 the field against a perfect one of the same type.
 
 This field can be used as an approximate field for joint two beam magnets such as those of the LHC. In
-the case of the LHC, the separatio is 194 mm.
+the case of the LHC, the separation is 194 mm. If `lhcright` or `lhcleft` magnet geometry types are used
+these fields are automatically applied to rbends, sbends, quadrupoles and sextupoles.
 
 .. figure:: dev_figures/multipoleouterdipolelhc_radial.pdf
    :width: 70%
