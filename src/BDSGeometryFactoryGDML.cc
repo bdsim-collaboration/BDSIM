@@ -88,8 +88,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
   BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
 
-  auto* gdmlColours = new std::map<G4String, G4Colour*>;
-
+  std::map<G4String, G4Colour*> gdmlColours;
   for (auto lv : lvsGDML)
     {
       auto auxInfo = parser->GetVolumeAuxiliaryInformation(lv);
@@ -99,26 +98,24 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 	    {
 	      std::stringstream ss(af.value);
 	      std::vector<G4double> colVals((std::istream_iterator<G4double>(ss)), std::istream_iterator<G4double>());
-	      
-	      auto *colour = new G4Colour(colVals.at(0), colVals.at(1), colVals.at(2), colVals.at(3));
-	      gdmlColours->insert(std::pair<G4String, G4Colour *>(lv->GetName(), colour));
+	      if (colVals.size() != 4)
+		{throw BDSException(__METHOD_NAME__, "invalid number of colour values for logical volume " + lv->GetName());}
+	      G4Colour* colour = new G4Colour(colVals.at(0), colVals.at(1), colVals.at(2), colVals.at(3));
+	      gdmlColours[lv->GetName()] = colour;
 	    }
 	}
     }
 
   G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
-  
 
   std::set<G4VisAttributes*> visesGDML;
-  if (gdmlColours->empty())
-    {
-      visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
-    }
+  if (gdmlColours.empty())
+    {visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);}
   else
     {
-      G4cout << "Loaded " << gdmlColours->size() << " logical volume colours from GDML auxiliary tags" << G4endl;
-      visesGDML = ApplyColourMapping(lvsGDML, gdmlColours, FALSE);
+      G4cout << "Loaded " << gdmlColours.size() << " logical volume colours from GDML auxiliary tags" << G4endl;
+      visesGDML = ApplyColourMapping(lvsGDML, &gdmlColours, false);
     }
   
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
@@ -136,10 +133,6 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
   result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
-
-  for (auto& gdmlColour : *gdmlColours)
-    {delete gdmlColour.second;}
-  gdmlColours->clear();
 
   delete parser;
   return result;
