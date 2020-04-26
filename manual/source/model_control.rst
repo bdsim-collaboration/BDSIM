@@ -954,50 +954,56 @@ The following parameters are used to control the use of an event generator file.
 
 .. tabularcolumns:: |p{3cm}|p{14cm}|
 
-+-------------------------+-----------------------------------------------------------+
-| Option                  | Description                                               |
-+=========================+===========================================================+
-| `distrType`             | This should be "eventgeneratorfile:format" where format   |
-|                         | one of the acceptable formats listed below.               |
-+-------------------------+-----------------------------------------------------------+
-| `distrFile`             | The path to the input file desired.                       |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinX      | Minimum x coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxX      | Maximum x coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinY      | Minimum y coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxY      | Maximum y coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinZ      | Minimum z coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxZ      | Maximum z coordinate accepted (m)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinXp     | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxXp     | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinYp     | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxYp     | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinZp     | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxZp     | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinT      | Minimum T coordinate accepted (s)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxT      | Maximum T coordinate accepted (s)                         |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMinEK     | Minimum kinetic energy accepted (GeV)                     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxEK     | Maximum kinetic energy accepted (GeV)                     |
-+-------------------------+-----------------------------------------------------------+
-| eventGeneratorParticles | PDG IDs or names (as per Geant4 exactly) for accepted     |
-|                         | particles. White space delimited. If empty all particles  |
-|                         | will be accepted, else only the ones specified will.      |
-+-------------------------+-----------------------------------------------------------+
++----------------------------+-----------------------------------------------------------+
+| Option                     | Description                                               |
++============================+===========================================================+
+| `distrType`                | This should be "eventgeneratorfile:format" where format   |
+|                            | one of the acceptable formats listed below.               |
++----------------------------+-----------------------------------------------------------+
+| `distrFile`                | The path to the input file desired.                       |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinX         | Minimum x coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxX         | Maximum x coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinY         | Minimum y coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxY         | Maximum y coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinZ         | Minimum z coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxZ         | Maximum z coordinate accepted (m)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinXp        | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxXp        | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinYp        | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxYp        | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinZp        | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxZp        | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinT         | Minimum T coordinate accepted (s)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxT         | Maximum T coordinate accepted (s)                         |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMinEK        | Minimum kinetic energy accepted (GeV)                     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorMaxEK        | Maximum kinetic energy accepted (GeV)                     |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorParticles    | PDG IDs or names (as per Geant4 exactly) for accepted     |
+|                            | particles. White space delimited. If empty all particles  |
+|                            | will be accepted, else only the ones specified will.      |
++----------------------------+-----------------------------------------------------------+
+| removeUnstableWithoutDecay | Boolean of whether to remove particles that are unstable  |
+|                            | as per their PDG definition but also don't have a decay   |
+|                            | table by default in Geant4. Default on. These particles   |
+|                            | would eventually be killed by Geant4 when they decay but  |
+|                            | without producing any secondaries.                        |
++----------------------------+-----------------------------------------------------------+
 
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
   in the original coordinates of the event generator file.
@@ -2039,12 +2045,7 @@ described in :ref:`tunnel-geometry`.
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
 |                                  | when BDSIM exits. Default true.                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of samplers (default 5 m) [m]. This is also  |
-|                                  | the diameter of the curvilinear world volumes used in |
-|                                  | curvilinear transforms. In the case of lower energy   |
-|                                  | machines with strong bending angles (10s of degrees), |
-|                                  | this should be reduced to prevent overlaps between    |
-|                                  | curvilinear volumes along the beam line.              |
+| samplerDiameter                  | Diameter of all samplers (default 5 m) [m].           |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
 |                                  | includes cavities.                                    |
@@ -2109,6 +2110,12 @@ described in :ref:`tunnel-geometry`.
 |                                  | the yoke of each magnet (using a fourth order         |
 |                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
+| yokeFieldsMatchLHCGeometry       | Boolean whether to use yoke fields that are the sum   |
+|                                  | of two multipole yoke fields with the LHC separation  |
+|                                  | of 194 mm. Default true. Applies to rbend, sbend,     |
+|                                  | quadrupole and sextupole.                             |
++----------------------------------+-------------------------------------------------------+
+
 
 .. _options-tracking:
 

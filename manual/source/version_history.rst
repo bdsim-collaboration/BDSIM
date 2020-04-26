@@ -39,6 +39,23 @@ New Features
   to all logical volumes in that BLM.
 * Cubic is now the default interpolation for fields and is automatically matched to the number
   of dimensions in the field map file.
+* LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
+  and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
+* Ability to filter out unstable particles with no default decay table in Geant4 when loading event
+  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  :code:`removeUnstableWithoutDecay`.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
+|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
+|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -325,6 +342,8 @@ General
 * Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
   the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
   and the length of the element.
+* Degrader wedges are no longer connected with geometry to prevent overlaps. Degrader can now be fully open
+  when using the element parameter :code:`degraderOffset`.
   
 Bug Fixes
 ---------
@@ -427,6 +446,8 @@ Bug Fixes
   improved to deal with any uniquely built components, such as rf cavities.
 * Small memory leaks reported by Coverity.
 * Unintialised variables reported by Coverity.
+* Fix erroneous warnings with jcol that would prevent it being built. These were due to double
+  parameter checks from a base class that don't appy.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
@@ -455,6 +476,17 @@ Bug Fixes
   would cause overlaps with neighbouring elements.
 * Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
   to degenerate naming of parallel worlds.
+* Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
+  must now be different.
+* Fix potentially bad geometry being built with exceptionally tightly bent dipoles with a short length. The
+  check on length, angle and horizontalWidth was symmetric whereas for C-shaped poled dipoles the yoke can
+  be shifted.
+* Fix a bug where if the :code:`samplerDiameter` option was made incredibly small, the linked curvilinear
+  volumes would also be shrunk and therefore result in a lack of transforms in incorrect fields and therefore
+  tracking. The size of curvilinear world cylinders for field transforms is now determined independently.
+* Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
+  is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
+  to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
 
 Output Changes
 --------------
