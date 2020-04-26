@@ -500,7 +500,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleouterquadrupolelhc:
       {
-	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+	    BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
         G4bool positiveField = (*strength)["k1"] > 0;
         field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, info.Left());
         delete innerField; // no longer required
@@ -508,12 +508,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleoutersextupolelhc:
       {
-	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
-	G4bool positiveField = (*strength)["k2"] > 0;
-	field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
-	delete innerField; // no longer required
-	break;
-      }
+	    BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	    G4bool positiveField = (*strength)["k2"] > 0;
+	    field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+	    delete innerField; // no longer required
+	    break;
+	  }
     case BDSFieldType::paralleltransporter:
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
