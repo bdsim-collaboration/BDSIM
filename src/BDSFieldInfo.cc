@@ -77,7 +77,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4bool                   autoScaleIn,
 			   G4UserLimits*            stepLimitIn,
 			   G4double                 poleTipRadiusIn,
-			   G4double                 beamPipeRadiusIn):
+			   G4double                 beamPipeRadiusIn,
+			   G4bool                   leftIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -98,7 +99,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   stepLimit(stepLimitIn),
   poleTipRadius(poleTipRadiusIn),
   beamPipeRadius(beamPipeRadiusIn),
-  chordStepMinimum(-1)
+  chordStepMinimum(-1),
+  left(leftIn)
 {
   // back calculate tilt angle from field transform
   G4ThreeVector unitY(0,1,0);
@@ -132,7 +134,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   poleTipRadius(other.poleTipRadius),
   beamPipeRadius(other.beamPipeRadius),
   chordStepMinimum(other.chordStepMinimum),
-  tilt(other.tilt)
+  tilt(other.tilt),
+  left(other.left)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -173,6 +176,7 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Beam pipe radius:  " << info.beamPipeRadius           << G4endl;
   out << "Chord Step Min:    " << info.chordStepMinimum         << G4endl;
   out << "Tilt:              " << info.tilt                     << G4endl;
+  out << "Left:              " << info.left                     << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)

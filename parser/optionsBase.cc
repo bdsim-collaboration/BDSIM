@@ -133,6 +133,7 @@ OptionsBase::OptionsBase()
   includeFringeFieldsCavities = true;
 
   yokeFields           = true;
+  yokeFieldsMatchLHCGeometry = true;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
