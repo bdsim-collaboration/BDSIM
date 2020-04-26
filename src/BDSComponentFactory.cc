@@ -1930,10 +1930,17 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       outerField->SetScalingRadius(outerInfo->innerRadius);
       outerField->SetLeft(outerInfo->yokeOnLeft);
       auto gt = outerInfo->geometryType;
-      if (fieldType == BDSFieldType::dipole &&
-	  (gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright))
-	{outerField->SetFieldType(BDSFieldType::multipoleouterdipolelhc);}
+      if (gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright)
+        {
+          if (fieldType == BDSFieldType::dipole)
+            {outerField->SetFieldType(BDSFieldType::multipoleouterdipolelhc);}
+          else if (fieldType == BDSFieldType::quadrupole)
+            {outerField->SetFieldType(BDSFieldType::multipoleouterquadrupolelhc);}
+          else if (fieldType == BDSFieldType::sextupole)
+            {outerField->SetFieldType(BDSFieldType::multipoleoutersextupolelhc);}
+        }
     }
+
   if (bpInfo)
     {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
   return outerField;
