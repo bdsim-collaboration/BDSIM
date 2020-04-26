@@ -232,9 +232,23 @@ int main(int /*argc*/, char** /*argv*/)
 
   // Regular carteasian grid - symmetric for x,y just now
   const G4int    nX    = 100;
-  const G4double xMin  = -100; // mm 
-  const G4double xMax  = 100;  // mm
+  const G4double xMin  = -200; // mm 
+  const G4double xMax  = 200;  // mm
+  const G4int    nY    = 100;
+  const G4double yMin  = -200; // mm
+  const G4double yMax  = 200;  // mm
+  
+  /*
+  // for lhc style magnets
+  const G4int    nX    = 200;
+  const G4double xMin  = -200; // mm 
+  const G4double xMax  = 400;  // mm
+  const G4int    nY    = 200;
+  const G4double yMin  = -250; // mm
+  const G4double yMax  = 250;  // mm
+  */
   const G4double xStep = (xMax - xMin) / (G4double) (nX-1);
+  const G4double yStep = (yMax - yMin) / (G4double) (nY-1);
    
   for (int f = 0; f < (int)fields.size(); ++f)
     {
@@ -264,11 +278,11 @@ int main(int /*argc*/, char** /*argv*/)
       std::ofstream cfile;
       cfile.open(std::string(nm+"_carteasian.dat").c_str());
       cfile << "> nX = "   << nX   << "\n";
-      cfile << "> nY = "   << nX   << "\n";
+      cfile << "> nY = "   << nY   << "\n";
       cfile << "> brho = " << brho << "\n";
       cfile << "# (x,y,z)\t\tField\n";
       G4double x,y;
-      for (y=xMin, i=0; i < nX; y+=xStep, ++i)
+      for (y=yMin, i=0; i < nY; y+=yStep, ++i)
 	{
 	  for (x=xMin, j=0; j < nX; x+=xStep, ++j)
 	    {
