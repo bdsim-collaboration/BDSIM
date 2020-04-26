@@ -549,7 +549,7 @@ Notes:
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 * If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
-  as described in ref:`fields-multipole-outer-lhc`.
+  as described in :ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
