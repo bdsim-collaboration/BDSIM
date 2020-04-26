@@ -30,10 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagDecapole.hh"
-#include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
+#include "BDSFieldMagMultipoleOuterDual.hh"
+#include "BDSFieldMagSkewOwn.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -197,6 +198,30 @@ int main(int /*argc*/, char** /*argv*/)
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterdecapole");
+
+  // outer lhc dipole
+  innerField = new BDSFieldMagDipole(st);
+  positiveField = (*st)["field"] < 0; // note convention for dipoles here
+  field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleouterdipolelhc");
+
+  // outer lhc quadrupole
+  innerField = new BDSFieldMagQuadrupole(st, brho);
+  positiveField = (*st)["k1"] > 0;
+  field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleouterquadrupolelhc");
+
+  // outer lhc sextupole
+  innerField = new BDSFieldMagSextupole(st, brho);
+  positiveField = (*st)["k2"] > 0;
+  field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleoutersextupolelhc");
   
   // Angular data
   const G4int    nR    = 20;
