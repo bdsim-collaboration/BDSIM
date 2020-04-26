@@ -62,8 +62,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
   
   for (const auto& dirnameAng : dirsAngle)
     {
-      G4String dirAng = directory + dirnameAng;
-      
+      G4String dirAng = directory + dirnameAng;      
       filesParticle = LoadDirectoryContents(dirAng);
       
       BDSScorerConversionLoader<std::ifstream> loader;
@@ -74,7 +73,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
       
       std::vector<G4int> ionPIDs; // Store the ion particle ids vs. angle for interpolation
       
-      for (const auto &filePDG : filesParticle)
+      for (const auto& filePDG : filesParticle)
         {
 	  G4String filepathPDG = dirAng + '/' + filePDG;
 	  G4int pid = (G4int)std::stoi(filePDG);
@@ -82,17 +81,14 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
 	  if (filePDG.substr((filePDG.find_last_of(".") + 1)) == "gz" && BDS::FileExists(filepathPDG))
             {
 #ifdef USE_GZSTREAM
-	      BDSScorerConversionLoader<igzstream> loaderC;
-	      
-	      conversionFactors[ang_index][pid] = loaderC.Load(filepathPDG, 1);
+	      BDSScorerConversionLoader<igzstream> loaderC;   
+	      conversionFactors[angleIndex][pid] = loaderC.Load(filepathPDG, 1);
 #else
 	      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
             }
 	  else if (BDS::FileExists(filepathPDG))
-            {
-	      conversionFactors[ang_index][pid] = loader.Load(filepathPDG, 1);
-            }
+            {conversionFactors[angleIndex][pid] = loader.Load(filepathPDG, 1);}
 	  
 	  if (pid > 1e7)
             {ionPIDs.push_back(pid);}
@@ -144,35 +140,30 @@ void BDSPSPopulationScaled::clear()
 G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4double stepLength = aStep->GetStepLength();
-  G4double radiationQuantity = 0;
   
   if (!BDS::IsFinite(stepLength))
     {return false;}
 
+  G4double radiationQuantity = 0;
   G4int index = GetIndex(aStep);
   G4TrackLogger& tlog = fCellTrackLogger[index];
 
   if (tlog.FirstEnterance(aStep->GetTrack()->GetTrackID()))
     {
-      const G4VTouchable *touchable = aStep->GetPreStepPoint()->GetTouchable();
+      const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
       auto rot = touchable->GetRotation();
       G4ThreeVector unitZ = G4ThreeVector(0, 0, 1);
       G4ThreeVector blmUnitZ = unitZ.transform(*rot);
       
       auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
       
-      /// The angle used for the lookup is sign-independent and spans the range 0 to pi/2
+      // The angle used for the lookup is sign-independent and spans the range 0 to pi/2
       G4double angle = fmod(std::abs(momDirection.angle(blmUnitZ)), CLHEP::pi);
       if (angle > CLHEP::pi/2.)
-        {
-	  angle = CLHEP::pi - angle;
-        }
-      
+        {angle = CLHEP::pi - angle;}
       
       G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
-      
       G4double weight = aStep->GetPreStepPoint()->GetWeight();
-      
       G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy,
 					    angle);
       radiationQuantity = weight * factor;
@@ -192,7 +183,7 @@ G4double BDSPSPopulationScaled::GetConversionFactor(G4int    particleID,
   if (angleNearestIndex < 0)
     {return 0;}
 
-  std::map<G4int, G4PhysicsVector *> conversionFactorsPart;
+  std::map<G4int, G4PhysicsVector*> conversionFactorsPart;
   auto searchAngle = conversionFactors.find(angleNearestIndex);
   if (searchAngle != conversionFactors.end())
     {conversionFactorsPart = searchAngle->second;}
