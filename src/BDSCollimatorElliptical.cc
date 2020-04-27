@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCollimatorElliptical.hh"
+#include "BDSDebug.hh"
+#include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4EllipticalTube.hh"
@@ -37,6 +40,16 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String    nameIn,
                 collimatorMaterialIn, vacuumMaterialIn,
                 xApertureIn, yApertureIn, xApertureOutIn, yApertureOutIn, colourIn)
 {;}
+
+void BDSCollimatorElliptical::CheckParameters()
+{
+  if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
+      BDS::IsFinite(yAperture))
+    {
+      if ((xApertureOut / yApertureOut) != (xAperture / yAperture))
+        {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": X/Y half axes ratio at entrance and exit apertures are not equal");}
+    }
+}
 
 void BDSCollimatorElliptical::BuildInnerCollimator()
 {
