@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Box.hh"
-#include "G4Trd.hh"
+#include "G4Trap.hh"
 
 #include <cmath>
 
@@ -45,26 +45,38 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
   if (tapered)
     {
       // Make subtracted volume longer than the solid volume
-      G4double xGradient = std::abs((xAperture - xApertureOut)) / chordLength;
-      G4double yGradient = std::abs((yAperture - yApertureOut)) / chordLength;
+      G4double xGradient = (xApertureOut - xAperture) / chordLength;
+      G4double yGradient = (yApertureOut - yAperture) / chordLength;
       
-      G4double deltam = 0.1 * chordLength;
+      G4double deltam = 0.01 * chordLength;
       G4double deltax = xGradient * deltam;
       G4double deltay = yGradient * deltam;
-      
-      innerSolid  = new G4Trd(name + "_inner_solid",             // name
-                              xAperture + deltax,                // X entrance half length
-                              xApertureOut - deltax,             // X exit half length
-                              yAperture + deltay,                // Y entrance half length
-                              yApertureOut - deltay,             // Y exit half length
-                              (chordLength + 2*deltam) * 0.5);   // Z half length
-    
-      vacuumSolid = new G4Trd(name + "_vacuum_solid",               // name
-                              xAperture - lengthSafetyLarge,        // X entrance half length
-                              xApertureOut - lengthSafetyLarge,     // X exit half length
-                              yAperture - lengthSafetyLarge,        // Y entrance half length
-                              yApertureOut - lengthSafetyLarge,     // Y exit half length
-                              chordLength*0.5 - lengthSafetyLarge); // Z half length
+
+      innerSolid = new G4Trap(name + "_inner_solid",
+                              (chordLength + 2*deltam) * 0.5, // pDz - z half length
+                              0,                     // Theta
+                              0,                     // phi
+                              yAperture - deltay,    // pDy1 - half y at -pDz
+                              xAperture - deltax,    // pDx1 - half x at -pDz, -pDy1
+                              xAperture - deltax,    // pDx2 - half x at -pDz, +pDy1
+                              0,                     // Alpha 1
+                              yApertureOut + deltay, // pDy2 - half y at +pDz
+                              xApertureOut + deltax, // pDx3 - half x at +pDz, -pDy2
+                              xApertureOut + deltax, // pDx4 - half x at +pDz, +pDy2
+                              0);                    // Alpha 2
+      G4double lsl = lengthSafetyLarge;
+      vacuumSolid = new G4Trap(name + "_vacuum_solid",
+                              chordLength*0.5 - lsl, // pDz - z half length
+                              0,                     // Theta
+                              0,                     // phi
+                              yAperture - lsl,       // pDy1 - half y at -pDz
+                              xAperture - lsl,       // pDx1 - half x at -pDz, -pDy1
+                              xAperture - lsl,       // pDx2 - half x at -pDz, +pDy1
+                              0,                     // Alpha 1
+                              yApertureOut - lsl,    // pDy2 - half y at +pDz
+                              xApertureOut - lsl,    // pDx3 - half x at +pDz, -pDy2
+                              xApertureOut - lsl,    // pDx4 - half x at +pDz, +pDy2
+                              0);                    // Alpha 2
     }
   else
     {
