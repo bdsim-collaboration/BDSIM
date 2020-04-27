@@ -957,26 +957,26 @@ rcol
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-+--------------------+------------------------------+--------------+---------------+
-| **Parameter**      | **Description**              | **Default**  | **Required**  |
-+====================+==============================+==============+===============+
-| `l`                | Length [m]                   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `xsize`            | Horizontal half aperture [m] | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `ysize`            | Vertical half aperture [m]   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | None         | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `colour`           | Name of colour desired for   | ""           | No            |
-|                    | block. See :ref:`colours`.   |              |               |
-+--------------------+------------------------------+--------------+---------------+
++--------------------+-----------------------------------+----------------+---------------+
+| **Parameter**      | **Description**                   | **Default**    | **Required**  |
++====================+===================================+================+===============+
+| `l`                | Length [m]                        | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsize`            | Horizontal half aperture [m]      | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysize`            | Half height of jaws [m]           | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `material`         | Outer material                    | None           | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `horizontalWidth`  | Outer full width [m]              | 0.5 m          | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsizeOut`         | Horizontal exit half aperture [m] | `xsize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysizeOut`         | Vertical exit half aperture [m]   | `ysize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `colour`           | Name of colour desired for block  | ""             | No            |
+|                    | See :ref:`colours`.               |                |               |
++--------------------+-----------------------------------+----------------+---------------+
 
 Notes: 
 
@@ -1017,7 +1017,7 @@ the aperture is elliptical and the `xsize` and `ysize` define the horizontal and
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
 * When tapered, the ratio between the horizontal and vertical half-axes of the entrance
-  aperture (xsize and ysize) must be the same ratio for the exit aperture (xsizeOut and ysizeOut).
+  aperture (`xsize` and `ysize`) **must** be the same ratio for the exit aperture (`xsizeOut` and `ysizeOut`).
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol
