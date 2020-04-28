@@ -143,10 +143,10 @@ void HistogramAccumulatorMerge::AccumulateSingleValue(double        oldMean,
 						      double&       newMean,
 						      double&       newVari) const
 {
-  double dMean        = x - oldMean;
-  double dMean2       = std::pow(dMean, 2);
-  double nA = (double) nEntriesAccumulated;
-  double nB = (double) nEntriesToAccumulate;
+  double dMean  = x - oldMean;
+  double dMean2 = std::pow(dMean, 2);
+  double nA = (double)nEntriesAccumulated;
+  double nB = (double)nEntriesToAccumulate;
   double nT = nA + nB;
 
   newMean = oldMean + nB * (dMean / nT);

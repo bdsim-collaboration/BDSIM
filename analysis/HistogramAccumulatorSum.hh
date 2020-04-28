@@ -38,7 +38,7 @@ class TH1;
 class HistogramAccumulatorSum: public HistogramAccumulator
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   HistogramAccumulatorSum();
   
   /// Constructor simply passes down to base class.
