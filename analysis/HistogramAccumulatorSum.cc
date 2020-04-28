@@ -27,8 +27,8 @@ HistogramAccumulatorSum::HistogramAccumulatorSum():
 {;}
 
 HistogramAccumulatorSum::HistogramAccumulatorSum(TH1*               baseHistogram,
-						 const int&         nDimensionsIn,
-						 const std::string  resultHistNameIn,
+						 int                nDimensionsIn,
+						 const std::string& resultHistNameIn,
 						 const std::string& resultHistTitleIn):
   HistogramAccumulator(baseHistogram,
 		       nDimensionsIn,
