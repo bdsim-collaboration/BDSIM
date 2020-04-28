@@ -137,6 +137,8 @@ Expected Changes To Results
   coordinates if specified. (`Zp` was already added).
 * Polarity of dipole yoke fields was fixed so particles slightly outside the beam pipe will be deflected
   in a different (but now correct) direction.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
 
 New Features
 ------------
@@ -361,6 +363,8 @@ Bug Fixes
   updated when multiple different particles were used for a `userfile` distribution.
 * Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
   was not filled correctly - this has been fixed.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
   on number of collimators analysed causing std::vector to reallocate and invalidate address of
   pointers as required by ROOT.
