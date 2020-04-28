@@ -43,8 +43,8 @@ public:
   
   /// Constructor simply passes down to base class.
   HistogramAccumulatorSum(TH1*               baseHistogram,
-			  const int&         nDimensionsIn,
-			  const std::string  resultHistName,
+			  int                nDimensionsIn,
+			  const std::string& resultHistName,
 			  const std::string& resultHistTitle);
   
   virtual ~HistogramAccumulatorSum(){;}

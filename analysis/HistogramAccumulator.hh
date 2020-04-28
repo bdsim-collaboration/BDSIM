@@ -65,7 +65,7 @@ public:
   /// baseHistogram exists in the currently open file.
   HistogramAccumulator(TH1*               baseHistogram,
 		       int                nDimensionsIn,
-		       const std::string  resultHistName,
+		       const std::string& resultHistName,
 		       const std::string& resultHistTitle);
 
   /// Destructor deletes mean and variance temporary histograms but leaks
@@ -90,14 +90,14 @@ protected:
   /// The xVari argument is not used in the implementation provided with this
   /// class but is used in derived classes with different AccumulateSingleValue
   /// implementations.
-  virtual void AccumulateSingleValue(const double&  oldMean,
-				     const double&  oldVari,
-				     const double&  x,
-				     const double&  xVari,
-				     const unsigned long& nEntriesAccumulated,
-				     const unsigned long& nEntriesToAccumulate,
-				     double&        newMean,
-				     double&        newVari) const;
+  virtual void AccumulateSingleValue(double        oldMean,
+				     double        oldVari,
+				     double        x,
+				     double        xVari,
+				     unsigned long nEntriesAccumulated,
+				     unsigned long nEntriesToAccumulate,
+				     double&       newMean,
+				     double&       newVari) const;
 
   int               nDimensions;     ///< Number of dimensions
   unsigned long     n;               ///< Counter.
