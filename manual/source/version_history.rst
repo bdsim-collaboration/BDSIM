@@ -39,6 +39,23 @@ New Features
   to all logical volumes in that BLM.
 * Cubic is now the default interpolation for fields and is automatically matched to the number
   of dimensions in the field map file.
+* LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
+  and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
+* Ability to filter out unstable particles with no default decay table in Geant4 when loading event
+  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  :code:`removeUnstableWithoutDecay`.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
+|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
+|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
@@ -120,6 +137,8 @@ Expected Changes To Results
   coordinates if specified. (`Zp` was already added).
 * Polarity of dipole yoke fields was fixed so particles slightly outside the beam pipe will be deflected
   in a different (but now correct) direction.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
 
 New Features
 ------------
@@ -344,6 +363,8 @@ Bug Fixes
   updated when multiple different particles were used for a `userfile` distribution.
 * Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
   was not filled correctly - this has been fixed.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
 * Fix for potential segfault when analysing collimator information branches in event tree. Dependent
   on number of collimators analysed causing std::vector to reallocate and invalidate address of
   pointers as required by ROOT.
@@ -470,6 +491,8 @@ Bug Fixes
 * Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
   is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
   to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
+* `rcol` no longer warns about the entrance and exit x-y ratio to be the same (only ecol does), which had no effect.
+
 
 Output Changes
 --------------
