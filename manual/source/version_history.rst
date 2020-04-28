@@ -63,7 +63,6 @@ General
 
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
-* `rcol` no longer requires the entrance and exit x-y ratio to be the same (only ecol does).
 
 Output Changes
 --------------
