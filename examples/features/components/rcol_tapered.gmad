@@ -14,3 +14,5 @@ lat : line = (col1, col2, col3, col4);
 com : line = (col1);
 
 include optionsTest.gmad;
+
+option, checkOverlaps=1;
