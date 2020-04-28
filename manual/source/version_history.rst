@@ -387,6 +387,8 @@ Bug Fixes
 * Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
   is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
   to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
+* `rcol` no longer warns about the entrance and exit x-y ratio to be the same (only ecol does), which had no effect.
+
 
 Output Changes
 --------------

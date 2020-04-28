@@ -67,7 +67,7 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
                                          zmax);   // Cut.
     
       vacuumSolid = new G4EllipticalCone(name + "_vacuum_solid",            // name
-                                         xhalf/zmax- lengthSafety,          // Major axis of largest ellipse
+                                         xhalf/zmax - lengthSafety,         // Major axis of largest ellipse
                                          yhalf/zmax - lengthSafety,         // Minor axis of largest ellipse
                                          zmax,                              // Height of cone
                                          chordLength*0.5 - lengthSafety);   // Cut.
