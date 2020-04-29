@@ -1046,7 +1046,7 @@ Notes:
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
   as a box with no aperture.
-* Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
+* For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
   that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
   no jaws will be built and BDSIM will exit.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
@@ -1059,11 +1059,15 @@ Notes:
 
 Examples: ::
 
-   ! Standard
+   ! standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
-   ! with kinetic energy limit
-   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+   ! two separately specified jaws
+   j1: jcol, l=1*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=1.5*cm;
+
+   ! only left jaw
+   j2: jcol, l=0.9*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=2*m;
+
 
 
 degrader
