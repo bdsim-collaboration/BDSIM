@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSCollimatorJaw.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSCrystalInfo.hh"
 #include "BDSDebug.hh"
@@ -152,14 +153,18 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   return worldPV;
 }
 
-void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimatorName,
-						    const std::string& materialName,
-						    G4double length,
-						    G4double aperture,
-						    G4double rotation,
-						    G4double xOffset,
-						    G4double yOffset,
-						    G4double crystalAngle)
+void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collimatorName,
+						                                           const std::string& materialName,
+                                                       G4double length,
+                                                       G4double halfApertureLeft,
+                                                       G4double halfApertureRight,
+                                                       G4double rotation,
+                                                       G4double xOffset,
+                                                       G4double yOffset,
+                                                       G4bool   buildLeftJaw,
+                                                       G4bool   buildRightJaw,
+                                                       G4bool   /*isACrystal*/,
+                                                       G4double crystalAngle)
 {
   auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
 
@@ -194,13 +199,20 @@ void BDSLinkDetectorConstruction::AddLinkCollimator(const std::string& collimato
   el.name     = collimatorName;
   el.material = g4material;
   el.l        = length / CLHEP::m;
-  el.aper1    = aperture / CLHEP::m;
-  el.xsize    = aperture * 0.5 / CLHEP::m;
-  el.ysize    = 0.2; // 1 m - big default
+  el.xsizeLeft  = halfApertureLeft / CLHEP::m;
+  el.xsizeRight = halfApertureRight / CLHEP::m;
+  el.ysize    = 0.2; // half size
   el.tilt     = rotation / CLHEP::rad;
   el.offsetX  = xOffset / CLHEP::m;
   el.offsetY  = yOffset / CLHEP::m;
   el.horizontalWidth = 2.0; // m
+
+  // if we don't want to build a jaw, then we set it to outside the width.
+  if (!buildLeftJaw)
+    {el.xsizeLeft = el.horizontalWidth * 1.2;}
+  if (!buildRightJaw)
+    {el.xsizeRight = el.horizontalWidth * 1.2;}
+
   if (isACrystal)
     {
       // find the bending angle of this particular crystal

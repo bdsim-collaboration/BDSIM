@@ -87,14 +87,19 @@ public:
   void SelectLinkElement(const std::string& elementName, G4bool debug = false);
   void SelectLinkElement(int index, G4bool debug = false);
 
-  void AddLinkCollimator(const std::string& collimatorName,
-			 const std::string& materialName,
-			 G4double length,
-			 G4double aperture,
-			 G4double rotation = 0,
-			 G4double xOffset  = 0,
-			 G4double yOffset  = 0,
-			 G4double crystalAngle = 0);
+  /// Use standard C++ types as expected to be used externally.
+  void AddLinkCollimatorJaw(const std::string& collimatorName,
+                            const std::string& materialName,
+                            double length,
+                            double halfApertureLeft,
+                            double halfApertureRight,
+                            double rotation,
+                            double xOffset,
+                            double yOffset,
+                            bool   buildLeftJaw  = true,
+                            bool   buildRightJaw = true,
+                            bool   isACrystal    = false,
+                            double crystalAngle  = 0);
 
   BDSHitsCollectionSamplerLink* SamplerHits() const;
   void ClearSamplerHits() {runAction->ClearSamplerHits();}

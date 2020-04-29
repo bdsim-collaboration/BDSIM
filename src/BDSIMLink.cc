@@ -433,26 +433,34 @@ void BDSIMLink::SelectLinkElement(int index, G4bool debug)
   currentElementIndex = index;
 }
 
-void BDSIMLink::AddLinkCollimator(const std::string& collimatorName,
-				  const std::string& materialName,
-				  G4double length,
-				  G4double aperture,
-				  G4double rotation,
-				  G4double xOffset,
-				  G4double yOffset,
-				  G4double crystalAngle)
+void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
+                          const std::string& materialName,
+                          double length,
+                          double halfApertureLeft,
+                          double halfApertureRight,
+                          double rotation,
+                          double xOffset,
+                          double yOffset,
+                          bool   buildLeftJaw,
+                          bool   buildRightJaw,
+                          bool   isACrystal,
+                          double crystalAngle)
 {
   G4GeometryManager* gm = G4GeometryManager::GetInstance();
   if (gm->IsGeometryClosed())
     {gm->OpenGeometry();}
 
-  construction->AddLinkCollimator(collimatorName,
+  construction->AddLinkCollimatorJaw(collimatorName,
 				  materialName,
 				  length,
-				  aperture,
+				  halfApertureLeft,
+				  halfApertureRight,
 				  rotation,
 				  xOffset,
 				  yOffset,
+				  buildLeftJaw,
+				  buildRightJaw,
+				  isACrystal,
 				  crystalAngle);
   nameToElementIndex[collimatorName] = construction->NumberOfElements() - 1;
   

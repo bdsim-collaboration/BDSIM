@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSLINKDETECTORCONSTRUCTION_H
 #define BDSLINKDETECTORCONSTRUCTION_H
 #include "BDSBeamline.hh"
+#include "BDSCollimatorJaw.hh"
 #include "BDSExtent.hh"
 
 #include "G4VUserDetectorConstruction.hh"
@@ -47,14 +48,18 @@ public:
 
   BDSExtent WorldExtent() const {return worldExtent;}
 
-  void AddLinkCollimator(const std::string& collimatorName,
-			 const std::string& materialName,
-			 G4double length,
-			 G4double aperture,
-			 G4double rotation,
-			 G4double xOffset,
-			 G4double yOffset,
-			 G4double crystalAngle);
+  void AddLinkCollimatorJaw(const std::string& collimatorName,
+			                      const std::string& materialName,
+			                      G4double length,
+                            G4double halfApertureLeft,
+                            G4double halfApertureRight,
+                            G4double rotation,
+                            G4double xOffset,
+                            G4double yOffset,
+                            G4bool   buildLeftJaw  = true,
+                            G4bool   buildRightJaw = true,
+                            G4bool   isACrystal    = false,
+                            G4double crystalAngle  = 0);
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
