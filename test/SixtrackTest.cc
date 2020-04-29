@@ -85,13 +85,14 @@ int main(int /*argc2*/, char** /*argv2*/)
 
   for (const auto& c : collimators)
     {
-      bds->AddLinkCollimator(c.name,
-			     c.materialName,
-			     c.length,
-			     c.aperture,
-			     c.rotation,
-			     c.xOffset,
-			     c.yOffset);
+      bds->AddLinkCollimatorJaw(c.name,
+			                          c.materialName,
+			                          c.length,
+			                          c.aperture,
+                                c.aperture,
+                                c.rotation,
+                                c.xOffset,
+                                c.yOffset);
     }
 
   for (const auto& collimator : collimators)
