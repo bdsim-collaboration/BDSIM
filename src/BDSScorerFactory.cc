@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerInfo.hh"
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSPSPopulationScaled.hh"
+#include "BDSPSBLMEnergyDeposit.hh"
 #include "BDSPSCellFluxScaled3D.hh"
 #include "BDSSDFilterAnd.hh"
 #include "BDSSDFilterLogicalVolume.hh"
@@ -88,7 +89,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
     case BDSScorerType::depositeddose3d:
       {result = new G4PSDoseDeposit3D(name); break;}
     case BDSScorerType::depositedenergy:
-      {result = new G4PSEnergyDeposit(name, "GeV"); break;}
+      {result = new BDSPSBLMEnergyDeposit(name, "GeV"); break;}
     case BDSScorerType::depositedenergy3d:
       {result = new G4PSEnergyDeposit3D(name, "GeV"); break;}
     case BDSScorerType::population:
