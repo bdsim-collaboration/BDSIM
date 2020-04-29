@@ -337,6 +337,7 @@ rebdsimCombine - Output Combination
 `rebdsimCombine` is a tool that can combine `rebdsim` output files correctly
 (i.e. the mean of the mean histograms) to provide the overall mean and error on
 the mean, as if all events had been analysed in one execution of `rebdsim`.
+Simple histograms are simply summed (not averaged).
 
 The combination of the histograms from the `rebdsim` output files is very quick
 in comparison to the analysis. `rebdsimCombine` is used as follows: ::
