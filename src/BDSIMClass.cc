@@ -184,7 +184,7 @@ int BDSIM::Initialise()
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
-  /// BUT for samplers we use a parallel world and this HAS to be before the physcis
+  /// BUT for samplers we use a parallel world and this HAS to be before the physics
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> Constructing physics processes" << G4endl;
 #endif
