@@ -252,6 +252,8 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
       {result = samplerPlane; break;}
     case BDSSDType::samplercylinder:
       {result = samplerCylinder; break;}
+    case BDSSDType::samplerlink:
+      {result = samplerLink; break;}
     case BDSSDType::terminator:
       {result = terminator; break;}
     case BDSSDType::energydep:
