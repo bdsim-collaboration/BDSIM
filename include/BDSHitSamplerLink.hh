@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSHITSAMPLERLINK_H
 #define BDSHITSAMPLERLINK_H
 
+#include "BDSHitSampler.hh"
 #include "BDSParticleCoordsFull.hh"
 
 #include "G4Types.hh"
@@ -34,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSHitSamplerLink: public G4VHit
+class BDSHitSamplerLink: public BDSHitSampler
 {
 public:
   BDSHitSamplerLink(G4int samplerIDIn,
@@ -54,18 +55,9 @@ public:
   
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
-
-  G4int                 samplerID;
-  BDSParticleCoordsFull coords;
-  G4double              momentum;
-  G4double              mass;
+  
   G4int                 Z;
   G4int                 A;
-  G4double              charge; ///< Double as g4 uses charge as a double.
-  G4int                 pdgID;
-  G4int                 parentID;
-  G4int                 trackID;
-  G4int                 nElectrons; ///< Can only get this at inspection time so include here.
   G4int                 eventID;
   
 private:
