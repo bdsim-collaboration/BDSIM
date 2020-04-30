@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSParticleCoordsFull.hh"
 #include "BDSHitSamplerLink.hh"
 
 #include "G4Allocator.hh"
@@ -35,17 +34,10 @@ BDSHitSamplerLink::BDSHitSamplerLink(G4int samplerIDIn,
 				     G4int    parentIDIn,
 				     G4int    trackIDIn,
 				     G4int    nElectronsIn):
-  samplerID(samplerIDIn),
-  coords(coordsIn),
-  momentum(momentumIn),
-  mass(massIn),
+	BDSHitSampler(samplerIDIn, coordsIn, momentumIn, massIn, chargeIn,
+	  0, pdgIDIn,parentIDIn,trackIDIn,0,0,nElectronsIn),
   Z(ZIn),
   A(AIn),
-  charge(chargeIn),
-  pdgID(pdgIDIn),
-  parentID(parentIDIn),
-  trackID(trackIDIn),
-  nElectrons(nElectronsIn),
   eventID(0)
 {;}
 
