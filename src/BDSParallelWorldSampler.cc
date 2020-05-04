@@ -131,7 +131,7 @@ void BDSParallelWorldSampler::Construct()
     } 
 }
 
-void BDSParallelWorldSampler::Place(BDSBeamlineElement* element,
+void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 				    G4double samplerRadius)
 {
   BDSSamplerType samplerType = element->GetSamplerType();

@@ -81,11 +81,11 @@ public:
   /// the world volume, so the inverse is required to get global to
   /// local transformation. S is global s position with unphysical
   /// default of -1m.
-  G4int RegisterSampler(G4String            name,
-			BDSSampler*         sampler,
-			G4Transform3D       transform = G4Transform3D(),
-			G4double            S         = -1000,
-			BDSBeamlineElement* element   = nullptr);
+  G4int RegisterSampler(const G4String&      name,
+			BDSSampler*          sampler,
+			const G4Transform3D& transform = G4Transform3D(),
+			G4double             S         = -1000,
+			const BDSBeamlineElement* element   = nullptr);
 
   G4int RegisterSampler(BDSSamplerInfo& info);
 
