@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4VisAttributes;
 class G4VPhysicalVolume;
+class BDSBeamlineElement;
 class BDSSampler;
 
 /**
@@ -46,6 +47,12 @@ public:
   /// Construct the required parallel world geometry. This must
   /// overload the pure virtual method in G4VUserParallelWorld.
   virtual void Construct();
+
+  BDSSampler* GeneralPlane() const {return generalPlane;}
+
+  /// Place a sampler from a single element.
+  void Place(BDSBeamlineElement* element,
+	     G4double samplerRadius);
 
 private:
   /// No default constructor.
