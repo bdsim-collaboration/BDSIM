@@ -160,7 +160,7 @@ private:
   void StoreExtrasLink(const G4Track* track,
 		       G4double       kineticEnergy);
 
-  /// Utility function to prepare and fill extra ion varaibles.
+  /// Utility function to prepare and fill extra ion variables.
   void StoreExtrasIon(const G4Track* track);
   
   G4int preProcessType;           ///< Process type of pre-step point
@@ -169,7 +169,7 @@ private:
   G4int postProcessSubType;       ///< Process sub type of post step point
 
   G4double preWeight;             ///< Weight associated with pre-step point
-  G4double postWeight;            ///< Weight associtaed with post step point
+  G4double postWeight;            ///< Weight associated with post step point
   G4double preEnergy;             ///< Kinetic energy of pre-step point
   G4double postEnergy;            ///< Kinetic energy of post step point
   G4ThreeVector preMomentum;      ///< Momentum of pre-step point
@@ -184,7 +184,7 @@ private:
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
 
-  /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
+  /// An auxiliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;
 };
