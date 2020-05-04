@@ -1220,7 +1220,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+| collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
