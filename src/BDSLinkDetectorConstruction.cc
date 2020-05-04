@@ -154,7 +154,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 }
 
 void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collimatorName,
-						                                           const std::string& materialName,
+						       const std::string& materialName,
                                                        G4double length,
                                                        G4double halfApertureLeft,
                                                        G4double halfApertureRight,
@@ -240,10 +240,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   else
     {el.region = "r1";} // stricter range cuts for default collimators
 
-  BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el,
-									 nullptr,
-									 nullptr,
-									 0); 
+  BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el, nullptr, nullptr, 0);
 
   // wrap in box
   BDSTiltOffset* to = new BDSTiltOffset(el.offsetX * CLHEP::m,
