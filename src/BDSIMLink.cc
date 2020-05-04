@@ -162,6 +162,10 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options
 
+  /// Construct output
+  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+                                             globalConstants->OutputFileName());
+
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
     {
