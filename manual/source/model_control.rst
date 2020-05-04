@@ -639,6 +639,9 @@ Notes:
 	     break the validity of the accelerator tracking routines. This is unavoidable, hence
 	     why we use the limits by default. BDSIM, by default applies step length limits of 110%
 	     the length of each volume.
+
+.. warning:: Turning off all limits will break the control required to stop primary particles after
+	     a certain number of turns in circular machines.
   
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
