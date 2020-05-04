@@ -321,9 +321,7 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
       auto samplerWorldRaw = GetParallelWorld(samplerWorldID);
       auto samplerWorld = dynamic_cast<BDSParallelWorldSampler*>(samplerWorldRaw);
       if (samplerWorld)
-      {
-        BDSSampler* sampler = samplerWorld->GeneralPlane();
-      }
+        {samplerWorld->Place(element, element->GetExtent().MaximumAbsTransverse());}
     }
 }
 
