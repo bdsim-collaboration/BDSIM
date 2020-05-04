@@ -69,6 +69,10 @@ public:
   inline void operator delete(void *aTrajectoryPoint);
   inline int operator==(const BDSTrajectoryPoint& right) const {return (this==&right);};
 
+  inline void DeleteExtraLocal() {delete extraLocal; extraLocal = nullptr;}
+  inline void DeleteExtraLinks() {delete extraLink;  extraLink  = nullptr;}
+  inline void DeleteExtraIon()   {delete extraIon;   extraIon   = nullptr;}
+
   /// Check to see if point is a scattering point (from a physics point of view). Uses
   /// static functions defined below. This is defined by whether the processes that defined
   /// the step length is non-transportation or the energy loss along step is greater than
