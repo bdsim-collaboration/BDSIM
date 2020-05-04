@@ -433,6 +433,7 @@ Bug Fixes
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
 * Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix a bug where the turn number of PrimaryFirstHit and PrimaryLastHit was always zero.
 * Fix sampler variables `theta`, `phi` and `phip` being -1 when it should be 0 for 0 angle particles
   due to a mistake in the identification of possible nans or infinite numbers.
 * Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
@@ -452,6 +453,7 @@ Bug Fixes
 * Unintialised variables reported by Coverity.
 * Fix erroneous warnings with jcol that would prevent it being built. These were due to double
   parameter checks from a base class that don't appy.
+* Fix Event.Summary.primaryAbsorbedInCollimator flag not identifying absorption in jcols correctly.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
