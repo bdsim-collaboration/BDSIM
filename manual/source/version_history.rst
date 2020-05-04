@@ -352,6 +352,7 @@ Bug Fixes
 * Unintialised variables reported by Coverity.
 * Fix erroneous warnings with jcol that would prevent it being built. These were due to double
   parameter checks from a base class that don't appy.
+* Fix Event.Summary.primaryAbsorbedInCollimator flag not identifying absorption in jcols correctly.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
