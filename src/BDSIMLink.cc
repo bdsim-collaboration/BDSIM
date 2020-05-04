@@ -443,34 +443,36 @@ void BDSIMLink::SelectLinkElement(int index, G4bool debug)
 }
 
 void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
-                          const std::string& materialName,
-                          double length,
-                          double halfApertureLeft,
-                          double halfApertureRight,
-                          double rotation,
-                          double xOffset,
-                          double yOffset,
-                          bool   buildLeftJaw,
-                          bool   buildRightJaw,
-                          bool   isACrystal,
-                          double crystalAngle)
+				     const std::string& materialName,
+				     double length,
+				     double halfApertureLeft,
+				     double halfApertureRight,
+				     double rotation,
+				     double xOffset,
+				     double yOffset,
+				     bool   buildLeftJaw,
+				     bool   buildRightJaw,
+				     bool   isACrystal,
+				     double crystalAngle,
+				     bool   sampleIn)
 {
   G4GeometryManager* gm = G4GeometryManager::GetInstance();
   if (gm->IsGeometryClosed())
     {gm->OpenGeometry();}
 
   construction->AddLinkCollimatorJaw(collimatorName,
-				  materialName,
-				  length,
-				  halfApertureLeft,
-				  halfApertureRight,
-				  rotation,
-				  xOffset,
-				  yOffset,
-				  buildLeftJaw,
-				  buildRightJaw,
-				  isACrystal,
-				  crystalAngle);
+				     materialName,
+				     length,
+				     halfApertureLeft,
+				     halfApertureRight,
+				     rotation,
+				     xOffset,
+				     yOffset,
+				     buildLeftJaw,
+				     buildRightJaw,
+				     isACrystal,
+				     crystalAngle,
+				     sampleIn);
   nameToElementIndex[collimatorName] = construction->NumberOfElements() - 1;
   
   /// Close the geometry in preparation for running - everything is now fixed.
