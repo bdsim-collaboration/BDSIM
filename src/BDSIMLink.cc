@@ -180,6 +180,10 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
 
   /// Register the geometry and parallel world construction methods with run manager.
   construction = new BDSLinkDetectorConstruction();
+
+  /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
+  auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(construction, true);
+
   runManager->SetUserInitialization(construction);
 
   // Set filters used in sensitive detectors that transfer particles back
@@ -199,6 +203,7 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   // hard to sift through and fix afterwards
   G4PhysicsListHelper::GetPhysicsListHelper()->UseLowLooperThresholds();
 #endif
+  auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
 
