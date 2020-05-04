@@ -51,8 +51,8 @@ public:
   BDSSampler* GeneralPlane() const {return generalPlane;}
 
   /// Place a sampler from a single element.
-  void Place(BDSBeamlineElement* element,
-	     G4double samplerRadius);
+  void Place(const BDSBeamlineElement* element,
+	     G4double                  samplerRadius);
 
 private:
   /// No default constructor.
