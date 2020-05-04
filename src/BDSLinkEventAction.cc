@@ -34,7 +34,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PropagatorInField.hh"
 #include "G4Run.hh"
 #include "G4SDManager.hh"
+#include "G4THitsMap.hh"
 #include "G4TransportationManager.hh"
+
+#include <map>
 
 BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn,
 				       BDSLinkRunAction* runActionIn,
@@ -104,27 +107,24 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
   if (samplerLink->entries() <= 0)
     {return;}
   else
-    {
-      runAction->AppendHits(currentEventIndex, samplerLink);
-    }
+    {runAction->AppendHits(currentEventIndex, samplerLink);}
 
-  /*
-  output->FillEvent(eventInfo,
-		    evt->GetPrimaryVertex(),
-		    SampHC,
-		    hitsCylinder,
-		    eCounterHits,
-		    eCounterFullHits,
-		    eCounterVacuumHits,
-		    eCounterTunnelHits,
-		    eCounterWorldHits,
-		    eCounterWorldContentsHits,
-		    worldExitHits,
-		    primaryHit,
-		    primaryLoss,
-		    interestingTrajectories,
-		    collimatorHits,
-		    apertureImpactHits,
+  output->FillEvent(nullptr,
+		                evt->GetPrimaryVertex(),
+		                nullptr,
+		                nullptr,
+                    nullptr,
+		                nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    std::map<G4String, G4THitsMap<G4double>*>(),
 		    BDSGlobalConstants::Instance()->TurnsTaken());
-  */
 }
