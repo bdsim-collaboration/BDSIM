@@ -72,6 +72,7 @@ public:
 
   inline const std::map<std::string, G4int>& NameToElementIndex() const {return nameToElementIndex;}
   inline G4int NumberOfElements() const {return linkBeamline ? (G4int)linkBeamline->size() : 0;}
+  inline void SetSamplerWorldID(G4int samplerWorldIDIn) {samplerWorldID = samplerWorldIDIn;}
 
  private:
 
@@ -93,6 +94,9 @@ public:
   const BDSParticleDefinition* designParticle;
 
   G4ChannelingOptrMultiParticleChangeCrossSection* crystalBiasing;
+
+  /// Cache of the index to which parallel world the sampler one is.
+  G4int samplerWorldID;
 
   std::map<std::string, G4int> nameToElementIndex; ///< Build up a copy here too.
 };
