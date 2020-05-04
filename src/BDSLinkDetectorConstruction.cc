@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSMaterials.hh"
+#include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSDManager.hh"
 #include "BDSTiltOffset.hh"
@@ -61,7 +62,8 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
   linkRegistry(nullptr),
   primaryGeneratorAction(nullptr),
   designParticle(nullptr),
-  crystalBiasing(nullptr)
+  crystalBiasing(nullptr),
+  samplerWorldID(-1)
 {
   linkRegistry = new BDSLinkRegistry();
   BDSSDManager::Instance()->SetLinkRegistry(linkRegistry);
@@ -313,6 +315,16 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
   G4Transform3D elCentreToStart = el->TransformToStart();
   G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
   linkRegistry->Register(el, globalToStart);
+
+  if (element->GetSamplerType() == BDSSamplerType::plane && samplerWorldID >= 0)
+    {
+      auto samplerWorldRaw = GetParallelWorld(samplerWorldID);
+      auto samplerWorld = dynamic_cast<BDSParallelWorldSampler*>(samplerWorldRaw);
+      if (samplerWorld)
+      {
+        BDSSampler* sampler = samplerWorld->GeneralPlane();
+      }
+    }
 }
 
 void BDSLinkDetectorConstruction::BuildPhysicsBias()

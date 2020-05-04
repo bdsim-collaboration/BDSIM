@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLinkDetectorConstruction.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
 #include "BDSParallelWorldImportance.hh"
@@ -87,6 +88,12 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       auto samplerWorld = new BDSParallelWorldSampler("main");
       massWorld->RegisterParallelWorld(samplerWorld);
+      auto massWorldBDS = dynamic_cast<BDSLinkDetectorConstruction*>(massWorld);
+      if (massWorldBDS)
+	{
+	  G4int samplerWorldID = massWorld->GetNumberOfParallelWorld() - 1;
+	  massWorldBDS->SetSamplerWorldID(samplerWorldID);
+	}
       acceleratorModel->RegisterParallelWorld(samplerWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
     }
