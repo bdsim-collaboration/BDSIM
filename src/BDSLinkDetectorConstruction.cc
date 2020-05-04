@@ -164,7 +164,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
                                                        G4bool   buildLeftJaw,
                                                        G4bool   buildRightJaw,
                                                        G4bool   /*isACrystal*/,
-                                                       G4double crystalAngle)
+                                                       G4double crystalAngle,
+                                                       G4bool   sampleIn)
 {
   auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
 
@@ -246,16 +247,15 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   BDSTiltOffset* to = new BDSTiltOffset(el.offsetX * CLHEP::m,
                                         el.offsetY * CLHEP::m,
                                         el.tilt * CLHEP::rad);
-  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
-						     to,
-						     component->GetExtent().MaximumAbsTransverse());
+  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, component->GetExtent().MaximumAbsTransverse(),
+                                                     sampleIn);
 
   // add to beam line
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
   nameToElementIndex[collimatorName] = (G4int)linkBeamline->size();
-  linkBeamline->AddComponent(comp);
+  linkBeamline->AddComponent(comp, nullptr, BDSSamplerType::plane, comp->GetName() + "_out");
 
   // update world extents and world solid
   UpdateWorldSolid();

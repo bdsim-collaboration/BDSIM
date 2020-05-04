@@ -35,7 +35,8 @@ class BDSLinkOpaqueBox: public BDSGeometryComponent
 public:
   BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
                    BDSTiltOffset* tiltOffsetIn,
-		   G4double outputSamplerRadiusIn);
+		               G4double outputSamplerRadiusIn,
+                   G4bool   sampleIn = false);
   virtual ~BDSLinkOpaqueBox();
 
   /// Default constructor
@@ -61,6 +62,7 @@ public:
 private:
   BDSAcceleratorComponent* component;
   G4double                 outputSamplerRadius;
+  G4bool                   sampleIncoming;
   G4ThreeVector            offsetToStart;
   G4Transform3D            transformToStart;
   BDSSamplerCustom*        sampler;

@@ -99,7 +99,8 @@ public:
                             bool   buildLeftJaw  = true,
                             bool   buildRightJaw = true,
                             bool   isACrystal    = false,
-                            double crystalAngle  = 0);
+                            double crystalAngle  = 0,
+			    bool   sampleIn      = false);
 
   BDSHitsCollectionSamplerLink* SamplerHits() const;
   void ClearSamplerHits() {runAction->ClearSamplerHits();}

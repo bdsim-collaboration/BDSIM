@@ -59,7 +59,8 @@ public:
                             G4bool   buildLeftJaw  = true,
                             G4bool   buildRightJaw = true,
                             G4bool   isACrystal    = false,
-                            G4double crystalAngle  = 0);
+                            G4double crystalAngle  = 0,
+                            G4bool   sampleIn      = false);
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
