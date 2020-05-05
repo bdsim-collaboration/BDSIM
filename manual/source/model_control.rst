@@ -787,10 +787,10 @@ Examples: ::
         shellYpWidth = 1d-9;
 
 
-userFile
+userfile
 ********
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle
+The `userfile` distribution allows the user to supply an ASCII text file with particle
 coordinates that are white-space separated (i.e. spaces, or tabs). The column names and
 the units are specified in an input string in the beam definition.
 
