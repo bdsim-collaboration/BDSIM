@@ -35,6 +35,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
 #include "BDSTiltOffset.hh"
 
@@ -320,8 +322,28 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
     {
       auto samplerWorldRaw = GetParallelWorld(samplerWorldID);
       auto samplerWorld = dynamic_cast<BDSParallelWorldSampler*>(samplerWorldRaw);
-      if (samplerWorld)
-        {samplerWorld->Place(element, element->GetExtent().MaximumAbsTransverse());}
+      if (!samplerWorld)
+        {return;}
+      
+      BDSSampler* sampler = samplerWorld->GeneralPlane();
+      G4String name = element->GetSamplerName();
+      G4double sEnd = element->GetSPositionEnd();
+      G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
+
+      G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
+									sampler,
+									*pt,
+									sEnd,
+									element);
+
+      G4LogicalVolume* samplerWorldLV = samplerWorld->WorldLV();
+      new G4PVPlacement(*pt,
+                        sampler->GetContainerLogicalVolume(), // logical volume
+			                  name + "_pv",     // name of placement
+			                  samplerWorldLV,   // mother volume
+			                  false,            // no boolean operation
+			                  samplerID,        // copy number
+			                  false);
     }
 }
 
