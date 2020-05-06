@@ -51,7 +51,7 @@ public:
   inline const G4Transform3D& TransformToStart() const {return transformToStart;}
 
   /// Place the output sampler
-  void PlaceOutputSampler(G4int ID);
+  G4int PlaceOutputSampler();
 
   /// Whether it's angled or not.
   G4bool Angled() const {return component ? BDS::IsFinite(component->GetAngle()) : false;}
