@@ -49,6 +49,7 @@ public:
   virtual void Construct();
 
   BDSSampler* GeneralPlane() const {return generalPlane;}
+  G4LogicalVolume* WorldLV() const {return samplerWorldLV;}
 
   /// Place a sampler from a single element.
   void Place(const BDSBeamlineElement* element,
@@ -69,6 +70,8 @@ private:
 
   /// General single sampler we use for plane samplers.
   BDSSampler* generalPlane;
+  
+  G4LogicalVolume* samplerWorldLV;
 };
 
 #endif
