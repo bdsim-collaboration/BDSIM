@@ -59,6 +59,7 @@ private:
   G4int  printModulo;
 
   G4int collIDSamplerLink;
+  G4int collIDSampler;
   G4int currentEventIndex;
   G4bool primaryAbsorbedInCollimator;
 };

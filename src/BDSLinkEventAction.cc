@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkEventAction.hh"
 #include "BDSLinkRunAction.hh"
 #include "BDSOutput.hh"
+#include "BDSSDSampler.hh"
 #include "BDSSDSamplerLink.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
@@ -46,6 +47,7 @@ BDSLinkEventAction::BDSLinkEventAction(BDSOutput* outputIn,
   runAction(runActionIn),
   debug(debugIn),
   collIDSamplerLink(-1),
+  collIDSampler(-1),
   currentEventIndex(0),
   primaryAbsorbedInCollimator(false)
 {
@@ -91,6 +93,7 @@ void BDSLinkEventAction::BeginOfEventAction(const G4Event* evt)
       G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
       BDSSDManager* bdsSDMan = BDSSDManager::Instance();
       collIDSamplerLink = g4SDMan->GetCollectionID(bdsSDMan->SamplerLink()->GetName());
+      collIDSampler     = g4SDMan->GetCollectionID(bdsSDMan->SamplerPlane()->GetName());
     }
 }
 
@@ -98,9 +101,10 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 {
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-  
   typedef BDSHitsCollectionSamplerLink slhc;
   slhc* samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
+  typedef BDSHitsCollectionSampler shc;
+  shc* sampHC = HCE ? dynamic_cast<shc*>(HCE->GetHC(collIDSampler)) : nullptr;
 
   if (!samplerLink)
     {return;}
@@ -111,7 +115,7 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 
   output->FillEvent(nullptr,
 		                evt->GetPrimaryVertex(),
-		                nullptr,
+		                sampHC,
 		                nullptr,
                     nullptr,
 		                nullptr,
@@ -126,5 +130,5 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
                     nullptr,
                     nullptr,
                     std::map<G4String, G4THitsMap<G4double>*>(),
-		    BDSGlobalConstants::Instance()->TurnsTaken());
+                    BDSGlobalConstants::Instance()->TurnsTaken());
 }
