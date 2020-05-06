@@ -787,16 +787,20 @@ Examples: ::
         shellYpWidth = 1d-9;
 
 
-userFile
+userfile
 ********
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle
-coordinates that are tab-delimited. The column names and the units are specified in an
-input string.
+The `userfile` distribution allows the user to supply an ASCII text file with particle
+coordinates that are white-space separated (i.e. spaces, or tabs). The column names and
+the units are specified in an input string in the beam definition.
 
 The file may also be compressed using gzip. Any file with the extension `.gz`
-will be automatically decompressed during the run without any temporary files. This is
-recommended, as compressed ASCII is significantly smaller in size.
+will be automatically decompressed during the run without creating any temporary
+files. This is recommended, as compressed ASCII is significantly smaller in size.
+
+Any coordinate not specified is taken from the `reference`_ distribution parameters.
+For example, if only `x` and `xp` are supplied as columns, the energy will be the
+central energy of the design beam particle, `y` will be `Y0`, which is by default 0.
 
 If the number of particles to be generated with ngenerate is greater than the number of
 particles defined in the file, the bunch generation will reload the file and read the
@@ -810,6 +814,7 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 	  from Geant4 and is on by default.
 
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
+* Coordinates no specified are taken from the default `reference`_ distribution parameters.
 * Lines starting with `#` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
@@ -825,7 +830,9 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 +==================================+=======================================================+
 | `distrFile`                      | File path to ASCII data file                          |
 +----------------------------------+-------------------------------------------------------+
-| `distrFileFormat`                | A string that details the column names and units      |
+| `distrFileFormat`                | A string that details the column names and units. A   |
+|                                  | list of token[unit] separated by white space where    |
+|                                  | unit is optional. See below for tokens and units.     |
 +----------------------------------+-------------------------------------------------------+
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
@@ -1442,6 +1449,9 @@ Notes:
 	     break the validity of the accelerator tracking routines. This is unavoidable, hence
 	     why we use the limits by default. BDSIM, by default applies step length limits of 110%
 	     the length of each volume.
+
+.. warning:: Turning off all limits will break the control required to stop primary particles after
+	     a certain number of turns in circular machines.
   
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
@@ -2133,7 +2143,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+| collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
