@@ -334,7 +334,7 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
         {return;}
       
       BDSSampler* sampler = samplerWorld->GeneralPlane();
-      G4String samplerName = originallName + "_in";
+      G4String samplerName = originalName + "_in";
       G4double sStart = element->GetSPositionStart();
 
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName, sampler, samplerPosition, sStart, element);
