@@ -44,6 +44,7 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String    nameIn,
 
 void BDSCollimatorElliptical::CheckParameters()
 {
+  BDSCollimator::CheckParameters();
   if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
       BDS::IsFinite(yAperture))
     {

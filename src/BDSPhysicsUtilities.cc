@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
 #include "globals.hh"
@@ -97,6 +98,8 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
 {
   G4VModularPhysicsList* result = nullptr;
 
+  BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  
   BDS::ConstructMinimumParticleSet();
   G4String physicsListNameLower = physicsList; // make lower case copy
   physicsListNameLower.toLower();
@@ -119,18 +122,24 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
           throw BDSException(__METHOD_NAME__, "Unknown Geant4 physics list \"" + geant4PhysicsList + "\"");
         }
       else
-        {
+	{
 	  result = factory.GetReferencePhysList(geant4PhysicsList);
-	  if (BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMRangeCuts())
+	  if (g->G4PhysicsUseBDSIMRangeCuts())
 	    {BDS::SetRangeCuts(result);}
-	  if (BDSGlobalConstants::Instance()->MinimumKineticEnergy() > 0 ||
-	      BDSGlobalConstants::Instance()->G4PhysicsUseBDSIMCutsAndLimits())
+	  if (g->MinimumKineticEnergy() > 0 || g->G4PhysicsUseBDSIMCutsAndLimits())
 	    {
-	      G4cout << "\nWARNING - adding cuts and limits physics process to Geant4 reference physics list" << G4endl;
+	      G4cout << "\nAdding cuts and limits physics process to Geant4 reference physics list" << G4endl;
 	      G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
-	      G4cout << "This can be turned off by setting option, g4PhysicsUseBDSIMCutsAndLimits=0;\n" << G4endl;
+	      G4cout
+		<< "This is done by default for the functionality of BDSIM tracking and should not affect the physics greatly.\n";
+	      G4cout << "See the BDSIM manual about Geant4 reference physics lists for details." << G4endl;
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
+	  else if (!g->G4PhysicsUseBDSIMCutsAndLimits() && g->Circular())
+      {
+	      G4String message = "g4PhysicsUseBDSIMCutsAndLimits turned off but using a circular machine - circular mechanics will be broken";
+	      BDS::Warning(__METHOD_NAME__, message);
+      }
 	}
     }
   else if (completePhysics)
