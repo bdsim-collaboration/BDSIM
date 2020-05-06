@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <fstream>
@@ -94,7 +96,16 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   /// Now overwrite container lv vis attributes
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  if (containerLV->GetNoDaughters() > 0)
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
+  else
+    {// no hierarchy - make sure it's visible
+      G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
+      G4VisAttributes* vis = new G4VisAttributes(*c);
+      vis->SetVisibility(true);
+      visesGDML.insert(vis);
+      containerLV->SetVisAttributes(vis);
+    }
 
   std::pair<BDSExtent, BDSExtent> outerInner = BDS::DetermineExtents(containerSolid);
   
