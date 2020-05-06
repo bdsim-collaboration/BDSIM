@@ -28,7 +28,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkOpaqueBox.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerCustom.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerPlane.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSamplerLink.hh"
 #include "BDSTiltOffset.hh"
@@ -163,9 +165,9 @@ BDSLinkOpaqueBox::~BDSLinkOpaqueBox()
   delete sampler;
 }
 
-void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
+G4int BDSLinkOpaqueBox::PlaceOutputSampler()
 {  
-  G4String samplerName = component->GetName() + "_sampler";
+  G4String samplerName = component->GetName() + "_out";
   BDSApertureType apt = BDSApertureType::circular;
   BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
   sampler = new BDSSamplerCustom(samplerName, ap);
@@ -185,13 +187,18 @@ void BDSLinkOpaqueBox::PlaceOutputSampler(G4int ID)
       position += gap.transform(*rm);
     }
   // if there's finite angle, we ensure (in constructor) there's no tilt
+  G4RotationMatrix* rml = rm ? rm : new G4RotationMatrix();
+  BDSSamplerInfo info(samplerName, sampler, G4Transform3D(*rml, position));
+  delete rml;
   
+  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(info);
   new G4PVPlacement(rm,
 		    position,
 		    sampler->GetContainerLogicalVolume(),
 		    samplerName + "_pv",
 		    containerLogicalVolume,
 		    false,
-		    ID,
+		    samplerID,
 		    true);
+  return samplerID;
 }

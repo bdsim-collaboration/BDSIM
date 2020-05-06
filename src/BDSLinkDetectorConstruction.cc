@@ -36,6 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
 #include "BDSTiltOffset.hh"
@@ -150,7 +151,11 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
   // place any defined link elements in input
   for (auto element : *linkBeamline)
-    {PlaceOneComponent(element);}
+    {
+      BDSLinkComponent* lc = dynamic_cast<BDSLinkComponent*>(element->GetAcceleratorComponent());
+      G4String name = lc ? lc->LinkName() : element->GetSamplerName();
+      PlaceOneComponent(element, name);
+    }
 
   delete componentFactory;
 
@@ -265,7 +270,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   UpdateWorldSolid();
 
   // place that one element
-  PlaceOneComponent(linkBeamline->back());
+  PlaceOneComponent(linkBeamline->back(), collimatorName);
 
   // update crystal biasing
   BuildPhysicsBias();
@@ -296,12 +301,12 @@ void BDSLinkDetectorConstruction::UpdateWorldSolid()
     {primaryGeneratorAction->SetWorldExtent(worldExtent);}
 }
 
-void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* element)
+void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* element,
+						    const G4String&           originalName)
 {
   G4String placementName = element->GetPlacementName() + "_pv";
   G4Transform3D* placementTransform = element->GetPlacementTransform();
   G4int copyNumber = element->GetCopyNo();
-  // auto pv =
   new G4PVPlacement(*placementTransform,
                     placementName,
                     element->GetContainerLogicalVolume(),
@@ -317,7 +322,10 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
   G4Transform3D elCentreToStart = el->TransformToStart();
   G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
   linkRegistry->Register(el, globalToStart);
-
+  
+  G4ThreeVector zOffset = G4ThreeVector(0,0,BDSGlobalConstants::Instance()->LengthSafety()+BDSSamplerPlane::ChordLength());
+  G4Transform3D samplerPosition = globalToStart * G4Transform3D(G4RotationMatrix(), globalToStart.getRotation()*zOffset);
+  
   if (element->GetSamplerType() == BDSSamplerType::plane && samplerWorldID >= 0)
     {
       auto samplerWorldRaw = GetParallelWorld(samplerWorldID);
@@ -326,24 +334,19 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
         {return;}
       
       BDSSampler* sampler = samplerWorld->GeneralPlane();
-      G4String name = element->GetSamplerName();
-      G4double sEnd = element->GetSPositionEnd();
-      G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
+      G4String samplerName = originallName + "_in";
+      G4double sStart = element->GetSPositionStart();
 
-      G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
-									sampler,
-									*pt,
-									sEnd,
-									element);
+      G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName, sampler, samplerPosition, sStart, element);
 
       G4LogicalVolume* samplerWorldLV = samplerWorld->WorldLV();
-      new G4PVPlacement(*pt,
-                        sampler->GetContainerLogicalVolume(), // logical volume
-			                  name + "_pv",     // name of placement
-			                  samplerWorldLV,   // mother volume
-			                  false,            // no boolean operation
-			                  samplerID,        // copy number
-			                  false);
+      new G4PVPlacement(samplerPosition,
+                        sampler->GetContainerLogicalVolume(),
+			samplerName + "_pv",
+			samplerWorldLV,
+			false,
+			samplerID,
+			false);
     }
 }
 

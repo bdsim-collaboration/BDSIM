@@ -36,13 +36,12 @@ BDSLinkRegistry::~BDSLinkRegistry()
 void BDSLinkRegistry::Register(BDSLinkOpaqueBox*    componentIn,
 			       const G4Transform3D& globalToInputIn)
 {
-  G4int newID = (G4int)byName.size();
+  G4int newID = componentIn->PlaceOutputSampler();
   G4cout << "New ID " << newID << " for " << componentIn->LinkName() << G4endl;
   G4bool noRotation = !(componentIn->Angled());
   BDSLinkRegistry::LinkEntry le = {noRotation, componentIn, globalToInputIn, globalToInputIn.inverse(), newID};
   byName[componentIn->LinkName()] = le;
   byID[newID] = le;
-  componentIn->PlaceOutputSampler(newID);
 }
 
 const G4Transform3D& BDSLinkRegistry::Transform(const std::string& name) const
