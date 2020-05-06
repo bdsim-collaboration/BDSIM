@@ -20,10 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSLINKCOMPONENT_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSLinkOpaqueBox.hh"
 
 #include "globals.hh" // geant4 types / globals
-
-class BDSLinkOpaqueBox;
 
 /**
  * @brief A BDSAcceleratorComponent wrapper for BDSLinkOpaqueBox.
@@ -52,7 +51,8 @@ public:
   virtual ~BDSLinkComponent(){;}
 
   /// Accessor.
-  BDSLinkOpaqueBox* Component() const {return component;}
+  inline BDSLinkOpaqueBox* Component() const {return component;}
+  inline G4String LinkName() const {return component ? component->LinkName() : "unknown";}
 
 private:
   /// Private default constructor to force use of given one.
