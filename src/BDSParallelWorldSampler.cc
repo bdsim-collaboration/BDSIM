@@ -55,7 +55,8 @@ BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
   G4VUserParallelWorld("SamplerWorld_" + name),
   suffix(name),
   samplerWorldVis(nullptr),
-  generalPlane(nullptr)
+  generalPlane(nullptr),
+  samplerWorldLV(nullptr)
 {;}
 
 BDSParallelWorldSampler::~BDSParallelWorldSampler()
@@ -71,7 +72,7 @@ void BDSParallelWorldSampler::Construct()
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   G4VPhysicalVolume* samplerWorld   = GetWorld();
-  G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
+  samplerWorldLV = samplerWorld->GetLogicalVolume();
 
   samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
@@ -176,7 +177,7 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 									element);
 
       G4VPhysicalVolume* samplerWorld   = GetWorld();
-      G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
+      samplerWorldLV = samplerWorld->GetLogicalVolume();
       const G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
       // record placements for cleaning up at destruction.
       G4PVPlacement* pl = new G4PVPlacement(*pt,              // placement transform
