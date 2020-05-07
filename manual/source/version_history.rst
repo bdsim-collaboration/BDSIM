@@ -399,6 +399,9 @@ Bug Fixes
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix crystal positioning in `crystalcol`. Previously, the crystal centre was placed at `xsize` but
+  it should be in the inside edge to match other collimators. The inside of the edge is now aligned
+  to `xsize`.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
   They're now filled correctly.
 * Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in
