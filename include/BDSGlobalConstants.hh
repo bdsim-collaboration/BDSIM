@@ -389,7 +389,7 @@ private:
   /// Process the option string and fill the below vector.
   void ProcessTrajectoryELossSRange();
   
-  /// Pairs of S ranges to link trajectores to.
+  /// Pairs of S ranges to link trajectories to.
   std::vector<std::pair<G4double, G4double> > elossSRange;
 };
 
