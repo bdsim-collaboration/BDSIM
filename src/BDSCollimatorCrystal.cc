@@ -105,7 +105,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalLeft)
     {
       G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
-      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft,0,0);
+      G4double halfThickness         = crystalInfoLeft->lengthX * 0.5;
+      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft + halfThickness,0,0);
       G4ThreeVector placementOffsetL = objectOffset + colOffsetL; // 'L' in p offset to avoid class with BDSGeometry Component member
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisLeft))
@@ -141,7 +142,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalRight)
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
-      G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
+      G4double halfThickness         = crystalInfoRight->lengthX * 0.5;
+      G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+halfThickness),0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisRight))
