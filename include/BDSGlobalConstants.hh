@@ -262,6 +262,7 @@ public:
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
+  inline G4bool   WorldMaterialSet()         const {return G4bool   (options.HasBeenSet("worldMaterial"));}
   inline G4String WorldGeometryFile()        const {return G4String(options.worldGeometryFile);}
   inline G4bool   AutoColourWorldGeometryFile()  const {return G4bool  (options.autoColourWorldGeometryFile);}
   inline G4String ImportanceWorldGeometryFile()  const {return G4String(options.importanceWorldGeometryFile);}
@@ -391,7 +392,7 @@ private:
   /// Process the option string and fill the below vector.
   void ProcessTrajectoryELossSRange();
   
-  /// Pairs of S ranges to link trajectores to.
+  /// Pairs of S ranges to link trajectories to.
   std::vector<std::pair<G4double, G4double> > elossSRange;
 };
 
