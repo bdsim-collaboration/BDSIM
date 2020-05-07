@@ -196,7 +196,10 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 			   recipe->lengthZ * 0.5);
 
   CommonConstruction(nameIn, recipe);
-
+  
+  // calculate offset in x due to angle so centre of input face lines up at x=0
+  G4double dx = 0.5*recipe->lengthZ * std::sin(0.5 * recipe->bendingAngleYAxis);
+  placementOffset = G4ThreeVector(dx, 0, 0);
   BDSExtent ext = BDSExtent(recipe->lengthX * 0.5,
 			    recipe->lengthY * 0.5,
 			    recipe->lengthZ * 0.5);
@@ -282,9 +285,13 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 				      offset);
   
   CommonConstruction(nameIn, recipe);
-
+  
+  // calculate offset in x due to angle so centre of input face lines up at x=0
+  G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
+  G4double bendingRadiusH = BendingRadiusHorizontal(recipe);
+  G4double dx = bendingRadiusH * std::sin(halfAngle) * std::tan(halfAngle);
   // placement offset - no rotation as we've rotated the solid internally
-  placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
+  placementOffset = G4ThreeVector(-bendingRadiusH + dx, 0, 0);
 
   BDSExtent ext = CalculateExtents(ba, xBR, thickness, recipe);
   

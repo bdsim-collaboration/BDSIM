@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryComponent.hh"
 #include "BDSSDType.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Material.hh"
@@ -105,7 +106,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalLeft)
     {
       G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
-      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft,0,0);
+      G4double halfThickness         = crystalInfoLeft->lengthX * 0.5;
+      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft + halfThickness,0,0);
       G4ThreeVector placementOffsetL = objectOffset + colOffsetL; // 'L' in p offset to avoid class with BDSGeometry Component member
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisLeft))
@@ -121,10 +123,15 @@ void BDSCollimatorCrystal::Build()
 
       // check if it'll fit..
       BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffsetL);
-      BDSExtent thisExtent = GetExtent();
+      BDSExtent thisExtent = GetExtent(); // actually outer extent of beam pipe
       G4bool safe = thisExtent.Encompasses(extShifted);
-      if (!safe)
-	{G4cout << __METHOD_NAME__ << "Left crystal potential overlap in component \"" << name << "\"" << G4endl;}
+      // second stricter check - TODO - use aperture check in future
+      BDSExtent innerRadius = BDSExtent(beamPipeInfo->IndicativeRadiusInner(),
+                                        beamPipeInfo->IndicativeRadiusInner(),
+                                        0.5*chordLength);
+      G4bool safe2 = innerRadius.Encompasses(extShifted);
+      if (!safe || !safe2)
+	      {BDS::Warning(__METHOD_NAME__, "Left crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
 
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
@@ -141,7 +148,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalRight)
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
-      G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
+      G4double halfThickness         = crystalInfoRight->lengthX * 0.5;
+      G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+halfThickness),0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisRight))
@@ -159,8 +167,13 @@ void BDSCollimatorCrystal::Build()
       BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffsetL);
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
-      if (!safe)
-	{G4cout << __METHOD_NAME__ << "Right crystal potential overlap in component \"" << name << "\"" << G4endl;}
+      // second stricter check - TODO - use aperture check in future
+      BDSExtent innerRadius = BDSExtent(beamPipeInfo->IndicativeRadiusInner(),
+                                        beamPipeInfo->IndicativeRadiusInner(),
+                                        0.5*chordLength);
+      G4bool safe2 = innerRadius.Encompasses(extShifted);
+      if (!safe || !safe2)
+        {BDS::Warning(__METHOD_NAME__, "Right crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisRight, "Right");
 
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
