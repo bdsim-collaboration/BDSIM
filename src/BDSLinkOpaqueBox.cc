@@ -53,12 +53,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
 				   BDSTiltOffset* tiltOffsetIn,
-				   G4double outputSamplerRadiusIn,
-				   G4bool   sampleIn):
+				   G4double outputSamplerRadiusIn):
   BDSGeometryComponent(nullptr, nullptr),
   component(acceleratorComponentIn),
   outputSamplerRadius(outputSamplerRadiusIn),
-  sampleIncoming(sampleIn),
   sampler(nullptr)
 {
   if (tiltOffsetIn->HasFiniteTilt() && BDS::IsFinite(component->GetAngle()))

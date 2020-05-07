@@ -473,7 +473,8 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     isACrystal,
 				     crystalAngle,
 				     sampleIn);
-  nameToElementIndex[collimatorName] = construction->NumberOfElements() - 1;
+  // update this class's nameToElementIndex map
+  nameToElementIndex = construction->NameToElementIndex();
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = gm->CloseGeometry();

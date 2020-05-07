@@ -154,7 +154,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
     {
       BDSLinkComponent* lc = dynamic_cast<BDSLinkComponent*>(element->GetAcceleratorComponent());
       G4String name = lc ? lc->LinkName() : element->GetSamplerName();
-      PlaceOneComponent(element, name);
+      G4int linkID = PlaceOneComponent(element, name);
+      nameToElementIndex[name] = linkID;
     }
 
   delete componentFactory;
@@ -163,7 +164,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 }
 
 void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collimatorName,
-						       const std::string& materialName,
+						                                           const std::string& materialName,
                                                        G4double length,
                                                        G4double halfApertureLeft,
                                                        G4double halfApertureRight,
@@ -174,7 +175,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
                                                        G4bool   buildRightJaw,
                                                        G4bool   /*isACrystal*/,
                                                        G4double crystalAngle,
-                                                       G4bool   sampleIn)
+                                                       G4bool   /*sampleIn*/)
 {
   auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
 
@@ -256,21 +257,20 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   BDSTiltOffset* to = new BDSTiltOffset(el.offsetX * CLHEP::m,
                                         el.offsetY * CLHEP::m,
                                         el.tilt * CLHEP::rad);
-  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, component->GetExtent().MaximumAbsTransverse(),
-                                                     sampleIn);
+  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, component->GetExtent().MaximumAbsTransverse());
 
   // add to beam line
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
-  nameToElementIndex[collimatorName] = (G4int)linkBeamline->size();
   linkBeamline->AddComponent(comp, nullptr, BDSSamplerType::plane, comp->GetName() + "_out");
 
   // update world extents and world solid
   UpdateWorldSolid();
 
   // place that one element
-  PlaceOneComponent(linkBeamline->back(), collimatorName);
+  G4int linkID = PlaceOneComponent(linkBeamline->back(), collimatorName);
+  nameToElementIndex[collimatorName] = linkID;
 
   // update crystal biasing
   BuildPhysicsBias();
@@ -301,7 +301,7 @@ void BDSLinkDetectorConstruction::UpdateWorldSolid()
     {primaryGeneratorAction->SetWorldExtent(worldExtent);}
 }
 
-void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* element,
+G4int BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* element,
 						    const G4String&           originalName)
 {
   G4String placementName = element->GetPlacementName() + "_pv";
@@ -317,11 +317,11 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
 
   auto lc = dynamic_cast<BDSLinkComponent*>(element->GetAcceleratorComponent());
   if (!lc)
-    {return;}
+    {return -1;}
   BDSLinkOpaqueBox* el = lc->Component();
   G4Transform3D elCentreToStart = el->TransformToStart();
   G4Transform3D globalToStart = elCentreToStart * (*placementTransform);
-  linkRegistry->Register(el, globalToStart);
+  G4int linkID = linkRegistry->Register(el, globalToStart);
   
   G4ThreeVector zOffset = G4ThreeVector(0,0,BDSGlobalConstants::Instance()->LengthSafety()+BDSSamplerPlane::ChordLength());
   G4Transform3D samplerPosition = globalToStart * G4Transform3D(G4RotationMatrix(), globalToStart.getRotation()*zOffset);
@@ -331,7 +331,7 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
       auto samplerWorldRaw = GetParallelWorld(samplerWorldID);
       auto samplerWorld = dynamic_cast<BDSParallelWorldSampler*>(samplerWorldRaw);
       if (!samplerWorld)
-        {return;}
+        {return -1;}
       
       BDSSampler* sampler = samplerWorld->GeneralPlane();
       G4String samplerName = originalName + "_in";
@@ -348,6 +348,7 @@ void BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* el
 			samplerID,
 			false);
     }
+  return linkID;
 }
 
 void BDSLinkDetectorConstruction::BuildPhysicsBias()
