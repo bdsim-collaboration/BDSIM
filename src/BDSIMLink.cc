@@ -332,6 +332,12 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
 
   const auto& nameInds = construction->NameToElementIndex();
   nameToElementIndex.insert(nameInds.begin(), nameInds.end());
+  
+  if (bdsOutput)
+    {
+      bdsOutput->InitialiseGeometryDependent();
+      bdsOutput->NewFile();
+    }
 
   initialised = true;
   return 0;
@@ -388,6 +394,8 @@ BDSIMLink::~BDSIMLink()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
+  if (bdsOutput)
+    {bdsOutput->CloseFile();}
   delete bdsOutput;
   delete runAction;
 
