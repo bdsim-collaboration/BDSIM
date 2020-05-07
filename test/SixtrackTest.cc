@@ -102,7 +102,7 @@ int main(int /*argc2*/, char** /*argv2*/)
 
       AddParticle(stp);
       
-      bds->SelectLinkElement(collimator.name);
+      bds->SelectLinkElement(collimator.name, true);
       bds->BeamOn((G4int)stp->Size());
       Summarise(bds);
     }
