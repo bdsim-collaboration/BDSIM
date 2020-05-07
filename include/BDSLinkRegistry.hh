@@ -39,8 +39,8 @@ public:
   BDSLinkRegistry();
   ~BDSLinkRegistry();
 
-  void Register(BDSLinkOpaqueBox*    componentIn,
-		const G4Transform3D& globalToInputIn);
+  G4int Register(BDSLinkOpaqueBox*    componentIn,
+		             const G4Transform3D& globalToInputIn);
 
   const G4Transform3D& Transform(const std::string& name) const;
   const G4Transform3D& Transform(G4int ID) const;

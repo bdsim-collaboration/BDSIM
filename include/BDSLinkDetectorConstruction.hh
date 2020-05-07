@@ -81,7 +81,7 @@ public:
   void UpdateWorldSolid();
 
   /// Place a beam line element in the world.
-  void PlaceOneComponent(const BDSBeamlineElement* element, const G4String& originalName);
+  G4int PlaceOneComponent(const BDSBeamlineElement* element, const G4String& originalName);
 
   G4Box* worldSolid;
   G4VPhysicalVolume* worldPV;
