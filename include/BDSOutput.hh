@@ -63,9 +63,9 @@ class BDSOutput: protected BDSOutputStructures
 {
 public:
   /// Constructor with base file name (without extension or number suffix).
-  BDSOutput(G4String baseFileNameIn,
-	    G4String fileExtentionIn,
-	    G4int    fileNumberOffset);
+  BDSOutput(const G4String& baseFileNameIn,
+	    const G4String& fileExtentionIn,
+	    G4int           fileNumberOffset);
   virtual ~BDSOutput(){;}
 
   /// Open a new file. This should call WriteHeader() in it.

@@ -41,8 +41,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TObject.h"
 #include "TTree.h"
 
-BDSOutputROOT::BDSOutputROOT(G4String fileName,
-			     G4int    fileNumberOffset):
+BDSOutputROOT::BDSOutputROOT(const G4String& fileName,
+			     G4int           fileNumberOffset):
   BDSOutput(fileName, ".root", fileNumberOffset),
   theRootOutputFile(nullptr),
   theHeaderOutputTree(nullptr),

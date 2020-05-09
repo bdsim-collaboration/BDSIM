@@ -79,9 +79,9 @@ const std::set<G4String> BDSOutput::protectedNames = {
   "PrimaryFirstHit", "PrimaryLastHit", "Trajectory", "ApertureImpacts"
 };
 
-BDSOutput::BDSOutput(G4String baseFileNameIn,
-		     G4String fileExtensionIn,
-		     G4int    fileNumberOffset):
+BDSOutput::BDSOutput(const G4String& baseFileNameIn,
+		     const G4String& fileExtensionIn,
+		     G4int           fileNumberOffset):
   BDSOutputStructures(BDSGlobalConstants::Instance()),
   baseFileName(baseFileNameIn),
   fileExtension(fileExtensionIn),

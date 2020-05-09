@@ -39,8 +39,8 @@ class BDSOutputROOT: public BDSOutput
 public:
   /// Constructor with default file name (without extension or number suffix).
   /// Also, file number offset to start counting suffix from.
-  BDSOutputROOT(G4String fileName,
-		G4int    fileNumberOffset);
+  BDSOutputROOT(const G4String& fileName,
+		G4int           fileNumberOffset);
   virtual ~BDSOutputROOT();
 
   virtual void NewFile();    ///< Open a new file.
