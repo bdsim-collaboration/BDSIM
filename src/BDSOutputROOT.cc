@@ -56,7 +56,7 @@ BDSOutputROOT::BDSOutputROOT(G4String fileName,
 
 BDSOutputROOT::~BDSOutputROOT()
 {
-  CloseFile();
+  Close();
 }
 
 void BDSOutputROOT::NewFile() 
@@ -193,16 +193,21 @@ void BDSOutputROOT::WriteFileRunLevel()
 
 void BDSOutputROOT::CloseFile()
 {
+  Close();
+}
+
+void BDSOutputROOT::Close()
+{
   if (theRootOutputFile)
-      {
-	if (theRootOutputFile->IsOpen())
-	  {
-	    theRootOutputFile->cd();
-	    theRootOutputFile->Write(0,TObject::kOverwrite);
-	    G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
-	    theRootOutputFile->Close();
-	    delete theRootOutputFile;
-	    theRootOutputFile = nullptr;
-	  }
-      }
+    {
+      if (theRootOutputFile->IsOpen())
+	{
+	  theRootOutputFile->cd();
+	  theRootOutputFile->Write(0,TObject::kOverwrite);
+	  G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
+	  theRootOutputFile->Close();
+	  delete theRootOutputFile;
+	  theRootOutputFile = nullptr;
+	}
+    }
 }

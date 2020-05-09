@@ -72,6 +72,9 @@ private:
 
   /// No default constructor.
   BDSOutputROOT() = delete;
+  /// An implementation only in this class. We need a non-virtual function to
+  /// call in the class destructor.
+  void Close();
   
   TFile* theRootOutputFile;    ///< Output file.
   TTree* theHeaderOutputTree;  ///< Header Tree.
