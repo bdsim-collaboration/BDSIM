@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <map>
+#include <set>
 
 BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4double    lengthIn,
@@ -183,6 +184,8 @@ void BDSCollimatorJaw::Build()
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(leftJawLV);
+      // register it in a set of collimator logical volumes
+      BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(leftJawLV);
       if (sensitiveOuter)
 	{RegisterSensitiveVolume(leftJawLV, BDSSDType::collimatorcomplete);}
       
@@ -215,6 +218,8 @@ void BDSCollimatorJaw::Build()
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(rightJawLV);
+      // register it in a set of collimator logical volumes
+      BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(rightJawLV);
       if (sensitiveOuter)
 	{RegisterSensitiveVolume(rightJawLV, BDSSDType::collimatorcomplete);}
       

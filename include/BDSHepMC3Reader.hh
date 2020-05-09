@@ -59,7 +59,8 @@ public:
   /// for the reference coordinates and offset of the beam point.
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
-		  BDSBunchEventGenerator* bunchIn);
+		  BDSBunchEventGenerator* bunchIn,
+		  G4bool removeUnstableWithoutDecayIn = true);
   virtual ~BDSHepMC3Reader();
 
   /// Accessor.
@@ -105,6 +106,7 @@ private:
   HepMC3::Reader*           reader;
   G4String                  fileName;
   BDSBunchEventGenerator*   bunch;
+  G4bool                    removeUnstableWithoutDecay;
   BDSEventGeneratorFileType fileType;
 };
 

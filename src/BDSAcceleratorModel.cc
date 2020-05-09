@@ -167,7 +167,7 @@ G4Region* BDSAcceleratorModel::Region(G4String name) const
 
 std::set<G4LogicalVolume*>* BDSAcceleratorModel::VolumeSet(G4String name)
 {
-  if (volumeRegistries.find(name) == volumeRegistries.end()) // no such registry -> reate one
+  if (volumeRegistries.find(name) == volumeRegistries.end()) // no such registry -> create one
     {volumeRegistries[name] = new std::set<G4LogicalVolume*>();}
   return volumeRegistries[name];
 }

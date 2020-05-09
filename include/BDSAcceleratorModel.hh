@@ -61,7 +61,7 @@ public:
   static BDSAcceleratorModel* Instance();
   ~BDSAcceleratorModel();
 
-  /// @{ Register consituent of world.
+  /// @{ Register constituent of world.
   inline void RegisterWorldPV(G4VPhysicalVolume* worldIn) {worldPV = worldIn;}
   inline void RegisterWorldLV(G4LogicalVolume*   worldIn) {worldLV = worldIn;}
   inline void RegisterWorldSolid(G4VSolid*       worldIn) {worldSolid = worldIn;}
