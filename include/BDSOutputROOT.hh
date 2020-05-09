@@ -37,6 +37,9 @@ class TTree;
 class BDSOutputROOT: public BDSOutput 
 {
 public:
+  /// No default constructor.
+  BDSOutputROOT() = delete;
+  
   /// Constructor with default file name (without extension or number suffix).
   /// Also, file number offset to start counting suffix from.
   BDSOutputROOT(const G4String& fileName,
@@ -70,8 +73,6 @@ private:
   /// structures are copied.
   virtual void WriteFileRunLevel();
 
-  /// No default constructor.
-  BDSOutputROOT() = delete;
   /// An implementation only in this class. We need a non-virtual function to
   /// call in the class destructor.
   void Close();
