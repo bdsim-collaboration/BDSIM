@@ -83,6 +83,8 @@ public:
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
   
+  virtual void UpdateSamplers() {UpdateSamplerStructures();}
+  
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
 

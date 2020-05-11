@@ -63,6 +63,9 @@ protected:
 
   /// Construct samplers.
   void InitialiseSamplers();
+  
+  /// TODO - for sixtrack only - update samplers.
+  G4int UpdateSamplerStructures();
 
   /// Extract number of collimators and their names from beam line. Two stage
   /// initialisation for collimators so histograms can be made dynamically if
