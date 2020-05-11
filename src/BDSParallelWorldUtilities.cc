@@ -148,7 +148,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 
 std::vector<G4ParallelWorldPhysics*> BDS::ConstructParallelWorldPhysics(const std::vector<G4VUserParallelWorld*>& worlds)
 {
-  std::vector<G4ParallelWorldPhysics*> result(worlds.size());
+  std::vector<G4ParallelWorldPhysics*> result;
   for (auto world : worlds)
     {result.push_back(new G4ParallelWorldPhysics(world->GetName()));}
   return result;
