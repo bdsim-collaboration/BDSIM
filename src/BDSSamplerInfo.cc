@@ -34,4 +34,7 @@ BDSSamplerInfo::BDSSamplerInfo(const G4String&           nameIn,
   sPosition(sPositionIn),
   element(elementIn),
   uniqueName(uniqueNameIn)
-{;}
+{
+  if (uniqueName.empty())
+    {uniqueName = name;}
+}
