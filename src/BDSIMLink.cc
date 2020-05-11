@@ -206,7 +206,7 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
   G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
-
+  BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
