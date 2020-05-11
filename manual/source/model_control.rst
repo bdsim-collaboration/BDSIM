@@ -3032,7 +3032,7 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
 * All scorers include the weight associated with the particle, which is only different from
   1 if biasing is used. This ensures the correct physical result is always obtained.
 * As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
 .. _scoring-mesh:
@@ -3171,31 +3171,34 @@ Scorer Types
 
 The following are accepted scorer types.
 
+* As the histogram is per-event, the quantity stored is per-event also. So, if there
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
-+---------------------------+---------------------------------------------------+-----------------+
-| **Scorer Type**           | **Description**                                   | **Units**       |
-+===========================+===================================================+=================+
-| cellcharge                | The charge deposited in the cell                  | e-              |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellflux                  | The flux (step length / cell volume)              | :math:`cm^{-2}` |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellfluxscaled            | The flux (step length / cell volume) multiplied   | :math:`cm^{-2}` |
-|                           | a factor as a function of kinetic energy as       |                 |
-|                           | specified in the :code:`conversionFactorFile`.    |                 |
-|                           | Default factor is 1.0.                            |                 |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellfluxscaledperparticle | Similar to `cellfluxscaled` but per particle      | :math:`cm^{-2}` |
-|                           | species. Specify :code:`conversionFilePath` to    |                 |
-|                           | files (see below). Default factor is 0 for all    |                 |
-|                           | particles and energies.                           |                 |
-+---------------------------+---------------------------------------------------+-----------------+
-| depositeddose             | The dose (energy deposited per unit mass)         | Gray (J/kg)     |
-+---------------------------+---------------------------------------------------+-----------------+
-| depositedenergy           | The deposited energy in the cell                  | J               |
-+---------------------------+---------------------------------------------------+-----------------+
-| population                | The number of particles passing through the cell  | NA              |
-+---------------------------+---------------------------------------------------+-----------------+
++---------------------------+-----------------+--------------------------------------------------+
+| **Scorer Type**           | **Units**       | **Description**                                  |
++===========================+=================+==================================================+
+| cellcharge                | e-              |The charge deposited in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| cellflux                  | :math:`cm^{-2}` | The flux (step length / cell volume)             | 
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  | 
+|                           |                 | a factor as a function of kinetic energy as      |
+|                           |                 | specified in the :code:`conversionFactorFile`.   |
+|                           |                 | Default factor is 1.0.                           |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     | 
+|                           |                 | species. Specify :code:`conversionFilePath` to   |
+|                           |                 | files (see below). Default factor is 0 for all   |
+|                           |                 | particles and energies.                          |
++---------------------------+-----------------+--------------------------------------------------+
+| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         | 
++---------------------------+-----------------+--------------------------------------------------+
+| depositedenergy           | GeV             |The deposited energy in the cell                  | 
++---------------------------+-----------------+--------------------------------------------------+
+| population                | NA              |The number of particles passing through the cell  | 
++---------------------------+-----------------+--------------------------------------------------+
 
 .. _scorer-conversion-factor-file:
 
