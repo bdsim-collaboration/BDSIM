@@ -139,7 +139,7 @@ BDSSDManager::BDSSDManager()
   samplerCylinder = new BDSSDSampler("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
-  samplerLink = new BDSSDSamplerLink("plane");
+  samplerLink = new BDSSDSamplerLink("link");
   SDMan->AddNewDetector(samplerLink);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
