@@ -48,6 +48,8 @@ public:
 
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
+  
+  virtual void UpdateSamplers();
 
 private:
   /// Copy header and write to file.
