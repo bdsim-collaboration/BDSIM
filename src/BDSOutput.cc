@@ -50,7 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
-
+#include "BDSScorerHistogramDef.hh"
+#include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectoryPoint.hh"
