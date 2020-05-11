@@ -90,7 +90,7 @@ const std::set<G4String> BDSOutput::protectedNames = {
 
 BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 		     const G4String& fileExtensionIn,
-		     G4int    fileNumberOffset):
+		     G4int           fileNumberOffset):
   BDSOutputStructures(BDSGlobalConstants::Instance()),
   baseFileName(baseFileNameIn),
   fileExtension(fileExtensionIn),
