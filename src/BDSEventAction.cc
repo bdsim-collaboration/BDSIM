@@ -379,6 +379,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    evt->GetPrimaryVertex(),
 		    SampHC,
 		    hitsCylinder,
+		    nullptr,
 		    eCounterHits,
 		    eCounterFullHits,
 		    eCounterVacuumHits,

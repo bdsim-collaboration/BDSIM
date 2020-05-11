@@ -117,6 +117,7 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 		                evt->GetPrimaryVertex(),
 		                sampHC,
 		                nullptr,
+                    samplerLink,
                     nullptr,
 		                nullptr,
                     nullptr,

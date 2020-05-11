@@ -43,6 +43,8 @@ class BDSParticleCoordsFullGlobal;
 class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
+class BDSHitSamplerLink;
+typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
@@ -115,6 +117,7 @@ public:
 		 const G4PrimaryVertex*                         vertex,
 		 const BDSHitsCollectionSampler*                samplerHitsPlane,
 		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
@@ -210,6 +213,8 @@ private:
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
+  
+  void FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits);
 
   /// Fill the hit where the primary particle impact.
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
