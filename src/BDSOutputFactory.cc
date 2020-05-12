@@ -23,10 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputNone.hh"
 #include "BDSOutputROOT.hh"
 
-
-BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
-					  G4String      fileName,
-					  G4int         fileNumberOffset)
+BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType   format,
+					  const G4String& fileName,
+					  G4int           fileNumberOffset,
+					  G4int           compressionLevel)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "setting up output." << G4endl;
@@ -38,7 +38,7 @@ BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
     case BDSOutputType::none:
       {result = new BDSOutputNone(); break;}
     case BDSOutputType::rootevent:
-      {result = new BDSOutputROOT(fileName, fileNumberOffset); break;}
+      {result = new BDSOutputROOT(fileName, fileNumberOffset, compressionLevel); break;}
     default:
       {result = new BDSOutputNone(); break;} // absolute default - should not reach this
     }
