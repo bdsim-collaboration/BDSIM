@@ -52,10 +52,15 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
+|                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
+|                                    | compression and 1 minimal. 5 is the default.                       |
++------------------------------------+--------------------------------------------------------------------+
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
+
 
 
 General

@@ -2355,6 +2355,10 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | nperfile                           | Number of events to record per output file                         |
 +------------------------------------+--------------------------------------------------------------------+
+| outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
+|                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
+|                                    | compression and 1 minimal. 5 is the default.                       |
++------------------------------------+--------------------------------------------------------------------+
 | sensitiveOuter                     | Whether the outer part of each component (other than the beam      |
 |                                    | pipe) records energy loss. `storeELoss` is required to be on for   |
 |                                    | this to work. The user may turn off energy loss from the           |
