@@ -36,15 +36,15 @@ class BDSCrystalInfo;
 class BDSCollimatorCrystal: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimatorCrystal(G4String           name,
-		       G4double           length,
-		       BDSBeamPipeInfo*   beamPipeInfoIn,
-		       BDSCrystalInfo*    crystalInfoLeftIn,
-		       BDSCrystalInfo*    crystalInfoRightIn = nullptr,
-		       const G4double&    halfGapLeftIn     = 0,
-		       const G4double&    halfGapRightIn    = 0,
-		       const G4double&    angleYAxisLeftIn  = 0,
-		       const G4double&    angleYAxisRightIn = 0);
+  BDSCollimatorCrystal(const G4String&  name,
+		       G4double         length,
+		       BDSBeamPipeInfo* beamPipeInfoIn,
+		       BDSCrystalInfo*  crystalInfoLeftIn,
+		       BDSCrystalInfo*  crystalInfoRightIn = nullptr,
+		       G4double         halfGapLeftIn      = 0,
+		       G4double         halfGapRightIn     = 0,
+		       G4double         angleYAxisLeftIn   = 0,
+		       G4double         angleYAxisRightIn  = 0);
   virtual ~BDSCollimatorCrystal();
 
   /// Override base class version and return crystal material.
@@ -64,7 +64,7 @@ private:
   /// If the crystal will cause an overlap in the vacuum volume due to
   /// its rotation, print warning and exit.
   void LongitudinalOverlap(const BDSExtent& extCrystal,
-			   const G4double&  crystalAngle,
+			   G4double         crystalAngle,
 			   const G4String& side) const;
 
   /// Register logical volumes in crystals and collimator sets in accelerator model.
