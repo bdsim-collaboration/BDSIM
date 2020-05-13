@@ -39,15 +39,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn, 
-					   G4double           lengthIn,
-					   BDSBeamPipeInfo*   beamPipeInfoIn,
-					   BDSCrystalInfo*    crystalInfoLeftIn,
-					   BDSCrystalInfo*    crystalInfoRightIn,
-					   const G4double&    halfGapLeftIn,
-					   const G4double&    halfGapRightIn,
-					   const G4double&    angleYAxisLeftIn,
-					   const G4double&    angleYAxisRightIn):
+BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn, 
+					   G4double         lengthIn,
+					   BDSBeamPipeInfo* beamPipeInfoIn,
+					   BDSCrystalInfo*  crystalInfoLeftIn,
+					   BDSCrystalInfo*  crystalInfoRightIn,
+					   G4double         halfGapLeftIn,
+					   G4double         halfGapRightIn,
+					   G4double         angleYAxisLeftIn,
+					   G4double         angleYAxisRightIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "crystalcol", beamPipeInfoIn),
   crystalInfoLeft(crystalInfoLeftIn),
   crystalInfoRight(crystalInfoRightIn),
@@ -201,7 +201,7 @@ G4String BDSCollimatorCrystal::Material() const
 }
 
 void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
-					       const G4double&  crystalAngle,
+					       G4double         crystalAngle,
 					       const G4String&  side) const
 {
   G4double zExt = extCrystal.MaximumZ();
