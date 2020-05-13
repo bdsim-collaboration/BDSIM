@@ -169,10 +169,11 @@ void BDSCrystalFactory::SetUserLimits(G4double length)
   crystalLV->SetUserLimits(ul);
 }
 
-BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSExtent& extent)
+BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSCrystalInfo* recipe,
+						  const BDSExtent& extent)
 {  
   // build the BDSCrystal instance and return it
-  BDSCrystal* aCrystal = new BDSCrystal(crystalSolid, crystalLV,
+  BDSCrystal* aCrystal = new BDSCrystal(recipe, crystalSolid, crystalLV,
 					extent, placementOffset, placementRotation);
 
   // register objects
@@ -202,7 +203,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 			    recipe->lengthY * 0.5,
 			    recipe->lengthZ * 0.5);
   
-  return BuildCrystalObject(ext); // no placement offset - leave as default
+  return BuildCrystalObject(recipe, ext); // no placement offset - leave as default
 }
 
 void BDSCrystalFactory::CalculateSolidAngles(G4double bendingAngle,
@@ -293,7 +294,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 
   BDSExtent ext = CalculateExtents(ba, xBR, thickness, recipe);
   
-  return BuildCrystalObject(ext);
+  return BuildCrystalObject(recipe, ext);
 }
 
 BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
@@ -385,5 +386,5 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   G4double xHi  = ext.XPos() + xmax;
   BDSExtent extTorus = BDSExtent(xLow, xHi, ext.YNeg(), ext.YPos(), ext.ZNeg(), ext.ZPos());
   
-  return BuildCrystalObject(extTorus);
+  return BuildCrystalObject(recipe, extTorus);
 }

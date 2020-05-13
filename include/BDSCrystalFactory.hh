@@ -66,7 +66,8 @@ private:
 			  const BDSCrystalInfo* recipe);
   
   /// build beampipe and register logical volumes
-  BDSCrystal* BuildCrystalObject(const BDSExtent& extent);
+  BDSCrystal* BuildCrystalObject(const BDSCrystalInfo*  recipe,
+				 const BDSExtent& extent);
   
   void SetVisAttributes();                    ///< Set visual attributes.  
   void SetUserLimits(G4double length); ///< Set user limits.
