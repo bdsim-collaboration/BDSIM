@@ -94,19 +94,6 @@ private:
 			     G4double xBendingRadius,
 			     G4double xThickness,
 			     const BDSCrystalInfo* recipe) const;
-
-  /// Utility function to calculate bending radius.
-  inline G4double BendingRadius(const G4double& length,
-				const G4double& angle) const
-  {return length / angle;}
-
-  /// Return bending radius in horizontal.
-  inline G4double BendingRadiusHorizontal(const BDSCrystalInfo* recipe) const
-  {return BendingRadius(recipe->lengthZ, recipe->bendingAngleYAxis);}
-
-  /// Return bending radius in vertical.
-  inline G4double BendingRadiusVertical(const BDSCrystalInfo* recipe) const 
-  {return BendingRadius(recipe->lengthY, recipe->bendingAngleZAxis);}
   
   const G4double   maxStepFactor;      ///< Fraction of length for maximum step in user limits.
   const G4int      nPoints;            ///< Number of points to split torus into.
