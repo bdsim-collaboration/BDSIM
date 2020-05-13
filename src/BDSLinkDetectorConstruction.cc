@@ -242,6 +242,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
 
       el.type = GMAD::ElementType::_CRYSTALCOL;
       el.apertureType = "circularvacuum";
+      el.aper1 = 50*CLHEP::cm;
       // need a small margin in length as crystal may have angled face and be rotated
       el.l += 10e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
       if (collimatorName.find("2") != std::string::npos) // b2
