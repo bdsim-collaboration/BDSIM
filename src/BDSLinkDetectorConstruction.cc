@@ -186,8 +186,13 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
      {"tcpv.a6l7.b1", "qmp34"}, // b1 v
      {"tcpv.a6r7.b2", "qmp53"}  // b2 v
     };
-  auto searchC = collimatorToCrystal.find(collimatorName); // will use later if needed
+  G4String collimatorLower = collimatorName;
+  collimatorLower.toLower();
+  auto searchC = collimatorToCrystal.find(collimatorLower); // will use later if needed
   G4bool isACrystal = searchC != collimatorToCrystal.end();
+  //G4cout << "XYZ isACrystal " << isACrystal << G4endl;
+  //if (isACrystal)
+  //{G4cout << "crystal name " << searchC->first << " " << searchC->second << G4endl;}
 
   std::map<std::string, std::string> sixtrackToBDSIM =
       {
@@ -228,9 +233,11 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
     {
       // find the bending angle of this particular crystal
       // so we can add half of that on for the BDSIM convention of the 0 about the centre for crystals
-      BDSCrystalInfo* ci = componentFactory->PrepareCrystalInfo(searchC->second);
+      G4String crystalNameC = searchC->second;
+      //G4cout << "crystal name " << crystalNameC << G4endl;
+      BDSCrystalInfo* ci = componentFactory->PrepareCrystalInfo(crystalNameC);
       crystalAngle *= CLHEP::rad;
-      crystalAngle += 0.5 * ci->bendingAngleYAxis;
+      //crystalAngle += 0.5 * ci->bendingAngleYAxis;
       delete ci; // no longer needed
 
       el.type = GMAD::ElementType::_CRYSTALCOL;
@@ -239,14 +246,21 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       el.l += 10e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
       if (collimatorName.find("2") != std::string::npos) // b2
         {
-          el.crystalLeft = collimatorToCrystal[collimatorName];
+          el.crystalLeft = crystalNameC;
           el.crystalAngleYAxisLeft = crystalAngle + 0.5 * ci->bendingAngleYAxis;
         }
       else
         {
-          el.crystalRight = collimatorToCrystal[collimatorName];
-          el.crystalAngleYAxisRight = crystalAngle - 0.5 * ci->bendingAngleYAxis;
+          el.crystalRight = crystalNameC;
+          el.crystalAngleYAxisRight = -1.0*crystalAngle - 0.5 * ci->bendingAngleYAxis;
         }
+      /*
+      G4cout << "XYZKEY Crystal angle " << crystalAngle << G4endl;
+      G4cout << "xsizeLeft     " << el.xsizeLeft << G4endl;
+      G4cout << "xsizeRight    " << el.xsizeRight << G4endl;
+      G4cout << "l crystal angle " << el.crystalAngleYAxisLeft << G4endl;
+      G4cout << "r crystal angle " << el.crystalAngleYAxisRight << G4endl;
+      */
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
