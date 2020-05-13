@@ -79,17 +79,19 @@ BDSCrystal* BDSCrystalFactory::CreateCrystal(const G4String& name,
 {
   CleanUp();
   
+  BDSCrystal* result = nullptr;
   switch(recipe->shape.underlying())
     {
     case BDSCrystalType::box:
-      {return CreateCrystalBox(name, recipe); break;}
+      {result = CreateCrystalBox(name, recipe); break;}
     case BDSCrystalType::cylinder:
-      {return CreateCrystalCylinder(name, recipe); break;}
+      {result = CreateCrystalCylinder(name, recipe); break;}
     case BDSCrystalType::torus:
-      {return CreateCrystalTorus(name, recipe); break;}
+      {result = CreateCrystalTorus(name, recipe); break;}
     default:
-      {return nullptr; break;}
+      {break;}
     }
+  return result;
 }
   
 void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
@@ -118,7 +120,7 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   G4ChannelingMaterialData* crystalChannelingData = (G4ChannelingMaterialData*)crystalMat->RetrieveExtension("channeling");
   G4String fileName = BDS::GetFullPath(recipe->data);
   if (!BDS::FileExists(fileName + "_pot.txt"))
-    {throw BDSException(__METHOD_NAME__, "No such crystal data files beginnging with: \"" + fileName + "\"");}
+    {throw BDSException(__METHOD_NAME__, "No such crystal data files beginning with: \"" + fileName + "\"");}
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Raw data path: " << recipe->data << G4endl;
   G4cout << __METHOD_NAME__ << "Using crystal data: " << fileName << G4endl;
@@ -367,7 +369,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   // makes it impossible to use a cylinder. we cheat by using a G4DisplacedSolid
   // that's a class used internally by geant4's boolean solids to rotate and translate
   // the frame of a solid. another option was an intersection with a big box, but
-  // geant4 can't handl this.
+  // geant4 can't handle this.
   G4RotationMatrix* relativeRotation = new G4RotationMatrix();
   relativeRotation->rotateX(-CLHEP::halfpi);
   G4ThreeVector offset(0,0,0);
