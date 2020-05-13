@@ -69,7 +69,7 @@ private:
   BDSCrystal* BuildCrystalObject(const BDSExtent& extent);
   
   void SetVisAttributes();                    ///< Set visual attributes.  
-  void SetUserLimits(const G4double& length); ///< Set user limits.
+  void SetUserLimits(G4double length); ///< Set user limits.
 
   /// Create box geometry for a crystal.
   BDSCrystal* CreateCrystalBox(const G4String&       nameIn,
@@ -85,14 +85,14 @@ private:
 
   /// Calculate the start angle and sweep angle given a bending angle.
   /// Different formula if bending angle is -ve or +ve.
-  void CalculateSolidAngles(const G4double& bendingAngle,
-			    G4double&       startAngle,
-			    G4double&       sweepAngle) const;
+  void CalculateSolidAngles(G4double  bendingAngle,
+			    G4double& startAngle,
+			    G4double& sweepAngle) const;
 
   /// Produce an extent for a curved crystal.
-  BDSExtent CalculateExtents(const G4double& bendingAngle,
-			     const G4double& xBendingRadius,
-			     const G4double& xThickness,
+  BDSExtent CalculateExtents(G4double bendingAngle,
+			     G4double xBendingRadius,
+			     G4double xThickness,
 			     const BDSCrystalInfo* recipe) const;
 
   /// Utility function to calculate bending radius.

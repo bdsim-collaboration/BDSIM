@@ -158,7 +158,7 @@ void BDSCrystalFactory::SetVisAttributes()
   crystalLV->SetVisAttributes(crysVisAttr);
 }
 
-void BDSCrystalFactory::SetUserLimits(const G4double& length)
+void BDSCrystalFactory::SetUserLimits(G4double length)
 {
   auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
@@ -205,7 +205,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
   return BuildCrystalObject(ext); // no placement offset - leave as default
 }
 
-void BDSCrystalFactory::CalculateSolidAngles(const G4double& bendingAngle,
+void BDSCrystalFactory::CalculateSolidAngles(G4double bendingAngle,
 					     G4double& startAngle,
 					     G4double& sweepAngle) const
 {
@@ -221,9 +221,9 @@ void BDSCrystalFactory::CalculateSolidAngles(const G4double& bendingAngle,
     }
 }
 
-BDSExtent BDSCrystalFactory::CalculateExtents(const G4double& xBendingAngle,
-					      const G4double& xBendingRadius,
-					      const G4double& xThickness,
+BDSExtent BDSCrystalFactory::CalculateExtents(G4double xBendingAngle,
+					      G4double xBendingRadius,
+					      G4double xThickness,
 					      const BDSCrystalInfo* recipe) const
 {
   // calculate horizontal extents - do in +ve version and flip for -ve
