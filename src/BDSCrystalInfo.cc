@@ -18,8 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+
+#include <limits>
 
 BDSCrystalInfo::BDSCrystalInfo(G4Material*    materialIn,
 			       G4String       dataIn,
@@ -52,3 +55,12 @@ BDSCrystalInfo::BDSCrystalInfo(G4Material*    materialIn,
   bendingAngleYAxis(bendingAngleYAxisIn),
   bendingAngleZAxis(bendingAngleZAxisIn)
 {;}
+
+G4double BDSCrystalInfo::BendingRadius(G4double length,
+				       G4double angle) const
+{
+  if (BDS::IsFinite(angle))
+    {return length / angle;}
+  else
+    {return std::numeric_limits<double>::max();}
+}
