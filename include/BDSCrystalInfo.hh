@@ -46,22 +46,22 @@ public:
   BDSCrystalInfo() = delete;
   
   /// Constructor to assign all members at once.
-  BDSCrystalInfo(G4Material*    materialIn,
+  BDSCrystalInfo(G4Material*     materialIn,
 		 const G4String& dataIn,
-		 BDSCrystalType crystalTypeIn,
-		 G4double       lengthXIn,
-		 G4double       lengthYIn,
-		 G4double       lengthZIn,
-		 G4double       sizeAIn,
-		 G4double       sizeBIn,
-		 G4double       sizeCIn,
-		 G4double       alphaIn,
-		 G4double       betaIn,
-		 G4double       gammaIn,
-		 G4int          spaceGroupIn,
-		 G4double       bendingAngleYAxisIn = 0,
-		 G4double       bendingAngleZAxisIn = 0,
-		 G4double       miscutAngleY = 0);
+		 BDSCrystalType  crystalTypeIn,
+		 G4double        lengthXIn,
+		 G4double        lengthYIn,
+		 G4double        lengthZIn,
+		 G4double        sizeAIn,
+		 G4double        sizeBIn,
+		 G4double        sizeCIn,
+		 G4double        alphaIn,
+		 G4double        betaIn,
+		 G4double        gammaIn,
+		 G4int           spaceGroupIn,
+		 G4double        bendingAngleYAxisIn = 0,
+		 G4double        bendingAngleZAxisIn = 0,
+         G4double        miscutAngleY        = 0););
 
   G4Material*    material; ///< Material.
   G4String       data;     ///< Potential data path.
