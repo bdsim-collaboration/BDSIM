@@ -61,7 +61,7 @@ public:
 		 G4int           spaceGroupIn,
 		 G4double        bendingAngleYAxisIn = 0,
 		 G4double        bendingAngleZAxisIn = 0,
-         G4double        miscutAngleY        = 0););
+		 G4double        miscutAngleY        = 0);
 
   G4Material*    material; ///< Material.
   G4String       data;     ///< Potential data path.
