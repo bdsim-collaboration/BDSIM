@@ -151,6 +151,7 @@ void Options::PublishMembers()
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
+  publish("outputCompressionLevel",&Options::outputCompressionLevel);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
   

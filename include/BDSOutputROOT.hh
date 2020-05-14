@@ -43,7 +43,8 @@ public:
   /// Constructor with default file name (without extension or number suffix).
   /// Also, file number offset to start counting suffix from.
   BDSOutputROOT(const G4String& fileName,
-		G4int           fileNumberOffset);
+		G4int           fileNumberOffset,
+		G4int           compressionLevelIn = -1);
   virtual ~BDSOutputROOT();
 
   virtual void NewFile();    ///< Open a new file.
@@ -79,6 +80,7 @@ private:
   /// call in the class destructor.
   void Close();
   
+  G4int  compressionLevel;     ///< ROOT compression level for files.
   TFile* theRootOutputFile;    ///< Output file.
   TTree* theHeaderOutputTree;  ///< Header Tree.
   TTree* theGeant4DataTree;    ///< Geant4 Data Tree.

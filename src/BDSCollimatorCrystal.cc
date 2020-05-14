@@ -39,15 +39,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn, 
-					   G4double           lengthIn,
-					   BDSBeamPipeInfo*   beamPipeInfoIn,
-					   BDSCrystalInfo*    crystalInfoLeftIn,
-					   BDSCrystalInfo*    crystalInfoRightIn,
-					   const G4double&    halfGapLeftIn,
-					   const G4double&    halfGapRightIn,
-					   const G4double&    angleYAxisLeftIn,
-					   const G4double&    angleYAxisRightIn):
+BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn, 
+					   G4double         lengthIn,
+					   BDSBeamPipeInfo* beamPipeInfoIn,
+					   BDSCrystalInfo*  crystalInfoLeftIn,
+					   BDSCrystalInfo*  crystalInfoRightIn,
+					   G4double         halfGapLeftIn,
+					   G4double         halfGapRightIn,
+					   G4double         angleYAxisLeftIn,
+					   G4double         angleYAxisRightIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "crystalcol", beamPipeInfoIn),
   crystalInfoLeft(crystalInfoLeftIn),
   crystalInfoRight(crystalInfoRightIn),
@@ -57,7 +57,10 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn,
   angleYAxisRight(angleYAxisRightIn),
   crystalLeft(nullptr),
   crystalRight(nullptr)
-{;}
+{
+  if (crystalInfoLeft)
+    {crystalInfoLeft->bendingAngleYAxis *= -1.0;}
+}
 
 BDSCollimatorCrystal::~BDSCollimatorCrystal()
 {
@@ -106,8 +109,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalLeft)
     {
       G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
-      G4double halfThickness         = crystalInfoLeft->lengthX * 0.5;
-      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft + halfThickness,0,0);
+      G4double dx                    = TransverseOffsetToEdge(crystalLeft, -angleYAxisLeft, true);
+      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft-dx,0,0);
       G4ThreeVector placementOffsetL = objectOffset + colOffsetL; // 'L' in p offset to avoid class with BDSGeometry Component member
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisLeft))
@@ -118,7 +121,8 @@ void BDSCollimatorCrystal::Build()
 	      RegisterRotationMatrix(placementRot);
 	    }
 	  G4ThreeVector localUnitY = G4ThreeVector(0,1,0).transform(*placementRot);
-	  placementRot->rotate(angleYAxisLeft, localUnitY); // rotate about local unitY
+	  placementRot->rotate(-angleYAxisLeft, localUnitY); // rotate about local unitY
+	  // note minus sign to rotate *away* from centre
 	}
 
       // check if it'll fit..
@@ -148,8 +152,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalRight)
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
-      G4double halfThickness         = crystalInfoRight->lengthX * 0.5;
-      G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+halfThickness),0,0); // -ve as r.h. coord system
+      G4double dx                    = TransverseOffsetToEdge(crystalLeft, angleYAxisRight, false);
+      G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+dx),0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisRight))
@@ -201,7 +205,7 @@ G4String BDSCollimatorCrystal::Material() const
 }
 
 void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
-					       const G4double&  crystalAngle,
+					       G4double         crystalAngle,
 					       const G4String&  side) const
 {
   G4double zExt = extCrystal.MaximumZ();
@@ -227,4 +231,52 @@ void BDSCollimatorCrystal::RegisterCrystalLVs(const BDSCrystal* crystal) const
       crystals->insert(lv);
       collimators->insert(lv);
     }
+}
+
+G4double BDSCollimatorCrystal::TransverseOffsetToEdge(const BDSCrystal* crystal,
+						      G4double          placementAngle,
+						      G4bool            left) const
+{
+  if (!BDS::IsFinite(placementAngle))
+    {return 0;}
+
+  const BDSCrystalInfo* recipe = crystal->recipe;
+  G4double result = 0;
+  G4double factor = left ? -1.0 : 1.0;
+  switch (recipe->shape.underlying())
+  {
+    case BDSCrystalType::box:
+    {
+      result = 0.5*recipe->lengthZ * std::sin(placementAngle);
+      result += factor * 0.5*recipe->lengthX * std::cos(placementAngle);
+      break;
+    }
+    case BDSCrystalType::cylinder:
+    case BDSCrystalType::torus:
+    {
+      G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
+      if (!BDS::IsFinite(halfAngle)) // like a box
+        {
+          result = 0.5*recipe->lengthZ * std::sin(placementAngle);
+          result += factor * 0.5*recipe->lengthX * std::cos(placementAngle);
+        }
+      else
+      {
+        G4TwoVector a(recipe->BendingRadiusHorizontal(), 0);
+        G4TwoVector b(a);
+        //b.rotate(-factor*std::abs(halfAngle)); // want to rotate 'down'
+        b.rotate(std::abs(halfAngle)); // want to rotate 'down'
+        //b.rotate(halfAngle); // want to rotate 'down'
+        G4TwoVector dxy = b - a;
+        dxy.rotate(placementAngle);
+        result = dxy.x();
+        result -= 0.5*recipe->lengthX * std::cos(placementAngle);
+      }
+      break;
+    }
+    default:
+    {break;}
+  }
+  
+  return result;
 }
