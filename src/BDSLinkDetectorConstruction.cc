@@ -240,6 +240,9 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       //crystalAngle += 0.5 * ci->bendingAngleYAxis;
       delete ci; // no longer needed
 
+      // crucial - crystal only responds to xsize - not xsizeLeft
+      el.xsize = el.xsizeLeft;
+      
       el.type = GMAD::ElementType::_CRYSTALCOL;
       el.apertureType = "circularvacuum";
       el.aper1 = 0.5; // m
