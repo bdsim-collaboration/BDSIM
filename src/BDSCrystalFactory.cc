@@ -289,7 +289,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   
   // calculate offset in x due to angle so centre of input face lines up at x=0
   G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
-  G4double bendingRadiusH = BendingRadiusHorizontal(recipe);
+  G4double bendingRadiusH = recipe->BendingRadiusHorizontal();
   G4double dx = bendingRadiusH * std::sin(halfAngle) * std::tan(halfAngle);
   // placement offset - no rotation as we've rotated the solid internally
   placementOffset = G4ThreeVector(-bendingRadiusH + dx, 0, 0);
