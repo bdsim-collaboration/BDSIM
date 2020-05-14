@@ -198,9 +198,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 
   CommonConstruction(nameIn, recipe);
   
-  // calculate offset in x due to angle so centre of input face lines up at x=0
-  G4double dx = 0.5*recipe->lengthZ * std::sin(0.5 * recipe->bendingAngleYAxis);
-  placementOffset = G4ThreeVector(dx, 0, 0);
+  placementOffset = G4ThreeVector(0, 0, 0);
   BDSExtent ext = BDSExtent(recipe->lengthX * 0.5,
 			    recipe->lengthY * 0.5,
 			    recipe->lengthZ * 0.5);
@@ -279,23 +277,16 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   // geant4 can't handle this.
   G4RotationMatrix* relativeRotation = new G4RotationMatrix();
   relativeRotation->rotateX(-CLHEP::halfpi);
-  G4ThreeVector offset(0,0,0);
+  G4double bendingRadiusH = recipe->BendingRadiusHorizontal(); // includes sign
+  G4ThreeVector offset(-bendingRadiusH,0,0);
   crystalSolid = new G4DisplacedSolid(nameIn + "_shifted_solid",
 				      rawShape,
 				      relativeRotation,
 				      offset);
   
   CommonConstruction(nameIn, recipe);
-  
-  // calculate offset in x due to angle so centre of input face lines up at x=0
-  G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
-  G4double bendingRadiusH = BendingRadiusHorizontal(recipe);
-  G4double dx = bendingRadiusH * std::sin(halfAngle) * std::tan(halfAngle);
-  // placement offset - no rotation as we've rotated the solid internally
-  placementOffset = G4ThreeVector(-bendingRadiusH + dx, 0, 0);
-
+  placementOffset = G4ThreeVector();
   BDSExtent ext = CalculateExtents(ba, xBR, thickness, recipe);
-  
   return BuildCrystalObject(recipe, ext);
 }
 
