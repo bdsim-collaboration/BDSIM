@@ -70,6 +70,12 @@ private:
   /// Register logical volumes in crystals and collimator sets in accelerator model.
   void RegisterCrystalLVs(const BDSCrystal* crystal) const;
 
+  /// Calculate appropriate offset in x so the inside edge will align
+  /// properly with the xsize opening of the collimator.
+  G4double TransverseOffsetToEdge(const BDSCrystal* crystal,
+				  G4double          placementAngle,
+				  G4bool            left) const;
+
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
   const G4double     halfGapLeft;
