@@ -42,6 +42,9 @@ class G4Material;
 class BDSCrystalInfo
 {
 public:
+  /// No default constuctor.
+  BDSCrystalInfo() = delete;
+  
   /// Constructor to assign all members at once.
   BDSCrystalInfo(G4Material*    materialIn,
 		 const G4String& dataIn,
@@ -77,9 +80,12 @@ public:
   G4double       bendingAngleZAxis; ///< Bending angle about Z axis.
   G4double       miscutAngleY;
 
+  G4double BendingRadiusHorizontal() const {return BendingRadius(lengthZ, bendingAngleYAxis);}
+  G4double BendingRadiusVertical()   const {return BendingRadius(lengthY, bendingAngleZAxis);}
+
 private:
-  /// private default constructor as unused
-  BDSCrystalInfo();
+  G4double BendingRadius(G4double length,
+			 G4double angle) const;
 };
 
 #endif
