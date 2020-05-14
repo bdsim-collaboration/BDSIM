@@ -1388,6 +1388,11 @@ Parameter                   Description                                         
 
 Notes:
 
+* A postive crystalAngleYAxisLeft will result in the crystal being rotated away from the z axis of the
+  collimator. Therefore, a positive angle for both a left and right crystal will result in diverging
+  crystals.
+* The bending angle of the left crystal is reversed from the definition. Therefore a positive bending angle
+  will result in the crystal bending away from the z axis of the collimator for both left and right crystals.
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
 * If both `crystalLeft` and `crystalRight` are specified, both will be constructed uniquely and placed.

@@ -52,10 +52,15 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
+|                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
+|                                    | compression and 1 minimal. 5 is the default.                       |
++------------------------------------+--------------------------------------------------------------------+
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
+
 
 
 General
@@ -139,6 +144,9 @@ Expected Changes To Results
   in a different (but now correct) direction.
 * Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
   in the past they were the mean.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
 
 New Features
 ------------
@@ -314,7 +322,7 @@ General
   for partially stripped ions. This storage marginally increases the memory usage per sampler hit, so
   a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
 * Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
-  hit information in the output. The crystal channelling process is ignore as a step defining process
+  hit information in the output. The crystal channelling process is ignored as a step defining process
   for generating unique hits in the crystal.
 * All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
 * The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
@@ -402,6 +410,9 @@ Bug Fixes
 * Fix crystal positioning in `crystalcol`. Previously, the crystal centre was placed at `xsize` but
   it should be in the inside edge to match other collimators. The inside of the edge is now aligned
   to `xsize`.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
   They're now filled correctly.
 * Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in

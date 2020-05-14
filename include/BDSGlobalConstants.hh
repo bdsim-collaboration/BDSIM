@@ -97,6 +97,7 @@ public:
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
   inline BDSOutputType OutputFormat()      const {return outputType;}
+  inline G4int    OutputCompressionLevel() const {return G4int   (options.outputCompressionLevel);}
   inline G4bool   Survey()                 const {return G4bool  (options.survey);}
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
