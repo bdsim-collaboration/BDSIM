@@ -190,9 +190,9 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   collimatorLower.toLower();
   auto searchC = collimatorToCrystal.find(collimatorLower); // will use later if needed
   G4bool isACrystal = searchC != collimatorToCrystal.end();
-  //G4cout << "XYZ isACrystal " << isACrystal << G4endl;
-  //if (isACrystal)
-  //{G4cout << "crystal name " << searchC->first << " " << searchC->second << G4endl;}
+  G4cout << "XYZ isACrystal " << isACrystal << G4endl;
+  if (isACrystal)
+    {G4cout << "crystal name " << searchC->first << " " << searchC->second << G4endl;}
 
   std::map<std::string, std::string> sixtrackToBDSIM =
       {
@@ -234,7 +234,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       // find the bending angle of this particular crystal
       // so we can add half of that on for the BDSIM convention of the 0 about the centre for crystals
       G4String crystalNameC = searchC->second;
-      //G4cout << "crystal name " << crystalNameC << G4endl;
+      G4cout << "crystal name " << crystalNameC << G4endl;
       BDSCrystalInfo* ci = componentFactory->PrepareCrystalInfo(crystalNameC);
       crystalAngle *= CLHEP::rad;
       //crystalAngle += 0.5 * ci->bendingAngleYAxis;
@@ -258,13 +258,13 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
           el.crystalRight = crystalNameC;
           el.crystalAngleYAxisRight = -1.0*crystalAngle - 0.5 * ci->bendingAngleYAxis;
         }
-      /*
+      
       G4cout << "XYZKEY Crystal angle " << crystalAngle << G4endl;
       G4cout << "xsizeLeft     " << el.xsizeLeft << G4endl;
       G4cout << "xsizeRight    " << el.xsizeRight << G4endl;
       G4cout << "l crystal angle " << el.crystalAngleYAxisLeft << G4endl;
       G4cout << "r crystal angle " << el.crystalAngleYAxisRight << G4endl;
-      */
+      
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
