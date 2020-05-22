@@ -57,10 +57,10 @@ public:
   BDSFieldLoaderBDSIM();
   ~BDSFieldLoaderBDSIM();
   
-  BDSArray4DCoords* Load4D(G4String fileName); ///< Load a 4D array.
-  BDSArray3DCoords* Load3D(G4String fileName); ///< Load a 3D array.
-  BDSArray2DCoords* Load2D(G4String fileName); ///< Load a 2D array.
-  BDSArray1DCoords* Load1D(G4String fileName); ///< Load a 1D array.
+  BDSArray4DCoords* Load4D(const G4String& fileName); ///< Load a 4D array.
+  BDSArray3DCoords* Load3D(const G4String& fileName); ///< Load a 3D array.
+  BDSArray2DCoords* Load2D(const G4String& fileName); ///< Load a 2D array.
+  BDSArray1DCoords* Load1D(const G4String& fileName); ///< Load a 1D array.
 
 private:
   /// Ensure any member variables are reset between usages.
@@ -70,7 +70,7 @@ private:
   void Terminate();
 
   /// General loader for any number of dimensions.
-  void Load(G4String fileName,
+  void Load(const G4String& fileName,
 	    const unsigned int nDim);
 
   /// Process on line of data. Index of 0 corresponds to a default value of field of 0.
