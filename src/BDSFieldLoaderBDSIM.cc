@@ -208,7 +208,10 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
       }
 
       // key definition
-      //if (line.find(">") != std::string::npos)
+      // if (line.find(">") != std::string::npos)
+      // NOTE the use of a regex expression here allows us to safely parse the first line
+      // in a tar.gz file which normally has a load of bumf upfront for the tar file. Each
+      // subsequent line comes out normally with the gzstream reader.
       std::smatch matchHeaderNumber;
       std::regex keyValue(R"((\w*)\s*>\s*([0-9eE.+-]+))");
       if (std::regex_search(line, matchHeaderNumber, keyValue))
