@@ -85,35 +85,35 @@ void BDSFieldLoaderBDSIM<T>::Terminate()
 } 
 
 template <class T>
-BDSArray1DCoords* BDSFieldLoaderBDSIM<T>::Load1D(G4String fileName)
+BDSArray1DCoords* BDSFieldLoaderBDSIM<T>::Load1D(const G4String& fileName)
 {
   Load(fileName,1);
   return static_cast<BDSArray1DCoords*>(result);
 }
 
 template <class T>
-BDSArray2DCoords* BDSFieldLoaderBDSIM<T>::Load2D(G4String fileName)
+BDSArray2DCoords* BDSFieldLoaderBDSIM<T>::Load2D(const G4String& fileName)
 {
   Load(fileName,2);
   return static_cast<BDSArray2DCoords*>(result);
 }
 
 template <class T>
-BDSArray3DCoords* BDSFieldLoaderBDSIM<T>::Load3D(G4String fileName)
+BDSArray3DCoords* BDSFieldLoaderBDSIM<T>::Load3D(const G4String& fileName)
 {
   Load(fileName,3);
   return static_cast<BDSArray3DCoords*>(result);
 }
 
 template <class T>
-BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(G4String fileName)
+BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(const G4String& fileName)
 {
   Load(fileName,4);
   return result;
 }
 
 template <class T>
-void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
+void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 				  const unsigned int nDim)
 {
   CleanUp();
