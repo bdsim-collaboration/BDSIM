@@ -67,7 +67,7 @@ private:
   void CleanUp();
 
   /// Close file and exit program in case of an error.
-  void Terminate();
+  void Terminate(const G4String& message = "");
 
   /// General loader for any number of dimensions.
   void Load(const G4String& fileName,
