@@ -88,7 +88,7 @@ void BDSMultilayerScreen::AddScreenLayer(BDSScreenLayer* layer, G4int isSampler)
   screenLayerNames[layer->GetName()] = layer;
 }
 
-BDSScreenLayer* BDSMultilayerScreen::ScreenLayer(G4String layerName)
+BDSScreenLayer* BDSMultilayerScreen::ScreenLayer(const G4String& layerName)
 {
   auto result = screenLayerNames.find(layerName);
   if (result == screenLayerNames.end())
@@ -105,7 +105,7 @@ void BDSMultilayerScreen::Build()
 }
 
 void BDSMultilayerScreen::Place(G4RotationMatrix* rot,
-				G4ThreeVector pos,
+				const G4ThreeVector& pos,
 				G4LogicalVolume* motherVol)
 {
   SetPhys(new G4PVPlacement(rot,
