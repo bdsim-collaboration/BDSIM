@@ -152,7 +152,7 @@ void BDSCollimatorCrystal::Build()
   if (crystalRight)
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
-      G4double dx                    = TransverseOffsetToEdge(crystalLeft, angleYAxisRight, false);
+      G4double dx                    = TransverseOffsetToEdge(crystalRight, angleYAxisRight, false);
       G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+dx),0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
