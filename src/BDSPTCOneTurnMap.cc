@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
@@ -34,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(const G4String& maptableFile,
 				   const BDSParticleDefinition* designParticle):
   initialPrimaryMomentum(0),
   beamOffsetS0(false),
@@ -52,11 +53,7 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
   G4cout << __METHOD_NAME__ << "Using map table " << filePath << G4endl;
   std::ifstream infile(filePath);
   if (!infile)
-    {
-      G4String message = "Failed to read maptable: \"" + maptableFile + "\"";
-      G4cerr << __METHOD_NAME__ << message << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Failed to read maptable: \"" + maptableFile + "\"");}
 
   // The columns of the maptable TFS (read into below with the stringsteam).
   G4String name = "";
@@ -97,10 +94,7 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
 	  {deltaPTerms.push_back(term); break;}
 	default:
 	  {
-	    G4String message = "Unrecognised PTC term index.  Your maptable file "
-	      "is perhaps malformed.";
-	    G4cerr << __METHOD_NAME__ << message << G4endl;
-	    exit(1);
+	    throw BDSException(__METHOD_NAME__, "Unrecognised PTC term index - maptable file is perhaps malformed.");
 	    break;
 	  }
 	}

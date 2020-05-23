@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "G4Version.hh"
@@ -881,7 +882,7 @@ void BDSMaterials::AddMaterial(G4Material* material, G4String name)
 #endif
     }
   else
-    {G4cout << __METHOD_NAME__ << "Material \"" << name << "\" already exists" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Material \"" + name + "\" already exists");}
 }
 
 void BDSMaterials::AddExistingMaterialAlias(const G4String &existingMaterialName,
@@ -965,11 +966,8 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
       G4cout << "Using NIST material " << material << G4endl;
 #endif
       G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial(material, true, true);
-      if (mat == nullptr)
-        {
-          G4cout << __METHOD_NAME__ << "\"" << material << "\" could not be found by NIST." << G4endl;
-          exit(1);
-        }
+      if (!mat)
+        {throw BDSException(__METHOD_NAME__, "\"" + material + "\" could not be found by NIST.");}
       return mat;
     }
   else
@@ -986,10 +984,9 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
 	  if (iter2 != aliases.end())
 	    {return iter2->second;}
 	  else
-	    {// can't find it -> warn and exit
+	    {
 	      ListMaterials();
-	      G4cout << __METHOD_NAME__ << "\"" << material << "\" is unknown." << G4endl;
-	      exit(1);
+	      throw BDSException(__METHOD_NAME__, "\"" + material + "\" is unknown.");
 	    }
 	}
     }
@@ -998,10 +995,7 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
 void BDSMaterials::AddElement(G4Element* element, const G4String& symbol)
 {
   if (CheckElement(symbol) != nullptr)
-    {
-      G4cout << __METHOD_NAME__ << "Element  \"" << symbol << "\" already exists." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Element  \"" + symbol + "\" already exists.");}
 
   elements.insert(make_pair(symbol, element));
 #ifdef BDSDEBUG
@@ -1051,11 +1045,8 @@ G4Element* BDSMaterials::CheckElement(G4String symbol) const
 G4Element* BDSMaterials::GetElement(G4String symbol) const
 {
   G4Element* element = CheckElement(symbol);
-  if (element == nullptr)
-    {
-      G4cout << __METHOD_NAME__ << "Element \"" << symbol << "\" could not be found." << G4endl;
-      exit(1);
-    }
+  if (!element)
+    {throw BDSException(__METHOD_NAME__, "Element \"" + symbol + "\" could not be found.");}
   return element;
 }
 
@@ -1210,17 +1201,10 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 			  it.componentsFractions);
 	    }
 	  else
-	    {
-	      G4cout << __METHOD_NAME__
-		     << "Badly defined material - number of components is not equal to number of weights or mass fractions!" << G4endl;
-	      exit(1);
-	    }
+	    {throw BDSException(__METHOD_NAME__, "Badly defined material - number of components is not equal to number of weights or mass fractions!");}
 	}
       else
-	{
-	  G4cout << __METHOD_NAME__ << "Badly defined material - need more information!" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException(__METHOD_NAME__, "Badly defined material - need more information!");}
     }
   if (verbose || debug)
     {G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;}

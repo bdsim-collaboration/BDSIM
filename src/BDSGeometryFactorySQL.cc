@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGlobalConstants.hh"
@@ -29,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
-//#include "BDSPCLTube.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -159,7 +159,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
   std::ifstream ifs;
   ifs.open(fileName);
   if (!ifs.good())
-    {G4cerr << __METHOD_NAME__ << "Error opening input file \"" << fileName << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
 
   //hasFields = false;
   //nPoleField = 0;
@@ -263,10 +263,7 @@ void BDSGeometryFactorySQL::BuildSQLObjects(G4String file)
 	  //else if(ObjectType.compareTo("PCLTUBE",cmpmode)==0)
 	  //  {logVol =  BuildPCLTube(itsSQLTable[i],k);}
 	  else
-	    {
-	      G4cerr << __METHOD_NAME__ << ObjectType << " not known" << G4endl;
-	      exit(1);
-	    }
+	    {throw BDSException(__METHOD_NAME__ + ObjectType + " not known.");}
 	  //Set the user limits and visual attributes
 	  SetLogVolAtt(logVol, lengthUserLimit);
 	  VOL_LIST.push_back(logVol);

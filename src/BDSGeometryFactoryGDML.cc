@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
@@ -135,13 +136,9 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
 
   // verify file open.
   if (!ifs.is_open())
-    {
-      G4cerr << __METHOD_NAME__ << "Cannot open file \"" << fileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
 
   std::ofstream fout(outputFileName);
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Original file:  " << fileName       << G4endl;
   G4cout << __METHOD_NAME__ << "Temporary file: " << outputFileName << G4endl;
