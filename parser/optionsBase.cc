@@ -38,6 +38,7 @@ OptionsBase::OptionsBase()
 #else
   outputDoublePrecision = false;
 #endif
+  outputCompressionLevel= 5;
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;

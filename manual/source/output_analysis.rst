@@ -198,22 +198,20 @@ Histograms
 Below is a complete of a rebdsim analysis configuration text file.
 ::
 
-  Debug                                   True
-  InputFilePath                           ./output.root
-  OutputFileName                          ./ana_1.root
-  CalculateOpticalFunctions               True
-  CalculateOpticalFunctionsFileName       ./ana_1.dat
+  InputFilePath    output.root
+  OutputFileName   ana_1.root
+  CalculateOptics  True
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
-  Histogram1D  Event.    Primaryx         {100}      {-0.1:0.1}          Primary.x           1
-  Histogram1D  Event.    Primaryy         {100}      {-0.1:0.1}          Primary.y           1
-  Histogram1D  Options.  seedState        {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram1D  Model.    componentLength  {100}      {0.0:100}           Model.length        1
-  Histogram1D  Run.      runDuration      {1000}     {0:1000}            Summary.duration    1
-  Histogram2D  Event.    XvsY             {100,100}  {-0.1:0.1,-0.1:0.1} Primary.y:Primary.x 1
-  Histogram3D  Event.    PhaseSpace3D     {20,30,40} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
-  Histogram1DLog  Event. PrimaryXAbs      {20}       {-9:-3}             abs(Primary.x)                 1
-  Histogram2D     Event. PhaseSpaceXXP    {20,30}    {-1e-6:1e-6,-1e-4:1e-4} Primary.xp:Primaryx 1
-  Histogram2DLog  Event. PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
+  Histogram1D  Event     Primaryx         {100}      {-0.1:0.1}          Primary.x           1
+  Histogram1D  Event     Primaryy         {100}      {-0.1:0.1}          Primary.y           1
+  Histogram1D  Options   seedState        {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram1D  Model     componentLength  {100}      {0.0:100}           Model.length        1
+  Histogram1D  Run       runDuration      {1000}     {0:1000}            Summary.duration    1
+  Histogram2D  Event     XvsY             {100,100}  {-0.1:0.1,-0.1:0.1} Primary.y:Primary.x 1
+  Histogram3D  Event     PhaseSpace3D     {20,30,40} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1DLog  Event  PrimaryXAbs      {20}       {-9:-3}             abs(Primary.x)                 1
+  Histogram2D     Event  PhaseSpaceXXP    {20,30}    {-1e-6:1e-6,-1e-4:1e-4} Primary.xp:Primaryx 1
+  Histogram2DLog  Event  PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
 
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
 	     method.  This is **totally inconsistent**.  If 1D, there is just :code:`x`.  If 2D, it's
@@ -480,6 +478,7 @@ rebdsimCombine - Output Combination
 `rebdsimCombine` is a tool that can combine `rebdsim` output files correctly
 (i.e. the mean of the mean histograms) to provide the overall mean and error on
 the mean, as if all events had been analysed in one execution of `rebdsim`.
+Simple histograms are simply summed (not averaged).
 
 The combination of the histograms from the `rebdsim` output files is very quick
 in comparison to the analysis. `rebdsimCombine` is used as follows: ::

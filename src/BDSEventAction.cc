@@ -284,11 +284,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   std::map<G4String, G4THitsMap<G4double>*> scorerHits;
   for (const auto& nameIndex : scorerCollectionIDs)
     {scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
-
-  // primary hit something?
-  // we infer this by seeing if there are any energy deposition hits at all - if there
-  // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
-  // may fool this..
+  
+  // primary hit something? we infer this by seeing if there are any energy
+  // deposition hits at all - if there are, the primary must have 'hit' something.
+  // we don't check the world energy hits here because the hits could be from
+  // intended transport through air in part of the machine (a gap). similarly, there
+  // could be ionisation of the vacuum gas without a real impact so we don't check
+  // the vacuum energy deposition
   if (eCounterHits)
     {
       if (verboseThisEvent)
@@ -310,10 +312,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (eCounterTunnelHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
-  // we don't check the world energy hits here because the hits could be from
-  // intended transport through air in part of the machine (a gap).
-  // similarly, there could be ionisation of the vacuum gas without a real impact
-  // so we don't check the vacuum energy deposition
 
   // collimator hits if any
   typedef BDSHitsCollectionCollimator chc;

@@ -159,12 +159,16 @@ int main(int argc, char *argv[])
 	{analysis->Write(outputFile);}
 
       // copy the model over and rename to avoid conflicts with Model directory
-      auto modelTree = dl->GetModelTree();
-      auto newTree = modelTree->CloneTree();
-      // unfortunately we have a folder called Model in histogram output files
-      // avoid conflict when copying the model for plotting
-      newTree->SetName("ModelTree");
-      newTree->Write("", TObject::kOverwrite);
+      TChain* modelTree = dl->GetModelTree();
+      TTree* treeTest = modelTree->GetTree();
+      if (treeTest)
+	{// TChain can be valid but TTree might not be in corrupt / bad file
+	  auto newTree = modelTree->CloneTree();
+	  // unfortunately we have a folder called Model in histogram output files
+	  // avoid conflict when copying the model for plotting
+	  newTree->SetName("ModelTree");
+	  newTree->Write("", TObject::kOverwrite);
+	}
 
       outputFile->Close();
       delete outputFile;
