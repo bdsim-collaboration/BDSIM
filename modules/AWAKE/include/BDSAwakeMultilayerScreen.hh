@@ -36,7 +36,9 @@ public:
                G4double height=65*CLHEP::mm);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
-  virtual void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+  virtual void Place(G4RotationMatrix* rot,
+		     const G4ThreeVector& pos,
+		     G4LogicalVolume* motherVol);
 
 private:
   typedef BDSMultilayerScreen super;

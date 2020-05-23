@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(const G4String& maptableFile,
 				   const BDSParticleDefinition* designParticle):
   initialPrimaryMomentum(0),
   beamOffsetS0(false),

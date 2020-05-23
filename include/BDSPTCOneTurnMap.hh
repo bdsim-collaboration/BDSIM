@@ -56,7 +56,7 @@ public:
   virtual ~BDSPTCOneTurnMap() {;}                                ///< Destructor.
 
   /// Main constructor with path to maptable file.
-  BDSPTCOneTurnMap(G4String path,
+  BDSPTCOneTurnMap(const G4String& path,
 		   const BDSParticleDefinition* designParticle);
 
   /// Decides whether or not this should be applied.  Can add more
