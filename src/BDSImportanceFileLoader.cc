@@ -60,10 +60,7 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
 #endif
 
   if (!validFile)
-    {
-      G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
   else
     {G4cout << "BDSImportanceFileLoader::Load> loading \"" << fileName << "\"" << G4endl;}
 
