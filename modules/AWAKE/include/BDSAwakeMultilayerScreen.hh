@@ -33,7 +33,7 @@ public:
 			   G4double mountThickness,
 			   G4String mountMaterial,
 			   G4double width=1*CLHEP::m,
-               G4double height=65*CLHEP::mm);
+			   G4double height=65*CLHEP::mm);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
   virtual void Place(G4RotationMatrix* rot,
@@ -43,7 +43,7 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
-		void simpleLayers();
+  void simpleLayers();
   void sampler(G4String name, const char* material="air", G4bool bSampler=true);
   void thinAirLayer();  
   void thinVacuumLayer();  

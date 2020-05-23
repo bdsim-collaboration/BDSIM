@@ -24,7 +24,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMultilayerScreen.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
-#include "BDSDebug.hh"
 
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
