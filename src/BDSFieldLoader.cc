@@ -231,11 +231,7 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
   // if we use delayed construction with setters, we could piece together the BDSFieldEM
   // one bit at a time. This is more an issue with the number of dimensions than anything.
   if (bFormat != eFormat)
-    {
-      G4cerr << __METHOD_NAME__ << "different formats for E and B fields are not currently "
-	    << "supported for an EM field " << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "different formats for E and B fields are not currently supported for an EM field");}
   
   BDSFieldEMInterpolated* result = nullptr;
   switch (eFormat.underlying())
@@ -303,7 +299,7 @@ BDSArray2DCoords* BDSFieldLoader::LoadPoissonMag2D(const G4String& filePath)
       BDSFieldLoaderPoisson<igzstream> loader;
       result = loader.LoadMag2D(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else
@@ -330,7 +326,7 @@ BDSArray1DCoords* BDSFieldLoader::LoadBDSIM1D(const G4String& filePath)
       BDSFieldLoaderBDSIM<igzstream> loader;
       result = loader.Load1D(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else
@@ -355,7 +351,7 @@ BDSArray2DCoords* BDSFieldLoader::LoadBDSIM2D(const G4String& filePath)
       BDSFieldLoaderBDSIM<igzstream> loader;
       result = loader.Load2D(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else
@@ -380,7 +376,7 @@ BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(const G4String& filePath)
       BDSFieldLoaderBDSIM<igzstream> loader;
       result = loader.Load3D(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else
@@ -405,7 +401,7 @@ BDSArray4DCoords* BDSFieldLoader::LoadBDSIM4D(const G4String& filePath)
       BDSFieldLoaderBDSIM<igzstream> loader;
       result = loader.Load4D(filePath);
 #else
-      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
     }
   else

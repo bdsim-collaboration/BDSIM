@@ -16,11 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMultilayerScreen.hh"
-
 #include "BDSColourWheel.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
+#include "BDSMultilayerScreen.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 #include "BDSDebug.hh"
@@ -91,11 +92,7 @@ BDSScreenLayer* BDSMultilayerScreen::ScreenLayer(G4String layerName)
 {
   auto result = screenLayerNames.find(layerName);
   if (result == screenLayerNames.end())
-    {
-      G4cerr << "BDSMultiLayer - error: screen layer \"" << layerName
-	     << "\" not found. Exiting." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "screen layer \"" + layerName + "\" not found");}
   else
     {return result->second;}
 }

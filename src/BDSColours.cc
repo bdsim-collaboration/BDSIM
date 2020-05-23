@@ -148,7 +148,7 @@ void BDSColours::DefineColour(const G4String& name,
 	     << "\" is already defined - clashing definitions" << G4endl;
       G4cout << "Already defined colours are " << G4endl;
       Print();
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "duplicate colour definition");
     }
   
   BDS::EnsureInLimits(red,0,255);

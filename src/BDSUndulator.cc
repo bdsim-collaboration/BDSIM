@@ -105,15 +105,10 @@ void BDSUndulator::BuildContainerLogicalVolume()
       undulatorMagnetHeight = 0.5 * (horizontalWidth - undulatorGap);
     }
   if (undulatorMagnetHeight > 0.5*horizontalWidth)
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorMagnetHeight\" larger than 0.5*horizontalWidth " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorMagnetHeight\" larger than 0.5*horizontalWidth in component " + name);}
   else if ((2*undulatorMagnetHeight + undulatorGap) > horizontalWidth)
     {
-      G4cerr << __METHOD_NAME__ << "Total undulator height (2*undulatorMagnetHeight + undulatorGap) is "
-            "larger than horizontalWidth " <<  G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Total undulator height (2*undulatorMagnetHeight + undulatorGap) is larger than horizontalWidth in component " + name);
     }
 
   G4double halfWidth  = 0.5 * (horizontalWidth + lengthSafetyLarge);
