@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
