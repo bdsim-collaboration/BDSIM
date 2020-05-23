@@ -61,7 +61,7 @@ void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
 					 G4double grooveWidth,
 					 G4double grooveSpatialFrequency)
 {
-  G4String layerName = nameIn;
+  G4String layerName;
   if (isSampler)
     {
       G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
@@ -69,7 +69,7 @@ void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
       layerName = tempString + "_" + layerName;
     }
   else
-    {layerName=name;}
+    {layerName = name;}
 
   G4ThreeVector layerSize(xysize.x(), xysize.y(), thickness);
   BDSScreenLayer* screen = new BDSScreenLayer(layerSize, layerName, material,
@@ -168,13 +168,13 @@ void BDSMultilayerScreen::RoughSurface(G4int layer1, G4int layer2)
 
 void BDSMultilayerScreen::ComputeDimensions()
 {
-  if (screenLayers.size() == 0)
-    {G4cerr << "Screen \"" << name << "\" has no layers." << G4endl; exit(1);}
+  if (screenLayers.empty())
+    {throw BDSException(__METHOD_NAME__, "Screen \"" + name +"\" has no layers.");}
 
   //Compute the total z thickness.
   G4double temp = 0;
-  for (unsigned int i=0; i<screenLayers.size(); i++)
-    {temp += screenLayers[i]->GetSize().z();}
+  for (const auto& layer : screenLayers)
+    {temp += layer->GetSize().z();}
   size.setZ(temp);
   
   //Compute the z positions of all the layers.
