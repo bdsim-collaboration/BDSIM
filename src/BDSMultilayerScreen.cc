@@ -33,8 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PVPlacement.hh"               
 #include "G4VSolid.hh"
 
-BDSMultilayerScreen::BDSMultilayerScreen(G4TwoVector xysizeIn,
-					 G4String    nameIn):
+BDSMultilayerScreen::BDSMultilayerScreen(const G4TwoVector& xysizeIn,
+					 const G4String&    nameIn):
   xysize(xysizeIn),
   name(nameIn),
   log(nullptr),

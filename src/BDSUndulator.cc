@@ -39,16 +39,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSUndulator::BDSUndulator(G4String   nameIn,
-			   G4double   lengthIn,
-			   G4double   periodIn,
-			   G4double   undulatorMagnetHeightIn,
-			   G4double   horizontalWidthIn,
-			   G4double   undulatorGapIn,
+BDSUndulator::BDSUndulator(const G4String&  nameIn,
+			   G4double         lengthIn,
+			   G4double         periodIn,
+			   G4double         undulatorMagnetHeightIn,
+			   G4double         horizontalWidthIn,
+			   G4double         undulatorGapIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
 			   BDSFieldInfo*    vacuumFieldInfoIn,
 			   BDSFieldInfo*    outerFieldInfoIn,
-			   G4String         materialIn):
+			   const G4String&  materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
