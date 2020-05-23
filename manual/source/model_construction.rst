@@ -336,6 +336,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
@@ -471,6 +476,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
@@ -538,6 +548,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in :ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -558,7 +570,7 @@ sextupole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{2}B_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -572,6 +584,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in ref:`fields-multipole-outer-lhc`.
 
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -592,7 +606,7 @@ octupole
 
 .. math::
 
-   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
+   k_{3} = \frac{1}{B \rho}\,\frac{d^{3}B_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -625,7 +639,7 @@ decapole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{4}B_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -653,7 +667,7 @@ multipole
 
 .. math::
 
-   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+   knl[n] = \frac{1}{B \rho} \frac{d^{n}B_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
 starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
@@ -943,26 +957,26 @@ rcol
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-+--------------------+------------------------------+--------------+---------------+
-| **Parameter**      | **Description**              | **Default**  | **Required**  |
-+====================+==============================+==============+===============+
-| `l`                | Length [m]                   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `xsize`            | Horizontal half aperture [m] | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `ysize`            | Vertical half aperture [m]   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | None         | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `colour`           | Name of colour desired for   | ""           | No            |
-|                    | block. See :ref:`colours`.   |              |               |
-+--------------------+------------------------------+--------------+---------------+
++--------------------+-----------------------------------+----------------+---------------+
+| **Parameter**      | **Description**                   | **Default**    | **Required**  |
++====================+===================================+================+===============+
+| `l`                | Length [m]                        | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsize`            | Horizontal half aperture [m]      | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysize`            | Half height of jaws [m]           | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `material`         | Outer material                    | None           | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `horizontalWidth`  | Outer full width [m]              | 0.5 m          | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsizeOut`         | Horizontal exit half aperture [m] | `xsize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysizeOut`         | Vertical exit half aperture [m]   | `ysize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `colour`           | Name of colour desired for block  | ""             | No            |
+|                    | See :ref:`colours`.               |                |               |
++--------------------+-----------------------------------+----------------+---------------+
 
 Notes: 
 
@@ -1003,7 +1017,7 @@ the aperture is elliptical and the `xsize` and `ysize` define the horizontal and
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
 * When tapered, the ratio between the horizontal and vertical half-axes of the entrance
-  aperture must be the same ratio for the exit aperture.
+  aperture (`xsize` and `ysize`) **must** be the same ratio for the exit aperture (`xsizeOut` and `ysizeOut`).
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol
@@ -1052,7 +1066,7 @@ Notes:
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
   as a box with no aperture.
-* Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
+* For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
   that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
   no jaws will be built and BDSIM will exit.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
@@ -1065,11 +1079,15 @@ Notes:
 
 Examples: ::
 
-   ! Standard
+   ! standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
-   ! with kinetic energy limit
-   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+   ! two separately specified jaws
+   j1: jcol, l=1*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=1.5*cm;
+
+   ! only left jaw
+   j2: jcol, l=0.9*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=2*m;
+
 
 
 degrader
@@ -1370,6 +1388,11 @@ Parameter                   Description                                         
 
 Notes:
 
+* A postive crystalAngleYAxisLeft will result in the crystal being rotated away from the z axis of the
+  collimator. Therefore, a positive angle for both a left and right crystal will result in diverging
+  crystals.
+* The bending angle of the left crystal is reversed from the definition. Therefore a positive bending angle
+  will result in the crystal bending away from the z axis of the collimator for both left and right crystals.
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
 * If both `crystalLeft` and `crystalRight` are specified, both will be constructed uniquely and placed.

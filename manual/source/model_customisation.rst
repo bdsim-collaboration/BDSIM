@@ -693,6 +693,11 @@ The magnet geometry is controlled by the following parameters.
 	  per-element magnet geometry definitions will be ignored and the ones specified
 	  in Options will be used.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this. These are described in :ref:`fields-multipole-outer-lhc`.
+
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +=======================+==============================================================+===============+===========+
@@ -1050,7 +1055,9 @@ External World Geometry
 
 External geometry can be supplied as the world volume with the option `worldGeometryFile`
 (see :ref:`options-geometry`). The BDSIM beamline will be placed inside this world volume
-provided in the file.
+provided in the file. ::
+
+  option, worldGeometryFile="gdml:myworld.gdml";
 
 Unlike the standard BDSIM world volume whose size is
 set dynamically, the external world volume will have fixed dimensions, therefore the user should supply
@@ -1062,6 +1069,9 @@ format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the ge
 file. See :ref:`externally-provided-geometry` for more details.
 
 * See also :ref:`physics-bias-importance-sampling` for usage of this.
+* The world **material** will be taken from the GDML file and the option :code:`worldMaterial`
+  will be ignored. If the option :code:`worldMaterial` is specified as well as
+  :code:`worldGeometryFile`, BDSIM will exit.
 * The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
   the supplied geometry by density. See :ref:`automatic-colours` for details.
 
@@ -1103,7 +1113,7 @@ There are 3 possible ways to place a piece of geometry.
 
 3) In curvilinear coordinates with respect to a beam line element by name.
 
-   - The name of an element is used to look up its `s` coordinate. `s`, `x`, `y` and the rotation
+   - The name of an element is used to look up its (mid-point) `s` coordinate. `s`, `x`, `y` and the rotation
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
