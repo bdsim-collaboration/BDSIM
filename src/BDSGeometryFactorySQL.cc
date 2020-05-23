@@ -29,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
-//#include "BDSPCLTube.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
