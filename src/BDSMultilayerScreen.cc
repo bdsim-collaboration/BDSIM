@@ -66,10 +66,10 @@ void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
     {
       G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
       G4String tempString = "Sampler_" + std::to_string(nThisSampler);
-      layerName = tempString + "_" + layerName;
+      layerName = tempString + "_" + nameIn;
     }
   else
-    {layerName = name;}
+    {layerName = nameIn;}
 
   G4ThreeVector layerSize(xysize.x(), xysize.y(), thickness);
   BDSScreenLayer* screen = new BDSScreenLayer(layerSize, layerName, material,
