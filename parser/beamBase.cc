@@ -35,7 +35,8 @@ BeamBase::BeamBase()
   zDistrType           = "";
   distrFile            = "";
   distrFileFormat      = "";
-  matchDistrFileLength = true;  
+  matchDistrFileLength = true;
+  removeUnstableWithoutDecay = true;
   nlinesIgnore         = 0;
   nlinesSkip           = 0;
   

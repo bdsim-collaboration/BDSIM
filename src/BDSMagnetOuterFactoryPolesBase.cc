@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSGlobalConstants.hh"
@@ -307,10 +308,10 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     horizonta
   // check parameters are valid
   if (horizontalWidth*0.5 < bpRadius)
     {
-      G4cerr << __METHOD_NAME__
-	     << "horizontalWidth (" << horizontalWidth << ") must be greater than 2*beampipe radius ("
-	     << 2*bpRadius << ")" << G4endl;
-      exit(1);
+      std::string msg = "HorizontalWidth (" + std::to_string(horizontalWidth);
+      msg += ") must be greater than 2*beampipe radius (";
+      msg += std::to_string(2*bpRadius) + ")";
+      throw BDSException(__METHOD_NAME__, msg);
     }
 
   // layout markers for the pole and yoke - radially out from centre
@@ -782,11 +783,11 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(const G4String&
   // Test faces
   if (BDS::WillIntersect(-angleIn, -angleOut, horizontalWidth, length))
     {
-      G4cout << __METHOD_NAME__ << "Error: Faces of magnet (section) named \""
-	     << name << "\" will overlap!" << G4endl;
-      G4cout << "Length of magnet " << length << " mm"
-	     << " is too short for the angle of the pole faces: (" << angleIn << "," << angleOut << ")." << G4endl;
-      exit(1);
+      std::string msg = "Error: Faces of magnet (section) named \"" + name + "\" will overlap!\n";
+      msg += "Length of magnet " + std::to_string(length);
+      msg += " mm is too short for the angle of the pole faces: (" + std::to_string(angleIn);
+      msg += "," + std::to_string(angleOut) + ").";
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
   // vhRatio - don't allow a ratio greater than 10:1
