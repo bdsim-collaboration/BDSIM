@@ -16,11 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMultilayerScreen.hh"
-
 #include "BDSColourWheel.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
+#include "BDSMultilayerScreen.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 #include "BDSDebug.hh"
@@ -33,8 +34,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PVPlacement.hh"               
 #include "G4VSolid.hh"
 
-BDSMultilayerScreen::BDSMultilayerScreen(G4TwoVector xysizeIn,
-					 G4String    nameIn):
+BDSMultilayerScreen::BDSMultilayerScreen(const G4TwoVector& xysizeIn,
+					 const G4String&    nameIn):
   xysize(xysizeIn),
   name(nameIn),
   log(nullptr),
@@ -66,7 +67,7 @@ void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
     {
       G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
       G4String tempString = "Sampler_" + std::to_string(nThisSampler);
-    layerName = tempString + "_" + layerName;
+      layerName = tempString + "_" + layerName;
     }
   else
     {layerName=name;}
@@ -91,11 +92,7 @@ BDSScreenLayer* BDSMultilayerScreen::ScreenLayer(G4String layerName)
 {
   auto result = screenLayerNames.find(layerName);
   if (result == screenLayerNames.end())
-    {
-      G4cerr << "BDSMultiLayer - error: screen layer \"" << layerName
-	     << "\" not found. Exiting." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "screen layer \"" + layerName + "\" not found");}
   else
     {return result->second;}
 }
