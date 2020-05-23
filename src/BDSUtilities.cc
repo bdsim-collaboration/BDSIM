@@ -395,16 +395,15 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
   std::string param = name + "=";
 
   int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      
+  if (pos >= 0)
+    {   
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
       int llen = tend - pos - param.length();
       
       value = spec.substr(pos + param.length(), llen);
-  }
+    }
   return value;
 }
 

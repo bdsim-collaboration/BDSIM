@@ -172,12 +172,6 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  /*if (!operation)
-    {
-      G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
-      callingProcess->DumpInfo();
-      exit(1);
-      }*/
   
   // get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
