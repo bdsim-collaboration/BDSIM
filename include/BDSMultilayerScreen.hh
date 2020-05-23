@@ -43,8 +43,8 @@ class BDSScreenLayer;
 class BDSMultilayerScreen 
 {
 public:
-  BDSMultilayerScreen(G4TwoVector xysize,
-		      G4String    name);
+  BDSMultilayerScreen(const G4TwoVector& xysizeIn,
+		      const G4String&    nameIn);
   virtual ~BDSMultilayerScreen();
 
   /// Construct and add a screen layer.
