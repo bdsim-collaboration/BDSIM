@@ -1416,7 +1416,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  baseWidth,
-			  PrepareMaterial(element, "carbon"),
+			  PrepareMaterial(element),
 			  PrepareVacuumMaterial(element),
 			  PrepareColour(element)));
 }

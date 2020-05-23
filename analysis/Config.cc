@@ -222,7 +222,7 @@ void Config::ParseHistogramLine(const std::string& line)
   
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
-  std::regex histNDim("(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
+  std::regex histNDim("^\\s*(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   //std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
   
@@ -587,7 +587,7 @@ void Config::ParseBinning(const std::string& binning,
       std::string errString = "Insufficient number of binning dimensions on line #"
 	+ std::to_string(lineCounter) + "\n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
-	+ binning + "\n";
+    + binning + "\nDimension defined by \"low:high\" and comma separated";
       throw RBDSException(errString);
     }
 }

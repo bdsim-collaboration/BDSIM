@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGMAD.hh"
@@ -57,7 +58,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
   std::ifstream inputf;
   inputf.open(fileName);
   if (!inputf.good())
-    {G4cerr << __METHOD_NAME__ << "Error opening input file \"" << fileName << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
 
   const G4String emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial  = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);

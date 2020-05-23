@@ -94,14 +94,14 @@ protected:
   /// The xVari argument is not used in the implementation provided with this
   /// class but is used in derived classes with different AccumulateSingleValue
   /// implementations.
-  virtual void AccumulateSingleValue(const double&  oldMean,
-				     const double&  oldVari,
-				     const double&  x,
-				     const double&  xVari,
-				     const unsigned long& nEntriesAccumulated,
-				     const unsigned long& nEntriesToAccumulate,
-				     double&        newMean,
-				     double&        newVari) const;
+  virtual void AccumulateSingleValue(double        oldMean,
+				     double        oldVari,
+				     double        x,
+				     double        xVari,
+				     unsigned long nEntriesAccumulated,
+				     unsigned long nEntriesToAccumulate,
+				     double&       newMean,
+				     double&       newVari) const;
 
   int               nDimensions;     ///< Number of dimensions
   unsigned long     n;               ///< Counter.

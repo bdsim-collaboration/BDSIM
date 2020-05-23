@@ -525,16 +525,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       for (G4int i = 0; i < 3; i++)
 	{worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
-
-  G4String    worldName         = "World";
-  G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
-  G4VSolid*        worldSolid   = nullptr;
-  G4LogicalVolume* worldLV      = nullptr;
+  
+  G4String         worldName  = "World";
+  G4VSolid*        worldSolid = nullptr;
+  G4LogicalVolume* worldLV    = nullptr;
 
   G4String worldGeometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
   if (!worldGeometryFile.empty())
     {
+      if (BDSGlobalConstants::Instance()->WorldMaterialSet())
+        {throw BDSException(__METHOD_NAME__, "conflicting options - world material option specified but material will be taken from world GDML file");}
       G4bool ac = BDSGlobalConstants::Instance()->AutoColourWorldGeometryFile();
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
@@ -586,7 +586,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #else
       G4cout << __METHOD_NAME__ << "World dimensions: " << worldR / CLHEP::m << " m" << G4endl;
 #endif
-
+      G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+      G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
       worldExtent = BDSExtent(worldR);
       worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 

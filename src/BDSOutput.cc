@@ -21,14 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSBLMRegistry.hh"
 #include "BDSDebug.hh"
+#include "BDSEventInfo.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSHistBinMapper3D.hh"
 #include "BDSHitApertureImpact.hh"
 #include "BDSHitCollimator.hh"
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSHitEnergyDepositionGlobal.hh"
-#include "BDSEventInfo.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSHistBinMapper3D.hh"
 #include "BDSHitSampler.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventAperture.hh"
@@ -50,7 +50,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
-#include "BDSHitSampler.hh"
 #include "BDSScorerHistogramDef.hh"
 #include "BDSSDManager.hh"
 #include "BDSStackingAction.hh"
@@ -90,7 +89,7 @@ const std::set<G4String> BDSOutput::protectedNames = {
 
 BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 		     const G4String& fileExtensionIn,
-		     G4int    fileNumberOffset):
+		     G4int           fileNumberOffset):
   BDSOutputStructures(BDSGlobalConstants::Instance()),
   baseFileName(baseFileNameIn),
   fileExtension(fileExtensionIn),
@@ -317,7 +316,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
     {FillPrimaryLoss(primaryLoss);}
-  FillTrajectories(trajectories);
+  if (trajectories)
+    {FillTrajectories(trajectories);}
   if (collimatorHits)
     {FillCollimatorHits(collimatorHits, primaryLoss);}
   if (apertureImpacts)
