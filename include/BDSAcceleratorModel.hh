@@ -121,15 +121,15 @@ public:
   BDSApertureInfo*  Aperture(G4String name) const;
 
   /// Access region information. Will exit if not found.
-  G4Region*         Region(G4String name) const;
+  G4Region*         Region(const G4String& name) const;
 
   /// Returns pointer to a set of logical volumes. If no set by that name exits, create it.
-  std::set<G4LogicalVolume*>* VolumeSet(G4String name);
+  std::set<G4LogicalVolume*>* VolumeSet(const G4String& name);
 
   /// Check whether a volume is in a registry of volumes (a set). If no such registry exists
   /// then return false.
   G4bool VolumeInSet(G4LogicalVolume* volume,
-		     G4String registryName);
+		     const G4String& registryName);
 
   /// Find a corresponding mass world beam line for a curvilinear (or bridge) beam
   /// line from the registered beam line sets.

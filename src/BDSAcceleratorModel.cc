@@ -150,7 +150,7 @@ BDSApertureInfo* BDSAcceleratorModel::Aperture(G4String name) const
     {throw BDSException(__METHOD_NAME__, "Invalid aperture name \"" + name + "\"");}
 }
 
-G4Region* BDSAcceleratorModel::Region(G4String name) const
+G4Region* BDSAcceleratorModel::Region(const G4String& name) const
 {
   auto result = regions.find(name);
   if (result != regions.end())
@@ -165,7 +165,7 @@ G4Region* BDSAcceleratorModel::Region(G4String name) const
     }
 }
 
-std::set<G4LogicalVolume*>* BDSAcceleratorModel::VolumeSet(G4String name)
+std::set<G4LogicalVolume*>* BDSAcceleratorModel::VolumeSet(const G4String& name)
 {
   if (volumeRegistries.find(name) == volumeRegistries.end()) // no such registry -> create one
     {volumeRegistries[name] = new std::set<G4LogicalVolume*>();}
@@ -173,7 +173,7 @@ std::set<G4LogicalVolume*>* BDSAcceleratorModel::VolumeSet(G4String name)
 }
 
 G4bool BDSAcceleratorModel::VolumeInSet(G4LogicalVolume* volume,
-					G4String registryName)
+					const G4String& registryName)
 {
   if (volumeRegistries.find(registryName) == volumeRegistries.end())
     {return false;} // no such registry
