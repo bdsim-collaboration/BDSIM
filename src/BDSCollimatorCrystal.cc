@@ -109,8 +109,8 @@ void BDSCollimatorCrystal::Build()
   if (crystalLeft)
     {
       G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
-      G4double dx                    = TransverseOffsetToEdge(crystalLeft, -angleYAxisLeft, true);
-      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft-dx,0,0);
+      G4double dx                    = TransverseOffsetToEdge(crystalLeft, angleYAxisLeft, true);
+      G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft+dx,0,0);
       G4ThreeVector placementOffsetL = objectOffset + colOffsetL; // 'L' in p offset to avoid class with BDSGeometry Component member
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisLeft))
@@ -152,7 +152,7 @@ void BDSCollimatorCrystal::Build()
   if (crystalRight)
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
-      G4double dx                    = TransverseOffsetToEdge(crystalLeft, angleYAxisRight, false);
+      G4double dx                    = TransverseOffsetToEdge(crystalRight, angleYAxisRight, false);
       G4ThreeVector colOffsetR       = G4ThreeVector(-(halfGapRight+dx),0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
@@ -237,46 +237,55 @@ G4double BDSCollimatorCrystal::TransverseOffsetToEdge(const BDSCrystal* crystal,
 						      G4double          placementAngle,
 						      G4bool            left) const
 {
-  if (!BDS::IsFinite(placementAngle))
-    {return 0;}
-
   const BDSCrystalInfo* recipe = crystal->recipe;
   G4double result = 0;
-  G4double factor = left ? -1.0 : 1.0;
+  G4double factor = left ? 1.0 : -1.0;
   switch (recipe->shape.underlying())
-  {
-    case BDSCrystalType::box:
     {
-      result = 0.5*recipe->lengthZ * std::sin(placementAngle);
-      result += factor * 0.5*recipe->lengthX * std::cos(placementAngle);
-      break;
-    }
+    case BDSCrystalType::box:
+      {
+	result =  0.5*recipe->lengthZ * std::sin(placementAngle);
+	result += 0.5*recipe->lengthX * std::cos(placementAngle);
+	break;
+      }
     case BDSCrystalType::cylinder:
     case BDSCrystalType::torus:
-    {
-      G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
-      if (!BDS::IsFinite(halfAngle)) // like a box
-        {
-          result = 0.5*recipe->lengthZ * std::sin(placementAngle);
-          result += factor * 0.5*recipe->lengthX * std::cos(placementAngle);
-        }
-      else
       {
-        G4TwoVector a(recipe->BendingRadiusHorizontal(), 0);
-        G4TwoVector b(a);
-        //b.rotate(-factor*std::abs(halfAngle)); // want to rotate 'down'
-        b.rotate(std::abs(halfAngle)); // want to rotate 'down'
-        //b.rotate(halfAngle); // want to rotate 'down'
-        G4TwoVector dxy = b - a;
-        dxy.rotate(placementAngle);
-        result = dxy.x();
-        result -= 0.5*recipe->lengthX * std::cos(placementAngle);
+	G4double halfAngle = 0.5 * recipe->bendingAngleYAxis;
+	if (!BDS::IsFinite(halfAngle)) // like a box
+	  {
+	    result =  0.5*recipe->lengthZ * std::sin(placementAngle);
+	    result += 0.5*recipe->lengthX * std::cos(placementAngle);
+	  }
+	else
+	  {
+	    // use 2-vectors to do all the maths for us
+	    // 2d vector from centre of curvature to middle of crystal
+	    G4TwoVector a(recipe->BendingRadiusHorizontal(), 0);
+	    G4TwoVector b(a); // copy it
+	    b.rotate(-halfAngle); // rotate to the front face centre
+	    // difference between these two is the vector from centre of crystal frame (which is the
+	    // middle of the crystal half way along z) to the front centre face
+	    G4TwoVector dxy = b - a;
+	    // construct a perpendicular vector for the width along the front face
+	    // 'factor' is because for the left crystal we want the right inside front face and the left inside
+	    // front face for the right crystal
+	    G4TwoVector frontFaceX = dxy.orthogonal() * factor;
+	    // 1/2 the width x this unit vector gives a vector from the centre of the front face
+	    // to the inside front edge
+	    G4TwoVector frontCentreToEdge = frontFaceX.unit() * 0.5*recipe->lengthX;
+	    // add this to the one from the middle of the crystal
+	    G4TwoVector resultV = dxy + frontCentreToEdge;
+	    // update by placement angle
+	    resultV.rotate(-factor*placementAngle);
+	    // result is horizontal (x) component of this - the sign should be right throughout
+	    result = -factor * resultV.x();
+	  }
+	break;
       }
-      break;
-    }
     default:
-    {break;}
-  }
+      {break;}
+    }
   
   return result;
 }

@@ -131,7 +131,6 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   //recipe->bendingAngleZAxis,
   //0);
   G4double bendingRadius = recipe->BendingRadiusHorizontal();
-  
   crystalChannelingData->SetBR(bendingRadius);
   
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
@@ -157,7 +156,7 @@ void BDSCrystalFactory::SetVisAttributes()
 {
   G4VisAttributes* crysVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("crystal"));
   crysVisAttr->SetVisibility(true);
-  crysVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  crysVisAttr->SetForceLineSegmentsPerCircle(100);
   allVisAttributes.insert(crysVisAttr);
   crystalLV->SetVisAttributes(crysVisAttr);
 }
