@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerHistogramDef.hh"
 
 #include "globals.hh"         // geant4 globals / types
+#include "G4Transform3D.hh"
 
 #include <map>
 #include <set>
@@ -148,11 +149,16 @@ public:
   /// is stored both in a vector and a map. Note, repeated entries will exist in the vector
   /// but be overwritten in the map.
   void RegisterScorerHistogramDefinition(const BDSScorerHistogramDef& def);
+  
+  /// Register a copy of the scorer placement so it can be used in the output.
+  void RegisterScorerPlacement(const G4String& meshName,
+                          const G4Transform3D& placement);
 
   /// @{ Access all scorer histogram definitions.
   const std::vector<BDSScorerHistogramDef>& ScorerHistogramDefinitions() const {return scorerHistogramDefs;}
   const std::map<G4String, BDSScorerHistogramDef>& ScorerHistogramDefinitionsMap() const {return scorerHistogramDefsMap;}
   const BDSScorerHistogramDef* ScorerHistogramDef(const G4String& name);
+  const std::map<G4String, G4Transform3D>& ScorerMeshPlacementsMap() const {return scorerMeshPlacements;}
   /// @}
   
 private:
@@ -194,6 +200,7 @@ private:
   std::vector<BDSScorerHistogramDef> scorerHistogramDefs;
   std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefsMap;
   /// @}
+  std::map<G4String, G4Transform3D> scorerMeshPlacements;
 };
 
 #endif

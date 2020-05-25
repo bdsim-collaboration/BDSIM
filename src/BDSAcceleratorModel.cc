@@ -234,6 +234,12 @@ void BDSAcceleratorModel::RegisterScorerHistogramDefinition(const BDSScorerHisto
   scorerHistogramDefsMap.emplace(def.uniqueName, def);
 }
 
+void BDSAcceleratorModel::RegisterScorerPlacement(const G4String& meshName,
+  const G4Transform3D& placement)
+{
+  scorerMeshPlacements[meshName] = placement;
+}
+
 const BDSScorerHistogramDef* BDSAcceleratorModel::ScorerHistogramDef(const G4String& name)
 {
   const auto result = scorerHistogramDefsMap.find(name);
