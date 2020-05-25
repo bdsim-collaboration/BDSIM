@@ -127,7 +127,10 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 #endif
   crystalChannelingData->SetFilename(fileName);
   
-  G4double bendingRadius = recipe->BendingRadiusHorizontal();
+  // -ve here due to right handed coordinate system + convention of +ve bending angle bends
+  // away from beam axis. This convention is also implied by when we do a -ve x axis rotation
+  // for cylindrical crystals (including the start and sweep angle).
+  G4double bendingRadius = -recipe->BendingRadiusHorizontal();
   crystalChannelingData->SetBR(bendingRadius);
   
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
