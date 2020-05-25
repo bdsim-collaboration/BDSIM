@@ -127,9 +127,6 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 #endif
   crystalChannelingData->SetFilename(fileName);
   
-  //G4ThreeVector bendingAngles = G4ThreeVector(recipe->bendingAngleYAxis);//, // bend induced in X
-  //recipe->bendingAngleZAxis,
-  //0);
   G4double bendingRadius = recipe->BendingRadiusHorizontal();
   crystalChannelingData->SetBR(bendingRadius);
   
