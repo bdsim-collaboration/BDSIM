@@ -154,7 +154,7 @@ void BDSCrystalFactory::SetVisAttributes()
 {
   G4VisAttributes* crysVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("crystal"));
   crysVisAttr->SetVisibility(true);
-  crysVisAttr->SetForceLineSegmentsPerCircle(100);
+  crysVisAttr->SetForceLineSegmentsPerCircle(200);
   allVisAttributes.insert(crysVisAttr);
   crystalLV->SetVisAttributes(crysVisAttr);
 }
@@ -248,7 +248,7 @@ BDSExtent BDSCrystalFactory::CalculateExtents(G4double xBendingAngle,
 BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameIn,
 						     const BDSCrystalInfo* recipe)
 {
-  G4double ba  = recipe->bendingAngleYAxis; // bending angle
+  G4double ba = recipe->bendingAngleYAxis; // bending angle
 
   // if no bending angle, create a box as that's all we can create
   if (!BDS::IsFinite(ba))
