@@ -140,6 +140,8 @@ void BDSOutputROOTEventModel::Flush()
   nCollimators = 0;
   collimatorInfo.clear();
   collimatorBranchNamesUnique.clear();
+  scoringMeshTranslation.clear();
+  scoringMeshRotation.clear();
 }
 
 #ifndef __ROOTBUILD__
