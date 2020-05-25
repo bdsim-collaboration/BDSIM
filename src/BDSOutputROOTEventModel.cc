@@ -142,7 +142,7 @@ void BDSOutputROOTEventModel::Flush()
   collimatorBranchNamesUnique.clear();
   scoringMeshTranslation.clear();
   scoringMeshRotation.clear();
-  scoringMeshNames.clear();
+  scoringMeshName.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -195,7 +195,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	  const G4String& name = kv.first;
 	  scoringMeshTranslation[name] = ConvertToROOT(kv.second.getTranslation());
 	  scoringMeshRotation[name]    = ConvertToROOT(kv.second.getRotation());
-	  scoringMeshNames.emplace_back(name);
+	  scoringMeshName.emplace_back(name);
 	}
     }
   
