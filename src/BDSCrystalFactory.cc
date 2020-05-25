@@ -127,11 +127,10 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 #endif
   crystalChannelingData->SetFilename(fileName);
   
-  //G4ThreeVector bendingAngles = G4ThreeVector(recipe->bendingAngleYAxis);//, // bend induced in X
-  //recipe->bendingAngleZAxis,
-  //0);
-  G4double bendingRadius = recipe->BendingRadiusHorizontal();
-  
+  // -ve here due to right handed coordinate system + convention of +ve bending angle bends
+  // away from beam axis. This convention is also implied by when we do a -ve x axis rotation
+  // for cylindrical crystals (including the start and sweep angle).
+  G4double bendingRadius = -recipe->BendingRadiusHorizontal();
   crystalChannelingData->SetBR(bendingRadius);
   
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
@@ -157,7 +156,7 @@ void BDSCrystalFactory::SetVisAttributes()
 {
   G4VisAttributes* crysVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("crystal"));
   crysVisAttr->SetVisibility(true);
-  crysVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  crysVisAttr->SetForceLineSegmentsPerCircle(200);
   allVisAttributes.insert(crysVisAttr);
   crystalLV->SetVisAttributes(crysVisAttr);
 }
@@ -251,7 +250,7 @@ BDSExtent BDSCrystalFactory::CalculateExtents(G4double xBendingAngle,
 BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameIn,
 						     const BDSCrystalInfo* recipe)
 {
-  G4double ba  = recipe->bendingAngleYAxis; // bending angle
+  G4double ba = recipe->bendingAngleYAxis; // bending angle
 
   // if no bending angle, create a box as that's all we can create
   if (!BDS::IsFinite(ba))
