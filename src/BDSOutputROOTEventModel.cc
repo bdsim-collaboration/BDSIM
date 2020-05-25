@@ -27,8 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetStrength.hh"
 #include "BDSSamplerRegistry.hh"
 
-#include "G4Types.hh"
+#include "G4RotationMatrix.hh"
 #include "G4String.hh"
+#include "G4Types.hh"
 
 #include <map>
 #include <string>
@@ -147,6 +148,31 @@ BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
   storeCollimatorInfo(storeCollimatorInfoIn)
 {;}
 
+TRotation BDSOutputROOTEventModel::ConvertToROOT(const G4RotationMatrix* rm) const
+{
+  TRotation rr = TRotation();
+  rr.SetToIdentity();
+  if (!rm)
+  {return rr;}
+
+    double angle;
+    CLHEP::Hep3Vector axis;
+
+    rm->getAngleAxis(angle, axis);
+    rr.Rotate(angle, TVector3(axis.x(), axis.y(), axis.z()));
+    return rr;
+}
+
+TRotation BDSOutputROOTEventModel::ConvertToROOT(const G4RotationMatrix& rm) const
+{
+  return ConvertToROOT(&rm);
+}
+
+TVector3 BDSOutputROOTEventModel::ConvertToROOT(const G4ThreeVector& v) const
+{
+  return TVector3(v.x() / CLHEP::m, v.y() / CLHEP::m, v.z() / CLHEP::m);
+}
+
 void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
 				   const std::map<G4String, G4int>& collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
@@ -176,79 +202,26 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
       collimatorInfo = collimatorInfoIn;
     }
 
-  double angle;
-  CLHEP::Hep3Vector axis;
-
   n = (int)beamline->size();
   
-  // iterate over flat beamline
   for (auto i = beamline->begin(); i != beamline->end(); ++i)
   {
-    // Name
     componentName.push_back((*i)->GetName());
     placementName.push_back((*i)->GetPlacementName());
     componentType.push_back((*i)->GetType());
-
-    // Length
     length.push_back((float &&) (*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m);
-
-    // Positions
-    G4ThreeVector p;
-    p = (*i)->GetPositionStart();
-    staPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-    p = (*i)->GetPositionMiddle();
-    midPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-    p = (*i)->GetPositionEnd();
-    endPos.push_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-
-    // Rotations
-    G4RotationMatrix *gr;
-    gr = (*i)->GetRotationStart();
-    TRotation rr = TRotation();
-    rr.SetToIdentity();
-    gr->getAngleAxis(angle,axis);
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    staRot.push_back(rr);
-
-    gr = (*i)->GetRotationMiddle();
-    gr->getAngleAxis(angle,axis);
-    rr.SetToIdentity();
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    //G4cout << (*i)->GetName() << " " << angle << " " << axis.x() << " " << axis.y() << " " << axis.z() << G4endl;
-    midRot.push_back(rr);
-
-    gr = (*i)->GetRotationEnd();
-    gr->getAngleAxis(angle,axis);
-    rr.SetToIdentity();
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    endRot.push_back(rr);
-
-    // Reference orbit positions
-    p = (*i)->GetReferencePositionStart();
-    staRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-    p = (*i)->GetReferencePositionMiddle();
-    midRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-    p = (*i)->GetReferencePositionEnd();
-    endRefPos.emplace_back(TVector3(p.getX() / CLHEP::m, p.getY() / CLHEP::m, p.getZ() / CLHEP::m));
-
-    // Reference orbit rotations
-    gr = (*i)->GetReferenceRotationStart();
-    gr->getAngleAxis(angle,axis);
-    rr.SetToIdentity();
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    staRefRot.push_back(rr);
-
-    gr = (*i)->GetReferenceRotationMiddle();
-    gr->getAngleAxis(angle,axis);
-    rr.SetToIdentity();
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    midRefRot.push_back(rr);
-
-    gr = (*i)->GetReferenceRotationEnd();
-    gr->getAngleAxis(angle,axis);
-    rr.SetToIdentity();
-    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
-    endRefRot.push_back(rr);
+    staPos.push_back(ConvertToROOT((*i)->GetPositionStart()));
+    midPos.push_back(ConvertToROOT((*i)->GetPositionMiddle()));
+    endPos.push_back(ConvertToROOT((*i)->GetPositionEnd()));
+    staRot.push_back(ConvertToROOT((*i)->GetRotationStart()));
+    midRot.push_back(ConvertToROOT((*i)->GetRotationMiddle()));
+    endRot.push_back(ConvertToROOT((*i)->GetRotationEnd()));
+    staRefPos.emplace_back(ConvertToROOT((*i)->GetReferencePositionStart()));
+    midRefPos.emplace_back(ConvertToROOT((*i)->GetReferencePositionMiddle()));
+    endRefPos.emplace_back(ConvertToROOT((*i)->GetReferencePositionEnd()));
+    staRefRot.push_back(ConvertToROOT((*i)->GetReferenceRotationStart()));
+    midRefRot.push_back(ConvertToROOT((*i)->GetReferenceRotationMiddle()));
+    endRefRot.push_back(ConvertToROOT((*i)->GetReferenceRotationEnd()));
 
     // tilt and offset
     BDSTiltOffset* to = (*i)->GetTiltOffset();

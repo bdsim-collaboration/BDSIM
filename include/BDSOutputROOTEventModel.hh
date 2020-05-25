@@ -141,6 +141,12 @@ public:
 #ifndef __ROOTBUILD__
   /// Constructor for whether to store collimator information or not.
   BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn);
+  
+  /// Utility function.
+  TRotation ConvertToROOT(const G4RotationMatrix* rm) const;
+  TRotation ConvertToROOT(const G4RotationMatrix& rm) const;
+  TVector3  ConvertToROOT(const G4ThreeVector& v) const;
+  
   /// Fill root output.
   virtual void Fill(const std::vector<G4int>& collimatorIndicesIn = {},
 		    const std::map<G4String, G4int>& collimatorIndicesByNameIn = {},
