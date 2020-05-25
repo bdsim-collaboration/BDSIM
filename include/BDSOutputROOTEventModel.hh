@@ -133,7 +133,7 @@ public:
 
   std::map<std::string, TVector3>  scoringMeshTranslation;
   std::map<std::string, TRotation> scoringMeshRotation;
-  std::vector<std::string>         scoringMeshNames;
+  std::vector<std::string>         scoringMeshName;
   
   /// Default constructor
   BDSOutputROOTEventModel();
