@@ -173,10 +173,11 @@ TVector3 BDSOutputROOTEventModel::ConvertToROOT(const G4ThreeVector& v) const
   return TVector3(v.x() / CLHEP::m, v.y() / CLHEP::m, v.z() / CLHEP::m);
 }
 
-void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn,
-				   const std::map<G4String, G4int>& collimatorIndicesByNameIn,
+void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                collimatorIndicesIn,
+				   const std::map<G4String, G4int>&         collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
-				   const std::vector<G4String>& collimatorBranchNamesIn)
+				   const std::vector<G4String>&             collimatorBranchNamesIn,
+                                   const std::map<G4String, G4Transform3D>* scorerMeshPlacements)
 {  
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {samplerNamesUnique.push_back(std::string(name) + ".");}
@@ -184,7 +185,16 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>& collimatorIndicesIn
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}
   
-  // get accelerator model
+  if (scorerMeshPlacements)
+    {
+      for (const auto& kv : *scorerMeshPlacements)
+	{
+	  const G4String& name = kv.first;
+	  scoringMeshTranslation[name] = ConvertToROOT(kv.second.getTranslation());
+	  scoringMeshRotation[name]    = ConvertToROOT(kv.second.getRotation());
+	}
+    }
+  
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (!beamline)
     {return;} // in case of generatePrimariesOnly there is no model - return
