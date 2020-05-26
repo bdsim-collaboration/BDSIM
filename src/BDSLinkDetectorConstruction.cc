@@ -190,7 +190,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   collimatorLower.toLower();
   auto searchC = collimatorToCrystal.find(collimatorLower); // will use later if needed
   G4bool isACrystal = searchC != collimatorToCrystal.end();
-  G4cout << "XYZ isACrystal " << isACrystal << G4endl;
+  //G4cout << "XYZ isACrystal " << isACrystal << G4endl;
   if (isACrystal)
     {G4cout << "crystal name " << searchC->first << " " << searchC->second << G4endl;}
 
