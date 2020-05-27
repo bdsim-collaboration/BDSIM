@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsMap.hh"
 #include "G4VPrimitiveScorer.hh"
 
-class BDSHistBinMapper3D;
+class BDSHistBinMapper;
 class G4PhysicsVector;
 
 /**
@@ -45,7 +45,7 @@ public:
   /// Constructor where no conversion factor file is provided and all cell fluxes just
   /// use conversion factor 1.0.
   BDSPSCellFluxScaled3D(const G4String&           scorerName,
-                        const BDSHistBinMapper3D* mapperIn,
+                        const BDSHistBinMapper* mapperIn,
                         const G4String&           unitIn = "percm2",
                         G4int ni=1, G4int nj=1, G4int nk=1,
                         G4int depi=2, G4int depj=1, G4int depk=0);
@@ -53,7 +53,7 @@ public:
   /// Constructor where conversion factor file is provided and loaded into a physics vector.
   /// Cell fluxes are multiplied by the factor as a function of the particle kinetic energy.
   BDSPSCellFluxScaled3D(const G4String&           scorerName,
-                        const BDSHistBinMapper3D* mapperIn,
+                        const BDSHistBinMapper* mapperIn,
                         const G4String&           filename,
                         const G4String&           unitIn = "percm2",
                         G4int ni=1, G4int nj=1, G4int nk=1,
@@ -88,7 +88,7 @@ private:
   G4PhysicsVector* conversionFactor;
   
   /// Mapping from coordinate systems in mesh to global replica number.
-  const BDSHistBinMapper3D* mapper; ///< We don't own this.
+  const BDSHistBinMapper* mapper; ///< We don't own this.
   
   std::map<G4VSolid*, G4double> volumeCache;
 };

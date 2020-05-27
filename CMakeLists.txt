@@ -56,6 +56,16 @@ mark_as_advanced(BDSIM_REGRESSION_PREFIX)
 # Find Packages #
 #################
 
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost REQUIRED COMPONENTS system)
+
+if(Boost_FOUND)
+    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+    message(STATUS "BOOST Found")
+endif()
+
 # GIT - optional - for software version in output & copying only example source files
 # minimum version 1.8.2.1 for git ls-files for example copying
 find_package(Git 1.8.2.1 QUIET)
@@ -199,6 +209,9 @@ if (USE_HEPMC3)
   target_link_libraries(${BDSIM_LIB_NAME} ${HEPMC3_LIBRARIES})
 endif()
 
+#link against BOOST
+target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
+
 # link against ROOT
 target_link_libraries(${BDSIM_LIB_NAME} ${ROOT_LIBRARIES})
 
@@ -231,6 +244,7 @@ add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
+
 if (BDSIM_BUILD_STATIC_LIBS)
   set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
 else()
@@ -241,6 +255,7 @@ bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
+
 
 include(CPack)
 

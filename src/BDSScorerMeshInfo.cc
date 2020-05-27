@@ -34,6 +34,7 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   nBinsX = mesh.nx;
   nBinsY = mesh.ny;
   nBinsZ = mesh.nz;
+  nBinsE = mesh.ne;
 
   if (!BDS::IsFinite(mesh.xsize))
     {throw BDSException(__METHOD_NAME__, "xsize must be finite in mesh \"" + mesh.name + "\"");}
@@ -48,6 +49,9 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   yHigh =  0.5*mesh.ysize * CLHEP::m;
   zLow  = -0.5*mesh.zsize * CLHEP::m;
   zHigh =  0.5*mesh.zsize * CLHEP::m;
+  //TODO get info from parser
+  eLow  =  1 * CLHEP::eV;
+  eHigh =  1e12 * CLHEP::eV;
 
   if (!BDS::IsFinite(nBinsX))
     {throw BDSException(__METHOD_NAME__, "nx must be finite in mesh \"" + mesh.name + "\"");}

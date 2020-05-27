@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSHistBinMapper3D.hh"
+#include "BDSHistBinMapper.hh"
 #include "BDSScorerHistogramDef.hh"
 
 #include "G4String.hh"
@@ -29,7 +29,7 @@ BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo&  mesh,
 					     const G4String&           uniqueNameIn,
 					     const G4String&           primitiveScorerNameIn,
 					     G4double                  primitiveScorerUnitValueIn,
-					     const BDSHistBinMapper3D& coordinateMapperIn):
+					     const BDSHistBinMapper& coordinateMapperIn):
   BDSScorerMeshInfo(mesh),
   uniqueName(uniqueNameIn),
   primitiveScorerName(primitiveScorerNameIn),

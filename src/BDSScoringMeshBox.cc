@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSHistBinMapper3D.hh"
+#include "BDSHistBinMapper.hh"
 #include "BDSScoringMeshBox.hh"
 #include "BDSScorerMeshInfo.hh"
 
@@ -31,20 +31,20 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
     BDSScoringMeshBox(name, placementTransform.getTranslation(), placementTransform.getRotation())
 {
   // size of the scoring mesh
-  G4double scorerSize[3];
   scorerSize[0] = recipe.ScoringBoxX();
   scorerSize[1] = recipe.ScoringBoxY();
   scorerSize[2] = recipe.ScoringBoxZ();
+  scorerSize[3] = recipe.ScoringBoxE();
   SetSize(scorerSize);
 
   // divisions of the scoring mesh
-  G4int nSegment[3];
   nSegment[0] = recipe.nBinsX;
   nSegment[1] = recipe.nBinsY;
   nSegment[2] = recipe.nBinsZ;
+  nSegment[3] = recipe.nBinsE;
   SetNumberOfSegments(nSegment);
 
-  mapper = new BDSHistBinMapper3D(fNSegment[0], fNSegment[1], fNSegment[2]);
+  mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2],nSegment[3]);
 }
 
 BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
@@ -57,14 +57,15 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
   fCenterPosition = translation;
 }
 
-const BDSHistBinMapper3D* BDSScoringMeshBox::Mapper() const
+const BDSHistBinMapper* BDSScoringMeshBox::Mapper() const
 {
   if (!sizeIsSet)
     {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
   if (!mapper)
-    {mapper = new BDSHistBinMapper3D(fNSegment[0], fNSegment[1], fNSegment[2]);}
+    {mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nSegment[3]);}
   return mapper;
 }
+
 
 BDSScoringMeshBox::~BDSScoringMeshBox()
 {
