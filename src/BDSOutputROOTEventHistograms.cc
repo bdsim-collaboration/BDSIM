@@ -43,7 +43,7 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
 							   std::vector<TH2D*>& histograms2DIn,
 							   std::vector<TH3D*>& histograms3DIn,
-							   std::vector<boost::histogram::histogram<double>> histograms4DIn):
+                                                           std::vector<boost::histogram::histogram<boost::histogram::axis::regular<double>>*>& histograms4DIn):
   histograms1D(histograms1DIn),
   histograms2D(histograms2DIn),
   histograms3D(histograms3DIn),
