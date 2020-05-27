@@ -51,7 +51,7 @@ public:
   inline G4double NBinsK() const {return nBinsK;}
   inline G4ThreeVector NBins() const {return G4ThreeVector(nBinsI, nBinsJ, nBinsK);}
   
-private:
+protected:
   G4int nBinsI;
   G4int nBinsJ;
   G4int nBinsK;

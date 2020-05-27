@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventInfo.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSHistBinMapper3D.hh"
+#include "BDSHistBinMapper.hh"
 #include "BDSHitApertureImpact.hh"
 #include "BDSHitCollimator.hh"
 #include "BDSHitEnergyDeposition.hh"
@@ -930,9 +930,9 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
   G4int histIndex = histIndices3D[histogramDefName];
   G4double unit   = BDS::MapGetWithDefault(histIndexToUnits3D, histIndex, 1.0);
   // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
-  const BDSHistBinMapper3D& mapper = scorerCoordinateMaps.at(histogramDefName);
+  const BDSHistBinMapper& mapper = scorerCoordinateMaps.at(histogramDefName);
   TH3D* hist = evtHistos->Get3DHistogram(histIndex);
-  G4int x,y,z;
+  G4int x,y,z,e;
 #if G4VERSION < 1039
   for (const auto& hit : *hitMap->GetMap())
 #else
@@ -940,7 +940,7 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 #endif
     {
       // convert from scorer global index to 3d i,j,k index of 3d scorer
-      mapper.IJKFromGlobal(hit.first, x,y,z);
+      mapper.IJKLFromGlobal(hit.first, x,y,z,e);
       G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
       evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second / unit);
     }

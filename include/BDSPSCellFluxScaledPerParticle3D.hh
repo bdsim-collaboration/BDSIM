@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-class BDSHistBinMapper3D;
+class BDSHistBinMapper;
 class G4PhysicsVector;
 
 /**
@@ -39,7 +39,7 @@ class BDSPSCellFluxScaledPerParticle3D: public BDSPSCellFluxScaled3D
 {
 public:
   BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
-								   const BDSHistBinMapper3D* mapperIn,
+								   const BDSHistBinMapper* mapperIn,
 								   const G4String&           pathname,
 								   const G4String&           unitIn = "percm2",
 								   G4int ni=1,

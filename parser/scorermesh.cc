@@ -34,6 +34,7 @@ void ScorerMesh::clear()
   nx    = 0;
   ny    = 0;
   nz    = 0;
+  ne    = 1;
   xsize = 0;
   ysize = 0;
   zsize = 0;
@@ -62,6 +63,7 @@ void ScorerMesh::PublishMembers()
   publish("nx",            &ScorerMesh::nx);
   publish("ny",            &ScorerMesh::ny);
   publish("nz",            &ScorerMesh::nz);
+  publish("ne",            &ScorerMesh::nz);
   publish("xsize",         &ScorerMesh::xsize);
   publish("ysize",         &ScorerMesh::ysize);
   publish("zsize",         &ScorerMesh::zsize);

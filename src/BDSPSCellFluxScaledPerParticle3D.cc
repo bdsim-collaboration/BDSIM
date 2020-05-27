@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSHistBinMapper3D.hh"
+#include "BDSHistBinMapper.hh"
 #include "BDSScorerConversionLoader.hh"
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSUtilities.hh"
@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
-                                                                   const BDSHistBinMapper3D* mapperIn,
+                                                                   const BDSHistBinMapper* mapperIn,
                                                                    const G4String&           pathname,
                                                                    const G4String&           unitIn,
                                                                    G4int ni,

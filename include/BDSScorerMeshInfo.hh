@@ -49,16 +49,20 @@ public:
   G4int    nBinsX;
   G4int    nBinsY;
   G4int    nBinsZ;
+  G4int    nBinsE;
   G4double xLow;
   G4double xHigh;
   G4double yLow;
   G4double yHigh;
   G4double zLow;
   G4double zHigh;
+  G4double eLow;
+  G4double eHigh;
 
   inline G4double  ScoringBoxX() const {return 0.5*(xHigh-xLow);}
   inline G4double  ScoringBoxY() const {return 0.5*(yHigh-yLow);}
   inline G4double  ScoringBoxZ() const {return 0.5*(zHigh-zLow);}
+  inline G4double  ScoringBoxE() const {return 0.5*(eHigh-eLow);}
   inline BDSExtent Extent()      const {return extent;}
 
 private:

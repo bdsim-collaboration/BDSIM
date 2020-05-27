@@ -49,7 +49,7 @@ BDSScorerFactory::BDSScorerFactory()
 {;}
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      info,
-						   const BDSHistBinMapper3D* mapper,
+						   const BDSHistBinMapper* mapper,
 						   G4double*                 unit,
 						   G4LogicalVolume*          worldLV)
 {
@@ -72,7 +72,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 							   const BDSScorerType       scorerType,
 							   const G4String&           filename,
 							   const G4String&           pathname,
-							   const BDSHistBinMapper3D* mapper,
+							   const BDSHistBinMapper* mapper,
 							   G4double*                 unit)
 {
   G4VPrimitiveScorer* result = nullptr;
