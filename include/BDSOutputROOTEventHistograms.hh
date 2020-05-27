@@ -52,7 +52,7 @@ public:
   BDSOutputROOTEventHistograms(std::vector<TH1D*>& histogram1DIn,
 			       std::vector<TH2D*>& histogram2DIn,
 			       std::vector<TH3D*>& histogram3DIn,
-			       std::vector<boost::histogram::histogram<int>> histograms4DIn);
+                               std::vector<boost::histogram::histogram<boost::histogram::axis::regular<double>>*>& histograms4DIn);
   virtual ~BDSOutputROOTEventHistograms();
 
   /// Interface function to create a 1D histogram using only standard types.
@@ -121,7 +121,7 @@ private:
   std::vector<TH1D*> histograms1D;
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
-  std::vector<boost::histogram::histogram<boost::histogram::axis::regular<double>>> histograms4D;
+  std::vector<boost::histogram::histogram<boost::histogram::axis::regular<double>>*> histograms4D;
 
   ClassDef(BDSOutputROOTEventHistograms,3);
 };
