@@ -237,7 +237,6 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       G4cout << "crystal name " << crystalNameC << G4endl;
       BDSCrystalInfo* ci = componentFactory->PrepareCrystalInfo(crystalNameC);
       crystalAngle *= CLHEP::rad;
-      //crystalAngle += 0.5 * ci->bendingAngleYAxis;
       delete ci; // no longer needed
 
       // crucial - crystal only responds to xsize - not xsizeLeft
@@ -256,7 +255,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       else
         {
           el.crystalRight = crystalNameC;
-          el.crystalAngleYAxisRight = -1.0*crystalAngle - 0.5 * ci->bendingAngleYAxis;
+          el.crystalAngleYAxisRight = crystalAngle + 0.5 * ci->bendingAngleYAxis;
         }
       
       G4cout << "XYZKEY Crystal angle " << crystalAngle << G4endl;
@@ -264,7 +263,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       G4cout << "xsizeRight    " << el.xsizeRight << G4endl;
       G4cout << "l crystal angle " << el.crystalAngleYAxisLeft << G4endl;
       G4cout << "r crystal angle " << el.crystalAngleYAxisRight << G4endl;
-      
+      G4cout << "rotation (tilt) " << el.tilt << G4endl;
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
