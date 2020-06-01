@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagInterpolated.hh"
+#include "BDSFieldMagInterpolated2Layer.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSFieldMagMultipoleOuterDual.hh"
@@ -293,6 +294,9 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.t*CLHEP::s),
 					    G4bool(definition.autoScale),
 					    fieldLimit);
+      
+      info->SetMagneticSubField(G4String(definition.magneticSubField));
+      info->SetElectricSubField(G4String(definition.electricSubField));
       if (BDSGlobalConstants::Instance()->Verbose())
         {
           G4cout << "Definition: \"" << definition.name << "\"" << G4endl;
@@ -565,6 +569,19 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   // has it and not the global wrapper.
   if (field)
     {field->SetTransform(info.Transform());}
+  
+  if (!info.MagneticSubFieldName().empty())
+    {
+      BDSFieldInfo* subFieldRecipe = GetDefinition(info.MagneticSubFieldName());
+      auto mainField = dynamic_cast<BDSFieldMagInterpolated*>(field);
+      if (!mainField)
+	{throw BDSException(__METHOD_NAME__, "subfield specified for non-field map type field - not supported");}
+      BDSFieldMag* subFieldRaw = CreateFieldMagRaw(*subFieldRecipe, scalingStrength, scalingKey);
+      auto subField = dynamic_cast<BDSFieldMagInterpolated*>(subFieldRaw);
+      if (!subField)
+	{throw BDSException(__METHOD_NAME__, "subfield type is not a field map type field - not supported");}
+      field = new BDSFieldMagInterpolated2Layer(mainField, subField);
+    }
   
   return field;
 }
