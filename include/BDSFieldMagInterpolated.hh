@@ -33,9 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldMagInterpolated: public BDSFieldMag
 {
 public:
-  BDSFieldMagInterpolated(const BDSExtent& fieldExtentIn,
-    const G4Transform3D& offset,
-				   G4double      scalingIn = 1.0);
+  BDSFieldMagInterpolated(const BDSExtent&     fieldExtentIn,
+			  const G4Transform3D& offset,
+			  G4double             scalingIn = 1.0);
 
   virtual ~BDSFieldMagInterpolated(){;}
 
@@ -49,7 +49,7 @@ public:
   inline BDSExtent Extent() const {return extentNoOffset.Translate(transform.getTranslation());} ///< With offset.
   
 private:
-  G4double scaling;         ///< Field value scaling.
+  G4double  scaling;        ///< Field value scaling.
   BDSExtent extentNoOffset; ///< Extent without offset.
 };
 
