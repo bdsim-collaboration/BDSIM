@@ -52,6 +52,8 @@ void Field::clear()
   axisAngle = false;
   autoScale = false;
   maximumStepLength = -1;
+  magneticSubField = "";
+  electricSubField = "";
 }
 
 void Field::PublishMembers()
@@ -80,6 +82,8 @@ void Field::PublishMembers()
   publish("axisAngle",            &Field::axisAngle);
   publish("autoScale",            &Field::autoScale);
   publish("maximumStepLength",    &Field::maximumStepLength);
+  publish("magneticSubField",     &Field::magneticSubField);
+  publish("electricSubField",     &Field::electricSubField);
 }
 
 void Field::print()const

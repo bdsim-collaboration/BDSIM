@@ -77,7 +77,9 @@ public:
 	       G4UserLimits*            stepLimitIn                = nullptr,
 	       G4double                 poleTipRadiusIn            = 1,
 	       G4double                 beamPipeRadiusIn           = 0,
-	       G4bool                   left                       = true);
+	       G4bool                   left                       = true,
+	       const G4String&          magneticSubFieldNameIn     = "",
+	       const G4String&          electricSubFieldNameIn     = "");
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -109,6 +111,8 @@ public:
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   inline G4double            Tilt()                     const {return tilt;}
   inline G4bool              Left()                     const {return left;}
+  inline G4String            MagneticSubFieldName()     const {return magneticSubFieldName;}
+  inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -121,6 +125,8 @@ public:
   inline void SetBeamPipeRadius(G4double beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
   inline void SetChordStepMinimum(G4double chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
   inline void SetLeft(G4bool leftIn) {left = leftIn;}
+  inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
+  inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
 
   /// Delete and replace the user limits which this class owns (only if not default ul).
   void SetUserLimits(G4UserLimits* userLimitsIn);
@@ -161,6 +167,8 @@ private:
   G4double                 chordStepMinimum;
   G4double                 tilt;           ///< Cache of tilt of field.
   G4bool                   left; ///< Flag for case of two-beam field - if not left, it's right.
+  G4String                 magneticSubFieldName;
+  G4String                 electricSubFieldName;
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;
