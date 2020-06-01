@@ -246,7 +246,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
               eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));
 	      // detect if an auto type and match up accordingly, else check it's the right one
 	      if (BDS::InterpolatorTypeIsAuto(eleIntType))
-                {eleIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, magIntType);}
+                {eleIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, eleIntType);}
 	      else
                 {
 		  G4int nDimInt = BDS::NDimensionsOfInterpolatorType(eleIntType);
