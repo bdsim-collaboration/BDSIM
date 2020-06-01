@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSInterpolator2D: public BDSInterpolator
 {
 public:
+  BDSInterpolator2D() = delete;
   explicit BDSInterpolator2D(BDSArray2DCoords* arrayIn);
   virtual ~BDSInterpolator2D(){;}
 

@@ -39,6 +39,7 @@ class BDSArray4DCoords;
 class BDSInterpolator4D: public BDSInterpolator
 {
 public:
+  BDSInterpolator4D() = delete;
   explicit BDSInterpolator4D(BDSArray4DCoords* arrayIn);
   virtual ~BDSInterpolator4D(){;}
 
