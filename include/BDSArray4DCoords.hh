@@ -172,7 +172,7 @@ private:
   /// therefore the size must be known at construction time.
   BDSArray4DCoords() = delete;
 
-  void CheckStep(G4double step, const G4String name) const;
+  void CheckStep(G4double step, const G4String& name) const;
 };
 
 #endif
