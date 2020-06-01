@@ -16,13 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSInterpolatorType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSInterpolatorType.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "globals.hh"
 
 #include <map>
 #include <string>
+#include <utility>
 
 // dictionary for BDSInterpolatorType for reflexivity
 template<>
@@ -74,7 +76,7 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
 	     << "\" is not a valid field type" << G4endl;
 
       G4cout << "Available interpolator types are:" << G4endl;
-      for (auto it : types)
+      for (const auto& it : types)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
@@ -101,7 +103,7 @@ G4int BDS::NDimensionsOfInterpolatorType(const BDSInterpolatorType& it)
       case BDSInterpolatorType::nearest3d:
       case BDSInterpolatorType::linear3d:
       case BDSInterpolatorType::cubic3d:
-        {result = 3; break;}
+         {result = 3; break;}
       case BDSInterpolatorType::nearest4d:
       case BDSInterpolatorType::linear4d:
       case BDSInterpolatorType::cubic4d:
@@ -110,4 +112,44 @@ G4int BDS::NDimensionsOfInterpolatorType(const BDSInterpolatorType& it)
         {result = 0; break;}
     }
   return result;
+}
+
+G4bool BDS::InterpolatorTypeIsAuto(BDSInterpolatorType typeIn)
+{
+  G4bool result = false;
+  switch (typeIn.underlying())
+    {
+    case BDSInterpolatorType::nearestauto:
+    case BDSInterpolatorType::linearauto:
+    case BDSInterpolatorType::cubicauto:
+      {result = true; break;}
+    default:
+      {break;}
+    }
+  return result;
+}
+
+BDSInterpolatorType BDS::InterpolatorTypeSpecificFromAuto(G4int               nDimension,
+							  BDSInterpolatorType autoType)
+{
+  std::map<std::pair<G4int, BDSInterpolatorType>, BDSInterpolatorType> mapping = {
+    {std::make_pair(1, BDSInterpolatorType::nearestauto), BDSInterpolatorType::nearest1d},
+    {std::make_pair(2, BDSInterpolatorType::nearestauto), BDSInterpolatorType::nearest2d},
+    {std::make_pair(3, BDSInterpolatorType::nearestauto), BDSInterpolatorType::nearest3d},
+    {std::make_pair(4, BDSInterpolatorType::nearestauto), BDSInterpolatorType::nearest4d},
+    {std::make_pair(1, BDSInterpolatorType::linearauto),  BDSInterpolatorType::linear1d},
+    {std::make_pair(2, BDSInterpolatorType::linearauto),  BDSInterpolatorType::linear2d},
+    {std::make_pair(3, BDSInterpolatorType::linearauto),  BDSInterpolatorType::linear3d},
+    {std::make_pair(4, BDSInterpolatorType::linearauto),  BDSInterpolatorType::linear4d},
+    {std::make_pair(1, BDSInterpolatorType::cubicauto),   BDSInterpolatorType::cubic1d},
+    {std::make_pair(2, BDSInterpolatorType::cubicauto),   BDSInterpolatorType::cubic2d},
+    {std::make_pair(3, BDSInterpolatorType::cubicauto),   BDSInterpolatorType::cubic3d},
+    {std::make_pair(4, BDSInterpolatorType::cubicauto),   BDSInterpolatorType::cubic4d},
+  };
+  auto key = std::make_pair(nDimension, autoType);
+  auto search = mapping.find(key);
+  if (search != mapping.end())
+    {return search->second;}
+  else
+    {throw BDSException(__METHOD_NAME__, "invalid number of dimensions in auto-mapping to interpolators.");}
 }

@@ -219,16 +219,24 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
           if (!definition.magneticInterpolator.empty())
             {
               magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));
-              G4int nDimInt = BDS::NDimensionsOfInterpolatorType(magIntType);
-              if (nDimFF != nDimInt)
+              // detect if an auto type and match up accordingly, else check it's the right one
+	      if (BDS::InterpolatorTypeIsAuto(magIntType))
+                {magIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, magIntType);}
+	      else
                 {
-		  throw BDSException(__METHOD_NAME__,
-				     "mismatch in number of dimensions between magnetic interpolator and field map format for field definition \"" + definition.name + "\"");
+                  G4int nDimInt = BDS::NDimensionsOfInterpolatorType(magIntType);
+                  if (nDimFF != nDimInt)
+		    {
+		      throw BDSException(__METHOD_NAME__,
+					 "mismatch in number of dimensions between magnetic interpolator and field map format for field definition \"" +
+					 definition.name + "\"");
+		    }
                 }
             }
           else
             {magIntType = DefaultInterpolatorType(nDimFF);}
-        }
+	}
+      
       BDSInterpolatorType eleIntType = BDSInterpolatorType::cubic3d;
       if (eleFileSpecified)
 	{// determine and check type of integrator
@@ -236,14 +244,21 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
           if (!definition.electricInterpolator.empty())
             {
               eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));
-              G4int nDimInt = BDS::NDimensionsOfInterpolatorType(eleIntType);
-              if (nDimFF != nDimInt)
+	      // detect if an auto type and match up accordingly, else check it's the right one
+	      if (BDS::InterpolatorTypeIsAuto(eleIntType))
+                {eleIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, magIntType);}
+	      else
                 {
-		  throw BDSException(__METHOD_NAME__,
-				     "mismatch in number of dimensions between electric interpolator and field map format for field definition \"" + definition.name + "\"");
-                }
-            }
-          else
+		  G4int nDimInt = BDS::NDimensionsOfInterpolatorType(eleIntType);
+		  if (nDimFF != nDimInt)
+		    {
+		      throw BDSException(__METHOD_NAME__,
+					 "mismatch in number of dimensions between electric interpolator and field map format for field definition \"" + definition.name + "\"");
+
+		    }
+		}
+	    }
+	  else
             {eleIntType = DefaultInterpolatorType(nDimFF);}
         }
 
