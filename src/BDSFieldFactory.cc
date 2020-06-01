@@ -376,10 +376,34 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 						 const G4String&          scalingKey)
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
-  G4double brho               = info.BRho();
-  G4double poleTipRadius      = info.PoleTipRadius();
-  G4double beamPipeRadius     = info.BeamPipeRadius();
-  BDSFieldMag* field          = nullptr;
+  BDSFieldMag* field = CreateFieldMagRaw(info, scalingStrength, scalingKey);
+  if (!field)
+    {return nullptr;} // return nullptr of right type
+
+  BDSFieldMag* resultantField = field;
+  // Optionally provide local to global transform using curvilinear coordinate system.
+  if (info.ProvideGlobal())
+    {resultantField = new BDSFieldMagGlobal(field);}
+
+  // Always this equation of motion for magnetic (only) fields
+  BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
+
+  // Create appropriate integrator
+  G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
+
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
+  return completeField;
+}
+
+BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
+						const BDSMagnetStrength* scalingStrength,
+						const G4String&          scalingKey)
+{
+  BDSFieldMag* field = nullptr;
+  const BDSMagnetStrength* strength = info.MagnetStrength();
+  G4double brho           = info.BRho();
+  G4double poleTipRadius  = info.PoleTipRadius();
+  G4double beamPipeRadius = info.BeamPipeRadius();
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::bmap1d:
@@ -515,7 +539,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleouterquadrupolelhc:
       {
-	    BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
         G4bool positiveField = (*strength)["k1"] > 0;
         field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, info.Left());
         delete innerField; // no longer required
@@ -523,39 +547,26 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleoutersextupolelhc:
       {
-	    BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
-	    G4bool positiveField = (*strength)["k2"] > 0;
-	    field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
-	    delete innerField; // no longer required
-	    break;
-	  }
+	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	G4bool positiveField = (*strength)["k2"] > 0;
+	field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, info.Left());
+	delete innerField; // no longer required
+	break;
+      }
     case BDSFieldType::paralleltransporter:
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
-	return nullptr;
 	break;
       }
     }
-  
 
-  BDSFieldMag* resultantField = field;
   // Set transform for local geometry offset
   // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
   // has it and not the global wrapper.
-  resultantField->SetTransform(info.Transform());
-
-  // Optionally provide local to global transform using curvilinear coordinate system.
-  if (info.ProvideGlobal())
-    {resultantField = new BDSFieldMagGlobal(field);}
-
-  // Always this equation of motion for magnetic (only) fields
-  BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
-
-  // Create appropriate integrator
-  G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
-
-  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
-  return completeField;
+  if (field)
+    {field->SetTransform(info.Transform());}
+  
+  return field;
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
