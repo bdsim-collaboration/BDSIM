@@ -51,6 +51,7 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
   :math:`x,y,z` and a 2D field :math:`x,y`.
 * Cubic interpolation is used by default unless otherwise specified.
+* Geant4's classical 4th order Runge Kutta is used as the default numerical integrator.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -70,7 +71,7 @@ Here is a minimal example of a magnetic field in BDSIM format::
   detfield: field, type="bmap3d",
                    magneticFile="bdsim3d:fieldmap.dat.gz";
 
-This will use the "g4classicalrk4" integrator for the particle motion and the "cubic3d" interpolation
+This will use the "g4classicalrk4" integrator for the particle motion and the "cubic" (in 3D) interpolation
 by default.
 	  
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
@@ -81,9 +82,9 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 		    bScaling = 0.4,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
+		    magneticInterpolator = "nearest",
 		    electricFile = "poisson2d:/Another/File.TXT",
-		    electricInterpolator = "linear2D";
+		    electricInterpolator = "linear";
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
@@ -314,33 +315,18 @@ is shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 
-+------------+-------------------------------+
-| **String** | **Description**               |
-+============+===============================+
-| nearest1d  | Nearest neighbour in 1D       |
-+------------+-------------------------------+
-| nearest2d  | Nearest neighbour in 2D       |
-+------------+-------------------------------+
-| nearest3d  | Nearest neighbour in 3D       |
-+------------+-------------------------------+
-| nearest4d  | Nearest neighbour in 4D       |
-+------------+-------------------------------+
-| linear1d   | Linear interpolation in 1D    |
-+------------+-------------------------------+
-| linear2d   | Linear interpolation in 2D    |
-+------------+-------------------------------+
-| linear3d   | Linear interpolation in 3D    |
-+------------+-------------------------------+
-| linear4d   | Linear interpolation in 4D    |
-+------------+-------------------------------+
-| cubic1d    | Cubic interpolation in 1D     |
-+------------+-------------------------------+
-| cubic2d    | Cubic interpolation in 2D     |
-+------------+-------------------------------+
-| cubic3d    | Cubic interpolation in 3D     |
-+------------+-------------------------------+
-| cubic4d    | Cubic interpolation in 4D     |
-+------------+-------------------------------+
++------------+---------------------------------+
+| **String** | **Description**                 |
++============+=================================+
+| nearest    | Nearest neighbour interpolation |
++------------+---------------------------------+
+| linear     | Linear interpolation            |
++------------+---------------------------------+
+| cubic      | Cubic interpolation             |
++------------+---------------------------------+
+
+Internally there is a different implementation for different numbers of dimensions and this
+is automatically chosen based on the number of dimensions in the field map type.
 
 .. _materials-and-atoms:
 	  
