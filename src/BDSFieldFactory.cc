@@ -366,7 +366,7 @@ BDSInterpolatorType BDSFieldFactory::DefaultInterpolatorType(G4int numberOfDimen
       case 4:
         {result = BDSInterpolatorType::cubic4d; break;}
       default:
-        {throw BDSException(__METHOD_NAME__, "unsupport number of dimensions " + std::to_string(numberOfDimensions));}
+        {throw BDSException(__METHOD_NAME__, "unsupported number of dimensions " + std::to_string(numberOfDimensions));}
     }
   return result;
 }
