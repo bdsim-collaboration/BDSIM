@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 
+class BDSExtent;
+
 /**
  * @brief Overlay of 4D array that provides uniform only spatial coordinate mapping.
  * 
@@ -149,6 +151,9 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a);
+  
+  /// Return the SPATIAL (only) extent of this field without any offset. Ignores time.
+  BDSExtent Extent() const;
 
 protected:
   /// @{ Dimension parameter - protected for derived class access.

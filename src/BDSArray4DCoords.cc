@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray4DCoords.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldValue.hh"
 #include "BDSUtilities.hh"
 
-#include <cmath>
 #include <string>
 #include <ostream>
 
@@ -118,4 +118,9 @@ std::ostream& BDSArray4DCoords::Print(std::ostream& out) const
 std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a)
 {
   return a.Print(out);
+}
+
+BDSExtent BDSArray4DCoords::Extent() const
+{
+  return BDSExtent(xMin, xMax, yMin, yMax, zMin, zMax);
 }

@@ -18,10 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSINTERPOLATOR1D_H
 #define BDSINTERPOLATOR1D_H
-
 #include "BDSArray1DCoords.hh"
 #include "BDSDimensionType.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldValue.hh"
+#include "BDSInterpolator.hh"
 
 #include "G4Types.hh"
 #include "G4ThreeVector.hh"
@@ -34,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSInterpolator1D
+class BDSInterpolator1D: public BDSInterpolator
 {
 public:
   explicit BDSInterpolator1D(BDSArray1DCoords* arrayIn);
@@ -48,6 +49,9 @@ public:
 
   /// Accessor for the active dimension this represents.
   inline BDSDimensionType FirstDimension() const {return array->FirstDimension();}
+
+  /// Extent of field.
+  virtual BDSExtent Extent() const {return array->Extent();}
 
 protected:
   /// Each derived class should implement this function. Note T suffix (was templated)
