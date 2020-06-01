@@ -145,20 +145,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       temporaryRecipe.SetBScaling(1);      // don't affect result with inadvertent scaling
 
       // enforce cubic interpolation for continuous higher differentials
-      switch (format.underlying())
-	{
-	case BDSFieldFormat::bdsim1d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic1d); break;}
-	case BDSFieldFormat::bdsim2d:
-	case BDSFieldFormat::poisson2d:
-	case BDSFieldFormat::poisson2dquad:
-	case BDSFieldFormat::poisson2ddipole:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic2d); break;}
-	case BDSFieldFormat::bdsim3d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic3d); break;}
-	case BDSFieldFormat::bdsim4d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic4d); break;}
-	}
+      G4int nDimFF = BDS::NDimensionsOfFieldFormat(format);
+      auto magIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, BDSInterpolatorType::cubicauto);
+      temporaryRecipe.SetMagneticInterpolatorType(magIntType);
 
       // build temporary field object
       BDSFieldMagInterpolated* tempField = LoadMagField(temporaryRecipe);
