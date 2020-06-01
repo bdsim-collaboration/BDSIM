@@ -127,7 +127,7 @@ public:
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
-  void Translate(G4ThreeVector translationIn);
+  void Translate(const G4ThreeVector& translationIn);
 
   /// Turn on or off transform caching.
   inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}

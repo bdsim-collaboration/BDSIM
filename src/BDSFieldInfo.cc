@@ -188,7 +188,7 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   return out;
 }
 
-void BDSFieldInfo::Translate(G4ThreeVector translationIn)
+void BDSFieldInfo::Translate(const G4ThreeVector& translationIn)
 {
   G4RotationMatrix       rm = transform.getRotation();
   G4ThreeVector translation = transform.getTranslation();
