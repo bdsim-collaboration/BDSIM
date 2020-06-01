@@ -34,6 +34,7 @@ struct interpolatortypes_def
   enum type
     {
       none,
+      nearestauto, linearauto, cubicauto,
       nearest1d, linear1d, cubic1d,
       nearest2d, linear2d, cubic2d,
       nearest3d, linear3d, cubic3d,
