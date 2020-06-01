@@ -95,13 +95,13 @@ BDSFieldLoader::~BDSFieldLoader()
 
 void BDSFieldLoader::DeleteArrays()
 {
-  for (auto a : arrays1d)
+  for (auto& a : arrays1d)
     {delete a.second;}
-  for (auto a : arrays2d)
+  for (auto& a : arrays2d)
     {delete a.second;}
-  for (auto a : arrays3d)
+  for (auto& a : arrays3d)
     {delete a.second;}
-  for (auto a : arrays4d)
+  for (auto& a : arrays4d)
     {delete a.second;}
 }
 
@@ -133,7 +133,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
     case BDSFieldFormat::poisson2ddipole:
       {result = LoadPoissonSuperFishBDipole(filePath, interpolatorType, transform, bScaling); break;}
     default:
-      break;
+      {break;}
     }
 
   if (result && info.AutoScale())
@@ -157,10 +157,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
 									      5,/*up to 5th order*/
 									      info.BRho());
-
+      
       delete tempField; // clear up
       
-      G4double ratio  = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+      G4double ratio = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
       if (!std::isnormal(ratio))
         {
           G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
