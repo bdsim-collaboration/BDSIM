@@ -227,9 +227,9 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
                   G4int nDimInt = BDS::NDimensionsOfInterpolatorType(magIntType);
                   if (nDimFF != nDimInt)
 		    {
-		      throw BDSException(__METHOD_NAME__,
-					 "mismatch in number of dimensions between magnetic interpolator and field map format for field definition \"" +
-					 definition.name + "\"");
+		      G4String message = "mismatch in number of dimensions between magnetic interpolator ";
+		      message += "and field map format for field definition \"" + definition.name + "\"";
+		      throw BDSException(__METHOD_NAME__, message);
 		    }
                 }
             }
@@ -249,19 +249,19 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
                 {eleIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, eleIntType);}
 	      else
                 {
-		  G4int nDimInt = BDS::NDimensionsOfInterpolatorType(eleIntType);
-		  if (nDimFF != nDimInt)
+                  G4int nDimInt = BDS::NDimensionsOfInterpolatorType(eleIntType);
+                  if (nDimFF != nDimInt)
 		    {
-		      throw BDSException(__METHOD_NAME__,
-					 "mismatch in number of dimensions between electric interpolator and field map format for field definition \"" + definition.name + "\"");
-
+		      G4String message = "mismatch in number of dimensions between electric interpolator ";
+		      message += "and field map format for field definition \"" + definition.name + "\"";
+		      throw BDSException(__METHOD_NAME__, message);
 		    }
-		}
-	    }
-	  else
+                }
+            }
+          else
             {eleIntType = DefaultInterpolatorType(nDimFF);}
         }
-
+      
       G4UserLimits* fieldLimit = nullptr;
       if (definition.maximumStepLength > 0)
 	{// only assign if specified
