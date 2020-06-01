@@ -28,14 +28,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSInterpolatorType, std::string>* BDSInterpolatorType::dictionary =
   new std::map<BDSInterpolatorType, std::string> ({
+      {BDSInterpolatorType::nearestauto,"nearestauto"},
       {BDSInterpolatorType::nearest1d,  "nearest1d"},
       {BDSInterpolatorType::nearest2d,  "nearest2d"},
       {BDSInterpolatorType::nearest3d,  "nearest3d"},
       {BDSInterpolatorType::nearest4d,  "nearest4d"},
+      {BDSInterpolatorType::linearauto, "linearauto"},
       {BDSInterpolatorType::linear1d,   "linear1d"},
       {BDSInterpolatorType::linear2d,   "linear2d"},
       {BDSInterpolatorType::linear3d,   "linear3d"},
       {BDSInterpolatorType::linear4d,   "linear4d"},
+      {BDSInterpolatorType::cubicauto,  "cubicauto"},
       {BDSInterpolatorType::cubic1d,    "cubic1d"},
       {BDSInterpolatorType::cubic2d,    "cubic2d"},
       {BDSInterpolatorType::cubic3d,    "cubic3d"},
@@ -45,14 +48,17 @@ std::map<BDSInterpolatorType, std::string>* BDSInterpolatorType::dictionary =
 BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
 {
   std::map<G4String, BDSInterpolatorType> types;
+  types["nearest"]   = BDSInterpolatorType::nearestauto;
   types["nearest1d"] = BDSInterpolatorType::nearest1d;
   types["nearest2d"] = BDSInterpolatorType::nearest2d;
   types["nearest3d"] = BDSInterpolatorType::nearest3d;
   types["nearest4d"] = BDSInterpolatorType::nearest4d;
+  types["linear"]    = BDSInterpolatorType::linearauto;
   types["linear1d"]  = BDSInterpolatorType::linear1d;
   types["linear2d"]  = BDSInterpolatorType::linear2d;
   types["linear3d"]  = BDSInterpolatorType::linear3d;
   types["linear4d"]  = BDSInterpolatorType::linear4d;
+  types["cubic"]     = BDSInterpolatorType::cubicauto;
   types["cubic1d"]   = BDSInterpolatorType::cubic1d;
   types["cubic2d"]   = BDSInterpolatorType::cubic2d;
   types["cubic3d"]   = BDSInterpolatorType::cubic3d;
