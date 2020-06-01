@@ -35,9 +35,9 @@ void Field::clear()
   integrator           = "g4classicalrk4";
   globalTransform      = true;
   magneticFile         = "";
-  magneticInterpolator = "";
+  magneticInterpolator = "cubic";
   electricFile         = "";
-  electricInterpolator = "";
+  electricInterpolator = "cubic";
   x         = 0;
   y         = 0;
   z         = 0;
