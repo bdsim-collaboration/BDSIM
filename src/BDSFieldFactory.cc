@@ -572,15 +572,22 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   
   if (!info.MagneticSubFieldName().empty())
     {
-      BDSFieldInfo* subFieldRecipe = GetDefinition(info.MagneticSubFieldName());
+      // set the transform of the 'main' field to only the transform defined in that field definition
+      field->SetTransform(info.Transform());
+      
       auto mainField = dynamic_cast<BDSFieldMagInterpolated*>(field);
       if (!mainField)
-	{throw BDSException(__METHOD_NAME__, "subfield specified for non-field map type field - not supported");}
+	      {throw BDSException(__METHOD_NAME__, "subfield specified for non-field map type field - not supported");}
+  
+      BDSFieldInfo* subFieldRecipe = new BDSFieldInfo(*(GetDefinition(info.MagneticSubFieldName())));
       BDSFieldMag* subFieldRaw = CreateFieldMagRaw(*subFieldRecipe, scalingStrength, scalingKey);
       auto subField = dynamic_cast<BDSFieldMagInterpolated*>(subFieldRaw);
       if (!subField)
 	{throw BDSException(__METHOD_NAME__, "subfield type is not a field map type field - not supported");}
       field = new BDSFieldMagInterpolated2Layer(mainField, subField);
+      // the transform goes beamline transform to the 2Layer class, then inside that the individual field transforms
+      field->SetTransform(info.TransformBeamline());
+      delete subFieldRecipe;
     }
   
   return field;
