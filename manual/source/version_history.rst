@@ -42,8 +42,14 @@ New Features
 * LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
   and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
 * Ability to filter out unstable particles with no default decay table in Geant4 when loading event
-  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  generator files for a beam - now the default behaviour and controllable with the beam parameter
   :code:`removeUnstableWithoutDecay`.
+* Interpolator types for fields don't need the dimension as a suffix any longer. e.g. 'cubic' is now
+  sufficient instead of one of 'cubic1d', 'cubic2d', 'cubic3d', 'cubic4d'. It is now automatically
+  determined from the dimensions of the field type. Old syntax is still accepted.
+* A field may now have a :code:`magneticSubField` where a smaller field is overlaid on top of a main
+  field providing the ability to place a smaller more detailed magnetic field map on top of a larger
+  (perhaps coarser) one.
 
 * New options:
 

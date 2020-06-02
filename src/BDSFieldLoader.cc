@@ -95,13 +95,13 @@ BDSFieldLoader::~BDSFieldLoader()
 
 void BDSFieldLoader::DeleteArrays()
 {
-  for (auto a : arrays1d)
+  for (auto& a : arrays1d)
     {delete a.second;}
-  for (auto a : arrays2d)
+  for (auto& a : arrays2d)
     {delete a.second;}
-  for (auto a : arrays3d)
+  for (auto& a : arrays3d)
     {delete a.second;}
-  for (auto a : arrays4d)
+  for (auto& a : arrays4d)
     {delete a.second;}
 }
 
@@ -133,7 +133,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
     case BDSFieldFormat::poisson2ddipole:
       {result = LoadPoissonSuperFishBDipole(filePath, interpolatorType, transform, bScaling); break;}
     default:
-      break;
+      {break;}
     }
 
   if (result && info.AutoScale())
@@ -145,20 +145,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       temporaryRecipe.SetBScaling(1);      // don't affect result with inadvertent scaling
 
       // enforce cubic interpolation for continuous higher differentials
-      switch (format.underlying())
-	{
-	case BDSFieldFormat::bdsim1d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic1d); break;}
-	case BDSFieldFormat::bdsim2d:
-	case BDSFieldFormat::poisson2d:
-	case BDSFieldFormat::poisson2dquad:
-	case BDSFieldFormat::poisson2ddipole:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic2d); break;}
-	case BDSFieldFormat::bdsim3d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic3d); break;}
-	case BDSFieldFormat::bdsim4d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic4d); break;}
-	}
+      G4int nDimFF = BDS::NDimensionsOfFieldFormat(format);
+      auto magIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, BDSInterpolatorType::cubicauto);
+      temporaryRecipe.SetMagneticInterpolatorType(magIntType);
 
       // build temporary field object
       BDSFieldMagInterpolated* tempField = LoadMagField(temporaryRecipe);
@@ -168,10 +157,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
 									      5,/*up to 5th order*/
 									      info.BRho());
-
+      
       delete tempField; // clear up
       
-      G4double ratio  = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+      G4double ratio = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
       if (!std::isnormal(ratio))
         {
           G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
