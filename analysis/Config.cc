@@ -487,7 +487,7 @@ void Config::ParseBinning(const std::string binning,
       std::string errString = "Insufficient number of binning dimensions on line #"
 	+ std::to_string(lineCounter) + "\n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
-	+ binning + "\n";
+	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw std::string(errString);
     }
 }

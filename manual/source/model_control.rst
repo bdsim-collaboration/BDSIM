@@ -787,16 +787,20 @@ Examples: ::
         shellYpWidth = 1d-9;
 
 
-userFile
+userfile
 ********
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle
-coordinates that are tab-delimited. The column names and the units are specified in an
-input string.
+The `userfile` distribution allows the user to supply an ASCII text file with particle
+coordinates that are white-space separated (i.e. spaces, or tabs). The column names and
+the units are specified in an input string in the beam definition.
 
 The file may also be compressed using gzip. Any file with the extension `.gz`
-will be automatically decompressed during the run without any temporary files. This is
-recommended, as compressed ASCII is significantly smaller in size.
+will be automatically decompressed during the run without creating any temporary
+files. This is recommended, as compressed ASCII is significantly smaller in size.
+
+Any coordinate not specified is taken from the `reference`_ distribution parameters.
+For example, if only `x` and `xp` are supplied as columns, the energy will be the
+central energy of the design beam particle, `y` will be `Y0`, which is by default 0.
 
 If the number of particles to be generated with ngenerate is greater than the number of
 particles defined in the file, the bunch generation will reload the file and read the
@@ -810,6 +814,7 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 	  from Geant4 and is on by default.
 
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
+* Coordinates no specified are taken from the default `reference`_ distribution parameters.
 * Lines starting with `#` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
@@ -825,7 +830,9 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 +==================================+=======================================================+
 | `distrFile`                      | File path to ASCII data file                          |
 +----------------------------------+-------------------------------------------------------+
-| `distrFileFormat`                | A string that details the column names and units      |
+| `distrFileFormat`                | A string that details the column names and units. A   |
+|                                  | list of token[unit] separated by white space where    |
+|                                  | unit is optional. See below for tokens and units.     |
 +----------------------------------+-------------------------------------------------------+
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
@@ -1442,6 +1449,9 @@ Notes:
 	     break the validity of the accelerator tracking routines. This is unavoidable, hence
 	     why we use the limits by default. BDSIM, by default applies step length limits of 110%
 	     the length of each volume.
+
+.. warning:: Turning off all limits will break the control required to stop primary particles after
+	     a certain number of turns in circular machines.
   
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
 prefix with "g4" to work in BDSIM.
@@ -2133,7 +2143,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| collimatorsAreInfiniteAbosrbers  | When turned on, all particles that enter the material |
+| collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
@@ -2344,6 +2354,10 @@ with the following options.
 | elossHistoBinWidth                 | The width of the histogram bins [m]                                |
 +------------------------------------+--------------------------------------------------------------------+
 | nperfile                           | Number of events to record per output file                         |
++------------------------------------+--------------------------------------------------------------------+
+| outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
+|                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
+|                                    | compression and 1 minimal. 5 is the default.                       |
 +------------------------------------+--------------------------------------------------------------------+
 | sensitiveOuter                     | Whether the outer part of each component (other than the beam      |
 |                                    | pipe) records energy loss. `storeELoss` is required to be on for   |
@@ -3022,7 +3036,7 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
 * All scorers include the weight associated with the particle, which is only different from
   1 if biasing is used. This ensures the correct physical result is always obtained.
 * As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J/kg / proton.
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
 .. _scoring-mesh:
@@ -3161,31 +3175,34 @@ Scorer Types
 
 The following are accepted scorer types.
 
+* As the histogram is per-event, the quantity stored is per-event also. So, if there
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 
-+---------------------------+---------------------------------------------------+-----------------+
-| **Scorer Type**           | **Description**                                   | **Units**       |
-+===========================+===================================================+=================+
-| cellcharge                | The charge deposited in the cell                  | e-              |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellflux                  | The flux (step length / cell volume)              | :math:`cm^{-2}` |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellfluxscaled            | The flux (step length / cell volume) multiplied   | :math:`cm^{-2}` |
-|                           | a factor as a function of kinetic energy as       |                 |
-|                           | specified in the :code:`conversionFactorFile`.    |                 |
-|                           | Default factor is 1.0.                            |                 |
-+---------------------------+---------------------------------------------------+-----------------+
-| cellfluxscaledperparticle | Similar to `cellfluxscaled` but per particle      | :math:`cm^{-2}` |
-|                           | species. Specify :code:`conversionFilePath` to    |                 |
-|                           | files (see below). Default factor is 0 for all    |                 |
-|                           | particles and energies.                           |                 |
-+---------------------------+---------------------------------------------------+-----------------+
-| depositeddose             | The dose (energy deposited per unit mass)         | Gray (J/kg)     |
-+---------------------------+---------------------------------------------------+-----------------+
-| depositedenergy           | The deposited energy in the cell                  | J               |
-+---------------------------+---------------------------------------------------+-----------------+
-| population                | The number of particles passing through the cell  | NA              |
-+---------------------------+---------------------------------------------------+-----------------+
++---------------------------+-----------------+--------------------------------------------------+
+| **Scorer Type**           | **Units**       | **Description**                                  |
++===========================+=================+==================================================+
+| cellcharge                | e-              |The charge deposited in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| cellflux                  | :math:`cm^{-2}` | The flux (step length / cell volume)             | 
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  | 
+|                           |                 | a factor as a function of kinetic energy as      |
+|                           |                 | specified in the :code:`conversionFactorFile`.   |
+|                           |                 | Default factor is 1.0.                           |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     | 
+|                           |                 | species. Specify :code:`conversionFilePath` to   |
+|                           |                 | files (see below). Default factor is 0 for all   |
+|                           |                 | particles and energies.                          |
++---------------------------+-----------------+--------------------------------------------------+
+| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         | 
++---------------------------+-----------------+--------------------------------------------------+
+| depositedenergy           | GeV             |The deposited energy in the cell                  | 
++---------------------------+-----------------+--------------------------------------------------+
+| population                | NA              |The number of particles passing through the cell  | 
++---------------------------+-----------------+--------------------------------------------------+
 
 .. _scorer-conversion-factor-file:
 

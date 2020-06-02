@@ -42,8 +42,14 @@ New Features
 * LHC yoke fields that are the sum of two multipole yoke fields. Works for rbend, sbend, quadrupole
   and sextupole. Default on and controlled by the new option :code:`yokeFieldsMatchLHCGeometry`.
 * Ability to filter out unstable particles with no default decay table in Geant4 when loading event
-  generator files for a beam - now the default behaviour and controlable with the beam parameter
+  generator files for a beam - now the default behaviour and controllable with the beam parameter
   :code:`removeUnstableWithoutDecay`.
+* Interpolator types for fields don't need the dimension as a suffix any longer. e.g. 'cubic' is now
+  sufficient instead of one of 'cubic1d', 'cubic2d', 'cubic3d', 'cubic4d'. It is now automatically
+  determined from the dimensions of the field type. Old syntax is still accepted.
+* A field may now have a :code:`magneticSubField` where a smaller field is overlaid on top of a main
+  field providing the ability to place a smaller more detailed magnetic field map on top of a larger
+  (perhaps coarser) one.
 
 * New options:
 
@@ -52,10 +58,15 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
+|                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
+|                                    | compression and 1 minimal. 5 is the default.                       |
++------------------------------------+--------------------------------------------------------------------+
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
+
 
 
 General
@@ -139,6 +150,9 @@ Expected Changes To Results
   in a different (but now correct) direction.
 * Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
   in the past they were the mean.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
 
 New Features
 ------------
@@ -314,7 +328,7 @@ General
   for partially stripped ions. This storage marginally increases the memory usage per sampler hit, so
   a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
 * Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
-  hit information in the output. The crystal channelling process is ignore as a step defining process
+  hit information in the output. The crystal channelling process is ignored as a step defining process
   for generating unique hits in the crystal.
 * All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
 * The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
@@ -399,6 +413,12 @@ Bug Fixes
 * Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
   v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
   applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix crystal positioning in `crystalcol`. Previously, the crystal centre was placed at `xsize` but
+  it should be in the inside edge to match other collimators. The inside of the edge is now aligned
+  to `xsize`.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
 * Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
   They're now filled correctly.
 * Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in
@@ -433,6 +453,7 @@ Bug Fixes
   :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
   due to a double transform.
 * Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix a bug where the turn number of PrimaryFirstHit and PrimaryLastHit was always zero.
 * Fix sampler variables `theta`, `phi` and `phip` being -1 when it should be 0 for 0 angle particles
   due to a mistake in the identification of possible nans or infinite numbers.
 * Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
@@ -452,6 +473,7 @@ Bug Fixes
 * Unintialised variables reported by Coverity.
 * Fix erroneous warnings with jcol that would prevent it being built. These were due to double
   parameter checks from a base class that don't appy.
+* Fix Event.Summary.primaryAbsorbedInCollimator flag not identifying absorption in jcols correctly.
 * Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
 * Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
   instead of all of it. The beam pipe thickness was also not taken into account and now is.
