@@ -55,7 +55,10 @@ BDSFieldInfo::BDSFieldInfo():
   poleTipRadius(1),
   beamPipeRadius(0),
   chordStepMinimum(-1),
-  tilt(0)
+  tilt(0),
+  left(false),
+  magneticSubFieldName(""),
+  electricSubFieldName("")
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -63,11 +66,11 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   BDSIntegratorType        integratorTypeIn,
 			   const BDSMagnetStrength* magnetStrengthIn,
 			   G4bool                   provideGlobalTransformIn,
-			   G4Transform3D            transformIn,
-			   G4String                 magneticFieldFilePathIn,
+			   const G4Transform3D&     transformIn,
+			   const G4String&          magneticFieldFilePathIn,
 			   BDSFieldFormat           magneticFieldFormatIn,
 			   BDSInterpolatorType      magneticInterpolatorTypeIn,
-			   G4String                 electricFieldFilePathIn,
+			   const G4String&          electricFieldFilePathIn,
 			   BDSFieldFormat           electricFieldFormatIn,
 			   BDSInterpolatorType      electricInterpolatorTypeIn,
 			   G4bool                   cacheTransformsIn,
@@ -78,7 +81,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4UserLimits*            stepLimitIn,
 			   G4double                 poleTipRadiusIn,
 			   G4double                 beamPipeRadiusIn,
-			   G4bool                   leftIn):
+			   G4bool                   leftIn,
+			   const G4String&          magneticSubFieldNameIn,
+			   const G4String&          electricSubFieldNameIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -100,7 +105,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   poleTipRadius(poleTipRadiusIn),
   beamPipeRadius(beamPipeRadiusIn),
   chordStepMinimum(-1),
-  left(leftIn)
+  left(leftIn),
+  magneticSubFieldName(magneticSubFieldNameIn),
+  electricSubFieldName(electricSubFieldNameIn)
 {
   // back calculate tilt angle from field transform
   G4ThreeVector unitY(0,1,0);
@@ -135,7 +142,9 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   beamPipeRadius(other.beamPipeRadius),
   chordStepMinimum(other.chordStepMinimum),
   tilt(other.tilt),
-  left(other.left)
+  left(other.left),
+  magneticSubFieldName(other.magneticSubFieldName),
+  electricSubFieldName(other.electricSubFieldName)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -177,6 +186,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Chord Step Min:    " << info.chordStepMinimum         << G4endl;
   out << "Tilt:              " << info.tilt                     << G4endl;
   out << "Left:              " << info.left                     << G4endl;
+  out << "Magnetic Sub Field " << info.magneticSubFieldName     << G4endl;
+  out << "Electric Sub Field " << info.electricSubFieldName     << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)
@@ -188,7 +199,7 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   return out;
 }
 
-void BDSFieldInfo::Translate(G4ThreeVector translationIn)
+void BDSFieldInfo::Translate(const G4ThreeVector& translationIn)
 {
   G4RotationMatrix       rm = transform.getRotation();
   G4ThreeVector translation = transform.getTranslation();
