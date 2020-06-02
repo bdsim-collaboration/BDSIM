@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagInterpolated2Layer.hh"
@@ -27,7 +29,10 @@ BDSFieldMagInterpolated2Layer::BDSFieldMagInterpolated2Layer(BDSFieldMagInterpol
   mainField(mainFieldIn),
   subField(subFieldIn),
   subFieldExtent(subFieldIn->Extent())
-{;}
+{
+  if (!mainField->ExtentNoOffset().Encompasses(subFieldExtent))
+    {throw BDSException(__METHOD_NAME__, "sub field in field map is bigger than main field.");}
+}
 
 BDSFieldMagInterpolated2Layer::~BDSFieldMagInterpolated2Layer()
 {
