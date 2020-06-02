@@ -153,7 +153,7 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a);
   
   /// Return the SPATIAL (only) extent of this field without any offset. Ignores time.
-  BDSExtent Extent() const;
+  virtual BDSExtent Extent() const;
 
 protected:
   /// @{ Dimension parameter - protected for derived class access.
