@@ -181,9 +181,9 @@ G4double BDSExtent::MinimumAbsTransverse() const
 
 G4bool BDSExtent::Encompasses(const G4ThreeVector& point) const
 {
-  G4bool xOK = point.x() > extXNeg && point.x() < extXPos;
-  G4bool yOK = point.y() > extYNeg && point.y() < extYPos;
-  G4bool zOK = point.z() > extZNeg && point.z() < extZPos;
+  G4bool xOK = (point.x() >= extXNeg) && (point.x() <= extXPos);
+  G4bool yOK = (point.y() >= extYNeg) && (point.y() <= extYPos);
+  G4bool zOK = (point.z() >= extZNeg) && (point.z() <= extZPos);
   return xOK && yOK && zOK;
 }
 
