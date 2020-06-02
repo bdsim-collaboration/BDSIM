@@ -51,6 +51,7 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
   :math:`x,y,z` and a 2D field :math:`x,y`.
 * Cubic interpolation is used by default unless otherwise specified.
+* Geant4's classical 4th order Runge Kutta is used as the default numerical integrator.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -70,7 +71,7 @@ Here is a minimal example of a magnetic field in BDSIM format::
   detfield: field, type="bmap3d",
                    magneticFile="bdsim3d:fieldmap.dat.gz";
 
-This will use the "g4classicalrk4" integrator for the particle motion and the "cubic3d" interpolation
+This will use the "g4classicalrk4" integrator for the particle motion and the "cubic" (in 3D) interpolation
 by default.
 	  
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
@@ -81,9 +82,9 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 		    bScaling = 0.4,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
+		    magneticInterpolator = "nearest",
 		    electricFile = "poisson2d:/Another/File.TXT",
-		    electricInterpolator = "linear2D";
+		    electricInterpolator = "linear";
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
@@ -150,6 +151,11 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | maximumStepLength    | The maximum permitted step length through the field. (m)        |
 +----------------------+-----------------------------------------------------------------+
+| magneticSubField     | Name of another field object like this one that will be used as |
+|                      | a magnetic 'sub' field that overlays this one.                  |
++----------------------+-----------------------------------------------------------------+
+
+.. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps are attached to and the coordinates
@@ -314,33 +320,74 @@ is shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 
-+------------+-------------------------------+
-| **String** | **Description**               |
-+============+===============================+
-| nearest1d  | Nearest neighbour in 1D       |
-+------------+-------------------------------+
-| nearest2d  | Nearest neighbour in 2D       |
-+------------+-------------------------------+
-| nearest3d  | Nearest neighbour in 3D       |
-+------------+-------------------------------+
-| nearest4d  | Nearest neighbour in 4D       |
-+------------+-------------------------------+
-| linear1d   | Linear interpolation in 1D    |
-+------------+-------------------------------+
-| linear2d   | Linear interpolation in 2D    |
-+------------+-------------------------------+
-| linear3d   | Linear interpolation in 3D    |
-+------------+-------------------------------+
-| linear4d   | Linear interpolation in 4D    |
-+------------+-------------------------------+
-| cubic1d    | Cubic interpolation in 1D     |
-+------------+-------------------------------+
-| cubic2d    | Cubic interpolation in 2D     |
-+------------+-------------------------------+
-| cubic3d    | Cubic interpolation in 3D     |
-+------------+-------------------------------+
-| cubic4d    | Cubic interpolation in 4D     |
-+------------+-------------------------------+
++------------+---------------------------------+
+| **String** | **Description**                 |
++============+=================================+
+| nearest    | Nearest neighbour interpolation |
++------------+---------------------------------+
+| linear     | Linear interpolation            |
++------------+---------------------------------+
+| cubic      | Cubic interpolation             |
++------------+---------------------------------+
+
+Internally there is a different implementation for different numbers of dimensions and this
+is automatically chosen based on the number of dimensions in the field map type.
+
+.. _fields-sub-fields:
+
+Sub-Fields
+^^^^^^^^^^
+
+A 'sub-field' is where one field map can be overlaid on top of another. The sub-field should be smaller
+and will simply take precedence on the main field within its range. This is useful if for example a
+precise field detailed field map is required for a smaller region but a coarser field map is suitable
+for the majority of the component. Remember, field maps must contain regularly spaced data so if a high
+density of points is required in one point, this would lead to an excessively large field map for the rest
+of the element which may not be necessary and slow the loading and running of the simulation.
+
+Inside the domain of the sub-field, only its interpolated value is used. The transition between the sub
+and main field is hard and it is left to the user to ensure that the field values are continuous to
+make physical sense.
+
+* Currently only sub-magnetic fields are supported.
+* The tilt or rotation of the field map (with respect to the element it is attached to) does not
+  apply to the region of applicability for the subfield. However, the field is tilted appropriately.
+* The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
+  main outer field.
+* If a 2D field is used both fields apply infinitely in z in a 3D model, therefore the sub-field
+  will always take precedence for any z value as long as x and y are inside its limits.
+
+Below is an example of a sub-field that can be found in :code:`bdsim/examples/features/fields/subfield`: ::
+
+  fpipe: field, type="bmap2d",
+       	        magneticFile="bdsim2d:inner.dat",
+	        magneticInterpolator="nearest",
+	        x=-10*cm;
+
+  fyoke: field, type="bmap2d",
+       	        magneticFile="bdsim2d:outer.dat",
+	        magneticInterpolator="cubic",
+	        magneticSubField="fpipe";
+
+  d1: drift, l=0.5*m, aper1=0.5*m, fieldAll="fyoke";
+
+First a smaller field map is defined called "fpipe". Secondly, a larger coarser field map is created
+called "fyoke" that crucially refers to the :code:`magneticSubField="fpipe"`. The sub-field applies
+only in the range of the field map taken from the maximum and minimum coordinates in each dimension
+when loading the field map. In the provided example, the "inner.dat" field map defines 4 points in a
+2D square at +- 20 cm in both x and y with the same B field vector. Nearest neighbour interpolation
+is used to ensure a perfect uniform field inside these points.
+
+The second field definition using "outer.dat" ranges from +- 50 cm with a similar box of 4 points in 2D.
+Each point has the same field value but with an opposing x component. The Python script used to create
+these simple field maps is included alongside the example. The example combined field map is shown
+in the visualiser below. The magnetic field lines were visualised using the Geant4 visualiser command
+:code:`/vis/scene/add/magneticField 10 lightArrow`.
+
+.. image:: figures/fields-sub-field.png
+	   :width: 60%
+	   :align: center
+
 
 .. _materials-and-atoms:
 	  
@@ -1055,7 +1102,9 @@ External World Geometry
 
 External geometry can be supplied as the world volume with the option `worldGeometryFile`
 (see :ref:`options-geometry`). The BDSIM beamline will be placed inside this world volume
-provided in the file.
+provided in the file. ::
+
+  option, worldGeometryFile="gdml:myworld.gdml";
 
 Unlike the standard BDSIM world volume whose size is
 set dynamically, the external world volume will have fixed dimensions, therefore the user should supply
@@ -1067,6 +1116,9 @@ format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the ge
 file. See :ref:`externally-provided-geometry` for more details.
 
 * See also :ref:`physics-bias-importance-sampling` for usage of this.
+* The world **material** will be taken from the GDML file and the option :code:`worldMaterial`
+  will be ignored. If the option :code:`worldMaterial` is specified as well as
+  :code:`worldGeometryFile`, BDSIM will exit.
 * The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
   the supplied geometry by density. See :ref:`automatic-colours` for details.
 
