@@ -568,7 +568,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
   // has it and not the global wrapper.
   if (field)
-    {field->SetTransform(info.Transform());}
+    {field->SetTransform(info.TransformComplete());}
   
   if (!info.MagneticSubFieldName().empty())
     {
@@ -611,7 +611,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
     {resultantField = new BDSFieldEMGlobal(field);}
 
   // Set transform for local geometry offset
-  resultantField->SetTransform(info.Transform());
+  resultantField->SetTransform(info.TransformComplete());
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
@@ -648,7 +648,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
     {resultantField = new BDSFieldEGlobal(field);}
 
   // Set transform for local geometry offset
-  resultantField->SetTransform(info.Transform());
+  resultantField->SetTransform(info.TransformComplete());
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
@@ -885,7 +885,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
       primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
     }
 
-  integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
+  integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.TransformComplete(),
 					   (*info.MagnetStrength())["length"],
 					   otm);
 						       
