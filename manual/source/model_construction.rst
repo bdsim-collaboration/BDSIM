@@ -716,13 +716,14 @@ to an increase in :math:`p_y` for a positively charged particle.
 .. warning:: :code:`vkick` will supercede the strength even if :code:`B` is specified. Therefore, the
 	     user should specify only :code:`vkick` or :code:`B`.
 
-In the case of a thick kicker, the resulting bending angle is calculated using:
+In the case of a thick vertical kicker, the resulting bending angle is calculated using:
 
 .. math::
 
-   \theta = \sin^{-1}(\,p_x)
+   \theta = \sin^{-1}(\,p_y),
 
-The dipole field strength is then calculated with respect to the chord length:
+where :math:`p_y` is the fractional change in vertical momentum. The dipole field strength is
+then calculated with respect to the chord length:
 
 .. math::
 
