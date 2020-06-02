@@ -1478,9 +1478,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   if (ul != defaultUL)
     {vacuumFieldInfo->SetUserLimits(ul);}
 
-  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
-  vacuumFieldInfo->SetTransform(newFieldTransform);
-
   return (new BDSUndulator(elementName,
 			   element->l * CLHEP::m,
 			   element->undulatorPeriod * CLHEP::m,
@@ -2466,14 +2463,14 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  mag->SetVacuumField(info);
 	}
     }
@@ -2483,7 +2480,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  component->SetField(info);
 	}
     }

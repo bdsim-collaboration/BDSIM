@@ -16,32 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSArray1DCoords.hh"
-#include "BDSFieldValue.hh"
-#include "BDSInterpolator1DCubic.hh"
-#include "BDSInterpolatorRoutines.hh"
+#ifndef BDSINTERPOLATOR_H
+#define BDSINTERPOLATOR_H
 
-#include "globals.hh"
+/**
+ * @brief Interface for all interpolators containing basic extent of validity.
+ *
+ * @author Laurie Nevay
+ */
 
-#include <cmath>
-
-BDSInterpolator1DCubic::BDSInterpolator1DCubic(BDSArray1DCoords* arrayIn):
-  BDSInterpolator1D(arrayIn)
-{;}
-
-BDSInterpolator1DCubic::~BDSInterpolator1DCubic()
-{;}
-
-BDSFieldValue BDSInterpolator1DCubic::GetInterpolatedValueT(G4double x) const
+class BDSInterpolator
 {
-  G4double xarr = array->ArrayCoordsFromX(x);
-  G4double x1   = std::floor(xarr);
+public:
+  BDSInterpolator(){;}
+  virtual ~BDSInterpolator(){;}
 
-  BDSFieldValue localData[4];
+  /// Interface each derived class must provide.
+  virtual BDSExtent Extent() const = 0;
+};
 
-  G4double x0 = x1-1;
-  for (int i = 0; i < 4; i++)
-    {localData[i] = array->GetConst(x0+i);}
-
-  return BDS::Cubic1D(localData, xarr-x1);
-}
+#endif
