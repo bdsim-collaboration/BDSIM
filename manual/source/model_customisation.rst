@@ -151,6 +151,11 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | maximumStepLength    | The maximum permitted step length through the field. (m)        |
 +----------------------+-----------------------------------------------------------------+
+| magneticSubField     | Name of another field object like this one that will be used as |
+|                      | a magnetic 'sub' field that overlays this one.                  |
++----------------------+-----------------------------------------------------------------+
+
+.. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps are attached to and the coordinates
@@ -327,6 +332,62 @@ is shown in :ref:`field-interpolators`.
 
 Internally there is a different implementation for different numbers of dimensions and this
 is automatically chosen based on the number of dimensions in the field map type.
+
+.. _fields-sub-fields:
+
+Sub-Fields
+^^^^^^^^^^
+
+A 'sub-field' is where one field map can be overlaid on top of another. The sub-field should be smaller
+and will simply take precedence on the main field within its range. This is useful if for example a
+precise field detailed field map is required for a smaller region but a coarser field map is suitable
+for the majority of the component. Remember, field maps must contain regularly spaced data so if a high
+density of points is required in one point, this would lead to an excessively large field map for the rest
+of the element which may not be necessary and slow the loading and running of the simulation.
+
+Inside the domain of the sub-field, only its interpolated value is used. The transition between the sub
+and main field is hard and it is left to the user to ensure that the field values are continuous to
+make physical sense.
+
+* Currently only sub-magnetic fields are supported.
+* The tilt or rotation of the field map (with respect to the element it is attached to) does not
+  apply to the region of applicability for the subfield. However, the field is tilted appropriately.
+* The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
+  main outer field.
+* If a 2D field is used both fields apply infinitely in z in a 3D model, therefore the sub-field
+  will always take precedence for any z value as long as x and y are inside its limits.
+
+Below is an example of a sub-field that can be found in :code:`bdsim/examples/features/fields/subfield`: ::
+
+  fpipe: field, type="bmap2d",
+       	        magneticFile="bdsim2d:inner.dat",
+	        magneticInterpolator="nearest",
+	        x=-10*cm;
+
+  fyoke: field, type="bmap2d",
+       	        magneticFile="bdsim2d:outer.dat",
+	        magneticInterpolator="cubic",
+	        magneticSubField="fpipe";
+
+  d1: drift, l=0.5*m, aper1=0.5*m, fieldAll="fyoke";
+
+First a smaller field map is defined called "fpipe". Secondly, a larger coarser field map is created
+called "fyoke" that crucially refers to the :code:`magneticSubField="fpipe"`. The sub-field applies
+only in the range of the field map taken from the maximum and minimum coordinates in each dimension
+when loading the field map. In the provided example, the "inner.dat" field map defines 4 points in a
+2D square at +- 20 cm in both x and y with the same B field vector. Nearest neighbour interpolation
+is used to ensure a perfect uniform field inside these points.
+
+The second field definition using "outer.dat" ranges from +- 50 cm with a similar box of 4 points in 2D.
+Each point has the same field value but with an opposing x component. The Python script used to create
+these simple field maps is included alongside the example. The example combined field map is shown
+in the visualiser below. The magnetic field lines were visualised using the Geant4 visualiser command
+:code:`/vis/scene/add/magneticField 10 lightArrow`.
+
+.. image:: figures/fields-sub-field.png
+	   :width: 60%
+	   :align: center
+
 
 .. _materials-and-atoms:
 	  
