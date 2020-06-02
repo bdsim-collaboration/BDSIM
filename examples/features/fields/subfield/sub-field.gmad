@@ -9,10 +9,13 @@ fyoke: field, type="bmap2d",
 	      magneticSubField="fpipe";
 
 
-d1: drift, l=0.1*m, aper1=0.5*m, fieldAll="fyoke";
+d1: drift, l=0.5*m, aper1=0.5*m, fieldAll="fyoke";
 l1: line=(d1);
 use, l1;
 
 beam, particle="e-",
       energy=1*GeV,
-      X0=12*cm;
+      X0=12*cm,
+      Xp0=-0.3;
+
+option, maximumStepLength=1*cm;
