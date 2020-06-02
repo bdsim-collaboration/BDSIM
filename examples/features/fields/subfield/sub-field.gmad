@@ -1,0 +1,18 @@
+fpipe: field, type="bmap2d",
+       	      magneticFile="bdsim2d:inner.dat",
+	      magneticInterpolator="nearest",
+	      x=-10*cm;
+
+fyoke: field, type="bmap2d",
+       	      magneticFile="bdsim2d:outer.dat",
+	      magneticInterpolator="cubic",
+	      magneticSubField="fpipe";
+
+
+d1: drift, l=0.1*m, aper1=0.5*m, fieldAll="fyoke";
+l1: line=(d1);
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV,
+      X0=12*cm;
