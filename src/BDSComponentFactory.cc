@@ -1474,9 +1474,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   if (ul != defaultUL)
     {vacuumFieldInfo->SetUserLimits(ul);}
 
-  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
-  vacuumFieldInfo->SetTransform(newFieldTransform);
-
   return (new BDSUndulator(elementName,
 			   element->l * CLHEP::m,
 			   element->undulatorPeriod * CLHEP::m,
