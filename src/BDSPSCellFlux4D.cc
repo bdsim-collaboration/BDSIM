@@ -7,13 +7,13 @@
 
 
 BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const BDSHistBinMapper* mapperIn, G4int ni, G4int nj, G4int nk, G4int nl, G4int depi, G4int depj, G4int depk, G4int depl):
-G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthl(depl),mapper(mapperIn)
+G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), fDepthl(depl), mapper(mapperIn)
 {
     fNl = nl;
 }
 
 BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const BDSHistBinMapper* mapperIn, const G4String& unit, G4int ni, G4int nj, G4int nk, G4int nl, G4int depi, G4int depj, G4int depk, G4int depl):
-        G4PSCellFlux3D(name, unit,ni,nj,nk,depi,depj,depk), fDepthl(depl),mapper(mapperIn)
+        G4PSCellFlux3D(name, unit,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), fDepthl(depl), mapper(mapperIn)
 {
     fNl = nl;
 }
@@ -22,10 +22,12 @@ BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const BDSHistBinMapper* mapperIn
 G4int BDSPSCellFlux4D::GetIndex(G4Step* aStep)
 {
     const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
+
     G4int i = touchable->GetReplicaNumber(fDepthi);
     G4int j = touchable->GetReplicaNumber(fDepthj);
     G4int k = touchable->GetReplicaNumber(fDepthk);
     G4int l = touchable->GetReplicaNumber(fDepthl);
+
 
     if (i<0 || j<0 || k<0 || l<0)
     {
@@ -40,6 +42,6 @@ G4int BDSPSCellFlux4D::GetIndex(G4Step* aStep)
         G4Exception("PSRadiationQuantity3D::GetIndex","DetPS0006",JustWarning,ED);
     }
 
-    G4int globalIndex = mapper->GlobalFromIJKLIndex(i,j,k,l); // x,y,z,t
+    G4int globalIndex = mapper->GlobalFromIJKLIndex(i,j,k,l); // x,y,z,e
     return globalIndex;
 }

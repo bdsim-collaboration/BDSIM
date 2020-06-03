@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PSCellCharge3D.hh"
 #include "G4PSCellFlux.hh"
 #include "G4PSCellFlux3D.hh"
+#include "BDSPSCellFlux4D.hh"
 #include "G4PSDoseDeposit.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSEnergyDeposit.hh"
@@ -118,6 +119,8 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 	result = scorer;
 	break;
       }
+    case BDSScorerType::cellflux4d:
+      {result = new BDSPSCellFlux4D(name,mapper,"percm2");break;}
     case BDSScorerType::cellfluxscaledperparticle3d:
       {result = new BDSPSCellFluxScaledPerParticle3D(name, mapper, pathname); break;}
     case BDSScorerType::cellfluxscaled3d:

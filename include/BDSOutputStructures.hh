@@ -108,11 +108,11 @@ protected:
 			  G4int    nBinsY, G4double yMin, G4double yMax,
 			  G4int    nBinsZ, G4double zMin, G4double zMax);
   G4int Create4DHistogram(G4String name,
-                          G4String title,
-                          G4int    nBinsX, G4double xMin, G4double xMax,
-                          G4int    nBinsY, G4double yMin, G4double yMax,
-                          G4int    nBinsZ, G4double zMin, G4double zMax,
-                          G4int    nBinsE, G4double eMin, G4double eMax);
+              G4String title,
+              G4int    nBinsX, G4double xMin, G4double xMax,
+              G4int    nBinsY, G4double yMin, G4double yMax,
+              G4int    nBinsZ, G4double zMin, G4double zMax,
+              G4int    nBinsE, G4double eMin, G4double eMax);
   ///@}
 
   BDSOutputROOTGeant4Data*   geant4DataOutput; ///< Geant4 information / particle tables.
