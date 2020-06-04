@@ -63,7 +63,6 @@ endforeach()
 
 
 add_library(rebdsim SHARED ${rebdsimLibSources})
-#target_compile_features(rebdsim PUBLIC cxx_std_11)
 target_link_libraries(rebdsim bdsimRootEvent)
 
 add_executable(rebdsimexec rebdsim.cc)

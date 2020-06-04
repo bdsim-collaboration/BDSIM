@@ -13,7 +13,6 @@ list(REMOVE_ITEM interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsinterpola
 
 # Build library
 add_library(interpolator STATIC ${interpolatorLibSources})
-#target_compile_features(interpolator PUBLIC cxx_std_11)
 
 # Build executable and link against needed libraries
 add_executable(interpolatorexec ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc)
