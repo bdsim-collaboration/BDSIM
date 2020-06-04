@@ -56,15 +56,7 @@ mark_as_advanced(BDSIM_REGRESSION_PREFIX)
 # Find Packages #
 #################
 
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS system)
 
-if(Boost_FOUND)
-    include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-    message(STATUS "BOOST Found")
-endif()
 
 # GIT - optional - for software version in output & copying only example source files
 # minimum version 1.8.2.1 for git ls-files for example copying
@@ -87,6 +79,9 @@ if(USE_GDML)
     add_definitions("-DUSE_GDML")
     message(STATUS "GDML support ON")
 endif()
+
+# Boost
+include(cmake/Boost.cmake)
 
 # HEPMC3
 include(cmake/HepMC.cmake)
@@ -208,9 +203,10 @@ endif()
 if (USE_HEPMC3)
   target_link_libraries(${BDSIM_LIB_NAME} ${HEPMC3_LIBRARIES})
 endif()
-
-#link against BOOST
-target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
+if (USE_BOOST)
+  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
+  target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
+endif()
 
 # link against ROOT
 target_link_libraries(${BDSIM_LIB_NAME} ${ROOT_LIBRARIES})
