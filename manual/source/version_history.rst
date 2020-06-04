@@ -206,6 +206,8 @@ New Features
 General
 -------
 
+* Installation support for AFS has been dropped since this is reaching end of life at CERN and may builds
+  there are unmaintained or now on cvmfs.
 * Executable verbosity options, now accepted in input gmad.
 * Valid default ranges for general single 3D energy deposition 'scoring' histogram
   available through options. Now 1m in x,y,z with 1 bin.
