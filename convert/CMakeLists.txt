@@ -7,7 +7,6 @@ set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
 add_library(convert SHARED ${convertLibSources})
-#target_compile_features(convert PUBLIC cxx_std_11)
 target_link_libraries(convert bdsimRootEvent)
 
 add_executable(ptc2bdsimexec ptc2Bdsim.cc)
