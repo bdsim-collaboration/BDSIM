@@ -59,6 +59,9 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     info->scorerType,
 							     info->filename,
 							     info->pathname,
+							     info->eLow,
+							     info->eHigh,
+							     info ->ne,
 							     mapper,
 							     unit);
 
@@ -73,6 +76,9 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 							   const BDSScorerType       scorerType,
 							   const G4String&           filename,
 							   const G4String&           pathname,
+							   const G4double&           eLow,
+							   const G4double&           eHigh,
+							   const G4int&              ne,
 							   const BDSHistBinMapper* mapper,
 							   G4double*                 unit)
 {
@@ -120,7 +126,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 	break;
       }
     case BDSScorerType::cellflux4d:
-      {result = new BDSPSCellFlux4D(name,mapper,"percm2");break;}
+      {result = new BDSPSCellFlux4D(name,eLow,eHigh,ne,mapper,"percm2");break;}
     case BDSScorerType::cellfluxscaledperparticle3d:
       {result = new BDSPSCellFluxScaledPerParticle3D(name, mapper, pathname); break;}
     case BDSScorerType::cellfluxscaled3d:

@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "parser/scorer.h"
+#include "parser/scorermesh.h"
+
 
 #include "G4ParticleTable.hh"
 #include "G4String.hh"
@@ -36,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
+BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, const GMAD::ScorerMesh& scorermesh,
 			     G4bool upgradeTo3D):
   particle(nullptr)
 {
@@ -71,6 +73,10 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   maximumTime   = scorer.maximumTime*CLHEP::second;
   worldVolumeOnly = scorer.scoreWorldVolumeOnly;
   primariesOnly = scorer.scorePrimariesOnly;
+  eLow = scorermesh.eLow * CLHEP::GeV;
+  eHigh = scorermesh.eHigh * CLHEP::GeV;
+  ne = scorermesh.ne;
+
 
   if (scorer.particlePDGID != 0)
     {
