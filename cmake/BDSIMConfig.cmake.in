@@ -4,7 +4,8 @@ set(BDSIM_VERSION_PATCH @BDSIM_PATCH_LEVEL@)
 
 @PACKAGE_INIT@
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# TODO - find someway for CMake to do this for us
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set_and_check(BDSIM_INCLUDE_DIR             "@PACKAGE_INCLUDE_INSTALL_DIR@")
 
