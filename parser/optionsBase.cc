@@ -319,7 +319,7 @@ OptionsBase::OptionsBase()
   zmin   = 0;
   zmax   = 1;
   emin   = 1e-12;
-  emax   = 1;
+  emax   = 1e4;
   useScoringMap = false;
 }
 

@@ -22,8 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-//#include <boost/format.hpp>
-//#include <boost/histogram.hpp>
+#include <boost/format.hpp>
+#include <boost/histogram.hpp>
 
 #ifndef __ROOTBUILD__
 #include "globals.hh"
@@ -36,7 +36,7 @@ class TH1D;
 class TH2D;
 class TH3D;
 
-//typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::unlimited_storage<std::__1::allocator<char> > > boost_histogram;
+typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::unlimited_storage<std::__1::allocator<char> > > boost_histogram;
 
 /**
  * @brief Holder for a set of histograms to be stored.
@@ -52,8 +52,8 @@ public:
   BDSOutputROOTEventHistograms& operator=(const BDSOutputROOTEventHistograms&) = delete;
   BDSOutputROOTEventHistograms(std::vector<TH1D*>& histogram1DIn,
 			       std::vector<TH2D*>& histogram2DIn,
-			       std::vector<TH3D*>& histogram3DIn);//,
-			      // std::vector<boost_histogram*>& histograms4DIn);
+			       std::vector<TH3D*>& histogram3DIn,
+			       std::vector<boost_histogram*>& histograms4DIn);
   virtual ~BDSOutputROOTEventHistograms();
 
   /// Interface function to create a 1D histogram using only standard types.
@@ -79,26 +79,35 @@ public:
 			  std::vector<double>& xedges,
 			  std::vector<double>& yedges,
 			  std::vector<double>& zedges);
-  /*G4int Create4DHistogram(G4String name, G4String title,
+  G4int Create4DHistogram(G4String name, G4String title,
                           G4int nxbins, G4double xmin, G4double xmax,
                           G4int nybins, G4double ymin, G4double ymax,
                           G4int nzbins, G4double zmin, G4double zmax,
-                          G4int nebins, G4double emin, G4double emax);*/
+                          G4int nebins, G4double emin, G4double emax);
 
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
   void Fill3DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zValue, G4double weight = 1.0);
-  //void Fill4DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zvalue, G4double eValue);
+  void Fill4DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double zvalue, G4double eValue);
   
   /// Set the value of a bin by (ROOT!!) global bin index. Note the TH3 function should
   /// be used to get ROOT's idea of a global bin index.
   void Set3DHistogramBinContent(G4int    histoId,
 				G4int    globalBinID,
 				G4double value);
+
+  void Set4DHistogramBinContent(G4int   histoId,
+                G4int    x,
+                G4int    y,
+                G4int    z,
+                G4int    e,
+                G4double value);
   
   /// Add the values from one supplied 3D histogram to another. Uses TH3-Add().
   void AccumulateHistogram3D(G4int histoId,
 			     TH3D* otherHistogram);
+  void AccumulateHistogram4D(G4int histoId,
+                 boost_histogram* otherHistogram);
 #endif
   /// Flush the contents.
   virtual void Flush();
@@ -113,18 +122,18 @@ public:
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
   std::vector<TH3D*>& Get3DHistograms() {return histograms3D;}
-  //std::vector<boost_histogram*>& Get4DHistograms() {return histograms4D;}
+  std::vector<boost_histogram*>& Get4DHistograms() {return histograms4D;}
   TH1D* Get1DHistogram(int iHisto) const {return histograms1D[iHisto];}
   TH2D* Get2DHistogram(int iHisto) const {return histograms2D[iHisto];}
   TH3D* Get3DHistogram(int iHisto) const {return histograms3D[iHisto];}
-  //boost_histogram* Get4DHistogram(int iHisto) const {return histograms4D[iHisto];}
+  boost_histogram* Get4DHistogram(int iHisto) const {return histograms4D[iHisto];}
   /// @}
 
 private:
   std::vector<TH1D*> histograms1D;
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
-  //std::vector<boost_histogram*> histograms4D;
+  std::vector<boost_histogram*> histograms4D;
 
   ClassDef(BDSOutputROOTEventHistograms,3);
 };
