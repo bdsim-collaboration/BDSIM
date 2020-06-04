@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0042 NEW)
 if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GenerateExportHeader)
 
@@ -79,8 +82,8 @@ include(cmake/ROOT.cmake)
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
-    add_definitions("-DUSE_GDML")
-    message(STATUS "GDML support ON")
+  add_definitions("-DUSE_GDML")
+  message(STATUS "GDML support ON")
 endif()
 
 # HEPMC3
@@ -89,8 +92,8 @@ include(cmake/HepMC.cmake)
 # Field double precision (off by default)
 option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
 if(FIELDDOUBLEPRECISION)
-    add_definitions("-DFIELDDOUBLE")
-    message(STATUS "Field double precision ON")
+  add_definitions("-DFIELDDOUBLE")
+  message(STATUS "Field double precision ON")
 endif()
 
 # Find GEANT4
