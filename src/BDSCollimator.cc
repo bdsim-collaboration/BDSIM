@@ -94,13 +94,6 @@ void BDSCollimator::CheckParameters()
   if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
     {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": no entrance aperture set for collimator - exit aperture parameters will be ignored");}
 
-  if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
-      BDS::IsFinite(yAperture))
-    {
-      if ((xApertureOut / yApertureOut) != (xAperture / yAperture))
-        {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": X/Y half axes ratio at entrance and exit apertures are not equal");}
-    }
-
   tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
   if (!tapered)
     {// copy for consistency in output and aperture prediction

@@ -48,6 +48,7 @@ namespace GMAD
       std::string distrFile;
       std::string distrFileFormat;
       bool        matchDistrFileLength;
+      bool        removeUnstableWithoutDecay;
       ///@}
       int         nlinesIgnore; ///< Ignore first lines in the input bunch file.
       int         nlinesSkip;   ///< Number of event lines to skip after the ignore lines.
