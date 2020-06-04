@@ -66,11 +66,12 @@ tested on:
     compiler: gcc 4.9, clang 6 (fully c++ 11 compliant)
    
 mandatory:
+   - CMake 3.1 or higher
    - BISON
    - CLHEP (recommended version 2.3.3.0 - check with Geant4 version)
    - FLEX
    - Geant4 versions Geant4.10 or greater (10.4.p03 recommended)
-     Latest patch version recommended of any 10.X version. 
+     or latest patch version recommended of any 10.X version. 
    - ROOT 6
 
 optional: 
