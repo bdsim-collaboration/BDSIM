@@ -79,6 +79,7 @@ Output Changes
 --------------
 
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
+* Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
 
 Output Class Versions
 ---------------------
