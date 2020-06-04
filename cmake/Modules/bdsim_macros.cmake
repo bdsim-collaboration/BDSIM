@@ -81,3 +81,12 @@ MACRO(COPY_EXAMPLES_NO_GIT)
   message(STATUS "Copying example directory")
   copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples POST_BUILD)
 ENDMACRO(COPY_EXAMPLES_NO_GIT)
+
+# taken from
+# https://stackoverflow.com/questions/39758585/duplicate-compile-flag-in-cmake-cxx-flags
+function(removeDuplicateSubstring stringIn stringOut)
+    separate_arguments(stringIn)
+    list(REMOVE_DUPLICATES stringIn)
+    string(REPLACE ";" " " stringIn "${stringIn}")
+    set(${stringOut} "${stringIn}" PARENT_SCOPE)
+endfunction()
