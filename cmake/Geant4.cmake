@@ -119,3 +119,15 @@ if (${G4_MINOR_VERSION} GREATER 5)
   add_definitions("-DG4VIS_USE")
   add_definitions("-DG4UI_USE")
 endif()
+
+# Geant4 adds some flags specifically setting the C++ standard which is annoying
+# and says we should just edit ourselves - no option to not do this
+# remove -std=c++11 or 14 17 (let us deal with this ensuring we're at least 11)
+string(REGEX REPLACE "\\-std=c\\+\\+[147]+" "" _TMPV ${CMAKE_CXX_FLAGS})
+set(CMAKE_CXX_FLAGS ${_TMPV})
+if($ENV{VERBOSE})
+  message(STATUS "CMAKE_CXX_FLAGS after Geant4 ${CMAKE_CXX_FLAGS}")
+endif()
+
+# now remove any duplicates we have to keep things tidy
+removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
