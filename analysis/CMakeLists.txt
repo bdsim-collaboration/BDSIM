@@ -26,6 +26,12 @@ else()
   set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
 endif()
 
+if (NOT USE_BOOST)
+  set(BOOSTINCLUDES "")
+else()
+  set(BOOSTINCLUDES "-I${Boost_INCLUDE_DIRS}")
+endif()
+
 # Add BDSIM label to original files
 set_source_files_properties(${rebdsimLibSources} ${rebdsimLibLinkDefs} PROPERTIES LABELS "BDSIM")
 
@@ -45,7 +51,7 @@ foreach(header ${rebdsimLibLinkDefs})
             COMMAND ${ROOTCINT_EXECUTABLE}
             ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths -inlineInputHeader
             ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${Boost_INCLUDE_DIRS}
-            -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+            -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${BOOSTINCLUDES} ${header}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
             IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
             COMMENT "Generate ROOT Dictionary for ${className}"
