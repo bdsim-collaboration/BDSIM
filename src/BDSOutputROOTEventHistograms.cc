@@ -247,7 +247,7 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
                               boost_histogram*  otherHistogram)
 
 {
-    histograms4D[histoId]->operator+(otherHistogram);
+    histograms4D[histoId]->operator+=(otherHistogram);
 }
 
 #endif
@@ -260,4 +260,6 @@ void BDSOutputROOTEventHistograms::Flush()
     {h->Reset();}
   for (auto h : histograms3D)
     {h->Reset();}
+  for (auto h : histograms4D)
+    {h->reset();}
 }

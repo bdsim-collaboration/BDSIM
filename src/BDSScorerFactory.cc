@@ -61,7 +61,7 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*      inf
 							     info->pathname,
 							     info->eLow,
 							     info->eHigh,
-							     info ->ne,
+							     info->ne,
 							     mapper,
 							     unit);
 
