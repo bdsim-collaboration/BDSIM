@@ -19,7 +19,7 @@ def Field(fx,fy,fz,xValue,yValue):
     return data
 
 def main():
-    outer = Field(sqrt(2),sqrt(2),0,50,50)
+    outer = Field(sqrt(2),sqrt(2),0,30,30)
     inner = Field(-sqrt(2),sqrt(2),0,20,20)
     
     # construct a BDSIM format field object and write it out
