@@ -1158,16 +1158,25 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
   std::map<G4String, BDSScorerInfo> scorerRecipes;
   for (const auto& scorer : scorers)
     {
-        if (scorer.type == "cellflux4d")
+        for (const auto& scoringmesh : scoringMeshes)
         {
-            BDSScorerInfo si = BDSScorerInfo(scorer, false);
-            scorerRecipes.insert(std::make_pair(si.name, si));
+            if (scoringmesh.scoreQuantity == scorer.name)
+            {
+                if (scorer.type == "cellflux4d")
+                {
+                    BDSScorerInfo si = BDSScorerInfo(scorer, scoringmesh, false);
+                    scorerRecipes.insert(std::make_pair(si.name, si));
+                }
+                else
+                {
+                    BDSScorerInfo si = BDSScorerInfo(scorer, scoringmesh, true); // true = upgrade to 3d as required for 3d mesh here
+                    scorerRecipes.insert(std::make_pair(si.name, si));
+                }
+
+            }
         }
-        else
-        {
-            BDSScorerInfo si = BDSScorerInfo(scorer, true); // true = upgrade to 3d as required for 3d mesh here
-            scorerRecipes.insert(std::make_pair(si.name, si));
-        }
+
+
     }
 
   // construct meshes

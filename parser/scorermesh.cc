@@ -39,7 +39,7 @@ void ScorerMesh::clear()
   ysize = 0;
   zsize = 0;
   eLow  = 1e-12;
-  eHigh = 1;
+  eHigh = 1e4;
 
   sequence         = "";
   referenceElement = "";

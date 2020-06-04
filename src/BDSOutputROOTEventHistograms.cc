@@ -22,8 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-//#include <boost/format.hpp>
-//#include <boost/histogram.hpp>
+#include <boost/format.hpp>
+#include <boost/histogram.hpp>
 
 ClassImp(BDSOutputROOTEventHistograms)
 
@@ -42,12 +42,12 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
 							   std::vector<TH2D*>& histograms2DIn,
-							   std::vector<TH3D*>& histograms3DIn)://,
-							  // std::vector<boost_histogram*>& histograms4DIn):
+							   std::vector<TH3D*>& histograms3DIn,
+							   std::vector<boost_histogram*>& histograms4DIn):
   histograms1D(histograms1DIn),
   histograms2D(histograms2DIn),
-  histograms3D(histograms3DIn)//,
-  //histograms4D(histograms4DIn)
+  histograms3D(histograms3DIn),
+  histograms4D(histograms4DIn)
 {;}
 
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
@@ -61,7 +61,7 @@ void BDSOutputROOTEventHistograms::FillSimple(const BDSOutputROOTEventHistograms
   histograms1D = rhs->histograms1D;
   histograms2D = rhs->histograms2D;
   histograms3D = rhs->histograms3D;
- // histograms4D = rhs->histograms4D;
+  histograms4D = rhs->histograms4D;
 }
 
 void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
@@ -172,7 +172,7 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
   return (G4int)histograms3D.size() - 1;
 }
 
-/*G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title,
+G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title,
                                 G4int nxbins, G4double xmin, G4double xmax,
                                 G4int nybins, G4double ymin, G4double ymax,
                                 G4int nzbins, G4double zmin, G4double zmax,
@@ -185,7 +185,7 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
                             boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {nebins, emin, emax, "Energy_log"});
 
     return (G4int)histograms4D.size() - 1;
-}*/
+}
 
 void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int    histoId,
 						   G4double value,
@@ -211,14 +211,14 @@ void BDSOutputROOTEventHistograms::Fill3DHistogram(G4int    histoId,
   histograms3D[histoId]->Fill(xValue,yValue,zValue,weight);
 }
 
-/*void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
+void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
                             G4double xValue,
                             G4double yValue,
                             G4double zValue,
                             G4double eValue)
 {
-    histograms4D[histoId]->operator()(xValue, yValue,zValue,eValue);
-}*/
+    histograms4D[histoId]->operator()(xValue, yValue, zValue, eValue);
+}
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
 							    G4int globalBinID,
@@ -227,10 +227,27 @@ void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
   histograms3D[histoId]->SetBinContent(globalBinID, value);
 }
 
+void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
+                                G4int x,
+                                G4int y,
+                                G4int z,
+                                G4int e,
+                                G4double value) {
+{
+    histograms4D[histoId]->at(x,y,z,e) = value;
+}
+
 void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
 							 TH3D* otherHistogram)
 {
   histograms3D[histoId]->Add(otherHistogram);
+}
+
+void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
+                              boost_histogram*  otherHistogram)
+
+{
+    histograms4D[histoId]->operator+(otherHistogram);
 }
 
 #endif

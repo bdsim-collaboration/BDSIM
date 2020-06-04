@@ -61,6 +61,9 @@ private:
 					   const BDSScorerType       scorerType,
 					   const G4String&           filename,
 					   const G4String&           pathname,
+                       const G4double&           eLow,
+                       const G4double&           eHigh,
+                       const G4int&                 ne,
 					   const BDSHistBinMapper* mapper,
 					   G4double*                 unit = nullptr);
 
