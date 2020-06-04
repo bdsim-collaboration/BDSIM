@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
@@ -372,7 +373,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 	  G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
 	  for (auto listName : physicsLists)
 	    {G4cout << "\"" << listName << "\"" << G4endl;}
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "Invalid physics list.");
 	}
     }
 
@@ -448,7 +449,7 @@ void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysi
 	  G4cout << "\"" << singlePhysicsIn << "\" cannot be used with the following:" << G4endl;
 	  for (const auto& v : forbidden)
 	    {G4cout << "\"" << v << "\"" << G4endl;}
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "Incompatible physics list.");
 	}
     }
 }
