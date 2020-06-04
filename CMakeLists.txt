@@ -67,6 +67,9 @@ if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
   set(GIT_FOUND FALSE)
 endif()
 
+# Boost - do before ROOT as may change the compilation flags and standard
+include(cmake/Boost.cmake)
+
 # CLHEP
 include(cmake/CLHEP.cmake)
 
@@ -79,9 +82,6 @@ if(USE_GDML)
     add_definitions("-DUSE_GDML")
     message(STATUS "GDML support ON")
 endif()
-
-# Boost
-include(cmake/Boost.cmake)
 
 # HEPMC3
 include(cmake/HepMC.cmake)

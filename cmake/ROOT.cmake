@@ -37,6 +37,13 @@ else()
   set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
 endif()
 
+if (NOT USE_BOOST)
+  set(BOOSTINCLUDES "")
+else()
+  set(BOOSTINCLUDES "-I${Boost_INCLUDE_DIRS}")
+endif()
+message(STATUS "XYZ2 ${BOOSTINCLUDES}")
+
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
 file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
@@ -59,7 +66,7 @@ foreach(header ${linkHeaders})
     COMMAND ${ROOTCINT_EXECUTABLE}
     ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -noIncludePaths -inlineInputHeader
     ${PREPROCESSOR_DEFS}  -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/include -I${CMAKE_CURRENT_SOURCE_DIR}/parser/
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${BOOSTINCLUDES} ${header}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
     IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
     COMMENT "Generate ROOT Dictionary for ${className}"
