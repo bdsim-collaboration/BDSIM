@@ -316,6 +316,7 @@ private:
   /// @{ Map of histogram name (short) to index of histogram in output.
   std::map<G4String, G4int> histIndices1D;
   std::map<G4String, G4int> histIndices3D;
+  std::map<G4String, G4int> histIndices4D;
   std::map<G4String, BDSHistBinMapper> scorerCoordinateMaps;
   /// @}
 
@@ -323,6 +324,7 @@ private:
   /// function GetWithDef should be used.
   std::map<G4int, G4double> histIndexToUnits1D;
   std::map<G4int, G4double> histIndexToUnits3D;
+  std::map<G4int, G4double> histIndexToUnits4D;
 };
 
 #endif

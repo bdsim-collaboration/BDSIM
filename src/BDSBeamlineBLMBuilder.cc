@@ -71,14 +71,23 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   // we need to loop over all the blm definitions to work out the unique combinations of
   // scorers that need to created. multiple scorers for a single blm ultimately have to be
   // in one G4MultiFunctionalSD sensitive detector.
+  std::vector<GMAD::ScorerMesh> scoringMeshes = BDSParser::Instance()->GetScorerMesh();
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
   // convert all the parser scorer definitions into recipes (including parameter checking)
   std::map<G4String, BDSScorerInfo> scorerRecipes;
   for (const auto& scorer : scorers)
     {
-      BDSScorerInfo si = BDSScorerInfo(scorer);
-      scorerRecipes.insert(std::make_pair(si.name, si));
+        for (const auto& scoringmesh : scoringMeshes)
+        {
+            if (scoringmesh.scoreQuantity == scorer.name)
+            {
+                BDSScorerInfo si = BDSScorerInfo(scorer,scoringmesh);
+                scorerRecipes.insert(std::make_pair(si.name, si));
+            }
+        }
+
     }
+
   
   std::set<std::set<G4String> > scorerSetsToMake;
   // cache a map of set of scorers and combined name by BLM name so we don't have to do it later again
