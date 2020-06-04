@@ -77,8 +77,8 @@ include(cmake/ROOT.cmake)
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
-    add_definitions("-DUSE_GDML")
-    message(STATUS "GDML support ON")
+  add_definitions("-DUSE_GDML")
+  message(STATUS "GDML support ON")
 endif()
 
 # HEPMC3
@@ -87,8 +87,8 @@ include(cmake/HepMC.cmake)
 # Field double precision (off by default)
 option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
 if(FIELDDOUBLEPRECISION)
-    add_definitions("-DFIELDDOUBLE")
-    message(STATUS "Field double precision ON")
+  add_definitions("-DFIELDDOUBLE")
+  message(STATUS "Field double precision ON")
 endif()
 
 # Find GEANT4
