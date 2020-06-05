@@ -972,7 +972,6 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
       G4double unit   = BDS::MapGetWithDefault(histIndexToUnits4D, histIndex, 1.0);
       // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
       const BDSHistBinMapper& mapper = scorerCoordinateMaps.at(histogramDefName);
-      boost_histogram* hist = evtHistos->Get4DHistogram(histIndex);
       G4int x,y,z,e;
 #if G4VERSION < 1039
       for (const auto& hit : *hitMap->GetMap())
@@ -984,9 +983,7 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
           mapper.IJKLFromGlobal(hit.first, x,y,z,e);
           evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e, *hit.second / unit);
       }
-
       runHistos->AccumulateHistogram4D(histIndex, evtHistos->Get4DHistogram(histIndex));
-
   }
 
 }

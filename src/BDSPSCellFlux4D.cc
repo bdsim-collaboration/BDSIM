@@ -29,7 +29,6 @@ G4int BDSPSCellFlux4D::GetIndex(G4Step* aStep)
     G4int i = touchable->GetReplicaNumber(fDepthi);
     G4int j = touchable->GetReplicaNumber(fDepthj);
     G4int k = touchable->GetReplicaNumber(fDepthk);
-    //G4int l = touchable->GetReplicaNumber(fDepthl);
 
     boost::histogram::axis::regular<double,boost::histogram::axis::transform::log> Laxis = boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {ne, eLow, eHigh, "Energy_log"};
 

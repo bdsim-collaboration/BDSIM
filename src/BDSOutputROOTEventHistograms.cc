@@ -184,10 +184,13 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String ti
                                 unsigned int nebins, G4double emin, G4double emax)
 {
 
-    boost_histogram h = boost::histogram::make_histogram(boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
+    boost_histogram h_tmp = boost::histogram::make_histogram(boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
                             boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
                             boost::histogram::axis::regular<double> {nzbins, zmin, zmax, "z"},
                             boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {nebins, emin, emax, "Energy_log"});
+
+    boost_histogram* h = new boost_histogram(h_tmp);
+    histograms4D.push_back(h);
 
     return (G4int)histograms4D.size() - 1;
 }
@@ -230,6 +233,7 @@ void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
 							    G4double value)
 {
   histograms3D[histoId]->SetBinContent(globalBinID, value);
+
 }
 
 void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
@@ -239,7 +243,9 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4int e,
                                 G4double value)
 {
+
     histograms4D[histoId]->at(x,y,z,e) = value;
+
 }
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
@@ -253,6 +259,7 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
 
 {
     histograms4D[histoId]->operator+=(*otherHistogram);
+
 }
 
 #endif
