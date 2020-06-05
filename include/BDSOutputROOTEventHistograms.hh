@@ -80,10 +80,10 @@ public:
 			  std::vector<double>& yedges,
 			  std::vector<double>& zedges);
   G4int Create4DHistogram(G4String name, G4String title,
-                          G4int nxbins, G4double xmin, G4double xmax,
-                          G4int nybins, G4double ymin, G4double ymax,
-                          G4int nzbins, G4double zmin, G4double zmax,
-                          G4int nebins, G4double emin, G4double emax);
+                          unsigned int nxbins, G4double xmin, G4double xmax,
+                          unsigned int nybins, G4double ymin, G4double ymax,
+                          unsigned int nzbins, G4double zmin, G4double zmax,
+                          unsigned int nebins, G4double emin, G4double emax);
 
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
