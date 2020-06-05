@@ -76,6 +76,11 @@ void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
     {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
   for (auto h : rhs->histograms3D)
     {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
+  for (auto h : rhs->histograms4D)
+    {boost_histogram* h_clone = nullptr;
+    boost_histogram h_tmp = *h;
+    *h_clone = h_tmp;
+    histograms4D.push_back(static_cast<boost_histogram*>(h_clone));}
 
 }
 
@@ -173,10 +178,10 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
 }
 
 G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title,
-                                G4int nxbins, G4double xmin, G4double xmax,
-                                G4int nybins, G4double ymin, G4double ymax,
-                                G4int nzbins, G4double zmin, G4double zmax,
-                                G4int nebins, G4double emin, G4double emax)
+                                unsigned int nxbins, G4double xmin, G4double xmax,
+                                unsigned int nybins, G4double ymin, G4double ymax,
+                                unsigned int nzbins, G4double zmin, G4double zmax,
+                                unsigned int nebins, G4double emin, G4double emax)
 {
 
     boost_histogram h = boost::histogram::make_histogram(boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
@@ -232,7 +237,7 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4int y,
                                 G4int z,
                                 G4int e,
-                                G4double value) {
+                                G4double value)
 {
     histograms4D[histoId]->at(x,y,z,e) = value;
 }
@@ -247,7 +252,7 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
                               boost_histogram*  otherHistogram)
 
 {
-    histograms4D[histoId]->operator+=(otherHistogram);
+    histograms4D[histoId]->operator+=(*otherHistogram);
 }
 
 #endif

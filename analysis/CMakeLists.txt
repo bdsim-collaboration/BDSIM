@@ -54,7 +54,7 @@ foreach(header ${rebdsimLibLinkDefs})
             -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${BOOSTINCLUDES} ${header}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
             IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-            COMMENT "Generate ROOT Dictionary for ${className}"
+            COMMENT "test Generate ROOT Dictionary for ${className}"
     )
     # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
     set_property(

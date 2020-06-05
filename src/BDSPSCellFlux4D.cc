@@ -9,16 +9,16 @@
 #include <boost/histogram.hpp>
 
 
-BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, const G4int ne, const BDSHistBinMapper* mapperIn, G4int ni, G4int nj, G4int nk, G4int nl, G4int depi, G4int depj, G4int depk, G4int depl):
-G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), fDepthl(depl),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
+BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, unsigned int ne, const BDSHistBinMapper* mapperIn, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
+G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
 {
-    fNl = nl;
+
 }
 
-BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, const G4int ne, const BDSHistBinMapper* mapperIn, const G4String& unit, G4int ni, G4int nj, G4int nk, G4int nl, G4int depi, G4int depj, G4int depk, G4int depl):
-        G4PSCellFlux3D(name, unit,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), fDepthl(depl),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
+BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, unsigned int ne, const BDSHistBinMapper* mapperIn, const G4String& unit, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
+        G4PSCellFlux3D(name, unit,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
 {
-    fNl = nl;
+
 }
 
 
