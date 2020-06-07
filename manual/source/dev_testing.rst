@@ -114,6 +114,29 @@ Please review the already existing ones and extend if necessary.
 .. note:: There are different test macros for various executables.
 
 
+Regression Testing
+==================
+
+Regression testing tests that the code reproduces a result it once did. When developing a new feature
+or indeed the code itself, the developer should demonstrate the output (i.e. physics-wise output) is
+correct. At this point they should create a reference result that can be used in future for regression
+testing.
+
+As the code is developed further, the implementation may change and therefore the regression testing
+should be used to prove that the code achieves the same result. If it does not but is now correct, the
+reference test result(s) should be updated.
+
+The regression testing work with a separate package in a separate repository. A BDSIM build is made
+with the advanced (i.e. hidden by default) CMake option :code:`BDSIM_GENERATE_REGRESSION_DATA` turned
+on. This runs all the tests and prefixes all output files with a string as defined by the CMake option
+:code:`BDSIM_REGRESSION_PREFIX`. This can be set to something like "ref" or "test".
+
+The output files are gathered from the build after running all tests. Then the regression test package
+is configured with respect two directories containing a set of reference files and test files. In this
+build a CMake test is defined for every matching pair of files. Each test runs our own program for comparing
+the data called the :code:`comparator`.
+	  
+
 Automated Testing
 =================
 
