@@ -112,3 +112,57 @@ to the CMake build system but also set some properties (such as labels). These a
 Please review the already existing ones and extend if necessary.
 
 .. note:: There are different test macros for various executables.
+
+
+Automated Testing
+=================
+
+At Royal Holloway, the testing is run hourly for short (i.e. non-LONG) tests if any new commits
+are made in develop as well as the full test suite on different platforms for different branches
+and versions of Geant4 nightly. As this is rather CPU intensive it is run on our own computing
+resources rather than on say Bitbucket's continuous integration testing where we would quickly
+exhaust the monthly free amount of CPU time.
+
+The scripts to run the tests are kept in a separate repository: `<https://bitbucket.org/jairhul/bdsim-cdash>`_.
+These scripts are based on using the EasyBuild set of environment modules for all the dependencies at
+Royal Holloway. The tests are run with the following in whomever manages the test's crontab on
+linappserv1. ::
+
+  crontab -e
+
+   * * * * /home/accsoft/cdash/bdsim-cdash/continuous.sh >> /scratch5/lnevay/cdash-builds/logs/crontab.log 2>&1
+   0 2 * * * /home/accsoft/cdash/bdsim-cdash/nightly.sh >> /scratch5/lnevay/cdash-builds/logs/crontab.log 2>&1
+   0 2 * * * /home/accsoft/cdash/bdsim-cdash/coverage.sh >> /scratch5/lnevay/cdash-builds/logs/crontab.log 2>&1
+
+Each script submits one job on the Royal Holloway Faraday cluster per build and each build and test execution
+runs single threaded taking typically 4 hours. 4 Gb of RAM has been found to be a safe amount for all testing
+purposes.
+
+On occasion if the farm load is high, the scheduler will accumulate these jobs due to the higher than average
+memory requirement. In future the continuous jobs could be improved to initially submit with lower memory requirements
+and resubmit if there are in fact changes to the repository with the necessary higher memory requirement.
+
+CDash Website
+-------------
+
+The test output is reported to a CDash "dashboard" which is a website using a mysql (or free version mariadb) database.
+This website is hosted on the (virtual machine) server :code:`jaiserv1.pp.rhul.ac.uk` that is only internally accessible
+in Royal Holloway for security reasons.
+
+To access the website it is convenient to use a tunnel. The following is added to the developer's bash profile: ::
+
+  alias jaiserv="ssh -L 8080:jaiserv1.pp.rhul.ac.uk:80 lnevay@linappserv2.pp.rhul.ac.uk"
+
+The command "jaiserv" can then be executed from any terminal. Then the following website can be accessed.
+
+* `<http://localhost:8080/cdash/index.php?project=BDSIM&date=>`_
+
+This shows an overview of all the test status as well as coverage.
+
+
+.. note:: Due to the selinux security extensions the ability of the website to email people notifying them
+	  of failed tests will work but then be broken when settings automatically reset after a week. This
+	  has not been pursued to be fixed.
+
+
+For administration of the jaiserv1 VM, contact the PP system administrators.
