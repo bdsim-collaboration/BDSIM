@@ -27,8 +27,8 @@ For each submodule:
    header structure.
    
    * Check data version in :code:`configuration/BDSVersionData.hh`.
-   * Regenerate data samples in :code:`examples/features/data/`.
-   * Regenerate data sample :code:`examples/features/beam/userfile-sample.root`.
+   * Regenerate data samples in :code:`examples/features/data/` using regenerateSamples.sh
+   * Regenerate data sample :code:`examples/features/beam/userfile/userfile-sample.root` using regenerateUserFileSample.sh.
 
 
 6. Update version history (including submodule and data versions) in
