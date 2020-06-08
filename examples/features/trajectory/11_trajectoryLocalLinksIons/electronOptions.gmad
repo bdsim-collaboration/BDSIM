@@ -1,0 +1,10 @@
+rangecut = 1*mm;
+
+option, beampipeRadius = 10 * cm,
+        horizontalWidth = 1.9 * m,
+        beampipeThickness = 0.5 * mm,
+	defaultRangeCut  = rangecut;
+
+option,physicsList="em";
+option,storeTrajectories=1;
+option,seed=3;

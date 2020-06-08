@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -56,7 +56,7 @@ public:
   virtual ~BDSPTCOneTurnMap() {;}                                ///< Destructor.
 
   /// Main constructor with path to maptable file.
-  BDSPTCOneTurnMap(G4String path,
+  BDSPTCOneTurnMap(const G4String& path,
 		   const BDSParticleDefinition* designParticle);
 
   /// Decides whether or not this should be applied.  Can add more

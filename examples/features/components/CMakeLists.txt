@@ -31,6 +31,7 @@ simple_testing(component-rmatrix             "--file=rmatrix.gmad"         ${OVE
 simple_testing(component-rmatrix-thin        "--file=rmatrix_thin.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})
 simple_testing(component-rf-cavity           "--file=rfcavity.gmad"        ${OVERLAP_CHECK})
+simple_testing(component-rf-fringe-off       "--file=rf_fringe_off.gmad"   ${OVERLAP_CHECK})
 simple_testing(component-sampler             "--file=sampler.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-scaling             "--file=scaling.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-screen              "--file=screen.gmad"          ${OVERLAP_CHECK})
@@ -53,6 +54,11 @@ endif()
 
 # ones requiring special options / falgs
 if(USE_GDML)
+# this test should be a fail - but we don't exit as we might inspect angled components wrongly
+# it will report overlaps but we won't identify that in the simple_fail
+# just now just for coverage
+  simple_testing(component-element-too-short "--file=element-too-short.gmad" "")
+  
   simple_testing(component-gdml              "--file=gdml.gmad"              ${OVERLAP_CHECK})
   simple_testing(component-gdml-nopreprocess "--file=gdml_nopreprocess.gmad" ${OVERLAP_CHECK})
 endif()

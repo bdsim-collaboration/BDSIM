@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
@@ -45,20 +46,26 @@ BDSGeometryFactoryGDML::BDSGeometryFactoryGDML()
 BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
-						   G4double /*suggestedLength*/,
-						   G4double /*suggestedHorizontalWidth*/)
+						   G4double             /*suggestedLength*/,
+						   G4double             /*suggestedHorizontalWidth*/,
+						   std::vector<G4String>* namedVacuumVolumes)
 {
   CleanUp();
 
   // Compensate for G4GDMLParser deficiency in loading more than one file with similar names
   // in objects. Prepend all names with component name.
   G4String processedFile;
-  if (BDSGlobalConstants::Instance()->PreprocessGDML())
-    {processedFile = BDS::PreprocessGDML(fileName, componentName);}
-  else
+  G4bool preprocessGDML       = BDSGlobalConstants::Instance()->PreprocessGDML();
+  G4bool preprocessGDMLSchema = BDSGlobalConstants::Instance()->PreprocessGDMLSchema();
+  if (preprocessGDML)
+    {processedFile = BDS::PreprocessGDML(fileName, componentName, preprocessGDMLSchema);} // use all in one method
+  else if (preprocessGDMLSchema) // generally don't process the file but process the schema to local copy only
+    {processedFile = BDS::PreprocessGDMLSchemaOnly(fileName);} // use schema only method
+  else // no processing
     {processedFile = fileName;}
   
   G4GDMLParser* parser = new G4GDMLParser();
+  parser->SetOverlapCheck(BDSGlobalConstants::Instance()->CheckOverlaps());
   parser->Read(processedFile, /*validate=*/true);
 
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
@@ -76,6 +83,9 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   std::set<G4LogicalVolume*>   lvsGDML;
   GetAllLogicalAndPhysical(containerPV, pvsGDML, lvsGDML);
 
+  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
+
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
@@ -92,10 +102,15 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterLogicalVolume(lvsGDML);
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
-
+  result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
+  
   delete parser;
   return result;
 }
+
+G4String BDSGeometryFactoryGDML::PreprocessedName(const G4String& objectName,
+						  const G4String& acceleratorComponentName) const
+{return BDSGDMLPreprocessor::ProcessedNodeName(objectName, acceleratorComponentName);}
 
 void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*      volume,
 						      std::set<G4VPhysicalVolume*>& pvsIn,
@@ -103,7 +118,7 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
 {
   const auto& lv = volume->GetLogicalVolume();
   lvsIn.insert(lv);
-  for (G4int i = 0; i < lv->GetNoDaughters(); i++)
+  for (G4int i = 0; i < (G4int)lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
       pvsIn.insert(pv);
@@ -121,13 +136,9 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
 
   // verify file open.
   if (!ifs.is_open())
-    {
-      G4cerr << __METHOD_NAME__ << "Cannot open file \"" << fileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
 
   std::ofstream fout(outputFileName);
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Original file:  " << fileName       << G4endl;
   G4cout << __METHOD_NAME__ << "Temporary file: " << outputFileName << G4endl;
@@ -155,4 +166,7 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
   fout.close();
 }
 
+#else
+// insert empty function to avoid no symbols warning
+void _SymbolToPreventWarningGeomFacGDML(){;}
 #endif

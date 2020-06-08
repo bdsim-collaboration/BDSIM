@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -29,7 +29,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "analysis/Model.hh"
 #include "analysis/Options.hh"
 
+#include "BDSDebug.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSVersionData.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -161,16 +164,18 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
   c->chi2   = 0.0;
   int ndof = 0; 
-  for(int i=0;i < h1->GetNbinsX(); i++)
+  for (int i=0;i < h1->GetNbinsX(); i++)
     { 
       //    std::cout << h1->GetBinContent(i) << " " << h2->GetBinContent(i) << " " << h1->GetBinError(i) << std::endl;
-      if(h1->GetBinError(i) > 0)
+      if (h1->GetBinError(i) > 0)
 	{
 	  c->chi2 += std::pow(h1->GetBinContent(i)-h2->GetBinContent(i),2)/(std::pow(h1->GetBinError(i),2)+std::pow(h2->GetBinError(i),2));
 	  ndof++;
 	}
     }
   // chi2 per dof
+  if (!std::isnormal(ndof))
+    {ndof = 1;}
   c->chi2 /= ndof;
   
   c->passed = true;
@@ -363,7 +368,14 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 		{break;} // skip test when errors are 0
 
 	      // check for nans or negative values that shouldn't be there
-	      if (NanOrInf(t1v) || NanOrInf(t2v) || GTEZero(t1v) != shouldBeGTEZero || GTEZero(t2v) != shouldBeGTEZero)
+	      // only check if greater than zero if they should be, otherwise no need to check.
+	      bool valueIsGood = true;
+	      if (shouldBeGTEZero)
+	        {
+	      	  if (!GTEZero(t1v) || !GTEZero(t2v))
+	            {valueIsGood = false;}
+	        }
+	      if (NanOrInf(t1v) || NanOrInf(t2v) || !valueIsGood)
 		{
 		  branchFailed = true;
 		  std::cout << "Invalid value found for branch \"" << branchName << "\"" << G4endl;
@@ -401,7 +413,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 {
   ResultEventTree* ret = new ResultEventTree();
   ret->name            = t1->GetName();
-  ret->passed          = true; // set deafault to pass
+  ret->passed          = true; // set default to pass
   ret->objtype         = "TTree(Event)";
   ret->t1NEntries      = (int)t1->GetEntries();
   ret->t2NEntries      = (int)t2->GetEntries();
@@ -417,8 +429,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 
   // Need to tell Event to process samplers at construction time.
   G4bool processSamplers = !samplerNames.empty();
-  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
-  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
+  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers, BDSIM_DATA_VERSION);
+  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers, BDSIM_DATA_VERSION);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames);
 
@@ -524,6 +536,7 @@ bool Compare::Summarise(std::vector<Result*> results)
   const int titleWidth = 20;
   const int fullWidth  = titleWidth + 22;
   std::cout << std::endl;
+  std::cout << "N results: " << results.size() << std::endl;
   std::cout << "Comparison: " << std::setw(titleWidth) << "Object Name" << "   "
 	    << "Result" << std::endl;
   std::cout << std::setfill('-') << std::setw(fullWidth) << " " << std::endl;

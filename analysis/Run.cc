@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "BDSVersionData.hh"
 
 #include <iostream>
 #include <vector>
@@ -32,35 +33,35 @@ Run::Run():
 {;}
 
 Run::Run(bool debugIn):
-  summary(nullptr),
-  histos(nullptr),
-  info(nullptr),
+  Summary(nullptr),
+  Histos(nullptr),
+  Info(nullptr),
   debug(debugIn),
-  dataVersion(0)
+  dataVersion(BDSIM_DATA_VERSION)
 {
-  summary = new BDSOutputROOTEventRunInfo();
-  histos  = new BDSOutputROOTEventHistograms();
-  info    = new BDSOutputROOTEventRunInfo();
+  Summary = new BDSOutputROOTEventRunInfo();
+  Histos  = new BDSOutputROOTEventHistograms();
+  Info    = new BDSOutputROOTEventRunInfo();
 }
 
 Run::Run(bool debugIn,
 	 int  dataVersionIn):
-  summary(nullptr),
-  histos(nullptr),
-  info(nullptr),
+  Summary(nullptr),
+  Histos(nullptr),
+  Info(nullptr),
   debug(debugIn),
   dataVersion(dataVersionIn)
 {
-  summary = new BDSOutputROOTEventRunInfo();
-  histos  = new BDSOutputROOTEventHistograms();
-  info    = new BDSOutputROOTEventRunInfo();
+  Summary = new BDSOutputROOTEventRunInfo();
+  Histos  = new BDSOutputROOTEventHistograms();
+  Info    = new BDSOutputROOTEventRunInfo();
 } 
 
 Run::~Run()
 {
-  delete summary;
-  delete histos;
-  delete info;
+  delete Summary;
+  delete Histos;
+  delete Info;
 }
 
 void Run::SetBranchAddress(TTree *t,
@@ -84,8 +85,8 @@ void Run::SetBranchAddress(TTree *t,
     }
 
   if (dataVersion < 4)
-    {t->SetBranchAddress("Info.", &info);}
+    {t->SetBranchAddress("Info.", &Info);}
   else
-    {t->SetBranchAddress("Summary.", &summary);}
-  t->SetBranchAddress("Histos.", &histos);
+    {t->SetBranchAddress("Summary.", &Summary);}
+  t->SetBranchAddress("Histos.", &Histos);
 }

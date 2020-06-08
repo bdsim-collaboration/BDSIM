@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -31,8 +31,8 @@ extern BDSCCDPixelSD* BDSCCDPixelSensDet;
 
 
 //============================================================
-BDSCCDPixel::BDSCCDPixel (G4ThreeVector size, G4String name):
-  _size(size), _name(name+"_CCDPixel")
+BDSCCDPixel::BDSCCDPixel (G4ThreeVector sizeIn, G4String nameIn):
+  _size(sizeIn), _name(nameIn+"_CCDPixel")
 {
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   _sensDet=new BDSCCDPixelSD(_name);

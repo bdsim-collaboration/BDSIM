@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTINFO_H
 #define BDSOUTPUTROOTEVENTINFO_H
 
-#include "TROOT.h"
+#include "Rtypes.h"
 #include "TObject.h"
 
 #include <ctime>
+#include <string>
 
 /**
  * @brief Information pertaining to an individual event.
@@ -31,11 +32,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class BDSOutputROOTEventInfo: public TObject
-{  
+{
 public:
-  time_t startTime; ///< Time stamp at start of event.
-  time_t stopTime;  ///< Time stamp at end of event.
-  float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
+  time_t startTime;   ///< Time stamp at start of event.
+  time_t stopTime;    ///< Time stamp at end of event.
+  float  durationWall;///< Number of seconds event took (wall time) to complete simulation (not writing out).
+  float  durationCPU; ///< Number of seconds event took (CPU time).
   std::string seedStateAtStart;         ///< Seed state at the start of the event.
   int    index;                         ///< Number of this event or run.
   bool   aborted;                       ///< Whether the event was aborted or not.
@@ -48,16 +50,21 @@ public:
   double energyDepositedWorldContents;  ///< Total energy deposited in the world contents for this event.
   double energyDepositedTunnel;         ///< Total energy deposited in the tunnel for this event.
   double energyWorldExit;               ///< Total energy leaving the world.
+  double energyImpactingAperture;       ///< Total energy impacting the aperture.
   double energyKilled;                  ///< Total energy of killed particles that weren't in a sensitive volume.
   double energyTotal;                   ///< Sum of above 5 variables that totals all energy.
   int    nCollimatorsInteracted;        ///< Number of collimators primary interacted with.
+  long long int nTracks;                ///< Number of tracks in the event.
   
   BDSOutputROOTEventInfo();
 
   virtual ~BDSOutputROOTEventInfo();
   void Flush();
+
+  /// Fill from another instance.
+  void Fill(const BDSOutputROOTEventInfo* other);
   
-  ClassDef(BDSOutputROOTEventInfo, 4);
+  ClassDef(BDSOutputROOTEventInfo, 5);
 };
 
 #endif

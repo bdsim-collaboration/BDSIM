@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchCircle.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "parser/beam.h"
 
@@ -59,13 +60,13 @@ void BDSBunchCircle::CheckParameters()
 {
   BDSBunch::CheckParameters();
   if (envelopeR <= 0)
-    {G4cerr << __METHOD_NAME__ << "envelopeR <=0 "  << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "envelopeR <= 0");}
   if (envelopeRp <= 0)
-    {G4cerr << __METHOD_NAME__ << "envelopeRp <=0 " << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "envelopeRp <= 0");}
   if (envelopeT < 0)
-    {G4cerr << __METHOD_NAME__ << "envelopeT < 0 "  << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "envelopeT < 0");}
   if (envelopeE < 0)
-    {G4cerr << __METHOD_NAME__ << "envelopeE < 0 "  << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "envelopeE < 0");}
 }
 
 BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()

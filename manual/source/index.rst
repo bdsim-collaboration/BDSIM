@@ -2,19 +2,21 @@
 Welcome to BDSIM's documentation!
 #################################
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
+   :caption: User Guide
 
    licence
    authorship
    introduction
    installation
    running
-   model_description
-   externalgeometry
+   input_syntax
+   model_construction
+   model_control
+   model_customisation
    model_conversion
+   externalgeometry
    output
    output_analysis
    python_utilities
@@ -25,10 +27,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 1
+   :caption: Developer Guide
    
    history
-
    developer
+   model_description
 
 
 Indices and tables

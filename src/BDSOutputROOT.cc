@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSOutputROOT.hh"
-
-#include "parser/options.h"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSOutputROOT.hh"
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventCoords.hh"
@@ -35,12 +35,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 
+#include "parser/options.h"
+
 #include "TFile.h"
 #include "TObject.h"
 #include "TTree.h"
 
-BDSOutputROOT::BDSOutputROOT(G4String fileName,
-			     G4int    fileNumberOffset):
+BDSOutputROOT::BDSOutputROOT(const G4String& fileName,
+			     G4int           fileNumberOffset):
   BDSOutput(fileName, ".root", fileNumberOffset),
   theRootOutputFile(nullptr),
   theHeaderOutputTree(nullptr),
@@ -54,8 +56,7 @@ BDSOutputROOT::BDSOutputROOT(G4String fileName,
 
 BDSOutputROOT::~BDSOutputROOT()
 {
-  if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write(0,TObject::kOverwrite);}
+  Close();
 }
 
 void BDSOutputROOT::NewFile() 
@@ -63,12 +64,8 @@ void BDSOutputROOT::NewFile()
   G4String newFileName = GetNextFileName();
   
   theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
-
   if (theRootOutputFile->IsZombie())
-    {
-      G4cerr << __METHOD_NAME__ << "Unable to open output file: \"" << newFileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Unable to open output file: \"" + newFileName +"\"");}
   
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
@@ -112,6 +109,8 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
+  if (storeApertureImpacts)
+    {theEventOutputTree->Branch("ApertureImpacts.", "BDSOutputROOTEventAperture", apertureImpacts, 4000, 1);}
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);
@@ -174,27 +173,41 @@ void BDSOutputROOT::WriteModel()
 
 void BDSOutputROOT::WriteFileEventLevel()
 {
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   theEventOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteFileRunLevel()
 {
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   theRunOutputTree->Fill();
-
-  if(theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
+  
+  if (theRootOutputFile)
+    {
+      if (theRootOutputFile->IsOpen())
+	{theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
+    }
 }
 
 void BDSOutputROOT::CloseFile()
 {
-  if(theRootOutputFile && theRootOutputFile->IsOpen())
-  {
-    theRootOutputFile->cd();
-    theRootOutputFile->Write(0,TObject::kOverwrite);
-    theRootOutputFile->Close();
-    delete theRootOutputFile;
-    theRootOutputFile = nullptr;
-  }
+  Close();
+}
+
+void BDSOutputROOT::Close()
+{
+  if (theRootOutputFile)
+    {
+      if (theRootOutputFile->IsOpen())
+	{
+	  theRootOutputFile->cd();
+	  theRootOutputFile->Write(0,TObject::kOverwrite);
+	  G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
+	  theRootOutputFile->Close();
+	  delete theRootOutputFile;
+	  theRootOutputFile = nullptr;
+	}
+    }
 }

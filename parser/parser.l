@@ -1,6 +1,6 @@
 /* 
  *Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
- *University of London 2001 - 2019.
+ *University of London 2001 - 2020.
  *
  *This file is part of BDSIM.
  *
@@ -141,6 +141,7 @@ tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 aperture {return APERTURE; }
+blm {return BLM;}
 
 matdef { return MATERIAL; }
 atom { return ATOM; }

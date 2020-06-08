@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -225,10 +225,10 @@ void BDSApertureInfo::InfoOKForLHC()
   CheckRequiredParametersSet(true, true, true, false);
 
   if ((aper3 > aper1) && (aper2 < aper3))
-    {throw BDSException("WARNING - \"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
+    {throw BDSException("\"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 
   if ((aper3 > aper2) && (aper1 < aper3))
-    {throw BDSException("WARNING - \"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
+    {throw BDSException("\"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape");}
 }
 
 void BDSApertureInfo::InfoOKForLHCDetailed()
@@ -240,7 +240,7 @@ void BDSApertureInfo::InfoOKForRectEllipse()
 {
   CheckRequiredParametersSet(true, true, true, true);
 
-  // TBC
+  // TODO
   
   /*
   //treat rectangle as point coordinates.  If this point is inside ellipse,
@@ -251,7 +251,7 @@ void BDSApertureInfo::InfoOKForRectEllipse()
       //rectangle too small
       G4cerr << __METHOD_NAME__ << "WARNING - combination of \"aper1\" and \"aper2\" too small"
 	     << " rectangle is entirely inside ellipse - simply use elliptical aperture" << G4endl;
-      exit(1);
+	     throw BDSException(__METHOD_NAME__, "");
     }
   */
   //check if ellipse is b

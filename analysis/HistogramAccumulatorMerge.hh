@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 
 class TH1;
 
@@ -49,8 +49,8 @@ public:
   
   /// Constructor simply passes down to base class.
   HistogramAccumulatorMerge(TH1*               baseHistogram,
-			    const int&         nDimensionsIn,
-			    const std::string  resultHistName,
+			    int                nDimensionsIn,
+			    const std::string& resultHistName,
 			    const std::string& resultHistTitle);
 
   virtual ~HistogramAccumulatorMerge(){;}
@@ -64,12 +64,12 @@ protected:
   /// This implements a different method from the base class that is used
   /// to combine means and variances from different samples of the same underlying
   /// experiment / data.
-  virtual void AccumulateSingleValue(const double& oldMean,
-				     const double& oldVari,
-				     const double& x,
-				     const double& xVari,
-				     const unsigned long& nEntriesAccumulated,
-				     const unsigned long& nEntriesToAccumulate,
+  virtual void AccumulateSingleValue(double        oldMean,
+				     double        oldVari,
+				     double        x,
+				     double        xVari,
+				     unsigned long nEntriesAccumulated,
+				     unsigned long nEntriesToAccumulate,
 				     double&       newMean,
 				     double&       newVari) const;
 

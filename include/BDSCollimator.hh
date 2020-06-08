@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -61,10 +61,14 @@ public:
   virtual void SetMinimumKineticEnergy(G4double minimimumKineticEnergyIn) {minKineticEnergy = minimimumKineticEnergyIn;}
 
 protected:
+  /// Check and update parameters before construction. Called at the start of Build() as
+  /// we can't call a virtual function in a constructor.
+  virtual void CheckParameters();
+  
   virtual void Build();
 
   virtual void BuildContainerLogicalVolume();
-
+  
   /// Pure virtual function to be provided by derived classes.
   /// Must produce vacuumSolid and innerSolid - the inner is used
   /// to subtract from the mass and the vacuum is placed inside it all

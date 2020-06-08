@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -80,6 +80,8 @@ public:
   void Fill(const BDSTrajectoryPoint* hit);
   void Fill(const BDSHitEnergyDeposition* hit);
 #endif
+  /// Fill from another instance.
+  void Fill(const BDSOutputROOTEventLoss* other);
   virtual void Flush();
 
   bool storeTurn       = false; ///< Store turn number.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -44,7 +44,7 @@ public:
 
   virtual ~BDSSensitiveDetector(){;}
 
-  /// Derived class shoudl implement method to return pointer of base
+  /// Derived class should implement method to return pointer of base
   /// class type G4VHit to the last hit. Not called back to avoid confusion
   /// with the STL back() that would return a reference. We must return a
   /// pointer here.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -16,15 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSException.hh"
 #include "BDSBunch.hh"
 #include "BDSBunchCircle.hh"
 #include "BDSBunchComposite.hh"
 #include "BDSBunchEShell.hh"
+#include "BDSBunchEventGenerator.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSBunchHalo.hh"
 #include "BDSBunchPtc.hh"
 #include "BDSBunchRing.hh"
+#include "BDSBunchSphere.hh"
 #include "BDSBunchSigmaMatrix.hh"
 #include "BDSBunchSixTrack.hh"
 #include "BDSBunchSquare.hh"
@@ -32,23 +33,36 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchType.hh"
 #include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
+
+#include <utility>
 
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
 #endif
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       const GMAD::Beam& beam,
-				       G4Transform3D beamlineTransform,
-				       G4double      beamlineS,
-				       const G4bool& generatePrimariesOnlyIn)  
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)  
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   G4String distrName = G4String(beam.distrType);
+  if (distrName.contains(":")) // must be eventgeneratorfile:subtype
+    {
+      std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrName);
+      distrName = ba.first; // overwrite with just first bit
+      // we can't generate primaries only with event generator file distribution as this
+      // only works in BDSPrimaryGeneratorAction at run time - it's not really a bunch
+      if (generatePrimariesOnlyIn)
+        {throw BDSException(__METHOD_NAME__, "eventgeneratorfile will not work with generator primaries only.");}
+    }
 
   // This will exit if no correct bunch type found.
   BDSBunchType distrType = BDS::DetermineBunchType(distrName);
@@ -57,11 +71,11 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 }
 
 BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
-				       BDSBunchType      distrType,
-				       const GMAD::Beam& beam,
-				       G4Transform3D beamlineTransform,
-				       G4double beamlineS,
-				       const G4bool& generatePrimariesOnlyIn)
+				       BDSBunchType                 distrType,
+				       const GMAD::Beam&            beam,
+				       const G4Transform3D&         beamlineTransform,
+				       G4double                     beamlineS,
+				       G4bool                       generatePrimariesOnlyIn)
 { 
   BDSBunch* bdsBunch = nullptr;
 
@@ -109,6 +123,10 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchPtc(); break;}
     case BDSBunchType::sixtrack:
       {bdsBunch = new BDSBunchSixTrack(); break;}
+    case BDSBunchType::sphere:
+      {bdsBunch = new BDSBunchSphere(); break;}
+    case BDSBunchType::eventgeneratorfile:
+      {bdsBunch = new BDSBunchEventGenerator(); break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "distrType \"" + distrType.ToString() + "\" not found");
@@ -119,6 +137,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
   bdsBunch->SetOptions(beamParticle, beam, distrType, beamlineTransform, beamlineS);
   bdsBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
   bdsBunch->CheckParameters();
-  
+  bdsBunch->Initialise();
+
   return bdsBunch;
 }

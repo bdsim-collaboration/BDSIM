@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -66,48 +66,53 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
 		  break; // no need to loop over rest of sequence
 		}
 	    }
-	  BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired);
+	  BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired, pl.name);
 	  worlds.push_back(info);
 	}
     }
   return worlds;
 }
 
-std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld)
+std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld,
+									   G4bool buildSamplerWorld)
 {
   BDSAcceleratorModel* acceleratorModel = BDSAcceleratorModel::Instance();
 
+  // registry of all created worlds that require the physics process so
+  // that their boundaries affect tracking
+  std::vector<G4VUserParallelWorld*> worldsRequiringPhysics;
+
   // standard worlds
-  auto samplerWorld           = new BDSParallelWorldSampler("main");
+  if (buildSamplerWorld) // optional
+    {
+      auto samplerWorld = new BDSParallelWorldSampler("main");
+      massWorld->RegisterParallelWorld(samplerWorld);
+      acceleratorModel->RegisterParallelWorld(samplerWorld);
+      worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
+    }
+
   auto curvilinearWorld       = new BDSParallelWorldCurvilinear("main");
   auto curvilinearBridgeWorld = new BDSParallelWorldCurvilinearBridge("main");
-  massWorld->RegisterParallelWorld(samplerWorld);
   massWorld->RegisterParallelWorld(curvilinearWorld);
   massWorld->RegisterParallelWorld(curvilinearBridgeWorld);
 
   // G4VUserDetectorConstruction doesn't delete parallel worlds so we should
-  acceleratorModel->RegisterParallelWorld(samplerWorld);
   acceleratorModel->RegisterParallelWorld(curvilinearWorld);
   acceleratorModel->RegisterParallelWorld(curvilinearBridgeWorld);
 
   // extra worlds for additional beam line placements
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
 
-  // register of all created
-  // worlds that require the physics process so that their boundaries affect tracking
-  std::vector<G4VUserParallelWorld*> worldsRequiringPhysics;
-  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
-  
   for (auto info : worldInfos)
     {
       if (info.curvilinearWorld)
 	{
-	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.sequenceName);
-	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
+	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.curvilinearWorldName);
+	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.curvilinearWorldName);
 	  massWorld->RegisterParallelWorld(cLWorld);
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
-      acceleratorModel->RegisterParallelWorld(cLWorld);
-      acceleratorModel->RegisterParallelWorld(cLBridgeWorld);
+	  acceleratorModel->RegisterParallelWorld(cLWorld);
+	  acceleratorModel->RegisterParallelWorld(cLBridgeWorld);
 	}
       if (info.samplerWorld)
 	{
@@ -121,7 +126,11 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   // only create the importance parallel world if the file is specified
   if (BDSGlobalConstants::Instance()->UseImportanceSampling())
     {
-      BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main");
+      G4String importanceWorldGeometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
+      G4String importanceVolumeMapFile     = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();
+      BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main",
+                                                                                   importanceWorldGeometryFile,
+                                                                                   importanceVolumeMapFile);
       acceleratorModel->RegisterParallelWorld(importanceWorld);
       massWorld->RegisterParallelWorld(importanceWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,9 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "optionsBase.h"
 
-// include git commit version.
-#include "version.h"
-
 #include <iostream>
 
 using namespace GMAD;
@@ -36,17 +33,34 @@ OptionsBase::OptionsBase()
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
+#ifdef __ROOTDOUBLE__
+  outputDoublePrecision = true;
+#else
+  outputDoublePrecision = false;
+#endif
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;
+  
   verbose               = false;
-  verboseEvent          = false;
-  verboseStep           = false;
-  verboseEventNumber    = -1;
+  
   verboseRunLevel       = 0;
-  verboseEventLevel     = 0;
+
+  verboseEventBDSIM       = false;
+  verboseEventLevel       = 0;
+  verboseEventStart       = -1;
+  verboseEventContinueFor = -1;
+  
   verboseTrackingLevel  = 0;
-  verboseSteppingLevel  = 0;
+  
+  verboseSteppingBDSIM            = false;
+  verboseSteppingLevel            = 0;
+  verboseSteppingEventStart       = -1;
+  verboseSteppingEventContinueFor = -1;
+  verboseSteppingPrimaryOnly      = false;
+  
+  verboseImportanceSampling = 0;
+  
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;
@@ -108,12 +122,14 @@ OptionsBase::OptionsBase()
   coilHeightFraction         = -1;
   ignoreLocalMagnetGeometry  = 0;
 
-  preprocessGDML = true;
+  preprocessGDML       = true;
+  preprocessGDMLSchema = true;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
   includeFringeFields  = true;
+  includeFringeFieldsCavities = true;
 
   yokeFields           = true;
   
@@ -157,11 +173,6 @@ OptionsBase::OptionsBase()
   
   // samplers
   samplerDiameter     = 5; // m
-
-  // beam loss monitors geometry
-  blmRad                   = 0.05;
-  blmLength                = 0.18;
-  sensitiveBLMs            = true;
 
   // physics processes
   turnOnOpticalAbsorption  = true;
@@ -214,7 +225,7 @@ OptionsBase::OptionsBase()
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
-  killNeutrinos            = true;
+  killNeutrinos            = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
@@ -223,11 +234,17 @@ OptionsBase::OptionsBase()
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  
+
+  storeApertureImpacts       = true;
+  storeApertureImpactsIons   = false;
+  storeApertureImpactsAll    = false;
+  apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
-  storeCollimatorLinks       = false;
+  storeCollimatorHits        = false;
+  storeCollimatorHitsLinks   = false;
   storeCollimatorHitsIons    = false;
   storeCollimatorHitsAll     = false;
+  collimatorHitsMinimumKE    = 0;
   storeEloss                 = true;
   storeElossHistograms       = true;
   storeElossVacuum           = false;
@@ -247,12 +264,18 @@ OptionsBase::OptionsBase()
   storeGeant4Data            = true;
   
   storeTrajectory                = false;
-  storeTrajectoryDepth           = 1000000;
+  storeTrajectoryDepth           = 0;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  storeTrajectoryTransportationSteps = true;
+  trajNoTransportation               = false; ///< kept only for backwards compatibility.
+  storeTrajectoryLocal           = false;
+  storeTrajectoryLinks           = false;
+  storeTrajectoryIon             = false;
+  trajectoryFilterLogicAND       = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -265,7 +288,6 @@ OptionsBase::OptionsBase()
   trajCutGTZ               = 1e99;  // minimum z position, so large default value
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
-  trajNoTransportation     = false;
   
   writePrimaries           = true;
   storeModel               = true;
@@ -274,8 +296,9 @@ OptionsBase::OptionsBase()
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
 
-  printFractionEvents = 0.1;
-  printFractionTurns  = 0.2;
+  printFractionEvents   = 0.1;
+  printFractionTurns    = 0.2;
+  printPhysicsProcesses = false;
   
   // visualisation
   nSegmentsPerCircle       = 50;
@@ -284,12 +307,12 @@ OptionsBase::OptionsBase()
   nbinsx = 1;
   nbinsy = 1;
   nbinsz = 1;
-  xmin   = 0;
-  xmax   = 0;
-  ymin   = 0;
-  ymax   = 0;
+  xmin   = -0.5;
+  xmax   = 0.5;
+  ymin   = -0.5;
+  ymax   = 0.5;
   zmin   = 0;
-  zmax   = 0;
+  zmax   = 1;
   useScoringMap = false;
 }
 

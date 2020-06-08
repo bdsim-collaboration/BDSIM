@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
 #include "BDSUtilities.hh"
@@ -32,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <map>
+#include <set>
 
 BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4double    lengthIn,
@@ -60,43 +62,37 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
   xSizeLeft(xSizeLeftIn),
   xSizeRight(xSizeRightIn),
   xHalfGap(xHalfGapIn),
+  jawHalfWidth(0),
   yHalfHeight(yHalfHeightIn),
   buildLeftJaw(buildLeftJawIn),
-  buildRightJaw(buildRightJawIn)
+  buildRightJaw(buildRightJawIn),
+  buildAperture(true)
 {
   jawHalfWidth = 0.5 * (0.5*horizontalWidth - lengthSafetyLarge - xHalfGap);
+}
+
+BDSCollimatorJaw::~BDSCollimatorJaw()
+{;}
+
+void BDSCollimatorJaw::CheckParameters()
+{
   if (jawHalfWidth < 1e-3) // 1um minimum, could also be negative
-    {
-      G4cerr << __METHOD_NAME__ << "horizontalWidth insufficient given xsize of jcol" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "horizontalWidth insufficient given xsize of jcol \"" + name + "\"");}
 
   // set half height to half horizontal width if zero - finite height required.
   if (!BDS::IsFinite(yHalfHeight))
     {yHalfHeight = 0.5*horizontalWidth;}
 
   if (BDS::IsFinite(yHalfHeight) && (yHalfHeight < 1e-3)) // 1um minimum
-    {
-      G4cerr << __METHOD_NAME__ << "insufficient ysize for jcol" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "insufficient ysize for jcol \"" + name + "\"");}
 
   if ((yHalfHeight < 0) || ((yHalfHeight > 0) && (yHalfHeight < 1e-3))) // 1um minimum and not negative
-    {
-      G4cerr << __METHOD_NAME__ << "insufficient ysize for jcol" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "insufficient ysize for jcol \"" + name + "\"");}
 
   if (xSizeLeft < 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Left jcol jaw cannot have negative half aperture size." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "left jcol jaw cannot have negative half aperture size: \"" + name + "\"");}
   if (xSizeRight < 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Left jcol jaw cannot have negative half aperture size." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "left jcol jaw cannot have negative half aperture size: \"" + name + "\"");}
 
   if (std::abs(xSizeLeft) > 0.5*horizontalWidth)
     {
@@ -114,15 +110,11 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
     }
   
   if (!buildLeftJaw && !buildRightJaw)
-    {G4cerr << __METHOD_NAME__ << "warning no jaws being built" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "no jaws being built: \"" + name + "\"");}
   
-  buildAperture = true;
   if (!BDS::IsFinite(xHalfGap) && !BDS::IsFinite(xSizeLeft) && !BDS::IsFinite(xSizeRight))
     {buildAperture = false;}
 }
-
-BDSCollimatorJaw::~BDSCollimatorJaw()
-{;}
 
 void BDSCollimatorJaw::BuildContainerLogicalVolume()
 {
@@ -134,10 +126,13 @@ void BDSCollimatorJaw::BuildContainerLogicalVolume()
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       vacuumMaterial,
 					       name + "_container_lv");
+  BDSExtent ext(horizontalWidth * 0.5, yHalfHeight, chordLength*0.5);
+  SetExtent(ext);
 }
 
 void BDSCollimatorJaw::Build()
 {
+  CheckParameters();
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
   // set each jaws half gap default to aperture half size
@@ -189,6 +184,8 @@ void BDSCollimatorJaw::Build()
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(leftJawLV);
+      // register it in a set of collimator logical volumes
+      BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(leftJawLV);
       if (sensitiveOuter)
 	{RegisterSensitiveVolume(leftJawLV, BDSSDType::collimatorcomplete);}
       
@@ -221,6 +218,8 @@ void BDSCollimatorJaw::Build()
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(rightJawLV);
+      // register it in a set of collimator logical volumes
+      BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(rightJawLV);
       if (sensitiveOuter)
 	{RegisterSensitiveVolume(rightJawLV, BDSSDType::collimatorcomplete);}
       

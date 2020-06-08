@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -206,7 +206,7 @@ void Config::ParseHistogramLine(const std::string& line)
   
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
-  std::regex histNDim("(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
+  std::regex histNDim("^\\s*(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   //std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
   
@@ -242,7 +242,13 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   if (results.size() < 7)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns";
+	+ " - invalid number of columns (too few)";
+      throw std::string(errString);
+    }
+  if (results.size() > 7)
+    {// ensure not too many columns
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
+      + " - too many columns - check no extra whitespace";
       throw std::string(errString);
     }
 
@@ -481,7 +487,7 @@ void Config::ParseBinning(const std::string binning,
       std::string errString = "Insufficient number of binning dimensions on line #"
 	+ std::to_string(lineCounter) + "\n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
-	+ binning + "\n";
+	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw std::string(errString);
     }
 }

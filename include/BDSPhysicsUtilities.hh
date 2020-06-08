@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,16 +20,37 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSPHYSICSUTILITIES_H
 
 #include "globals.hh"
+#include "G4Version.hh"
 
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
 
 class BDSParticleDefinition;
+class G4DynamicParticle;
 class G4GenericBiasingPhysics;
+class G4ParticleDefinition;
 class G4VModularPhysicsList;
+
+#if G4VERSION_NUMBER > 1049
+// lots of extra code to disable bad particle killing in Geant4.10.5 series
+#include <utility>
+class G4CoupledTransportation;
+class G4Transportation;
+#endif
+
+namespace GMAD
+{
+  class BeamBase;
+}
 
 namespace BDS
 {
+  /// Whether a particle is an ion. A proton is counted NOT as an ion.
+  G4bool IsIon(const G4ParticleDefinition* particle);
+
+  /// Calls IsIon above but also a proton with any bound electrons is considered an ion.
+  G4bool IsIon(const G4DynamicParticle* paritlce);
+  
   /// Detect whether we're using a Geant4 provided physics list or whether we'll use the
   /// BDSIM modular physics and construct it.
   G4VModularPhysicsList* BuildPhysics(const G4String& physicsList);
@@ -82,6 +103,21 @@ namespace BDS
   /// Check if the user has requested a changed energy validity range and set the appropriate
   /// variables in the G4ProductionCutsTable.
   void CheckAndSetEnergyValidityRange();
+
+#if G4VERSION_NUMBER > 1049
+  /// Apply FixGeant105ThreshholdsForParticle to the beam particle definition.
+  void FixGeant105ThreshholdsForBeamParticle(const BDSParticleDefinition* particleDefinition);
+
+  /// Set 1keV, 10keV and 1500 for warning energy, important energy and number of trials in
+  /// Geant4's looping thresholds.
+  void FixGeant105ThreshholdsForParticle(const G4ParticleDefinition* particleDefinition);
+
+  /// Taken from Geant4 field01 example. Set low values.
+  void ChangeLooperParameters(const G4ParticleDefinition* particleDef);
+
+  /// Taken from Geant4 field01 example. Get the two possible transportation processes.
+  std::pair<G4Transportation*, G4CoupledTransportation*> FindTransportation(const G4ParticleDefinition* particleDef);
+#endif
 }
 
 #endif

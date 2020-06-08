@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -71,7 +71,8 @@ public:
 		   BDSIntegratorType multipoleOuterIn,
 		   BDSIntegratorType rmatrixThinIn,
 		   BDSIntegratorType parallelTransporterIn,
-		   BDSIntegratorType undulator);
+		   BDSIntegratorType undulator,
+           BDSIntegratorType cavityFringeIn);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
@@ -98,6 +99,7 @@ public:
   BDSIntegratorType rmatrixThin;
   BDSIntegratorType parallelTransporter;
   BDSIntegratorType undulator;
+  BDSIntegratorType cavityFringe;
 
   /// Accessor for bool of is the integrator set matrix style.
   inline G4bool IsMatrixIntegratorSet() const {return isMatrix;}

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -35,6 +35,7 @@ BeamBase::BeamBase()
   distrFileFormat      = "";
   matchDistrFileLength = true;  
   nlinesIgnore         = 0;
+  nlinesSkip           = 0;
   
   X0  = 0.0;
   Y0  = 0.0;
@@ -45,6 +46,7 @@ BeamBase::BeamBase()
   Zp0 = 0.0;
   T0  = 0.0;
   E0  = 0.0;
+  tilt   = 0.0;
   sigmaT = 0.0;
   sigmaE = 0.0;
 
@@ -101,4 +103,22 @@ BeamBase::BeamBase()
   haloPSWeightFunction  = "";
 
   offsetSampleMean = false;
+
+  eventGeneratorMinX  = -1e6;
+  eventGeneratorMaxX  =  1e6;
+  eventGeneratorMinY  = -1e6;
+  eventGeneratorMaxY  =  1e6;
+  eventGeneratorMinZ  = -1e6;
+  eventGeneratorMaxZ  =  1e6;
+  eventGeneratorMinXp = -1;
+  eventGeneratorMaxXp = 1.1; // > 1 for no ambiguity (max value 1)
+  eventGeneratorMinYp = -1;
+  eventGeneratorMaxYp = 1.1;
+  eventGeneratorMinZp = -1;
+  eventGeneratorMaxZp = 1.1;
+  eventGeneratorMinT  = -1;
+  eventGeneratorMaxT  = 1e50;
+  eventGeneratorMinEK = -1;
+  eventGeneratorMaxEK = 1e50;
+  eventGeneratorParticles = "";
 }

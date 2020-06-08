@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -66,7 +66,7 @@ public:
   /// the coordinate system of the geometry.  Ie an offset aperture.  This is
   /// a public interface to allow the transform to be set after construction so
   /// that derived classes don't need modified constructors.
-  virtual void SetTransform(const G4Transform3D& transformIn) {transform = transformIn.inverse();}
+  virtual void SetTransform(const G4Transform3D& transformIn);
 
   /// Accessor.
   inline G4bool FiniteStrength() const {return finiteStrength;}

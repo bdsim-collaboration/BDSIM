@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -142,7 +142,11 @@ private:
   /// Flag telling whether ions are being used either in physics list or in beam particle.
   mutable G4bool usingIons;
 
-  /// @{Physics constructor loader.
+  /// Unique physics constructor that doesn't add physics processes but only forces the
+  /// immediate construction of all particles.  See implementation for constructors called.
+  void AllParticles();
+  
+  /// @{ Physics constructor loader.
   void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();

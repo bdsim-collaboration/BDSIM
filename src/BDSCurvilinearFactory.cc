@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -41,9 +41,9 @@ BDSCurvilinearFactory::BDSCurvilinearFactory():
 BDSCurvilinearFactory::~BDSCurvilinearFactory()
 {;}
 
-BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String name,
-								   const G4double chordLength,
-								   const G4double radius)
+BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String& name,
+								   G4double        chordLength,
+								   G4double        radius)
 {
   G4double halfLength = chordLength * 0.5 - lengthSafety;
   G4Tubs* solid = new G4Tubs(name + "_solid", // name
@@ -60,20 +60,22 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
 			    solid, 0);
 }
 
-BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String       name,
+BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String&      name,
 								   const G4double       arcLength,
 								   const G4double       chordLength,
 								   const G4double       radius,
 								   const G4double       angle,
-								   const G4ThreeVector  inputFaceNormal,
-								   const G4ThreeVector  outputFaceNormal,
+								   const G4ThreeVector& inputFaceNormal,
+								   const G4ThreeVector& outputFaceNormal,
 								   const BDSTiltOffset* tiltOffset)
 {
   // angle is finite!
   // factor of 0.8 here is arbitrary tolerance as g4 cut tubs seems to fail
   // with cutting entrance / exit planes close to limit.
   // s = r*theta -> r = s/theta
-  G4double radiusFromAngleLength =  std::abs(chordLength / angle) * 0.8;
+  G4double radiusFromAngleLength = radius;
+  if (BDS::IsFinite(angle)) // it could be 0
+    {radiusFromAngleLength =  std::abs(chordLength / angle) * 0.8;}
   G4double radiusLocal = std::min(radius, radiusFromAngleLength);
 
   // copy in case we need to modify in the case of tilt offset
@@ -103,11 +105,11 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
   return CommonConstruction(name, arcLength, chordLength, radiusLocal, solid, angle);
 }
 
-BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String       name,
-								   const G4double       arcLength,
-								   const G4double       chordLength,
-								   const G4double       radius,
-								   const G4double       angle,
+BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String& name,
+								   G4double        arcLength,
+								   G4double        chordLength,
+								   G4double        radius,
+								   G4double        angle,
 								   const BDSTiltOffset* tiltOffset)
 {
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-0.5*angle, -0.5*angle);
@@ -117,12 +119,12 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
   return CreateCurvilinearVolume(name, arcLength, chordLength, radius, angle, inputFaceNormal, outputFaceNormal, tiltOffset);
 }
 
-BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String      name,
-							      const G4double      arcLength,
-							      const G4double      chordLength,
-							      const G4double      radius,
-							      G4VSolid*           solid,
-							      const G4double      angle)
+BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String& name,
+							      G4double        arcLength,
+							      G4double        chordLength,
+							      G4double        radius,
+							      G4VSolid*       solid,
+							      G4double        angle)
 {
   // nullptr for material ONLY ok in parallel world!
   G4LogicalVolume* lv =  new G4LogicalVolume(solid,            // solid

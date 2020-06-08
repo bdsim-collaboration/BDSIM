@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
@@ -28,6 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
 #include <cmath>
@@ -125,7 +129,7 @@ std::string BDS::GetCurrentDir()
   if (getcwd(currentPath, sizeof(currentPath)) != NULL)
     {currentPathString = std::string(currentPath);}
   else
-    {G4cerr << "Cannot determine current working directory" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Cannot determine current working directory");}
 
   return currentPathString;
 }
@@ -327,23 +331,15 @@ G4bool BDS::Geant4EnvironmentIsSet()
 				     "G4PIIDATA",
 				     "G4SAIDXSDATA"};
 
+  // here we loop through all variables - ie don't break the loop
   G4bool result = true;
-  for (auto it = variables.begin(); it != variables.end(); ++it)
+  for (const auto& variable : variables)
     {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "testing for variable: " << *it;
-#endif
-      const char* env_p = std::getenv( (*it).c_str() );
+      const char* env_p = std::getenv( variable.c_str() );
       if (!env_p)
 	{
 	  result = false;
-#ifdef BDSDEBUG
-	  G4cout << " - not found" << G4endl;
-	}
-      else
-	{
-	  G4cout << " - found" << G4endl;
-#endif
+	  G4cerr << "Variable: \"" << variable << "\" not found." << G4endl;
 	}
     }
   return result;
@@ -354,13 +350,12 @@ void BDS::CheckHighPrecisionDataExists(const G4String& physicsListName)
   const char* envHPData = std::getenv("G4PARTICLEHPDATA");
   if (!envHPData)
     {
-      G4cerr << "The G4TENDL low energy data is not available!" << G4endl;
-      G4cout << "G4TENDL data is required through the environmental variable "
-	     << "\"G4PARTICLEHPDATA\"" << G4endl;
-      G4cout << "This is required for the \"" << physicsListName << "\" physics list." << G4endl;
-      G4cout << "This data is an optional download from the Geant4 website. Please "
-	     << "download from the Geant4 website and export the environmental variable." << G4endl;
-      exit(1);
+      std::string msg = "The G4TENDL low energy data is not available!\n";
+      msg += "G4TENDL data is required through the environmental variable \"G4PARTICLEHPDATA\"\n;";
+      msg += "This is required for the \"" + physicsListName + "\" physics list.\n";
+      msg += "This data is an optional download from the Geant4 website. Please\n";
+      msg += "download from the Geant4 website and export the environmental variable.";
+      throw BDSException(__METHOD_NAME__, msg);
     }
 }
 
@@ -369,13 +364,12 @@ void BDS::CheckLowEnergyNeutronDataExists(const G4String& physicsListName)
   const char* envHPData = std::getenv("G4LENDDATA");
   if (!envHPData)
     {
-      G4cerr << "The Low Energy Neutron Data ('LEND') is not available!" << G4endl;
-      G4cout << "Data is required through the environmental variable "
-	     << "\"G4LENDDATA\"" << G4endl;
-      G4cout << "This is required for the \"" << physicsListName << "\" physics list." << G4endl;
-      G4cout << "This data is an optional download from the Geant4 website. Please "
-	     << "download from the Geant4 website and export the environmental variable." << G4endl;
-      exit(1);
+      std::string msg = "The Low Energy Neutron Data ('LEND') is not available!\n";
+      msg += "Data is required through the environmental variable \"G4LENDDATA\"\n";
+      msg += "This is required for the \"" + physicsListName + "\" physics list.\n";
+      msg += "This data is an optional download from the Geant4 website. Please\n";
+      msg += "download from the Geant4 website and export the environmental variable.";
+      throw BDSException(__METHOD_NAME__, msg);
     }
 }
 
@@ -401,17 +395,30 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
   std::string param = name + "=";
 
   int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      
+  if (pos >= 0)
+    {   
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
       int llen = tend - pos - param.length();
       
       value = spec.substr(pos + param.length(), llen);
-  }
+    }
   return value;
+}
+
+std::vector<G4String> BDS::GetWordsFromString(const G4String& input)
+{
+  std::vector<G4String> result;
+  if (input.empty())
+    {return result;}
+  
+  std::istringstream ss(input);
+
+  G4String word;
+  while (ss >> word)
+    {result.push_back(word);}
+  return result;
 }
 
 G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
@@ -509,20 +516,18 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
       std::size_t found = formatAndPath.find(":");
       if (found == std::string::npos)
 	{
-	  G4cerr << __METHOD_NAME__ << "invalid specifier \""
-		 << formatAndPath << "\"" << G4endl;
-	  G4cerr << "Missing \":\" to separate format and file path" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "invalid specifier \"" + formatAndPath + "\"\n"
+			     + "Missing \":\" to separate format and file path");
 	}
       else
 	{
 	  G4String format   = formatAndPath.substr(0,found);
 	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
 #ifdef BDSDEBUG
-	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
-	G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
+	  G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
+	  G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
 #endif
-	return std::make_pair(format,filePath);
+	  return std::make_pair(format,filePath);
 	}
     }
   return std::make_pair("","");
@@ -538,7 +543,9 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
   if (defaultUL->GetMaxAllowedStep(t) > length)
     {// copy and change length in UL
       result = new G4UserLimits(*defaultUL);
-      result->SetMaxAllowedStep(length * fraction);
+      G4double lengthScale = length * fraction;
+      lengthScale = std::max(lengthScale, 1.0); // no smaller than 1mm limit
+      result->SetMaxAllowedStep(lengthScale);
     }
   else
     {result = defaultUL;} // stick with length in defaultUL
@@ -548,8 +555,19 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
 G4double BDS::GetMemoryUsage()
 {
   struct rusage r_usage;
-  G4double result = getrusage(RUSAGE_SELF,&r_usage);
-  return result;
+  int itWorked = getrusage(RUSAGE_SELF, &r_usage);
+  if (itWorked != 0)
+    {return 0;} // failed
+  else
+    {
+      G4double maxMemory = r_usage.ru_maxrss;
+#ifdef __APPLE__
+      maxMemory /= 1048*1048;
+#else
+      maxMemory /= 1048;
+#endif
+      return maxMemory;
+    }
 }
 
 std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
@@ -568,4 +586,28 @@ std::map<G4String, G4String> BDS::GetUserParametersMap(G4String userParameters)
       result[G4String(key)] = G4String(value);
     }
   return result;
+}
+
+G4int BDS::VerboseEventStop(G4int verboseEventStart,
+			    G4int verboseEventContinueFor)
+{
+  G4int verboseEventStop = 0;
+  if (verboseEventContinueFor < 1)
+    {verboseEventStop = std::numeric_limits<int>::max();}
+  else
+    {verboseEventStop = verboseEventStart + verboseEventContinueFor;}
+  return verboseEventStop;
+}
+
+G4bool BDS::VerboseThisEvent(G4int eventIndex,
+			     G4int eventStart,
+			     G4int eventStop)
+{
+  return eventIndex >= eventStart && eventIndex < eventStop;
+}
+
+G4double BDS::Rigidity(G4double momentumMagnitude,
+		       G4double charge)
+{
+  return momentumMagnitude / CLHEP::GeV / BDS::cOverGeV / charge;
 }

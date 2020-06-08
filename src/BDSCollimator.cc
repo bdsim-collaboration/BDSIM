@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,10 +21,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimator.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -58,19 +60,23 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   yAperture(yApertureIn),
   xApertureOut(xApertureOutIn),
   yApertureOut(yApertureOutIn),
+  tapered(false),
   colour(colourIn),
   minKineticEnergy(0)
-{
-  if (!BDS::IsFinite(horizontalWidth))
-    {horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
+{;}
 
+BDSCollimator::~BDSCollimator()
+{;}
+
+void BDSCollimator::CheckParameters()
+{
   if ((xAperture > 0.5 * horizontalWidth) || (yAperture > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
       G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Error in collimator");
     }
 
   if ((xApertureOut > 0.5 * horizontalWidth) || (yApertureOut > 0.5 * horizontalWidth))
@@ -79,25 +85,11 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
       G4cerr << "x aperture " << xApertureOut << " mm, y aperture " << yApertureOut << " mm" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Error in collimator.");
     }
 
   if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
-    {
-      G4cout << __METHOD_NAME__
-             << "Warning - no entrance aperture set for collimator - exit aperture parameters will be ignored"
-             << G4endl;
-    }
-
-  if (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut) && BDS::IsFinite(xAperture) &&
-      BDS::IsFinite(yAperture))
-    {
-      if ((xApertureOut / yApertureOut) != (xAperture / yAperture))
-        {
-          G4cout << __METHOD_NAME__ << "Warning - X/Y half axes ratio at entrance and exit apertures are not equal"
-                 << G4endl;
-        }
-    }
+    {BDS::Warning(__METHOD_NAME__, "element: \"" + name + "\": no entrance aperture set for collimator - exit aperture parameters will be ignored");}
 
   tapered = (BDS::IsFinite(xApertureOut) && BDS::IsFinite(yApertureOut));
   if (!tapered)
@@ -109,9 +101,6 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   if (!colour)
     {colour = BDSColours::Instance()->GetColour("collimator");}
 }
-
-BDSCollimator::~BDSCollimator()
-{;}
 
 G4String BDSCollimator::Material() const
 {
@@ -131,10 +120,14 @@ void BDSCollimator::BuildContainerLogicalVolume()
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
+  BDSExtent ext(horizontalWidth * 0.5, horizontalWidth * 0.5,
+                chordLength * 0.5);
+  SetExtent(ext);
 }
 
 void BDSCollimator::Build()
 {
+  CheckParameters();
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
   // Swap variables around if exit size is larger than entrance size
@@ -192,7 +185,7 @@ void BDSCollimator::Build()
     {RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
-                                            (G4ThreeVector)0,        // position
+                                            G4ThreeVector(),         // position
                                             collimatorLV,            // its logical volume
                                             name + "_collimator_pv", // its name
                                             containerLogicalVolume,  // its mother  volume

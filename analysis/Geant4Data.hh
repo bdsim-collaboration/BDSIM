@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ANALYSISGEANT4DATA_H
 #define ANALYSISGEANT4DATA_H
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 
-#include "BDSOutputROOTGeant4Data.hh"
-
+class BDSOutputROOTGeant4Data;
 class TTree;
 
 /**

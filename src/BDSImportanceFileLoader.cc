@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -60,10 +60,7 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
 #endif
 
   if (!validFile)
-    {
-      G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
   else
     {G4cout << "BDSImportanceFileLoader::Load> loading \"" << fileName << "\"" << G4endl;}
 
@@ -108,11 +105,8 @@ std::map<G4String, G4double> BDSImportanceFileLoader<T>::Load(const G4String& fi
           message += " importance value must be numeric.";
           throw BDSException(message);
         }
-
-      // importance world should be GDML import created in pyg4ometry so modify PV name accordingly.
-      // dangerous to assume fixed behaviour of external package - susceptible to change.
-      G4String fullVolume = "importanceWorld_PREPEND" + volume + "_pv";
-      importance[fullVolume] = importanceValue;
+      
+      importance[volume] = importanceValue;
 
       linenum += 1;
     }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
@@ -82,7 +83,6 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
       {
 	G4cout << "Unsupported factory type " << type;
 	return nullptr;
-	break;
       }
     }
 }
@@ -90,10 +90,11 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
 BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 						       G4String  formatAndFileName,
 						       std::map<G4String, G4Colour*>* colourMapping,
-						       G4double  suggestedLength,
-						       G4double  suggestedHorizontalWidth,
-						       G4bool    makeSensitive,
-						       BDSSDType sensitivityType)
+						       G4double               suggestedLength,
+						       G4double               suggestedHorizontalWidth,
+						       std::vector<G4String>* namedVacuumVolumes,
+						       G4bool                 makeSensitive,
+						       BDSSDType              sensitivityType)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String fileName = BDS::GetFullPath(ff.second);
@@ -105,7 +106,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 
   // Check the file exists.
   if (!BDS::FileExists(fileName))
-    {G4cerr << __METHOD_NAME__ << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "No such file \"" + fileName + "\"");}
   
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
   BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);
@@ -113,7 +114,8 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
     {return nullptr;}
   
   BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping,
-					       suggestedLength, suggestedHorizontalWidth);
+					       suggestedLength, suggestedHorizontalWidth,
+					       namedVacuumVolumes);
   
   if (result)
     {
@@ -122,7 +124,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 	{result->MakeAllVolumesSensitive(sensitivityType);}
       
       registry[(std::string)fileName] = result;
-      storage.push_back(result);
+      storage.insert(result);
     }
   
   return result;

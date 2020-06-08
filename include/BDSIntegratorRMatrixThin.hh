@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -57,6 +57,8 @@ public:
 private:
   BDSIntegratorRMatrixThin();
 
+protected:
+  // matrix elements set differently in derived cavity fringe class.
   G4double kick1;
   G4double kick2;
   G4double kick3;

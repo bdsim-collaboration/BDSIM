@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -44,7 +44,10 @@ BDSTunnelBuilder::BDSTunnelBuilder():
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
 {
-  delete BDSTunnelFactory::Instance();
+  try // we should not throw an exception in a destructor
+    {delete BDSTunnelFactory::Instance();}
+  catch (...)
+    {;}
 }
 
 G4bool BDSTunnelBuilder::BreakTunnel(BDSBeamline::const_iterator proposedStart,
@@ -245,7 +248,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 	  // this works in 3d.
 	  G4ThreeVector unitZStart = G4ThreeVector(0,0,1).transform(*startRot);
 	  G4ThreeVector unitZEnd   = G4ThreeVector(0,0,1).transform(*endRot);
-	  // TBC - this could be done with the cross product in future.
+	  // TODO - this could be done with the cross product in future.
 	  G4ThreeVector unitZDiff  = unitZEnd - unitZStart;
 	  G4bool isAngled          = unitZDiff.mag() > 1e-30;
 	  

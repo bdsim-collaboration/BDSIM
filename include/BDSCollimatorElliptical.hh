@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -46,6 +46,11 @@ public:
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();
+
+protected:
+  /// Check and update parameters before construction. Called at the start of Build() as
+  /// we can't call a virtual function in a constructor.
+  virtual void CheckParameters();
 
 private:
   /// Private default constructor to force the use of the supplied one.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -16,31 +16,31 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
-#include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
-
 #include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSException.hh"
 #include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
-#include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
+
+#include "globals.hh" // geant4 globals / types
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <algorithm>
 #include <iterator>
 #include <ostream>
 #include <set>
-#include <utility>  // for std::pair
 #include <vector>
 
 G4double BDSBeamline::paddingLength = -1;
@@ -123,22 +123,22 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 			       G4String                 samplerName)
 {
   if (!component)
-    {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "invalid accelerator component " + samplerName);}
 
   // check the sampler name is allowed in the output
   if (BDSOutput::InvalidSamplerName(samplerName))
     {
       G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
       BDSOutput::PrintProtectedNames(G4cerr);
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "");
     }
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      G4int size = (G4int)line->size();
-      for (G4int i = 0; i < size; ++i)
+      G4int sizeLine = (G4int)line->size();
+      for (G4int i = 0; i < sizeLine; ++i)
 	{
-	  if (i < size-1)
+	  if (i < sizeLine-1)
 	    {AddSingleComponent((*line)[i], tiltOffset);}
 	  else // only attach the desired sampler to the last one in the line
 	    {AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
@@ -263,7 +263,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	      G4cout << __METHOD_NAME__ << "Error - angled faces of objects will cause overlap in beam line geometry" << G4endl;
 	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
 		     << clasherName << "\"" << G4endl;
-	      exit(1);
+	      throw BDSException(__METHOD_NAME__, "");
 	    }
 	}
     }
@@ -380,8 +380,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       if (hasFiniteOffset && hasFiniteAngle) 
 	{// do not allow x offsets for bends as this will cause overlaps
 	  G4String name = component->GetName();
-	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
-		 << " overlaps: " << name << " - omitting x offset" << G4endl;
+	  G4String message = "element has x offset, but this will cause geometry overlaps: " + name
+	    + " - omitting x offset";
+	  BDS::Warning(__METHOD_NAME__, message);
 	  offset.setX(0.0);
 	}
       // note the displacement is applied in the accelerator x and y frame so use
@@ -568,9 +569,9 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
 {
   if (!element)
-    {G4cerr << __METHOD_NAME__ << "invalid BDSBeamlineElement" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "invalid BDSBeamlineElement");}
   if (!(element->GetAcceleratorComponent()))
-    {G4cerr << __METHOD_NAME__ << "invalid BDSAcceleratorComponent" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "invalid BDSAcceleratorComponent");}
   
   // update world extent for this beam line
   UpdateExtents(element);
@@ -714,15 +715,40 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
     }
 }
 
-BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
-					    G4int    i) const
+const BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
+						  G4int    i) const
 {
   // build placement name based on acc component name and ith placement
   // matches construction in BDSBeamlineElement
-  G4String placementName = acceleratorComponentName + "_" + std::to_string(i);
+  G4String suffix        = "_" + std::to_string(i);
+  G4String placementName = acceleratorComponentName + suffix;
   const auto search = components.find(placementName);
   if (search == components.end())
-    {return nullptr;} //wasn't found
+    {
+      // Try again but search including naming convention of uniquely built
+      // components. Sometimes we modify an element or build it uniquely for
+      // that position in the lattice, so we therefore add a suffix to the
+      // name for storing in the component registry.
+      // Naming will be NAME_MOD_MODNUMBER_PLACEMENTNUMBER
+      // Why not search registry? -> should be found from this beam line
+      // 1) search with starts with NAME
+      std::vector<const BDSBeamlineElement*> candidates;
+      std::for_each(this->begin(),
+		    this->end(),
+		    [&acceleratorComponentName,&candidates](const BDSBeamlineElement* el)
+		    {if (BDS::StartsWith(el->GetPlacementName(), acceleratorComponentName)){candidates.push_back(el);};});
+      
+      if (candidates.empty())
+        {return nullptr;} // nothing found
+      else
+        {// 2) of things that start with NAME, search for ones that end in _PLACEMENTNUMBER
+          auto foundItem = std::find_if(candidates.begin(),
+					candidates.end(),
+					[&suffix](const BDSBeamlineElement* el)
+					{return BDS::EndsWith(el->GetPlacementName(), suffix);});
+          return foundItem != candidates.end() ? *foundItem : nullptr;
+        }
+    }
   else
     {return search->second;}
 }
@@ -730,7 +756,7 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
 G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentName,
 						  G4int    i) const
 {
-  BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
+  const BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
   if (!result)
     {
       G4cerr << __METHOD_NAME__ << "No element named \""
@@ -738,7 +764,7 @@ G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentN
 	     << i << G4endl;
       G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
       G4cout << "multiple sections with unique names." << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "");
     }
   else
     {return G4Transform3D(*(result->GetRotationMiddle()), result->GetPositionMiddle());}
@@ -866,6 +892,8 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
   sPos.push_back(0.0);
   for (auto element : beamline)
     {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
+    if (sPos.size() == 1)
+      {sPos.push_back(1*CLHEP::m);}
   return sPos;
 }
 
@@ -876,7 +904,7 @@ G4bool BDSBeamline::ElementAnglesSumToCircle()
 
 BDSExtentGlobal BDSBeamline::GetExtentGlobal() const
 {
-  const BDSExtent ext = BDSExtent(maximumExtentPositive, maximumExtentNegative);
+  const BDSExtent ext = BDSExtent(maximumExtentNegative, maximumExtentPositive);
   BDSExtentGlobal extG = BDSExtentGlobal(ext, G4Transform3D());
   return extG;
 }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 using namespace GMAD;
 
@@ -57,6 +58,40 @@ double Beam::get_value(std::string property_name) const
 	}
     }
   return value;
+}
+
+std::string Beam::get_value_string(std::string property_name) const
+{
+  try {
+      double value = get<double>(this, property_name);
+      std::ostringstream strs;
+      strs << value;
+      return strs.str();
+    }
+  catch (...) {
+      try {
+          int value = get<int>(this, property_name);
+          std::ostringstream strs;
+          strs << value;
+          return strs.str();
+        }
+      catch (...) {
+          try {
+              std::string value = get<std::string>(this, property_name);
+              return value;
+            }
+          catch (...) {
+              try {
+                  bool value = get<bool>(this, property_name);
+                  std::ostringstream strs;
+                  strs << std::boolalpha << value;
+                  return strs.str();
+                }
+              catch (...)
+                {std::cerr << "Error " << property_name << std::endl; exit(1);}
+            }
+        }
+    }
 }
 
 void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
@@ -128,6 +163,9 @@ void Beam::PublishMembers()
   publish("distrFileFormat",      &Beam::distrFileFormat);
   publish("matchDistrFileLength", &Beam::matchDistrFileLength);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
+  publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency
+  publish("nlinesSkip",           &Beam::nlinesSkip);
+  publish("nLinesSkip",           &Beam::nlinesSkip);   // for consistency
 
   // aliases
   publish("distribution",         &Beam::distrType);
@@ -135,7 +173,7 @@ void Beam::PublishMembers()
   publish("yDistribution",        &Beam::yDistrType);
   publish("zDistribution",        &Beam::zDistrType);
 
-  // centra values
+  // central values
   publish("X0",    &Beam::X0);
   publish("Y0",    &Beam::Y0);
   publish("Z0",    &Beam::Z0);
@@ -143,8 +181,12 @@ void Beam::PublishMembers()
   publish("Xp0",   &Beam::Xp0);
   publish("Yp0",   &Beam::Yp0);
   publish("Zp0",   &Beam::Zp0);
+  publish("tilt",  &Beam::tilt);
   publish("T0",    &Beam::T0);
   publish("E0",    &Beam::E0);
+
+  publish("sigmaT", &Beam::sigmaT);
+  publish("sigmaE", &Beam::sigmaE);
 
   // for gausstwiss
   publish("betx",  &Beam::betx);
@@ -175,8 +217,6 @@ void Beam::PublishMembers()
   publish("sigmaXp",&Beam::sigmaXp);
   publish("sigmaY", &Beam::sigmaY);
   publish("sigmaYp",&Beam::sigmaYp);
-  publish("sigmaT",&Beam::sigmaT);
-  publish("sigmaE",&Beam::sigmaE);
 
   // options for beam distrType="square" or distrType="circle"
   publish("envelopeX", &Beam::envelopeX);
@@ -236,4 +276,22 @@ void Beam::PublishMembers()
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 
   publish("offsetSampleMean",      &Beam::offsetSampleMean);
+
+  publish("eventGeneratorMinX",      &Beam::eventGeneratorMinX);
+  publish("eventGeneratorMaxX",      &Beam::eventGeneratorMaxX);
+  publish("eventGeneratorMinY",      &Beam::eventGeneratorMinY);
+  publish("eventGeneratorMaxY",      &Beam::eventGeneratorMaxY);
+  publish("eventGeneratorMinZ",      &Beam::eventGeneratorMinZ);
+  publish("eventGeneratorMaxZ",      &Beam::eventGeneratorMaxZ);
+  publish("eventGeneratorMinXp",     &Beam::eventGeneratorMinXp);
+  publish("eventGeneratorMaxXp",     &Beam::eventGeneratorMaxXp);
+  publish("eventGeneratorMinYp",     &Beam::eventGeneratorMinYp);
+  publish("eventGeneratorMaxYp",     &Beam::eventGeneratorMaxYp);
+  publish("eventGeneratorMinZp",     &Beam::eventGeneratorMinZp);
+  publish("eventGeneratorMaxZp",     &Beam::eventGeneratorMaxZp);
+  publish("eventGeneratorMinT",      &Beam::eventGeneratorMinT);
+  publish("eventGeneratorMaxT",      &Beam::eventGeneratorMinT);
+  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK);
+  publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK);
+  publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
 }

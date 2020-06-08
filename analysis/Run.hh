@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -45,13 +45,14 @@ public:
   void SetBranchAddress(TTree* t,
 			bool                      allBranchesOn    = true,
 			const RBDS::VectorString* branchesToTurnOn = nullptr);
-  
+
+  // These variables are named to match the naems in the output file we would find.
   /// @{ Member that ROOT can map file data to locally.
-  BDSOutputROOTEventRunInfo*    summary;
-  BDSOutputROOTEventHistograms* histos;
+  BDSOutputROOTEventRunInfo*    Summary;
+  BDSOutputROOTEventHistograms* Histos;
   /// @}
 
-  BDSOutputROOTEventRunInfo*    info; ///< For backwards compatibiliy.
+  BDSOutputROOTEventRunInfo*    Info; ///< For backwards compatibiliy.
   
 private:  
   bool debug;

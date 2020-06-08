@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
@@ -151,7 +152,8 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);
-  
+
+  physicsConstructors.insert(std::make_pair("all_particles",          &BDSModularPhysicsList::AllParticles));
   physicsConstructors.insert(std::make_pair("charge_exchange",        &BDSModularPhysicsList::ChargeExchange));
   physicsConstructors.insert(std::make_pair("cherenkov",              &BDSModularPhysicsList::Cherenkov));
   physicsConstructors.insert(std::make_pair("cuts_and_limits",        &BDSModularPhysicsList::CutsAndLimits));
@@ -285,7 +287,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   ConfigurePhysics();
 
   // register the physics constructors with base class mechanics.
-  for(auto physics : constructors)
+  for (auto physics : constructors)
     {RegisterPhysics(physics);}
   
 #ifdef BDSDEBUG
@@ -371,7 +373,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 	  G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
 	  for (auto listName : physicsLists)
 	    {G4cout << "\"" << listName << "\"" << G4endl;}
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "Invalid physics list.");
 	}
     }
 
@@ -413,7 +415,7 @@ void BDSModularPhysicsList::ConstructAllIons()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
-  if(opticalPhysics)
+  if (opticalPhysics)
     {ConfigureOptical();}
 }
 
@@ -447,9 +449,18 @@ void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysi
 	  G4cout << "\"" << singlePhysicsIn << "\" cannot be used with the following:" << G4endl;
 	  for (const auto& v : forbidden)
 	    {G4cout << "\"" << v << "\"" << G4endl;}
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, "Incompatible physics list.");
 	}
     }
+}
+
+void BDSModularPhysicsList::AllParticles()
+{
+  ConstructAllLeptons();
+  ConstructAllShortLived();
+  ConstructAllMesons();
+  ConstructAllBaryons();
+  ConstructAllIons();
 }
 
 void BDSModularPhysicsList::ChargeExchange()
@@ -476,7 +487,7 @@ void BDSModularPhysicsList::Cherenkov()
 
 void BDSModularPhysicsList::CutsAndLimits()
 {
-  if(!physicsActivated["cuts_and_limits"])
+  if (!physicsActivated["cuts_and_limits"])
     {
       constructors.push_back(new BDSPhysicsCutsAndLimits());
       physicsActivated["cuts_and_limits"] = true;
@@ -485,7 +496,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 
 void BDSModularPhysicsList::Decay()
 {
-  if(!physicsActivated["decay"])
+  if (!physicsActivated["decay"])
     {
       constructors.push_back(new G4DecayPhysics());
       physicsActivated["decay"] = true;
@@ -494,7 +505,7 @@ void BDSModularPhysicsList::Decay()
 
 void BDSModularPhysicsList::DecayRadioactive()
 {
-  if(!physicsActivated["decay_radioactive"])
+  if (!physicsActivated["decay_radioactive"])
     {
       constructors.push_back(new G4RadioactiveDecayPhysics());
       physicsActivated["decay_radioactive"] = true;
@@ -661,7 +672,7 @@ void BDSModularPhysicsList::FTFPBERT()
 {
   ConstructAllLeptons();
   HadronicElastic(); // has to be here to prevent G4 segfault
-  if(!physicsActivated["ftfp_bert"])
+  if (!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
       physicsActivated["ftfp_bert"] = true;
@@ -672,7 +683,7 @@ void BDSModularPhysicsList::FTFPBERTHP()
 {
   ConstructAllLeptons();
   HadronicElastic(); // has to be here to prevent G4 segfault
-  if(!physicsActivated["ftfp_bert_hp"])
+  if (!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
       physicsActivated["ftfp_bert_hp"] = true;
@@ -835,7 +846,7 @@ void BDSModularPhysicsList::IonINCLXX()
 
 void BDSModularPhysicsList::LaserWire()
 {
-  if(!physicsActivated["lw"])
+  if (!physicsActivated["lw"])
     {
       constructors.push_back(new BDSPhysicsLaserWire());
       physicsActivated["lw"] = true;
@@ -844,7 +855,7 @@ void BDSModularPhysicsList::LaserWire()
 							  
 void BDSModularPhysicsList::Muon()
 {
-  if(!physicsActivated["muon"])
+  if (!physicsActivated["muon"])
     {
       constructors.push_back(new BDSPhysicsMuon(emWillBeUsed));
       physicsActivated["muon"] = true;
@@ -853,7 +864,7 @@ void BDSModularPhysicsList::Muon()
 
 void BDSModularPhysicsList::NeutronTrackingCut()
 {
-  if(!physicsActivated["neutron_tracking_cut"])
+  if (!physicsActivated["neutron_tracking_cut"])
     {
       auto ntc = new G4NeutronTrackingCut();
       G4double timeLimit = BDSGlobalConstants::Instance()->NeutronTimeLimit();
@@ -869,7 +880,7 @@ void BDSModularPhysicsList::NeutronTrackingCut()
 							  
 void BDSModularPhysicsList::Optical()
 {
-  if(!physicsActivated["optical"])
+  if (!physicsActivated["optical"])
     {
       opticalPhysics = new G4OpticalPhysics();		  
       constructors.push_back(opticalPhysics);
@@ -880,7 +891,7 @@ void BDSModularPhysicsList::Optical()
 void BDSModularPhysicsList::QGSPBERT()
 {
   ConstructAllLeptons();
-  if(!physicsActivated["qgsp_bert"])
+  if (!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
       physicsActivated["qgsp_bert"] = true;
@@ -890,7 +901,7 @@ void BDSModularPhysicsList::QGSPBERT()
 void BDSModularPhysicsList::QGSPBERTHP()
 {
   ConstructAllLeptons();
-  if(!physicsActivated["qgsp_bert_hp"])
+  if (!physicsActivated["qgsp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
       physicsActivated["qgsp_bert_hp"] = true;
@@ -900,7 +911,7 @@ void BDSModularPhysicsList::QGSPBERTHP()
 void BDSModularPhysicsList::QGSPBIC()
 {
   ConstructAllLeptons();
-  if(!physicsActivated["qgsp_bic"])
+  if (!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
       physicsActivated["qgsp_bic"] = true;
@@ -910,7 +921,7 @@ void BDSModularPhysicsList::QGSPBIC()
 void BDSModularPhysicsList::QGSPBICHP()
 {
   ConstructAllLeptons();
-  if(!physicsActivated["qgsp_bic_hp"])
+  if (!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
       physicsActivated["qgsp_bic_hp"] = true;
@@ -919,7 +930,10 @@ void BDSModularPhysicsList::QGSPBICHP()
 
 void BDSModularPhysicsList::Shielding()
 {
-  if(!physicsActivated["shielding"])
+#if G4VERSION_NUMBER > 1059
+  AllParticles();
+#endif
+  if (!physicsActivated["shielding"])
     {
       constructors.push_back(new G4HadronPhysicsShielding());
       physicsActivated["shielding"] = true;
@@ -930,7 +944,7 @@ void BDSModularPhysicsList::Stopping()
 {
   ConstructAllShortLived();
   ConstructAllIons();
-  if(!physicsActivated["stopping"])
+  if (!physicsActivated["stopping"])
     {
       constructors.push_back(new G4StoppingPhysics());
       physicsActivated["stopping"] = true;
@@ -940,7 +954,7 @@ void BDSModularPhysicsList::Stopping()
 void BDSModularPhysicsList::SynchRad()
 {
   ConstructAllLeptons();
-  if(!physicsActivated["synch_rad"])
+  if (!physicsActivated["synch_rad"])
     {
       constructors.push_back(new BDSPhysicsSynchRad());
       physicsActivated["synch_rad"] = true;
@@ -962,7 +976,7 @@ void BDSModularPhysicsList::EmGS()
 #if G4VERSION_NUMBER > 1020
 void BDSModularPhysicsList::DecaySpin()
 {
-  if(!physicsActivated["decay_spin"])
+  if (!physicsActivated["decay_spin"])
     {// this will replace regular decay for various processes
       constructors.push_back(new G4SpinDecayPhysics());
       physicsActivated["decay_spin"] = true;
@@ -992,6 +1006,9 @@ void BDSModularPhysicsList::IonPHP()
 void BDSModularPhysicsList::DecayMuonicAtom()
 {
   ConstructAllLeptons();
+#if G4VERSION_NUMBER > 1059
+  ConstructAllIons();
+#endif
   if (!physicsActivated["decay_muonic_atom"])
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());
@@ -1046,7 +1063,7 @@ void BDSModularPhysicsList::Channelling()
 void BDSModularPhysicsList::ShieldingLEND()
 {
   BDS::CheckLowEnergyNeutronDataExists("shielding_lend");
-  if(!physicsActivated["shielding_lend"])
+  if (!physicsActivated["shielding_lend"])
     {
       constructors.push_back(new G4HadronPhysicsShieldingLEND());
       physicsActivated["shielding_lend"] = true;

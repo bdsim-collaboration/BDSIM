@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief General exception with possible name of object and message.
  * 
- * Provide optional name of objec the message is associated with. This
+ * Provide optional name of object the message is associated with. This
  * Can be appended later with SetName() function. 
  *
  * @author Laurie Nevay
@@ -34,26 +34,35 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSException: public std::exception
 {
 public:
-  BDSException(const std::string& messageIn):
+  explicit BDSException(const std::string& messageIn) noexcept:
     name(""),
-    message(messageIn)
+    message(messageIn),
+    completeString(messageIn)
   {;}
-  BDSException(const std::string& nameIn, const std::string& messageIn):
+  BDSException(const std::string& nameIn, const std::string& messageIn) noexcept:
     name(nameIn),
-    message(messageIn)
+    message(messageIn),
+    completeString(nameIn + " : " + messageIn)
+  {;}
+  BDSException(const BDSException& other) noexcept:
+    name(other.name),
+    message(other.message),
+    completeString(other.completeString)
   {;}
   virtual ~BDSException(){;}
 
   /// Override message in std::exception.
-  const char* what() const noexcept override {return name.empty() ? message.c_str() : (name + " : " + message).c_str();}
+  const char* what() const noexcept override
+  {return name.empty() ? message.c_str() : completeString.c_str();}
 
   /// Allow setting of name later.
-  void SetName(const std::string& nameIn) {name = nameIn;}
-  void AppendToMessage(const std::string& messageIn) {message += " " + messageIn;}
+  void SetName(const std::string& nameIn) {name = nameIn; completeString = nameIn + " : " + message;}
+  void AppendToMessage(const std::string& messageIn) {message += " " + messageIn; completeString += " " + messageIn;}
 
   /// @{ Data to print.
   std::string name;
   std::string message;
+  std::string completeString;
   /// @}
 };
 

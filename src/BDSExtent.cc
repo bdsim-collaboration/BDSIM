@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -155,32 +155,28 @@ std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
 
 G4double BDSExtent::MaximumAbs() const
 {
-  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
-				std::abs(extYNeg), extYPos,
-				std::abs(extZNeg), extZPos};
-  return *std::max_element(exts.begin(), exts.end());
+  return std::max({std::abs(extXNeg), extXPos,
+		   std::abs(extYNeg), extYPos,
+		   std::abs(extZNeg), extZPos});
 }
 
 G4double BDSExtent::MinimumAbs() const
 {
-  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
-				std::abs(extYNeg), extYPos,
-				std::abs(extZNeg), extZPos};
-  return *std::min_element(exts.begin(), exts.end());
+  return std::min({std::abs(extXNeg), extXPos,
+		   std::abs(extYNeg), extYPos,
+		   std::abs(extZNeg), extZPos});
 }
 
 G4double BDSExtent::MaximumAbsTransverse() const
 {
-  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
-				std::abs(extYNeg), extYPos};
-  return *std::max_element(exts.begin(), exts.end());
+  return std::max({std::abs(extXNeg), extXPos,
+		   std::abs(extYNeg), extYPos});
 }
 
 G4double BDSExtent::MinimumAbsTransverse() const
 {
-  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
-				std::abs(extYNeg), extYPos};
-  return *std::min_element(exts.begin(), exts.end());
+  return std::min({std::abs(extXNeg), extXPos,
+		   std::abs(extYNeg), extYPos});
 }
 
 G4bool BDSExtent::Encompasses(const G4ThreeVector& point) const

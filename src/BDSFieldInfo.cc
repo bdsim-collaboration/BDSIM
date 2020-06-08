@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -103,7 +103,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   // back calculate tilt angle from field transform
   G4ThreeVector unitY(0,1,0);
   G4ThreeVector unitYR = unitY.transform(transformIn.getRotation());
-  tilt = CLHEP::halfpi - unitYR.getPhi(); // halfpi offset for which axis we choose by convention
+  tilt = -(CLHEP::halfpi - unitYR.getPhi()); // halfpi offset for which axis we choose by convention
 }
 
 BDSFieldInfo::~BDSFieldInfo()

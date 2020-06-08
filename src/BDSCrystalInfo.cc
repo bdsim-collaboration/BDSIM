@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,24 +18,27 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 
-BDSCrystalInfo::BDSCrystalInfo(G4Material*    materialIn,
-			       G4String       dataIn,
-			       BDSCrystalType crystalTypeIn,
-			       G4double       lengthXIn,
-			       G4double       lengthYIn,
-			       G4double       lengthZIn,
-			       G4double       sizeAIn,
-			       G4double       sizeBIn,
-			       G4double       sizeCIn,
-			       G4double       alphaIn,
-			       G4double       betaIn,
-			       G4double       gammaIn,
-			       G4int          spaceGroupIn,
-			       G4double       bendingAngleYAxisIn,
-			       G4double       bendingAngleZAxisIn):
+#include <limits>
+
+BDSCrystalInfo::BDSCrystalInfo(G4Material*     materialIn,
+			       const G4String& dataIn,
+			       BDSCrystalType  crystalTypeIn,
+			       G4double        lengthXIn,
+			       G4double        lengthYIn,
+			       G4double        lengthZIn,
+			       G4double        sizeAIn,
+			       G4double        sizeBIn,
+			       G4double        sizeCIn,
+			       G4double        alphaIn,
+			       G4double        betaIn,
+			       G4double        gammaIn,
+			       G4int           spaceGroupIn,
+			       G4double        bendingAngleYAxisIn,
+			       G4double        bendingAngleZAxisIn):
   material(materialIn),
   data(dataIn),
   shape(crystalTypeIn),
@@ -52,3 +55,12 @@ BDSCrystalInfo::BDSCrystalInfo(G4Material*    materialIn,
   bendingAngleYAxis(bendingAngleYAxisIn),
   bendingAngleZAxis(bendingAngleZAxisIn)
 {;}
+
+G4double BDSCrystalInfo::BendingRadius(G4double length,
+				       G4double angle) const
+{
+  if (BDS::IsFinite(angle))
+    {return length / angle;}
+  else
+    {return std::numeric_limits<double>::max();}
+}

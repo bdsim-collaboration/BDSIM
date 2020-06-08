@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTRUN_H
 #define BDSOUTPUTROOTEVENTRUN_H
 
-#include "TROOT.h"
+#include "Rtypes.h"
 #include "TObject.h"
 
 #include <ctime>
+#include <string>
 
 class BDSOutputROOTEventInfo;
 
@@ -42,10 +43,11 @@ public:
 
   time_t startTime;
   time_t stopTime;
-  double duration;
+  double durationWall;
+  double durationCPU;
   std::string seedStateAtStart; ///< Seed state at the start of the event.
   
-  ClassDef(BDSOutputROOTEventRunInfo,2);
+  ClassDef(BDSOutputROOTEventRunInfo,3);
 };
 
 #endif

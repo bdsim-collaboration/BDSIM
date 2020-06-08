@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -37,10 +37,10 @@ public:
   ~BDSColours();
 
   /// Get colour from name
-  G4Colour* GetColour(G4String type);
+  G4Colour* GetColour(const G4String& type);
 
   /// Define a new colour.
-  void DefineColour(G4String name,
+  void DefineColour(const G4String& name,
 		    G4double red,
 		    G4double green,
 		    G4double blue,

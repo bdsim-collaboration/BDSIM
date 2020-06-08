@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
@@ -44,11 +45,11 @@ using namespace GMAD;
 BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName,
 					     const Element*          element,
 					     BDSMagnetStrength*      st,
-					     const G4double          brho,
+					     G4double                brho,
 					     const BDSIntegratorSet* integratorSet,
-					     const G4double&         incomingFaceAngle,
-					     const G4double&         outgoingFaceAngle,
-					     const G4bool&           buildFringeFields,
+					     G4double                incomingFaceAngle,
+					     G4double                outgoingFaceAngle,
+					     G4bool                  buildFringeFields,
 					     const GMAD::Element*    prevElement,
 					     const GMAD::Element*    nextElement)
 {
@@ -101,11 +102,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	    {
 	      buildFringeIncoming = false;
 	      if (BDS::IsFinite(prevElement->e2 - element->e1))
-		{
-		  G4cerr << __METHOD_NAME__ << prevElement->name << " e2 clashes with "
-			 << elementName << " e1" << G4endl;
-		  exit(1);
-		}
+		{throw BDSException( __METHOD_NAME__, prevElement->name + " e2 clashes with " + elementName + " e1");}
 	    }
 	}
       if (nextElement)
@@ -147,13 +144,22 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 								-outgoingFaceAngle,
 								bpInfo,
 								yokeOnLeft);
+
+      BDSFieldInfo* outerField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
+										  BDSFieldType::dipole,
+										  bpInfo,
+										  mgInfo,
+										  fieldTiltOffset,
+										  integratorSet,
+										  brho);
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
 					 arcLength,
 					 bpInfo,
 					 mgInfo,
 					 vacuumField,
-					 -angle); // angle 0, but should be minus for 3d cart.
+					 -angle,
+					 outerField); // angle 0, but should be minus for 3d cart.
       return oneBend;
     }
 
@@ -193,7 +199,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 
   // unlike an rbend, the sbend will mostly likely be split up into segments.
   // we must check that the faces of each segment (varying from e1 to e2) will
-  // not overlap given the outer diamter.
+  // not overlap given the outer diameter.
   // calculate extent along z due poleface rotation at half the horizontal width.
   G4double horizontalWidth = BDSComponentFactory::PrepareHorizontalWidth(element);
   if (incomingFaceAngle > 0)
@@ -225,6 +231,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(centralName, element,
 							    0.5*semiAngle, 0.5*semiAngle, bpInfo,
 							    yokeOnLeft);
+  BDSFieldInfo* semiOuterField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(semiStrength,
+                                                                              BDSFieldType::dipole,
+                                                                              bpInfo,
+                                                                              mgInfo,
+                                                                              fieldTiltOffset,
+                                                                              integratorSet,
+                                                                              brho);
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
@@ -232,20 +245,35 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					  bpInfo,
 					  mgInfo,
 					  semiVacuumField,
-					  -semiAngle); // minus for 3d cartesian conversion
+					  -semiAngle,
+					  semiOuterField); // minus for 3d cartesian conversion
   
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo("checking", element,
-											 -incomingFaceAngle,
-                                                                                         -outgoingFaceAngle,
-											 bpInfo,
-											 yokeOnLeft);
+  auto magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo("checking", element,
+											                              -incomingFaceAngle,
+                                                                          -outgoingFaceAngle,
+											                              bpInfo, yokeOnLeft);
   // minus for conversion to 3d cartesian
-  BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
-						      magnetOuterInfoCheck->horizontalWidth,
-						      centralName);
-  // clean up
-  delete magnetOuterInfoCheck;
+  G4double minimalRadius = 2*magnetOuterInfoCheck->MinimumIntersectionRadiusRequired();
+  // extra pedantic check for dipoles with certain geometry types
+  if (!magnetOuterInfoCheck->hStyle)
+    {// in the case of C-shaped poled dipoles, the full 'horizontalWidth' is shifted to the yoke side
+      switch (magnetOuterInfoCheck->geometryType.underlying())
+        {
+          case BDSMagnetGeometryType::polescircular:
+          case BDSMagnetGeometryType::polesfacet:
+          case BDSMagnetGeometryType::polesfacetcrop:
+          case BDSMagnetGeometryType::polessquare:
+            {
+              minimalRadius *= element->yokeOnInside ? 2.0 : 0.5;
+              break;
+            }
+          default:
+            {break;}
+        }
+    }
+  BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle, minimalRadius, element->name);
+  delete magnetOuterInfoCheck; // clean up
   
   // build incoming fringe field if required
   if (buildFringeIncoming)
@@ -286,7 +314,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,incomingFaceAngle,outgoingFaceAngle,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
-					      brho, integratorSet, yokeOnLeft);
+					      brho, integratorSet, yokeOnLeft, semiOuterField);
 	    }
           else
             {// finite pole face, but not strong so build one angled, then repeat the rest to save memory
@@ -298,7 +326,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 		  segmentAngleOut = 0.5*semiAngle;      // even matching angle
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
-						  brho, integratorSet, yokeOnLeft);
+						  brho, integratorSet, yokeOnLeft, semiOuterField);
 		}
               else // others afterwards are a repeat of the even angled one
                 {oneBend = centralWedge;}
@@ -315,7 +343,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,incomingFaceAngle,outgoingFaceAngle,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
-					      brho, integratorSet, yokeOnLeft);
+					      brho, integratorSet, yokeOnLeft, semiOuterField);
 	    }
           else
             {// finite pole face, but not strong so build only one unique angled on output face
@@ -327,7 +355,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 		  segmentAngleOut = 0.5*semiAngle - outgoingFaceAngle;
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
-						  brho, integratorSet, yokeOnLeft);
+						  brho, integratorSet, yokeOnLeft, semiOuterField);
 		}
               else // after central, but before unique end piece - even angled.
                 {oneBend = centralWedge;}
@@ -357,11 +385,11 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   return sbendline;
 }
 
-void BDS::UpdateSegmentAngles(const G4int index,
-			      const G4int nSBends,
-			      const G4double semiAngle,
-			      const G4double incomingFaceAngle,
-			      const G4double outgoingFaceAngle,
+void BDS::UpdateSegmentAngles(G4int index,
+			      G4int nSBends,
+			      G4double semiAngle,
+			      G4double incomingFaceAngle,
+			      G4double outgoingFaceAngle,
 			      G4double& segmentAngleIn,
 			      G4double& segmentAngleOut)
 {
@@ -402,15 +430,16 @@ void BDS::UpdateSegmentAngles(const G4int index,
 }
 
 BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
-				 const G4String           name,
-				 const G4double           arcLength,
-				 const G4double           angle,
-				 const G4double           angleIn,
-				 const G4double           angleOut,
+				 const G4String&          name,
+				 G4double                 arcLength,
+				 G4double                 angle,
+				 G4double                 angleIn,
+				 G4double                 angleOut,
 				 const BDSMagnetStrength* strength,
-				 const G4double           brho,
+				 G4double                 brho,
 				 const BDSIntegratorSet*  integratorSet,
-				 const G4bool             yokeOnLeft)
+				 G4bool                   yokeOnLeft,
+				 const BDSFieldInfo*      outerFieldIn)
 {
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   
@@ -430,6 +459,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 					       strengthCopy,
 					       true,
 					       fieldTiltOffset);
+
+  BDSFieldInfo* outerField = new BDSFieldInfo(*outerFieldIn);
   
   BDSMagnet* magnet = new BDSMagnet(BDSMagnetType::sectorbend,
 				    name,
@@ -437,7 +468,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				    bpInfo,
 				    magnetOuterInfo,
 				    vacuumField,
-				    -angle);
+				    -angle,
+				    outerField);
   
   return magnet;
 }
@@ -446,12 +478,12 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const Element*          element,
 			     const Element*          prevElement,
 			     const Element*          nextElement,
-			     const G4double          brho,
+			     G4double                brho,
 			     BDSMagnetStrength*      st,
 			     const BDSIntegratorSet* integratorSet,
-			     const G4double&         incomingFaceAngle,
-			     const G4double&         outgoingFaceAngle,
-			     const G4bool&           buildFringeFields)
+			     G4double                incomingFaceAngle,
+			     G4double                outgoingFaceAngle,
+			     G4bool                  buildFringeFields)
 {
   const G4String name = elementName;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
@@ -511,9 +543,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     {
       if (BDS::IsFinite(prevElement->e2) && BDS::IsFinite(element->e1))
 	{
-	  G4cerr << __METHOD_NAME__ << prevElement->name << " has finite e2!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e1" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__, prevElement->name + " has finite e2!\n Clashes with " + elementName + " with finite e1");
 	}
       if (prevElement->type == ElementType::_RBEND)
 	{
@@ -525,9 +555,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     {
       if (BDS::IsFinite(nextElement->e1) && BDS::IsFinite(element->e2))
 	{
-	  G4cerr << __METHOD_NAME__ << nextElement->name << " has finite e1!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e2" << G4endl;
-	  exit(1);
+	  throw BDSException(__METHOD_NAME__ + nextElement->name + " has finite e1!\n Clashes with " + elementName + " with finite e2");
 	}
       if (nextElement->type == ElementType::_RBEND)
 	{
@@ -662,11 +690,11 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  G4double                 angleIn,
 				  G4double                 angleOut,
-				  G4String                 name,
+				  const G4String&          name,
 				  const BDSMagnetStrength* st,
 				  G4double                 brho,
 				  const BDSIntegratorSet*  integratorSet,
-                  BDSFieldType             dipoleFieldType)
+				  BDSFieldType             dipoleFieldType)
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -697,11 +725,11 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 		       true);
 }
 
-G4int BDS::CalculateNSBendSegments(const G4double& length,
-				   const G4double& angle,
-				   const G4double incomingFaceAngle,
-				   const G4double outgoingFaceAngle,
-				   const G4double aperturePrecision)
+G4int BDS::CalculateNSBendSegments(G4double length,
+				   G4double angle,
+				   G4double incomingFaceAngle,
+				   G4double outgoingFaceAngle,
+				   G4double aperturePrecision)
 {
   // Split a bend into equal segments such that the maximum distance between the
   // chord and arc is 1mm.
@@ -740,11 +768,11 @@ BDSIntegratorType BDS::GetDipoleIntegratorType(const BDSIntegratorSet* integrato
 
 BDSMagnetStrength* BDS::GetFringeMagnetStrength(const Element*           element,
                                                 const BDSMagnetStrength* st,
-                                                const G4double           fringeAngle,
-                                                const G4double           e1,
-                                                const G4double           e2,
-                                                const G4double           fintx,
-                                                const G4bool             isEntrance)
+                                                G4double           fringeAngle,
+                                                G4double           e1,
+                                                G4double           e2,
+                                                G4double           fintx,
+                                                G4bool             isEntrance)
 {
   BDSMagnetStrength* fringeSt   = new BDSMagnetStrength(*st);
   (*fringeSt)["length"]         = BDSGlobalConstants::Instance()->ThinElementLength();

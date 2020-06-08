@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -16,19 +16,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMagnetOuterFactoryLHC.hh"
-
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
-#include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
+#include "BDSMagnetOuterFactoryCylindrical.hh"
+#include "BDSMagnetOuterFactoryLHC.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
@@ -141,12 +141,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   if (innerCoilInnerRadius > (massShift - collarBoxHalfWidth))
     {buildCollar = false;}
   if (innerCoilInnerRadius > collarOuterRadius)
-    {
-      // pipe is too big to use with this geometry!
-      G4cerr << __METHOD_NAME__ << "this beam pipe is too big to use with the LHC dipole geometry" << G4endl;
-      G4cerr << "Please consider using a different magnet geometry for this particular magnet" << G4endl;
-      G4cerr << "Magnet named: " << name << G4endl;
-      exit(1);
+    {// pipe is too big to use with this geometry!
+      throw BDSException(__METHOD_NAME__, "error in component \"" + name + "\"\n" +
+			 "this beam pipe is too big to use with the LHC dipole geometry\n" +
+			 "Please consider using a different magnet geometry for this particular magnet");
     }
 
   G4ThreeVector dipolePosition; // translation of whole assembly relative to centre of active pipe
@@ -320,22 +318,22 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   //buildInnerCoil = false;
   if (buildInnerCoil)
     {
-      coil1Inner = new G4CutTubs(name+"_coil1_inner_solid",            // name
-				 innerCoilInnerRadius,                 // inner radius
-				 innerCoilOuterRadius,                 // outer radius
-				 length*0.5 - lengthSafetyLarge,       // length
-				 -coilInnerFullAngle*0.5,              // start angle
-				 coilInnerFullAngle,                   // sweep angle
-				 inputFaceNormal,                      // input face normal
-				 outputFaceNormal);                    // output face normal
-      coil2Inner = new G4CutTubs(name+"_coil2_inner_solid",            // name
-				 innerCoilInnerRadius,                 // inner radius
-				 innerCoilOuterRadius,                 // outer radius
-				 length*0.5 - lengthSafetyLarge,       // length
-				 CLHEP::pi-coilInnerFullAngle*0.5,     // start angle
-				 coilInnerFullAngle,                   // sweep angle
-				 inputFaceNormal,                      // input face normal
-				 outputFaceNormal);                    // output face normal
+      coil1Inner = new G4CutTubs(name+"_coil1_inner_solid",                // name
+				 innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+				 innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+				 length*0.5 - lengthSafetyLarge,           // length
+				 -coilInnerFullAngle*0.5,                  // start angle
+				 coilInnerFullAngle,                       // sweep angle
+				 inputFaceNormal,                          // input face normal
+				 outputFaceNormal);                        // output face normal
+      coil2Inner = new G4CutTubs(name+"_coil2_inner_solid",                // name
+				 innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+				 innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+				 length*0.5 - lengthSafetyLarge,           // length
+				 CLHEP::pi-coilInnerFullAngle*0.5,         // start angle
+				 coilInnerFullAngle,                       // sweep angle
+				 inputFaceNormal,                          // input face normal
+				 outputFaceNormal);                        // output face normal
       coil1InnerLV =  new G4LogicalVolume(coil1Inner,
 					  nbti,
 					  name+"_coil1_Inner_lv");
@@ -369,29 +367,29 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
       allPhysicalVolumes.insert(coil1InnerPV);
       allPhysicalVolumes.insert(coil2InnerPV);
 
-      collar1PoleTopInnerSolid    = new G4CutTubs(name+"_collar1_pole_inner_top",      // name
-						  innerCoilInnerRadius,                // inner radius
-						  innerCoilOuterRadius,                // outer radius
-						  length*0.5 - lengthSafetyLarge,      // length
+      collar1PoleTopInnerSolid    = new G4CutTubs(name+"_collar1_pole_inner_top",           // name
+						  innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+						  innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+						  length*0.5 - lengthSafetyLarge,           // length
 						  CLHEP::pi*0.5-poleInnerFullAngle*0.5,// start angle
-						  poleInnerFullAngle,                  // sweep angle
-						  inputFaceNormal,                     // input face normal
-						  outputFaceNormal);                   // output face normal
-      collar1PoleBottomInnerSolid = new G4CutTubs(name+"_collar1_pole_inner_bottom",   // name
-						  innerCoilInnerRadius,                // inner radius
-						  innerCoilOuterRadius,                // outer radius
-						  length*0.5 - lengthSafetyLarge,      // length
-						  CLHEP::pi*1.5-poleInnerFullAngle*0.5,// start angle
-						  poleInnerFullAngle,                  // sweep angle
-						  inputFaceNormal,                     // input face normal
-						  outputFaceNormal);                   // output face normal
+						  poleInnerFullAngle,                       // sweep angle
+						  inputFaceNormal,                          // input face normal
+						  outputFaceNormal);                        // output face normal
+      collar1PoleBottomInnerSolid = new G4CutTubs(name+"_collar1_pole_inner_bottom",        // name
+						  innerCoilInnerRadius + lengthSafetyLarge, // inner radius
+						  innerCoilOuterRadius - lengthSafetyLarge, // outer radius
+						  length*0.5 - lengthSafetyLarge,           // length
+						  CLHEP::pi*1.5-poleInnerFullAngle*0.5,     // start angle
+						  poleInnerFullAngle,                       // sweep angle
+						  inputFaceNormal,                          // input face normal
+						  outputFaceNormal);                        // output face normal
       collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
 						     stainlesssteel,
 						     name+"_collar1_pole_top_inner_lv");
       collar1PoleBottomInnerLV = new G4LogicalVolume(collar1PoleBottomInnerSolid,
 						     stainlesssteel,
 						     name+"_collar1_pole_bottom_inner_lv");
-      
+
       collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
       collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
 
@@ -910,8 +908,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = yokeOuterRadius;
   // massShift defined at very beginning of this function
-  // TBC - x component of this to be checked!
-  BDSExtent ext = BDSExtent(-containerRadius+massShift, containerRadius-massShift,
+  BDSExtent ext = BDSExtent(-containerRadius, containerRadius,
 			    -containerRadius,containerRadius,
 			    -length*0.5,length*0.5);
 
@@ -1014,12 +1011,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
     {buildCollar = false;}
   G4bool buildAtAll = containerInnerRadius > (beamPipeAxisSeparation - collarOuterRadius - 1*CLHEP::mm);
   if ((coilInnerRadius > collarOuterRadius) || buildAtAll)
-    {
-      // pipe is too big to use with this geometry!
-      G4cerr << __METHOD_NAME__ << "this beam pipe is too big to use with the LHC dipole geometry" << G4endl;
-      G4cerr << "Please consider using a different magnet geometry for this particular magnet" << G4endl;
-      G4cerr << "Magnet named: " << name << G4endl;
-      exit(1);
+    {// pipe is too big to use with this geometry!
+      throw BDSException(__METHOD_NAME__, "error in component \"" + name + "\"\n" +
+			 "this beam pipe is too big to use with the LHC dipole geometry\n" +
+			 "Please consider using a different magnet geometry for this particular magnet");
     }
 
   G4ThreeVector dipolePosition; // translation of whole assembly relative to centre of active pipe
@@ -1504,9 +1499,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = yokeOuterRadius;
-  // massShift defined at very beginning of this function
-  // TBC - x component to be checked.
-  BDSExtent ext = BDSExtent(-containerRadius+massShift,containerRadius+massShift,
+  // Here the extent is considered without any offset.
+  BDSExtent ext = BDSExtent(-containerRadius,containerRadius,
 			    -containerRadius,containerRadius,
 			    -length*0.5,length*0.5);
   

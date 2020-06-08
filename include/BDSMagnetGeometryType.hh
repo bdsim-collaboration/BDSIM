@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -31,8 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct magnetgeometrytypes_def
 {
-  enum type { none, cylindrical, polescircular, polessquare, polesfacet,
-	      polesfacetcrop, lhcleft, lhcright, external };
+  enum type {none, cylindrical, polescircular, polessquare, polesfacet,
+	      polesfacetcrop, lhcleft, lhcright, external};
 };
 
 typedef BDSTypeSafeEnum<magnetgeometrytypes_def, G4int> BDSMagnetGeometryType;

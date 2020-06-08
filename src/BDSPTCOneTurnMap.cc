@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
@@ -34,9 +35,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(const G4String& maptableFile,
 				   const BDSParticleDefinition* designParticle):
-  beamOffsetS0(false)
+  initialPrimaryMomentum(0),
+  beamOffsetS0(false),
+  lastTurnNumber(0),
+  xLastTurn(0),
+  pxLastTurn(0),
+  yLastTurn(0),
+  pyLastTurn(0),
+  deltaPLastTurn(0)
 {
   referenceMomentum = designParticle->Momentum();
   mass = designParticle->Mass();
@@ -45,11 +53,7 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
   G4cout << __METHOD_NAME__ << "Using map table " << filePath << G4endl;
   std::ifstream infile(filePath);
   if (!infile)
-    {
-      G4String message = "Failed to read maptable: \"" + maptableFile + "\"";
-      G4cerr << __METHOD_NAME__ << message << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Failed to read maptable: \"" + maptableFile + "\"");}
 
   // The columns of the maptable TFS (read into below with the stringsteam).
   G4String name = "";
@@ -90,10 +94,7 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile,
 	  {deltaPTerms.push_back(term); break;}
 	default:
 	  {
-	    G4String message = "Unrecognised PTC term index.  Your maptable file "
-	      "is perhaps malformed.";
-	    G4cerr << __METHOD_NAME__ << message << G4endl;
-	    exit(1);
+	    throw BDSException(__METHOD_NAME__, "Unrecognised PTC term index - maptable file is perhaps malformed.");
 	    break;
 	  }
 	}
@@ -107,15 +108,13 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
 						    G4bool beamOffsetS0In)
 {
   lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
-  initialPrimaryMomentum =
-      std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
+  initialPrimaryMomentum = std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
   // Converting to PTC Coordinates:
   xLastTurn  = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
   yLastTurn  = coords.local.y / CLHEP::m;
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
-  deltaPLastTurn =
-      (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
+  deltaPLastTurn = (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
 
   turnsScattered.clear();
 
@@ -132,12 +131,12 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
 				   G4double& pz,
 				   G4int turnsTaken)
 {
-  auto xOut = 0.0;
-  auto yOut = 0.0;
-  auto pxOut = 0.0;
-  auto pyOut = 0.0;
-  auto pzOut = 0.0;
-  auto deltaPOut = 0.0;
+  G4double xOut = 0.0;
+  G4double yOut = 0.0;
+  G4double pxOut = 0.0;
+  G4double pyOut = 0.0;
+  G4double pzOut = 0.0;
+  G4double deltaPOut = 0.0;
 
   // In short: lastTurnNumber exists to prevent the map being
   // applied multiple times in one turn.
@@ -223,8 +222,9 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
   pyOut *= referenceMomentum;
   // by defn the particle has the initial primary momentum, which we
   // used to calculate pz.
-  pzOut = std::sqrt(std::pow(initialPrimaryMomentum, 2) - std::pow(px, 2) -
-                    std::pow(py, 2));
+  pzOut = std::sqrt(std::pow(initialPrimaryMomentum, 2)
+		    - std::pow(px, 2)
+		    - std::pow(py, 2));
 
   // Now set output for arguments passed by reference.
   x  = xOut;
@@ -252,7 +252,7 @@ G4double BDSPTCOneTurnMap::Evaluate(std::vector<PTCMapTerm>& terms,
 				    G4double py,
                                     G4double deltaP) const
 {
-  auto result = 0.;
+  G4double result = 0;
   for (const auto& term : terms)
     {
       result += (term.coefficient

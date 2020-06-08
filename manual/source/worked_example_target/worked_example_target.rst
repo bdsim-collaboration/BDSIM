@@ -287,7 +287,7 @@ Question 2
 * What spectrum of particles comes out after the target?
 
 The ideal plot here would be histograms of different particle species for different
-energies, i.e. a line for each particle type. To do this, we again hsitogram the
+energies, i.e. a line for each particle type. To do this, we again histogram the
 particles recorded in the sampler after the target. We histogram the energy for
 each particle species. The following analysis is used. ::
 
@@ -307,8 +307,9 @@ The particle IDs are the Particle Data Group IDs that can be found online at
 After the target there is air as this is the default `worldMaterial` (see
 :ref:`options-common`). Potentially, a (likely secondary) particle could
 bounce back off of the air and go through the sampler before hitting the
-target again. We could change to the world material option to "vacuum"
-to avoid this or add the filter of the z component of the momentum is
+target again. We could change to the world material option to vacuum
+(:code:`option, worldMaterial="G4_Galactic";`) to avoid this or add the
+filter of the z component of the momentum is
 positive - i.e. forwards travelling. This is why we have :code:`c1.zp>0`
 in all of the selections above. We can quickly check if there are any backwards
 going particles at all by inspecting the data in a ROOT TBrowser (see
@@ -360,26 +361,26 @@ the plot. This is included with this example as :code:`plotSpectra.py`. ::
           h   = pybdsim.Data.PadHistogram1D(ho)
           _plt.errorbar(h.xcentres, h.contents, yerr=h.errors, drawstyle="steps-mid", label=name)
 
-    binWidth = d.histogramspy["Event/PerEntryHistograms/Q2"+extra+"All"].xwidths[0]
+      binWidth = d.histogramspy["Event/PerEntryHistograms/Q2"+extra+"All"].xwidths[0]
         
-    if log:
-        _plt.xscale("log")
-        _plt.ylabel("Number / Proton / d\,log(E) GeV")
-        _plt.xlim(9,6700)
-        _plt.ylim(1e-3,2)
-    else:
-        _plt.ylabel("Number / Proton / " + str(round(binWidth,0)) + " GeV")
-        _plt.xlim(-50,6600)
-        _plt.ylim(1e-3,1e3)
+      if log:
+          _plt.xscale("log")
+          _plt.ylabel("Number / Proton / d\,log(E) GeV")
+          _plt.xlim(9,6700)
+          _plt.ylim(1e-3,2)
+      else:
+          _plt.ylabel("Number / Proton / " + str(round(binWidth,0)) + " GeV")
+          _plt.xlim(-50,6600)
+          _plt.ylim(1e-3,1e3)
+      
+      _plt.xlabel('Total Particle Energy (GeV)')
+      _plt.yscale('log', nonposy='clip')
+      _plt.legend(fontsize="small")
+      _plt.tight_layout()
 
-    _plt.xlabel('Total Particle Energy (GeV)')
-    _plt.yscale('log', nonposy='clip')
-    _plt.legend(fontsize="small")
-    _plt.tight_layout()
-
-    if not outputfilename.endswith(".pdf"):
-        outputfilename += ".pdf"
-    _plt.savefig(outputfilename)
+      if not outputfilename.endswith(".pdf"):
+          outputfilename += ".pdf"
+      _plt.savefig(outputfilename)
 
 We can use this as follows: ::
 
@@ -426,8 +427,8 @@ This produces the following figure.
 
 This is more informative but still we are lacking statistics. Given the first generation
 of data took less than 10 seconds, we can rerun 3000, reanalyse the new data using rebdsim
-and make new plots. Below are such plots for 3000 events. On the developer's computer took
-90 seconds to run.
+and make new plots. Below are such plots for 3000 events. On the developer's computer this
+took 90 seconds to run.
 
 .. figure:: target-q2-spectra-3k.pdf
 	    :width: 100%

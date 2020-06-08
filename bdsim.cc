@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * \mainpage
  * BDSIM © 2001-@CURRENT_YEAR@
+ * Reference: Computer Physics Communications, 252, 107200 (2020)
+ *            https://doi.org/10.1016/j.cpc.2020.107200
+ *            https://arxiv.org/abs/1808.10745
+ * Website:   http://www.pp.rhul.ac.uk/bdsim
  *
  * version @BDSIM_VERSION@
  */
@@ -32,9 +36,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char** argv)
 {
+  BDSIM* bds = nullptr;
   try
     {
-      BDSIM* bds = new BDSIM(argc, argv);
+      bds = new BDSIM(argc, argv);
       if (!bds->Initialised())
 	{
 	  if (bds->InitialisationResult() == 1) // if 2 it's ok
@@ -47,11 +52,13 @@ int main(int argc, char** argv)
   catch (const BDSException& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;
+      delete bds;
       exit(1);
     }
   catch (const std::exception& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;
+      delete bds;
       exit(1);
     }
   return 0;

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -174,8 +174,11 @@ void Parser::Initialise()
   add_func("atan",std::atan);
   add_func("abs",std::abs);
  
-  add_var("pi",4.0*std::atan(1),reserved);
+  add_var("pi",     4.0*std::atan(1),reserved);
+  add_var("twopi",  8.0*std::atan(1),reserved);
+  add_var("halfpi", 2.0*std::atan(1),reserved);
 
+  add_var("PeV",1e+6,reserved);
   add_var("TeV",1e+3,reserved);
   add_var("GeV",1.0 ,reserved);
   add_var("MeV",1e-3,reserved);
@@ -267,7 +270,7 @@ void Parser::expand_line(FastList<Element>& target,
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
-    std::cerr << "'ERROR" << name << "' is not a line" << std::endl;
+    std::cerr << "Error with use command: \"" << name << "\" is not a line" << std::endl;
     exit(1);
   }
 
@@ -631,7 +634,7 @@ void Parser::Overwrite(const std::string& objectName)
 
   // possible object types are:
   // element, atom, colour, crystal, field, material, physicsbiasing, placement,
-  // query, region, tunnel, cavitymodel, samplerplacement, aperture
+  // query, region, tunnel, cavitymodel, samplerplacement, aperture, blm
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end())
@@ -662,6 +665,7 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
     else if ( (extended = FindAndExtend<SamplerPlacement>(objectName)) ) {}
     else if ( (extended = FindAndExtend<Aperture>   (objectName)) ) {}
+    else if ( (extended = FindAndExtend<BLMPlacement> (objectName)) ) {}
   }
 
   if (extended==false)
@@ -809,6 +813,12 @@ namespace GMAD {
 
   template<>
   std::vector<SamplerPlacement>& Parser::GetList<SamplerPlacement>() {return samplerplacement_list;}
+
+  template<>
+  BLMPlacement& Parser::GetGlobal() {return blm;}
+
+  template<>
+  std::vector<BLMPlacement>& Parser::GetList<BLMPlacement>() {return blm_list;}
 
   template<>
   Aperture& Parser::GetGlobal() {return aperture;}

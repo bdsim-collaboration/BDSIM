@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
@@ -89,12 +90,13 @@ public:
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
-  BDSAcceleratorComponent* CreateTerminator();
+  BDSAcceleratorComponent* CreateTerminator(G4double witdth);
 
   /// Public creation for object that accounts for slight offset between ends of a ring.
   /// The z component of the delta three vector is used for the length of the teleporter.
-  BDSAcceleratorComponent* CreateTeleporter(const G4double teleporterLength,
-					    const G4Transform3D transformIn);
+  BDSAcceleratorComponent* CreateTeleporter(const G4double       teleporterLength,
+					    const G4double       teleporterWidth,
+					    const G4Transform3D& transformIn);
 
   /// Create the tilt and offset information object by inspecting the parser element
   static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
@@ -127,11 +129,14 @@ public:
   static G4double PrepareHorizontalWidth(GMAD::Element const* el,
 					 G4double defaultHorizontalWidth = -1);
 
-  BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
-                                            const BDSFieldType&       fieldType,
-					    const BDSBeamPipeInfo*    bpInfo,
-                                            const BDSMagnetOuterInfo* outerInfo,
-					    const G4Transform3D&      fieldTransform) const;
+  /// Prepare the field definition for the yoke of a magnet.
+  static BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
+						   const BDSFieldType&       fieldType,
+						   const BDSBeamPipeInfo*    bpInfo,
+						   const BDSMagnetOuterInfo* outerInfo,
+						   const G4Transform3D&      fieldTransform,
+						   const BDSIntegratorSet*   integratorSetIn,
+						   G4double                  brhoIn);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -174,7 +179,7 @@ public:
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double horizontalWidth,
-					     G4String name = "not given");
+					     const G4String& name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
@@ -233,13 +238,20 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateWireScanner();
   BDSAcceleratorComponent* CreateRMatrix();
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double        angleIn,
+					     const G4String& name);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     const BDSMagnetStrength* stIn,
-					     G4String name);
-  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
-					     G4String name);
+					     const G4String&          name,
+					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
+					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
+					     G4double                 beamPipeRadius = 0);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
+  BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
+					      const BDSMagnetStrength* stIn,
+					      const G4String&          name,
+					      G4double                 irisRadius);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
@@ -248,15 +260,15 @@ private:
 
   /// Helper method for common magnet construction
   BDSMagnet* CreateMagnet(const GMAD::Element* el,
-			  BDSMagnetStrength* st,
-			  BDSFieldType  fieldType,
-			  BDSMagnetType magnetType,
-			  G4double      angle = 0.0,
-  G4String nameSuffix = "") const;
+			  BDSMagnetStrength*   st,
+			  BDSFieldType         fieldType,
+			  BDSMagnetType        magnetType,
+			  G4double             angle = 0.0,
+			  const G4String&      nameSuffix = "") const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
-				    const G4bool& printWarning = true);
+				    G4bool               printWarning = true);
 
   /// Prepare the vacuum material from the element or resort to default in options.
   G4Material* PrepareVacuumMaterial(GMAD::Element const* el) const;
@@ -287,11 +299,15 @@ private:
   /// Will always return a unique object that's not owned by this class.
   BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* el,
 						  G4double             frequency) const;
-  
-  /// Utility function to prepare field strength object for rf cavity.
-  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
-					   G4double currentArcLength) const;
 
+  /// Utility function to prepare field strength object for rf cavity. This takes a pointer
+  /// for both incoming and outgoing strengths that this function will allocate by reference.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
+					   G4double cavityLength,
+					   G4double currentArcLength,
+					   BDSMagnetStrength*& fringeIn,
+					   BDSMagnetStrength*& fringeOut) const;
+  
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.

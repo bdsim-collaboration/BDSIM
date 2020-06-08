@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -63,6 +63,8 @@ public:
 #ifndef __ROOTBUILD__
   void Fill(const BDSHitEnergyDepositionGlobal* hit);
 #endif
+  /// Fill from another instance.
+  void Fill(const BDSOutputROOTEventLossWorld* other);
   virtual void Flush();
 
   ClassDef(BDSOutputROOTEventLossWorld,1);

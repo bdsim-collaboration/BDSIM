@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -37,14 +37,18 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
   brho(brhoIn)
 {
   b0l = (*strength)["field"] * brho;
+  G4double l = (*strength)["length"] / CLHEP::m;
+  // avoid potential div by zero in strength normalisation
+  if (!BDS::IsFinite(l))
+    {l=1*CLHEP::m;}
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
   std::vector<G4String>::iterator skey = skewKeys.begin();
   for (G4double i = 0; i < normKeys.size(); i++, ++nkey, ++skey)
     {
-      bnl.push_back((*strength)[*nkey] / std::pow(CLHEP::m,i+1));
-      bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
+      bnl.push_back((*strength)[*nkey] / (l*std::pow(CLHEP::m,i+1)));
+      bsl.push_back((*strength)[*skey] / (l*std::pow(CLHEP::m,i+1)));
       nfact.push_back(Factorial(i));
     }
 

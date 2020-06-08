@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -172,6 +172,8 @@ int BDSOutputROOTGeant4Data::IonA(const int& pdgID) const
       else
 	{return 0;}
     }
+  else if (pdgID == 2212)
+    {return 1;}
   else
     {return 0;}
 }
@@ -186,12 +188,14 @@ int BDSOutputROOTGeant4Data::IonZ(const int& pdgID) const
       else
 	{return 0;}
     }
+  else if (pdgID == 2212)
+    {return 1;}
   else
     {return 0;}
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
+void BDSOutputROOTGeant4Data::Fill(G4bool fillIons)
 {
   G4ParticleTable* pt = G4ParticleTable::GetParticleTable();
 

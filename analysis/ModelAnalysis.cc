@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,9 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ModelAnalysis.hh"
 
-#include "TROOT.h"
 #include "Model.hh"
-#include "TChain.h"
 
 ClassImp(ModelAnalysis)
 
