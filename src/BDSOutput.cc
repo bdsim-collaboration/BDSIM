@@ -203,10 +203,12 @@ void BDSOutput::FillModel()
 {
   if (storeModel)
     {
+      const auto& smpm = BDSAcceleratorModel::Instance()->ScorerMeshPlacementsMap();
       modelOutput->Fill(collimatorIndices,
 			collimatorIndicesByName,
 			collimatorInfo,
-			collimatorNames);
+			collimatorNames,
+			&smpm);
       WriteModel();
       ClearStructuresModel();
     }
