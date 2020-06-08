@@ -68,7 +68,7 @@ public:
   /// Constructor with base file name (without extension or number suffix).
   BDSOutput(const G4String& baseFileNameIn,
 	    const G4String& fileExtentionIn,
-	    G4int    fileNumberOffset);
+	    G4int           fileNumberOffset);
   virtual ~BDSOutput(){;}
 
   /// Open a new file. This should call WriteHeader() in it.
