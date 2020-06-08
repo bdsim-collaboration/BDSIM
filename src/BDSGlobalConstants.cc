@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
@@ -26,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSTrajectoryFilter.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -44,23 +46,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 #include <utility>
-#include <vector>
 
 BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if (!instance)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions(),
-				       BDSParser::Instance()->GetBeam());}
+    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
   return instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
-				       GMAD::Beam&          beamIn):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   options(opt),
-  beam(beamIn),
   turnsTaken(0)
 {
   ResetTurnNumber();
@@ -69,8 +68,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   numberToGenerate = G4int(options.nGenerate);
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
+  curvilinearDiameter = 5*CLHEP::m;
+  curvilinearDiameterShrunkForBends = false;
 
-  // beampipe
+  // beam pipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,
 					     options.aper2 * CLHEP::m,
@@ -87,7 +88,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
       G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" " << horizontalWidth
 	     << " must be greater than 2x (\"aper1\" + \"beamPipeThickness\") ("
 	     << defaultBeamPipeModel->aper1 << " + " << defaultBeamPipeModel->beamPipeThickness << ")" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__,"error in beam pipe defaults");
     }
   magnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
@@ -120,9 +121,19 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   InitialiseBeamlineTransform();
 
   BDSSamplerPlane::chordLength = LengthSafety();
-
-  ProcessTrajectorySamplerIDs();
+  
   ProcessTrajectoryELossSRange();
+
+  // mark which trajectory filters have been set
+  trajectoryFiltersSet[BDSTrajectoryFilter::depth]           = options.HasBeenSet("storeTrajectoryDepth");
+  trajectoryFiltersSet[BDSTrajectoryFilter::particle]        = options.HasBeenSet("storeTrajectoryParticle") ||
+    options.HasBeenSet("storeTrajectoryParticleID");
+  trajectoryFiltersSet[BDSTrajectoryFilter::energyThreshold] = options.HasBeenSet("storeTrajectoryEnergyThreshold");
+  trajectoryFiltersSet[BDSTrajectoryFilter::sampler]         = options.HasBeenSet("storeTrajectorySamplerID");
+  trajectoryFiltersSet[BDSTrajectoryFilter::elossSRange]     = options.HasBeenSet("storeTrajectoryElossSRange");
+  trajectoryFiltersSet[BDSTrajectoryFilter::transportation]  = options.HasBeenSet("storeTrajectoryTransportationSteps");
+  trajectoryFiltersSet[BDSTrajectoryFilter::minimumZ]        = options.HasBeenSet("trajCutGTZ");
+  trajectoryFiltersSet[BDSTrajectoryFilter::maximumR]        = options.HasBeenSet("trajCutLTR");
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
@@ -199,7 +210,7 @@ G4int BDSGlobalConstants::PrintModuloEvents() const
     {printModulo = 1;}
 
   if (!Batch())
-    {printModulo = 1;} // interative -> print every event
+    {printModulo = 1;} // interactive -> print every event
   return printModulo;
 }
 
@@ -212,7 +223,7 @@ G4int BDSGlobalConstants::PrintModuloTurns() const
     {printModulo = 1;}
 
   if (!Batch())
-    {printModulo = 1;} // interative -> print every turn
+    {printModulo = 1;} // interactive -> print every turn
   return printModulo;
 }
 
@@ -228,25 +239,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
   instance = nullptr;
 }
 
-void BDSGlobalConstants::ProcessTrajectorySamplerIDs()
-{
-  if (options.storeTrajectorySamplerID.empty())
-    {return;}
-  std::istringstream is(options.storeTrajectorySamplerID);
-  G4String tok;
-  while (is >> tok)
-    {
-      BDSSamplerRegistry* samplerRegistry = BDSSamplerRegistry::Instance();
-      G4int i = 0;
-      for (const auto& info : *samplerRegistry)
-        {
-          if (info.UniqueName() == tok)
-            {samplerIDs.push_back(i);}
-	  i++;
-        }
-    }
-}
-
 void BDSGlobalConstants::ProcessTrajectoryELossSRange()
 {
   if (options.storeTrajectoryELossSRange.empty())
@@ -255,9 +247,36 @@ void BDSGlobalConstants::ProcessTrajectoryELossSRange()
   std::string tok;
   while (is >> tok)
     {
-      G4int loc = tok.find(":",0);
-      G4double rstart = std::stod(tok.substr(0, loc));
-      G4double rend   = std::stod(tok.substr(loc+1,tok.size()));
-      elossSRange.emplace_back(rstart, rend);
+      std::size_t loc = tok.find(":",0);
+      if (loc == std::string::npos)
+	{throw BDSException(__METHOD_NAME__, "Error: no ':' character found in option storeTrajectoryELossSRange \"" + options.storeTrajectoryELossSRange + "\" - invalid range.");}
+      G4double rstart = 0;
+      G4double rend   = 0;
+      try
+	{
+	  rstart = std::stod(tok.substr(0, loc));
+	  rend   = std::stod(tok.substr(loc+1,tok.size()));
+	}
+      catch (const std::invalid_argument& e)
+	{
+	  G4cerr << "Invalid value \"" << tok << "\" in option storeTrajectoryELossSRange." << G4endl;
+	  throw BDSException(__METHOD_NAME__, "Error: can't convert string to number for option storeTrajectoryELossSRange.");
+	}
+      if (rend < rstart)
+	{
+	  G4String message = "Error in option storeTrajectoryElossSRange - end point "
+	    + std::to_string(rend) + " is less than beginning " + std::to_string(rstart) + ".";
+	  throw BDSException(__METHOD_NAME__, message);
+	}
+      elossSRange.emplace_back(rstart*CLHEP::m, rend*CLHEP::m);
     }
+}
+
+G4bool BDSGlobalConstants::StoreTrajectoryTransportationSteps() const
+{
+  // only if true we let this option take precedence
+  if (options.trajNoTransportation)
+    {return false;}
+  else
+    {return options.storeTrajectoryTransportationSteps;}
 }

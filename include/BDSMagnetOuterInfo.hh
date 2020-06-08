@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -18,12 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSMAGNETOUTERINFO_H
 #define BDSMAGNETOUTERINFO_H
-
 #include "BDSMagnetGeometryType.hh"
 
-#include "globals.hh"         // geant4 types / globals
+#include "globals.hh"
 
-#include <ostream>
+#include <cmath>
 
 class G4Colour;
 class G4Material;
@@ -45,7 +44,7 @@ public:
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(G4String              nameIn,
+  BDSMagnetOuterInfo(const G4String&         nameIn,
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              horizontalWidthIn,
 		     G4Material*           outerMaterialIn,
@@ -58,7 +57,7 @@ public:
 		     G4bool                buildEndPiecesIn      = true,
 		     G4double              coilWidthFractionIn   = 0.65,
 		     G4double              coilHeightFractionIn  = 0.8,
-		     G4String              geometryTypeAndPathIn = "",
+		     const G4String&       geometryTypeAndPathIn = "",
 		     G4Colour*             colourIn              = nullptr);
 
   G4String              name;
@@ -77,8 +76,7 @@ public:
   G4String              geometryTypeAndPath;
   G4Colour*             colour;
 
-  /// Output stream operator implementation.
-  friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
+  inline G4double MinimumIntersectionRadiusRequired() const {return std::hypot(0.5*horizontalWidth, 0.05*horizontalWidth*vhRatio);}
 };
 
 #endif

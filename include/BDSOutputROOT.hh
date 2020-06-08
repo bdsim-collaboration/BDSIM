@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -23,9 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
+#include "Rtypes.h"
+
+class TFile;
+class TTree;
 
 /**
  * @brief ROOT Event output class.
@@ -36,10 +37,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOT: public BDSOutput 
 {
 public:
+  /// No default constructor.
+  BDSOutputROOT() = delete;
+  
   /// Constructor with default file name (without extension or number suffix).
   /// Also, file number offset to start counting suffix from.
-  BDSOutputROOT(G4String fileName,
-		G4int    fileNumberOffset);
+  BDSOutputROOT(const G4String& fileName,
+		G4int           fileNumberOffset);
   virtual ~BDSOutputROOT();
 
   virtual void NewFile();    ///< Open a new file.
@@ -69,8 +73,9 @@ private:
   /// structures are copied.
   virtual void WriteFileRunLevel();
 
-  /// No default constructor.
-  BDSOutputROOT() = delete;
+  /// An implementation only in this class. We need a non-virtual function to
+  /// call in the class destructor.
+  void Close();
   
   TFile* theRootOutputFile;    ///< Output file.
   TTree* theHeaderOutputTree;  ///< Header Tree.

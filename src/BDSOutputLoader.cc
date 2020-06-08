@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -53,18 +53,12 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
   // check it's a valid file
   badFilePath = file->IsZombie();
   if (badFilePath)
-    {
-      G4cout << __METHOD_NAME__ << "No such file \"" << filePath << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "No such file \"" + filePath + "\"");}
   else
-    {// check it's a rootevent file
+    {// check it's a rootevent file - TBC - use analysis IsBDSIMFile after restructure
       rootEventFile = file->GetListOfKeys()->Contains("Event");
       if (!rootEventFile)
-	{
-	  G4cout << __METHOD_NAME__ << "Not a BDSIM rootevent output format ROOT file" << G4endl;
-	  exit(1);
-	}
+	{throw BDSException(__METHOD_NAME__, "Not a BDSIM rootevent output format ROOT file");}
     }
 
   // extract data version
@@ -79,14 +73,14 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
 
   beamTree = static_cast<TTree*>(file->Get("Beam"));
   if (!beamTree)
-    {G4cerr << "Invalid file \"" << filePath << "\" - doesn't contain beam Tree" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Invalid file \"" + filePath + "\" - doesn't contain beam Tree");}
   localBeam = new BDSOutputROOTEventBeam();
   beamTree->SetBranchAddress("Beam.", &localBeam);
 
   // set up local structure copies.
   optionsTree = static_cast<TTree*>(file->Get("Options"));
   if (!optionsTree)
-    {G4cerr << "Invalid file \"" << filePath << "\" - doesn't contain options structure" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Invalid file \"" + filePath + "\" - doesn't contain options structure.");}
   localOptions = new BDSOutputROOTEventOptions();
   optionsTree->SetBranchAddress("Options.", &localOptions);
   

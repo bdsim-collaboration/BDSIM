@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -31,19 +31,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // forward declarations
 template <class T> class G4THitsCollection;
+class BDSHitApertureImpact;
+typedef G4THitsCollection<BDSHitApertureImpact> BDSHitsCollectionApertureImpacts;
 class BDSHitCollimator;
 typedef G4THitsCollection<BDSHitCollimator> BDSHitsCollectionCollimator;
 class BDSHitEnergyDeposition;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
 class BDSEventInfo;
 class BDSParticleCoordsFullGlobal;
+class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
-
+class BDSTrajectoriesToStore;
 class G4PrimaryVertex;
 
 namespace GMAD
@@ -60,9 +63,9 @@ class BDSOutput: protected BDSOutputStructures
 {
 public:
   /// Constructor with base file name (without extension or number suffix).
-  BDSOutput(G4String baseFileNameIn,
-	    G4String fileExtentionIn,
-	    G4int    fileNumberOffset);
+  BDSOutput(const G4String& baseFileNameIn,
+	    const G4String& fileExtentionIn,
+	    G4int           fileNumberOffset);
   virtual ~BDSOutput(){;}
 
   /// Open a new file. This should call WriteHeader() in it.
@@ -81,7 +84,7 @@ public:
   void FillHeader();
 
   /// Fill the local structure geant4 data with information. Also calls WriteGeant4Data().
-  void FillGeant4Data(const G4bool& writeIons);
+  void FillGeant4Data(G4bool writeIons);
 
   /// Fill the local structure beam with the original ones from the parser.
   /// This also calls WriteBeam().
@@ -100,8 +103,7 @@ public:
   /// and calls WriteFileEventLevel() and then clears the structures. It therefore
   /// should not be used in conjunction with FillEvent().
   void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
-			    const G4double charge,
-			    const G4int pdgID);
+			    const BDSParticleDefinition*       particle);
   
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                            info,
@@ -117,8 +119,9 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
 		 const BDSTrajectoryPoint*                      primaryHit,
 		 const BDSTrajectoryPoint*                      primaryLoss,
-		 const std::map<BDSTrajectory*, bool>&          trajectories,
+		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
+		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
 		 const G4int                                    turnsTaken);
 
   /// Close a file and open a new one.
@@ -145,6 +148,7 @@ protected:
 
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
+  G4bool storeApertureImpacts;
   /// @}
 
 private:
@@ -212,11 +216,14 @@ private:
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
 
   /// Copy a set of trajectories to the output structure.
-  void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
+  void FillTrajectories(const BDSTrajectoriesToStore* trajectories);
 
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 			  const BDSTrajectoryPoint* primaryLossPoint);
+
+  /// Fill aperture impact hits.
+  void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
@@ -250,9 +257,10 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
-  G4bool storeCollimatorLinks;
-  G4bool storeCollimatorHitsIons;
   G4bool storeCollimatorInfo;
+  G4bool storeCollimatorHits;
+  G4bool storeCollimatorHitsLinks;
+  G4bool storeCollimatorHitsIons;
   G4bool storeELoss;
   G4bool storeELossHistograms;
   G4bool storeELossTunnel;
@@ -268,10 +276,6 @@ private:
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
-  G4bool storeOption1;
-  G4bool storeOption2;
-  G4bool storeOption3;
-  G4bool storeOption4;
   /// @}
 
   /// Whether to create collimator output structures or not - based on

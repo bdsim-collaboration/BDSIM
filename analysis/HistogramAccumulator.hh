@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 
 class TH1;
 
@@ -30,7 +30,7 @@ class TH1;
  * 
  * This acts as a base class to accumulate a single histogram from many.
  * The default implementation is to calculate the mean and the standard
- * error on the mean, however, the AccumulateSingleValue() function is virutal
+ * error on the mean, however, the AccumulateSingleValue() function is virtual
  * and may be overridden to provide different functionality.
  * 
  * TH1 is the base class of all ROOT histograms so even 2 and 3D histograms
@@ -41,7 +41,7 @@ class TH1;
  * objects in the currently open file (lots of static stuff) and therefore
  * this should be unique from the supplied base histogram name!
  * 
- * Each instance is single use. Once termianted, the accumulation should
+ * Each instance is single use. Once terminated, the accumulation should
  * not be used.
  * 
  * The algorithm used to calculate the mean and variance is one that supports
@@ -65,7 +65,7 @@ public:
   /// baseHistogram exists in the currently open file.
   HistogramAccumulator(TH1*               baseHistogram,
 		       int                nDimensionsIn,
-		       const std::string  resultHistName,
+		       const std::string& resultHistName,
 		       const std::string& resultHistTitle);
 
   /// Destructor deletes mean and variance temporary histograms but leaks
@@ -90,14 +90,14 @@ protected:
   /// The xVari argument is not used in the implementation provided with this
   /// class but is used in derived classes with different AccumulateSingleValue
   /// implementations.
-  virtual void AccumulateSingleValue(const double&  oldMean,
-				     const double&  oldVari,
-				     const double&  x,
-				     const double&  xVari,
-				     const unsigned long& nEntriesAccumulated,
-				     const unsigned long& nEntriesToAccumulate,
-				     double&        newMean,
-				     double&        newVari) const;
+  virtual void AccumulateSingleValue(double        oldMean,
+				     double        oldVari,
+				     double        x,
+				     double        xVari,
+				     unsigned long nEntriesAccumulated,
+				     unsigned long nEntriesToAccumulate,
+				     double&       newMean,
+				     double&       newVari) const;
 
   int               nDimensions;     ///< Number of dimensions
   unsigned long     n;               ///< Counter.

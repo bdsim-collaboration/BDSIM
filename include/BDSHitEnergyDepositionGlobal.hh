@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -48,7 +48,8 @@ public:
 			       G4int    parentIDIn,
 			       G4double weightIn,
 			       G4int    turnsTakenIn);
-  
+
+  /// Note this should not be inline when we use a G4Allocator.
   virtual ~BDSHitEnergyDepositionGlobal();
 
   inline G4double TotalEnergyWeighted() const {return weight * totalEnergy;}

@@ -31,9 +31,12 @@ If the analysis will be regularly used interactively, it is worth automating the
 loading in root by finding and editing the :code:`rootlogon.C` in your
 :code:`<root-install-dir>/macros/` directory.  Example text would be::
 
-  cout << "Loading rebdsim libraries" << endl;
-  gSystem->Load("librebdsim");
-  gSystem->Load("libbdsimRootEvent");
+  {
+    cout << "Loading rebdsim libraries" << endl;
+    gSystem->Load("librebdsim");
+    gSystem->Load("libbdsimRootEvent");
+  }
+
 
 .. note:: The file extension is omitted on purpose.
 
@@ -46,19 +49,22 @@ Quick Recipes
 Inspect Histograms
 ------------------
 
-* Run rebdsimHistoMerge on BDSIM output file (quick).
-* Browse output of rebdsimHistoMerge in TBrowser in ROOT.
-* See :ref:`rebdsim-histo-merge` for details.
+1. Run rebdsimHistoMerge on BDSIM output file (quick).
+2. Browse output of rebdsimHistoMerge in TBrowser in ROOT.
+
+See :ref:`rebdsim-histo-merge` for details.
 
 ::
 
    rebdsimHistoMerge output.root results.root
+   root -l results.root
+   > TBrowser tb;
 
 Plot Energy Deposition \& Losses
 --------------------------------
 
-* Run rebdsimHistoMerge on BDSIM output file (quick).
-* Plot in Python using `pybdsim` using dedicated plotting function.
+1. Run rebdsimHistoMerge on BDSIM output file (quick).
+2. Plot in Python using `pybdsim` using dedicated plotting function.
 
 ::
    
@@ -140,6 +146,19 @@ where :math:`\sigma` is the standard deviation of the values in that bin for all
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than two events.
 
+Standard Error On The Mean
+--------------------------
+
+The errors in the per-event histograms from BDSIM as the standard error on the mean and **not**
+the standard deviation. These errors represent how well the central value, the mean, is
+estimated statistically. This is typically what is desired when performing a simulation to
+see that the simulation (a Monte Carlo) has converged to specific value. If we were to provide
+the standard deviation, it would be unclear whether the simulation has converged or whether there
+is just a large variation from event to event in that bin.
+
+If the standard deviation is required, the user should multiply the errors by :math:`\sqrt{N_{events}}`.
+See :ref:`numerical-methods` for a mathematical description of how the errors are calculated.
+
 .. _output-analysis-configuration-file:
 	  
 Analysis Configuration File
@@ -155,22 +174,25 @@ Examples can be found in:
 
 ::
 
-  Debug                                   True
-  InputFilePath                           ./output.root
-  OutputFileName                          ./ana_1.root
-  CalculateOpticalFunctions               True
-  CalculateOpticalFunctionsFileName       ./ana_1.dat
+  InputFilePath    output.root
+  OutputFileName   ana_1.root
+  CalculateOptics  True
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
-  Histogram1D  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
-  Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
-  Histogram1D  Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram1D  Model.    componentLength {100}      {0.0:100}           Model.length        1
-  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Summary.duration    1
-  Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
-  Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
-  Histogram1DLog Event.  PrimaryXAbs     {20}       {-9:-3}      abs(Primary.x)                 1
-  Histogram2DLinLog Event. PhaseSpaceAbs {20,20}    {-1e-6:1e-5,-9:-3} Primary.x:abs(Primary.y) 1
-  Histogram2DLog    Event. PhaseSpaceAbs2 {20,20}   {-9:-3,-1e-6:1e-5} abs(Primary.x):Primary.y 1
+  Histogram1D  Event     Primaryx         {100}      {-0.1:0.1}          Primary.x           1
+  Histogram1D  Event     Primaryy         {100}      {-0.1:0.1}          Primary.y           1
+  Histogram1D  Options   seedState        {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram1D  Model     componentLength  {100}      {0.0:100}           Model.length        1
+  Histogram1D  Run       runDuration      {1000}     {0:1000}            Summary.duration    1
+  Histogram2D  Event     XvsY             {100,100}  {-0.1:0.1,-0.1:0.1} Primary.y:Primary.x 1
+  Histogram3D  Event     PhaseSpace3D     {20,30,40} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1DLog  Event  PrimaryXAbs      {20}       {-9:-3}             abs(Primary.x)                 1
+  Histogram2D     Event  PhaseSpaceXXP    {20,30}    {-1e-6:1e-6,-1e-4:1e-4} Primary.xp:Primaryx 1
+  Histogram2DLog  Event  PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
+
+.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
+	     method.  This is **totally inconsistent**.  If 1D, there is just :code:`x`.  If 2D, it's
+	     :code:`y : x`. If 3D, it's :code:`x : y : z`.  This **only** applies to the variable and
+	     **not** to the bin specification. 
 
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
@@ -223,11 +245,6 @@ a 1D histogram with thirty logarithmically spaced bins from 1e-3 to 1e3, the fol
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
-
-.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
-	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
-	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
-	     not to the bin specification.
 
 
 Analysis Configuration Options
@@ -301,6 +318,7 @@ rebdsimCombine - Output Combination
 `rebdsimCombine` is a tool that can combine `rebdsim` output files correctly
 (i.e. the mean of the mean histograms) to provide the overall mean and error on
 the mean, as if all events had been analysed in one execution of `rebdsim`.
+Simple histograms are simply summed (not averaged).
 
 The combination of the histograms from the `rebdsim` output files is very quick
 in comparison to the analysis. `rebdsimCombine` is used as follows: ::
@@ -343,6 +361,19 @@ optical functions as well as beam sizes. It is run as follows::
 
 This creates a ROOT file called "optics.root" that contains the optical functions
 of the sampler data.
+
+This may also take the optional argument :code:`--emittanceOnTheFly` (exactly, case-sensitive)
+where the emittance is recalculated at each sampler. By default, we calculate the emittance
+**only** for the first sampler and use that as the assumed value for all other samplers. This
+does not affect sigmas but does affect :math:`\alpha` and :math:`beta` for the optical functions.
+
+If the central energy of the beam changes throughout the lattice, e.g. accelerating or deccelerating
+cavities are used, the the emittance on the fly option should be used.::
+  
+   rebdsimOptics output.root optics.root --emittanceOnTheFly
+
+
+* The order is not interchangeable.
 
 See :ref:`optical-validation` for more details.
 
@@ -435,7 +466,7 @@ file. This is numerically equivalent to analysing all the data in one execution 
 User Analysis
 =============
 
-Whilst `rebdsim` will cover the majority of anlayses, the user may desire a more
+Whilst `rebdsim` will cover the majority of analyses, the user may desire a more
 detailed or customised analysis. Methods to accomplish this are detailed here for
 interactive or compiled C++ with ROOT, or through Python.
 
@@ -474,8 +505,8 @@ automatically when any BDSIM output file is loaded using the ROOT libraries.
 IPython
 *******
 
-We recommend using iPython instead of pure Python to allow interactive exploration
-of the tools. After typing at the iPython prompt for example :code:`pybdsim.`, press
+We recommend using IPython instead of pure Python to allow interactive exploration
+of the tools. After typing at the IPython prompt for example :code:`pybdsim.`, press
 the tab key and all of the available functions and objects inside `pybdsim` (in this
 case) will be shown.
 
@@ -487,7 +518,7 @@ associated with it. ::
   >>> d.
   d.ConvertToPybdsimHistograms d.histograms2d                
   d.filename                   d.histograms2dpy              
-  d.histograms                 d.histograms3d               >
+  d.histograms                 d.histograms3d
   d.histograms1d               d.histograms3dpy              
   d.histograms1dpy             d.histogramspy 
 
@@ -702,12 +733,12 @@ One may manually loop over the events in a macro::
     gSystem->Load("librebdsim");
     DataLoader* dl = new DataLoader("output.root");
     Event* evt = dl->GetEvent();
-    TTree* evtTree = dl->GetEventTree()
+    TTree* evtTree = dl->GetEventTree();
     int nentries = (int)evtTree->GetEntries();
     for (int i = 0; i < nentries; ++i)
       {
-        evtTree->GetEntry(i)
-	std::cout << evt->Eloss.n >> std::endl;
+        evtTree->GetEntry(i);
+        std::cout << evt->Eloss.n << std::endl;
       }
   }
 
@@ -752,10 +783,12 @@ The following classes are used for data loading and can be found in `bdsim/analy
 * Options.hh
 * Run.hh
 
+.. _numerical-methods:
+
 Numerical Methods
 =================
 
-Alogrithms used to accurately calculate quantities are described here. These are
+Algorithms used to accurately calculate quantities are described here. These are
 documented explicitly as a simple implementation of the mathematical formulae
 would result in an inaccurate answer in some cases.
 
@@ -768,7 +801,7 @@ To calculate the mean in the per-entry histograms as well as the associated erro
 .. math::
 
    \bar{x} &= \sum_{i = 0}^{n} x_{i}\\
-   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
+   \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n-1}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
 
 These equations are however problematic to implement computationally. The formula above
 for the variance requires two passes through the data to first calculate the mean,
@@ -806,8 +839,8 @@ After processing all entries, the variance is used to calculate the standard err
 with:
 
 .. math::
-
-   \sigma_{\bar{x}} = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{\sqrt{n-1}} Var\,(x)}
+   
+   \sigma_{\bar{x}} = \sqrt{\frac{1}{n}}\sqrt{\frac{1}{(n-1)} Var\,(x)}
 
 
 Merging Histograms

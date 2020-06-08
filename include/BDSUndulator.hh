@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -38,16 +38,16 @@ class BDSFieldInfo;
 class BDSUndulator: public BDSAcceleratorComponent
 {
 public:
-  BDSUndulator(G4String nameIn,
-               G4double lengthIn,
-               G4double periodIn,
-               G4double magnetHeightIn,
-               G4double magnetWidthIn,
-               G4double undulatorGapIn,
+  BDSUndulator(const G4String&  nameIn,
+               G4double         lengthIn,
+               G4double         periodIn,
+               G4double         magnetHeightIn,
+               G4double         magnetWidthIn,
+               G4double         undulatorGapIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
                BDSFieldInfo*    vacuumFieldInfoIn,
                BDSFieldInfo*    outerFieldInfoIn,
-               G4String         materialIn = "iron");
+               const G4String&  materialIn = "iron");
 
   virtual ~BDSUndulator();
 
@@ -56,18 +56,14 @@ protected:
 
   virtual void BuildContainerLogicalVolume();
 
-  /// Function for building geometry for a single undulator period.
-  void BuildUndulatorMagnet();
-
   BDSFieldInfo* vacuumFieldInfo;
   BDSFieldInfo* outerFieldInfo;
   const G4double undulatorPeriod;
-  const G4double horizontalWidth; ///Element width (and height)
-  G4double undulatorMagnetHeight; ///<Full magnet box height
-  G4double magnetWidth;  ///<Full magnet width
-  G4double undulatorGap; ///<Full undulator gap
-  G4int    numMagnets;   ///<Total number of magnets (1 undulator period is 2 magnets)
-  G4String material;     ///<Undulator magnet material
+  const G4double horizontalWidth; ///< Element width (and height)
+  G4double undulatorMagnetHeight; ///< Full magnet box height
+  G4double undulatorGap;          ///< Full undulator gap
+  G4int    numMagnets;            ///< Total number of magnets (1 undulator period is 2 magnets)
+  G4String material;              ///< Undulator magnet material
 };
 
 #endif

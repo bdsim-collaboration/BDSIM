@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -34,7 +34,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include <algorithm>
+#include <fstream>
+#include <istream>
 #include <map>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -43,11 +46,62 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace xercesc;
 
 G4String BDS::PreprocessGDML(const G4String& file,
-			     const G4String& prefix)
+			     const G4String& prefix,
+			     G4bool          preprocessSchema)
 {
+  if (BDS::EndsWith(file, ".gmad"))
+    {throw BDSException(__METHOD_NAME__, "trying to read a GMAD file (\"" + file + "\") as a GDML file - check file or change extension.");}
   BDSGDMLPreprocessor processor;
-  G4String processedFile = processor.PreprocessFile(file, prefix);
+  G4String processedFile = processor.PreprocessFile(file,
+						    prefix,
+						    preprocessSchema);
   return processedFile;
+}
+
+G4String BDS::PreprocessGDMLSchemaOnly(const G4String& file)
+{
+  // open file
+  if (BDS::EndsWith(file, ".gmad"))
+    {throw BDSException(__METHOD_NAME__, "trying to read a GMAD file (\"" + file + "\") as a GDML file - check file or change extension.");}
+  std::ifstream inputFile;
+  inputFile.open(file.c_str());
+  if (!inputFile.is_open())
+    {throw BDSException(__METHOD_NAME__, "Invalid file \"" + file + "\"");}
+  else
+    {G4cout << __METHOD_NAME__ << "updating GDML Schema to local copy for file:\n \"" << file << "\"" << G4endl;}
+
+  // create new temporary file that modified gdml can be written to.
+  G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file);
+
+  std::ofstream outFile;
+  outFile.open(newFile);
+
+  G4String localSchema = BDS::GDMLSchemaLocation();
+  int i = 0;
+  std::regex gdmlTag("\\<gdml");
+  std::string line;
+  while (std::getline(inputFile, line))
+    {
+      if (i < 10)
+	{ // expect schema in first 10 lines of file - efficiency
+	  if (std::regex_search(line, gdmlTag))
+	    {
+	      std::regex schema("xsi:noNamespaceSchemaLocation=\"(\\S+)\"");
+	      std::string newLine;
+	      std::string prefix = "xsi:noNamespaceSchemaLocation=\"";
+	      std::regex_replace(std::back_inserter(newLine), line.begin(), line.end(), schema, prefix+localSchema+"\"$2");
+	      outFile << newLine;
+	    }
+	  else
+	    {outFile << line;}
+	}
+      else
+	{outFile << line;}
+      outFile << "\n";
+      i++;
+    }
+  outFile.close();
+  return newFile;
 }
 
 G4String BDS::GDMLSchemaLocation()
@@ -80,7 +134,8 @@ BDSGDMLPreprocessor::~BDSGDMLPreprocessor()
 {;}
 
 G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
-					     const G4String& prefix)
+					     const G4String& prefix,
+                                             G4bool preprocessSchema)
 {
   G4cout << __METHOD_NAME__ << "Preprocessing GDML file " << file << G4endl;
   
@@ -125,14 +180,14 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
       throw BDSException(__METHOD_NAME__, messageSS.str());
     }
   catch (...)
-    {throw BDSException(__METHOD_NAME__, "Unexpected Exception");}
+    {throw BDSException(__METHOD_NAME__, "Unexpected Exception - possibly malformed GDML file: " + filename);}
   
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
   DOMElement* docRootNode    = doc->getDocumentElement();
   DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
   // map structure and all names used
-  ReadDoc(docWalker);
+  ReadDoc(docWalker, preprocessSchema);
 
   // reset iterator
   docWalker->detach();
@@ -164,19 +219,21 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   return newFile;
 }
 
-void BDSGDMLPreprocessor::ReadDoc(DOMNodeIterator* docIterator)
+void BDSGDMLPreprocessor::ReadDoc(DOMNodeIterator* docIterator,
+				  G4bool processSchema)
 {
   for (DOMNode* currentNode = docIterator->nextNode(); currentNode != 0; currentNode = docIterator->nextNode())
-    {ReadNode(currentNode);}
+    {ReadNode(currentNode, processSchema);}
 }
 
-void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
+void BDSGDMLPreprocessor::ReadNode(DOMNode* node,
+				   G4bool processSchema)
 {
   if (!node)
     {return;}
 
   std::string thisNodeName = XMLString::transcode(node->getNodeName());
-  if (thisNodeName == "gdml")
+  if (thisNodeName == "gdml" && processSchema)
     {// to update location of schema
       ProcessGDMLNode(node->getAttributes());
       return;
@@ -193,7 +250,7 @@ void BDSGDMLPreprocessor::ProcessGDMLNode(DOMNamedNodeMap* attributeMap)
   if (!attributeMap)
   {return;}
 
-  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+  for (XMLSize_t i = 0; i < attributeMap->getLength(); i++)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string nodeName = XMLString::transcode(attr->getNodeName());
@@ -218,14 +275,14 @@ void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
   if (!attributeMap)
     {return;}
   
-  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+  for (XMLSize_t i = 0; i < attributeMap->getLength(); i++)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string name = XMLString::transcode(attr->getNodeValue());
       auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
       if (search != ignoreAttrs.end())
         {continue;} // ignore this attribute
-      if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
+      if (XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
 	{
 	  names.push_back(name);
 	  count[name] = 0;
@@ -254,13 +311,17 @@ void BDSGDMLPreprocessor::ProcessNode(DOMNode*        node,
     {ProcessAttributes(node->getAttributes(), prefix);}
 }
 
+G4String BDSGDMLPreprocessor::ProcessedNodeName(const G4String& nodeName,
+						const G4String& prefix)
+{return prefix + "_" + nodeName;}
+
 void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
 					    const G4String&  prefix)
 {
   if (!attributeMap)
     {return;}
 
-  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+  for (XMLSize_t i = 0; i < attributeMap->getLength(); i++)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string name = XMLString::transcode(attr->getNodeValue());
@@ -272,7 +333,7 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
       if (XMLString::compareIString(attr->getNodeName(),
                                     XMLString::transcode("name")) == 0)
 	{
-	  std::string newName = prefix + "_" + name;
+	  std::string newName = ProcessedNodeName(name, prefix);
 	  attr->setNodeValue(XMLString::transcode(newName.c_str()));
 	}
       else
@@ -290,4 +351,8 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
 	}
     }
 }
+
+#else
+// insert empty function to avoid no symbols warning
+void _SymbolToPreventWarningGDML(){;}
 #endif

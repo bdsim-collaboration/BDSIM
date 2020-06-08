@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSApertureInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
@@ -66,9 +68,9 @@ BDSSamplerCustom::BDSSamplerCustom(G4String               nameIn,
       }
     default:
       {
-	G4cerr << "Shape \"" << shape.apertureType.ToString() << "\" is not currently supported." << G4endl;
-	G4cerr << "Please use circular or rectangular." << G4endl;
-	exit(1);
+	std::string msg = "Shape \"" + shape.apertureType.ToString() + "\" is not currently supported.\n";
+	msg += "Please use circular or rectangular.";
+	throw BDSException(__METHOD_NAME__, msg);
 	break;
       }
     }

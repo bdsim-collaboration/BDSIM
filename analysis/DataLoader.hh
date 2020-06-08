@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DATALOADER_H
 #define DATALOADER_H
 
-#include "TROOT.h"
+#include "Rtypes.h" // for classdef
 
 #include "RebdsimTypes.hh"
 
@@ -77,6 +77,7 @@ public:
   inline int DataVersion() const {return dataVersion;}
 
   /// @{ Accessor
+  std::vector<std::string>   GetFileNames()      {return fileNames;}
   std::vector<std::string>   GetTreeNames()      {return treeNames;};
   std::vector<std::string>   GetBranchNames()    {return branchNames;}
   std::vector<std::string>   GetSamplerNames()   {return samplerNames;}

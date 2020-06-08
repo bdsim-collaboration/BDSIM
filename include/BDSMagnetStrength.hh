@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -56,6 +56,7 @@ private:
 public:
   /// Default constructor does nothing as class will return 0 for uninitialised keys
   BDSMagnetStrength(){;}
+
   /// This constructor allows instantiation with a map of keys and values.
   explicit BDSMagnetStrength(std::map<G4String, G4double> keyvalues);
 

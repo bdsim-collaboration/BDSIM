@@ -16,6 +16,10 @@ interpolator_test("interpolator-2d-nearest" "2d_nearest.gmad")
 interpolator_test("interpolator-2d-linear"  "2d_linear.gmad")
 interpolator_test("interpolator-2d-cubic"   "2d_cubic.gmad")
 
+if (USE_GDML)
+  simple_testing(field-map-b-2d-tilt "--file=fieldmap-tilt-test.gmad" "")
+endif()
+
 if (USE_GZSTREAM)
   simple_testing(field-map-b-2d-along-xz "--file=b_field_2d_along_xz.gmad --output=none" "")
 

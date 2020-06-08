@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -49,7 +49,8 @@ public:
 			      G4int    turnsTakenIn,             // turns taken if circular
 			      G4double stepLengthIn,
 			      G4int    beamlineIndexIn = -1);
-  
+
+  /// Note this should not be inline when we use a G4Allocator.
   ~BDSHitEnergyDepositionExtra();
   
   inline void* operator new(size_t) ;

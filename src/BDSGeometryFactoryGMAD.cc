@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGMAD.hh"
@@ -35,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 
+#include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <map>
 #include <set>
@@ -46,14 +49,15 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
 						   G4double /*suggestedLength*/,
-						   G4double /*suggestedHorizontalWidth*/)
+						   G4double /*suggestedHorizontalWidth*/,
+						   std::vector<G4String>* /*vacuumBiasVolumeNames*/)
 {
   CleanUp();
   
   std::ifstream inputf;
   inputf.open(fileName);
   if (!inputf.good())
-    {G4cerr << __METHOD_NAME__ << "Error opening input file \"" << fileName << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "Cannot open file \"" + fileName + "\"");}
 
   const G4String emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial  = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
@@ -88,11 +92,11 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
     {
       token = GetWord(inputf);
  
-      if(token=="Box")
+      if (token=="Box")
 	{
-	  if(GetWord(inputf) == "{")
+	  if (GetWord(inputf) == "{")
 	    {
-	      while((token = GetWord(inputf)))
+	      while ((token = GetWord(inputf)))
 		{
 		  if (token == "}") break;
 		  
@@ -112,8 +116,8 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 	      G4String name = "aBox_" + std::to_string(count);
 	      auto solid = new G4Box(name,
 				     x,   // half x
-				     y, // half y
-				     z ); // half z
+				     y,   // half y
+				     z);  // half z
 
 	      ExpandExtent(x0, x, y0, y, z0, z);
 	      Finish(name, solid, materialName, containerLV, phi, theta, psi, x0, y0, z0);
@@ -123,11 +127,11 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 	    {Error();}
 	}// G4Box
       
-      if(token=="Tubs")
+      if (token=="Tubs")
 	{
-	  if(GetWord(inputf) == "{")
+	  if (GetWord(inputf) == "{")
 	    {
-	      while((token = GetWord(inputf)))
+	      while ((token = GetWord(inputf)))
 		{
 		  if (token == "}") break;
 		  
@@ -154,10 +158,10 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 	      auto solid = new G4Tubs(name,
 				      rmin,             // inner R
 				      rmax,             // outer R
-				      z,                //z
-				      phi0,             //phi 0 
-				      dphi*CLHEP::deg); //delta phi
-	      ExpandExtent(x0, rmax, y0, rmax, z0, rmax);
+				      z,                // z
+				      phi0,             // phi 0 
+				      dphi*CLHEP::deg); // delta phi
+	      ExpandExtent(x0, rmax, y0, rmax, z0, z);
 	      Finish(name, solid, materialName, containerLV, phi, theta, psi, x0, y0, z0);
 	      count++;   
 	    }
@@ -165,12 +169,12 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 	    {Error();}
 	}
       
-      if(token=="Cons")
+      if (token=="Cons")
 	{
-	  if(GetWord(inputf) == "{")
+	  if (GetWord(inputf) == "{")
 	    {
 	      
-	      while((token = GetWord(inputf)))
+	      while ((token = GetWord(inputf)))
 		{
 		  if (token == "}")
 		    {break;}
@@ -207,7 +211,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 				      phi0, //phi 0 
 				      dphi*CLHEP::deg); //delta phi
 	      G4double rmm = std::max(rmax, rmax2);
-	      ExpandExtent(x0, rmm, y0, rmm, z0, rmm);
+	      ExpandExtent(x0, rmm, y0, rmm, z0, z);
 	      Finish(name, solid, materialName, containerLV, phi, theta, psi, x0, y0, z0);
 	      count++;
 	      
@@ -215,11 +219,11 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
 	  else
 	    {Error();}
 	}
-      if(token=="Trd")
+      if (token=="Trd")
 	{// trapezoid
-	  if(GetWord(inputf) == "{")
+	  if (GetWord(inputf) == "{")
 	    {
-	      while((token = GetWord(inputf)))
+	      while ((token = GetWord(inputf)))
 		{
 		  if (token == "}") break;
 		  
@@ -263,9 +267,9 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
   // update solid
   delete containerSolid; // delete existing solid
   containerSolid = new G4Box("container_solid",
-			     (xmax - xmin)*0.5,
-			     (xmax - xmin)*0.5,
-			     (xmax - xmin)*0.5);
+			     std::max(std::abs(xmax), std::abs(xmin)),
+                             std::max(std::abs(ymax), std::abs(ymin)),
+                             std::max(std::abs(zmax), std::abs(zmin)));
   containerLV->SetSolid(containerSolid); // update container solid
 
   ApplyColourMapping(allLogicalVolumes, mapping);
@@ -291,11 +295,11 @@ G4String BDSGeometryFactoryGMAD::GetWord(std::ifstream& inputf) const
     inputf.get(c);// get character from file
 
     // return char tokens 
-    if(c=='=')
+    if (c=='=')
       {return G4String(c);}
 
     // skip whitespace
-    if( (c != ' ' ) && (c != '\t' )&& (c != ',' ) && (c != '\n' ))
+    if ( (c != ' ' ) && (c != '\t' )&& (c != ',' ) && (c != '\n' ))
       {break;}
   }
 
@@ -303,7 +307,7 @@ G4String BDSGeometryFactoryGMAD::GetWord(std::ifstream& inputf) const
   {
     str += c;
     inputf.get(c);       // get character from file
-    if( (c == ' ' ) || (c == '\t' )|| (c == ',' )|| (c == '\n' )|| (c == '=' ) ) 
+    if ( (c == ' ' ) || (c == '\t' )|| (c == ',' )|| (c == '\n' )|| (c == '=' ) ) 
       {
 	inputf.putback(c);
 	break;
@@ -319,10 +323,10 @@ void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
 {
   G4String token;
 
-  if(lastToken == name)
+  if (lastToken == name)
     {
       token = GetWord(inputf);
-      if(token == "=")
+      if (token == "=")
 	{
 	  token = GetWord(inputf);
 	  x = strtod(token.c_str(),nullptr);
@@ -337,10 +341,10 @@ void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
 {
   G4String token;
 
-  if(lastToken == name)
+  if (lastToken == name)
     {
       token = GetWord(inputf);
-      if(token == "=")
+      if (token == "=")
 	{
 	  token = GetWord(inputf);
 	  lval = token;

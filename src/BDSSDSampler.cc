@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,8 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSHitSampler.hh"
 #include "BDSParticleCoordsFull.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -79,15 +81,21 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
     }
   
   G4Track* track    = aStep->GetTrack();
+  const G4DynamicParticle* dp = track->GetDynamicParticle();
   G4int TrackID     = track->GetTrackID();           // unique ID of track
   G4int ParentID    = track->GetParentID();          // unique ID of track's mother
   G4double T        = track->GetGlobalTime();        // time since beginning of event
   G4double energy   = track->GetTotalEnergy();       // total track energy
-  G4double charge   = track->GetDynamicParticle()->GetCharge(); // dynamic effective charge
+  G4double charge   = dp->GetCharge(); // dynamic effective charge
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
+  G4int nElectrons  = dp->GetTotalOccupancy();
+  G4double mass     = dp->GetMass();
+  G4double rigidity = 0;
+  if (BDS::IsFinite(charge))
+    {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
@@ -117,7 +125,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
     }
   else
     {
-      // The global to local transform is defined in the regisitry.
+      // The global to local transform is defined in the registry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
       localPosition  = globalToLocal * (HepGeom::Point3D<G4double>)pos;
       // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
@@ -146,12 +154,15 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 
   BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
+					    mass,
 					    charge,
+					    rigidity,
 					    PDGtype,
 					    ParentID,
 					    TrackID,
 					    turnstaken,
-					    beamlineIndex);
+					    beamlineIndex,
+					    nElectrons);
   
   SamplerCollection->insert(smpHit);
   return true; // the hit was stored

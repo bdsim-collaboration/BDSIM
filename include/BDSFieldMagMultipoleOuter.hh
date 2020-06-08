@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -47,16 +47,18 @@ class BDSMagnetStrength;
  * of a magnet as it neglects the permeability and the geometry, however, it
  * is a 1st order approximation.
  *
+ * Does not own or delete the BDSFieldMag* innerFieldIn argument.
+ *
  * @author Laurie Nevay
  */
 
 class BDSFieldMagMultipoleOuter: public BDSFieldMag
 {
 public:
-  BDSFieldMagMultipoleOuter(const G4int     orderIn,
-			    const G4double& poleTipRadius,
-			    BDSFieldMag*    innerFieldIn,
-			    const G4bool&   kPositive);
+  BDSFieldMagMultipoleOuter(G4int              orderIn,
+			    G4double           poleTipRadius,
+			    const BDSFieldMag* innerFieldIn,
+			    G4bool             kPositive);
 
   virtual ~BDSFieldMagMultipoleOuter(){;}
 

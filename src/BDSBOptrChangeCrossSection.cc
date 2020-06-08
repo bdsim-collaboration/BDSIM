@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBOptrChangeCrossSection.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSPhysicsUtilities.hh"
 
 #include "globals.hh"
 #include "G4BiasingProcessInterface.hh"
@@ -33,12 +34,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4Proton.hh"
 #include "G4VProcess.hh"
 
 #include <limits>
 
-BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
-						       G4String name):
+BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(const G4String& particleNameIn,
+						       const G4String& name):
   G4VBiasingOperator(name),
   fSetup(true),
   particleName(particleNameIn),
@@ -48,8 +50,8 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 
   if (!fParticleToBias)
     {throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found");}
-
-  particleIsIon = G4IonTable::IsIon(fParticleToBias);
+  
+  particleIsIon = BDS::IsIon(fParticleToBias);
 }
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
@@ -88,7 +90,9 @@ void BDSBOptrChangeCrossSection::StartRun()
     }
 }
 
-void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4int iPrimary)
+void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
+					 G4double bias,
+					 G4int    iPrimary)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << processName << " " << bias << " " << iPrimary << G4endl;
@@ -137,12 +141,13 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   const G4ParticleDefinition* definition = track->GetDefinition();
   if (particleIsIon)
     {// we're looking for an ion and this generally isn't an ion
-      if (!G4IonTable::IsIon(definition))
-	{return nullptr;}
+      if (!G4IonTable::IsIon(definition) || definition == G4Proton::Definition())
+        {return nullptr;}
+      // else it's generally an ion so continue - ie apply GenericIon to any ion
     }
   else if (definition != fParticleToBias)
     {return nullptr;}
-    
+
   // select and setup the biasing operation for current callingProcess:
   // Check if the analog cross-section well defined : for example, the conversion
   // process for a gamma below e+e- creation threshold has an DBL_MAX interaction
@@ -167,12 +172,6 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  /*if (!operation)
-    {
-      G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
-      callingProcess->DumpInfo();
-      exit(1);
-      }*/
   
   // get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -46,7 +46,7 @@ G4Transform3D BDSTiltOffset::Transform3D() const
 {
   G4ThreeVector off = GetOffset();
   G4RotationMatrix rm = G4RotationMatrix();
-  rm.rotateZ(-tilt);
+  rm.rotateZ(tilt);
   return G4Transform3D(rm, off);
 }
 

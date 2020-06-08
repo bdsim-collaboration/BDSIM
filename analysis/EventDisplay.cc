@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -49,7 +49,7 @@ EventDisplay* EventDisplay::instance = nullptr;
 EventDisplay* EventDisplay::Instance()
 {
   if (!instance)
-    {std::cout << "EventDisplay> Warning - no file supplied" << std::endl;}
+    {std::cout << "EventDisplay> WARNING - no file supplied" << std::endl;}
   return instance;
 }
 
@@ -275,10 +275,10 @@ void EventDisplay::DrawSamplers()
 void EventDisplay::DrawTrajectories()
 {
   std::cout << "EventDisplay::DrawTrajectories>" << std::endl;
-  std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->Trajectory->trajectories.size() << std::endl;
+  std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->Trajectory->XYZ.size() << std::endl;
 
   int iTraj = 0;
-  for (auto t : event->Trajectory->trajectories)
+  for (auto t : event->Trajectory->XYZ)
     {
       std::string trajNameAppend = std::string();
       if (event->Trajectory->trackID[iTraj] == 1)

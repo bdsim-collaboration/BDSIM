@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,15 +19,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTGEANT4DATA_H
 #define BDSOUTPUTROOTGEANT4DATA_H
 
+#include "Rtypes.h"
 #include "TObject.h"
-#include "TROOT.h"
 
 #ifndef __ROOTBUILD__
 #include "globals.hh"
 #endif
 
+#include <cstdlib>  // for std::abs(int)
+#include <cmath>
 #include <map>
 #include <limits>
+#include <string>
 
 /**
  * @brief Geant4 particle data for particles used in simulation
@@ -127,11 +130,12 @@ public:
   int         IonA(const int& pdgID) const;
   int         IonZ(const int& pdgID) const;
 
+  /// This doesn't count a proton (even with electrons) as an ion.
   inline bool IsIon(const int& pdgID) const {return pdgID > 1000000000;}
   
 #ifndef __ROOTBUILD__
   /// Fill maps of particle information from Geant4.
-  void Fill(const G4bool& fillIons);
+  void Fill(G4bool fillIons);
 #endif
 
   std::map<int, ParticleInfo> particles;

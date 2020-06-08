@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -36,7 +36,7 @@ public:
   inline G4LogicalVolume* log(){return _log;}
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
-  inline void phys(G4PVPlacement* phys){_phys=phys;}
+  inline void phys(G4PVPlacement* physIn){_phys=physIn;}
   inline G4PVPlacement* phys(){return _phys;}
 
 private:

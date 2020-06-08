@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchComposite.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
@@ -56,10 +57,7 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
   if (xType == BDSBunchType::composite ||
       yType == BDSBunchType::composite ||
       zType == BDSBunchType::composite)
-    {
-      G4cerr << __METHOD_NAME__ << "x,y,z distributions cannot be 'composite'" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "x,y,z distributions cannot be 'composite'");}
 
   // here we don't have generatePrimariesOnly bool but this will be overridden with the
   // separate call to SetGeneratePrimariesOnly in BDSBunchFactory
@@ -84,11 +82,16 @@ void BDSBunchComposite::CheckParameters()
 }
 
 BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
-{  
+{
   auto x = xBunch->GetNextParticleLocal();
   auto y = yBunch->GetNextParticleLocal();
   auto z = zBunch->GetNextParticleLocal();
 
+  particleDefinitionHasBeenUpdated = xBunch->ParticleDefinitionHasBeenUpdated() ||
+                                     yBunch->ParticleDefinitionHasBeenUpdated() ||
+                                     zBunch->ParticleDefinitionHasBeenUpdated();
+
+  // TODO - the weight only comes from the x distribution here... should it be product of all?
   BDSParticleCoordsFull result(x.x, y.y, z.z,
                                x.xp, y.yp, z.zp,
 			       z.T, z.s,

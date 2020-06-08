@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
+#include "G4Transform3D.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <cstdlib>
@@ -69,6 +70,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
   beamPipePlacementTransform(G4Transform3D()),
   isThin(isThinIn)
 {
+  magnetOuterInfo->name += "_outer";
   horizontalWidth = magnetOuterInfoIn->horizontalWidth;
   containerRadius = 0.5*horizontalWidth;
   
@@ -150,7 +152,7 @@ void BDSMagnet::Build()
 
 void BDSMagnet::BuildBeampipe()
 {
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
 							    chordLength - 2*lengthSafety,
 							    beamPipeInfo);
 
@@ -170,8 +172,11 @@ void BDSMagnet::BuildVacuumField()
 {
   if (vacuumFieldInfo)
     {
-      G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
-      vacuumFieldInfo->SetTransform(newFieldTransform);
+      if (beamPipePlacementTransform != G4Transform3D::Identity)
+        {
+          G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
+          vacuumFieldInfo->SetTransform(newFieldTransform);
+        }
       // can use containerLV for field as we don't construct any geometry with thin elements.
       if (isThin)
         {
@@ -197,7 +202,7 @@ void BDSMagnet::BuildOuter()
 							       chordLength,
 							       beampipe);
 
-  if(outer)
+  if (outer)
     {
       // copy necessary bits out of BDSGeometryComponent that holds
       // container information for whole magnet object provided by

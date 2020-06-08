@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSCavity.hh"
 #include "BDSCavityElement.hh"
 #include "BDSCavityFactory.hh"
@@ -39,7 +41,13 @@ BDSCavityElement::BDSCavityElement(G4String             nameIn,
   vacuumFieldInfo(vacuumFieldInfoIn),
   cavityInfo(cavityInfoIn),
   vacuumMaterial(vacuumMaterialIn)
-{;}
+{
+  beamPipeInfo = new BDSBeamPipeInfo(BDSBeamPipeType::circular,
+				     cavityInfo->irisRadius, 0, 0, 0,
+				     vacuumMaterialIn,
+				     cavityInfo->thickness,
+				     cavityInfo->material);
+}
 
 BDSCavityElement::~BDSCavityElement()
 {
@@ -75,6 +83,6 @@ void BDSCavityElement::Build()
 void BDSCavityElement::BuildField()
 {
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-							    GetAcceleratorVacuumLogicalVolume(),
-							    true);
+                                                            GetAcceleratorVacuumLogicalVolumes(),
+                                                            true);
 }

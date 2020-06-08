@@ -449,7 +449,7 @@ This algorithm transports a particle through free space with no external force a
 This is provided here, although provided generally by Geant4, as it is required by other
 BDSIM integrators under various circumstances. It exists in the
 :code:`BDSIntegratorBase::AdvanceDrift`
-base class for the majority of BDSIM integrators.
+base class function for the BDSIM magnetic field integrators.
 
 .. math::
 
@@ -985,7 +985,7 @@ The resulting momentum change will therefore be:
 .. math::
 
    dp_{x} ~ &= ~ \frac{q_{x,in}}{\rho}~\tan(\theta)\\
-   dp_{y} ~ &= ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
+   dp_{y} ~ &= ~ -\frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
 
 Where ":math:`corr.`" is the fringe field correction term. The calculation of the fringe
 field correction term is split into two terms, which are calculated separately in two
@@ -1012,16 +1012,14 @@ Here, :math:`h_{gap}` is also an input parameter that specifies the half-distanc
 poles. Fintk2 is a second fringe parameter with a default of zero, meaning the :math:`corr_{2}` term equals
 1 by default.
 
-* The correction term .
-
-The change in momentum:
+The final change in momentum is therefore:
 
 .. math::
 
    d\mathbf{p} ~ = ~
    \begin{pmatrix}
    + dp_{x} \\
-   - dp_{y} \\
+   + dp_{y} \\
    0
    \end{pmatrix}
 
@@ -1276,6 +1274,51 @@ The z terms are not calculated via the matrix method, rather the z-position is s
 addition of the step length, and the z-momentum is calculated from the x- and y-momentum to ensure
 momentum conservation. Note that these matrices are incomplete; there are terms for the calculation of
 the l parameter which are not needed in this stepper.
+
+
+
+BDSIM Cavity Fringes
+--------------------
+
+* Class name: :code:`BDSIntegratorCavityFringe`
+
+Cavity fringes are constructed as thin RMatrix elements either end of the solenoid body. This integrator
+inherits the thin rmatrix integrator and automatically sets the matrix elements.
+
+* The input coordinates are converted to the local curvilinear frame.
+
+* If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
+  is applied.
+
+If the fringes of an RF cavity are constructed, the length of the cavity body is reduced by the thin element
+length in order to conserve the total element length. In this case the cavity efield is scaled accordingly.
+For the fringes, the following matrix is used:
+
+.. math::
+
+   \begin{pmatrix}
+   1                                          & 0  & 0                                          & 0 \\
+   \mp \frac{\gamma^{\prime}}{2\gamma_{i(f)}} & 1  & 0                                          & 0 \\
+   0                                          & 0  & 1                                          & 0 \\
+   0                                          & 0  & \mp \frac{\gamma^{\prime}}{2\gamma_{i(f)}} & 1 \\
+   \end{pmatrix}
+
+where
+
+.. math::
+
+   \gamma^{\prime} = \frac{qE_0\cos(\Delta\phi)}{m_0 c^2}
+
+where :math:`q` is the particle charge, :math:`E_0` is the peak cavity field strength, :math:`\Delta\phi` is
+the cavity field phase offset, :math:`m_0 c^2` is the particle rest mass, and :math:`\gamma_{i(f)}` is
+the entrance :math:`(i)` and exit :math:`(f)` particle lorentz factor.
+
+As the off-diagonal matrix elements are energy dependant, the integrator sets those terms every time the
+integrator is called. After the thin rmatrix stepper has advanced the particle, the off-diagonal elements are
+set back to zero to prevent particle-specific information being cached and applied to subsequent particles.
+In the event that those matrix terms are 0, the particle advance as if the fringe element is a drift.
+
+
 
 Validation of BDSIM Integrators
 ===============================

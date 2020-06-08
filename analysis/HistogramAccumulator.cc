@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,9 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "TROOT.h"
 
 #include <cmath>
+#include <stdexcept>
 #include <string>
 
 ClassImp(HistogramAccumulator)
@@ -42,13 +42,15 @@ HistogramAccumulator::HistogramAccumulator():
 
 HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
 					   int                nDimensionsIn,
-					   const std::string  resultHistNameIn,
+					   const std::string& resultHistNameIn,
 					   const std::string& resultHistTitleIn):
   nDimensions(nDimensionsIn),
   n(0),
   terminated(false),
   resultHistName(resultHistNameIn),
   resultHistTitle(resultHistTitleIn),
+  mean(nullptr),
+  variance(nullptr),
   result(nullptr)
 {
   std::string meanName = resultHistName + "_Mean";
@@ -77,16 +79,19 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
 	break;
       }
     default:
-      {break;}
+      {throw std::domain_error("Invalid number of dimensions"); break;}
     }
-  // empty contents
-  mean->Reset();
-  variance->Reset();
-  result->Reset();
-  // set title
-  result->SetTitle(resultHistTitle.c_str());
-  mean->SetTitle(meanName.c_str());
-  variance->SetTitle(variName.c_str());
+  if (mean && variance && result)
+    {// technically these could be nullptr
+      // empty contents
+      mean->Reset();
+      variance->Reset();
+      result->Reset();
+      // set title
+      result->SetTitle(resultHistTitle.c_str());
+      mean->SetTitle(meanName.c_str());
+      variance->SetTitle(variName.c_str());
+    }
 }
 
 HistogramAccumulator::~HistogramAccumulator()
@@ -206,6 +211,7 @@ TH1* HistogramAccumulator::Terminate()
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
 		mn  = mean->GetBinContent(j,k);
+		var = variance->GetBinContent(j, k);
 		err = n > 1 ? factor*std::sqrt(var) : 0;
 		result->SetBinContent(j, k, mn);
 		result->SetBinError(j, k,   err);
@@ -222,6 +228,7 @@ TH1* HistogramAccumulator::Terminate()
 		for (int l = 0; l <= result->GetNbinsZ() + 1; ++l)
 		  {
 		    mn  = mean->GetBinContent(j,k,l);
+		    var = variance->GetBinContent(j, k, l);
 		    err = n > 1 ? factor*std::sqrt(var) : 0;
 		    result->SetBinContent(j,k,l, mn);
 		    result->SetBinError(j,k,l,   err);
@@ -237,12 +244,12 @@ TH1* HistogramAccumulator::Terminate()
   return result;
 }
 
-void HistogramAccumulator::AccumulateSingleValue(const double&  oldMean,
-						 const double&  oldVari,
-						 const double&  x,
-						 const double&/*xVari*/,
-						 const unsigned long& nEntriesAccumulated,
-						 const unsigned long& /*nEntriesToAccumulate*/,
+void HistogramAccumulator::AccumulateSingleValue(double         oldMean,
+						 double         oldVari,
+						 double         x,
+						 double       /*xVari*/,
+						 unsigned long  nEntriesAccumulated,
+						 unsigned long/*nEntriesToAccumulate*/,
 						 double&        newMean,
 						 double&        newVari) const
 {

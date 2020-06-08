@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -28,12 +28,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <vector>
 
-BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              orderIn,
-						     const G4double&          poleTipRadiusIn,
-						     BDSFieldMag*             innerFieldIn,
-						     const G4bool&            kPositive):
+BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
+						     G4double           poleTipRadiusIn,
+						     const BDSFieldMag* innerFieldIn,
+						     G4bool             kPositive):
   order(orderIn),
-  normalisation(1),
+  normalisation(1), // we have to get field first to calculate the normalisation which uses it, so start with 1
   positiveField(kPositive),
   poleTipRadius(poleTipRadiusIn)
 {
@@ -63,13 +63,11 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              or
   
   // normalisation
   normalisation = fieldAtPoleTipMag / rawOuterlFieldAtPoleTipMag;
-  if (std::isnan(normalisation))
+  if (!std::isfinite(normalisation))
     {
       normalisation = 0;
       finiteStrength = false;
     }
-
-  delete innerFieldIn; // no longer required
 }
 
 G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
@@ -84,7 +82,7 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
   G4double reciprocal = 0;
   G4TwoVector cToPosPerp;
 
-  // loop over linear sum from all inifinite wire sources
+  // loop over linear sum from all infinite wire sources
   G4int pole = 1; // counter
   const G4double spatialLimit = 6; // mm
   G4bool closeToPole = false;
@@ -103,8 +101,12 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
 	}
       
       reciprocal = 1/cToPosMag;
+      if (!std::isnormal(reciprocal))
+	{reciprocal = 1.0;} // protect against bad values
       cToPosPerp = G4TwoVector(-cToPos.y(), cToPos.x());
-      result += std::pow(-1, pole+1)*cToPosPerp.unit() * reciprocal;
+      G4TwoVector val = std::pow(-1, pole+1)*cToPosPerp.unit() * reciprocal;
+      if (std::isfinite(val.x()) && std::isfinite(val.y())) // tolerate bad values
+	{result += val;}
       pole++;
     }
 

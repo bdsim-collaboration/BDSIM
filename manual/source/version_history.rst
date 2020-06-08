@@ -1,3 +1,502 @@
+V1.5 - 2020 - Planned Development
+=================================
+
+Below is a brief list of planned developments for the next version. Please get in touch
+if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
+
+* Change run histograms to be per-event averages rather than simple histograms.
+* Interpolated aperture shapes between any two shapes.
+* Tapered aperture for all elements.
+* Beam pipe sections to fill gaps between changes in aperture.
+* Any aperture shape can be used for both the inside and the outside of a collimator.
+* Scoring meshes for dose maps etc.
+* Restructure code into proper C++ libraries rather than just analysis and bdsim.
+* Multiple beam line tracking.
+* Use sampler data from a BDSIM output file as input to another BDSIM simulation.
+
+V1.4 - 2020 / 06 / 08
+=====================
+
+Expected Changes To Results
+---------------------------
+
+* Any wirescanner elements should be updated to use :code:`wireAngle` instead of :code:`angle` for
+  their rotation angle. Not doing this will result in different angles and therefore results.
+* Fix for field maps with rotations (multiples of :math:`\pi/2` were ok). The field will now be correct
+  but this may be different from previous releases.
+* Field maps now pick up the tilt from the element, so a separate tilt isn't required in the field
+  definition as was in the past to make the field align with a tilted element. In this case, the field
+  definition tilt should be removed and the field will be orientated to the component it's attached to.
+* PrimaryFirstHit location on wire scanners will now be more accurate, where it might have missed it before.
+* Default range cut from BDSIM will not be enforced if using a Geant4 physics list. It will only be set if
+  specified in the user input.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
+* The default when using the :code:`option, storeTrajectories=1;` is to only store the primary trajectory,
+  which will vastly reduce the data size. See output changes below for further details.
+* Trajectory option :code:`storeTrajectoryELossSRange` is now in metres and not millimetres.
+* Reference coordinates `X0`, `Y0`, `Z0`, `Xp`, `Yp` are now added to the userfile distribution
+  coordinates if specified. (`Zp` was already added).
+* Polarity of dipole yoke fields was fixed so particles slightly outside the beam pipe will be deflected
+  in a different (but now correct) direction.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
+
+New Features
+------------
+
+* BDSIM no longer requires a beam line to be built! You can simply make a placement or even an empty world.
+* Restructured "Model Description" section in the manual as it was growing overly big and difficult to use.
+* New units: `twopi`, `halfpi` and `PeV`.
+* New bunch distribution `sphere` to generate random directions at a given point.
+* `S0` for bunch offset in curvilinear frame now a documented feature of the bunch.
+* Improved event level verbosity.
+* All verbosity options now documented, including corresponding executable options.
+* BDSIM will now exit if invalid ranges and bins are specified for the single 3D
+  energy deposition ('scoring') histogram that can be specified via options.
+* New verbose event stepping options. See :ref:`bdsim-options-verbosity` for more details.
+* New beam loss monitors (BLMs) with :code:`blm` command (See :ref:`detectors-blms`).
+* New executable option :code:`--distrFileNLinesSkip` for the number of lines to skip into
+  a distribution file.
+* New executable option :code:`--nturns` to control the number of turns in a circular machine.
+* Support for partially stripped ions in output samplers.
+* Optional linking to HepMC3 for event generator output file loading. Can load any format
+  HepMC3 can load.
+* Filters for event generator particles loaded with HepMC3.
+* Ability to print out all particles and physics processes to be helpful for finding Geant4
+  names for biasing. See new options below.
+* `kaon-`, `kaon+` or `kaon0L` may now be used as beam particles.
+* The beam particle may now be specified by its PDG integer ID rather than by name.
+* A new physics list called "all_particles" has been introduced to construct all particles
+  only but no physics processes. Useful for an exotic beams where only tracking is required.
+* New `tilt` parameter for the beam command to apply a rotation about unit Z after the coordinates
+  are generated as an easy method to introduce coupling.  Note, this is in the beam command.
+* The userfile bunch distribution now supports the column "S" to allow specification of curvilinear
+  coordinates as input.
+* Field maps are now automatically tilted when attached to a tilted beam line element, whereas
+  they weren't before.
+* RF cavity fringe fields have been implemented and are on by default. They are controlled with
+  the `includeFringeFieldsCavities` option. The `includeFringeFields` option does not affect cavity fringes.
+* Revised executable options for verbosity. These are now the exact same as the input options. Old
+  options are still functional but undocumented.
+* Added the ability to attach a BLM flush to the side of a component
+  with option `side`, including the possibility of introducing an additional gap with `sideOffset`.
+* New internal region class allows better setting of defaults when defining custom regions. Previously,
+  these would just be the default in the class if they weren't specified, which was 0. The global ones
+  will now take precedence as will the value `defaultRangeCut` in the `cutsregion` declaration.
+* New options `apertureImpactsMinimumKE` and `collimatorHitsMinimumKE` to control the minimum kinetic
+  energy a particle must have for either an aperture impact or collimator hit respectively to
+  be generated.
+* A generic element now has the ability to label (classify) volumes as 'vacuum' for the purposes of
+  biasing where we split geometry into 'vacuum' and (general) 'material', e.g. yoke. See :ref:`element`
+  for details and the :code:`namedVacuumVolumes` parameter.
+
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+  
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| apertureImpactsMinimumKE           | Minimum kinetic energy for an aperture impact to be generated (GeV)|
++------------------------------------+--------------------------------------------------------------------+
+| collimatorHitsminimumKE            | Minimum kinetic energy for a collimator hit to be generated (GeV)  |
++------------------------------------+--------------------------------------------------------------------+
+| includeFringeFieldsCavities        | Include thin fringe fields for RF cavities only, on by default.    |
+|                                    | Cavity fringes are not affected by the includeFringeFields option, |
+|                                    | includeFringeFieldsCavities must be explicitly turned off if no    |
+|                                    | fringes are to be built at all in the model.                       |
++------------------------------------+--------------------------------------------------------------------+
+| preprocessGDMLSchema               | Whether to preprocess a copy of the GDML file where the URL of     |
+|                                    | the GDML schema is changed to a local copy provided in BDSIM so    |
+|                                    | geometry can be loaded without internet access. On by default.     |
++------------------------------------+--------------------------------------------------------------------+
+| printPhysicsProcesses              | Print out all defined particles according to the physics list and  |
+|                                    | the names of all defined physics processes for that particle.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpacts               | Create an optional branch called "ApertureImpacts" in the Event    |
+|                                    | tree in the output that contains coordinates of where the primary  |
+|                                    | particle exists the beam pipe. Note this could be multiple times.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsIons           | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all secondary ions as well as the primary. No information will |
+|                                    | be generated for other particles.                                  |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
+|                                    | for all particles leaving the beam pipe when this option is turned |
+|                                    | on.                                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHits                | Store collimator hits for primary particles. This is addition to   |
+|                                    | the basic `primaryInteracted` and `primaryStopped` variables.      |
++------------------------------------+--------------------------------------------------------------------+
+| storeCollimatorHtisLinks           | `storeCollimatorLinks` has been renamed to this (backwards         |
+|                                    | compatible.                                                        |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryIon                 | For the trajectories that are stored (according to the filters),   |
+|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
+|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryTransportationSteps | On by default. Renamed and opposite logic to                       |
+|                                    | `trajNoTransportation` option.                                     |
++------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | of the specified filters will be stored. This is opposite to the   |
+|                                    | more inclusive OR logic used where a trajectory will be stored if  |
+|                                    | matches any of the specified filters.                              |
++------------------------------------+--------------------------------------------------------------------+
+| verboseRunLevel                    | (0-5) level of Geant4 run level print out. The same as             |
+|                                    | `-\\-verboseRun=X` executable option.                              |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventBDSIM                  | Extra print out identifying the start and end of event             |
+|                                    | action as well as the allocator pool sizes. Print out              |
+|                                    | the size of each hits collection if it exists at all. The          |
+|                                    | same as `-\\-verboseEventBDSIM` executable option.                 |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventStart                  | Event index to start print out according to                        |
+|                                    | `verboseEventBDSIM`. Zero counting.                                |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventContinueFor            | Number of events to continue print out event information           |
+|                                    | according to `verboseEventBDSIM`. -1 means all subsequent          |
+|                                    | events.                                                            |
++------------------------------------+--------------------------------------------------------------------+
+| verboseEventLevel                  | (0-5) level of Geant4 event level print out for all events.        |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingBDSIM               | Extra print out for all steps of all particles from BDSIM          |
+|                                    | for events in the range according to `verboseSteppingEventStart`   |
+|                                    | and `verboseSteppingEventContinueFor`. Default is all events.      |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingLevel               | (0-5) level of Geant4 print out per step of each particle. This    |
+|                                    | done according to the range of `verboseSteppingEventStart`, and    |
+|                                    | `verboseSteppingEventContinueFor`. Default is all events and all   |
+|                                    | particles.                                                         |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingEventStart          | Event offset (zero counting) to start stepping print out           |
+|                                    | according to `verboseSteppingLevel`.                               |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingEventContinueFor    | Number of events to continue print out stepping information for    |
+|                                    | according to `verboseSteppingLevel`.                               |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingPrimaryOnly         | If true, only print out stepping information for the primary.      |
++------------------------------------+--------------------------------------------------------------------+
+| verboseImportanceSampling          | (0-5) level of importance sampling related print out.              |
++------------------------------------+--------------------------------------------------------------------+
+| verboseStep                        | Whether to use the verbose stepping action for every               |
+|                                    | step. Note, this is a lot of output.                               |
++------------------------------------+--------------------------------------------------------------------+
+| verboseSteppingLevel               | (0-5) level of Geant4 stepping level print out. The same           |
+|                                    | as `-\\-verbose_G4stepping=X` executable option.                   |
++------------------------------------+--------------------------------------------------------------------+
+| verboseTrackingLevel               | (0-5) level of Geant4 tracking level print out. The same           |
+|                                    | as `-\\-verbose_G4tracking=X` executable option.                   |
++------------------------------------+--------------------------------------------------------------------+
+
+* Previous verbosity options are still valid but now undocumented. This change is to make the naming consistent
+  in lowerCamelCase and to make executable options consistent with input gmad options.
+
+
+General
+-------
+
+* Installation support for AFS has been dropped since this is reaching end of life at CERN and may builds
+  there are unmaintained or now on cvmfs.
+* Executable verbosity options, now accepted in input gmad.
+* Valid default ranges for general single 3D energy deposition 'scoring' histogram
+  available through options. Now 1m in x,y,z with 1 bin.
+* wirescanner element now uses :code:`wireAngle` for the rotation angle and not :code:`angle`.
+* wirescanner element now requires a material to be specified as this makes a large difference
+  to the expected result. This should be specified.
+* Sampler hits now store rigidity, mass and charge as these are only correct from the G4DynamicParticle
+  and cannot be reliably or easily back-calculated afterwards based on the particle definition (PDG ID)
+  for partially stripped ions. This storage marginally increases the memory usage per sampler hit, so
+  a small increase in memory (RAM) usage may be observed for very large numbers of sampler hits.
+* Crystals in crystal collimators are now sensitive as collimators and produce the special collimator
+  hit information in the output. The crystal channelling process is ignored as a step defining process
+  for generating unique hits in the crystal.
+* All processes of type `G4ProcessType::fNotDefined` are excluded from generating collimator specific hits.
+* The option `storeCollimatorInfo` now does not store collimator hits for primary particles but only
+  the Boolean variables `primaryInteracted` and `primaryStopped` as well as `totalEnergyDeposited` in
+  each per-collimator branch in Event. This allows greater control over the amount of information stored.
+  The primary hits can be turned on as well with the option `storeCollimatorHits`.
+* Remove use of exit(1) throughout the code.
+* Element variables "blmLocZ" and "blmLocTheta" were old and removed. These will be rejected in any
+  element definition from now on.
+* The generic beam line "element" will now be inspected for end piece coil placement on the edge of magnets
+  and these will be placed if the pro or preceding geometry is small enough. Previously, coils would only be
+  placed if (strictly) drifts were on either side of the magnet.
+* When using a Geant4 reference physics list the default is to use BDSIM's ranges. This can be turned off,
+  but shouldn't interfere if no ranges are set. This has been changed as the `defaultRangeCut` would be enforced
+  in the past even if not set explicitly by the user, causing BDSIM's default 1 mm range to be used.
+* `option, checkOverlaps=1;` now checks the internal structure of any loaded GDML geometry. Previously,
+  only the placement of the container volume of the loaded geometry was checked to see if it overlaps
+  with any other geometry, but nothing internally.
+* Neutrinos are no longer killed by default. They can be turned off (for optimisation purposes) with
+  the option :code:`option, killNeutrinos=1;`.
+* Rectellipse beam pipe will now use elliptical beam pipe without the use of Boolean solids in cases
+  where the parameters result in this. This makes therefore a marginally simpler model and avoids
+  abusing unnecessary Booleans in Geant4 due to the way people use the rectellipse for everything.
+* Revised calculation of octagonal beam pipe points such that each side is uniformly thick exactly
+  equalling beam pipe thickness. This is an improvement over the previous algorithm for this.
+* Descriptions of the elements rmatrix and thinrmatrix have been added to the manual.
+* Maximum step size calculation for RF cavities has been improved to use 2.5% of the minimum of
+  the wavelength (based on the frequency of the cavity and only valid when non-zero frequency)
+  and the length of the element.
+* Degrader wedges are no longer connected with geometry to prevent overlaps. Degrader can now be fully open
+  when using the element parameter :code:`degraderOffset`.
+  
+Bug Fixes
+---------
+
+* Fix polarity for dipole yoke fields. The field in the yokes had the opposite polarity to that
+  of the beam pipe resulting in particles slightly missing the beam pipe being deflected in the
+  wrong direction.
+* Fix phase offset based on postiion in lattice for RF cavities. Only noticeable when the phase
+  was set to provie zero acceleration (:math:`pi/2`) and it was slightly off causing a gain or
+  loss in energy.
+* Fixed formula in manual for standard error on the mean calculation. The implementation in code
+  was correct and has not changed.
+* Fix thick multipole element where the field was 1M times too strong because of the omission of units.
+* Fix Issue #272 where there could be a possible segfault due to the beam particle definition being
+  updated when multiple different particles were used for a `userfile` distribution.
+* Errors in 2D and 3D merged histograms from events were 0 always. The mean was corrected, but the error
+  was not filled correctly - this has been fixed.
+* Merged **simple** histograms (only simple ones) from using rebdsimCombine are now truly the sum, whereas
+  in the past they were the mean.
+* Fix for potential segfault when analysing collimator information branches in event tree. Dependent
+  on number of collimators analysed causing std::vector to reallocate and invalidate address of
+  pointers as required by ROOT.
+* Fix for warnings about unknown collimator branch names when loading data with DataLoader class.
+* Fixed warnings about exiting when Geant4 geometry in closed state in the event
+  of a warning being produced and BDSIM exiting. Now correctly intercept and re-throw
+  the exception.
+* Fix a bug where setting a rotation angle for a wire scanner would result in energy deposition
+  S coordinates all being -1. This was because the :code:`angle` parameter is assumed to only
+  ever be for bends and BDSIM reduces the sampler and curvilinear world (used for coordinate
+  transforms) diameter given the maximum bending angle of bends in the whole lattice. This is
+  required to avoid overlaps before construction. The new parameter :code:`wireAngle` is used
+  instead.
+* Fix wire scanner sensitivity. The wire was never sensitive.
+* Fix generic element sensitivity. It never produced energy deposition.
+* Partial fix for aggressive looping particle killing in Geant4.10.5. For electrons and positrons,
+  and the beam particle, the looping threshold has be lowered to 1 keV. Ongoing investigation.
+* Fix missing previous single 3D scoring map (3D histogram of machine energy deposition)
+  being missing from the run histograms.
+* The rigidity was corrected for partially stripped ions in the sampler output.
+* The initial kinetic energy of partially stripped ions was slightly inflated due to subtracting
+  the nuclear mass not including the mass of the electrons. The magnetic fields were however
+  calculated correctly and this resulted in incorrect behaviour. This has been since fixed.
+* Fix a bug where if a userfile with different particle types was used and `-\\-generatePrimariesOnly`
+  was used the phase space coordinates would be correct but the mass, charge, rigidity would be
+  written wrongly to the output. The particle definition is now updated correctly in the special
+  case of generating primaries only where the Geant4 kernel isn't used.
+* Fix a possible segfault when an ion beam is used for as well as the `-\\-generatePrimariesOnly`
+  excutable option.
+* Ion variables are now correctly written to the Primary branch of the Event tree in the case of using
+  an ion beam with `-\\-generatePrimariesOnly`.
+* Fix crystal channelling biasing that was broken with commit #66a6809. This was introduced between
+  v1.3.1 and v1.3.2. It resulted in the channelling working but the cross-section biasing not being
+  applied and therefore the rest of the physics processes acting as if the block was amorphous.
+* Fix crystal positioning in `crystalcol`. Previously, the crystal centre was placed at `xsize` but
+  it should be in the inside edge to match other collimators. The inside of the edge is now aligned
+  to `xsize`.
+* Note a change of sign to the left crystal angle. A positive angle and also bendingAngleAxisY rotates
+  both left and right crystals away from the centre of the collimator. Will only affect the left crystal
+  as compared to previous behaviour.
+* Fix `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` not being filled in Model tree output.
+  They're now filled correctly.
+* Fix generic biasing for protons when an ion is used as the beam, or when GenericIon is available in
+  the physics list and also biased. Previously, the proton would not be biased but instead only the
+  ions would be.
+* Fix Event.Summary.memoryUsageMb which was always 0. Also now correct units on linux and Mac. Was previously
+  a factor of 1048 too big on linux.
+* Fix scaling of relativistic beta in the dipolequadrupole integrator, the particle design beta was
+  always was used before regardless of dipole scaling.
+* Fix phase term in rf field when frequency is 0. When frequency is 0, the field should be constant and
+  maximal, however, it was constant but still modulated by the phase of the incoming particle.
+* Fix for default value of "energy" (actually energy loss) in the trajectory branch of the Event tree
+  where the default value was -1 whereas it should be 0.
+* Fix missing geometrical margins in undulator.
+* Fix small occasional overlap with rectellipse beam pipe with yoke of magnets.
+* Fix a lack of warning when there were too many columns supplied to a rebdsim analysis configuration
+  input text file.
+* Fix a bug where the PrimaryFirstHit or PrimayrLastHit S coordinate may appear to jump back and forth
+  or be discontinuous or wrong. This was fixed by using a more robust directional lookup in the geometry
+  on boundaries. Although with the exact same coordinates, Geant4's navigation internally can 'stick'
+  to surfaces and it's more robust to use a navigator search with a direction of motion included. For
+  the primary trajectory we did a repeated point-only lookup, leading to occasionally the calculated S
+  position from the centre of the element being wrong. Even if the primary trajectory isn't stored, a
+  light version is used to identify the primary first and last hit points. This only happened in very
+  specific circumstances and depended on the physics list used.
+* Fix for incorrect curvilinear transforms resulting in wrong S coordinate. This was caused when the
+  geometry search fell back to the curvilinear bridge world instead of the regular curvilinear world.
+  The transform was used from the regular curvilinear world though, which would be the transform from
+  the last lookup. This only affected a small fraction of cases with steps on boundaries on samplers in
+  between elements. Most tracking routines do not depend on S / z, so there is little effect to tracking.
+* Fix for field map rotation when using a tilt in the field. If the field was tilted by a multiple of
+  :math:`\pi/2`, you would not notice. For small finite tilts, the field vector would be rotated wrongly
+  due to a double transform.
+* Fix a bug where the local coordinates of PrimaryFirstHit and PrimaryLastHit were always zero.
+* Fix a bug where the turn number of PrimaryFirstHit and PrimaryLastHit was always zero.
+* Fix sampler variables `theta`, `phi` and `phip` being -1 when it should be 0 for 0 angle particles
+  due to a mistake in the identification of possible nans or infinite numbers.
+* Fix check that the RF cavity horizontalWidth is larger than the cavity model radius when a cavity model
+  is specified for that element.
+* Correctly identify primary first hits on wire scanner wires. Due to the often very thin geometric
+  nature of wires, a step through the wire is usually defined by transportation and not by a discrete
+  physics process. However, the kinetic energy and momentum direction often change due to along-step
+  processes that are not identified easily in Geant4. We now detect these changes and correctly identify
+  the primary as impacting the wire as the PrimaryFirstHit location.
+* Fixed a bug where the terminator and teleporters would overlap with the tunnel.
+* Fixed two sources of overlaps which may appear when using `lhcleft` or `lhcright` magnet geometries.
+* Fixed a bug where the `lhcright` transverse extent was set incorrectly.
+* Placements with respect to thin multipoles would not work. Thin multipoles were always made uniquely
+  where sometimes they didn't have to be - this has been fixed. Also, the searching algorithm has been
+  improved to deal with any uniquely built components, such as rf cavities.
+* Small memory leaks reported by Coverity.
+* Unintialised variables reported by Coverity.
+* Fix erroneous warnings with jcol that would prevent it being built. These were due to double
+  parameter checks from a base class that don't appy.
+* Fix Event.Summary.primaryAbsorbedInCollimator flag not identifying absorption in jcols correctly.
+* Fix naming of placements so multiple placements of the same geometry are uniquely shown in the visualiser.
+* Fix for test in `shield` element where the beam pipe wasn't built because it was compared to half the `xsize`
+  instead of all of it. The beam pipe thickness was also not taken into account and now is.
+* Fix potential overlap with octagonal beam pipes caused by incorrect determination of the radius
+  required for the magnet poles to not hit the beam pipe.
+* Fixed naming bug in magnets where the beam pipe container, magnet outer container and overall container
+  logical volumes would have the same name. This would cause problems when exporting BDSIM geometry to
+  GDML and then trying to reload it somewhere. Each are now named uniquely.
+* Fix potential compilation problem with some compilers for "ambiguous overload of abs".
+* Fix bug where `distrFile` executable option would not print out if set at the start of BDSIM.
+* Fix print out for biasing that would incorrectly say "all particles" for biasing primary particles only.
+  The message has also changed so as not to be confused with particle species.
+* Fix the extension of any list type parameters in beam line elements when they're extended or redefined -
+  such as updating the `knl` parameter of a multipole. Previously the parser would not understand this syntax.
+* Fix survey writing for models with placement beam lines to now write those beam lines in separate files
+  named as the survey name appended with the placement name. Previously the survey file was overwritten for
+  every secondary beam lines so only the final beam line placement was recorded.
+* Fixed parallel transport integrator for non-paraxial particles (e.g. secondaries from elsewhere) that would
+  be parallel transported to the end of the element regardless of particle entry position or direction of travel.
+  Non-paraxial particles are now tracked through as if the element were a drift. In the case of rmatrix elements,
+  this change does not affect the behaviour of the rmatrix in the centre of the element, only the parallel transport
+  through the thick sections of the element.
+* Fix segfault in rebdsimOptics when supplying a BDSIM root file in which only primaries are generated, the model
+  isn't constructed in this case so it isn't written, therefore can't be copied to the rebdsimOptics output.
+* Fix wrongly sized container volume for ggmad geometry for Cons and Tubs solids as well as reported extents that
+  would cause overlaps with neighbouring elements.
+* Fix crash from Geant4 when the same sequence was placed multiple times (multiple beam line visualisation) due
+  to degenerate naming of parallel worlds.
+* Fix segfault in rebdsimOptics when the output file name is the same as the input file name. The two files names
+  must now be different.
+* Fix potentially bad geometry being built with exceptionally tightly bent dipoles with a short length. The
+  check on length, angle and horizontalWidth was symmetric whereas for C-shaped poled dipoles the yoke can
+  be shifted.
+* Fix a bug where if the :code:`samplerDiameter` option was made incredibly small, the linked curvilinear
+  volumes would also be shrunk and therefore result in a lack of transforms in incorrect fields and therefore
+  tracking. The size of curvilinear world cylinders for field transforms is now determined independently.
+* Fix possible overlaps reported in curvilinear transform volumes when a beam line with very strong bends
+  is used. The volumes are built with more tolerance and also with a look behind previous in the beam line
+  to avoid large volumes inbetween bends that migh overlap in a sequence of bends.
+* `rcol` no longer warns about the entrance and exit x-y ratio to be the same (only ecol does), which had no effect.
+
+
+Output Changes
+--------------
+
+* In the output, `Event.Trajectory.trajectories` is now `Event.Trajectory.XYZ` to better reflect
+  what it is.  Similarly, `momenta` is now `PXPYPZ`. Capitals denote the global coordinates.
+* The default behaviour with `option, storeTrajectories=1;` is now to **only** store the primary
+  trajectory whereas it was all before. This vastly reduces the data size.
+* The default option :code:`storeTrajectoryDepth` is now 0, representing only the primary whereas
+  this was 1e5 before. -1 will mean 'all'. This in effect fixes a misunderstanding where trajectory
+  options would not appear to have any effect unless the depth was set to 0.
+* A new data member "filters" has been added to the Trajectory branch of the Event tree. This has
+  bits (std::bitset<N>) that are 1 or 0 representing whether an individual trajectory matched each
+  filter. This allows a mix of trajectories to be disentangled.
+* In the analysis class :code:`analysis/Run.hh`, the member variables `Summary` and `Histos`
+  now start with capital letters to match the layout on file.
+* Samplers now have a new variable called `nElectrons` that is the number of electrons on a
+  partially stripped ion (if it is one) passing through the sampler. This is filled alongside
+  the other ion information.
+* Samplers now have a new variable called `theta` included in polar coordinates (optional), which
+  is the angle with respect to the local z axis. i.e. :math:`tan^{-1}(r^{\prime}/z^{\prime})`.
+* `isIon`, `ionA` and `ionZ` are now non-zero when a Hydrogen ion with one or two electrons
+  passes through a sampler.
+* All extra coordinates are now recorded in the Primary sampler structure no matter if these
+  are turned on or not for the samplers.
+* New Event.Summary variable `cpuTime`, which is the duration of the event in CPU time in seconds.
+* `e1`, `e2`, `hgap`, `fint`, `fintx`, `fintk2`, `fintxk2` variables in Model tree are now filled
+  correctly.
+* BDSOutputROOTEventCoords member variables are now all vectors instead of single numbers. This
+  is to allow the possibility of more than one primary particle as is possible when loading a
+  file from an event generator.
+* New BDSOutputROOTEventAperture class.
+* Consistency on `isIon` behaviour. A proton is not an ion, but a proton with bound electrons is.
+* The variable :code:`duration` in Event.Summary and Run.Summary is now :code:`durationWall` to more
+  accurately reflect the difference between this and the new variable :code:`durationCPU` for CPU time.
+* The header class BDSOutputROOTEventHeader now has variables that store which files were analysed
+  in the case of rebdsim and which files were combined in the case of rebdsimCombine.
+* New variable :code:`nTracks` in Event.Summary which is the number of tracks created in that event.
+
+Output Class Versions
+---------------------
+
+* Data Version 5.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | Y           | NA              | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | Y           | 1               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | Y           | 3               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | Y           | 2               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+Utilities
+---------
+
+* pybdsim v2.2.0
+* pymadx v1.8.0
+* pymad8 v1.6.0
+* pytransport v1.4.0
+
+
 V1.3.3 - 2019 / 05 / 21
 =======================
 
@@ -177,7 +676,7 @@ New Features
 |                                  | generated, `isIon`, `ionA` and `ionZ` variables are filled.      |
 |                                  | Collimator hits will now also be generated for all ions.         |
 +----------------------------------+------------------------------------------------------------------+
-| storeCollimatorLinks             | If `storeCollimatorInfo` is on and collimator hits are           |
+| storeCollimatorHitsLinks         | If `storeCollimatorInfo` is on and collimator hits are           |
 |                                  | generated, extra information is stored for each collimator hit.  |
 +----------------------------------+------------------------------------------------------------------+
 | storeEloss                       | Ability to completely turn off generation of energy deposition   |

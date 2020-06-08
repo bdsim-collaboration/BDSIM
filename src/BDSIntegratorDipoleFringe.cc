@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -37,11 +37,12 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 minimumRadiusOfCurvatureIn,
 						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  rho(std::abs(brhoIn)/(*strengthIn)["field"]),
+  rho(std::abs(brhoIn)/(*strengthIn)["field"] * (*strengthIn)["scaling"] ),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
-  finiteTilt(BDS::IsFinite(tiltIn))
+  finiteTilt(BDS::IsFinite(tiltIn)),
+  multipoleIntegrator(nullptr)
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
@@ -67,6 +68,9 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   // prepare magnet strength object for thin sextupole needed for curved polefaces
   BDSMagnetStrength* sextStrength = new BDSMagnetStrength();
   (*sextStrength)["k2"] = thinSextStrength;
+  // component strength is normalised by length, no length here to set to 1
+  (*sextStrength)["length"] = 1*CLHEP::m;
+
   // integrator for thin sextupole
   multipoleIntegrator = new BDSIntegratorMultipoleThin(sextStrength, brhoIn, eqOfMIn);
   delete sextStrength;
@@ -78,6 +82,11 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 
   bx = (*strengthIn)["bx"];
   by = (*strengthIn)["by"];
+}
+
+BDSIntegratorDipoleFringe::~BDSIntegratorDipoleFringe()
+{
+  delete multipoleIntegrator;
 }
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[6],
@@ -117,7 +126,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
       yMultipoleOut[i + 3] = yIn[i + 3];
     }
   // apply thin multipole kick if finite curvature. Does not step, stepping occurs in dipole integrator
-  if (BDS::IsFinite(polefaceCurvature))
+  if (multipoleIntegrator)
     {MultipoleStep(yIn, yMultipoleOut, h);}
 
   // container for dipole step output, used as fringe step input

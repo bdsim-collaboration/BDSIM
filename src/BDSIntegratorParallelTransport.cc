@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -37,7 +37,6 @@ void BDSIntegratorParallelTransport::Stepper(const G4double yIn[],
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
   
-  // check if beam particle, if so step as drift
   BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMom     = localPosMom.PostStepPoint();
@@ -50,7 +49,16 @@ void BDSIntegratorParallelTransport::Stepper(const G4double yIn[],
   G4double xp0 = localMomUnit.x();
   G4double yp0 = localMomUnit.y();
   G4double zp0 = localMomUnit.z();
-  
+
+  // only proceed with parallal transport if particle is paraxial
+  // judged by forward momentum > 0.9 and |transverse| < 0.1
+  if (zp0 < 0.9 || std::abs(xp0) > 0.1 || std::abs(yp0) > 0.1)
+	{
+	  AdvanceDriftMag(yIn, h, yOut, yErr);
+	  SetDistChord(0);
+	  return;
+	}
+
   G4double x1 = x0;
   G4double y1 = y0;
   G4double z1 = z0+h;

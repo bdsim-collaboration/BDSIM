@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -52,7 +52,7 @@ std::pair<BDSExtent, BDSExtent> BDS::DetermineExtents(const G4VSolid* solid)
     {return BDS::InspectCutTubs(solid);}
   else
     {
-      G4cout << "Solid of type \"" << className << "\" is not supported" << G4endl;
+      G4cout << "BDS::DetermineExtents> Solid of type \"" << className << "\" is not supported" << G4endl;
       return std::make_pair(BDSExtent(), BDSExtent());
     }
 }

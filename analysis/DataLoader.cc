@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -28,8 +28,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Run.hh"
 
 #include "BDSDebug.hh"
+#include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventCollimator.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSVersionData.hh"
 
 #include "TChain.h"
 #include "TFile.h"
@@ -52,7 +54,8 @@ DataLoader::DataLoader(std::string fileName,
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn),
   backwardsCompatible(backwardsCompatibleIn),
-  dataVersion(4)
+  g4dChain(nullptr),
+  dataVersion(BDSIM_DATA_VERSION)
 {
   CommonCtor(fileName);
 }
@@ -60,6 +63,7 @@ DataLoader::DataLoader(std::string fileName,
 DataLoader::~DataLoader()
 {
   delete hea;
+  delete g4d;
   delete bea;
   delete opt;
   delete mod;
@@ -108,6 +112,7 @@ void DataLoader::CommonCtor(std::string fileName)
 #else
       BDSOutputROOTEventSampler<float>::particleTable = g4d->geant4Data;
       BDSOutputROOTEventCollimator::particleTable = g4d->geant4Data;
+      BDSOutputROOTEventAperture::particleTable = g4d->geant4Data;
 #endif
     }
 }
@@ -204,20 +209,16 @@ void DataLoader::BuildEventBranchNameList()
       std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
       exit(1);
     }
-
-  // We don't need to prepare a vector of samplers that will be set branch on
-  // if we're not going to process the samplers.
-  if (!processSamplers)
-    {return;}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
     {return;}
 
-  Model* modTemporary = new Model();
+  Model* modTemporary = new Model(false, dataVersion);
   modTemporary->SetBranchAddress(mt);
   mt->GetEntry(0);
-  samplerNames    = modTemporary->SamplerNames(); // copy sampler names out
+  if (processSamplers)
+    {samplerNames = modTemporary->SamplerNames();} // copy sampler names out
   // collimator names was only added in data version 4 - can leave as empty vector
   if (dataVersion > 3)
     {collimatorNames = modTemporary->CollimatorNames();}

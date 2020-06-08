@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 #include "G4VUserEventInformation.hh"
+
+#include <ctime>
 
 /**
  * @brief Interface to store event information use G4 hooks.
@@ -47,13 +49,15 @@ public:
   /// @{ Setters
   inline void SetStartTime(const time_t& startTimeIn)   {info->startTime = startTimeIn;}
   inline void SetStopTime(const time_t& stopTimeIn)     {info->stopTime  = stopTimeIn;}
-  inline void SetDuration(const G4float& durationIn)    {info->duration  = (float)durationIn;}
+  inline void SetDurationWall(G4float durationWallIn)   {info->durationWall = (float)durationWallIn;}
+  inline void SetDurationCPU(G4float  durationCPUIn)    {info->durationCPU  = (float)durationCPUIn;}
   inline void SetSeedStateAtStart(const G4String& seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
-  inline void SetIndex(const G4int& indexIn)            {info->index     = (int)indexIn;}
-  inline void SetAborted(const G4bool& abortedIn)       {info->aborted   = (bool)abortedIn;}
-  inline void SetPrimaryHitMachine(const G4bool& hitIn) {info->primaryHitMachine = (bool)hitIn;}
-  inline void SetMemoryUsage(const G4double& memoryUsageMbIn) {info->memoryUsageMb = (double)memoryUsageMbIn;}
+  inline void SetIndex(G4int indexIn)                   {info->index     = (int)indexIn;}
+  inline void SetAborted(G4bool abortedIn)              {info->aborted   = (bool)abortedIn;}
+  inline void SetPrimaryHitMachine(G4bool hitIn)        {info->primaryHitMachine = (bool)hitIn;}
+  inline void SetMemoryUsage(G4double memoryUsageMbIn)  {info->memoryUsageMb = (double)memoryUsageMbIn;}
   inline void SetPrimaryAbsorbedInCollimator(G4bool absorbed) {info->primaryAbsorbedInCollimator = absorbed;}
+  inline void SetNTracks(long long int nTracks)         {info->nTracks = nTracks;}
   /// @}
 
   /// Accessor.

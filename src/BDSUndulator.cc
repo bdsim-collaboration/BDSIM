@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDType.hh"
 #include "BDSUndulator.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
@@ -37,27 +39,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSUndulator::BDSUndulator(G4String   nameIn,
-			   G4double   lengthIn,
-			   G4double   periodIn,
-			   G4double   undulatorMagnetHeightIn,
-			   G4double   horizontalWidthIn,
-			   G4double   undulatorGapIn,
+BDSUndulator::BDSUndulator(const G4String&  nameIn,
+			   G4double         lengthIn,
+			   G4double         periodIn,
+			   G4double         undulatorMagnetHeightIn,
+			   G4double         horizontalWidthIn,
+			   G4double         undulatorGapIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
 			   BDSFieldInfo*    vacuumFieldInfoIn,
 			   BDSFieldInfo*    outerFieldInfoIn,
-			   G4String         materialIn):
+			   const G4String&  materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
   undulatorPeriod(periodIn),
   horizontalWidth(horizontalWidthIn),
   undulatorMagnetHeight(undulatorMagnetHeightIn),
-  undulatorGap(undulatorGapIn)
+  undulatorGap(undulatorGapIn),
+  numMagnets(0)
 {
-  if (materialIn == "")
+  if (materialIn.empty())
     {
-      G4cout << __METHOD_NAME__ << "Warning - no material set for undulator magnet - using iron" << G4endl;
+      BDS::Warning(__METHOD_NAME__, "element \"" + name + "\" no material set for undulator magnet - using iron");
       material = "iron";
     }
   else
@@ -75,51 +78,37 @@ void BDSUndulator::BuildContainerLogicalVolume()
   // input Checks
   BDSExtent bp = beamPipeInfo->Extent();
   if (!BDS::IsFinite(undulatorPeriod))
-    {
-      G4cerr << __METHOD_NAME__ << "Undulator period is 0, period must be finite" <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "undulator period is 0, period must be finite.");}
+  
   // check if the undulator period is an integer factor of the element length
   if (BDS::IsFinite(std::fmod(chordLength, undulatorPeriod)))
-    {
-      G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "
-              "undulator periods (length \"undulatorPeriod\"" <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "undulator length \"arcLength\" does not divide into an integer number of\n undulator periods (length \"undulatorPeriod\".");}
+  
   // can now cast num magnets to integer as above check should catch if it isnt an integer.
   numMagnets = (G4int) 2*chordLength/undulatorPeriod;
 
   G4double beampipeThickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->beamPipeThickness;
   if (!BDS::IsFinite(undulatorGap))
     {
-      G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height" << G4endl;
+      G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height." << G4endl;
       undulatorGap = 2*(bp.DY() +  2*beampipeThickness);
     }
   if (undulatorGap < (bp.DY() + 2*beampipeThickness + lengthSafetyLarge))
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorGap\" smaller than beam pipe aperture " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorGap\" for element: \"" + name + "\" smaller than beam pipe aperture.");}
+  
   if (undulatorGap >= horizontalWidth)
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorGap\" larger than horizontalWidth " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorGap\" for element: \"" + name + "\" larger than horizontalWidth.");}
+  
   if (!BDS::IsFinite(undulatorMagnetHeight))
     {
       // update single magnet box height in case of undulator gap change.
       undulatorMagnetHeight = 0.5 * (horizontalWidth - undulatorGap);
     }
   if (undulatorMagnetHeight > 0.5*horizontalWidth)
-    {
-      G4cerr << __METHOD_NAME__ << "\"undulatorMagnetHeight\" larger than 0.5*horizontalWidth " <<  G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "\"undulatorMagnetHeight\" larger than 0.5*horizontalWidth in component " + name);}
   else if ((2*undulatorMagnetHeight + undulatorGap) > horizontalWidth)
     {
-      G4cerr << __METHOD_NAME__ << "Total undulator height (2*undulatorMagnetHeight + undulatorGap) is "
-            "larger than horizontalWidth " <<  G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Total undulator height (2*undulatorMagnetHeight + undulatorGap) is larger than horizontalWidth in component " + name);
     }
 
   G4double halfWidth  = 0.5 * (horizontalWidth + lengthSafetyLarge);
@@ -148,8 +137,8 @@ void BDSUndulator::Build()
 
   // magnet geometry
   G4Box* magnet = new G4Box(name + "_single_magnet_solid",
-			    0.5*horizontalWidth,
-			    0.5*undulatorMagnetHeight,
+			    0.5*horizontalWidth - 2*lengthSafetyLarge,
+			    0.5*undulatorMagnetHeight - 2*lengthSafetyLarge,
 			    0.5*singleMagnetLength);
   RegisterSolid(magnet);
 

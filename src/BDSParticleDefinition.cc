@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicalConstants.hh"
@@ -24,19 +25,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4ParticleDefinition.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 #include <iomanip>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
-
+#include <string>
 
 BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 					     G4double              totalEnergyIn,
 					     G4double              ffact,
-					     BDSIonDefinition*     ionDefinitionIn):
+					     BDSIonDefinition*     ionDefinitionIn,
+                         G4int                 ionPDGIDIn):
   particle(particleIn),
   ionDefinition(ionDefinitionIn),
+  ionPDGID(ionPDGIDIn),
   name(particleIn->GetParticleName()),
   mass(particleIn->GetPDGMass()),
   totalEnergy(totalEnergyIn),
@@ -56,14 +61,16 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
   CalculateLorentzFactors();
 }
 
-BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
+BDSParticleDefinition::BDSParticleDefinition(const G4String&    nameIn,
 					     G4double          massIn,
 					     G4double          chargeIn,
 					     G4double          totalEnergyIn,
 					     G4double          ffact,
-					     BDSIonDefinition* ionDefinitionIn):
+					     BDSIonDefinition* ionDefinitionIn,
+                         G4int             ionPDGIDIn):
   particle(nullptr),
   ionDefinition(ionDefinitionIn),
+  ionPDGID(ionPDGIDIn),
   name(nameIn),
   mass(massIn),
   charge(chargeIn),
@@ -72,6 +79,12 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
   beta(1.0),
   brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
 {
+  if (totalEnergy < mass)
+    {
+      throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergy/CLHEP::GeV)
+			 +" GeV) is less than the mass (" + std::to_string(mass/CLHEP::GeV)
+			 +" GeV) of particle");
+    }
   kineticEnergy = totalEnergy - mass;
 
   CalculateMomentum();
@@ -81,6 +94,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
 
 BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other):
   particle(other.particle),
+  ionPDGID(other.ionPDGID),
   name(other.name),
   mass(other.mass),
   charge(other.charge),
@@ -100,6 +114,16 @@ BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other)
 BDSParticleDefinition::~BDSParticleDefinition()
 {
   delete ionDefinition;
+}
+
+G4int BDSParticleDefinition::PDGID() const
+{
+  if (particle)
+    {return particle->GetPDGEncoding();}
+  else if (ionDefinition)
+    {return ionPDGID;}
+  else
+    {return 0;}
 }
 
 std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
@@ -122,10 +146,7 @@ void BDSParticleDefinition::CalculateMomentum()
   try
     {momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));}
   catch (const std::domain_error&) // sqrt(-ve)
-    {
-      G4cerr << __METHOD_NAME__ << "Total energy insufficient to include mass or particle" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Total energy insufficient to include mass or particle.");}
 }
 
 void BDSParticleDefinition::CalculateRigidity(const G4double& ffact)

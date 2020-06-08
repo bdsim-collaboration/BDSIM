@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -315,7 +315,9 @@ void BDSAwakeMultilayerScreen::RoughSurface(){
   */
 
 
-void BDSAwakeMultilayerScreen::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol)
+void BDSAwakeMultilayerScreen::Place(G4RotationMatrix* rot,
+				     const G4ThreeVector& pos,
+				     G4LogicalVolume* motherVol)
 {
   super::Place(rot,pos,motherVol);
   surfaces();

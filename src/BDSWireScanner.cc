@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -53,17 +54,10 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   wireOffset(wireOffsetIn)
 {
   if (wireDiameter <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wireDiameter for \"" << name
-	     << "\" is not defined or must be greater than 0" <<  G4endl;
-      exit(1);
-    }
-
+    {throw BDSException(__METHOD_NAME__, "Error: wireDiameter for \"" + name + "\" is not defined or must be greater than 0");}
+  
   if (wireLength <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name << "\" must be > 0." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Error: wire for \"" + name + "\" must be > 0.");}
 
   // check whether the beam pipe will fit transversely (ignores presumably very small
   // wire diameter). work out end points off wire including length and offset in x,y.
@@ -76,11 +70,7 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   tipBot += offsetXY;
   G4double innerRadius = beamPipeInfo->IndicativeRadiusInner();
   if (tipTop.mag() > innerRadius || tipBot.mag() > innerRadius)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: wire for \"" << name
-	     << "\" is too big to fit in beam pipe give offsets." << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "wire for \"" + name + "\" is too big to fit in beam pipe give offsets.");}
 }
 
 void BDSWireScanner::BuildContainerLogicalVolume()
@@ -121,6 +111,7 @@ void BDSWireScanner::Build()
 						wireMaterial,        // material
 						name + "_wire_lv");  // name
   RegisterLogicalVolume(wireLV);
+  RegisterSensitiveVolume(wireLV, BDSSDType::wirecomplete);
   
   // placement rotation
   G4RotationMatrix* wireRot = new G4RotationMatrix();
@@ -135,11 +126,12 @@ void BDSWireScanner::Build()
   RegisterVisAttributes(wireVisAttr);
   
   // placement
+  G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
   G4PVPlacement* wirePV = new G4PVPlacement(wireRot,           // rotation
 					    wireOffset,        // position
 					    wireLV,            // its logical volume
 					    name + "_wire_pv", // its name
-					    GetAcceleratorVacuumLogicalVolume(),
+					    vac,
 					    false,                  // no boolean operation
 					    0,                      // copy number
 					    checkOverlaps);

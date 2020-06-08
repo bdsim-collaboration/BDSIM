@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTemporaryFiles.hh"
 #include "BDSUtilities.hh"
@@ -59,7 +60,7 @@ void BDSTemporaryFiles::InitialiseTempDir()
 	  
 	  char* newTempDirC = mkdtemp(pc);
 	  if (!newTempDirC)
-            {G4cerr << __METHOD_NAME__ << "Unable to create directory: " << templateDir << G4endl; exit(1);}
+            {throw BDSException(__METHOD_NAME__, "Unable to create directory: " + templateDir);}
 	  else
             {
 	      G4String newTempDir = G4String(newTempDirC);
@@ -77,8 +78,7 @@ void BDSTemporaryFiles::InitialiseTempDir()
       G4cerr << __METHOD_NAME__ << "Could not create temporary dir in one of:" << G4endl;
       for (const auto& dir : dirsToTry)
 	{G4cerr << dir << G4endl;}
-      G4cerr << "Required for operation - exiting" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__, "Required for operation.");
     }
   else
     {G4cout << __METHOD_NAME__ << "Created temporary directory in: " << temporaryDirectory << G4endl;}

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "TChain.h"
 #include "TFile.h"
@@ -54,11 +55,11 @@ int main(int argc, char *argv[])
     }
 
   std::string configFilePath = std::string(argv[1]); //create a string from arguments so able to use find_last_of and substr  methods
-  std::string configFileExtension =  configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
+  std::string configFileExtension = configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
   if (configFileExtension != "txt")
     {
-      std::cout << "Unrecognised filetype: '." << configFileExtension << "'" <<  std::endl;
-      std::cout << "Make sure the config file is plain text with the .txt extension!" << std::endl;
+      std::cerr << "Unrecognised extension for file: " << configFilePath << ".  Extension: " << configFileExtension << std::endl;
+      std::cerr << "Make sure the config file is plain text with the .txt extension!" << std::endl;
       exit(1);
     }
 
@@ -77,29 +78,39 @@ int main(int argc, char *argv[])
     {Config::Instance(configFilePath, inputFilePath, outputFileName);}
   catch (std::string error)
     {
-      std::cout << error << std::endl;
+      std::cerr << error << std::endl;
       exit(1);
     }
 
-  Config* config = Config::Instance();
+  Config* config = nullptr;
+  try
+    {config = Config::Instance();}
+  catch (const std::string& e)
+    {std::cerr << e << std::endl; exit(1);}
   
   bool allBranches = config->AllBranchesToBeActivated();
   const RBDS::BranchMap* branchesToActivate = &(config->BranchesToBeActivated());
   
   bool debug = config->Debug();
-  DataLoader dl = DataLoader(config->InputFilePath(),
-			     debug,
-			     config->ProcessSamplers(),
-			     allBranches,
-			     branchesToActivate,
-			     config->GetOptionBool("backwardscompatible"));
+  DataLoader* dl = nullptr;
+  try
+    {
+      dl = new DataLoader(config->InputFilePath(),
+			  debug,
+			  config->ProcessSamplers(),
+			  allBranches,
+			  branchesToActivate,
+			  config->GetOptionBool("backwardscompatible"));
+    }
+  catch (const std::string e)
+    {std::cerr << e << std::endl; exit(1);}
 
-  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(),
-						  dl.GetBeamTree(),
+  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
+						  dl->GetBeamTree(),
 						  config->PerEntryBeam(),
 						  debug);
-  EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
-                                                   dl.GetEventTree(),
+  EventAnalysis*   evtAnalysis = new EventAnalysis(dl->GetEvent(),
+                                                   dl->GetEventTree(),
 						   config->PerEntryEvent(),
 						   config->ProcessSamplers(),
                                                    debug,
@@ -107,16 +118,16 @@ int main(int argc, char *argv[])
 						   config->GetOptionBool("emittanceonthefly"),
                                                    (long int)config->GetOptionNumber("eventstart"),
                                                    (long int)config->GetOptionNumber("eventend"));
-  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(),
-						 dl.GetRunTree(),
+  RunAnalysis*     runAnalysis = new RunAnalysis(dl->GetRun(),
+						 dl->GetRunTree(),
 						 config->PerEntryRun(),
 						 debug);
-  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(),
-						     dl.GetOptionsTree(),
+  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl->GetOptions(),
+						     dl->GetOptionsTree(),
 						     config->PerEntryOption(),
 						     debug);
-  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(),
-						   dl.GetModelTree(),
+  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl->GetModel(),
+						   dl->GetModelTree(),
 						   config->PerEntryModel(),
 						   debug);
 
@@ -137,7 +148,7 @@ int main(int argc, char *argv[])
       // add header for file type and version details
       outputFile->cd();
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-      headerOut->Fill(); // updates time stamp
+      headerOut->Fill(dl->GetFileNames()); // updates time stamp
       headerOut->SetFileType("REBDSIM");
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
@@ -148,20 +159,26 @@ int main(int argc, char *argv[])
 	{analysis->Write(outputFile);}
 
       // copy the model over and rename to avoid conflicts with Model directory
-      auto modelTree = dl.GetModelTree();
-      auto newTree = modelTree->CloneTree();
-      // unforunately we have a folder called Model in histogram output files
-      // avoid conflict when copying the model for plotting
-      newTree->SetName("ModelTree");
-      newTree->Write("", TObject::kOverwrite);
+      TChain* modelTree = dl->GetModelTree();
+      TTree* treeTest = modelTree->GetTree();
+      if (treeTest)
+	{// TChain can be valid but TTree might not be in corrupt / bad file
+	  auto newTree = modelTree->CloneTree();
+	  // unfortunately we have a folder called Model in histogram output files
+	  // avoid conflict when copying the model for plotting
+	  newTree->SetName("ModelTree");
+	  newTree->Write("", TObject::kOverwrite);
+	}
 
       outputFile->Close();
       delete outputFile;
+      std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
-  catch (std::string error)
+  catch (const std::string& error)
     {
-      std::cout << error << std::endl;
+      std::cerr << error << std::endl;
       exit(1);
     }
+  delete dl;
   return 0;
 }

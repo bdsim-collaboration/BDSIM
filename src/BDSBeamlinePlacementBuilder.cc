@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <vector>
 
@@ -56,10 +57,11 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 								placement.geometryFile,
 								nullptr,
 								0, 0,
+								nullptr,
 								placement.sensitive);
 
       G4double length = geom->GetExtent().DZ();
-      BDSSimpleComponent* comp = new BDSSimpleComponent(geom->GetName(),
+      BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
 							geom,
 							length);
 

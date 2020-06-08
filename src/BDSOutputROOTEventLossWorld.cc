@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -52,6 +52,27 @@ void BDSOutputROOTEventLossWorld::Fill(const BDSHitEnergyDepositionGlobal* hit)
   turn.push_back(hit->turnsTaken);
 }
 #endif
+
+void BDSOutputROOTEventLossWorld::Fill(const BDSOutputROOTEventLossWorld* other)
+{
+  if (!other)
+    {return;}
+
+  n = other->n;
+  totalEnergy           = other->totalEnergy;
+  preStepKineticEnergy  = other->preStepKineticEnergy;
+  postStepKineticEnergy = other->postStepKineticEnergy;
+  stepLength            = other->stepLength;
+  X = other->X;
+  Y = other->Y;
+  Z = other->Z;
+  T = other->T;
+  partID   = other->partID;
+  trackID  = other->trackID;
+  parentID = other->parentID;
+  weight   = other->weight;
+  turn     = other->turn;
+}
 
 void BDSOutputROOTEventLossWorld::Flush()
 {

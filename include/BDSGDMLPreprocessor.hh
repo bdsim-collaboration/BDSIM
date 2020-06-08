@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -32,7 +32,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace BDS
 {
   G4String PreprocessGDML(const G4String& file,
-			  const G4String& prefix);
+			  const G4String& prefix,
+			  G4bool          preprocessSchema = true);
+
+  G4String PreprocessGDMLSchemaOnly(const G4String& file);
 
   /// Get GDML Schema location included with BDSIM.
   G4String GDMLSchemaLocation();
@@ -55,11 +58,17 @@ public:
   ~BDSGDMLPreprocessor();
 
   G4String PreprocessFile(const G4String& file,
-			  const G4String& prefix);
+			  const G4String& prefix,
+			  G4bool          preprocessSchema = true);
+
+  /// Prepare the prefixed name. Done in a public static function so the
+  /// convention is in only one place.
+  static G4String ProcessedNodeName(const G4String& nodeName,
+				    const G4String& prefix);
 private:
 
-  void ReadDoc(xercesc::DOMNodeIterator* docIterator);
-  void ReadNode(xercesc::DOMNode* node);
+  void ReadDoc(xercesc::DOMNodeIterator* docIterator, G4bool processSchema);
+  void ReadNode(xercesc::DOMNode* node, G4bool processSchema);
   void ProcessGDMLNode(xercesc::DOMNamedNodeMap* attributeMap);
   void ReadAttributes(xercesc::DOMNamedNodeMap* attributeMap);
   void ProcessDoc(xercesc::DOMNodeIterator* dotIterator, const G4String& prefix);

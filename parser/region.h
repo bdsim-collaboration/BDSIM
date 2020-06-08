@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -32,10 +32,12 @@ namespace GMAD
    * 
    * @author Jochem Snuverink
    */
-  class Region : public Published<Region> {
+  class Region: public Published<Region>
+  {
   public:
     std::string name; ///< name
 
+    double   defaultRangeCut;
     double   prodCutPhotons;
     double   prodCutElectrons;
     double   prodCutPositrons;

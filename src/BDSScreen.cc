@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -80,6 +80,6 @@ void BDSScreen::AddScreenLayer(G4double thickness, G4String material, G4int isSa
 void BDSScreen::PlaceScreen()
 {
   mlScreen->Build();//Build the screen.
-  G4LogicalVolume* vacuumLV = GetAcceleratorVacuumLogicalVolume();
+  G4LogicalVolume* vacuumLV = *(GetAcceleratorVacuumLogicalVolumes().begin());
   mlScreen->Place(screenRot, screenPos, vacuumLV); //Place the screen in the beampipe centre.
 }

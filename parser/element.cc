@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -184,16 +184,17 @@ void Element::PublishMembers()
   publish("undulatorGap",          &Element::undulatorGap);
   publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
 
-  publish("wireDiameter" ,      &Element::wireDiameter);
-  publish("wireLength" ,        &Element::wireLength);
-  publish("wireOffsetX" ,       &Element::wireOffsetX);
-  publish("wireOffsetY" ,       &Element::wireOffsetY);
-  publish("wireOffsetZ" ,       &Element::wireOffsetZ);
+  publish("wireDiameter",      &Element::wireDiameter);
+  publish("wireLength",        &Element::wireLength);
+  publish("wireOffsetX",       &Element::wireOffsetX);
+  publish("wireOffsetY",       &Element::wireOffsetY);
+  publish("wireOffsetZ",       &Element::wireOffsetZ);
+  publish("wireAngle",         &Element::wireAngle);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
-
+  publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -221,9 +222,6 @@ void Element::PublishMembers()
   publish("samplerRadius",       &Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
   
-  publish("blmLocZ",    &Element::blmLocZ);
-  publish("blmLocTheta",&Element::blmLocTheta);
-
   publish("colour", &Element::colour);
 
   publish("crystalLeft",            &Element::crystalLeft);
@@ -243,15 +241,10 @@ std::string Element::getPublishedName(std::string nameIn)const
 }
 
 bool Element::isSpecial()const {
-  bool isSpecial = false;
-
-  if (type == ElementType::_TRANSFORM3D ||
-      type == ElementType::_MARKER ||
-      type == ElementType::_LINE ||
-      type == ElementType::_REV_LINE )
-    {isSpecial = true;}
-
-  return isSpecial;
+  return (type == ElementType::_TRANSFORM3D ||
+	  type == ElementType::_MARKER ||
+	  type == ElementType::_LINE ||
+	  type == ElementType::_REV_LINE);
 }
 
 void Element::print(int ident)const{
@@ -310,10 +303,10 @@ void Element::print(int ident)const{
       }
     case ElementType::_ELEMENT:
       {
-	std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
-		  << "precision region " << region       << std::endl
-		  << "Geometry file : "  << geometryFile << std::endl
-		  << "Field object  : "  << fieldAll     << std::endl;
+	std::cout << "horizontalWidth: " << horizontalWidth << "m" << std::endl
+		  << "region:          " << region       << std::endl
+		  << "geometryFile:    " << geometryFile << std::endl
+		  << "Field object :   " << fieldAll     << std::endl;
 	break;
       }	
     case ElementType::_AWAKESCREEN:
@@ -349,8 +342,7 @@ void Element::print(int ident)const{
       }
     case ElementType::_SCREEN:
       {
-	std::cout << "angle=" << angle <<"rad" << std::endl
-		  << "precision region " << region << std::endl;
+	std::cout << "angle=" << angle <<"rad" << std::endl;
 	break;
       }
     case ElementType::_TRANSFORM3D:
@@ -443,6 +435,7 @@ void Element::flush()
   wireOffsetX  = 0;
   wireOffsetY  = 0;
   wireOffsetZ  = 0;
+  wireAngle    = 0;
 
   // undulator
   undulatorPeriod = 1;
@@ -502,11 +495,10 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
-  
-  blmLocZ.clear();
-  blmLocTheta.clear();
 
-  bias = ""; biasMaterial=""; biasVacuum="";
+  bias         = "";
+  biasMaterial = "";
+  biasVacuum   = "";
   biasMaterialList.clear();
   biasVacuumList.clear();
   minimumKineticEnergy = 0;
@@ -521,7 +513,8 @@ void Element::flush()
   fieldAll    = "";
 
   geometryFile ="";
-  material="";  
+  material="";
+  namedVacuumVolumes = "";
   windowmaterial = "vacuum";
   mountmaterial="";
   scintmaterial = "";

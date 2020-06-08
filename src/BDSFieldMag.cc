@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2019.
+University of London 2001 - 2020.
 
 This file is part of BDSIM.
 
@@ -61,4 +61,10 @@ void BDSFieldMag::GetFieldValue(const G4double point[4],
   field[3] = 0;             // E_x
   field[4] = 0;             // E_y
   field[5] = 0;             // E_z
+}
+
+void BDSFieldMag::SetTransform(const G4Transform3D& transformIn)
+{
+  transform = transformIn;
+  inverseTransform = transformIn.inverse();
 }
