@@ -3,7 +3,7 @@ OutputFileName  ana1.root
 # Object	    treeName  Histogram Name    # Bins       Binning          Variable                                 Selection
 SimpleHistogram1D   Event. Primaryx              {20}        {-5e-8:5e-8}     Primary.x                                  1
 SimpleHistogram1D   Event. Primaryy              {20}        {-5e-8:5e-8}     Primary.y                                  1
-Histogram1DLog      Event. EventDuration         {30}        {-4:2}           Summary.duration                           1
+Histogram1DLog      Event. EventDuration         {30}        {-4:2}           Summary.durationCPU                        1
 SimpleHistogram2D   Event. ElossTunnelTransverse {20,20}     {-3:3,-3:3}      ElossTunnel.Y:ElossTunnel.X                1
 Histogram3D         Event. TunnelDeposition      {20,20,30}  {-3:3,-3:3,0:5}  ElossTunnel.Z:ElossTunnel.Y:ElossTunnel.X  ElossTunnel.energy*ElossTunnel.weight
 Histogram1DLog      Event. EnergySpectrum        {50}        {-9:-1}          Eloss.energy                               1
