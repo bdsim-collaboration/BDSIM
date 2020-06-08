@@ -30,7 +30,7 @@ BDSFieldMagInterpolated2Layer::BDSFieldMagInterpolated2Layer(BDSFieldMagInterpol
   subField(subFieldIn),
   subFieldExtent(subFieldIn->Extent())
 {
-  if (!mainField->ExtentNoOffset().Encompasses(subFieldExtent))
+  if (!mainField->ExtentNoOffset().Encompasses(subFieldIn->ExtentNoOffset()))
     {throw BDSException(__METHOD_NAME__, "sub field in field map is bigger than main field.");}
 }
 
@@ -43,8 +43,10 @@ BDSFieldMagInterpolated2Layer::~BDSFieldMagInterpolated2Layer()
 G4ThreeVector BDSFieldMagInterpolated2Layer::GetField(const G4ThreeVector& position,
 						      const G4double       t) const
 {
+  // transformations in these objects are only the transform of the field definition,
+  // not w.r.t. the beam line which is done already on the incoming position for this instance
   if (subFieldExtent.Encompasses(position))
-    {return subField->GetField(position, t);}
+    {return subField->GetFieldTransformed(position, t);}
   else
-    {return mainField->GetField(position, t);}
+    {return mainField->GetFieldTransformed(position, t);}
 }
