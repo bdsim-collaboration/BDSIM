@@ -164,6 +164,7 @@ void Beam::PublishMembers()
   publish("distrFile",            &Beam::distrFile);
   publish("distrFileFormat",      &Beam::distrFileFormat);
   publish("matchDistrFileLength", &Beam::matchDistrFileLength);
+  publish("removeUnstableWithoutDecay", &Beam::removeUnstableWithoutDecay);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
   publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency
   publish("nlinesSkip",           &Beam::nlinesSkip);
