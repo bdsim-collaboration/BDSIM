@@ -461,7 +461,7 @@ equations (in the usual Geant4 way)::
 
 .. include:: <isogrk1.txt>
 
-where v is between 0 and 2 * |pgr| and u between 0 and h, respectively.
+where v is between 0 and 2 :math:`\pi` and u between 0 and h, respectively.
 
 Creating a geometry list
 ^^^^^^^^^^^^^^^^^^^^^^^^

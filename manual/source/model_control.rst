@@ -2560,7 +2560,7 @@ appropriate parameters need to be defined for each individual distribution.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
 
 +---------------+--------------------------------+------------------------+
 | **Variable**  | **Description**                | **Coordinates Used**   |
