@@ -1204,6 +1204,7 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	  scorerBox->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
 	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
 	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+	  BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
 	}
 
       scManager->RegisterScoringMesh(scorerBox);

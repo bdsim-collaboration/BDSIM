@@ -79,6 +79,7 @@ Output Changes
 --------------
 
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
+* Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
 
 Output Class Versions
 ---------------------
@@ -123,7 +124,7 @@ Output Class Versions
 | BDSOutputROOTGeant4Data           | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 
-V1.4 - 2020 / 03 / ??
+V1.4 - 2020 / 06 / 08
 =====================
 
 Expected Changes To Results
@@ -317,6 +318,8 @@ New Features
 General
 -------
 
+* Installation support for AFS has been dropped since this is reaching end of life at CERN and may builds
+  there are unmaintained or now on cvmfs.
 * Executable verbosity options, now accepted in input gmad.
 * Valid default ranges for general single 3D energy deposition 'scoring' histogram
   available through options. Now 1m in x,y,z with 1 bin.
@@ -600,10 +603,10 @@ Output Class Versions
 Utilities
 ---------
 
-* pybdsim v2.1.0
-* pymadx v1.7.1
-* pymad8 v1.5.0
-* pytransport v1.3.0
+* pybdsim v2.2.0
+* pymadx v1.8.0
+* pymad8 v1.6.0
+* pytransport v1.4.0
 
 
 V1.3.3 - 2019 / 05 / 21
