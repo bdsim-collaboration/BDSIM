@@ -75,8 +75,8 @@ Requirements \& Environment
    or clang 6 or higher.
 2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended.
-4) *Optional* - Python 2.7 series for python utilities and easy data loading with ROOT.
-5) `ROOT`_ 6.0 or higher, for output & analysis compiled with python 2.7 support (default is 3 series).
+4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
+5) `ROOT`_ 6.0 or higher, for output & analysis compiled with Python support (default is 3 series).
 6) *Optional* - Qt5 libraries for best Geant4 visualiser.
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
 8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.4.p03**. Avoid 10.5.p0-1. See `Geant4 Installation Guide`_
@@ -402,7 +402,7 @@ These can all be set up separately, or alternatively the user can install all at
 once with the MakeFile added for convenience (running make command).  The Python package
 installer ("PIP") is required for this.
 
-.. note:: ROOT should be compiled with Python2.7 support for the full functionality of
+.. note:: ROOT should be compiled with Python support for the full functionality of
 	  pybdsim data loading to be exploited.
 
 To set up all utilities at once:
