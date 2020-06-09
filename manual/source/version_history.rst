@@ -24,12 +24,12 @@ New Features
   of different particle species beams with the same momentum for example.
 * Either :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used for bunch distributions
   that use :code:`sigmaE` nominally.
-* Normalised emittance can now be used for `guasstwiss` and `halo` distributions with the parameters
+* Normalised emittance can now be used for `gausstwiss` and `halo` distributions with the parameters
   :code:`emitnx` and :code:`emitny`.
-* Loaded geometry can now be auto-coloured by BDSIM whereas before it'd all appear very light grey.
-  The colouring has a few specific ones, but is mostly grey by density. The opacity is also varied
+* Loaded geometry can now be auto-coloured by BDSIM whereas before it would all appear very light grey.
+  The colouring has a few specific ones, but is mostly grey by density, and the opacity is also varied
   depending on the state of the material. The parameter :code:`autoColour` can be used with the
-  generic beam line element as well as placements and magnet outer geometry.
+  generic beam line element as well as placements and magnet outer geometry and is on by default.
 * Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
