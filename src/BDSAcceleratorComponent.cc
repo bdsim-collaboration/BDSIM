@@ -180,7 +180,7 @@ void BDSAcceleratorComponent::BuildUserLimits()
 std::set<G4LogicalVolume*> BDSAcceleratorComponent::GetAcceleratorMaterialLogicalVolumes() const
 {
   // get full set minus ones marked to be excluded completely from biasing
-  std::set<G4LogicalVolume*> result = BDSGeometryComponent::GetAllBiasingVolumes();
+  std::set<G4LogicalVolume*> result = GetAllBiasingVolumes();
 
   for (auto lv : acceleratorVacuumLV)
     {result.erase(lv);}
