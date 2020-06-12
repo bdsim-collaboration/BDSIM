@@ -10,7 +10,15 @@ else()
   set(VERSION_SHA1 ${BDSIM_VERSION})
 endif()
 
+if (BOOST_FOUND)
+  set(BOOST_INCLUDE_DIRS ":${Boost_INCLUDE_DIRS}")
+else()
+  set(BOOST_INCLUDE_DIRS " ")
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersion.hh     ${CMAKE_CURRENT_BINARY_DIR}/BDSVersion.hh     @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersionData.hh ${CMAKE_CURRENT_BINARY_DIR}/BDSVersionData.hh @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bdsim.sh.in       ${CMAKE_BINARY_DIR}/bin/bdsim.sh              @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/bin/bdsim.sh DESTINATION bin)
+
+

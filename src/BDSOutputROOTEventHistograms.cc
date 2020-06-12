@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-#include <boost/format.hpp>
 #include <boost/histogram.hpp>
 
 ClassImp(BDSOutputROOTEventHistograms)

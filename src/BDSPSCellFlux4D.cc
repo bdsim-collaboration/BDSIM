@@ -5,7 +5,6 @@
 #include "BDSPSCellFlux4D.hh"
 #include "BDSHistBinMapper.hh"
 
-#include <boost/format.hpp>
 #include <boost/histogram.hpp>
 
 
