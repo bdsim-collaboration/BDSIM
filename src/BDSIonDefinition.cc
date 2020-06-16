@@ -53,7 +53,10 @@ BDSIonDefinition::BDSIonDefinition(G4int    aIn,
 				   G4double qIn):
   a(aIn),
   z(zIn),
-  charge(qIn)
+  charge(qIn),
+  energy(0),
+  overrideCharge(false),
+  nElectrons(0)
 {
   if (a < z)
     {
