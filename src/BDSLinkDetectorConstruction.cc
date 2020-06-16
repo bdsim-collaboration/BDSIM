@@ -267,8 +267,19 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
-
-  BDSAcceleratorComponent* component = componentFactory->CreateComponent(&el, nullptr, nullptr, 0);
+    
+    
+  BDSAcceleratorComponent* component = nullptr;
+  try
+    {component = componentFactory->CreateComponent(&el, nullptr, nullptr, 0);}
+  catch (const BDSException&)
+    {
+      G4cout << "Replacing component " << el.name << " with drift" << G4endl;
+      // well it didn't work (maybe ridiculous unphysical gap - so replace it with a drift
+      el.type = GMAD::ElementType::_DRIFT;
+      el.apertureType = "circularvacuum";
+      component = componentFactory->CreateComponent(&el, nullptr, nullptr, 0);
+    }
 
   // wrap in box
   BDSTiltOffset* to = new BDSTiltOffset(el.offsetX * CLHEP::m,
