@@ -65,9 +65,6 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   BDSParticleCoordsFull coords;
   try
     {
-      // update particle definition in the special case of an ion - can only be done here
-      // and not before due to Geant4 ion information availability only at run time
-      bunch->UpdateIonDefinition();
       coords = bunch->GetNextParticleLocal();
     }
   catch (const BDSException& exception)

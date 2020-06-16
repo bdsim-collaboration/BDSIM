@@ -43,7 +43,15 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
 
   G4int ci = currentIndex;
   currentIndex++;
-  return particles[ci].coords;
+  
+  auto particle = particles[ci];
+  particleDefinition = particle.particleDefinition;
+  particleDefinitionHasBeenUpdated = true;
+  // update particle definition in the special case of an ion - can only be done here
+  // and not before due to Geant4 ion information availability only at run time
+  UpdateIonDefinition();
+  
+  return particle.coords;
 }
 
 void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefinitionIn,
