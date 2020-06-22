@@ -870,6 +870,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       G4double angleX = std::asin(hkick * scaling);
       G4double angleY = std::asin(vkick * scaling);
 
+      if (isnan(angleX))
+        {throw BDSException(__METHOD_NAME__, "hkick too strong for element \"" + element->name + "\" ");}
+      if (isnan(angleY))
+        {throw BDSException(__METHOD_NAME__, "vkick too strong for element \"" + element->name + "\" ");}
+
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
