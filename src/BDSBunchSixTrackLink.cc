@@ -18,9 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSixTrackLink.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
+#include "G4IonTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
 #include "G4String.hh"
 
 #include <vector>
@@ -47,9 +52,7 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   auto particle = particles[ci];
   particleDefinition = particle.particleDefinition;
   particleDefinitionHasBeenUpdated = true;
-  // update particle definition in the special case of an ion - can only be done here
-  // and not before due to Geant4 ion information availability only at run time
-  UpdateIonDefinition();
+  UpdateGeant4ParticleDefinition(particleDefinition->PDGID());
   
   return particle.coords;
 }
@@ -61,4 +64,37 @@ void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefi
   size = (G4int)particles.size();
   if (!particleDefinition)
     {particleDefinition = particles.back().particleDefinition;}
+}
+
+void BDSBunchSixTrackLink::UpdateGeant4ParticleDefinition(G4int pdgID)
+{
+  G4ParticleDefinition* newParticleDefinition = nullptr;
+  if (!particleDefinition->IsAnIon())
+  {
+    G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
+    auto search = encoding->find(pdgID);
+    if (search != encoding->end())
+    {newParticleDefinition = search->second;}
+    else
+    {throw BDSException(__METHOD_NAME__,"PDG ID \"" + std::to_string(pdgID) + "not found in particle table");}
+  }
+  else
+  {
+    G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+    BDSIonDefinition* ionDefinition = particleDefinition->IonDefinition();
+    newParticleDefinition = ionTable->GetIon(ionDefinition->Z(),
+                                                            ionDefinition->A(),
+                                                            ionDefinition->ExcitationEnergy());
+  }
+  particleDefinition->UpdateG4ParticleDefinition(newParticleDefinition);
+  // Note we don't need to take care of electrons here. These are automatically
+  // allocated by Geant4 when it converts the primary vertex to a dynamic particle
+  // (in the process of constructing a track from it) (done in G4PrimaryTransformer)
+  // this relies on the charge being set correctly - Geant4 detects this isn't the same
+  // as Z and adds electrons accordingly.
+#if G4VERSION_NUMBER > 1049
+  // in the case of ions the particle definition is only available now
+  // fix the looping thresholds now it's available
+  BDS::FixGeant105ThreshholdsForParticle(newParticleDefinition);
+#endif
 }

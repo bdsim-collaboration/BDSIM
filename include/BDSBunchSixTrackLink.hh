@@ -49,6 +49,8 @@ public:
 
   inline size_t Size() const {return particles.size();}
   
+  void UpdateGeant4ParticleDefinition(G4int pdgID);
+  
 private:
   G4int currentIndex; ///< Index in the vector that we're currently at.
   G4int size;         ///< Number of particles (1 counting).
