@@ -52,6 +52,8 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   auto particle = particles[ci];
   particleDefinition = particle.particleDefinition;
   particleDefinitionHasBeenUpdated = true;
+  G4cout << "BDSIM particle definition object " << particleDefinition << G4endl;
+  G4cout << "Geant4 particle definition object " << particleDefinition->ParticleDefinition() << G4endl;
   UpdateGeant4ParticleDefinition(particleDefinition->PDGID());
   
   return particle.coords;
