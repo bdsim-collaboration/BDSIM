@@ -45,7 +45,7 @@ public:
   void AddParticle(BDSParticleDefinition* particleDefinitionIn,
 		   const BDSParticleCoordsFull& coordsIn);
 
-  void ClearParticles() {particles.clear(); currentIndex = 0;}
+  void ClearParticles();
 
   inline size_t Size() const {return particles.size();}
   
@@ -54,6 +54,6 @@ public:
 private:
   G4int currentIndex; ///< Index in the vector that we're currently at.
   G4int size;         ///< Number of particles (1 counting).
-  std::vector<BDSParticleExternal> particles;
+  std::vector<BDSParticleExternal*> particles;
 };
 #endif

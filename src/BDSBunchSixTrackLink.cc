@@ -50,21 +50,29 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   currentIndex++;
   
   auto particle = particles[ci];
-  particleDefinition = particle.particleDefinition;
+  particleDefinition = particle->particleDefinition;
   particleDefinitionHasBeenUpdated = true;
   //UpdateGeant4ParticleDefinition(particleDefinition->PDGID());
   UpdateIonDefinition();
   
-  return particle.coords;
+  return particle->coords;
 }
 
 void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefinitionIn,
                                        const BDSParticleCoordsFull& coordsIn)
 {
-  particles.emplace_back(BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
+  particles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
   size = (G4int)particles.size();
   if (!particleDefinition)
-    {particleDefinition = particles.back().particleDefinition;}
+    {particleDefinition = particles.back()->particleDefinition;}
+}
+
+void BDSBunchSixTrackLink::ClearParticles()
+{
+  currentIndex = 0;
+  size = 0;
+  for (auto p : particles)
+    {delete p;}
 }
 
 void BDSBunchSixTrackLink::UpdateGeant4ParticleDefinition(G4int pdgID)
