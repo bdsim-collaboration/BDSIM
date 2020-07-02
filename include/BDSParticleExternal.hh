@@ -41,8 +41,8 @@ public:
   /// Define copy constructor as this class owns the particleDefinition.
   BDSParticleExternal(const BDSParticleExternal& other);
 
-  /// Use default copy-assignment constructor.
-  BDSParticleExternal& operator=(const BDSParticleExternal& other) = default;
+  BDSParticleExternal(BDSParticleExternal&& other) noexcept;
+  BDSParticleExternal& operator=(BDSParticleExternal&& other) noexcept;
   ~BDSParticleExternal();
 
   BDSParticleDefinition* particleDefinition;

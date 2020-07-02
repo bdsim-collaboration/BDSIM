@@ -36,6 +36,28 @@ BDSParticleExternal::BDSParticleExternal(const BDSParticleExternal& other):
   index(other.index)
 {;}
 
+BDSParticleExternal::BDSParticleExternal(BDSParticleExternal&& other) noexcept:
+  coords(other.coords),
+  index(other.index)
+{
+  particleDefinition = other.particleDefinition;
+  other.particleDefinition = nullptr;
+}
+
+BDSParticleExternal& BDSParticleExternal::operator=(BDSParticleExternal&& other) noexcept
+{
+  if (this != &other)
+    {
+      delete particleDefinition;
+      particleDefinition = other.particleDefinition;
+      other.particleDefinition = nullptr;
+
+      coords = other.coords;
+      index  = other.index;
+    }
+  return *this;
+}
+
 BDSParticleExternal::~BDSParticleExternal()
 {
   delete particleDefinition;
