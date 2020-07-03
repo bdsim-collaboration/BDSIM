@@ -2225,7 +2225,12 @@ BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(const G4String& crystalN
 {
   auto result = crystalInfos.find(crystalName);
   if (result == crystalInfos.end())
-    {throw BDSException(__METHOD_NAME__, "unknown crystal \"" + crystalName + "\" - please define it");}
+    {
+      G4cout << "Defined crystals are:" << G4endl;
+      for (const auto& kv : crystalInfos)
+	{G4cout << kv.first << G4endl;}
+      throw BDSException(__METHOD_NAME__, "unknown crystal \"" + crystalName + "\" - please define it");
+    }
 
   // prepare a copy so the component can own that recipe
   BDSCrystalInfo* info = new BDSCrystalInfo(*(result->second));
