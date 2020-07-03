@@ -46,11 +46,11 @@ BDSSamplerRegistry::~BDSSamplerRegistry()
   instance = nullptr;
 }
 
-G4int BDSSamplerRegistry::RegisterSampler(G4String            name,
-					  BDSSampler*         sampler,
-					  G4Transform3D       transform,
-					  G4double            S,
-					  BDSBeamlineElement* element)
+G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
+					  BDSSampler*          sampler,
+					  const G4Transform3D& transform,
+					  G4double             S,
+					  const BDSBeamlineElement* element)
 {
   samplerObjects.insert(sampler);
   G4String uniqueName = name;
