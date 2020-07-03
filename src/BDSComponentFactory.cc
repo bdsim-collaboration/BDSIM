@@ -102,7 +102,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-					 BDSComponentFactoryUser* userComponentFactoryIn):
+					 BDSComponentFactoryUser*     userComponentFactoryIn,
+                                         G4bool                       usualPrintOut):
   designParticle(designParticleIn),
   userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
@@ -115,7 +116,8 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   beta0 = designParticle->Beta();
   
   integratorSet = BDS::IntegratorSet(integratorSetType);
-  G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
+  if (usualPrintOut)
+    {G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;}
 
   PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
