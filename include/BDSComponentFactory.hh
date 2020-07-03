@@ -75,7 +75,8 @@ class BDSComponentFactory
 {
 public:
   explicit BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
+			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr,
+			       G4bool usualPrintOut = true);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
