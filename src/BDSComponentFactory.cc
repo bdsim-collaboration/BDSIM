@@ -112,6 +112,8 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
+  if (!designParticle)
+    {throw BDSException(__METHOD_NAME__, "no valid design particle - required.");}
   brho  = designParticle->BRho();
   beta0 = designParticle->Beta();
   
