@@ -72,7 +72,7 @@ G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo& info)
 {
   infos.push_back(info);
 
-  G4int index = numberOfEntries; // copy the number of entires / the index of this entry
+  G4int index = numberOfEntries; // copy the number of entries / the index of this entry
   numberOfEntries++;
   return index;
 }

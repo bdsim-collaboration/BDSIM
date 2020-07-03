@@ -55,20 +55,20 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
   for (const auto& pl : placements)
     {// loop over all placement definitions and see if any are beam line placements
       if (!pl.sequence.empty()) // it's a beam line placement
-	{// curvilinear world required at least
-	  G4bool samplerWorldRequired = false;
-	  for (const auto& el : BDSParser::Instance()->GetSequence(pl.sequence))
-	    {// do any elements require a sampler -> sampler world required
-	      BDSSamplerType sType = BDS::DetermineSamplerType(el.samplerType);
-	      if (sType != BDSSamplerType::none)
-		{
-		  samplerWorldRequired = true;
-		  break; // no need to loop over rest of sequence
-		}
-	    }
-	  BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired, pl.name);
-	  worlds.push_back(info);
-	}
+      {// curvilinear world required at least
+        G4bool samplerWorldRequired = false;
+        for (const auto& el : BDSParser::Instance()->GetSequence(pl.sequence))
+        {// do any elements require a sampler -> sampler world required
+          BDSSamplerType sType = BDS::DetermineSamplerType(el.samplerType);
+          if (sType != BDSSamplerType::none)
+          {
+            samplerWorldRequired = true;
+            break; // no need to loop over rest of sequence
+          }
+        }
+        BDSParallelWorldInfo info(pl.sequence, true, samplerWorldRequired, pl.name);
+        worlds.push_back(info);
+      }
     }
   return worlds;
 }
