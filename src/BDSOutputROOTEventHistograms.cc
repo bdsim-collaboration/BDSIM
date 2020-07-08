@@ -183,7 +183,7 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String ti
                                 unsigned int nebins, G4double emin, G4double emax)
 {
 
-    boost_histogram h_tmp = boost::histogram::make_histogram(boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
+    boost_histogram h_tmp = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
                             boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
                             boost::histogram::axis::regular<double> {nzbins, zmin, zmax, "z"},
                             boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {nebins, emin, emax, "Energy_log"});
