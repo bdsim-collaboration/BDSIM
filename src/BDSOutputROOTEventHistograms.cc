@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-#include <boost/histogram.hpp>
+//#include <boost/histogram.hpp>
 
 ClassImp(BDSOutputROOTEventHistograms)
 
@@ -42,7 +42,7 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
 							   std::vector<TH2D*>& histograms2DIn,
 							   std::vector<TH3D*>& histograms3DIn,
-							   std::vector<boost_histogram*>& histograms4DIn):
+							   std::vector<BDSBH4D*>& histograms4DIn):
   histograms1D(histograms1DIn),
   histograms2D(histograms2DIn),
   histograms3D(histograms3DIn),
@@ -76,10 +76,10 @@ void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
   for (auto h : rhs->histograms3D)
     {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
   for (auto h : rhs->histograms4D)
-    {boost_histogram* h_clone = nullptr;
-    boost_histogram h_tmp = *h;
+    {BDSBH4D* h_clone = nullptr;
+        BDSBH4D h_tmp = *h;
     *h_clone = h_tmp;
-    histograms4D.push_back(static_cast<boost_histogram*>(h_clone));}
+    histograms4D.push_back(static_cast<BDSBH4D*>(h_clone));}
 
 }
 
@@ -183,13 +183,14 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String ti
                                 unsigned int nebins, G4double emin, G4double emax)
 {
 
-    boost_histogram h_tmp = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
-                            boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
-                            boost::histogram::axis::regular<double> {nzbins, zmin, zmax, "z"},
-                            boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {nebins, emin, emax, "Energy_log"});
+    BDSBH4D h_tmp = BDSBH4D(nxbins, xmin, xmax,
+                            nybins, ymin, ymax,
+                            nzbins, zmin, zmax,
+                            nebins, emin, emax);
 
-    boost_histogram* h = new boost_histogram(h_tmp);
+    BDSBH4D* h = new BDSBH4D(h_tmp);
     histograms4D.push_back(h);
+
 
     return (G4int)histograms4D.size() - 1;
 }
@@ -224,7 +225,7 @@ void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
                             G4double zValue,
                             G4double eValue)
 {
-    histograms4D[histoId]->operator()(xValue, yValue, zValue, eValue);
+    histograms4D[histoId]->h.operator()(xValue, yValue, zValue, eValue);
 }
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
@@ -243,7 +244,7 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4double value)
 {
 
-    histograms4D[histoId]->at(x,y,z,e) = value;
+    histograms4D[histoId]->h.at(x,y,z,e) = value;
 
 }
 
@@ -254,10 +255,10 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
 }
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
-                              boost_histogram*  otherHistogram)
+                             BDSBH4D* otherHistogram)
 
 {
-    histograms4D[histoId]->operator+=(*otherHistogram);
+    histograms4D[histoId]->h.operator+=(otherHistogram->h);
 
 }
 
@@ -272,5 +273,5 @@ void BDSOutputROOTEventHistograms::Flush()
   for (auto h : histograms3D)
     {h->Reset();}
   for (auto h : histograms4D)
-    {h->reset();}
+    {h->h.reset();}
 }

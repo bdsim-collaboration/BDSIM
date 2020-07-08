@@ -2,8 +2,8 @@
 // Created by Eliott Ramoisiaux on 05/06/2020.
 //
 
-#ifndef ROOT_TEST_BDSBH4D_HH
-#define ROOT_TEST_BDSBH4D_HH
+#ifndef BDSBH4D_HH
+#define BDSBH4D_HH
 
 #include <boost/histogram.hpp>
 
@@ -16,6 +16,10 @@ class BDSBH4D : public TObject {
 
 public:
     BDSBH4D();
+    BDSBH4D(unsigned int nxbins, double xmin, double xmax,
+            unsigned int nybins, double ymin, double ymax,
+            unsigned int nzbins, double zmin, double zmax,
+            unsigned int nebins, double emin, double emax);
     virtual ~BDSBH4D() {;}
 
     boost_histogram h;
@@ -25,4 +29,4 @@ ClassDef(BDSBH4D,1);
 };
 
 
-#endif //ROOT_TEST_BDSBH4D_HH
+#endif //BDSBH4D_HH
