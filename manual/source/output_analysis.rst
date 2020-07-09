@@ -87,16 +87,17 @@ If you want to recreate a specific event to witness it but need the event index.
 3. Scan with condition.
 
 ::
+   
    root -l myfile.root
    > TTree* evt = (TTree*)_file0->Get("Event")
    > evt->Scan("Summary.index", "PrimaryLastHit.S>10")
 
 
-The syntax is :code:`evt->Scan("Summary.index", "some condition of variables")`. This will print out
+The syntax is :code:`evt->Scan("Summary.index", "selection")`. This will print out
 the :code:`Summary.index` variable in the data (i.e. the event index) for each entry in the tree
-(i.e. event) that matches the condition. The condition should be with respect to variables in the Event
-tree and without "Event" in them. ROOT typically prints a few at a time, with the return key printing
-out the next few and :code:`q` to quit this scanning mode.
+(i.e. event) that matches the selection condition. The condition should be with respect to variables
+in the Event tree and without "Event" in them. ROOT typically prints a few at a time, with the
+return key printing out the next few and :code:`q` to quit this scanning mode.
 
 
 Load Raw Data
