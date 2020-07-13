@@ -23,6 +23,18 @@ public:
     virtual ~BDSBH4D() {;}
 
     boost_histogram h;
+    unsigned int h_nxbins;
+    unsigned int h_nybins;
+    unsigned int h_nzbins;
+    unsigned int h_nebins;
+    double h_xmin;
+    double h_xmax;
+    double h_ymin;
+    double h_ymax;
+    double h_zmin;
+    double h_zmax;
+    double h_emin;
+    double h_emax;
 
 ClassDef(BDSBH4D,1);
 
