@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Gamma.hh"
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GenericIon.hh"
+#include "G4IonElasticPhysics.hh"
 #include "G4IonTable.hh"
 #include "G4KaonMinus.hh"
 #include "G4KaonPlus.hh"
@@ -440,6 +441,7 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(G4bool useEMD,
 						       G4bool emss)
 {
   G4VModularPhysicsList* physlist = new FTFP_BERT();
+  physlist->RegisterPhysics(new G4IonElasticPhysics()); // not included by default in FTFP_BERT
   G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
   physlist->RegisterPhysics(new BDSPhysicsChannelling());
   if (!regular)
