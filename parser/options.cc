@@ -151,6 +151,7 @@ void Options::PublishMembers()
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
+  publish("outputCompressionLevel",&Options::outputCompressionLevel);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
   
@@ -249,6 +250,7 @@ void Options::PublishMembers()
   publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
+  publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);

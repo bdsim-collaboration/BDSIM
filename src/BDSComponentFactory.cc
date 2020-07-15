@@ -636,7 +636,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   // don't check here on whether the possibly next / previous sbend will clash with
   // pole face angles - let that be checked after element construction in the beamline
-
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double angle = 0;
@@ -688,10 +687,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["length"] = arcLength;
   (*st)["scaling"]= element->scaling;
 
-  // Check the faces won't overlap due to too strong an angle with too short a magnet
-  G4double horizontalWidth = PrepareHorizontalWidth(element);
-  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], horizontalWidth, elementName);
-
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->scaling * element->k1 / CLHEP::m2;}
@@ -699,6 +694,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
+
+  // Check the faces won't overlap due to too strong an angle with too short a magnet
+  auto bp = PrepareBeamPipeInfo(element);
+  BDSMagnetOuterInfo* oiCheck = PrepareMagnetOuterInfo("checking", element,
+                                                       -incomingFaceAngle, -outgoingFaceAngle,
+                                                       bp, element->yokeOnInside);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], oiCheck->MinimumIntersectionRadiusRequired(), elementName);
+  delete oiCheck;
+  delete bp;
 
   // the above in / out face angles are not w.r.t. the local coords - subtract angle/2 to convert
   // this may seem like undoing the += in the functions, but they're used for the beam pipes
@@ -1412,7 +1416,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  baseWidth,
-			  PrepareMaterial(element, "carbon"),
+			  PrepareMaterial(element),
 			  PrepareVacuumMaterial(element),
 			  PrepareColour(element)));
 }
@@ -1469,9 +1473,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
   if (ul != defaultUL)
     {vacuumFieldInfo->SetUserLimits(ul);}
-
-  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
-  vacuumFieldInfo->SetTransform(newFieldTransform);
 
   return (new BDSUndulator(elementName,
 			   element->l * CLHEP::m,
@@ -1922,7 +1923,22 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 
   outerField->SetChordStepMinimum(BDSGlobalConstants::Instance()->ChordStepMinimumYoke());
   if (outerInfo)
-    {outerField->SetScalingRadius(outerInfo->innerRadius);}
+    {
+      outerField->SetScalingRadius(outerInfo->innerRadius);
+      outerField->SetLeft(outerInfo->yokeOnLeft);
+      auto gt = outerInfo->geometryType;
+      G4bool yfmLHC = BDSGlobalConstants::Instance()->YokeFieldsMatchLHCGeometry();
+      if ((gt == BDSMagnetGeometryType::lhcleft || gt == BDSMagnetGeometryType::lhcright) && yfmLHC)
+        {
+          if (fieldType == BDSFieldType::dipole)
+            {outerField->SetFieldType(BDSFieldType::multipoleouterdipolelhc);}
+          else if (fieldType == BDSFieldType::quadrupole)
+            {outerField->SetFieldType(BDSFieldType::multipoleouterquadrupolelhc);}
+          else if (fieldType == BDSFieldType::sextupole)
+            {outerField->SetFieldType(BDSFieldType::multipoleoutersextupolelhc);}
+        }
+    }
+
   if (bpInfo)
     {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
   return outerField;
@@ -1959,7 +1975,6 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  // name
   info->name = elementNameIn;
   
   // magnet geometry type
@@ -2126,17 +2141,13 @@ G4Transform3D BDSComponentFactory::CreateFieldTransform(Element const* el)
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
 							 G4double horizontalWidth,
-							 G4String name)
+							 const G4String& name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
-#endif
   if (horizontalWidth > 2*radiusFromAngleLength)
     {
-      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
-	     << name
-	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \"" << name
+	     << "\" will result in overlapping faces!" << G4endl << "Please reduce the horizontalWidth" << G4endl;
       throw BDSException(__METHOD_NAME__, "");
     }
 }
@@ -2443,14 +2454,14 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  mag->SetVacuumField(info);
 	}
     }
@@ -2460,7 +2471,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
-	    {info->SetTransform(info->Transform() * fieldTrans);}
+	    {info->SetTransformBeamline(fieldTrans);}
 	  component->SetField(info);
 	}
     }
