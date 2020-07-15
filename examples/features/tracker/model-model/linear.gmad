@@ -1,6 +1,8 @@
-
-
 include ../../../model-model/bdsim/linear/bmm-linear_beam.gmad;
 include ../../../model-model/bdsim/linear/bmm-linear_components.gmad;
 include ../../../model-model/bdsim/linear/bmm-linear_options.gmad;
 include ../../../model-model/bdsim/linear/bmm-linear_sequence.gmad;
+
+sample, all;
+
+option, nturns=1;
