@@ -1,3 +1,0 @@
-e1: drift, l=1.0;
-
-include GenericHybridTest.gmad;
