@@ -185,7 +185,7 @@ target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
-add_subdirectory( tracker )
+add_subdirectory(tracker)
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 

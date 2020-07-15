@@ -18,11 +18,16 @@ target_link_libraries(tracker bdsim gmad)
 ## tracker #
 #############
 
-add_executable(trackerexec tracker.cc)
-set_target_properties(trackerexec PROPERTIES OUTPUT_NAME "tracker" VERSION ${BDSIM_VERSION})
-target_link_libraries(trackerexec tracker)
+set(trackerName "tracker")
 
+add_executable(trackerexec tracker.cc)
+set_target_properties(trackerexec
+  PROPERTIES
+  OUTPUT_NAME "${trackerName}"
+  VERSION ${BDSIM_VERSION})
+
+target_link_libraries(trackerexec tracker)
 bdsim_install_targets(trackerexec tracker)
 
-
-set (binary tracker)
+# For use with tracker tests
+set(trackerBinary ${CMAKE_CURRENT_BINARY_DIR}/${trackerName} PARENT_SCOPE)
