@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 #include "PerEntryHistogram.hh"
 
@@ -31,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4D.hh"
 
 #include <cmath>
 #include <iostream>
@@ -85,6 +87,13 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 	baseHist = factory.CreateHistogram3D(d, baseName, baseName);
 	temp = dynamic_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
 	break;
+      }
+    case 4:
+      {
+    const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+    baseHist = factory.CreateHistogram4D(d, baseName, baseName);
+    temp = dynamic_cast<BDSBH4D*>(baseHist->Clone(tempName.c_str()));
+    break;
       }
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}

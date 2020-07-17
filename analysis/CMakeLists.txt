@@ -80,10 +80,12 @@ set_target_properties(rebdsimHistoMergeExec PROPERTIES OUTPUT_NAME "rebdsimHisto
 target_link_libraries(rebdsimHistoMergeExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimHistoMergeExec)
 
+
 add_executable(rebdsimCombineExec rebdsimCombine.cc)
 set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimCombineExec)
+
 
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})

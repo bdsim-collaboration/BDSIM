@@ -22,10 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4D.hh"
 
 #include <cmath>
 #include <stdexcept>
 #include <string>
+
 
 ClassImp(HistogramAccumulator)
 
@@ -77,6 +79,13 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
 	variance = static_cast<TH3D*>(baseHistogram->Clone(variName.c_str()));
 	result   = static_cast<TH3D*>(baseHistogram->Clone(resultHistName.c_str()));
 	break;
+      }
+    case 4:
+      {
+    mean =  dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(meanName);
+    variance = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(variName);
+    result   = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(resultHistName);
+    break;
       }
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}
@@ -173,6 +182,34 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 	  }
 	break;
       }
+    case 4:
+      {
+    BDSBH4D* h1  = dynamic_cast<BDSBH4D*>(mean);
+    BDSBH4D* h1e = dynamic_cast<BDSBH4D*>(variance);
+    BDSBH4D* ht  = dynamic_cast<BDSBH4D*>(newValue);
+    for (int j = -1; j <= h1->GetNbinsX(); ++j)
+      {
+        for (int k = -1; k <= h1->GetNbinsY(); ++k)
+          {
+            for (int l = -1; l <= h1->GetNbinsZ(); ++l)
+              {
+                for (int e = -1; e <= h1->GetNbinsE(); ++e)
+                  {
+                    AccumulateSingleValue(h1->h.at(j,k,l,e),
+                              h1e->h.at(j,k,l,e),
+                              ht->h.at(j,k,l,e),
+                              error, n, nEntriesToAccumulate,
+                              newMean, newVari);
+                    h1->h.at(j,k,l,e) = newMean;
+                    h1e->h.at(j,k,l,e) = newVari;
+
+                  }
+
+              }
+          }
+      }
+    break;
+      }
     default:
       {break;}
     }
@@ -237,10 +274,41 @@ TH1* HistogramAccumulator::Terminate()
 	  }
 	break;
       }
+    case 4:
+      {
+
+    for (int j = -1; j <= dynamic_cast<BDSBH4D*>(result)->GetNbinsX(); ++j)
+      {
+        for (int k = -1; k <= dynamic_cast<BDSBH4D*>(result)->GetNbinsY(); ++k)
+          {
+            for (int l = -1; l <= dynamic_cast<BDSBH4D*>(result)->GetNbinsZ(); ++l)
+              {
+                for (int e = -1; e <= dynamic_cast<BDSBH4D*>(result)->GetNbinsE(); ++e)
+                  {
+                    mn  = dynamic_cast<BDSBH4D*>(mean)->h.at(j,k,l,e);
+                    var = dynamic_cast<BDSBH4D*>(variance)->h.at(j,k,l,e);
+                    err = n > 1 ? factor*std::sqrt(var) : 0;
+                    dynamic_cast<BDSBH4D*>(result)->h.at(j,k,l,e) = mn;
+                    dynamic_cast<BDSBH4D*>(result)->h_err.at(j,k,l,e) = err;
+                  }
+
+              }
+          }
+      }
+    break;
+      }
     default:
       {break;}
     }
-  result->SetEntries(n);
+  if(nDimensions==4)
+    {
+        dynamic_cast<BDSBH4D*>(result)->SetEntries(n);
+    }
+  else
+    {
+        result->SetEntries(n);
+    }
+
   return result;
 }
 

@@ -21,12 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 
 #include "TH1.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4D.hh"
 
 #include <string>
 #include <vector>
@@ -64,6 +66,12 @@ TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
 	const HistogramDef3D* d = static_cast<const HistogramDef3D*>(definition);
 	result = CreateHistogram3D(d, overRideName, overRideTitle);
 	break;
+      }
+    case 4:
+      {
+    const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+    result = CreateHistogram4D(d, overRideName, overRideTitle);
+    break;
       }
     default:
       {break;}
@@ -184,4 +192,20 @@ TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
     }
   return result;
 }
-      
+
+BDSBH4D* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
+                                          std::string overRideName,
+                                          std::string overRideTitle) {
+    BDSBH4D *result = nullptr;
+    std::string name = d->histName;
+    std::string title = name;
+    CheckNameAndTitle(name, title, overRideName, overRideTitle);
+
+    result = new BDSBH4D(name.c_str(),title.c_str(),
+                         d->xNBins, d->xLow, d->xHigh,
+                         d->yNBins, d->yLow, d->yHigh,
+                         d->zNBins, d->zLow, d->zHigh,
+                         d->eNBins, d->eLow, d->eHigh);
+
+    return result;
+}
