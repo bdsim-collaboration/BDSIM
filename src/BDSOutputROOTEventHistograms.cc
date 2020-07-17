@@ -76,10 +76,7 @@ void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
   for (auto h : rhs->histograms3D)
     {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
   for (auto h : rhs->histograms4D)
-    {BDSBH4D* h_clone = nullptr;
-        BDSBH4D h_tmp = *h;
-    *h_clone = h_tmp;
-    histograms4D.push_back(static_cast<BDSBH4D*>(h_clone));}
+    {histograms4D.push_back(static_cast<BDSBH4D*>(h->Clone()));}
 
 }
 
@@ -183,14 +180,12 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String ti
                                 unsigned int nebins, G4double emin, G4double emax)
 {
 
-    BDSBH4D h_tmp = BDSBH4D(nxbins, xmin, xmax,
-                            nybins, ymin, ymax,
-                            nzbins, zmin, zmax,
-                            nebins, emin, emax);
 
-    BDSBH4D* h = new BDSBH4D(h_tmp);
-    histograms4D.push_back(h);
-
+    histograms4D.push_back(new BDSBH4D(name.c_str(), title.c_str(),
+                                       nxbins, xmin, xmax,
+                                       nybins, ymin, ymax,
+                                       nzbins, zmin, zmax,
+                                       nebins, emin, emax));
 
     return (G4int)histograms4D.size() - 1;
 }

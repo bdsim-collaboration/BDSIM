@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4D.hh"
 
 #include <cmath>
 #include <string>
@@ -125,6 +126,34 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
 	      }
 	  }
 	break;
+      }
+    case 4:
+      {
+    BDSBH4D* h1  = static_cast<BDSBH4D*>(mean);
+    BDSBH4D* h1e = static_cast<BDSBH4D*>(variance);
+    BDSBH4D* ht  = static_cast<BDSBH4D*>(newValue);
+    for (int j = -1; j <= h1->GetNbinsX(); ++j)
+      {
+        for (int k = -1; k <= h1->GetNbinsY(); ++k)
+          {
+            for (int l = -1; l <= h1->GetNbinsZ(); ++l)
+              {
+                for (int e = -1; e <= h1->GetNbinsE(); ++e)
+                  {
+                    var = std::pow(ht->h.at(j,k,l,e), 2) * factor;
+                    AccumulateSingleValue(h1->h.at(j,k,l,e),
+                              h1e->h.at(j,k,l,e),
+                              ht->h.at(j,k,l,e),
+                              var,
+                              oldEntries, newEntries,
+                              newMean, newVari);
+                    h1->h.at(j, k, l, e) = newMean;
+                    h1e->h.at(j, k, l, e) = newVari;
+                  }
+              }
+          }
+      }
+    break;
       }
     default:
       {break;}
