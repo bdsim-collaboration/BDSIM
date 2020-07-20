@@ -95,6 +95,7 @@ int main (int argc, char** argv)
   output->InitialiseGeometryDependent();
   output->NewFile();
   output->FillModel();
+  output->FillBeam(BDSParser::Instance()->GetBeamBase());
   output->WriteTrackerBunch("primaries",bunch,true);
 
   /// Build tracker
