@@ -97,9 +97,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
       // bdsbunch generates values in CLHEP mm standard.
       BDSParticleCoordsFullGlobal c = bdsbunch->GetNextParticle();
       double energy = c.local.totalEnergy;
-      //momentum back calculated from kinetic energy - can't change bds bunch
-      // p = sqrt( (E + m)^2 - m^2 )
-      double p = sqrt( energy*energy + 2*energy*mass );
+      double p = std::sqrt(energy*energy - mass*mass);
 
       // Momenta from BDSBunch are px/|p|, but we want px/p0
       // (i.e. normalised w.r.t reference momentum, not particle momentum).
