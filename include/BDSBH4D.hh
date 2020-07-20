@@ -9,6 +9,8 @@
 
 #include "Rtypes.h"
 #include "TH1D.h"
+#include "TTree.h"
+
 
 
 typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram;
@@ -22,6 +24,8 @@ public:
             unsigned int nybins, double ymin, double ymax,
             unsigned int nzbins, double zmin, double zmax,
             unsigned int nebins, double emin, double emax);
+
+    void to_PyROOT(std::string filename , std::string path);
 
     virtual ~BDSBH4D() {;}
 
