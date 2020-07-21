@@ -93,7 +93,7 @@ int main (int argc, char** argv)
 
   /// Check the element lookup works
   std::cout << ">>> Checking s-lookup" << std::endl;
-  double s = 4.;
+  double s = 4*CLHEP::m;
   TRKElement* el = beamline->FindElement(s);
   if (el)
   {

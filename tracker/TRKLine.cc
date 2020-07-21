@@ -34,7 +34,7 @@ TRKLine::~TRKLine()
 void TRKLine::AddElement(TRKElement* e) {
   elements.push_back(e);
   double lastS = elementEndS.empty() ? 0 : elementEndS.back();
-  elementEndS.push_back(lastS + e->GetLength() * 1.E-3);  // mm to metre conversion
+  elementEndS.push_back(lastS + e->GetLength());
 }
 
 TRKElement* TRKLine::FindElement(std::string eName)const {
