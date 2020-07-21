@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class TRKAperture;
 class TRKBunch;
+class TRKParticle;
 class TRKPlacement;
 class TRKStrategy;
 class TRKTiltOffset;
@@ -43,7 +44,7 @@ public:
   virtual ~TRKElement();
 
   /// track method, visitor pattern
-  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
   TRKBunch* CheckAperture(TRKBunch* bunch);
   // for when no aperture is used - we have to copy after state to before / confirm coordinates
   void ConfirmCoordinates(TRKBunch* bunch);

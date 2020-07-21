@@ -31,9 +31,9 @@ TRKRBend::TRKRBend(double        angleIn,
 TRKRBend::~TRKRBend()
 {;}
 
-void TRKRBend::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKRBend::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
 {
-  strategy->Track(this,bunch);
+  strategy->Track(this, particle, step);
 }
 
 void TRKRBend::Print(std::ostream &out) const

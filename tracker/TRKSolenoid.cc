@@ -32,16 +32,16 @@ TRKSolenoid::TRKSolenoid(double        strengthIn,
 TRKSolenoid::~TRKSolenoid()
 {;}
 
-void TRKSolenoid::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKSolenoid::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetIn,bunch);}
+    {strategy->Track(offsetIn, particle);}
 
-  strategy->Track(this,bunch);
+  strategy->Track(this, particle, step);
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetOut,bunch);}
+    {strategy->Track(offsetOut, particle);}
 
 }
 

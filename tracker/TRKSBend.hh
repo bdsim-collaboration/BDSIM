@@ -45,7 +45,7 @@ public:
   inline double GetAngle()const{return angle;}
   inline double GetK1()const{return k1;}
   
-  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
   
 protected:
   /// output stream

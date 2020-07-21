@@ -32,8 +32,8 @@ TRKKicker::TRKKicker(double hkickIn, double vkickIn, std::string nameIn,
 
 TRKKicker::~TRKKicker() { ; }
 
-void TRKKicker::Track(TRKBunch *bunch, TRKStrategy *strategy) {
-  strategy->Track(this, bunch);
+void TRKKicker::Track(TRKParticle* particle, double step, TRKStrategy* strategy) {
+  strategy->Track(this, particle, step);
 }
 
 void TRKKicker::Print(std::ostream &out) const {
