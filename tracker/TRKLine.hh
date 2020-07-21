@@ -34,6 +34,7 @@ class TRKLine {
 private: 
   // in case we use FindElement a lot, probably good to make an index also (but something for later)
   std::vector<TRKElement*> elements;
+  std::vector<double> elementEndS;   /// Vector with the s-locations at the end of beam line elements
   std::string name;               ///< name of element
   bool circular;                  ///< circular flag for rings
   
@@ -44,6 +45,9 @@ public:
   void AddElement(TRKElement *e);
   /// Find first element with name eName
   TRKElement* FindElement(std::string eName)const;
+
+  /// Find element to which an s position belongs
+  TRKElement* FindElement(double s)const;
 
   std::string GetName()const{return name;}
   bool GetCircular()const{return circular;}

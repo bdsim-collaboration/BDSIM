@@ -33,6 +33,8 @@ TRKLine::~TRKLine()
 
 void TRKLine::AddElement(TRKElement* e) {
   elements.push_back(e);
+  double lastS = elementEndS.empty() ? 0 : elementEndS.back();
+  elementEndS.push_back(lastS + e->GetLength() * 1.E-3);  // mm to metre conversion
 }
 
 TRKElement* TRKLine::FindElement(std::string eName)const {
@@ -45,6 +47,18 @@ TRKElement* TRKLine::FindElement(std::string eName)const {
   }
   /// if not found return NULL
   return NULL;
+}
+
+TRKElement* TRKLine::FindElement(double s)const {
+    auto it = std::lower_bound(elementEndS.begin(), elementEndS.end(), s);
+    if (it != elementEndS.end())
+    {
+        int index = it - elementEndS.begin();
+        return elements.at(index);
+    }
+
+    /// if not found return NULL
+    return NULL;
 }
 
 /// output stream
