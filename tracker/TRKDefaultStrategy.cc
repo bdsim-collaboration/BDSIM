@@ -13,7 +13,7 @@
 #include <cmath>
 
 void TRKDefaultStrategy::Track(TRKDrift *el, TRKBunch *bunch) {
-  trk::maps::drift(*bunch, el->GetLength());
+  trk::maps::nldrift(*bunch, el->GetLength());
 }
 
 void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
