@@ -91,6 +91,25 @@ int main (int argc, char** argv)
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
+  /// Check the element lookup works
+  std::cout << ">>> Checking s-lookup" << std::endl;
+  double s = 4.;
+  TRKElement* el = beamline->FindElement(s);
+  if (el)
+  {
+      std::cout << "Element at s= " << s << " is: " << el->GetName() << std::endl;
+  }
+  else
+  {
+      std::cout << "Element at s= " << s << " is out of bounds for beamline" << std::endl;
+  }
+
+  /// Check S-allocation in bunch generation
+    std::cout << ">>> Checking s-coordinates of particles" << std::endl;
+  for (const auto& p : *bunch){
+      std::cout << p.S() << std::endl;
+  }
+
   /// Write primaries to output file
   output->InitialiseGeometryDependent();
   output->NewFile();
