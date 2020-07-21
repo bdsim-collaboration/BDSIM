@@ -41,12 +41,13 @@ public:
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
   TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
   TRKParticle(double xIn, double pxIn, double yIn, double pyIn, double zIn,
-              double pzIn, double beta0In, double gamma0In, double sIn)
+              double pzIn, double beta0In, double gamma0In, double SIn)
       : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
-        gamma0(gamma0In), s(sIn) {}
+        gamma0(gamma0In), S(SIn) {}
 
   //accessors
-  double S()const      {return s;}
+  double getS()const      {return S;}
+
   /// return coordinate in micrometres
   ///@{
   double X()const      {return posmom.X();}  
@@ -102,7 +103,7 @@ public:
   double gamma0;
 
   // s-position of the particle, needed for arbitrary step-length tracking
-  double s;
+  double S;
 
 private:
   /// position in micrometre (transverse) and metre (longitudinal) and momentum in rad

@@ -107,7 +107,7 @@ int main (int argc, char** argv)
   /// Check S-allocation in bunch generation
     std::cout << ">>> Checking s-coordinates of particles" << std::endl;
   for (const auto& p : *bunch){
-      std::cout << p.S() << std::endl;
+      std::cout << p.getS() << std::endl;
   }
 
   /// Write primaries to output file
