@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
+#include <random>
 #include <map>
 
 #include "BDSDebug.hh"
@@ -54,6 +55,15 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 
 TRKTracker::~TRKTracker()
 {}
+
+double TRKTracker::RandomStep()
+{
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<std::mt19937::result_type> dist(0.1,40);
+
+    return dist(rng);
+}
 
 void TRKTracker::Track(TRKBunch* bunch) 
 {
