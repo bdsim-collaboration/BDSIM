@@ -22,10 +22,12 @@ void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
 
 void TRKDefaultStrategy::Track(TRKRBend *el, TRKBunch *bunch) {
   auto angle = el->GetAngle();
-  auto k0 = el->GetStrength();
+  double length = el->GetLength();
+  double k0 = angle / length;
+
   auto poleface = angle / 2;
   trk::maps::dipole_fringe(*bunch, k0, poleface);
-  trk::maps::sbend(*bunch, el->GetLength(), k0, el->GetK1());
+  trk::maps::sbend(*bunch, length, angle, el->GetK1());
   trk::maps::dipole_fringe(*bunch, k0, poleface);
 }
 
