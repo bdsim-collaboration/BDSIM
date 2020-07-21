@@ -381,10 +381,11 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
   return new TRKRBend(element.angle * CLHEP::rad,
-      element.name,
-      element.l * CLHEP::m,
-      aperture,
-      placement);
+		      element.name,
+		      element.l * CLHEP::m,
+		      aperture,
+		      placement,
+		      element.k1 / CLHEP::m2);
 }
 
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)

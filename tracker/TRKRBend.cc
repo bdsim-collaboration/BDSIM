@@ -23,9 +23,10 @@ TRKRBend::TRKRBend(double        angleIn,
 		   std::string   nameIn,
 		   double        lengthIn,
 		   TRKAperture  *apertureIn,
-		   TRKPlacement *placementIn):
+		   TRKPlacement *placementIn,
+		   double        k1In=0.0):
   TRKElement(nameIn,lengthIn,apertureIn,placementIn),
-  angle(angleIn)
+  angle(angleIn), k1(k1In)
 {;}
 
 TRKRBend::~TRKRBend()
