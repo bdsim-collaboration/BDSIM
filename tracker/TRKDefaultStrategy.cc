@@ -13,7 +13,7 @@
 #include <cmath>
 
 void TRKDefaultStrategy::Track(TRKDrift *el, TRKBunch *bunch) {
-  trk::maps::drift(*bunch, el->GetLength());
+  trk::maps::nldrift(*bunch, el->GetLength());
 }
 
 void TRKDefaultStrategy::Track(TRKSBend *el, TRKBunch *bunch) {
@@ -50,10 +50,12 @@ void TRKDefaultStrategy::Track(TRKSolenoid *el, TRKBunch *bunch) {
 }
 
 void TRKDefaultStrategy::Track(TRKKicker *el, TRKBunch *bunch) {
-  trk::maps::drift(*bunch, el->GetLength());
   auto hkick = el->GetHKick();
   auto vkick = el->GetVKick();
+
   for (auto &p : *bunch) {
-    trk::maps::kicker(p, hkick, vkick);
+    trk::maps::kicker(p, hkick/2., vkick/2.);
+    trk::maps::drift(p, el->GetLength());
+    trk::maps::kicker(p, hkick/2., vkick/2.);
   }
 }

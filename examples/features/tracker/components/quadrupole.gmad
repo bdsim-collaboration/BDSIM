@@ -1,0 +1,6 @@
+focusing:   quadrupole, k1=+0.01, l=1*m;
+defocusing: quadrupole, k1=-0.01, l=1*m;
+zero:       quadrupole, k1= 0.0,  l=1*m;
+
+component: line = (focusing, defocusing, zero);
+include run_settings.gmad;

@@ -265,10 +265,13 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
     case GMAD::ElementType::_KICKER:
     case GMAD::ElementType::_TKICKER:
       trkelement = CreateKicker(element);
+      break;
     case GMAD::ElementType::_HKICKER:
       trkelement = CreateHKicker(element);
+      break;
     case GMAD::ElementType::_VKICKER:
       trkelement = CreateVKicker(element);
+      break;
     default:
       trkelement = NULL;
       break;

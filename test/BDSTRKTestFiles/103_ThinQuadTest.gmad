@@ -1,3 +1,0 @@
-e1: quadrupole, l=1.0, k1=1.0;
-
-include GenericThinTest.gmad;

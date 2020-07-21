@@ -1,3 +1,0 @@
-e1: sextupole, l=1.0, k2=1.0;
-
-include GenericThinTest.gmad;

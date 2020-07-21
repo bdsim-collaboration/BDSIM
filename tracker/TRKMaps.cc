@@ -12,6 +12,28 @@ void trk::maps::drift(TRKParticle &p, double length) noexcept {
   p.z += p.pz * length / std::pow(p.beta0 * p.gamma0, 2);
 }
 
+void trk::maps::nldrift(TRKParticle &p, double length) noexcept {
+  auto beta0 = p.beta0;
+  auto gamma0 = p.gamma0;
+  double t1 = 1 / beta0 + p.pz;
+  double nlterm = std::sqrt(t1*t1
+			    - p.px*p.px
+			    - p.py*p.py
+			    - 1 / (beta0 * beta0 * gamma0 * gamma0));
+
+  p.x += p.px * length / nlterm;
+  p.y += p.py * length / nlterm;
+  p.z += -length * (t1 / nlterm - 1 / p.beta0);
+
+}
+
+void trk::maps::nldrift(TRKBunch &bunch, double length) noexcept {
+  for (auto &p : bunch) {
+    nldrift(p, length);
+  }
+}
+
+
 void trk::maps::drift(TRKBunch &bunch, double length) noexcept {
   for (auto &p : bunch) {
     drift(p, length);

@@ -1,0 +1,11 @@
+option, ngenerate=10;
+
+beam,  particle="proton",
+       energy=6.5*TeV,
+       distrType="userfile",
+       distrFile="primaries.dat",
+       distrFileFormat="x[m]:xp[rad]:y[m]:yp[rad]";
+
+lat: line=(component);
+use, period=lat;
+sample, all;

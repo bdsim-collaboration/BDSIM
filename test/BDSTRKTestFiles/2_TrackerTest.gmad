@@ -1,6 +1,0 @@
-include fodo.gmad
-include options.gmad
-include beam.gmad
-
-option, ngenerate=500,
-	apertureType="circular";

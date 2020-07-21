@@ -1,0 +1,7 @@
+positive: sextupole, k2=+0.1, l=0.5*m;
+negative: sextupole, k2=-0.1, l=0.5*m;
+zero: sextupole, k2=0.0, l=0.5*m;
+
+component: line = (positive, negative, zero);
+
+include run_settings.gmad;

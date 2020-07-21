@@ -199,8 +199,8 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
       parentID.push_back(0);
       trackID.push_back(0);
       turnNumber.push_back(0);
-      energy.push_back(energy_);
-      p.push_back(momentum);
+      energy.push_back(energy_ / CLHEP::GeV);
+      p.push_back(momentum / CLHEP::GeV);
     }
 }
 

@@ -1,0 +1,5 @@
+zero: octupole, k3= 0.0,  l=1*m;
+
+component: line = (zero);
+
+include run_settings.gmad;
