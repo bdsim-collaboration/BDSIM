@@ -1,0 +1,4 @@
+component: rcol, l=1., material="Graphite", xsize=0.0015, ysize=0.1;
+
+
+include run_settings.gmad

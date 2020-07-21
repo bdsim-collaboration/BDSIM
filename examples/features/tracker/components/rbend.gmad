@@ -1,0 +1,3 @@
+component: rbend, angle=-0.00112904867462, l=9.5*m;
+
+include run_settings.gmad

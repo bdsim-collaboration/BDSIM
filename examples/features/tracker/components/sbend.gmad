@@ -1,0 +1,8 @@
+component: sbend, angle=0.00509998807401,
+	   	  fint=0.0,
+		  fintx=0,
+		  hgap=0.0,
+		  l=14.3;
+
+
+include run_settings.gmad

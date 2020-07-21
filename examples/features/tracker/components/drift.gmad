@@ -1,0 +1,4 @@
+component: drift, l=1.0*m;
+
+include run_settings.gmad;
+
