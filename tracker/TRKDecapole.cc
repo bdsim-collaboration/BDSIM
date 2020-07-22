@@ -30,9 +30,9 @@ TRKDecapole::TRKDecapole(double        strengthIn,
 TRKDecapole::~TRKDecapole()
 {;}
 
-void TRKDecapole::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKDecapole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
 {
-  strategy->Track(this,bunch);
+  strategy->Track(this, particle, step);
 }
 
 void TRKDecapole::Print(std::ostream &out) const
