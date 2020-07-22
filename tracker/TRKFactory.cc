@@ -43,13 +43,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 //tracking strategies / routines
 #include "TRK.hh"
-#include "TRKDefaultStrategy.hh"
-#include "TRKHybrid.hh"
 #include "TRKParticleDefinition.hh"
-#include "TRKStrategy.hh"
-#include "TRKThick.hh"
-#include "TRKThin.hh"
-#include "TRKThinSymplectic.hh"
+#include "TRKDefaultStrategy.hh"
+//#include "TRKHybrid.hh"
+//#include "TRKStrategy.hh"
+//#include "TRKThick.hh"
+//#include "TRKThin.hh"
+//#include "TRKThinSymplectic.hh"
 
 #include "parser/beam.h"
 #include "parser/element.h"
@@ -126,16 +126,16 @@ TRKStrategy* TRKFactory::CreateStrategy()
   TRKStrategy* result = nullptr;
   switch(strategy)
     {
-    case TRK::THIN:
-      {result = new TRKThin(trackingsteps); break;}
+//    case TRK::THIN:
+//      {result = new TRKThin(trackingsteps); break;}
     case TRK::DEFAULT:
       {result = new TRKDefaultStrategy(); break;}
-    case TRK::THINSYMPLECTIC:
-      {result = new TRKThinSymplectic(trackingsteps); break;}
-    case TRK::THICK:
-      {result = new TRKThick(trackingsteps); break;}
-    case TRK::HYBRID:
-      {result = new TRKHybrid(trackingsteps); break;}
+//    case TRK::THINSYMPLECTIC:
+//      {result = new TRKThinSymplectic(trackingsteps); break;}
+//    case TRK::THICK:
+//      {result = new TRKThick(trackingsteps); break;}
+//    case TRK::HYBRID:
+//      {result = new TRKHybrid(trackingsteps); break;}
     default:
       {break;}
     }
