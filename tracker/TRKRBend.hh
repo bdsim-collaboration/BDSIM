@@ -49,10 +49,10 @@ protected:
 
 private:
   TRKRBend(); ///< not implemented
-  double k1;
 
   /// bending angle in rad
   double angle;
+  double k1;
 };
 
 #endif
