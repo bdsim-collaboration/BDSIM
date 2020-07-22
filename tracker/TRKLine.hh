@@ -26,6 +26,7 @@ class TRKElement;
 
 //typedef std::vector<TRKElement*>::iterator TRKLineIter;
 typedef std::vector<TRKElement*>::const_iterator TRKLineConstIter;
+typedef std::vector<double>::const_iterator TRKLineConstSIter;
 
 /**
  * @brief beamline
@@ -57,6 +58,9 @@ public:
 
   TRKLineConstIter begin()const {return elements.begin();}
   TRKLineConstIter end()const {return elements.end();}
+
+  TRKLineConstSIter beginS()const {return elementEndS.begin();}
+  TRKLineConstSIter endS()const {return elementEndS.end();}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);
