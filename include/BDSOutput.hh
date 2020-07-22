@@ -50,6 +50,7 @@ typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyD
 class BDSTrajectoriesToStore;
 template <class T> class G4THitsMap;
 class TRKBunch;
+class TRKParticle;
 
 class G4PrimaryVertex;
 
@@ -140,7 +141,7 @@ public:
   void WriteTrackerBunch(G4String, TRKBunch*, G4bool=false) {;}
 
   void FillSamplerHitsTracker(G4int samplerIndex,
-			      TRKBunch* bunch,
+			      TRKParticle* particle,
 			      double s);
   
   /// Test whether a sampler name is invalid or not.

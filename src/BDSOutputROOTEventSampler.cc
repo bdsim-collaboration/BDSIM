@@ -162,46 +162,43 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 }
 
 template <class U>
-void BDSOutputROOTEventSampler<U>::Fill(const TRKBunch& bunch, double sIn)
+void BDSOutputROOTEventSampler<U>::Fill(const TRKParticle& particle, double sIn)
 {
-  S = sIn / CLHEP::m;
-  auto mass_ = bunch.mass;
-  auto e0 = bunch.totalEnergy;
-  for (const auto& particle : bunch)
-    {
-      auto zp_ = particle.pz / CLHEP::rad;
+    S = sIn / CLHEP::m;
+
+    // dummy values for mass and e0 for now as they depend on the bunch
+    auto mass_ = 1; //bunch.mass;
+    auto e0 = 1; //bunch.totalEnergy;
+    auto zp_ = particle.pz / CLHEP::rad;
 
 
-      auto gamma0 = particle.gamma0;
-      auto beta0 = particle.beta0;
-      auto p0 = mass_ * std::sqrt(gamma0*gamma0 - 1);
-      auto energy_ = p0 * (zp_ + 1./beta0);
+    auto gamma0 = particle.gamma0;
+    auto beta0 = particle.beta0;
+    auto p0 = mass_ * std::sqrt(gamma0*gamma0 - 1);
+    auto energy_ = p0 * (zp_ + 1./beta0);
 
-      auto momentum = std::sqrt(energy_*energy_ - mass_*mass_);
-      // convert back to bdsim standard momenta coordinates:  p/|p|
+    auto momentum = std::sqrt(energy_*energy_ - mass_*mass_);
+    // convert back to bdsim standard momenta coordinates:  p/|p|
 
-      n++;
-      x.push_back(particle.x / CLHEP::m);
-      // std::cout << particle.x / CLHEP::m << "\n";
-      xp.push_back((p0 / momentum) * particle.px / CLHEP::rad);
-      y.push_back(particle.y / CLHEP::m);
-      yp.push_back((p0 / momentum) * particle.py / CLHEP::rad);
-      z = particle.z / CLHEP::m;
-      zp.push_back(zp_);
+    n++;
+    x.push_back(particle.x / CLHEP::m);
+    // std::cout << particle.x / CLHEP::m << "\n";
+    xp.push_back((p0 / momentum) * particle.px / CLHEP::rad);
+    y.push_back(particle.y / CLHEP::m);
+    yp.push_back((p0 / momentum) * particle.py / CLHEP::rad);
+    z = particle.z / CLHEP::m;
+    zp.push_back(zp_);
 
+    weight.push_back(1);
 
+    T.push_back(-1); // dummy value for now
 
-      weight.push_back(1);
-
-      T.push_back(-1); // dummy value for now
-
-      partID.push_back(2212);
-      parentID.push_back(0);
-      trackID.push_back(0);
-      turnNumber.push_back(0);
-      energy.push_back(energy_ / CLHEP::GeV);
-      p.push_back(momentum / CLHEP::GeV);
-    }
+    partID.push_back(2212);
+    parentID.push_back(0);
+    trackID.push_back(0);
+    turnNumber.push_back(0);
+    energy.push_back(energy_ / CLHEP::GeV);
+    p.push_back(momentum / CLHEP::GeV);
 }
 
 template <class U>
