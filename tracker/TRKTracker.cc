@@ -58,14 +58,106 @@ TRKTracker::~TRKTracker()
 
 double TRKTracker::RandomStep()
 {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_real_distribution<std::mt19937::result_type> dist(0.1,40);
-
-    return dist(rng);
+    double rn = (((double) rand() / (RAND_MAX))) * 4.e4;
+    return rn;
 }
 
-void TRKTracker::Track(TRKBunch* bunch) 
+void TRKTracker::Track(TRKBunch* bunch)
+{
+    if (!bunch)
+    {return;} // can't track nothing
+    if (bunch->empty())
+    {return;} // even if bunch exists, there must be particles in it
+
+    BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
+
+    for (unsigned int i = 0; i < maxTurns; i++)
+    {
+        for (auto &&p : *bunch)
+        {
+            auto eIt = line->begin();
+            auto esIt = line->beginS();
+            auto element = *eIt;
+            auto SEnd = *esIt;
+
+            if (i == 0)
+            {
+                /// On the first turn, find the element where the particle starts off in
+                auto startElement = line->FindElement(p.getS());
+                while(*eIt != startElement)
+                {
+                    eIt++;
+                    esIt++;
+                }
+            }
+
+            double ds = RandomStep();
+            double endPoint = p.getS() + ds;
+            bool advance = FALSE;
+
+            int count = 0;
+            while (eIt != line->end() and esIt != line->endS())
+            {
+                count++;
+                if (count > 1e6) {break;}
+
+                if (advance)
+                {
+                    element = *eIt++;
+                    SEnd = *esIt++;
+                    advance = FALSE;
+                }
+
+                if (fabs(endPoint - p.getS()) < endPoint * 1.E-6)
+                {
+                    /// Step is completed, prepare a new step
+                    ds = RandomStep();
+                    endPoint = p.getS() + ds;
+                }
+
+                double step;
+                if (endPoint > SEnd)
+                {
+                    step = SEnd - p.getS();
+                    advance = TRUE;
+//                    std::cout << "Step limited!" << std::endl;
+                }
+                else
+                {
+                    step = ds;
+                }
+
+                element->Track(&p, step, strategy);
+
+//                std::cout << "Particle s (before): " << p.S << std::endl;
+//                std::cout << "Step: " << step << std::endl;
+
+                p.S += step;
+                ds -= step;
+
+//                std::cout << "Particle s (after): " << p.S << std::endl;
+//                std::cout << "End point: "<< endPoint << "\n" << std::endl;
+
+            }
+        }
+
+        BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
+        if (bunch->empty())
+        {
+            std::cout << "No further particles to track" << std::endl;
+            break;
+        }
+
+        // finish an event in the output which is a turn here
+        const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
+        output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                          nullptr, nullptr, nullptr, nullptr, scorerhits, i);
+
+    }
+}
+
+/*void TRKTracker::Track(TRKBunch* bunch)
 {
   
   if (!bunch)
@@ -124,4 +216,4 @@ void TRKTracker::Track(TRKBunch* bunch)
 			nullptr, nullptr, nullptr, nullptr, scorerhits, i);
     }// end of turns iteration
     
-}
+}*/
