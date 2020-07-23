@@ -167,7 +167,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKParticle& particle, double sIn)
     S = sIn / CLHEP::m;
 
     // dummy values for mass and e0 for now as they depend on the bunch
-    auto mass_ = 1; //bunch.mass;
+    auto mass_ = 938.272013; //bunch.mass;
     auto e0 = 1; //bunch.totalEnergy;
     auto zp_ = particle.pz / CLHEP::rad;
 
