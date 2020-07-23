@@ -10,7 +10,6 @@
 #pragma link C++ class boost::empty_::empty_value<boost::histogram::detail::null_mutex,0,true>+;
 #pragma link C++ class boost::histogram::detail::null_mutex+;
 #pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >+;
-//#pragma link C++ class boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>+;
 #pragma link C++ class boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default>+;
 #pragma link C++ class boost::histogram::axis::iterator_mixin<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >+;
 #pragma link C++ class boost::histogram::axis::transform::id+;
@@ -23,6 +22,11 @@
 #pragma link C++ class boost::histogram::storage_adaptor<vector<double> >+;
 #pragma link C++ class boost::histogram::detail::vector_impl<vector<double> >+;
 
+
+#pragma link C++ class boost::variant<boost::histogram::histogram<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<double> > >,boost::histogram::histogram<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<double> > > >+;
+#pragma link C++ class boost::aligned_storage<224,8>+;
+#pragma link C++ class boost::detail::aligned_storage::aligned_storage_imp<224,8>+;
+#pragma link C++ class boost::detail::aligned_storage::aligned_storage_imp<224,8>::data_t+;
 
 
 #endif //ROOT_TEST_BDSBH4DLINKDEF_H

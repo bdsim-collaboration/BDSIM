@@ -70,9 +70,11 @@ BDSBH4D::BDSBH4D(const std::string name, const std::string title,
 
 }
 
-void BDSBH4D::to_PyROOT(std::string filename, std::string path) {
+void BDSBH4D::to_PyROOT(std::string filename, std::string histo_name) {
 
     const char* filename_char = filename.c_str();
+
+    std::string path = "Event/MergedHistograms/" + histo_name;
     const char* path_char = path.c_str();
 
     TFile *_file0 = TFile::Open(filename_char);
@@ -138,7 +140,9 @@ void BDSBH4D::SetEntries(unsigned long i){
 }
 
 void BDSBH4D::Reset() {
-    h.reset();
+    auto v = HistogramResetVisitor();
+    boost::apply_visitor(v,h);
+    //h.reset();
 }
 
 BDSBH4D* BDSBH4D::Clone(std::string newname) {

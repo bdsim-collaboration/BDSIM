@@ -220,7 +220,9 @@ void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
                             G4double zValue,
                             G4double eValue)
 {
-    histograms4D[histoId]->h.operator()(xValue, yValue, zValue, eValue);
+    auto v = HistogramOperatorParenthesesVisitor(xValue, yValue, zValue, eValue);
+    boost::apply_visitor(v,histograms4D[histoId]->h);
+    //histograms4D[histoId]->h.operator()(xValue, yValue, zValue, eValue);
 }
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
@@ -239,7 +241,10 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4double value)
 {
 
-    histograms4D[histoId]->h.at(x,y,z,e) = value;
+    auto v = HistogramAtSetVisitor(x,y,z,e,value);
+    boost::apply_visitor(v,histograms4D[histoId]->h);
+
+    //histograms4D[histoId]->h.at(x,y,z,e) = value;
 
 }
 
@@ -253,9 +258,17 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
                              BDSBH4D* otherHistogram)
 
 {
-    histograms4D[histoId]->h.operator+=(otherHistogram->h);
+    //auto v = HistogramPlusEqualVisitor(otherHistogram);
+    //boost::apply_visitor(v,histograms4D[histoId]->h);
+
+    //atention pas juste
+
+    histograms4D[histoId]->h = (otherHistogram->h);
+
+    //histograms4D[histoId]->h.operator+=(otherHistogram->h);
 
 }
+
 
 #endif
 
@@ -268,5 +281,9 @@ void BDSOutputROOTEventHistograms::Flush()
   for (auto h : histograms3D)
     {h->Reset();}
   for (auto h : histograms4D)
-    {h->h.reset();}
+    {
+      auto v = HistogramResetVisitor();
+      boost::apply_visitor(v,h->h);
+      //h->h.reset();
+    }
 }
