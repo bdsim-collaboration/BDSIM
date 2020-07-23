@@ -58,7 +58,7 @@ TRKTracker::~TRKTracker()
 
 double TRKTracker::RandomStep()
 {
-    double rn = (((double) rand() / (RAND_MAX))) * 4.e4;
+    double rn = (((double) rand() / (RAND_MAX))) * 0.1e3;
     return rn;
 }
 
