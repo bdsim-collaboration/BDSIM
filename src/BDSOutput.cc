@@ -979,7 +979,7 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
           for (const auto& hit : *hitMap)
 #endif
       {
-          // convert from scorer global index to 3d i,j,k index of 3d scorer
+          // convert from scorer global index to 4d i,j,k,e index of 4d scorer
           mapper.IJKLFromGlobal(hit.first, x,y,z,e);
           evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e, *hit.second / unit);
       }
