@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <chrono>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <random>
 #include <map>
@@ -64,10 +65,10 @@ double TRKTracker::RandomStep()
 
 void TRKTracker::Track(TRKBunch* bunch)
 {
-    if (!bunch)
-    {return;} // can't track nothing
-    if (bunch->empty())
-    {return;} // even if bunch exists, there must be particles in it
+  if (!bunch)
+    {throw std::runtime_error("No bunch has been provided.");}
+  if (bunch->empty())
+    {throw std::runtime_error("Bunch is empty.");}
 
     BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
 
