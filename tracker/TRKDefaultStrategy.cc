@@ -32,7 +32,7 @@ void TRKDefaultStrategy::Track(TRKRBend* el, TRKParticle* particle, double step)
 }
 
 void TRKDefaultStrategy::Track(TRKQuadrupole* el, TRKParticle* particle, double step) {
-  trk::maps::quadrupole(*particle, el->GetLength(), el->GetStrength());
+  trk::maps::quadrupole(*particle, step, el->GetStrength());
 }
 
 void TRKDefaultStrategy::Track(TRKSextupole* el, TRKParticle* particle, double step) {
