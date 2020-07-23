@@ -183,7 +183,8 @@ TH1* HistogramAccumulator::Terminate()
   // error on mean is sqrt(1/n) * std = sqrt(1/n) * sqrt(1/(n-1)) * sqrt(variance)
   // the only variable is the variance, so take the rest out as a factor.
   const double nD = (double)n; // cast only once
-  const double factor = std::sqrt(1./(nD * (nD - 1))); // nan if n = 1 -> won't be used
+  // Protect against inf: set to 0 if nD == 1.
+  const double factor = nD == 1 ? 0 : std::sqrt(1. / (nD * (nD - 1)));
   double mn     = 0; // temporary variable for mean
   double err    = 0; // temporary variable for standard error on mean
   double var    = 0; // temporary variable for variance
@@ -198,7 +199,7 @@ TH1* HistogramAccumulator::Terminate()
 	  {
 	    mn  = mean->GetBinContent(j);
 	    var = variance->GetBinContent(j);
-	    err = n > 1 ? factor*std::sqrt(var) : 0;
+	    err = factor*std::sqrt(var);
 	    result->SetBinContent(j, mn);
 	    result->SetBinError(j,   err);
 	  }
@@ -212,7 +213,7 @@ TH1* HistogramAccumulator::Terminate()
 	      {
 		mn  = mean->GetBinContent(j,k);
 		var = variance->GetBinContent(j, k);
-		err = n > 1 ? factor*std::sqrt(var) : 0;
+		err = factor*std::sqrt(var);
 		result->SetBinContent(j, k, mn);
 		result->SetBinError(j, k,   err);
 	      }
@@ -229,7 +230,7 @@ TH1* HistogramAccumulator::Terminate()
 		  {
 		    mn  = mean->GetBinContent(j,k,l);
 		    var = variance->GetBinContent(j, k, l);
-		    err = n > 1 ? factor*std::sqrt(var) : 0;
+		    err = factor*std::sqrt(var);
 		    result->SetBinContent(j,k,l, mn);
 		    result->SetBinError(j,k,l,   err);
 		  }

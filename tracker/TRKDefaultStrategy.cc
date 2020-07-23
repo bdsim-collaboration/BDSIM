@@ -22,7 +22,9 @@ void TRKDefaultStrategy::Track(TRKSBend* el, TRKParticle* particle, double step)
 
 void TRKDefaultStrategy::Track(TRKRBend* el, TRKParticle* particle, double step) {
   auto angle = el->GetAngle();
-  auto k0 = el->GetStrength();
+  double length = el->GetLength();
+  double k0 = angle / length;
+
   auto poleface = angle / 2;
   trk::maps::dipole_fringe(*particle, k0, poleface);
   trk::maps::sbend(*particle, step, k0, el->GetK1());

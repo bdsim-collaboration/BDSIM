@@ -34,7 +34,8 @@ public:
 	   std::string   name,
 	   double        length,
 	   TRKAperture  *aperture,
-	   TRKPlacement *placement);
+	   TRKPlacement *placement,
+	   double        k1);
   virtual ~TRKRBend();
   
   inline double GetAngle() const {return angle;}
@@ -48,10 +49,10 @@ protected:
 
 private:
   TRKRBend(); ///< not implemented
-  double k1;
 
   /// bending angle in rad
   double angle;
+  double k1;
 };
 
 #endif
