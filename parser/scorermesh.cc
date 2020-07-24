@@ -40,6 +40,7 @@ void ScorerMesh::clear()
   zsize = 0;
   eLow  = 1e-12;
   eHigh = 1e4;
+  eScale = 'log';
 
   sequence         = "";
   referenceElement = "";
@@ -69,8 +70,9 @@ void ScorerMesh::PublishMembers()
   publish("xsize",         &ScorerMesh::xsize);
   publish("ysize",         &ScorerMesh::ysize);
   publish("zsize",         &ScorerMesh::zsize);
-  publish("eLow",         &ScorerMesh::eLow);
+  publish("eLow",          &ScorerMesh::eLow);
   publish("eHigh",         &ScorerMesh::eHigh);
+  publish("eScale",        &ScorerMesh::eScale);
   publish("sequence",      &ScorerMesh::sequence);
   publish("referenceElement", &ScorerMesh::referenceElement);
   publish("referenceElementNumber", &ScorerMesh::referenceElementNumber);
@@ -102,6 +104,7 @@ void ScorerMesh::print()const
     	    << "zsize "         << zsize         << std::endl
     	    << "eLow "          << eLow          << std::endl
     	    << "eHigh "          << eHigh          << std::endl
+    	    << "eScale "        << eScale          << std::endl
 	    << "sequence "      << sequence      << std::endl
 	    << "referenceElement" << referenceElement << std::endl
 	    << "referenceElementNumber" << referenceElementNumber << std::endl

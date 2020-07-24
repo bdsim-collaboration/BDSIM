@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH3D.h"
 #include "BDSBH4D.hh"
 #include "BDSBH4DLinear.hh"
+#include "BDSBH4DLog.hh"
 
 ClassImp(BDSOutputROOTEventHistograms)
 
@@ -42,7 +43,7 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
 							   std::vector<TH2D*>& histograms2DIn,
 							   std::vector<TH3D*>& histograms3DIn,
-							   std::vector<BDSBH4DLinear*>& histograms4DIn):
+							   std::vector<BDSBH4D*>& histograms4DIn):
   histograms1D(histograms1DIn),
   histograms2D(histograms2DIn),
   histograms3D(histograms3DIn),
@@ -173,19 +174,29 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
   return (G4int)histograms3D.size() - 1;
 }
 
-G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title,
+G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title, std::string eScale,
                                 unsigned int nxbins, G4double xmin, G4double xmax,
                                 unsigned int nybins, G4double ymin, G4double ymax,
                                 unsigned int nzbins, G4double zmin, G4double zmax,
                                 unsigned int nebins, G4double emin, G4double emax)
 {
-
-
-    histograms4D.push_back(new BDSBH4DLinear(name, title,
-                                       nxbins, xmin, xmax,
-                                       nybins, ymin, ymax,
-                                       nzbins, zmin, zmax,
-                                       nebins, emin, emax));
+    if(eScale == "linear") {
+        histograms4D.push_back(new BDSBH4DLinear(name, title, eScale,
+                                                 nxbins, xmin, xmax,
+                                                 nybins, ymin, ymax,
+                                                 nzbins, zmin, zmax,
+                                                 nebins, emin, emax));
+    }
+    else if(eScale == "log") {
+        histograms4D.push_back(new BDSBH4DLog(name, title, eScale,
+                                                 nxbins, xmin, xmax,
+                                                 nybins, ymin, ymax,
+                                                 nzbins, zmin, zmax,
+                                                 nebins, emin, emax));
+    }
+    else if(eScale == "user") {
+        ;
+    }
 
     return (G4int)histograms4D.size() - 1;
 }

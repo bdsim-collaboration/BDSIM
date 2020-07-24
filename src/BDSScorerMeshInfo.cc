@@ -51,6 +51,7 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   zHigh =  0.5*mesh.zsize * CLHEP::m;
   eLow  =  mesh.eLow* CLHEP::GeV;
   eHigh =  mesh.eHigh* CLHEP::GeV;
+  eScale = mesh.eScale;
 
   if (!BDS::IsFinite(nBinsX))
     {throw BDSException(__METHOD_NAME__, "nx must be finite in mesh \"" + mesh.name + "\"");}

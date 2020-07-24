@@ -10,6 +10,7 @@ HistogramDef4D::HistogramDef4D():
         eNBins(0),
         eLow(0),
         eHigh(0),
+        eScale("log"),
         logarithmicE(false)
 {;}
 
@@ -27,6 +28,7 @@ HistogramDef4D::HistogramDef4D(std::string treeNameIn,
                                double      zHighIn,
                                double      eLowIn,
                                double      eHighIn,
+                               std::string eScaleIn,
                                std::string plotIn,
                                std::string selectionIn,
                                bool        perEntryIn,
@@ -39,6 +41,7 @@ HistogramDef4D::HistogramDef4D(std::string treeNameIn,
                        plotIn, selectionIn, perEntryIn,
                        logarithmicXIn, logarithmicYIn, logarithmicZIn),
         eNBins(eNBinsIn),
+        eScale(eScaleIn),
         eLow(eLowIn),
         eHigh(eHighIn),
         logarithmicE(logarithmicEIn)

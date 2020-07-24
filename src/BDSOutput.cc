@@ -546,7 +546,7 @@ void BDSOutput::CreateHistograms()
 	  }
 	  else
       {
-	      G4int histID = Create4DHistogram(def.outputName,def.outputName,
+	      G4int histID = Create4DHistogram(def.outputName,def.outputName,def.eScale,
                                            def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
                                            def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
                                            def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,

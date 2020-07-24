@@ -32,7 +32,8 @@ public:
     double      zHighIn,
     double      eLowIn,
     double      eHighIn,
-            std::string plotIn,
+    std::string eScaleIn,
+    std::string plotIn,
     std::string selectionIn    = "1",
     bool        perEntryIn     = true,
     bool        logarithmicXIn = false,
@@ -44,6 +45,7 @@ public:
     int         eNBins;
     double      eLow;
     double      eHigh;
+    std::string eScale;
     bool        logarithmicE;
 
 ClassDef(HistogramDef4D, 1);

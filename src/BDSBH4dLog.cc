@@ -36,7 +36,7 @@ BDSBH4DLog::BDSBH4DLog()
 
 }
 
-BDSBH4DLog::BDSBH4DLog(std::string& name, std::string& title,
+BDSBH4DLog::BDSBH4DLog(std::string& name, std::string& title, const std::string& eScale,
                              unsigned int nxbins, double xmin, double xmax,
                              unsigned int nybins, double ymin, double ymax,
                              unsigned int nzbins, double zmin, double zmax,
@@ -66,6 +66,7 @@ BDSBH4DLog::BDSBH4DLog(std::string& name, std::string& title,
     h_emax = emax;
     h_name = name;
     h_title = title;
+    h_escale = eScale;
 
 }
 
