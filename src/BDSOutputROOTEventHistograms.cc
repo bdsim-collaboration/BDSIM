@@ -262,14 +262,17 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
                              BDSBH4D* otherHistogram)
 
 {
-    //auto v = HistogramPlusEqualVisitor(otherHistogram);
-    //boost::apply_visitor(v,histograms4D[histoId]->h);
+    for (int j = -1; j <= histograms4D[histoId]->GetNbinsX(); ++j) {
+        for (int k = -1; k <= histograms4D[histoId]->GetNbinsY(); ++k) {
+            for (int l = -1; l <= histograms4D[histoId]->GetNbinsZ(); ++l) {
+                for (int e = -1; e <= histograms4D[histoId]->GetNbinsE(); ++e) {
 
-    //atention pas juste
-
-    ;//histograms4D[histoId]->h = (otherHistogram->h);
-
-    //histograms4D[histoId]->h.operator+=(otherHistogram->h);
+                    double value = histograms4D[histoId]->At(j,k,l,e) + otherHistogram->At(j,k,l,e);
+                    histograms4D[histoId]->Set(j,k,l,e,value);
+                }
+            }
+        }
+    }
 
 }
 
