@@ -16,6 +16,7 @@ Notes:
 2. In the filepath option ./ is not needed to specify current folder (eg. --filepath=./folder/file -> --filepath=folder/file)
 3. Due to MadX convention the output of the simulations will always be produced in the same folder as the input .madx file
 """
+from __future__ import print_function
 
 import optparse
 import pybdsim
@@ -60,7 +61,7 @@ def Main():
     options,args = parser.parse_args()
 
     if args:
-        print "ERROR when parsing, leftover arguments", args
+        print("ERROR when parsing, leftover arguments", args)
         raise SystemExit
     
     if options.clean:    
