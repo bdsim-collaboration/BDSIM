@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DLinear.hh"
 
 #include <string>
 #include <vector>
@@ -201,11 +201,19 @@ BDSBH4D* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
     std::string title = name;
     CheckNameAndTitle(name, title, overRideName, overRideTitle);
 
-    result = new BDSBH4D(name.c_str(),title.c_str(),
+    // if linear
+    result = new BDSBH4DLinear(name,title,
                          d->xNBins, d->xLow, d->xHigh,
                          d->yNBins, d->yLow, d->yHigh,
                          d->zNBins, d->zLow, d->zHigh,
                          d->eNBins, d->eLow, d->eHigh);
+
+    // else if log
+//    result = new BDSBH4DLog(name,title,
+//                               d->xNBins, d->xLow, d->xHigh,
+//                               d->yNBins, d->yLow, d->yHigh,
+//                               d->zNBins, d->zLow, d->zHigh,
+//                               d->eNBins, d->eLow, d->eHigh);
 
     return result;
 }

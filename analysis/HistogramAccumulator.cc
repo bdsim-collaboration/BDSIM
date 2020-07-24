@@ -61,30 +61,30 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
     {
     case 1:
       {
-	mean     = static_cast<TH1D*>(baseHistogram->Clone(meanName.c_str()));
-	variance = static_cast<TH1D*>(baseHistogram->Clone(variName.c_str()));
-	result   = static_cast<TH1D*>(baseHistogram->Clone(resultHistName.c_str()));
+	mean     = dynamic_cast<TH1D*>(baseHistogram->Clone(meanName.c_str()));
+	variance = dynamic_cast<TH1D*>(baseHistogram->Clone(variName.c_str()));
+	result   = dynamic_cast<TH1D*>(baseHistogram->Clone(resultHistName.c_str()));
 	break;
       }
     case 2:
       {
-	mean     = static_cast<TH2D*>(baseHistogram->Clone(meanName.c_str()));
-	variance = static_cast<TH2D*>(baseHistogram->Clone(variName.c_str()));
-	result   = static_cast<TH2D*>(baseHistogram->Clone(resultHistName.c_str()));
+	mean     = dynamic_cast<TH2D*>(baseHistogram->Clone(meanName.c_str()));
+	variance = dynamic_cast<TH2D*>(baseHistogram->Clone(variName.c_str()));
+	result   = dynamic_cast<TH2D*>(baseHistogram->Clone(resultHistName.c_str()));
 	break;
       }
     case 3:
       {
-	mean     = static_cast<TH3D*>(baseHistogram->Clone(meanName.c_str()));
-	variance = static_cast<TH3D*>(baseHistogram->Clone(variName.c_str()));
-	result   = static_cast<TH3D*>(baseHistogram->Clone(resultHistName.c_str()));
+	mean     = dynamic_cast<TH3D*>(baseHistogram->Clone(meanName.c_str()));
+	variance = dynamic_cast<TH3D*>(baseHistogram->Clone(variName.c_str()));
+	result   = dynamic_cast<TH3D*>(baseHistogram->Clone(resultHistName.c_str()));
 	break;
       }
     case 4:
       {
-    mean =  dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(meanName);
-    variance = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(variName);
-    result   = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(resultHistName);
+    mean =  dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(meanName.c_str());
+    variance = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(variName.c_str());
+    result   = dynamic_cast<BDSBH4D*>(baseHistogram)->Clone(resultHistName.c_str());
     break;
       }
     default:
@@ -195,30 +195,13 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
               {
                 for (int e = -1; e <= h1->GetNbinsE(); ++e)
                   {
-                    auto v = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v,h1->h);
-                    auto v1 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v1,h1e->h);
-                    auto v2 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v2,ht->h);
-                    AccumulateSingleValue(v.result,
-                                          v1.result,
-                                          v2.result,
-                                          error, n, nEntriesToAccumulate,
-                                          newMean, newVari);
-                    auto v3 = HistogramAtSetVisitor(j,k,l,e,newMean);
-                    boost::apply_visitor(v3,h1->h);
-                    auto v4 = HistogramAtSetVisitor(j,k,l,e,newVari);
-                    boost::apply_visitor(v4,h1e->h);
-
-                    /*AccumulateSingleValue(h1->h.at(j,k,l,e),
-                              h1e->h.at(j,k,l,e),
-                              ht->h.at(j,k,l,e),
+                    AccumulateSingleValue(h1->At(j,k,l,e),
+                              h1e->At(j,k,l,e),
+                              ht->At(j,k,l,e),
                               error, n, nEntriesToAccumulate,
                               newMean, newVari);
-                    h1->h.at(j,k,l,e) = newMean;
-                    h1e->h.at(j,k,l,e) = newVari; */
-
+                    h1->Set(j,k,l,e, newMean);
+                    h1e->Set(j,k,l,e, newVari);
                   }
 
               }
@@ -301,17 +284,11 @@ TH1* HistogramAccumulator::Terminate()
               {
                 for (int e = -1; e <= dynamic_cast<BDSBH4D*>(result)->GetNbinsE(); ++e)
                   {
-                    auto v = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v,dynamic_cast<BDSBH4D*>(mean)->h);
-                    mn  = v.result;
-                    auto v1 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v1,dynamic_cast<BDSBH4D*>(variance)->h);
-                    var = v1.result;
+                    mn = dynamic_cast<BDSBH4D*>(mean)->At(j, k, l, e);
+                    var = dynamic_cast<BDSBH4D*>(variance)->At(j, k, l, e);
                     err = n > 1 ? factor*std::sqrt(var) : 0;
-                    auto v2 = HistogramAtSetVisitor(j,k,l,e,mn);
-                    boost::apply_visitor(v2,dynamic_cast<BDSBH4D*>(result)->h);
-                    auto v3 = HistogramAtSetVisitor(j,k,l,e,err);
-                    boost::apply_visitor(v3,dynamic_cast<BDSBH4D*>(result)->h_err);
+                    dynamic_cast<BDSBH4D*>(result)->Set(j, k, l, e, mn);
+                    dynamic_cast<BDSBH4D*>(result)->SetError(j, k, l, e, err);
                   }
 
               }

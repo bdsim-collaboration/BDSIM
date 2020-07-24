@@ -5,118 +5,37 @@
 #ifndef BDSBH4D_HH
 #define BDSBH4D_HH
 
-#include <boost/variant.hpp>
 #include <boost/histogram.hpp>
 
 #include "Rtypes.h"
 #include "TH1D.h"
 #include "TTree.h"
-
-
-
-typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_Log;
-typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_Linear;
-
-class HistogramAtGetVisitor : public boost::static_visitor<> {
-
-public:
-    int x, y, z, e;
-    double result;
-    HistogramAtGetVisitor(const int xx, const int yy, const int zz, const int ee) : x(xx), y(yy), z(zz), e(ee) {};
-    template <typename T>
-    void operator()(T& operand)
-    {
-        result =  operand.at( x, y, z, e);
-    }
-
-};
-
-class HistogramAtSetVisitor : public boost::static_visitor<> {
-
-public:
-    int x, y, z, e, value;
-    HistogramAtSetVisitor(const int xx, const int yy, const int zz, const int ee, const double v) : x(xx), y(yy), z(zz), e(ee), value(v) {};
-    template <typename T>
-    void operator()(T& operand) const
-    {
-        operand.at( x, y, z, e) = value;
-    }
-
-};
-
-class HistogramOperatorParenthesesVisitor : public boost::static_visitor<> {
-
-public:
-    int x, y, z, e;
-    HistogramOperatorParenthesesVisitor(const int xx, const int yy, const int zz, const int ee) : x(xx), y(yy), z(zz), e(ee) {};
-    template <typename T>
-    void operator()(T& operand) const
-    {
-        operand.operator()( x, y, z, e);
-    }
-
-};
-
-
-/*class HistogramPlusEqualVisitor : public boost::static_visitor<> {
-
-    histograms4D[histoId]->h.operator+=(otherHistogram->h);
-
-public:
-    otherHistogram = BDSBH4D::BDSBH4D();
-    HistogramPlusEqualVisitor(BDSBH4D* ) {};
-    template <typename T>
-    void operator()(T& operand) const
-    {
-        return operand.operator+=( );
-    }
-
-}; */
-
-
-class HistogramResetVisitor : public boost::static_visitor<> {
-
-public:
-    HistogramResetVisitor(){};
-    template <typename T>
-    void operator()(T& operand) const
-    {
-        operand.reset();
-    }
-
-};
+#include "TObject.h"
 
 class BDSBH4D : public TH1D {
 
 public:
-    BDSBH4D();
-    BDSBH4D(const std::string name, const std::string title,
-            unsigned int nxbins, double xmin, double xmax,
-            unsigned int nybins, double ymin, double ymax,
-            unsigned int nzbins, double zmin, double zmax,
-            unsigned int nebins, double emin, double emax);
+    ~BDSBH4D() override = default;
 
-    void to_PyROOT(std::string filename , std::string path);
+    int GetNbinsX() const final;
+    int GetNbinsY() const final;
+    int GetNbinsZ() const final;
+    int GetNbinsE() const;
+    const char* GetName() const override;
+    const char* GetTitle() const override;
 
-    virtual ~BDSBH4D() {;}
+    void SetName(const char*) override;
+    void SetTitle(const char*) override;
+    void SetEntries(double) override;
 
-    int GetNbinsX();
-    int GetNbinsY();
-    int GetNbinsZ();
-    int GetNbinsE();
-    const std::string GetName();
-    const std::string GetTitle();
+    virtual void Reset() = 0;
+    BDSBH4D* Clone(const char*) const override = 0;
+    virtual void Fill(double, double, double, double) = 0;
+    virtual void Set(int, int, int, int, double) = 0;
+    virtual void SetError(int, int, int, int, double) = 0;
+    virtual double At(int, int, int, int) = 0;
+    virtual double AtError(int, int, int, int) = 0;
 
-    void SetName(const std::string name);
-    void SetTitle(const std::string title);
-    void SetEntries(unsigned long i);
-
-    void Reset();
-
-    BDSBH4D* Clone(std::string newname="");
-
-    boost::variant<boost_histogram_Linear,boost_histogram_Log> h;
-    boost::variant<boost_histogram_Linear,boost_histogram_Log> h_err;
 
     unsigned int h_nxbins;
     unsigned int h_nybins;
@@ -137,6 +56,5 @@ public:
 ClassDef(BDSBH4D,1);
 
 };
-
 
 #endif //BDSBH4D_HH

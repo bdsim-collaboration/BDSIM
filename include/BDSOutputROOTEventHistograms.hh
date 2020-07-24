@@ -31,13 +31,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h"
 #include "TObject.h"
 #include "BDSBH4D.hh"
+#include "BDSBH4DLinear.hh"
 
 class TH1D;
 class TH2D;
 class TH3D;
 class BDSBH4D;
-
-//typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram;
+class BDSBH4DLinear;
 
 /**
  * @brief Holder for a set of histograms to be stored.
@@ -54,7 +54,7 @@ public:
   BDSOutputROOTEventHistograms(std::vector<TH1D*>& histogram1DIn,
 			       std::vector<TH2D*>& histogram2DIn,
 			       std::vector<TH3D*>& histogram3DIn,
-			       std::vector<BDSBH4D*>& histograms4DIn);
+			       std::vector<BDSBH4DLinear*>& histograms4DIn);
   virtual ~BDSOutputROOTEventHistograms();
 
   /// Interface function to create a 1D histogram using only standard types.
@@ -123,7 +123,7 @@ public:
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
   std::vector<TH3D*>& Get3DHistograms() {return histograms3D;}
-  std::vector<BDSBH4D*>& Get4DHistograms() {return histograms4D;}
+  std::vector<BDSBH4DLinear*>& Get4DHistograms() {return histograms4D;}
   TH1D* Get1DHistogram(int iHisto) const {return histograms1D[iHisto];}
   TH2D* Get2DHistogram(int iHisto) const {return histograms2D[iHisto];}
   TH3D* Get3DHistogram(int iHisto) const {return histograms3D[iHisto];}
@@ -134,7 +134,7 @@ private:
   std::vector<TH1D*> histograms1D;
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
-  std::vector<BDSBH4D*> histograms4D;
+  std::vector<BDSBH4DLinear*> histograms4D;
 
   ClassDef(BDSOutputROOTEventHistograms,3);
 };
