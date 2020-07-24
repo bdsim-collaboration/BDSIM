@@ -129,9 +129,9 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
       }
     case 4:
       {
-    BDSBH4D* h1  = static_cast<BDSBH4D*>(mean);
-    BDSBH4D* h1e = static_cast<BDSBH4D*>(variance);
-    BDSBH4D* ht  = static_cast<BDSBH4D*>(newValue);
+    BDSBH4D* h1  = dynamic_cast<BDSBH4D*>(mean);
+    BDSBH4D* h1e = dynamic_cast<BDSBH4D*>(variance);
+    BDSBH4D* ht  = dynamic_cast<BDSBH4D*>(newValue);
     for (int j = -1; j <= h1->GetNbinsX(); ++j)
       {
         for (int k = -1; k <= h1->GetNbinsY(); ++k)
@@ -140,38 +140,15 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
               {
                 for (int e = -1; e <= h1->GetNbinsE(); ++e)
                   {
-
-                    auto v = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v,ht->h);
-                    auto v1 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v1,h1->h);
-                    auto v2 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v2,h1e->h);
-                    auto v3 = HistogramAtGetVisitor(j,k,l,e);
-                    boost::apply_visitor(v3,ht->h);
-
-                    var = std::pow(v.result, 2) * factor;
-                    AccumulateSingleValue(v1.result,
-                                          v2.result,
-                                          v3.result,
-                                          var,
-                                          oldEntries, newEntries,
-                                          newMean, newVari);
-
-                    auto v4 = HistogramAtSetVisitor(j, k, l, e, newMean);
-                    boost::apply_visitor(v4,h1->h);
-                    auto v5 = HistogramAtSetVisitor(j, k, l, e, newVari);
-                    boost::apply_visitor(v5,h1e->h);
-
-                    /*var = std::pow(ht->h.at(j,k,l,e), 2) * factor;
-                    AccumulateSingleValue(h1->h.at(j,k,l,e),
-                              h1e->h.at(j,k,l,e),
-                              ht->h.at(j,k,l,e),
+                    var = std::pow(ht->At(j,k,l,e), 2) * factor;
+                    AccumulateSingleValue(h1->At(j,k,l,e),
+                              h1e->At(j,k,l,e),
+                              ht->At(j,k,l,e),
                               var,
                               oldEntries, newEntries,
                               newMean, newVari);
-                    h1->h.at(j, k, l, e) = newMean;
-                    h1e->h.at(j, k, l, e) = newVari; */
+                    h1->Set(j, k, l, e, newMean);
+                    h1e->Set(j, k, l, e, newVari);
                   }
               }
           }
