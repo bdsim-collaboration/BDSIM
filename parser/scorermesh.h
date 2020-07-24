@@ -49,6 +49,7 @@ namespace GMAD
     double zsize;       ///< Z total width.
     double eLow;        ///< E Low limit.
     double eHigh;       ///< E High limit.
+    std::string eScale; ///< E scaling type.
 
     // placement stuff
     std::string sequence;     ///< Name of sequence to place.

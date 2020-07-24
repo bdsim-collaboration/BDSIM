@@ -17,7 +17,7 @@ typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regu
 class BDSBH4DLog : public BDSBH4D {
 public:
     BDSBH4DLog();
-    BDSBH4DLog(std::string& name, std::string& title,
+    BDSBH4DLog(std::string& name, std::string& title, const std::string& eScale,
                   unsigned int nxbins, double xmin, double xmax,
                   unsigned int nybins, double ymin, double ymax,
                   unsigned int nzbins, double zmin, double zmax,

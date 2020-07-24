@@ -58,6 +58,7 @@ public:
   G4double zHigh;
   G4double eLow;
   G4double eHigh;
+  std::string eScale;
 
   inline G4double  ScoringBoxX() const {return 0.5*(xHigh-xLow);}
   inline G4double  ScoringBoxY() const {return 0.5*(yHigh-yLow);}

@@ -51,6 +51,7 @@ public:
     double h_emax;
     std::string h_name;
     std::string h_title;
+    std::string h_escale;
     unsigned long entries = 0;
 
 ClassDef(BDSBH4D,1);

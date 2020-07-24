@@ -22,7 +22,7 @@
 #pragma link C++ class boost::histogram::detail::vector_impl<vector<double> >+;
 #pragma link C++ class boost::histogram::storage_adaptor<vector<double> >+;
 #pragma link C++ class boost::empty_::empty_value<string,0,false>+;
-#pragma link C++ class BDSBH4DLinear+;
+#pragma link C++ class BDSBH4DLog+;
 
 
 #endif //ROOT_TEST_BDSBH4DLINKDEF_H
