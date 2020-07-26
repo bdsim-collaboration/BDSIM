@@ -64,8 +64,8 @@ BDSBH4D<boost_histogram_log>::BDSBH4D()
 
 }
 
-template <class T>
-BDSBH4D<T>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+template <>
+BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
                  unsigned int nxbins, double xmin, double xmax,
                  unsigned int nybins, double ymin, double ymax,
                  unsigned int nzbins, double zmin, double zmax,
