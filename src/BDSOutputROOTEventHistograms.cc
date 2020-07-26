@@ -21,9 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 #include "BDSBH4D.hh"
-#include "BDSBH4DLinear.hh"
-#include "BDSBH4DLog.hh"
 
 ClassImp(BDSOutputROOTEventHistograms)
 
@@ -43,7 +42,7 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(std::vector<TH1D*>& histograms1DIn,
 							   std::vector<TH2D*>& histograms2DIn,
 							   std::vector<TH3D*>& histograms3DIn,
-							   std::vector<BDSBH4D*>& histograms4DIn):
+							   std::vector<BDSBH4DBase*>& histograms4DIn):
   histograms1D(histograms1DIn),
   histograms2D(histograms2DIn),
   histograms3D(histograms3DIn),
@@ -77,7 +76,7 @@ void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
   for (auto h : rhs->histograms3D)
     {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
   for (auto h : rhs->histograms4D)
-    {histograms4D.push_back(static_cast<BDSBH4DLinear*>(h->Clone("")));}
+    {histograms4D.push_back(static_cast<BDSBH4DBase*>(h->Clone("")));}
 
 }
 
@@ -181,14 +180,14 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String ti
                                 unsigned int nebins, G4double emin, G4double emax)
 {
     if(eScale == "linear") {
-        histograms4D.push_back(new BDSBH4DLinear(name, title, eScale,
-                                                 nxbins, xmin, xmax,
-                                                 nybins, ymin, ymax,
-                                                 nzbins, zmin, zmax,
-                                                 nebins, emin, emax));
+        histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(name, title, eScale,
+                                           nxbins, xmin, xmax,
+                                           nybins, ymin, ymax,
+                                           nzbins, zmin, zmax,
+                                           nebins, emin, emax));
     }
     else if(eScale == "log") {
-        histograms4D.push_back(new BDSBH4DLog(name, title, eScale,
+        histograms4D.push_back(new BDSBH4D<boost_histogram_log>(name, title, eScale,
                                                  nxbins, xmin, xmax,
                                                  nybins, ymin, ymax,
                                                  nzbins, zmin, zmax,
@@ -259,7 +258,7 @@ void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
 }
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram4D(G4int histoId,
-                             BDSBH4D* otherHistogram)
+                                                         BDSBH4DBase* otherHistogram)
 
 {
     for (int j = -1; j <= histograms4D[histoId]->GetNbinsX(); ++j) {

@@ -33,7 +33,7 @@ class TH1;
 class TH1D;
 class TH2D;
 class TH3D;
-class BDSBH4D;
+class BDSBH4DBase;
 
 /**
  * @brief Class to manufacture histograms.
@@ -74,9 +74,9 @@ public:
 			  std::string overRideName  = "",
 			  std::string overRideTitle = "");
 
-  BDSBH4D* CreateHistogram4D(const HistogramDef4D* d,
-              std::string overRideName  = "",
-              std::string overRideTitle = "");
+  BDSBH4DBase* CreateHistogram4D(const HistogramDef4D* d,
+                                 std::string overRideName  = "",
+                                 std::string overRideTitle = "");
 
   ClassDef(HistogramFactory, 1);
 };

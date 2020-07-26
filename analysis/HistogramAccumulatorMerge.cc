@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
 
 #include <cmath>
 #include <string>
@@ -129,9 +129,9 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
       }
     case 4:
       {
-    BDSBH4D* h1  = dynamic_cast<BDSBH4D*>(mean);
-    BDSBH4D* h1e = dynamic_cast<BDSBH4D*>(variance);
-    BDSBH4D* ht  = dynamic_cast<BDSBH4D*>(newValue);
+    BDSBH4DBase* h1  = dynamic_cast<BDSBH4DBase*>(mean);
+    BDSBH4DBase* h1e = dynamic_cast<BDSBH4DBase*>(variance);
+    BDSBH4DBase* ht  = dynamic_cast<BDSBH4DBase*>(newValue);
     for (int j = -1; j <= h1->GetNbinsX(); ++j)
       {
         for (int k = -1; k <= h1->GetNbinsY(); ++k)

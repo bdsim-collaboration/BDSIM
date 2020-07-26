@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
 
 #include <cmath>
 #include <iostream>
@@ -92,7 +92,7 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
       {
     const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
     baseHist = factory.CreateHistogram4D(d, baseName, baseName);
-    temp = dynamic_cast<BDSBH4D*>(baseHist->Clone(tempName.c_str()));
+    temp = dynamic_cast<BDSBH4DBase*>(baseHist->Clone(tempName.c_str()));
     break;
       }
     default:
