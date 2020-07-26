@@ -40,7 +40,7 @@ void ScorerMesh::clear()
   zsize = 0;
   eLow  = 1e-12;
   eHigh = 1e4;
-  eScale = 'log';
+  eScale = "log";
 
   sequence         = "";
   referenceElement = "";

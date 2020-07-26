@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
 
 #include "TTree.h"
 #include "TFile.h"
@@ -126,9 +126,9 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
       for (auto& h : histograms4d)
     {
 
-        BDSBH4D *hist = dynamic_cast<BDSBH4D *>(h->Result());
+        BDSBH4DBase *hist = dynamic_cast<BDSBH4DBase *>(h->Result());
         TTree *tree = new TTree(hist->GetName(), "A Root Tree");
-        tree->Branch("BDSBH4D", &hist, 32000, 0);
+        tree->Branch("BDSBH4DBase", &hist, 32000, 0);
         tree->Fill();
         dir->WriteTObject(tree,h->Result()->GetName(),"",32000);
 

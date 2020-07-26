@@ -30,13 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h"
 #include "TObject.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
 
 class TH1D;
 class TH2D;
 class TH3D;
-class BDSBH4D;
-class BDSBH4DLinear;
 
 /**
  * @brief Holder for a set of histograms to be stored.
@@ -53,7 +51,7 @@ public:
   BDSOutputROOTEventHistograms(std::vector<TH1D*>& histogram1DIn,
 			       std::vector<TH2D*>& histogram2DIn,
 			       std::vector<TH3D*>& histogram3DIn,
-			       std::vector<BDSBH4D*>& histograms4DIn);
+			       std::vector<BDSBH4DBase*>& histograms4DIn);
   virtual ~BDSOutputROOTEventHistograms();
 
   /// Interface function to create a 1D histogram using only standard types.
@@ -107,7 +105,7 @@ public:
   void AccumulateHistogram3D(G4int histoId,
 			     TH3D* otherHistogram);
   void AccumulateHistogram4D(G4int histoId,
-                 BDSBH4D* otherHistogram);
+                             BDSBH4DBase* otherHistogram);
 #endif
   /// Flush the contents.
   virtual void Flush();
@@ -122,18 +120,18 @@ public:
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
   std::vector<TH3D*>& Get3DHistograms() {return histograms3D;}
-  std::vector<BDSBH4D*>& Get4DHistograms() {return histograms4D;}
+  std::vector<BDSBH4DBase*>& Get4DHistograms() {return histograms4D;}
   TH1D* Get1DHistogram(int iHisto) const {return histograms1D[iHisto];}
   TH2D* Get2DHistogram(int iHisto) const {return histograms2D[iHisto];}
   TH3D* Get3DHistogram(int iHisto) const {return histograms3D[iHisto];}
-  BDSBH4D* Get4DHistogram(int iHisto) const {return histograms4D[iHisto];}
+  BDSBH4DBase* Get4DHistogram(int iHisto) const {return histograms4D[iHisto];}
   /// @}
 
 private:
   std::vector<TH1D*> histograms1D;
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
-  std::vector<BDSBH4D*> histograms4D;
+  std::vector<BDSBH4DBase*> histograms4D;
 
   ClassDef(BDSOutputROOTEventHistograms,3);
 };

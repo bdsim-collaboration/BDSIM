@@ -1,61 +1,43 @@
 //
-// Created by Eliott Ramoisiaux on 05/06/2020.
+// Created by Cedric Hernalsteens on 23/07/2020.
 //
 
 #ifndef BDSBH4D_HH
 #define BDSBH4D_HH
 
+#include "BDSBH4DBase.hh"
 #include <boost/histogram.hpp>
 
 #include "Rtypes.h"
 #include "TH1D.h"
 #include "TTree.h"
-#include "TObject.h"
 
-class BDSBH4D : public TH1D {
+typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_linear;
+typedef boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_log;
 
+template<class T>
+class BDSBH4D : public BDSBH4DBase {
 public:
-    ~BDSBH4D() override = default;
+    BDSBH4D();
+    BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+            unsigned int nxbins, double xmin, double xmax,
+            unsigned int nybins, double ymin, double ymax,
+            unsigned int nzbins, double zmin, double zmax,
+            unsigned int nebins, double emin, double emax);
 
-    int GetNbinsX() const final;
-    int GetNbinsY() const final;
-    int GetNbinsZ() const final;
-    int GetNbinsE() const;
-    const char* GetName() const override;
-    const char* GetTitle() const override;
+    T h;
+    T h_err;
 
-    void SetName(const char*) override;
-    void SetTitle(const char*) override;
-    void SetEntries(double) override;
-
-    virtual void Reset() = 0;
-    BDSBH4D* Clone(const char*) const override = 0;
-    virtual void Fill(double, double, double, double) = 0;
-    virtual void Set(int, int, int, int, double) = 0;
-    virtual void SetError(int, int, int, int, double) = 0;
-    virtual double At(int, int, int, int) = 0;
-    virtual double AtError(int, int, int, int) = 0;
-
-
-    unsigned int h_nxbins;
-    unsigned int h_nybins;
-    unsigned int h_nzbins;
-    unsigned int h_nebins;
-    double h_xmin;
-    double h_xmax;
-    double h_ymin;
-    double h_ymax;
-    double h_zmin;
-    double h_zmax;
-    double h_emin;
-    double h_emax;
-    std::string h_name;
-    std::string h_title;
-    std::string h_escale;
-    unsigned long entries = 0;
+    void Reset() override;
+    BDSBH4D* Clone(const char*) const override;
+    void Fill(double, double, double, double) override;
+    void Set(int, int, int, int, double) override;
+    void SetError(int, int, int, int, double) override;
+    double At(int, int, int, int) override;
+    double AtError(int, int, int, int) override;
 
 ClassDef(BDSBH4D,1);
 
 };
 
-#endif //BDSBH4D_HH
+#endif // BDSBH4D_HH

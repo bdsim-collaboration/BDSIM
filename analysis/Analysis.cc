@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
 
 #include <iostream>
 #include <string>
@@ -72,7 +72,7 @@ void Analysis::Execute()
       TH1::AddDirectory(kTRUE);
       TH2::AddDirectory(kTRUE);
       TH3::AddDirectory(kTRUE);
-      BDSBH4D::AddDirectory(kTRUE);
+      BDSBH4DBase::AddDirectory(kTRUE);
       PreparePerEntryHistograms();
       Process();
     }
@@ -192,7 +192,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
   TH3::AddDirectory(kTRUE);
-  BDSBH4D::AddDirectory(kTRUE);
+  BDSBH4DBase::AddDirectory(kTRUE);
 
   
   // pull out communal information in base class
@@ -235,7 +235,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 4:
       {
     HistogramDef4D* d = static_cast<HistogramDef4D*>(definition);
-    BDSBH4D* h = factory.CreateHistogram4D(d);
+    BDSBH4DBase* h = factory.CreateHistogram4D(d);
     chain->Draw(command.c_str(), selection.c_str(),"goff");
     histogramNames.push_back(name);
     histograms4D[name] = h;
