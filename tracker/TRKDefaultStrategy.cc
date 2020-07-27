@@ -17,7 +17,7 @@ void TRKDefaultStrategy::Track(TRKDrift* el, TRKParticle* particle, double step)
 }
 
 void TRKDefaultStrategy::Track(TRKSBend* el, TRKParticle* particle, double step) {
-  trk::maps::sbend(*particle, step, el->GetAngle(), el->GetK1());
+  trk::maps::sbend(*particle, step, el->GetAngle() * step / el->GetLength(), el->GetK1());
 }
 
 void TRKDefaultStrategy::Track(TRKRBend* el, TRKParticle* particle, double step) {
@@ -50,8 +50,8 @@ void TRKDefaultStrategy::Track(TRKSolenoid *el, TRKParticle* particle, double st
 }
 
 void TRKDefaultStrategy::Track(TRKKicker *el, TRKParticle* particle, double step) {
-  auto hkick = el->GetHKick();
-  auto vkick = el->GetVKick();
+  auto hkick = el->GetHKick() * step/el->GetLength();
+  auto vkick = el->GetVKick() * step/el->GetLength();
   trk::maps::kicker(*particle, hkick/2., vkick/2.);
   trk::maps::drift(*particle, step);
   trk::maps::kicker(*particle, hkick/2., vkick/2.);
