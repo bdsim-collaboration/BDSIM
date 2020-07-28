@@ -9,6 +9,7 @@
 #include "TRKSBend.hh"
 #include "TRKRBend.hh"
 #include "TRKSolenoid.hh"
+#include "TRKDipoleFringe.hh"
 
 #include <cmath>
 
@@ -18,6 +19,13 @@ void TRKDefaultStrategy::Track(TRKDrift* el, TRKParticle* particle, double step)
 
 void TRKDefaultStrategy::Track(TRKSBend* el, TRKParticle* particle, double step) {
   trk::maps::sbend(*particle, step, el->GetAngle() * step / el->GetLength(), el->GetK1());
+}
+
+void TRKDefaultStrategy::Track(TRKDipoleFringe* el, TRKParticle* particle, double step) {
+    auto poleface = el->GetPoleface();
+    double k0 = el->GetK0();
+
+    trk::maps::dipole_fringe(*particle, k0, poleface);
 }
 
 void TRKDefaultStrategy::Track(TRKRBend* el, TRKParticle* particle, double step) {
