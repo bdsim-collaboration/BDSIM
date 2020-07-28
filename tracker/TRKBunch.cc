@@ -85,6 +85,8 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
   //initialise the vector of particles
   bunch.reserve(population);
 
+  bdsbunch->BeginOfRunAction(population); // offsetSampleMean
+
   BDSParticleDefinition const *referenceParticle =
       bdsbunch->ParticleDefinition();
 
