@@ -31,6 +31,7 @@ class TRKOctupole;
 class TRKSolenoid;
 class TRKKicker;
 class TRKSampler;
+class TRKDipoleFringe;
 class TRKTiltOffset;
 
 /**
@@ -60,6 +61,7 @@ public:
   virtual void Track(TRKDrift*      el, TRKParticle* particle, double step)=0;
   virtual void Track(TRKSBend*      el, TRKParticle* particle, double step)=0;
   virtual void Track(TRKRBend*      el, TRKParticle* particle, double step)=0;
+  virtual void Track(TRKDipoleFringe* el, TRKParticle* particle, double step)=0;
   virtual void Track(TRKQuadrupole* el, TRKParticle* particle, double step)=0;
   virtual void Track(TRKSextupole*  el, TRKParticle* particle, double step)=0;
   virtual void Track(TRKOctupole*   el, TRKParticle* particle, double step)=0;
