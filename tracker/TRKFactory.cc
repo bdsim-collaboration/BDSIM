@@ -40,6 +40,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
+#include "TRKDipoleFringe.hh"
+#include "TRKElementLine.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
@@ -380,12 +382,32 @@ TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKRBend(element.angle * CLHEP::rad,
-		      element.name,
-		      element.l * CLHEP::m,
-		      aperture,
-		      placement,
-		      element.k1 / CLHEP::m2);
+
+    double angle = element.angle * CLHEP::rad;
+    double length = element.l * CLHEP::m;
+
+    double poleface = angle / 2;
+    double k0 = angle / length;
+
+    std::string name = element.name;
+
+    auto fringeIn = new TRKDipoleFringe(name + "_fringeIn", poleface, aperture, nullptr, k0);
+    auto fringeOut = new TRKDipoleFringe(name + "_fringeOut", poleface, aperture, nullptr, k0);
+
+    auto body = new TRKSBend(element.angle,
+                             element.k1 / CLHEP::m2,
+                             element.name,
+                             length,
+                             aperture,
+                             placement
+    );
+
+    auto rbendLine = new TRKElementLine(name);
+    rbendLine->AddElement(fringeIn);
+    rbendLine->AddElement(body);
+    rbendLine->AddElement(fringeOut);
+
+    return rbendLine;
 }
 
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
