@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
+#include "BDSBHTypedefs.hh"
 
 #include "parser/scorermesh.h"
 
@@ -61,4 +62,14 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   extent = BDSExtent(xLow, xHigh,
 		     yLow, yHigh,
 		     zLow, zHigh);
+
+  if (nBinsE > 1) {
+    if (eScale == "linear") {
+      energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");
+    }
+    else if (eScale == "log") {
+      energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");
+    }
+    else {throw BDSException(__METHOD_NAME__, "eScale must be 'linear' or 'log' in mesh \"" + mesh.name + "\"");}
+  }
 }

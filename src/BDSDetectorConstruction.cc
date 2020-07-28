@@ -1156,28 +1156,10 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 
   // convert all the parser scorer definitions into recipes (including parameter checking)
   std::map<G4String, BDSScorerInfo> scorerRecipes;
-  for (const auto& scorer : scorers)
-    {
-        for (const auto& scoringmesh : scoringMeshes)
-        {
-            if (scoringmesh.scoreQuantity == scorer.name)
-            {
-                if (scorer.type == "cellflux4d")
-                {
-                    BDSScorerInfo si = BDSScorerInfo(scorer, scoringmesh, false);
-                    scorerRecipes.insert(std::make_pair(si.name, si));
-                }
-                else
-                {
-                    BDSScorerInfo si = BDSScorerInfo(scorer, scoringmesh, true); // true = upgrade to 3d as required for 3d mesh here
-                    scorerRecipes.insert(std::make_pair(si.name, si));
-                }
-
-            }
-        }
-
-
-    }
+  for (const auto &scorer : scorers) {
+      BDSScorerInfo si = BDSScorerInfo(scorer, true);
+      scorerRecipes.insert(std::make_pair(si.name, si));
+  }
 
   // construct meshes
   BDSScorerFactory scorerFactory;
@@ -1204,24 +1186,26 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       std::stringstream sqss(mesh.scoreQuantity);
       G4String word;
       while (sqss >> word) // split by white space - process word at a time
-	{
-	  auto search = scorerRecipes.find(word);
-	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
+      {
+        auto search = scorerRecipes.find(word);
+        if (search == scorerRecipes.end()) { throw BDSException(__METHOD_NAME__,
+                                                                "scorerQuantity \"" + word + "\" for mesh \"" +
+                                                                meshName + "\" not found.");
+        }
 
-	  G4double psUnit = 1.0;
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
-	  // The mesh internally creates a multifunctional detector which is an SD and has
-	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
-	  // the hits map we need the full name of the unique primitive scorer so we build that
-	  // name here and store it.
-	  G4String uniqueName = meshName + "/" + ps->GetName();
-	  meshPrimitiveScorerNames.push_back(uniqueName);
-	  meshPrimitiveScorerUnits.push_back(psUnit);
-	  scorerBox->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
-	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
-	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
-	}
+        G4double psUnit = 1.0;
+        G4VPrimitiveScorer *ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
+        // The mesh internally creates a multifunctional detector which is an SD and has
+        // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
+        // the hits map we need the full name of the unique primitive scorer so we build that
+        // name here and store it.
+        G4String uniqueName = meshName + "/" + ps->GetName();
+        meshPrimitiveScorerNames.push_back(uniqueName);
+        meshPrimitiveScorerUnits.push_back(psUnit);
+        scorerBox->SetPrimitiveScorer(ps); // sets the current ps but appends to list of multiple
+        BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
+        BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+      }
 
       scManager->RegisterScoringMesh(scorerBox);
 

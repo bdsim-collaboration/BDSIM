@@ -1,16 +1,32 @@
-//
-// Created by Eliott Ramoisiaux on 26/05/2020.
-//
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2020.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef BDSIM_BDSHISTBINMAPPER_HH
 #define BDSIM_BDSHISTBINMAPPER_HH
 
+#include "BDSBHTypedefs.hh"
 #include "G4ThreeVector.hh"
 
 
 class BDSHistBinMapper {
 public:
-    BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn);
+    BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn, boost_histogram_axes_variant energyAxisIn);
 
     virtual ~BDSHistBinMapper(){;}
 
@@ -29,13 +45,14 @@ public:
     inline G4double NBinsJ() const {return nBinsJ;}
     inline G4double NBinsK() const {return nBinsK;}
     inline G4double NBinsL() const {return nBinsL;}
+    inline boost_histogram_axes_variant  GetEnergyAxis() const {return energyAxis;}
 
 protected:
     G4int nBinsI;
     G4int nBinsJ;
     G4int nBinsK;
     G4int nBinsL;
+    boost_histogram_axes_variant energyAxis;
 };
-
 
 #endif //BDSIM_BDSHISTBINMAPPER_HH

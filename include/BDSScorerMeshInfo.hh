@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERMESHINFO_H
 #define BDSSCORERMESHINFO_H
 
+#include "BDSBHTypedefs.hh"
 #include "BDSExtent.hh"
 
 #include "G4String.hh"
@@ -59,6 +60,7 @@ public:
   G4double eLow;
   G4double eHigh;
   std::string eScale;
+  boost_histogram_axes_variant energyAxis;
 
   inline G4double  ScoringBoxX() const {return 0.5*(xHigh-xLow);}
   inline G4double  ScoringBoxY() const {return 0.5*(yHigh-yLow);}
