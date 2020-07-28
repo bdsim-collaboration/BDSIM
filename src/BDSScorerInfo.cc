@@ -77,6 +77,12 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, const GMAD::ScorerMesh&
   eHigh = scorermesh.eHigh * CLHEP::GeV;
   ne = scorermesh.ne;
 
+  if (scorermesh.eScale == "linear") {
+    energyAxis = boost_histogram_linear_axis(ne, eLow, eHigh, "energy");
+  }
+  else if (scorermesh.eScale == "log") {
+    energyAxis = boost_histogram_log_axis(ne, eLow, eHigh, "energy");
+  }
 
   if (scorer.particlePDGID != 0)
     {

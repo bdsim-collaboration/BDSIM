@@ -4,20 +4,17 @@
 
 #include "BDSPSCellFlux4D.hh"
 #include "BDSHistBinMapper.hh"
+#include "BDSBHTypedefs.hh"
+#include <boost/variant.hpp>
 
-#include <boost/histogram.hpp>
-
-
-BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, unsigned int ne, const BDSHistBinMapper* mapperIn, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
-G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
+BDSPSCellFlux4D::BDSPSCellFlux4D(const G4String& name, const boost_histogram_axes_variant& energyAxis, const BDSHistBinMapper* mapperIn, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
+G4PSCellFlux3D(name,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), energyAxis(energyAxis), mapper(mapperIn)
 {
-
 }
 
-BDSPSCellFlux4D::BDSPSCellFlux4D(G4String name, const G4double eLow, const G4double eHigh, unsigned int ne, const BDSHistBinMapper* mapperIn, const G4String& unit, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
-        G4PSCellFlux3D(name, unit,ni,nj,nk,depi,depj,depk), fDepthi(depi), fDepthj(depj), fDepthk(depk),ne(ne), eLow(eLow), eHigh(eHigh), mapper(mapperIn)
+BDSPSCellFlux4D::BDSPSCellFlux4D(const G4String& name, const boost_histogram_axes_variant& energyAxis, const BDSHistBinMapper* mapperIn, const G4String& unit, G4int ni, G4int nj, G4int nk, G4int depi, G4int depj, G4int depk):
+        G4PSCellFlux3D(name, unit, ni, nj, nk, depi, depj, depk), fDepthi(depi), fDepthj(depj), fDepthk(depk), energyAxis(energyAxis), mapper(mapperIn)
 {
-
 }
 
 
@@ -28,11 +25,8 @@ G4int BDSPSCellFlux4D::GetIndex(G4Step* aStep)
     G4int i = touchable->GetReplicaNumber(fDepthi);
     G4int j = touchable->GetReplicaNumber(fDepthj);
     G4int k = touchable->GetReplicaNumber(fDepthk);
-
-    boost::histogram::axis::regular<double,boost::histogram::axis::transform::log> Laxis = boost::histogram::axis::regular<double, boost::histogram::axis::transform::log> {ne, eLow, eHigh, "Energy_log"};
-
-    G4int l = Laxis.index(aStep->GetPostStepPoint()->GetKineticEnergy());
-
+    boost::variant<double> energy(aStep->GetPostStepPoint()->GetKineticEnergy());
+    G4int l = boost::apply_visitor(EnergyAxisIndexVisitor(), energyAxis, energy);
 
     if (i<0 || j<0 || k<0)
     {
