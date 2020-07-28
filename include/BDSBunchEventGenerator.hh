@@ -52,6 +52,7 @@ public:
   /// Return whether a particle is within the phase space cuts for an event
   /// generator file particle.
   G4bool AcceptParticle(const BDSParticleCoordsFull& coords,
+			G4double rpOriginal,
 			G4double kineticEnergy,
 			G4int    pdgID);
 
@@ -77,10 +78,13 @@ protected:
   G4double eventGeneratorMaxYp;
   G4double eventGeneratorMinZp;
   G4double eventGeneratorMaxZp;
+  G4double eventGeneratorMinRp;
+  G4double eventGeneratorMaxRp;
   G4double eventGeneratorMinT;
   G4double eventGeneratorMaxT;
   G4double eventGeneratorMinEK;
   G4double eventGeneratorMaxEK;
+  G4double Rp0;
   /// @}
 
   /// Vector (sorted) of permitted particles.
