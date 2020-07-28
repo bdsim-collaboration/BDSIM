@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 #include "TRKElement.hh"
+#include "TRKElementLine.hh"
 
 TRKLine::TRKLine(std::string nameIn, bool circularIn) :
   name(nameIn),circular(circularIn)
@@ -32,6 +33,20 @@ TRKLine::~TRKLine()
 }
 
 void TRKLine::AddElement(TRKElement* e) {
+    if (auto* ell = dynamic_cast<TRKElementLine*>(e))
+    {
+        for (auto &se : *ell)
+        {
+            AddSingleElement(se);
+        }
+    }
+    else
+    {
+        AddSingleElement(e);
+    }
+}
+
+void TRKLine::AddSingleElement(TRKElement* e) {
   elements.push_back(e);
   double lastS = elementEndS.empty() ? 0 : elementEndS.back();
   elementEndS.push_back(lastS + e->GetLength());

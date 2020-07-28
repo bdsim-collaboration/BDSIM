@@ -44,6 +44,8 @@ public:
   ~TRKLine();
   /// Append TRKElement to Line
   void AddElement(TRKElement *e);
+  void AddSingleElement(TRKElement *e);
+
   /// Find first element with name eName
   TRKElement* FindElement(std::string eName)const;
 
