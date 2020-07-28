@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSSCORERINFO_H
 
 #include "BDSScorerType.hh"
+#include "BDSBHTypedefs.hh"
 
 #include "globals.hh"         // geant4 types / globals
 
@@ -73,6 +74,7 @@ public:
   G4double      eLow;
   G4double      eHigh;
   G4int ne;
+  boost_histogram_axes_variant energyAxis;
 };
 
 #endif
