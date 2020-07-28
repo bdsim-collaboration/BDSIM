@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <iostream>
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSMaterials.hh"
@@ -38,8 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, const GMAD::ScorerMesh& scorermesh,
-			     G4bool upgradeTo3D):
+BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, G4bool upgradeTo3D):
   particle(nullptr)
 {
   const std::map<std::string, std::string> replacements = {
@@ -59,7 +59,7 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, const GMAD::ScorerMesh&
       auto search = replacements.find(scorerTypeNameOriginal);
       if (search != replacements.end())
 	{scorerTypeName = search->second;}
-      else if (!G4String(scorerTypeNameOriginal).contains("3d"))
+      else if (!G4String(scorerTypeNameOriginal).contains("3d") && !G4String(scorerTypeNameOriginal).contains("4d"))
 	{throw BDSException(__METHOD_NAME__, "3D scorer required but a non-3D one specified.");}
     }
   
@@ -73,16 +73,6 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, const GMAD::ScorerMesh&
   maximumTime   = scorer.maximumTime*CLHEP::second;
   worldVolumeOnly = scorer.scoreWorldVolumeOnly;
   primariesOnly = scorer.scorePrimariesOnly;
-  eLow = scorermesh.eLow * CLHEP::GeV;
-  eHigh = scorermesh.eHigh * CLHEP::GeV;
-  ne = scorermesh.ne;
-
-  if (scorermesh.eScale == "linear") {
-    energyAxis = boost_histogram_linear_axis(ne, eLow, eHigh, "energy");
-  }
-  else if (scorermesh.eScale == "log") {
-    energyAxis = boost_histogram_log_axis(ne, eLow, eHigh, "energy");
-  }
 
   if (scorer.particlePDGID != 0)
     {

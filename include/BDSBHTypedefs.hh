@@ -23,12 +23,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/histogram.hpp>
 #include <boost/variant.hpp>
 
+#ifndef __ROOTDOUBLE__
+typedef double boost_histogram_storage_type; // change to float later and update the LinkDef file
+#else
+typedef double boost_histogram_storage_type;
+#endif
+
 typedef boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> boost_histogram_linear_axis;
 typedef boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> boost_histogram_log_axis;
 
-typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_linear;
-typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis    >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > > boost_histogram_log;
+typedef boost::variant<boost_histogram_linear_axis*, boost_histogram_log_axis*> boost_histogram_axes_variant;
 
-typedef boost::variant<boost_histogram_linear_axis, boost_histogram_log_axis> boost_histogram_axes_variant;
+typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_linear;
+typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis    >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_log;
 
 #endif //BDSIM_BDSBHTYPEDEFS_H

@@ -40,7 +40,7 @@ void ScorerMesh::clear()
   zsize = 0;
   eLow  = 1e-12;
   eHigh = 1e4;
-  eScale = "log";
+  eScale = "linear";
 
   sequence         = "";
   referenceElement = "";
@@ -90,7 +90,7 @@ void ScorerMesh::PublishMembers()
   publish("axisAngle",     &ScorerMesh::axisAngle);
 }
 
-void ScorerMesh::print()const
+void ScorerMesh::print() const
 {
   std::cout << "ScorerMesh: "
 	    << "name "          << name          << std::endl

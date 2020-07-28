@@ -34,17 +34,16 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
   scorerSize[0] = recipe.ScoringBoxX();
   scorerSize[1] = recipe.ScoringBoxY();
   scorerSize[2] = recipe.ScoringBoxZ();
-  scorerSize[3] = recipe.ScoringBoxE();
   SetSize(scorerSize);
 
   // divisions of the scoring mesh
   nSegment[0] = recipe.nBinsX;
   nSegment[1] = recipe.nBinsY;
   nSegment[2] = recipe.nBinsZ;
-  nSegment[3] = recipe.nBinsE;
+  nEnergySegments = recipe.nBinsE;
   SetNumberOfSegments(nSegment);
 
-  mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2],nSegment[3]);
+  mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nEnergySegments, recipe.energyAxis);
 }
 
 BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
@@ -62,7 +61,7 @@ const BDSHistBinMapper* BDSScoringMeshBox::Mapper() const
   if (!sizeIsSet)
     {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
   if (!mapper)
-    {mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nSegment[3]);}
+  {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" mapper has mysteriously disapeared");}
   return mapper;
 }
 

@@ -62,8 +62,9 @@ public:
 protected:
   mutable BDSHistBinMapper* mapper;
 
-  G4double scorerSize[4];
-  G4int nSegment[4];
+  G4double scorerSize[3];
+  G4int nSegment[3];
+  G4int nEnergySegments;
 
 };
 
