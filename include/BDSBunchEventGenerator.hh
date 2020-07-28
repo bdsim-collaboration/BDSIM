@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBunch.hh"
 
+#include "G4RotationMatrix.hh"
 #include "G4Types.hh"
 
 #include <vector>
@@ -53,6 +54,9 @@ public:
   G4bool AcceptParticle(const BDSParticleCoordsFull& coords,
 			G4double kineticEnergy,
 			G4int    pdgID);
+
+  /// Get a rotation matrix according to Xp0 and Yp0.
+  G4RotationMatrix ReferenceBeamMomentumOffset() const;
   
 protected:
   /// Split on white space and try and find names and IDs in the G4ParticleTable.

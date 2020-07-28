@@ -72,7 +72,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
-
+  referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   OpenFile();
 }
 
@@ -166,7 +166,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 					       centralCoordsGlobal.global.y,
 					       centralCoordsGlobal.global.z,
 					       centralCoordsGlobal.global.T);
-
+  
   double overallWeight = 1.0;
   if (hepmcevt->weights().size() > 0)
     {overallWeight = hepmcevt->weight();}
@@ -186,7 +186,11 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4double pz = p.z() * CLHEP::GeV;
       G4ThreeVector unitMomentum(px,py,pz);
       unitMomentum = unitMomentum.unit();
-
+  
+      // apply any reference coordinate offsets.
+      unitMomentum = unitMomentum.transform(referenceBeamMomentumOffset);
+      // it's ok that this G4PrimaryParticle doesn't have the correct momentum direction as we only use it for
+      // total energy and checking - it's direction is updated later based on unitMomentum with a beam line transform.
       G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, px, py, pz);
 
       // if the particle definition isn't found from the pdgcode in the construction

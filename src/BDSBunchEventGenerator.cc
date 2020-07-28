@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSPhysicsUtilities.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
 
@@ -180,4 +181,17 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
     {allowedParticle = std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID);}
   
   return x && y && z && xp && yp && zp && t && ek && allowedParticle;
+}
+
+G4RotationMatrix BDSBunchEventGenerator::ReferenceBeamMomentumOffset() const
+{
+  if (!BDS::IsFinite(Xp0) && !BDS::IsFinite(Yp0))
+    {return G4RotationMatrix();}
+  else
+    {
+      G4RotationMatrix result;
+      result.rotateX(std::asin(-Yp0));
+      result.rotateY(std::asin(Xp0));
+      return result;
+    }
 }
