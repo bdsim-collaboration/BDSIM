@@ -25,8 +25,9 @@ G4int BDSPSCellFlux4D::GetIndex(G4Step* aStep)
     G4int i = touchable->GetReplicaNumber(fDepthi);
     G4int j = touchable->GetReplicaNumber(fDepthj);
     G4int k = touchable->GetReplicaNumber(fDepthk);
-    boost::variant<double> energy(aStep->GetPostStepPoint()->GetKineticEnergy());
-    G4int l = boost::apply_visitor(EnergyAxisIndexVisitor(), energyAxis, energy);
+    G4int l = boost::apply_visitor([&](auto&& one){
+        return (decltype(one)(one)).index(aStep->GetPostStepPoint()->GetKineticEnergy());
+    }, energyAxis);
 
     if (i<0 || j<0 || k<0)
     {

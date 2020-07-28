@@ -31,10 +31,4 @@ typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis,
 
 typedef boost::variant<boost_histogram_linear_axis, boost_histogram_log_axis> boost_histogram_axes_variant;
 
-class EnergyAxisIndexVisitor : public boost::static_visitor<int> {
-public:
-    int operator()(const boost_histogram_linear_axis& ax, const double energy) const { return ax.index(energy); }
-    int operator()(const boost_histogram_log_axis& ax, const double energy) const { return ax.index(energy); }
-};
-
 #endif //BDSIM_BDSBHTYPEDEFS_H
