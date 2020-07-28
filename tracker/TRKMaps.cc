@@ -43,7 +43,11 @@ void trk::maps::drift(TRKBunch &bunch, double length) noexcept {
 void trk::maps::sbend(TRKParticle &particle, double length, double angle,
                       double k1) noexcept {
 
+    if (length == 0){
+        return;
+    }
     auto rho = length / angle;
+
     auto k0 = 1. / rho;
     auto h = k0;
 
