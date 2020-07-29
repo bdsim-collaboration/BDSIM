@@ -28,6 +28,7 @@ public:
     void SetTitle(const char*) override;
     void SetEntries(double) override;
 
+    virtual BDSBH4DBase& operator+=(const BDSBH4DBase& other) = 0;
     virtual void Reset() = 0;
     BDSBH4DBase* Clone(const char*) const override = 0;
     virtual void Fill(double, double, double, double) = 0;
