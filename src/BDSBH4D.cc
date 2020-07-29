@@ -6,6 +6,9 @@
 
 #include <string>
 
+#include <boost/format.hpp>
+#include "iostream"
+
 templateClassImp(BDSBH4D)
 
 template <>
@@ -179,8 +182,70 @@ double BDSBH4D<T>::At(int x, int y, int z, int e) {
 }
 
 template <class T>
+double BDSBH4D<T>::LowBinEdgeAt(int x, int y, int z, int e) {
+
+    std::ostringstream os4;
+    for (auto&& i : indexed(h)) {
+
+        if (i.index(0) == x and i.index(1) == y and i.index(2) == z and i.index(3) == e) {
+            return i.bin(3).lower();
+        }
+    }
+}
+
+template <class T>
+double BDSBH4D<T>::HighBinEdgeAt(int x, int y, int z, int e) {
+
+    std::ostringstream os4;
+    for (auto&& i : indexed(h)) {
+
+        if (i.index(0) == x and i.index(1) == y and i.index(2) == z and i.index(3) == e) {
+            return i.bin(3).upper();
+        }
+    }
+}
+
+template <class T>
 double BDSBH4D<T>::AtError(int x, int y, int z, int e) {
     return h_err.at(x, y, z, e);
+}
+
+template <class T>
+void BDSBH4D<T>::Print() {
+
+    std::ostringstream os4;
+    for (auto&& x : indexed(this->h)) {
+        os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
+               % x.index(0) % x.index(1) % x.index(2) % x.index(3)
+               % x.bin(0).lower() % x.bin(0).upper()
+               % x.bin(1).lower() % x.bin(1).upper()
+               % x.bin(2).lower() % x.bin(2).upper()
+               % x.bin(3).lower() % x.bin(3).upper()
+               % *x;
+    }
+
+    std::cout << os4.str() << std::flush;
+}
+
+template <class T>
+void BDSBH4D<T>::Print(int x, int y, int z, int e) {
+
+    std::ostringstream os4;
+    for (auto&& i : indexed(this->h)) {
+        if (i.index(0) == x and  i.index(1) == y and i.index(2) ==z and i.index(3) ==e){
+
+            os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
+                   % i.index(0) % i.index(1) % i.index(2) % i.index(3)
+                   % i.bin(0).lower() % i.bin(0).upper()
+                   % i.bin(1).lower() % i.bin(1).upper()
+                   % i.bin(2).lower() % i.bin(2).upper()
+                   % i.bin(3).lower() % i.bin(3).upper()
+                   % *i;
+        }
+
+    }
+
+    std::cout << os4.str() << std::flush;
 }
 
 template class BDSBH4D<boost_histogram_linear>;

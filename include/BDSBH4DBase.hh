@@ -35,6 +35,10 @@ public:
     virtual void SetError(int, int, int, int, double) = 0;
     virtual double At(int, int, int, int) = 0;
     virtual double AtError(int, int, int, int) = 0;
+    virtual double LowBinEdgeAt(int, int, int, int) = 0;
+    virtual double HighBinEdgeAt(int, int, int, int) = 0;
+    virtual void Print() = 0;
+    virtual void Print(int, int, int, int) = 0;
 
     unsigned int h_nxbins;
     unsigned int h_nybins;

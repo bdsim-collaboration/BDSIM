@@ -33,6 +33,10 @@ public:
     void SetError(int, int, int, int, double) override;
     double At(int, int, int, int) override;
     double AtError(int, int, int, int) override;
+    double LowBinEdgeAt(int, int, int, int) override;
+    double HighBinEdgeAt(int, int, int, int) override;
+    void Print() override;
+    void Print(int , int , int , int) override;
 
 ClassDef(BDSBH4D,1);
 
