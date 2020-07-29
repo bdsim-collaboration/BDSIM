@@ -20,13 +20,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ROOT_TEST_BDSBH4DLINKDEF_H
 #define ROOT_TEST_BDSBH4DLINKDEF_H
 
+#ifndef __ROOTDOUBLE__
+typedef double boost_histogram_storage_type; // change to float later and update the LinkDef file
+#else
+typedef double boost_histogram_storage_type;
+#endif
+
 #include "BDSBH4D.hh"
 
-#pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > >+;
+#pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > >+;
 #pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >+;
-#pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<double> >,boost::histogram::detail::null_mutex>+;
+#pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<boost_histogram_storage_type> >,boost::histogram::detail::null_mutex>+;
 
-#pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<double, std::__1::allocator<double> > > >+;
+#pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > >+;
 #pragma link C++ class boost::empty_::empty_value<boost::histogram::detail::null_mutex,0,true>+;
 #pragma link C++ class boost::histogram::detail::null_mutex+;
 #pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >+;
@@ -36,11 +42,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #pragma link C++ class boost::histogram::axis::metadata_base<boost::use_default,string>+;
 #pragma link C++ class boost::histogram::axis::iterator_mixin<boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >+;
 #pragma link C++ class boost::histogram::axis::transform::log+;
-#pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<double> >,boost::histogram::detail::null_mutex>+;
+#pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::histogram::axis::transform::log,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<boost_histogram_storage_type> >,boost::histogram::detail::null_mutex>+;
 
 #pragma link C++ class allocator<char>+;
 #pragma link C++ class boost::histogram::detail::vector_impl<vector<double> >+;
-#pragma link C++ class boost::histogram::storage_adaptor<vector<double> >+;
+#pragma link C++ class boost::histogram::storage_adaptor<vector<boost_histogram_storage_type> >+;
 #pragma link C++ class boost::empty_::empty_value<string,0,false>+;
 
 #pragma link C++ class BDSBH4D<boost_histogram_linear>+;
