@@ -34,6 +34,7 @@ public:
     virtual void Fill(double, double, double, double) = 0;
     virtual void Set(int, int, int, int, double) = 0;
     virtual void SetError(int, int, int, int, double) = 0;
+    virtual void Add(BDSBH4DBase*) = 0;
     virtual double At(int, int, int, int) = 0;
     virtual double AtError(int, int, int, int) = 0;
     virtual double LowBinEdgeAt(int, int, int, int) = 0;

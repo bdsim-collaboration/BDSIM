@@ -176,6 +176,12 @@ void BDSBH4D<T>::SetError(int x,
 }
 
 template <class T>
+void BDSBH4D<T>::Add(BDSBH4DBase* otherHistogram) {
+    BDSBH4D<T>* tmp = dynamic_cast<BDSBH4D<T>*>(otherHistogram);
+    h += tmp->h;
+}
+
+template <class T>
 double BDSBH4D<T>::At(int x, int y, int z, int e) {
     return h.at(x, y, z, e);
 }

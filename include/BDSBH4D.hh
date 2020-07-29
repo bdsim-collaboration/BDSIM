@@ -35,6 +35,7 @@ public:
     void Fill(double, double, double, double) override;
     void Set(int, int, int, int, double) override;
     void SetError(int, int, int, int, double) override;
+    void Add(BDSBH4DBase*) override;
     double At(int, int, int, int) override;
     double AtError(int, int, int, int) override;
     double LowBinEdgeAt(int, int, int, int) override;
