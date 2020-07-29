@@ -147,7 +147,6 @@ BDSBH4D<T>* BDSBH4D<T>::Clone(const char* newname) const {
     auto clone = new BDSBH4D<T>(*this);
     clone->SetName(newname);
     return clone;
-
 }
 
 template <class T>

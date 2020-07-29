@@ -26,6 +26,10 @@ public:
     T h;
     T h_err;
 
+    BDSBH4DBase& operator+=(const BDSBH4DBase& other) override {
+      h += dynamic_cast<const BDSBH4D<T>&>(other).h;
+      return *this;
+    }
     void Reset() override;
     BDSBH4D* Clone(const char*) const override;
     void Fill(double, double, double, double) override;
