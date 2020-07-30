@@ -138,6 +138,41 @@ BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, con
 }
 
 template <class T>
+void BDSBH4D<T>::to_PyROOT(std::string filename, std::string histo_name) {
+
+    const char* filename_char = filename.c_str();
+
+    std::string path ="Event/MergedHistograms/" +histo_name;
+    const char* path_char = path.c_str();
+
+    TFile *_file0 = TFile::Open(filename_char);
+    TTree* tree = (TTree*) _file0->Get(path_char);
+    BDSBH4D<T>* Boost_histogram = new BDSBH4D<T>();
+    tree->SetBranchAddress("BDSBH4DBase",&Boost_histogram);
+    tree->GetEntry(0);
+
+    this->h = Boost_histogram->h;
+    this->h_err = Boost_histogram->h_err;
+    this->h_nxbins = Boost_histogram->h_nxbins;
+    this->h_nybins = Boost_histogram->h_nybins;
+    this->h_nzbins = Boost_histogram->h_nzbins;
+    this->h_nebins = Boost_histogram->h_nebins;
+    this->h_xmin = Boost_histogram->h_xmin;
+    this->h_xmax = Boost_histogram->h_xmax;
+    this->h_ymin = Boost_histogram->h_ymin;
+    this->h_ymax = Boost_histogram->h_ymax;
+    this->h_zmin = Boost_histogram->h_zmin;
+    this->h_zmax = Boost_histogram->h_zmax;
+    this->h_emin = Boost_histogram->h_emin;
+    this->h_emax = Boost_histogram->h_emax;
+    this->h_name = Boost_histogram->h_name;
+    this->h_title = Boost_histogram->h_title;
+    this->h_escale = Boost_histogram->h_escale;
+
+
+}
+
+template <class T>
 void BDSBH4D<T>::Reset() {
     h.reset();
 }
@@ -216,17 +251,31 @@ double BDSBH4D<T>::AtError(int x, int y, int z, int e) {
 }
 
 template <class T>
-void BDSBH4D<T>::Print() {
+void BDSBH4D<T>::Print(bool show_not_empty) {
 
     std::ostringstream os4;
     for (auto&& x : indexed(this->h)) {
-        os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
-               % x.index(0) % x.index(1) % x.index(2) % x.index(3)
-               % x.bin(0).lower() % x.bin(0).upper()
-               % x.bin(1).lower() % x.bin(1).upper()
-               % x.bin(2).lower() % x.bin(2).upper()
-               % x.bin(3).lower() % x.bin(3).upper()
-               % *x;
+
+        if (show_not_empty == true and *x != 0){
+            os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
+                   % x.index(0) % x.index(1) % x.index(2) % x.index(3)
+                   % x.bin(0).lower() % x.bin(0).upper()
+                   % x.bin(1).lower() % x.bin(1).upper()
+                   % x.bin(2).lower() % x.bin(2).upper()
+                   % x.bin(3).lower() % x.bin(3).upper()
+                   % *x;
+
+        }
+        else if (show_not_empty == false){
+            os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
+                   % x.index(0) % x.index(1) % x.index(2) % x.index(3)
+                   % x.bin(0).lower() % x.bin(0).upper()
+                   % x.bin(1).lower() % x.bin(1).upper()
+                   % x.bin(2).lower() % x.bin(2).upper()
+                   % x.bin(3).lower() % x.bin(3).upper()
+                   % *x;
+
+        }
     }
 
     std::cout << os4.str() << std::flush;
