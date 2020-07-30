@@ -30,6 +30,7 @@ public:
       h += dynamic_cast<const BDSBH4D<T>&>(other).h;
       return *this;
     }
+    void to_PyROOT(std::string, std::string);
     void Reset() override;
     BDSBH4D* Clone(const char*) const override;
     void Fill(double, double, double, double) override;
@@ -40,7 +41,7 @@ public:
     double AtError(int, int, int, int) override;
     double LowBinEdgeAt(int, int, int, int) override;
     double HighBinEdgeAt(int, int, int, int) override;
-    void Print() override;
+    void Print(bool show_not_empty = false) override;
     void Print(int , int , int , int) override;
 
 ClassDef(BDSBH4D,1);

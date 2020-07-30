@@ -10,6 +10,7 @@
 #include "Rtypes.h"
 #include "TH1D.h"
 #include "TTree.h"
+#include "TFile.h"
 #include "TObject.h"
 
 class BDSBH4DBase : public TH1D {
@@ -39,7 +40,7 @@ public:
     virtual double AtError(int, int, int, int) = 0;
     virtual double LowBinEdgeAt(int, int, int, int) = 0;
     virtual double HighBinEdgeAt(int, int, int, int) = 0;
-    virtual void Print() = 0;
+    virtual void Print(bool show_not_empty = false) = 0;
     virtual void Print(int, int, int, int) = 0;
 
     unsigned int h_nxbins;
