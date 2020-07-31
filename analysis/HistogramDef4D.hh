@@ -33,6 +33,7 @@ public:
     double      eLowIn,
     double      eHighIn,
     std::string eScaleIn,
+    std::vector<double> eBinsEdgesIn,
     std::string plotIn,
     std::string selectionIn    = "1",
     bool        perEntryIn     = true,
@@ -46,6 +47,8 @@ public:
     double      eLow;
     double      eHigh;
     std::string eScale;
+    std::vector<double> eBinsEdges;
+
     bool        logarithmicE;
 
 ClassDef(HistogramDef4D, 1);

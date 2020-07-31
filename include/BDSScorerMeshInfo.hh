@@ -60,6 +60,7 @@ public:
   G4double eLow;
   G4double eHigh;
   std::string eScale;
+  std::vector<double> eBinsEdges ={};
   boost_histogram_axes_variant energyAxis;
 
   inline G4double  ScoringBoxX() const {return 0.5*(xHigh-xLow);}

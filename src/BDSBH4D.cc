@@ -36,6 +36,7 @@ BDSBH4D<boost_histogram_linear>::BDSBH4D()
     h_zmax = 1;
     h_emin = 1;
     h_emax = 230;
+    h_escale = 'linear';
 
 }
 
@@ -64,11 +65,42 @@ BDSBH4D<boost_histogram_log>::BDSBH4D()
     h_zmax = 1;
     h_emin = 1;
     h_emax = 230;
+    h_escale = 'log';
 
 }
 
 template <>
-BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+BDSBH4D<boost_histogram_variable>::BDSBH4D()
+{
+    h = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {3, 0.0, 1.0, "x"},
+                                              boost::histogram::axis::regular<double> {3, 0.0, 1.0, "y"},
+                                              boost::histogram::axis::regular<double> {3, 0.0, 1.0, "z"},
+                                              boost::histogram::axis::variable<double> {std::vector<double>{0.001,0.230}, "energy"});
+
+    h_err = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {3, 0.0, 1.0, "x"},
+                                                  boost::histogram::axis::regular<double> {3, 0.0, 1.0, "y"},
+                                                  boost::histogram::axis::regular<double> {3, 0.0, 1.0, "z"},
+                                                  boost::histogram::axis::variable<double> {std::vector<double>{0.001,0.1,0.230}, "energy"});
+
+    h_nxbins = 3;
+    h_nybins = 3;
+    h_nzbins = 3;
+    h_nebins = 2;
+    h_xmin = 0;
+    h_xmax = 1;
+    h_ymin = 0;
+    h_ymax = 1;
+    h_zmin = 0;
+    h_zmax = 1;
+    h_emin = 0.001;
+    h_emax = 0.230;
+    h_escale = 'user';
+    h_ebinsedges = std::vector<double>{0.001,0.1,0.230};
+
+}
+
+template <>
+BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
                  unsigned int nxbins, double xmin, double xmax,
                  unsigned int nybins, double ymin, double ymax,
                  unsigned int nzbins, double zmin, double zmax,
@@ -103,7 +135,7 @@ BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, 
 }
 
 template <>
-BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
                     unsigned int nxbins, double xmin, double xmax,
                     unsigned int nybins, double ymin, double ymax,
                     unsigned int nzbins, double zmin, double zmax,
@@ -137,6 +169,44 @@ BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, con
 
 }
 
+
+template <>
+BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
+                                      unsigned int nxbins, double xmin, double xmax,
+                                      unsigned int nybins, double ymin, double ymax,
+                                      unsigned int nzbins, double zmin, double zmax,
+                                      unsigned int nebins, double emin, double emax)
+{
+    h = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
+                                              boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
+                                              boost::histogram::axis::regular<double> {nzbins, zmin, zmax, "z"},
+                                              boost::histogram::axis::variable<double> {eBinsEdges, "energy"});
+
+    h_err = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
+                                                  boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
+                                                  boost::histogram::axis::regular<double> {nzbins, zmin, zmax, "z"},
+                                                  boost::histogram::axis::variable<double> {eBinsEdges, "energy"});
+
+    h_nxbins = nxbins;
+    h_nybins = nybins;
+    h_nzbins = nzbins;
+    h_nebins = eBinsEdges.size()-1;
+    h_xmin = xmin;
+    h_xmax = xmax;
+    h_ymin = ymin;
+    h_ymax = ymax;
+    h_zmin = zmin;
+    h_zmax = zmax;
+    h_emin = eBinsEdges[0];
+    h_emax = eBinsEdges[h_nebins];
+    h_name = name;
+    h_title = title;
+    h_escale = eScale;
+    h_ebinsedges = eBinsEdges;
+
+}
+
+
 template <class T>
 void BDSBH4D<T>::to_PyROOT(std::string filename, std::string histo_name) {
 
@@ -168,6 +238,7 @@ void BDSBH4D<T>::to_PyROOT(std::string filename, std::string histo_name) {
     this->h_name = Boost_histogram->h_name;
     this->h_title = Boost_histogram->h_title;
     this->h_escale = Boost_histogram->h_escale;
+    this->h_ebinsedges = Boost_histogram->h_ebinsedges;
 
 
 }
@@ -251,12 +322,12 @@ double BDSBH4D<T>::AtError(int x, int y, int z, int e) {
 }
 
 template <class T>
-void BDSBH4D<T>::Print(bool show_not_empty) {
+void BDSBH4D<T>::Print(bool with_zero_values) {
 
     std::ostringstream os4;
     for (auto&& x : indexed(this->h)) {
 
-        if (show_not_empty == true and *x != 0){
+        if (with_zero_values == false and *x != 0){
             os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
                    % x.index(0) % x.index(1) % x.index(2) % x.index(3)
                    % x.bin(0).lower() % x.bin(0).upper()
@@ -266,7 +337,7 @@ void BDSBH4D<T>::Print(bool show_not_empty) {
                    % *x;
 
         }
-        else if (show_not_empty == false){
+        else if (with_zero_values == true){
             os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
                    % x.index(0) % x.index(1) % x.index(2) % x.index(3)
                    % x.bin(0).lower() % x.bin(0).upper()
@@ -302,5 +373,7 @@ void BDSBH4D<T>::Print(int x, int y, int z, int e) {
     std::cout << os4.str() << std::flush;
 }
 
+
 template class BDSBH4D<boost_histogram_linear>;
 template class BDSBH4D<boost_histogram_log>;
+template class BDSBH4D<boost_histogram_variable>;

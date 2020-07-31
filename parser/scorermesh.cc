@@ -41,7 +41,7 @@ void ScorerMesh::clear()
   eLow  = 1e-12;
   eHigh = 1e4;
   eScale = "linear";
-
+  eBinsEdgesFilenamePath = "";
   sequence         = "";
   referenceElement = "";
   referenceElementNumber = 0;
@@ -73,6 +73,7 @@ void ScorerMesh::PublishMembers()
   publish("eLow",          &ScorerMesh::eLow);
   publish("eHigh",         &ScorerMesh::eHigh);
   publish("eScale",        &ScorerMesh::eScale);
+  publish("eBinsEdgesFilenamePath", &ScorerMesh::eBinsEdgesFilenamePath);
   publish("sequence",      &ScorerMesh::sequence);
   publish("referenceElement", &ScorerMesh::referenceElement);
   publish("referenceElementNumber", &ScorerMesh::referenceElementNumber);

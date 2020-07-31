@@ -17,7 +17,7 @@ template<class T>
 class BDSBH4D : public BDSBH4DBase {
 public:
     BDSBH4D();
-    BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+    BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
             unsigned int nxbins, double xmin, double xmax,
             unsigned int nybins, double ymin, double ymax,
             unsigned int nzbins, double zmin, double zmax,
@@ -41,7 +41,7 @@ public:
     double AtError(int, int, int, int) override;
     double LowBinEdgeAt(int, int, int, int) override;
     double HighBinEdgeAt(int, int, int, int) override;
-    void Print(bool show_not_empty = false) override;
+    void Print(bool with_zero_values = true) override;
     void Print(int , int , int , int) override;
 
 ClassDef(BDSBH4D,1);

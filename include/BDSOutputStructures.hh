@@ -110,6 +110,7 @@ protected:
   G4int Create4DHistogram(G4String name,
               G4String title,
               std::string eScale,
+              std::vector<double> eBinsEdges,
               G4int    nBinsX, G4double xMin, G4double xMax,
               G4int    nBinsY, G4double yMin, G4double yMax,
               G4int    nBinsZ, G4double zMin, G4double zMax,
