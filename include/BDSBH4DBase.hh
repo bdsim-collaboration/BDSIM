@@ -40,7 +40,7 @@ public:
     virtual double AtError(int, int, int, int) = 0;
     virtual double LowBinEdgeAt(int, int, int, int) = 0;
     virtual double HighBinEdgeAt(int, int, int, int) = 0;
-    virtual void Print(bool show_not_empty = false) = 0;
+    virtual void Print(bool with_zero_values = true) = 0;
     virtual void Print(int, int, int, int) = 0;
 
     unsigned int h_nxbins;
@@ -58,6 +58,7 @@ public:
     std::string h_name;
     std::string h_title;
     std::string h_escale;
+    std::vector<double> h_ebinsedges;
     unsigned long entries = 0;
 
 ClassDef(BDSBH4DBase,1);

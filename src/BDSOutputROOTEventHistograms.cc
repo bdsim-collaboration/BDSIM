@@ -173,28 +173,32 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
   return (G4int)histograms3D.size() - 1;
 }
 
-G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title, std::string eScale,
+G4int BDSOutputROOTEventHistograms::Create4DHistogram(G4String name, G4String title, std::string eScale, std::vector<double> eBinsEdges,
                                 unsigned int nxbins, G4double xmin, G4double xmax,
                                 unsigned int nybins, G4double ymin, G4double ymax,
                                 unsigned int nzbins, G4double zmin, G4double zmax,
                                 unsigned int nebins, G4double emin, G4double emax)
 {
     if(eScale == "linear") {
-        histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(name, title, eScale,
+        histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(name, title, eScale, eBinsEdges,
                                            nxbins, xmin, xmax,
                                            nybins, ymin, ymax,
                                            nzbins, zmin, zmax,
                                            nebins, emin, emax));
     }
     else if(eScale == "log") {
-        histograms4D.push_back(new BDSBH4D<boost_histogram_log>(name, title, eScale,
+        histograms4D.push_back(new BDSBH4D<boost_histogram_log>(name, title, eScale, eBinsEdges,
                                                  nxbins, xmin, xmax,
                                                  nybins, ymin, ymax,
                                                  nzbins, zmin, zmax,
                                                  nebins, emin, emax));
     }
     else if(eScale == "user") {
-        ;
+        histograms4D.push_back(new BDSBH4D<boost_histogram_variable>(name, title, eScale, eBinsEdges,
+                                                                nxbins, xmin, xmax,
+                                                                nybins, ymin, ymax,
+                                                                nzbins, zmin, zmax,
+                                                                nebins, emin, emax));
     }
 
     return (G4int)histograms4D.size() - 1;

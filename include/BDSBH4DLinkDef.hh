@@ -49,7 +49,16 @@ typedef double boost_histogram_storage_type;
 #pragma link C++ class boost::histogram::storage_adaptor<vector<boost_histogram_storage_type> >+;
 #pragma link C++ class boost::empty_::empty_value<string,0,false>+;
 
+#pragma link C++ class boost::histogram::histogram<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::variable<double,boost::use_default,boost::use_default,allocator<double> > >,boost::histogram::storage_adaptor<vector<double> > >+;
+#pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::variable<double,boost::use_default,boost::use_default,allocator<double> > >+;
+#pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::variable<double,boost::use_default,boost::use_default,allocator<double> > >,boost::histogram::storage_adaptor<vector<double> >,boost::histogram::detail::null_mutex>+;
+#pragma link C++ class boost::histogram::axis::variable<double,boost::use_default,boost::use_default,allocator<double> >+;
+#pragma link C++ class boost::histogram::axis::iterator_mixin<boost::histogram::axis::variable<double,boost::use_default,boost::use_default,allocator<double> > >+;
+
+
+
 #pragma link C++ class BDSBH4D<boost_histogram_linear>+;
 #pragma link C++ class BDSBH4D<boost_histogram_log>+;
+#pragma link C++ class BDSBH4D<boost_histogram_variable>+;
 
 #endif //ROOT_TEST_BDSBH4DLINKDEF_H
