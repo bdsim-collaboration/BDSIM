@@ -24,6 +24,7 @@ public:
     int GetNbinsE() const;
     const char* GetName() const override;
     const char* GetTitle() const override;
+    unsigned long GetEntries();
 
     void SetName(const char*) override;
     void SetTitle(const char*) override;
@@ -59,7 +60,7 @@ public:
     std::string h_title;
     std::string h_escale;
     std::vector<double> h_ebinsedges;
-    unsigned long entries = 0;
+    unsigned long h_entries = 0;
 
 ClassDef(BDSBH4DBase,1);
 

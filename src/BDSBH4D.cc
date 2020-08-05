@@ -246,6 +246,7 @@ void BDSBH4D<T>::to_PyROOT(std::string filename, std::string histo_name) {
 template <class T>
 void BDSBH4D<T>::Reset() {
     h.reset();
+    h_entries = 0;
 }
 
 template <class T>
