@@ -127,7 +127,7 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
     {
 
         BDSBH4DBase *hist = dynamic_cast<BDSBH4DBase *>(h->Result());
-        TTree *tree = new TTree(hist->GetName(), "A Root Tree");
+        TTree *tree = new TTree(hist->GetName(), "BDSBH4DBase Tree");
         tree->Branch("BDSBH4DBase", &hist, 32000, 0);
         tree->Fill();
         dir->WriteTObject(tree,h->Result()->GetName(),"",32000);

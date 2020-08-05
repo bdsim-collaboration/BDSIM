@@ -92,14 +92,27 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
     }
   if (mean && variance && result)
     {// technically these could be nullptr
-      // empty contents
-      mean->Reset();
-      variance->Reset();
-      result->Reset();
-      // set title
-      result->SetTitle(resultHistTitle.c_str());
-      mean->SetTitle(meanName.c_str());
-      variance->SetTitle(variName.c_str());
+
+      if (nDimensions != 4){
+          // empty contents
+          mean->Reset();
+          variance->Reset();
+          result->Reset();
+          // set title
+          result->SetTitle(resultHistTitle.c_str());
+          mean->SetTitle(meanName.c_str());
+          variance->SetTitle(variName.c_str());
+      }
+      else{
+          // empty contents
+          static_cast<BDSBH4DBase*>(mean)->Reset();
+          static_cast<BDSBH4DBase*>(variance)->Reset();
+          static_cast<BDSBH4DBase*>(result)->Reset();
+          // set title
+          static_cast<BDSBH4DBase*>(result)->SetTitle(resultHistTitle.c_str());
+          static_cast<BDSBH4DBase*>(mean)->SetTitle(meanName.c_str());
+          static_cast<BDSBH4DBase*>(variance)->SetTitle(variName.c_str());
+      }
     }
 }
 

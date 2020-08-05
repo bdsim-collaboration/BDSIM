@@ -53,8 +53,18 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
   // Want the number of events accumulated so far. We purposively set the entries
   // in the mean histogram as the number of events accumulated, not the number of
   // histograms (ie files here).
-  unsigned long oldEntries = (unsigned long)mean->GetEntries();       // works for base class*
-  unsigned long newEntries = (unsigned long)newValue->GetEntries(); // works for base class*
+  unsigned long oldEntries;
+  unsigned long newEntries;
+
+  if (nDimensions == 4){
+      oldEntries = (unsigned long)static_cast<BDSBH4DBase*>(mean)->GetEntries();
+      newEntries = (unsigned long)static_cast<BDSBH4DBase*>(newValue)->GetEntries();
+  }
+  else{
+      oldEntries = (unsigned long)mean->GetEntries();   // works for base class*
+      newEntries = (unsigned long)newValue->GetEntries();   // works for base class*
+  }
+
   unsigned long newTotalEntries = oldEntries + newEntries;
   const double nD     = (double)newEntries;
   const double factor = nD * (nD - 1);
@@ -158,8 +168,16 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
     default:
       {break;}
     }
-  mean->SetEntries(newTotalEntries);
-  variance->SetEntries(newTotalEntries);
+    if(nDimensions==4)
+    {
+        dynamic_cast<BDSBH4DBase*>(mean)->SetEntries(newTotalEntries);
+        dynamic_cast<BDSBH4DBase*>(variance)->SetEntries(newTotalEntries);
+    }
+    else
+    {
+        mean->SetEntries(newTotalEntries);
+        variance->SetEntries(newTotalEntries);
+    }
   n = newTotalEntries; // updated to Terminate() works correctly
 }
 
