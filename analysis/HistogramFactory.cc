@@ -40,8 +40,8 @@ HistogramFactory::~HistogramFactory()
 {;}
 
 TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
-				       std::string overRideName,
-				       std::string overRideTitle)
+				       const std::string&  overRideName,
+				       const std::string&  overRideTitle)
 {
   TH1* result = nullptr;
   const int nDimensions = definition->nDimensions;
