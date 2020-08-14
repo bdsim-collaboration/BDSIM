@@ -83,8 +83,8 @@ void HistogramFactory::CheckNameAndTitle(std::string& name,
 }
 
 TH1D* HistogramFactory::CreateHistogram1D(const HistogramDef1D* d,
-					  std::string overRideName,
-					  std::string overRideTitle)
+					  const std::string& overRideName,
+					  const std::string& overRideTitle)
 {
   TH1D* result = nullptr;
   std::string name  = d->histName;
@@ -105,8 +105,8 @@ TH1D* HistogramFactory::CreateHistogram1D(const HistogramDef1D* d,
 }
 
 TH2D* HistogramFactory::CreateHistogram2D(const HistogramDef2D* d,
-					  std::string overRideName,
-					  std::string overRideTitle)
+					  const std::string& overRideName,
+					  const std::string& overRideTitle)
 {
   TH2D* result = nullptr;
   std::string name  = d->histName;
@@ -145,8 +145,8 @@ TH2D* HistogramFactory::CreateHistogram2D(const HistogramDef2D* d,
 }
 
 TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
-					  std::string overRideName,
-					  std::string overRideTitle)
+					  const std::string& overRideName,
+					  const std::string& overRideTitle)
 {
   TH3D* result = nullptr;
   std::string name  = d->histName;
