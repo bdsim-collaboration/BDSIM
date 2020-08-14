@@ -90,8 +90,12 @@ TH1D* HistogramFactory::CreateHistogram1D(const HistogramDef1D* d,
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
-  
-  if (d->logarithmicX)
+
+  if (d->UnevenBinning())
+    {
+      result = new TH1D(name.c_str(), title.c_str(), d->xNBins, d->binEdgesX->data());
+    }
+  else if (d->logarithmicX)
     {// note ROOT requires len(binEdges) = nBins + 1
       std::vector<double> binEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
       result = new TH1D(name.c_str(), title.c_str(), d->xNBins, binEdges.data());
@@ -112,8 +116,30 @@ TH2D* HistogramFactory::CreateHistogram2D(const HistogramDef2D* d,
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
-  
-  if (d->logarithmicX && d->logarithmicY)
+
+  if (d->UnevenBinning())
+    {
+      if (d->binEdgesX && d->binEdgesY)
+	{
+	  result = new TH2D(name.c_str(), title.c_str(),
+			    d->xNBins, d->binEdgesX->data(),
+			    d->yNBins, d->binEdgesY->data());
+	}
+      else if (d->binEdgesX)
+	{
+	  result = new TH2D(name.c_str(), title.c_str(),
+			    d->xNBins, d->binEdgesX->data(),
+			    d->yNBins, d->yLow, d->yHigh);
+	}
+      else
+	{
+	  result = new TH2D(name.c_str(), title.c_str(),
+			    d->xNBins, d->xLow, d->xHigh,
+			    d->yNBins, d->binEdgesY->data());
+
+	}
+    }
+  else if (d->logarithmicX && d->logarithmicY)
     {
       std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
       std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
@@ -152,8 +178,31 @@ TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
-  
-  if (d->logarithmicX || d->logarithmicY || d->logarithmicZ)
+
+  if (d->UnevenBinning())
+    {
+      std::vector<double> binEdgesX;
+      std::vector<double> binEdgesY;
+      std::vector<double> binEdgesZ;
+      if (d->binEdgesX)
+	{binEdgesX = *(d->binEdgesX);}
+      else
+	{binEdgesX = RBDS::LinSpace(d->xNBins, d->xLow, d->xHigh);}
+      if (d->binEdgesY)
+	{binEdgesY = *(d->binEdgesY);}
+      else
+	{binEdgesY = RBDS::LinSpace(d->yNBins, d->yLow, d->yHigh);}
+      if (d->binEdgesZ)
+	{binEdgesZ = *(d->binEdgesZ);}
+      else
+	{binEdgesZ = RBDS::LinSpace(d->zNBins, d->zLow, d->zHigh);}
+      
+      result = new TH3D(name.c_str(), title.c_str(),
+			d->xNBins, binEdgesX.data(),
+			d->yNBins, binEdgesY.data(),
+			d->zNBins, binEdgesZ.data());
+    }
+  else if (d->logarithmicX || d->logarithmicY || d->logarithmicZ)
     {
       std::vector<double> xBinEdges;
       std::vector<double> yBinEdges;
