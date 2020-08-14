@@ -36,12 +36,12 @@ public:
   HistogramDef();
 
   /// Use this constructor.
-  HistogramDef(std::string treeNameIn,
-	       std::string histNameIn,
-	       int         nDimensionsIn,
-               std::string variable,
-	       std::string selectionIn = "1",
-	       bool        perEnetry   = true);
+  HistogramDef(const std::string& treeNameIn,
+	       const std::string& histNameIn,
+	       int                nDimensionsIn,
+               const std::string& variable,
+	       const std::string& selectionIn = "1",
+	       bool               perEnetry   = true);
   virtual ~HistogramDef(){;}
   
   std::string treeName;
