@@ -49,19 +49,19 @@ TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
     {
     case 1:
       {
-	const HistogramDef1D* d = static_cast<const HistogramDef1D*>(definition);
+	const HistogramDef1D* d = dynamic_cast<const HistogramDef1D*>(definition);
 	result = CreateHistogram1D(d, overRideName, overRideTitle);
 	break;
       }
     case 2:
       {
-	const HistogramDef2D* d = static_cast<const HistogramDef2D*>(definition);
+	const HistogramDef2D* d = dynamic_cast<const HistogramDef2D*>(definition);
 	result = CreateHistogram2D(d, overRideName, overRideTitle);
 	break;
       }
     case 3:
       {
-	const HistogramDef3D* d = static_cast<const HistogramDef3D*>(definition);
+	const HistogramDef3D* d = dynamic_cast<const HistogramDef3D*>(definition);
 	result = CreateHistogram3D(d, overRideName, overRideTitle);
 	break;
       }
