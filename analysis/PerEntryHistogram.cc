@@ -51,8 +51,12 @@ PerEntryHistogram::PerEntryHistogram():
 
 PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 				     TChain*             chainIn):
+  accumulator(nullptr),
   chain(chainIn),
-  selection(definition->selection)
+  selection(definition->selection),
+  temp(nullptr),
+  result(nullptr),
+  command("")
 {
   int nDimensions = definition->nDimensions;
   TH1* baseHist = nullptr;
