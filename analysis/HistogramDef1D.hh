@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef.hh"
 
 #include <string>
+#include <vector>
 
 #include "Rtypes.h"
 
@@ -34,25 +35,37 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class HistogramDef1D: public HistogramDef
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   HistogramDef1D();
 
   /// Use this constructor.
-  HistogramDef1D(std::string treeNameIn,
-		 std::string histNameIn,
-		 int         xNBinsIn,
-		 double      xLowIn,
-		 double      xHighIn,
-		 std::string variableIn,
-		 std::string selectionIn  = "1",
-		 bool        perEntryIn   = true,
-		 bool        logarithmicX = false);
-  virtual ~HistogramDef1D(){;}
+  HistogramDef1D(const std::string& treeNameIn,
+		 const std::string& histNameIn,
+		 int                xNBinsIn,
+		 double             xLowIn,
+		 double             xHighIn,
+		 const std::string& variableIn,
+		 const std::string& selectionIn  = "1",
+		 bool               perEntryIn   = true,
+		 bool               logarithmicX = false);
+
+  /// Alternative constructor for uneven binning.
+  HistogramDef1D(const std::string&   treeNameIn,
+                 const std::string&   histNameIn,
+                 std::vector<double>* binEdgesXIn,
+                 const std::string&   variableIn,
+                 const std::string&   selectionIn = "1",
+                 bool                 perEntryIn  = true);
+  virtual ~HistogramDef1D();
+
+  /// Whether we have uneven binning or not.
+  virtual bool UnevenBinning() const {return binEdgesX;}
   
-  int         xNBins;
-  double      xLow;
-  double      xHigh;
-  bool        logarithmicX;
+  int    xNBins;
+  double xLow;
+  double xHigh;
+  bool   logarithmicX;
+  std::vector<double>* binEdgesX;
 
   ClassDef(HistogramDef1D, 1);
 };

@@ -43,6 +43,8 @@ public:
 	       const std::string& selectionIn = "1",
 	       bool               perEnetry   = true);
   virtual ~HistogramDef(){;}
+
+  virtual bool UnevenBinning() const = 0;
   
   std::string treeName;
   std::string histName;

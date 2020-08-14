@@ -51,7 +51,39 @@ HistogramDef3D::HistogramDef3D(std::string treeNameIn,
   zNBins(zNBinsIn),
   zLow(zLowIn),
   zHigh(zHighIn),
-  logarithmicZ(logarithmicZIn)
+  logarithmicZ(logarithmicZIn),
+  binEdgesZ(nullptr)
 {
   nDimensions = 3;
+}
+
+HistogramDef3D::HistogramDef3D(const std::string&   treeNameIn,
+			       const std::string&   histNameIn,
+			       std::vector<double>* binEdgesXIn,
+			       std::vector<double>* binEdgesYIn,
+			       std::vector<double>* binEdgesZIn,
+			       const std::string&   variableIn,
+			       const std::string&   selectionIn,
+			       bool                 perEntryIn):
+  HistogramDef2D(treeNameIn, histNameIn, binEdgesXIn, binEdgesYIn, variableIn, selectionIn, perEntryIn),
+  zNBins(1),
+  zLow(0),
+  zHigh(1),
+  logarithmicZ(false),
+  binEdgesZ(binEdgesZIn)
+{
+  nDimensions = 3;
+
+  if (!binEdgesZIn)
+    {throw std::invalid_argument("invalid bin edges vector.");}
+  if (!(binEdgesZIn->size() > 1))
+    {throw std::invalid_argument("too few bin edges.");}
+  zNBins = (int)binEdgesZ->size() - 1;
+  zLow   = (*binEdgesZ)[0];
+  zHigh  = binEdgesZ->back();
+}
+
+HistogramDef3D::~HistogramDef3D()
+{
+  delete binEdgesZ;
 }
