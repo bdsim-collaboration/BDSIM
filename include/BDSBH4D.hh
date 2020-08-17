@@ -30,7 +30,7 @@ public:
       h += dynamic_cast<const BDSBH4D<T>&>(other).h;
       return *this;
     }
-    void to_PyROOT(std::string, std::string);
+    void to_PyROOT(const std::string&, const std::string&);
     void Reset() override;
     BDSBH4D* Clone(const char*) const override;
     void Fill(double, double, double, double) override;
