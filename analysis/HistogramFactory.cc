@@ -187,15 +187,15 @@ TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
       if (d->binEdgesX)
 	{binEdgesX = *(d->binEdgesX);}
       else
-	{binEdgesX = RBDS::LinSpace(d->xNBins, d->xLow, d->xHigh);}
+	{binEdgesX = RBDS::LinSpace(d->xLow, d->xHigh, d->xNBins);}
       if (d->binEdgesY)
 	{binEdgesY = *(d->binEdgesY);}
       else
-	{binEdgesY = RBDS::LinSpace(d->yNBins, d->yLow, d->yHigh);}
+	{binEdgesY = RBDS::LinSpace(d->yLow, d->yHigh, d->yNBins);}
       if (d->binEdgesZ)
 	{binEdgesZ = *(d->binEdgesZ);}
       else
-	{binEdgesZ = RBDS::LinSpace(d->zNBins, d->zLow, d->zHigh);}
+	{binEdgesZ = RBDS::LinSpace(d->zLow, d->zHigh, d->zNBins);}
       
       result = new TH3D(name.c_str(), title.c_str(),
 			d->xNBins, binEdgesX.data(),
