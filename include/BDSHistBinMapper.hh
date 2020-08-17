@@ -33,7 +33,7 @@ public:
     virtual G4int GlobalFromIJKLIndex(G4int iIndex,
                                      G4int jIndex,
                                      G4int kIndex,
-                                     G4int lIndex = 1) const;
+                                     G4int lIndex = 0) const;
 
     virtual void IJKLFromGlobal(G4int  globalBin,
                                G4int& iIndex,
