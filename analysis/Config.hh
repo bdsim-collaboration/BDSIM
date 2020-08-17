@@ -68,27 +68,27 @@ public:
   void ParseInputFile();
 
   /// @{ General accessor for option.
-  inline std::string GetOptionString(std::string key) const {return optionsString.at(key);}
-  inline bool        GetOptionBool(std::string key)   const {return optionsBool.at(key);}
-  inline double      GetOptionNumber(std::string key) const {return optionsNumber.at(key);}
+  inline std::string GetOptionString(const std::string& key) const {return optionsString.at(key);}
+  inline bool        GetOptionBool(const std::string& key)   const {return optionsBool.at(key);}
+  inline double      GetOptionNumber(const std::string& key) const {return optionsNumber.at(key);}
   /// @}
 
   /// Access all histogram definitions.
-  inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const
+  inline const std::vector<HistogramDef*>& HistogramDefinitions(const std::string& treeName) const
   {return histoDefs.at(treeName);}
 
   /// Access all simple histogram definitions - throws exception if out of range.
-  inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(std::string treeName) const
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(const std::string& treeName) const
   {return histoDefsSimple.at(treeName);}
 
   /// Access all per entry histogram definitions - throws exception if out of range.
-  inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(std::string treeName) const
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(const std::string& treeName) const
   {return histoDefsPerEntry.at(treeName);}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
   /// as there isn't much difference.  This can of course be revised in future.
-  const RBDS::VectorString& BranchesToBeActivated(std::string treeName) const
+  const RBDS::VectorString& BranchesToBeActivated(const std::string& treeName) const
   {return branches.at(treeName);}
 
   /// Access the map of all branches to be activated per tree.
@@ -99,7 +99,7 @@ public:
   inline bool AllBranchesToBeActivated() const {return allBranchesActivated;}
 
   /// Set a branch to be activated if not already.
-  void SetBranchToBeActivated(std::string treeName, std::string branchName);
+  void SetBranchToBeActivated(const std::string& treeName, const std::string& branchName);
 
   /// @{ Accessor.
   inline std::string InputFilePath() const             {return optionsString.at("inputfilepath");}
@@ -156,9 +156,9 @@ public:
   void UpdateRequiredBranches(const HistogramDef* def);
 
   /// Update the vector of required branches for a particular tree to be
-  /// activated for anlysis based on a single string defintion such as Primary.x.
-  void UpdateRequiredBranches(const std::string treeName,
-			      const std::string var);
+  /// activated for analysis based on a single string definition such as Primary.x.
+  void UpdateRequiredBranches(const std::string& treeName,
+			      const std::string& var);
 
   /// Check if the supplied tree name is one of the static member vector of
   /// allowed tree names.
@@ -178,7 +178,7 @@ public:
 
   /// Parse binning substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
-  void ParseBinning(const std::string binning,
+  void ParseBinning(const std::string& binning,
 		    const int nDim,
 		    double& xLow, double& xHigh,
 		    double& yLow, double& yHigh,

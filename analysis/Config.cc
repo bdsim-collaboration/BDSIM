@@ -388,8 +388,8 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
   UpdateRequiredBranches(def->treeName, def->selection);
 }
 
-void Config::UpdateRequiredBranches(const std::string treeName,
-				    const std::string var)
+void Config::UpdateRequiredBranches(const std::string& treeName,
+				    const std::string& var)
 {
   // This won't work properly for the options Tree that has "::" in the class
   // as well as double splitting. C++ regex does not support lookahead / behind
@@ -407,8 +407,8 @@ void Config::UpdateRequiredBranches(const std::string treeName,
     }
 }
 
-void Config::SetBranchToBeActivated(const std::string treeName,
-				    const std::string branchName)
+void Config::SetBranchToBeActivated(const std::string& treeName,
+				    const std::string& branchName)
 {
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
@@ -455,7 +455,7 @@ void Config::ParseBins(const std::string& bins,
     {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
 
-void Config::ParseBinning(const std::string binning,
+void Config::ParseBinning(const std::string& binning,
 			  const int nDim,
 			  double& xLow, double& xHigh,
 			  double& yLow, double& yHigh,
