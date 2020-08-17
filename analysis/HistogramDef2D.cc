@@ -24,7 +24,8 @@ HistogramDef2D::HistogramDef2D():
   yNBins(0),
   yLow(0),
   yHigh(0),
-  logarithmicY(0)
+  logarithmicY(false),
+  binEdgesY(nullptr)
 {;}
 
 HistogramDef2D::HistogramDef2D(const std::string& treeNameIn,
