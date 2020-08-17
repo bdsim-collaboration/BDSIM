@@ -24,7 +24,8 @@ HistogramDef3D::HistogramDef3D():
   zNBins(0),
   zLow(0),
   zHigh(0),
-  logarithmicZ(false)
+  logarithmicZ(false),
+  binEdgesZ(nullptr)
 {;}
 
 HistogramDef3D::HistogramDef3D(const std::string& treeNameIn,
