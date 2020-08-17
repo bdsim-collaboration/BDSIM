@@ -223,7 +223,7 @@ void Config::ParseHistogramLine(const std::string& line)
     }
 }
 
-void Config::ParseHistogram(const std::string line, const int nDim)
+void Config::ParseHistogram(const std::string& line, const int nDim)
 {  
   // split line on white space
   // doesn't inspect words themselves
@@ -296,8 +296,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   std::regex singleColon("\\w+(:{1})\\w+");
   // count the number of matches by distance of match iterator from beginning
   int nColons = static_cast<int>(std::distance(std::sregex_iterator(variable.begin(),
-								   variable.end(),
-								   singleColon),
+								    variable.end(),
+								    singleColon),
 					       std::sregex_iterator()));
   if (nColons > nDim - 1)
     {
@@ -437,7 +437,7 @@ bool Config::InvalidTreeName(const std::string& treeName) const
 }
 
 
-void Config::ParseBins(const std::string bins,
+void Config::ParseBins(const std::string& bins,
 		       const int nDim,
 		       int& xBins,
 		       int& yBins,
