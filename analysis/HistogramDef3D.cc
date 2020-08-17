@@ -27,8 +27,8 @@ HistogramDef3D::HistogramDef3D():
   logarithmicZ(false)
 {;}
 
-HistogramDef3D::HistogramDef3D(std::string treeNameIn,
-			       std::string histNameIn,
+HistogramDef3D::HistogramDef3D(const std::string& treeNameIn,
+			       const std::string& histNameIn,
 			       int         xNBinsIn,
 			       int         yNBinsIn,
 			       int         zNBinsIn,
@@ -38,8 +38,8 @@ HistogramDef3D::HistogramDef3D(std::string treeNameIn,
 			       double      yHighIn,
 			       double      zLowIn,
 			       double      zHighIn,
-			       std::string plotIn,
-			       std::string selectionIn,
+			       const std::string& plotIn,
+			       const std::string& selectionIn,
 			       bool        perEntryIn,
 			       bool        logarithmicXIn,
 			       bool        logarithmicYIn,

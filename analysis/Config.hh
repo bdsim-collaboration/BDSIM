@@ -137,7 +137,7 @@ public:
   void ParseHistogramLine(const std::string& line);
 
   /// Parse everything after the histogram declaration and check all parameters.
-  void ParseHistogram(const std::string line, const int nDim);
+  void ParseHistogram(const std::string& line, const int nDim);
 
   /// Check whether a histogram definition word contains the world 'simple' and
   /// if so, it's not a per-entry histogram.
@@ -170,7 +170,7 @@ public:
 
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
-  void ParseBins(const std::string bins,
+  void ParseBins(const std::string& bins,
 		 const int nDim,
 		 int& xBins,
 		 int& yBins,

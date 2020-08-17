@@ -39,8 +39,8 @@ public:
   HistogramDef3D();
 
   /// Use this constructor.
-  HistogramDef3D(std::string treeNameIn,
-		 std::string histNameIn,
+  HistogramDef3D(const std::string& treeNameIn,
+		 const std::string& histNameIn,
 		 int         xNBinsIn,
 		 int         yNBinsIn,
 		 int         zNBinsIn,
@@ -50,8 +50,8 @@ public:
 		 double      yHighIn,
 		 double      zLowIn,
 		 double      zHighIn,
-		 std::string plotIn,
-		 std::string selectionIn    = "1",
+		 const std::string& plotIn,
+		 const std::string& selectionIn    = "1",
 		 bool        perEntryIn     = true,
 		 bool        logarithmicXIn = false,
 		 bool        logarithmicYIn = false,
