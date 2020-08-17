@@ -51,10 +51,10 @@ private:
   /// Storage of histogram options. This owns th HistogramDef objects.
   std::map<std::string, std::vector<HistogramDef*> > histoDefs;
 
-  /// Copy of defintion used to identify only 'simple' histogram definitions. Doesn't own.
+  /// Copy of definition used to identify only 'simple' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsSimple;
 
-  /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
+  /// Copy of definition used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
   
 public:
@@ -121,7 +121,7 @@ public:
  protected:
   /// Private constructor for singleton pattern.
   Config() = delete;
-  /// Constructor used when mergine only.
+  /// Constructor used when merging only.
   Config(const std::string& inputFilePathIn,
 	 const std::string& outputFileNameIn);
   /// Desired constructor, also private for singleton pattern.
@@ -201,7 +201,7 @@ public:
   /// Cache of which branches need to be activated for this analysis.
   RBDS::BranchMap branches;
 
-  /// Whether all branches will be activatd - ie for optics.
+  /// Whether all branches will be activated - ie for optics.
   bool allBranchesActivated;
 
   ClassDef(Config,1);
