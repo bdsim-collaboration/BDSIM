@@ -368,20 +368,20 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
 
 void Config::ParseSpectraLine(const std::string& line)
 {
-    // split line on white space
-    std::vector<std::string> results = SplitOnWhiteSpace(line);
-    
-    if (results.size() < 6)
+  // split line on white space
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
+  
+  if (results.size() < 6)
     {// ensure enough columns
-        std::string errString = "Invalid line #" + std::to_string(lineCounter)
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
         + " - invalid number of columns (too few)";
-        throw RBDSException(errString);
+      throw RBDSException(errString);
     }
-    if (results.size() > 6)
+  if (results.size() > 6)
     {// ensure not too many columns
-        std::string errString = "Invalid line #" + std::to_string(lineCounter)
+      std::string errString = "Invalid line #" + std::to_string(lineCounter)
         + " - too many columns - check no extra whitespace";
-        throw RBDSException(errString);
+      throw RBDSException(errString);
     }
     
     bool log  = false;
@@ -395,7 +395,7 @@ void Config::ParseSpectraLine(const std::string& line)
     std::string variable = ".kineticEnergy"; // kinetic energy by default
     if (ContainsWordCI(results[0], "TE"))
     {variable = ".energy";}
-    else if (ContainsWordCI(results[0], "Rigidity"))
+  else if (ContainsWordCI(results[0], "Rigidity"))
     {variable = ".rigidity";}
     
     std::string samplerName = results[1];
@@ -423,29 +423,29 @@ void Config::ParseSpectraLine(const std::string& line)
         err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
         throw RBDSException(err);
     }
-    
-    // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
-    // per event so we should warn the user about this as it'll create no histograms
-    if (particles.empty() && !perEntry)
+  
+  // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
+  // per event so we should warn the user about this as it'll create no histograms
+  if (particles.empty() && !perEntry)
     {throw RBDSException("Simple spectra used but no specific particles named - only works for specific particles");}
-    
-    HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
-                                             b.nBinsX, b.xLow, b.xHigh,
-                                             samplerName + variable,
-                                             selection, perEntry, log);
-    
-    HistogramDefSet* result = new HistogramDefSet(samplerName,
-                                                  def,
-                                                  particles,
-                                                  results[4]);
-    delete def; // no longer needed
-    
-    if (perEntry)
+  
+  HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
+					   xBinning,
+					   samplerName + variable,
+					   selection, perEntry);
+  
+  HistogramDefSet* result = new HistogramDefSet(samplerName,
+						def,
+						particles,
+						results[4]);
+  delete def; // no longer needed
+  
+  if (perEntry)
     {eventHistoDefSetsPerEntry.push_back(result);}
-    else
+  else
     {eventHistoDefSetsSimple.push_back(result);}
-    
-    SetBranchToBeActivated("Event.", samplerName);
+  
+  SetBranchToBeActivated("Event.", samplerName);
 }
 
 void Config::ParseParticleSetLine(const std::string& line)
@@ -629,7 +629,7 @@ void Config::ParseBinning(const std::string& binning,
       std::string errString = "Insufficient number of binning dimensions on line #"
 	+ std::to_string(lineCounter) + "\n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
-    + binning + "\nDimension defined by \"low:high\" and comma separated";
+	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw RBDSException(errString);
     }
 }
@@ -682,7 +682,7 @@ std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
       if (std::regex_search(res, matchSelection, selection))
 	{
 	  auto keySearch = RBDS::spectraParticlesKeys.find(matchSelection[1]);
-      RBDS::SpectraParticles which;
+	  RBDS::SpectraParticles which;
 	  if (keySearch != RBDS::spectraParticlesKeys.end())
 	    {which = keySearch->second;}
 	  else
