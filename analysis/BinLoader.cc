@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BinLoader.hh"
+#include "RBDSException.hh"
 
 #include <algorithm>
 #include <fstream>
@@ -33,7 +34,7 @@ std::vector<double>* RBDS::LoadBins(const std::string& fileName)
   bool validFile = file.is_open();
 
   if (!validFile)
-    {throw std::invalid_argument("Cannot open file \"" + fileName + "\"");}
+    {throw RBDSException("Cannot open file \"" + fileName + "\"");}
   else
     {std::cout << "LoadBins> loading \"" << fileName << "\"" << std::endl;}
 
@@ -52,7 +53,7 @@ std::vector<double>* RBDS::LoadBins(const std::string& fileName)
       try
 	{liness >> binEdge;}
       catch (...)
-	{throw std::invalid_argument("invalid bin edge on line " + std::to_string(lineNum));}
+	{throw RBDSException("invalid bin edge on line " + std::to_string(lineNum));}
       result->push_back(binEdge);
   
       if (!liness.eof())
@@ -60,14 +61,14 @@ std::vector<double>* RBDS::LoadBins(const std::string& fileName)
 	  std::string remainder;
 	  liness >> remainder;
 	  std::string message = "Error: extra text \"" + remainder + "\" on line " + std::to_string(lineNum) + " of bin edges file \"" + fileName + "\"";
-	  throw std::invalid_argument(message);
+	  throw RBDSException(message);
 	}
       
       lineNum += 1;
     }
   
   if (result->size() < 2)
-    {throw std::invalid_argument("insufficient number of bins in file - must be at least 2");}
+    {throw RBDSException("insufficient number of bins in file - must be at least 2");}
   
   file.close();
   return result;

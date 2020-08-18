@@ -384,7 +384,7 @@ void Config::ParseSpectraLine(const std::string& line)
       throw RBDSException(errString);
     }
   
-  bool xLog  = false;
+  bool xLog = false;
   bool yLog = false; // duff values to fulfill function
   bool zLog = false;
   ParseLog(results[0], xLog, yLog, zLog);
@@ -564,7 +564,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
 
 void Config::ParseBinning(const std::string& binning,
@@ -614,9 +614,9 @@ void Config::ParseBinning(const std::string& binning,
 		  (*values[counter]).high = std::stod(matchR[2]);
 		}
 	      catch (std::invalid_argument&) // if stod can't convert number to double
-		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+		{throw RBDSException("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
 	      if ((*values[counter]).high <= (*values[counter]).low)
-		{throw std::invalid_argument("high bin edge is <= low bin edge \"" + binning + "\"");}
+		{throw RBDSException("high bin edge is <= low bin edge \"" + binning + "\"");}
 	      if (isLog[counter])
 		{
 		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
