@@ -61,9 +61,9 @@ Config::Config(const std::string& fileNameIn,
   InitialiseOptions(fileNameIn);  
   ParseInputFile();
 
-  if (inputFilePathIn != "")
+  if (!inputFilePathIn.empty())
     {optionsString["inputfilepath"] = inputFilePathIn;}
-  if (outputFileNameIn != "")
+  if (!outputFileNameIn.empty())
     {optionsString["outputfilename"] = outputFileNameIn;}
 }
 
@@ -121,15 +121,15 @@ Config* Config::Instance(const std::string& fileName,
 			 const std::string& inputFilePath,
 			 const std::string& outputFileName)
 {
-  if(!instance && fileName != "")
+  if(!instance && !fileName.empty())
     {instance = new Config(fileName, inputFilePath, outputFileName);}
-  else if(instance && fileName != "")
+  else if(instance && !fileName.empty())
     {
       std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
       delete instance;
       instance = new Config(fileName, inputFilePath, outputFileName);
     }
-  else if (!instance && fileName == "")
+  else if (!instance && !fileName.empty())
     {instance = new Config(inputFilePath, outputFileName);}
   // else return current instance (can be nullptr!)
   return instance;
