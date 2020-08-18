@@ -61,9 +61,9 @@ public:
   virtual ~Config();
 
   /// Singleton accessor
-  static Config* Instance(std::string fileName = "",
-			  std::string inputFilePath = "",
-			  std::string outputFileName = "");
+  static Config* Instance(const std::string& fileName = "",
+			  const std::string& inputFilePath = "",
+			  const std::string& outputFileName = "");
 
   void ParseInputFile();
 
@@ -125,9 +125,9 @@ public:
   Config(const std::string& inputFilePathIn,
 	 const std::string& outputFileNameIn);
   /// Desired constructor, also private for singleton pattern.
-  Config(std::string fileNameIn,
-	 std::string inputFilePathIn,
-	 std::string outputFileNameIn);
+  Config(const std::string& fileNameIn,
+	 const std::string& inputFilePathIn,
+	 const std::string& outputFileNameIn);
 
   /// Set defaults in member maps for all options so that the keys can
   /// always be accessed.

@@ -53,9 +53,9 @@ Config::Config(const std::string& inputFilePathIn,
   optionsBool["perentryevent"] = true;
 }
 
-Config::Config(std::string fileNameIn,
-	       std::string inputFilePathIn,
-	       std::string outputFileNameIn):
+Config::Config(const std::string& fileNameIn,
+	       const std::string& inputFilePathIn,
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);  
@@ -117,9 +117,9 @@ void Config::InitialiseOptions(std::string analysisFile)
     }
 }
 
-Config* Config::Instance(std::string fileName,
-			 std::string inputFilePath,
-			 std::string outputFileName)
+Config* Config::Instance(const std::string& fileName,
+			 const std::string& inputFilePath,
+			 const std::string& outputFileName)
 {
   if(!instance && fileName != "")
     {instance = new Config(fileName, inputFilePath, outputFileName);}
