@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class HistogramDef
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   HistogramDef();
 
   /// Use this constructor.
@@ -42,9 +42,7 @@ public:
                const std::string& variable,
 	       const std::string& selectionIn = "1",
 	       bool               perEnetry   = true);
-  virtual ~HistogramDef(){;}
-
-  virtual bool UnevenBinning() const = 0;
+  virtual ~HistogramDef(){;};
   
   std::string treeName;
   std::string histName;

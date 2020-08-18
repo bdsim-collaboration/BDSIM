@@ -18,11 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEF3D_H
 #define HISTOGRAMDEF3D_H
-
+#include "BinSpecification.hh"
 #include "HistogramDef2D.hh"
 
 #include <string>
-#include <vector>
 
 #include "Rtypes.h" // for classdef
 
@@ -39,43 +38,18 @@ public:
   HistogramDef3D();
 
   /// Use this constructor.
-  HistogramDef3D(const std::string& treeNameIn,
-		 const std::string& histNameIn,
-		 int         xNBinsIn,
-		 int         yNBinsIn,
-		 int         zNBinsIn,
-		 double      xLowIn,
-		 double      xHighIn,
-		 double      yLowIn,
-		 double      yHighIn,
-		 double      zLowIn,
-		 double      zHighIn,
-		 const std::string& plotIn,
-		 const std::string& selectionIn    = "1",
-		 bool        perEntryIn     = true,
-		 bool        logarithmicXIn = false,
-		 bool        logarithmicYIn = false,
-		 bool        logarithmicZIn = false);
-
-  /// Alternative constructor for uneven binning.
-  HistogramDef3D(const std::string&   treeNameIn,
-		 const std::string&   histNameIn,
-		 std::vector<double>* binEdgesXIn,
-		 std::vector<double>* binEdgesYIn,
-		 std::vector<double>* binEdgesZIn,
-		 const std::string&   variableIn,
-		 const std::string&   selectionIn = "1",
-		 bool                 perEntryIn  = true);
+  HistogramDef3D(const std::string&      treeNameIn,
+		 const std::string&      histNameIn,
+		 const BinSpecification& xBinningIn,
+		 const BinSpecification& yBinningIn,
+		 const BinSpecification& zBinningIn,
+		 const std::string&      variableIn,
+		 const std::string&      selectionIn = "1",
+		 bool                    perEntryIn  = true);
+  
   virtual ~HistogramDef3D();
 
-  /// Whether we have uneven binning or not.
-  virtual bool UnevenBinning() const {return HistogramDef2D::UnevenBinning() || binEdgesZ;} 
-
-  int         zNBins;
-  double      zLow;
-  double      zHigh;
-  bool        logarithmicZ;
-  std::vector<double>* binEdgesZ;
+  BinSpecification zBinning;
 
   ClassDef(HistogramDef3D, 1);
 };

@@ -18,11 +18,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEF2D_H
 #define HISTOGRAMDEF2D_H
-
+#include "BinSpecification.hh"
 #include "HistogramDef1D.hh"
 
 #include <string>
-#include <vector>
 
 #include "Rtypes.h" // for classdef
 
@@ -39,38 +38,17 @@ public:
   HistogramDef2D();
 
   /// Use this constructor.
-  HistogramDef2D(const std::string& treeNameIn,
-		 const std::string& histNameIn,
-		 int                xNBinsIn,
-		 int                yNBinsIn,
-		 double             xLowIn,
-		 double             xHighIn,
-		 double             yLowIn,
-		 double             yHighIn,
-		 const std::string& variableIn,
-		 const std::string& selectionIn    = "1",
-		 bool               perEntryIn     = true,
-		 bool               logarithmicXIn = false,
-		 bool               logarithmicYIn = false);
-
-  /// Alternative constructor for uneven binning.
-  HistogramDef2D(const std::string&   treeNameIn,
-		 const std::string&   histNameIn,
-		 std::vector<double>* binEdgesXIn,
-		 std::vector<double>* binEdgesYIn,
-		 const std::string&   variableIn,
-		 const std::string&   selectionIn = "1",
-		 bool                 perEntryIn  = true);
+  HistogramDef2D(const std::string&      treeNameIn,
+		 const std::string&      histNameIn,
+		 const BinSpecification& xBinningIn,
+		 const BinSpecification& yBinningIn,
+		 const std::string&      variableIn,
+		 const std::string&      selectionIn = "1",
+		 bool                    perEntryIn  = true);
+  
   virtual ~HistogramDef2D();
-
-    /// Whether we have uneven binning or not.
-  virtual bool UnevenBinning() const {return HistogramDef1D::UnevenBinning() || binEdgesY;} 
-
-  int    yNBins;
-  double yLow;
-  double yHigh;
-  bool   logarithmicY;
-  std::vector<double>* binEdgesY;
+  
+  BinSpecification yBinning;
   
   ClassDef(HistogramDef2D, 1);
 };
