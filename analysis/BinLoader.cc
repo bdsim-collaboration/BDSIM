@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <exception>
 #include <sstream>
 #include <string>
 #include <vector>
