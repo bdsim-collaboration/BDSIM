@@ -212,17 +212,22 @@ void Config::ParseHistogramLine(const std::string& line)
   std::regex histNDim("^\\s*(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   //std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
-  
-  if (std::regex_search(line, match, histNDim))
+
+  try
     {
-      int nDim = std::stoi(match[1]);
-      ParseHistogram(line, nDim);
+      if (std::regex_search(line, match, histNDim))
+	{
+	  int nDim = std::stoi(match[1]);
+	  ParseHistogram(line, nDim);
+	}
+      else
+	{throw std::invalid_argument("");}
     }
-  else
+  catch (std::exception& e)
     {
-      std::string errString = "Invalid histogram type on line #" + std::to_string(lineCounter)
+      std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
 	+ ": \n\"" + line + "\"\n";
-      throw std::string(errString);
+      throw std::invalid_argument(e.what() + errString);
     }
 }
 
