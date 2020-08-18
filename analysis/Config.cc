@@ -223,7 +223,7 @@ void Config::ParseHistogramLine(const std::string& line)
       else
 	{throw std::invalid_argument("");}
     }
-  catch (std::exception& e)
+  catch (std::invalid_argument& e)
     {
       std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
 	+ ": \n\"" + line + "\"\n";
