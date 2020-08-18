@@ -458,8 +458,8 @@ void Config::ParseBinning(const std::string& binning,
   // simple match - let stod throw exception if wrong
   std::regex oneDim("([0-9eE.+-]+):([0-9eE.+-]+)");
   
-  std::regex notCommas("[^,]+");
-  auto wordsBegin = std::sregex_token_iterator(binningL.begin(), binningL.end(), notCommas);
+  std::regex commas(",");
+  auto wordsBegin = std::sregex_token_iterator(binningL.begin(), binningL.end(), commas, -1);
   auto wordsEnd   = std::sregex_token_iterator();
   int counter = 0;
   std::vector<BinSpecification*> values = {&xBinning, &yBinning, &zBinning};
