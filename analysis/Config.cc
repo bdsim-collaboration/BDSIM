@@ -383,17 +383,17 @@ void Config::ParseSpectraLine(const std::string& line)
         + " - too many columns - check no extra whitespace";
       throw RBDSException(errString);
     }
-    
-    bool log  = false;
-    bool logy = false; // duff values to fulfill function
-    bool logz = false;
-    ParseLog(results[0], log, logy, logz);
-    
-    bool perEntry = true;
-    ParsePerEntry(results[0], perEntry);
-    
-    std::string variable = ".kineticEnergy"; // kinetic energy by default
-    if (ContainsWordCI(results[0], "TE"))
+  
+  bool xLog  = false;
+  bool yLog = false; // duff values to fulfill function
+  bool zLog = false;
+  ParseLog(results[0], xLog, yLog, zLog);
+  
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
+  
+  std::string variable = ".kineticEnergy"; // kinetic energy by default
+  if (ContainsWordCI(results[0], "TE"))
     {variable = ".energy";}
   else if (ContainsWordCI(results[0], "Rigidity"))
     {variable = ".rigidity";}
@@ -409,10 +409,14 @@ void Config::ParseSpectraLine(const std::string& line)
     }
   else
     {spectraNames[samplerName] = 1;}
-    std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
-    std::string selection = results[5];
-    
-    Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
+  std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
+  std::string selection = results[5];
+
+  BinSpecification xBinning;
+  BinSpecification yBinning;
+  BinSpecification zBinning;
+  ParseBins(results[2], 1, xBinning, yBinning, zBinning);
+  ParseBinning(results[3], 1, xBinning, yBinning, zBinning, xLog, yLog, zLog);
     
   std::set<ParticleSpec> particles;
   try
@@ -450,9 +454,9 @@ void Config::ParseSpectraLine(const std::string& line)
 
 void Config::ParseParticleSetLine(const std::string& line)
 {
-    std::vector<std::string> results = SplitOnWhiteSpace(line);
-    if (results.size() < 2)
-    {;}
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
+  if (results.size() < 2)
+    {;} // TBC TBC
 }
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
