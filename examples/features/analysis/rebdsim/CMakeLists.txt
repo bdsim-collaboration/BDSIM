@@ -2,6 +2,7 @@ rebdsim_test(analysis-rebdsim                 "analysisConfig.txt")
 rebdsim_test(analysis-rebdsim-multiple-files  "multipleFilesAnalysis.txt")
 rebdsim_test(analysis-rebdsim-selection       "selection.txt")
 rebdsim_test(analysis-rebdsim-event-range     "analysisConfigRange.txt")
+rebdsim_test(analysis-uneven-binning          "unevenBinning.txt")
 
 # tests that should fail
 add_test(NAME analysis-rebdsim-event-range-invalid COMMAND rebdsimexec analysisConfigRangeInvalid.txt)
