@@ -61,7 +61,7 @@ Config::Config(const std::string& fileNameIn,
 	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
-  InitialiseOptions(fileNameIn);  
+  InitialiseOptions(fileNameIn);
   ParseInputFile();
 
   if (!inputFilePathIn.empty())

@@ -176,10 +176,7 @@ int main(int argc, char *argv[])
       std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
   catch (const std::string& error)
-    {
-      std::cerr << error << std::endl;
-      exit(1);
-    }
+    {std::cerr << error << std::endl; exit(1);}
   delete dl;
   return 0;
 }
