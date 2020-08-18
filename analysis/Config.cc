@@ -398,30 +398,30 @@ void Config::ParseSpectraLine(const std::string& line)
   else if (ContainsWordCI(results[0], "Rigidity"))
     {variable = ".rigidity";}
     
-    std::string samplerName = results[1];
-    // because we can have multiple spectra on a branch and there are no user-specified names for this
-    int nSpectraThisBranch = 0;
-    auto search = spectraNames.find(samplerName);
-    if (search != spectraNames.end())
+  std::string samplerName = results[1];
+  // because we can have multiple spectra on a branch and there are no user-specified names for this
+  int nSpectraThisBranch = 0;
+  auto search = spectraNames.find(samplerName);
+  if (search != spectraNames.end())
     {// branch name already exists
-        nSpectraThisBranch = search->second;
-        search->second++;
+      nSpectraThisBranch = search->second;
+      search->second++;
     }
-    else
+  else
     {spectraNames[samplerName] = 1;}
     std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
     std::string selection = results[5];
     
     Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
     
-    std::set<ParticleSpec> particles;
-    try
+  std::set<ParticleSpec> particles;
+  try
     {particles = ParseParticles(results[4]);}
-    catch (const std::exception& e)
+  catch (const std::exception& e)
     {
-        std::string err = e.what();
-        err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
-        throw RBDSException(err);
+      std::string err = e.what();
+      err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
+      throw RBDSException(err);
     }
   
   // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
