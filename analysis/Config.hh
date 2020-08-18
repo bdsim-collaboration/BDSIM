@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef CONFIG_H
 #define CONFIG_H
+#include "BinSpecification.hh"
 
 #include "Rtypes.h" // for classdef
 
@@ -80,6 +81,10 @@ public:
   inline bool        GetOptionBool(const std::string& key)   const {return optionsBool.at(key);}
   inline double      GetOptionNumber(const std::string& key) const {return optionsNumber.at(key);}
   /// @}
+
+  /// Access all histogram definitions.
+  inline const std::vector<HistogramDef*>& HistogramDefinitions(const std::string& treeName) const
+  {return histoDefs.at(treeName);}
 
   /// Access all simple histogram definitions - throws exception if out of range.
   inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(const std::string& treeName) const
@@ -176,7 +181,7 @@ public:
   void UpdateRequiredBranches(const HistogramDef* def);
 
   /// Update the vector of required branches for a particular tree to be
-  /// activated for anlysis based on a single string defintion such as Primary.x.
+  /// activated for analysis based on a single string definition such as Primary.x.
   void UpdateRequiredBranches(const std::string& treeName,
 			      const std::string& var);
 
@@ -191,44 +196,27 @@ public:
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBins(const std::string& bins,
-		 int  nDim,
-		 int& xBins,
-		 int& yBins,
-		 int& zBins) const;
+		 int nDim,
+		 BinSpecification& xBinning,
+		 BinSpecification& yBinning,
+		 BinSpecification& zBinning) const;
 
   /// Parse binning substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBinning(const std::string& binning,
 		    int nDim,
-		    double& xLow, double& xHigh,
-		    double& yLow, double& yHigh,
-		    double& zLow, double& zHigh) const;
-
+                    BinSpecification& xBinning,
+                    BinSpecification& yBinning,
+                    BinSpecification& zBinning,
+                    bool xLog,
+                    bool yLog,
+                    bool zLog) const;
   /// Return a vector of strings by splitting on whitespace.
   std::vector<std::string> SplitOnWhiteSpace(const std::string& line) const;
-
-  /// Simple struct to hold bin numbers and ranges.
-  struct Binning
-  {
-    int nBinsX   = 1;
-    int nBinsY   = 1;
-    int nBinsZ   = 1;
-    double xLow  = 0;
-    double xHigh = 0;
-    double yLow  = 0;
-    double yHigh = 0;
-    double zLow  = 0;
-    double zHigh = 0;
-  };
-
-  /// Return a struct of bin numbers and ranges.
-  Binning ParseBinsAndBinning(const std::string& bins,
-			      const std::string& binning,
-			      int nDim) const;
-
+    
   /// Parser a list of particle PDG IDs into a set.
   std::set<ParticleSpec> ParseParticles(const std::string& word) const;
-  
+    
   /// Parse a settings line in input file and appropriate update member map.
   void ParseSetting(const std::string& line);
 
@@ -246,7 +234,7 @@ public:
   /// Cache of which branches need to be activated for this analysis.
   RBDS::BranchMap branches;
 
-  /// Whether all branches will be activatd - ie for optics.
+  /// Whether all branches will be activated - ie for optics.
   bool allBranchesActivated;
 
   /// Cache of all spectra names declared to permit unique naming of histograms

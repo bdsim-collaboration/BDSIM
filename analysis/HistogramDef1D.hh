@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEF1D_H
 #define HISTOGRAMDEF1D_H
-
+#include "BinSpecification.hh"
 #include "HistogramDef.hh"
 
 #include <string>
@@ -38,24 +38,19 @@ public:
   HistogramDef1D();
 
   /// Use this constructor.
-  HistogramDef1D(std::string treeNameIn,
-		 std::string histNameIn,
-		 int         xNBinsIn,
-		 double      xLowIn,
-		 double      xHighIn,
-		 std::string variableIn,
-		 std::string selectionIn  = "1",
-		 bool        perEntryIn   = true,
-		 bool        logarithmicX = false);
-  virtual ~HistogramDef1D(){;}
-
+  HistogramDef1D(const std::string&      treeNameIn,
+		 const std::string&      histNameIn,
+		 const BinSpecification& xBinningIn,
+		 const std::string&      variableIn,
+		 const std::string&      selectionIn = "1",
+		 bool                    perEntryIn  = true);
+  
+  virtual ~HistogramDef1D();
+    
   /// Copy this instance. Virtual to be overridden in derived classes.
   virtual HistogramDef* Clone() const {return new HistogramDef1D(*this);}
-  
-  int         xNBins;
-  double      xLow;
-  double      xHigh;
-  bool        logarithmicX;
+
+  BinSpecification xBinning;
 
   ClassDef(HistogramDef1D, 1);
 };
