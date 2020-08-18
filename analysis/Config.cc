@@ -485,11 +485,13 @@ void Config::ParseBinning(const std::string& binning,
 	      std::smatch matchR = *j;
 	      try
 		{
-		  (*values[counter]).low = std::stod(matchS);
-		  (*values[counter]).high = std::stod(matchS);
+		  (*values[counter]).low  = std::stod(matchR[1]);
+		  (*values[counter]).high = std::stod(matchR[2]);
 		}
 	      catch (std::invalid_argument&) // if stod can't convert number to double
 		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+	      if ((*values[counter]).high <= (*values[counter]).low)
+		{throw std::invalid_argument("high bin edge is <= low bin edge \"" + binning + "\"");}
 	      if (isLog[counter])
 		{
 		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
