@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef CONFIG_H
 #define CONFIG_H
+#include "BinSpecification.hh"
 
 #include "Rtypes.h" // for classdef
 
@@ -171,19 +172,22 @@ public:
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBins(const std::string& bins,
-		 const int nDim,
-		 int& xBins,
-		 int& yBins,
-		 int& zBins) const;
+		 int nDim,
+		 BinSpecification& xBinning,
+		 BinSpecification& yBinning,
+		 BinSpecification& zBinning) const;
 
   /// Parse binning substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBinning(const std::string& binning,
-		    const int nDim,
-		    double& xLow, double& xHigh,
-		    double& yLow, double& yHigh,
-		    double& zLow, double& zHigh) const;
-
+		    int nDim,
+                    BinSpecification& xBinning,
+                    BinSpecification& yBinning,
+                    BinSpecification& zBinning,
+                    bool xLog,
+                    bool yLog,
+                    bool zLog) const;
+  
   /// Parse a settings line in input file and appropriate update member map.
   void ParseSetting(const std::string& line);
 

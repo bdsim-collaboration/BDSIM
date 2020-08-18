@@ -16,6 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BinGeneration.hh"
+#include "BinLoader.hh"
+#include "BinSpecification.hh"
 #include "Config.hh"
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
@@ -277,18 +280,11 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   std::string variable  = results[5];
   std::string selection = results[6];
 
-  int nBinsX = 1;
-  int nBinsY = 1;
-  int nBinsZ = 1;
-  double xLow  = 0;
-  double xHigh = 0;
-  double yLow  = 0;
-  double yHigh = 0;
-  double zLow  = 0;
-  double zHigh = 0;
-
-  ParseBins(bins, nDim, nBinsX, nBinsY, nBinsZ);
-  ParseBinning(binning, nDim, xLow, xHigh, yLow, yHigh, zLow, zHigh);
+  BinSpecification xBinning;
+  BinSpecification yBinning;
+  BinSpecification zBinning;
+  ParseBins(bins, nDim,xBinning, yBinning, zBinning);
+  ParseBinning(binning, nDim, xBinning, yBinning, zBinning, xLog, yLog, zLog);
 
   // make a check that the number of variables supplied in ttree with y:x syntax doesn't
   // exceed the number of declared dimensions - this would result in a segfault from ROOT
@@ -315,30 +311,22 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     case 1:
       {
 	result = new HistogramDef1D(treeName, histName,
-				    nBinsX, xLow, xHigh,
-				    variable, selection,
-				    perEntry, xLog);
+				    xBinning,
+				    variable, selection, perEntry);
 	break;
       }
     case 2:
       {
 	result = new HistogramDef2D(treeName, histName,
-				    nBinsX, nBinsY,
-				    xLow, xHigh,
-				    yLow, yHigh,
-				    variable, selection,
-				    perEntry, xLog, yLog);
+				    xBinning, yBinning,
+				    variable, selection, perEntry);
 	break;
       }
     case 3:
       {
 	result = new HistogramDef3D(treeName, histName,
-				    nBinsX, nBinsY, nBinsZ,
-				    xLow, xHigh,
-				    yLow, yHigh,
-				    zLow, zHigh,
-				    variable, selection, perEntry,
-				    xLog, yLog, zLog);
+				    xBinning, yBinning, zBinning,
+				    variable, selection, perEntry);
 	break;
       }
     default:
@@ -436,16 +424,15 @@ bool Config::InvalidTreeName(const std::string& treeName) const
   return std::find(treeNames.begin(), treeNames.end(), treeName) == treeNames.end();
 }
 
-
 void Config::ParseBins(const std::string& bins,
-		       const int nDim,
-		       int& xBins,
-		       int& yBins,
-		       int& zBins) const
+		       int nDim,
+		       BinSpecification& xBinning,
+		       BinSpecification& yBinning,
+		       BinSpecification& zBinning) const
 {
   // match a number including +ve exponentials (should be +ve int)
   std::regex number("([0-9e\\+]+)+", std::regex_constants::icase);
-  int* binValues[3] = {&xBins, &yBins, &zBins};
+  int* binValues[3] = {&xBinning.n, &yBinning.n, &zBinning.n};
   auto words_begin = std::sregex_iterator(bins.begin(), bins.end(), number);
   auto words_end   = std::sregex_iterator();
   int counter = 0;
@@ -456,28 +443,60 @@ void Config::ParseBins(const std::string& bins,
 }
 
 void Config::ParseBinning(const std::string& binning,
-			  const int nDim,
-			  double& xLow, double& xHigh,
-			  double& yLow, double& yHigh,
-			  double& zLow, double& zHigh) const
+			  int nDim,
+			  BinSpecification& xBinning,
+			  BinSpecification& yBinning,
+			  BinSpecification& zBinning,
+			  bool xLog,
+			  bool yLog,
+			  bool zLog) const
 {
+  // erase braces
+  std::string binningL = binning;
+  binningL.erase(std::remove(binningL.begin(), binningL.end(), '{'), binningL.end());
+  binningL.erase(std::remove(binningL.begin(), binningL.end(), '}'), binningL.end());
   // simple match - let stod throw exception if wrong
   std::regex oneDim("([0-9eE.+-]+):([0-9eE.+-]+)");
-  auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
-  auto words_end   = std::sregex_iterator();
-
-  std::vector<double*> vals = {&xLow, &xHigh, &yLow, &yHigh, &zLow, &zHigh};
+  
+  std::regex notCommas("[^,]+");
+  auto wordsBegin = std::sregex_token_iterator(binningL.begin(), binningL.end(), notCommas);
+  auto wordsEnd   = std::sregex_token_iterator();
   int counter = 0;
-  for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {// iterate over all matches and pull out first and second number
-      std::smatch match = *i;
-      try
-	{
-	  (*vals[2*counter])     = std::stod(match[1]);
-	  (*vals[(2*counter)+1]) = std::stod(match[2]);
+  std::vector<BinSpecification*> values = {&xBinning, &yBinning, &zBinning};
+  std::vector<bool> isLog = {xLog, yLog, zLog};
+  for (auto i = wordsBegin; i != wordsEnd; ++i, ++counter)
+    {
+      std::string matchS = *i;
+      if (matchS.find(".txt") != std::string::npos)
+	{// file name for variable binning
+	  std::vector<double>* binEdges = RBDS::LoadBins(matchS);
+	  (*values[counter]).edges = binEdges;
+	  (*values[counter]).n     = (int)binEdges->size() - 1;
+	  (*values[counter]).low   = binEdges->at(0);
+	  (*values[counter]).high  = binEdges->back();
 	}
-      catch (std::invalid_argument&) // if stod can't convert number to double
-	{throw std::string("Invalid binning number: \"" + match[0].str() + "\" on line #" + std::to_string(lineCounter));}
+      else
+	{// try to match ranges
+	  auto rangeBegin = std::sregex_iterator(matchS.begin(), matchS.end(), oneDim);
+	  auto rangeEnd   = std::sregex_iterator();
+	  int counterRange = 0;
+	  for (auto j = rangeBegin; j != rangeEnd; ++j, ++counterRange)
+	    {// iterate over all matches and pull out first and second number
+	      std::smatch matchR = *j;
+	      try
+		{
+		  (*values[counter]).low = std::stod(matchS);
+		  (*values[counter]).high = std::stod(matchS);
+		}
+	      catch (std::invalid_argument&) // if stod can't convert number to double
+		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+	      if (isLog[counter])
+		{
+		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
+		  (*values[counter]).edges = new std::vector<double>(binEdges);
+		}
+	    }
+	}    
     }
   
   if (counter == 0)
