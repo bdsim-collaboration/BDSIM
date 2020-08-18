@@ -77,11 +77,10 @@ int main(int argc, char *argv[])
   try
     {Config::Instance(configFilePath, inputFilePath, outputFileName);}
   catch (std::string error)
-    {
-      std::cerr << error << std::endl;
-      exit(1);
-    }
-
+    {std::cerr << error << std::endl; exit(1);}
+  catch (const std::invalid_argument& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
+  
   Config* config = nullptr;
   try
     {config = Config::Instance();}
@@ -104,6 +103,8 @@ int main(int argc, char *argv[])
     }
   catch (const std::string e)
     {std::cerr << e << std::endl; exit(1);}
+  catch (const std::invalid_argument& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
 
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
 						  dl->GetBeamTree(),
