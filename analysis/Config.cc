@@ -174,10 +174,10 @@ void Config::ParseInputFile()
       else if (std::regex_search(line, comment))
 	{continue;} // skip lines starting with '#'
       else if (std::regex_search(line, histogram))
-	{ParseHistogramLine(line);} // any histogram - must be before settings
+        {ParseHistogramLine(line);} // any histogram - must be before settings
       else if (std::regex_search(line, spectra))
 	{ParseSpectraLine(line);}
-	  else if (std::regex_search(line, particleSet))
+      else if (std::regex_search(line, particleSet))
         {ParseParticleSetLine(line);}
       else
 	{ParseSetting(line);} // any setting
