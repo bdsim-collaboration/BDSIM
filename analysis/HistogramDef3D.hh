@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef HISTOGRAMDEF3D_H
 #define HISTOGRAMDEF3D_H
-
+#include "BinSpecification.hh"
 #include "HistogramDef2D.hh"
 
 #include <string>
@@ -38,32 +38,21 @@ public:
   HistogramDef3D();
 
   /// Use this constructor.
-  HistogramDef3D(std::string treeNameIn,
-		 std::string histNameIn,
-		 int         xNBinsIn,
-		 int         yNBinsIn,
-		 int         zNBinsIn,
-		 double      xLowIn,
-		 double      xHighIn,
-		 double      yLowIn,
-		 double      yHighIn,
-		 double      zLowIn,
-		 double      zHighIn,
-		 std::string plotIn,
-		 std::string selectionIn    = "1",
-		 bool        perEntryIn     = true,
-		 bool        logarithmicXIn = false,
-		 bool        logarithmicYIn = false,
-		 bool        logarithmicZIn = false);
-  virtual ~HistogramDef3D(){;}
-
+  HistogramDef3D(const std::string&      treeNameIn,
+		 const std::string&      histNameIn,
+		 const BinSpecification& xBinningIn,
+		 const BinSpecification& yBinningIn,
+		 const BinSpecification& zBinningIn,
+		 const std::string&      variableIn,
+		 const std::string&      selectionIn = "1",
+		 bool                    perEntryIn  = true);
+  
+  virtual ~HistogramDef3D();
+    
   /// Copy this instance. Virtual to be overridden in derived classes.
   virtual HistogramDef* Clone() const {return new HistogramDef3D(*this);}
 
-  int         zNBins;
-  double      zLow;
-  double      zHigh;
-  bool        logarithmicZ;
+  BinSpecification zBinning;
 
   ClassDef(HistogramDef3D, 1);
 };

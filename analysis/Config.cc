@@ -16,6 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BinGeneration.hh"
+#include "BinLoader.hh"
+#include "BinSpecification.hh"
 #include "Config.hh"
 #include "HistogramDefSet.hh"
 #include "HistogramDef1D.hh"
@@ -62,7 +65,7 @@ Config::Config(const std::string& fileNameIn,
 	           const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
-  InitialiseOptions(fileNameIn);  
+  InitialiseOptions(fileNameIn);
   ParseInputFile();
 
   if (!inputFilePathIn.empty())
@@ -225,112 +228,43 @@ void Config::ParseHistogramLine(const std::string& line)
   std::regex histNDim("^\\s*(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   //std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
-  
+
   if (std::regex_search(line, match, histNDim))
     {
       int nDim = std::stoi(match[1]);
-      ParseHistogram(line, nDim);
+      try
+	{ParseHistogram(line, nDim);}
+      catch(std::invalid_argument& e)
+	{
+	  std::string errString = "\nProblem with histogram definition on line #"
+	    + std::to_string(lineCounter) + ": \n\"" + line + "\"\n";
+	  throw std::invalid_argument(e.what() + errString);
+	}
     }
   else
     {
-      std::string errString = "Invalid histogram type on line #" + std::to_string(lineCounter)
+      std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
 	+ ": \n\"" + line + "\"\n";
       throw RBDSException(errString);
     }
 }
 
-void Config::ParseSpectraLine(const std::string& line)
-{
-  // split line on white space
-  std::vector<std::string> results = SplitOnWhiteSpace(line);
-  
-  if (results.size() < 6)
-    {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns (too few)";
-      throw RBDSException(errString);
-    }
-  if (results.size() > 6)
-    {// ensure not too many columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-      + " - too many columns - check no extra whitespace";
-      throw RBDSException(errString);
-    }
-
-  bool log  = false;
-  bool logy = false; // duff values to fulfill function
-  bool logz = false;
-  ParseLog(results[0], log, logy, logz);
-
-  bool perEntry = true;
-  ParsePerEntry(results[0], perEntry);
-
-  std::string variable = ".kineticEnergy"; // kinetic energy by default
-  if (ContainsWordCI(results[0], "TE"))
-    {variable = ".energy";}
-  else if (ContainsWordCI(results[0], "Rigidity"))
-    {variable = ".rigidity";}
-
-  std::string samplerName = results[1];
-  // because we can have multiple spectra on a branch and there are no user-specified names for this
-  int nSpectraThisBranch = 0;
-  auto search = spectraNames.find(samplerName);
-  if (search != spectraNames.end())
-    {// branch name already exists
-      nSpectraThisBranch = search->second;
-      search->second++;
-    }
-  else
-    {spectraNames[samplerName] = 1;}
-  std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
-  std::string selection = results[5];
-  
-  Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
-
-  std::set<ParticleSpec> particles;
-  try
-    {particles = ParseParticles(results[4]);}
-  catch (const std::exception& e)
-    {
-      std::string err = e.what();
-      err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
-      throw RBDSException(err);
-    }
-
-  // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
-  // per event so we should warn the user about this as it'll create no histograms
-  if (particles.empty() && !perEntry)
-    {throw RBDSException("Simple spectra used but no specific particles named - only works for specific particles");}
-
-  HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
-					   b.nBinsX, b.xLow, b.xHigh,
-					   samplerName + variable,
-					   selection, perEntry, log);
-
-  HistogramDefSet* result = new HistogramDefSet(samplerName,
-						def,
-						particles,
-						results[4]);
-  delete def; // no longer needed
-  
-  if (perEntry)
-    {eventHistoDefSetsPerEntry.push_back(result);}
-  else
-    {eventHistoDefSetsSimple.push_back(result);}
-
-  SetBranchToBeActivated("Event.", samplerName);
-}
-
-void Config::ParseParticleSetLine(const std::string& line)
-{
-  std::vector<std::string> results = SplitOnWhiteSpace(line);
-  if (results.size() < 2)
-    {;}
-}
-
 void Config::ParseHistogram(const std::string& line, const int nDim)
-{
-  std::vector<std::string> results = SplitOnWhiteSpace(line);
+{  
+  // split line on white space
+  // doesn't inspect words themselves
+  // checks number of words, ie number of columns is correct
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitepsace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  
   if (results.size() < 7)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
@@ -368,10 +302,13 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   std::string binning   = results[4];
   std::string variable  = results[5];
   std::string selection = results[6];
-  
-  Config::Binning b;
-  ParseBinsAndBinning(bins, binning, nDim);
-  
+
+  BinSpecification xBinning;
+  BinSpecification yBinning;
+  BinSpecification zBinning;
+  ParseBins(bins, nDim,xBinning, yBinning, zBinning);
+  ParseBinning(binning, nDim, xBinning, yBinning, zBinning, xLog, yLog, zLog);
+
   // make a check that the number of variables supplied in ttree with y:x syntax doesn't
   // exceed the number of declared dimensions - this would result in a segfault from ROOT
   // a single (not 2) colon with at least one character on either side
@@ -396,30 +333,22 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     case 1:
       {
 	result = new HistogramDef1D(treeName, histName,
-				    b.nBinsX, b.xLow, b.xHigh,
-				    variable, selection,
-				    perEntry, xLog);
+				    xBinning,
+				    variable, selection, perEntry);
 	break;
       }
     case 2:
       {
 	result = new HistogramDef2D(treeName, histName,
-				    b.nBinsX, b.nBinsY,
-				    b.xLow,   b.xHigh,
-				    b.yLow,   b.yHigh,
-				    variable, selection,
-				    perEntry, xLog, yLog);
+				    xBinning, yBinning,
+				    variable, selection, perEntry);
 	break;
       }
     case 3:
       {
 	result = new HistogramDef3D(treeName, histName,
-				    b.nBinsX, b.nBinsY, b.nBinsZ,
-				    b.xLow, b.xHigh,
-				    b.yLow, b.yHigh,
-				    b.zLow, b.zHigh,
-				    variable, selection, perEntry,
-				    xLog, yLog, zLog);
+				    xBinning, yBinning, zBinning,
+				    variable, selection, perEntry);
 	break;
       }
     default:
@@ -435,6 +364,95 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
 	    {histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
+}
+
+void Config::ParseSpectraLine(const std::string& line)
+{
+    // split line on white space
+    std::vector<std::string> results = SplitOnWhiteSpace(line);
+    
+    if (results.size() < 6)
+    {// ensure enough columns
+        std::string errString = "Invalid line #" + std::to_string(lineCounter)
+        + " - invalid number of columns (too few)";
+        throw RBDSException(errString);
+    }
+    if (results.size() > 6)
+    {// ensure not too many columns
+        std::string errString = "Invalid line #" + std::to_string(lineCounter)
+        + " - too many columns - check no extra whitespace";
+        throw RBDSException(errString);
+    }
+    
+    bool log  = false;
+    bool logy = false; // duff values to fulfill function
+    bool logz = false;
+    ParseLog(results[0], log, logy, logz);
+    
+    bool perEntry = true;
+    ParsePerEntry(results[0], perEntry);
+    
+    std::string variable = ".kineticEnergy"; // kinetic energy by default
+    if (ContainsWordCI(results[0], "TE"))
+    {variable = ".energy";}
+    else if (ContainsWordCI(results[0], "Rigidity"))
+    {variable = ".rigidity";}
+    
+    std::string samplerName = results[1];
+    // because we can have multiple spectra on a branch and there are no user-specified names for this
+    int nSpectraThisBranch = 0;
+    auto search = spectraNames.find(samplerName);
+    if (search != spectraNames.end())
+    {// branch name already exists
+        nSpectraThisBranch = search->second;
+        search->second++;
+    }
+    else
+    {spectraNames[samplerName] = 1;}
+    std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
+    std::string selection = results[5];
+    
+    Config::Binning b = ParseBinsAndBinning(results[2], results[3], 1);
+    
+    std::set<ParticleSpec> particles;
+    try
+    {particles = ParseParticles(results[4]);}
+    catch (const std::exception& e)
+    {
+        std::string err = e.what();
+        err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
+        throw RBDSException(err);
+    }
+    
+    // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
+    // per event so we should warn the user about this as it'll create no histograms
+    if (particles.empty() && !perEntry)
+    {throw RBDSException("Simple spectra used but no specific particles named - only works for specific particles");}
+    
+    HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
+                                             b.nBinsX, b.xLow, b.xHigh,
+                                             samplerName + variable,
+                                             selection, perEntry, log);
+    
+    HistogramDefSet* result = new HistogramDefSet(samplerName,
+                                                  def,
+                                                  particles,
+                                                  results[4]);
+    delete def; // no longer needed
+    
+    if (perEntry)
+    {eventHistoDefSetsPerEntry.push_back(result);}
+    else
+    {eventHistoDefSetsSimple.push_back(result);}
+    
+    SetBranchToBeActivated("Event.", samplerName);
+}
+
+void Config::ParseParticleSetLine(const std::string& line)
+{
+    std::vector<std::string> results = SplitOnWhiteSpace(line);
+    if (results.size() < 2)
+    {;}
 }
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
@@ -528,56 +546,80 @@ bool Config::InvalidTreeName(const std::string& treeName) const
 }
 
 void Config::ParseBins(const std::string& bins,
-		       int  nDim,
-		       int& xBins,
-		       int& yBins,
-		       int& zBins) const
+		       int nDim,
+		       BinSpecification& xBinning,
+		       BinSpecification& yBinning,
+		       BinSpecification& zBinning) const
 {
   // match a number including +ve exponentials (should be +ve int)
   std::regex number("([0-9e\\+]+)+", std::regex_constants::icase);
-  int* binValues[3] = {&xBins, &yBins, &zBins};
+  int* binValues[3] = {&xBinning.n, &yBinning.n, &zBinning.n};
   auto words_begin = std::sregex_iterator(bins.begin(), bins.end(), number);
   auto words_end   = std::sregex_iterator();
   int counter = 0;
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw RBDSException("Invalid bin specification on line #" + std::to_string(lineCounter));}
-}
-
-Config::Binning Config::ParseBinsAndBinning(const std::string& bins,
-					    const std::string& binning,
-					    int                nDim) const
-{
-  Binning b;
-  ParseBinning(binning, nDim, b.xLow, b.xHigh, b.yLow, b.yHigh, b.zLow, b.zHigh);
-  ParseBins(bins, nDim, b.nBinsX, b.nBinsY, b.nBinsZ);
-  return b;
+    {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
 
 void Config::ParseBinning(const std::string& binning,
 			  int nDim,
-			  double& xLow, double& xHigh,
-			  double& yLow, double& yHigh,
-			  double& zLow, double& zHigh) const
+			  BinSpecification& xBinning,
+			  BinSpecification& yBinning,
+			  BinSpecification& zBinning,
+			  bool xLog,
+			  bool yLog,
+			  bool zLog) const
 {
+  // erase braces
+  std::string binningL = binning;
+  binningL.erase(std::remove(binningL.begin(), binningL.end(), '{'), binningL.end());
+  binningL.erase(std::remove(binningL.begin(), binningL.end(), '}'), binningL.end());
   // simple match - let stod throw exception if wrong
   std::regex oneDim("([0-9eE.+-]+):([0-9eE.+-]+)");
-  auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
-  auto words_end   = std::sregex_iterator();
-
-  std::vector<double*> vals = {&xLow, &xHigh, &yLow, &yHigh, &zLow, &zHigh};
+  
+  std::regex commas(",");
+  auto wordsBegin = std::sregex_token_iterator(binningL.begin(), binningL.end(), commas, -1);
+  auto wordsEnd   = std::sregex_token_iterator();
   int counter = 0;
-  for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {// iterate over all matches and pull out first and second number
-      std::smatch match = *i;
-      try
-	{
-	  (*vals[2*counter])     = std::stod(match[1]);
-	  (*vals[(2*counter)+1]) = std::stod(match[2]);
+  std::vector<BinSpecification*> values = {&xBinning, &yBinning, &zBinning};
+  std::vector<bool> isLog = {xLog, yLog, zLog};
+  for (auto i = wordsBegin; i != wordsEnd; ++i, ++counter)
+    {
+      std::string matchS = *i;
+      if (matchS.find(".txt") != std::string::npos)
+	{// file name for variable binning
+	  std::vector<double>* binEdges = RBDS::LoadBins(matchS);
+	  (*values[counter]).edges = binEdges;
+	  (*values[counter]).n     = (int)binEdges->size() - 1;
+	  (*values[counter]).low   = binEdges->at(0);
+	  (*values[counter]).high  = binEdges->back();
 	}
-      catch (std::invalid_argument&) // if stod can't convert number to double
-	{throw RBDSException("Invalid binning number: \"" + match[0].str() + "\" on line #" + std::to_string(lineCounter));}
+      else
+	{// try to match ranges
+	  auto rangeBegin = std::sregex_iterator(matchS.begin(), matchS.end(), oneDim);
+	  auto rangeEnd   = std::sregex_iterator();
+	  int counterRange = 0;
+	  for (auto j = rangeBegin; j != rangeEnd; ++j, ++counterRange)
+	    {// iterate over all matches and pull out first and second number
+	      std::smatch matchR = *j;
+	      try
+		{
+		  (*values[counter]).low  = std::stod(matchR[1]);
+		  (*values[counter]).high = std::stod(matchR[2]);
+		}
+	      catch (std::invalid_argument&) // if stod can't convert number to double
+		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+	      if ((*values[counter]).high <= (*values[counter]).low)
+		{throw std::invalid_argument("high bin edge is <= low bin edge \"" + binning + "\"");}
+	      if (isLog[counter])
+		{
+		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
+		  (*values[counter]).edges = new std::vector<double>(binEdges);
+		}
+	    }
+	}    
     }
   
   if (counter == 0)
@@ -676,8 +718,8 @@ std::string Config::LowerCase(const std::string& st) const
   
 void Config::ParseSetting(const std::string& line)
 {
-  // match a word; at least one space; and a word including '.' and _ and /
-  std::regex setting("(\\w+)\\s+([\\.\\/_\\w\\*]+)", std::regex_constants::icase);
+  // match a word; at least one space; and a word including '.' and _ and / and -
+  std::regex setting("(\\w+)\\s+([\\.\\/_\\-\\w\\*]+)", std::regex_constants::icase);
   std::smatch match;
   if (std::regex_search(line, match, setting))
     {

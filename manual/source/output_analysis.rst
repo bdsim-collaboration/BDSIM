@@ -77,6 +77,28 @@ Plot Energy Deposition \& Losses
    >>> import pybdsim
    >>> pybdsim.Plot.LossAndEnergyDeposition("results.root")
 
+Find Event Number of Interesting Condition
+------------------------------------------
+
+If you want to recreate a specific event to witness it but need the event index.
+
+1. Load raw BDSIM output file in ROOT.
+2. Get the event tree.
+3. Scan with condition.
+
+::
+   
+   root -l myfile.root
+   > TTree* evt = (TTree*)_file0->Get("Event")
+   > evt->Scan("Summary.index", "PrimaryLastHit.S>10")
+
+
+The syntax is :code:`evt->Scan("Summary.index", "selection")`. This will print out
+the :code:`Summary.index` variable in the data (i.e. the event index) for each entry in the tree
+(i.e. event) that matches the selection condition. The condition should be with respect to variables
+in the Event tree and without "Event" in them. ROOT typically prints a few at a time, with the
+return key printing out the next few and :code:`q` to quit this scanning mode.
+
 
 Load Raw Data
 -------------
@@ -232,7 +254,7 @@ Below is a complete of a rebdsim analysis configuration text file.
 * For bins and binning, the dimensions are separated by :code:`,`.
 * For bins and binning, the range from low to high is specified by :code:`low:high`.
 * For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`.
-  See warning below for order of variables.
+  See warning above for order of variables.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get
   the kinetic energy of proton primaries in MeV).
@@ -405,6 +427,49 @@ a 1D histogram with thirty logarithmically spaced bins from 1e-3 to 1e3, the fol
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
+
+Uneven Binning
+--------------
+
+Variable bin widths in histograms may also be used. These may be used in one or multiple dimensions and
+in combination with logarithmic binning. Uneven binning is specified by supplying a text file
+with a single column of **bin edges** per dimension. These are the lower bin edges as well as the
+upper most one. Therefore, at least **2** bin edges are required to define the minimum 1 bin. e.g.
+a histogram with 1 single bin of width 2 centred at 3 would be defined by a text file containing
+the 2 lines: ::
+
+  1.0
+  3.0
+
+Implementation notes:
+
+* The text file name **must** end with :code:`.txt`.
+* The text file should contain one number per line.
+* The number may be in scientific or floating point or integer format.
+* The number of bins must still be specified in the histogram definition, but the number is ignored
+  (see the value "1" in the example below).
+* The text file name (path **relative** to the execution location, or absolute path) is used to
+  define the bin edges in that dimension.
+* No white-space must be allowed inside the binning specification.
+
+Examples can be found in :code:`bdsim/examples/features/analysis/rebdsim/`. Specifically,
+"unevenBinning.txt" and "bins-x.txt". An example Python script called "makebinning.py" is provided
+that generates random bin widths in a range.
+
+Examples::
+
+  Histogram1D    Event UnevenX     {1}      {bins-x.txt}                        d2_1.x                     1
+  Histogram2D    Event UnevenXY    {1,1}    {bins-x.txt,bins-y.txt}             d2_1.y:d2_1.x              1
+  Histogram2D    Event UnevenY     {10,1}   {-0.5:0.5,bins-y.txt}               d2_1.y:d2_1.x              1
+  Histogram3D    Event UnevenXYZ   {1,1,1}  {bins-x.txt,bins-y.txt,bins-z.txt}  d2_1.x:d2_1.y:d2_1.energy  1
+  Histogram3D    Event UnevenYZ    {11,1,1} {-0.5:0.5,bins-y.txt,bins-z.txt}    d2_1.x:d2_1.y:d2_1.energy  1
+  Histogram3D    Event UnevenZ     {11,8,1} {-0.5:0.5,-1:1,bins-z.txt}          d2_1.x:d2_1.y:d2_1.energy  1
+  Histogram2DLog Event LogXUnevenY {100,1}  {-5:1,bins-x.txt}                   d1_1.x:d2_1.energy         1 
+  Histogram2DLinLog Event UnevenXLogY {1,100} {bins-x.txt,-5,1}                 d2_1.energy:d1_1.x         1
+
+  
+* Uneven binning can be used in combination with logarithmic binning, but the uneven one should be
+  labelled as linear (i.e. "Lin").
 
 
 Analysis Configuration Options
