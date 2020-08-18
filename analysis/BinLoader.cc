@@ -54,12 +54,21 @@ std::vector<double>* RBDS::LoadBins(const std::string& fileName)
       catch (...)
 	{throw std::invalid_argument("invalid bin edge on line " + std::to_string(lineNum));}
       result->push_back(binEdge);
+  
+      if (!liness.eof())
+	{
+	  std::string remainder;
+	  liness >> remainder;
+	  std::string message = "Error: extra text \"" + remainder + "\" on line " + std::to_string(lineNum) + " of bin edges file \"" + fileName + "\"";
+	  throw std::invalid_argument(message);
+	}
+      
       lineNum += 1;
     }
   
   if (result->size() < 2)
-  {throw std::invalid_argument("insufficient number of bins in file - must be at least 2");}
-
+    {throw std::invalid_argument("insufficient number of bins in file - must be at least 2");}
+  
   file.close();
   return result;
 }
