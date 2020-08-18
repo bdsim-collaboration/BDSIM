@@ -132,7 +132,7 @@ Config* Config::Instance(const std::string& fileName,
       delete instance;
       instance = new Config(fileName, inputFilePath, outputFileName);
     }
-  else if (!instance && !fileName.empty())
+  else if (!instance && fileName.empty())
     {instance = new Config(inputFilePath, outputFileName);}
   // else return current instance (can be nullptr!)
   return instance;
