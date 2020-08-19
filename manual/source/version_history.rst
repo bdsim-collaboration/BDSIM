@@ -1,5 +1,8 @@
-V1.5 - 2020 - Planned Development
-=================================
+V1.5 - 2020 / ?? / ??
+=====================
+
+Planned Development
+-------------------
 
 Below is a brief list of planned developments for the next version. Please get in touch
 if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
@@ -50,6 +53,8 @@ New Features
 * A field may now have a :code:`magneticSubField` where a smaller field is overlaid on top of a main
   field providing the ability to place a smaller more detailed magnetic field map on top of a larger
   (perhaps coarser) one.
+* Variable bin widths may be used in rebdsim analysis configurations as supplied by an external text file
+  in any dimension.
 
 * New options:
 
@@ -74,6 +79,12 @@ General
 
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
+
+Bug Fixes
+---------
+
+* Tolerate "-" character in rebdsim input and output file names written inside the analysis configuration
+  file. In the past, only the part up to this character was used.
 
 Output Changes
 --------------
