@@ -242,6 +242,8 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  storeApertureImpacts       = true;
+  storeApertureImpactsHistograms = true;
   apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
