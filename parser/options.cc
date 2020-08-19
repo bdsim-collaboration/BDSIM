@@ -444,7 +444,7 @@ void Options::PublishMembers()
   publish("trajCutLTR",                     &Options::trajCutLTR);
 
   publish("storePrimaries",                 &Options::storePrimaries);
-  publish("storePrimaries",                 &Options::storePrimaries); ///< alternative for backwards compatibility
+  publish("writePrimaries",                 &Options::storePrimaries); ///< alternative for backwards compatibility
   publish("storeModel",                     &Options::storeModel);
 
   // circular options
