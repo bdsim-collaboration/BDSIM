@@ -472,5 +472,5 @@ void Options::PublishMembers()
   // tracker
   publish("trackingType",    &Options::trackingType);
   publish("trackingSteps",   &Options::trackingSteps);
-  publish("dontUseAperture", &Options::dontUseAperture);
+  publish("useAperture",     &Options::useAperture);
 }

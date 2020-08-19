@@ -58,7 +58,7 @@ private:
   void CheckAperture(TRKBunch* bunch, TRKElement* element);
   /// maximum number of turns
   unsigned int maxTurns;
-  bool dontuseaperture;
+  bool useaperture;
 
   BDSOutput* output;
 };

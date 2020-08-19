@@ -88,7 +88,7 @@ TRKFactory::TRKFactory(const GMAD::Options&   options,
   // beampiperadius  = options.aper1;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
-  dontuseaperture = options.dontUseAperture;
+  useaperture = options.useAperture;
   if (options.nturns > 1)
     {circular = true;}
   else
@@ -103,7 +103,7 @@ std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
       << "Beam Pipe Radius (m):     " << factory.beampiperadius   << std::endl
       << "Tracking Steps:           " << factory.trackingsteps    << std::endl
       << "Default Aperture Type:    " << *factory.defaultaperture << std::endl
-      << "Don't Use Aperture:       " << factory.dontuseaperture;
+      << "Use Aperture:             " << factory.useaperture;
   return out;
 }
 
@@ -164,10 +164,14 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
   //possible. it will just default to the general kind.
   //default case = aperturetype
 
-  if (dontuseaperture)
-    {return NULL;} //no aperture at all - will never be check with this setting so no seg fault
+  if (useaperture)
+    {
+      return new TRKApertureCircular(element.aper1);
+    }
   else
-    {return new TRKApertureCircular(element.aper1);}
+    {
+      return NULL;  //no aperture at all - will never be check with this setting so no seg fault
+    }
   /*
     // THIS SHOULD BE FIXED GIVEN THE NEW APERTURE MODELS AVAILABLE
   else if ((element.aperX != 0) && (element.aperY !=0)) {

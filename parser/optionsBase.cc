@@ -322,7 +322,7 @@ OptionsBase::OptionsBase()
   // tracker options
   trackingType             = "default";
   trackingSteps            = 1;
-  dontUseAperture          = false;
+  useAperture              = true;
 }
 
 

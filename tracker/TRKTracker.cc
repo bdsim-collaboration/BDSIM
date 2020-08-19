@@ -45,7 +45,7 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       BDSOutput*           outputIn):
   line(lineIn), strategy(strategyIn), output(outputIn)
 {
-  dontuseaperture = options.dontUseAperture;
+  useaperture = options.useAperture;
   maxTurns = std::abs(options.nturns);
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
