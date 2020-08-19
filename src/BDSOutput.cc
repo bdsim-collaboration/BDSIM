@@ -110,9 +110,8 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeApertureImpactsHistograms =
-      storeApertureImpacts || g->StoreApertureImpactsHistograms() ||
-      g->StoreApertureImpactsAll() || g->StoreApertureImpactsIons();
+  storeApertureImpactsHistograms = storeApertureImpacts || g->StoreApertureImpactsHistograms() ||
+    g->StoreApertureImpactsAll() || g->StoreApertureImpactsIons();
   storeCollimatorInfo = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
@@ -472,8 +471,9 @@ void BDSOutput::CreateHistograms()
 
   if (storeApertureImpactsHistograms)
     {
-      histIndices1D["PFirstAI"] = Create1DHistogram(
-          "PFirstAIHisto", "Primary aperture impacts", nbins, smin, smax);
+      histIndices1D["PFirstAI"] = Create1DHistogram("PFirstAIHisto",
+						    "Primary aperture impacts",
+						    nbins, smin, smax);
     }
 
   // only create tunnel histograms if we build the tunnel
