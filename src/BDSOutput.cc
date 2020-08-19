@@ -895,8 +895,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
     }
 }
 
-void
-BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts *hits)
+void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
 {
   if ((!storeApertureImpacts && !storeApertureImpactsHistograms) || !hits)
     {return;}
@@ -910,16 +909,13 @@ BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts *hits)
 	{
 	  nPrimaryImpacts += 1;
 	  if (storeApertureImpactsHistograms && nPrimaryImpacts == 1)
-	    {
-	      evtHistos->Fill1DHistogram(histIndices1D["PFirstAI"],
-					 hit->S / CLHEP::m);
-	    }
+	    {evtHistos->Fill1DHistogram(histIndices1D["PFirstAI"], hit->S / CLHEP::m);}
         }
       // hits are generated in order as the particle progresses
       // through the model, so the first one in the collection
       // for the primary is the first one in S.
       if (storeApertureImpacts)
-	apertureImpacts->Fill(hit, nPrimaryImpacts==1);
+	{apertureImpacts->Fill(hit, nPrimaryImpacts==1);}
     }
 }
 
