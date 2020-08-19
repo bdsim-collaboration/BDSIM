@@ -16,24 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BinSpecification.hh"
-#include "HistogramDef1D.hh"
+#ifndef BINLOADER_H
+#define BINLOADER_H
 
-ClassImp(HistogramDef1D)
+#include <string>
+#include <vector>
 
-HistogramDef1D::HistogramDef1D():
-  xBinning(BinSpecification())
-{;}
+namespace RBDS
+{
+  /// Method to load a single column text file and return vector of values.
+  std::vector<double>* LoadBins(const std::string& fileName);
+}
 
-HistogramDef1D::HistogramDef1D(const std::string& treeNameIn,
-			       const std::string& histNameIn,
-			       const BinSpecification& xBinningIn,
-			       const std::string& variableIn,
-			       const std::string& selectionIn,
-			       bool               perEntryIn):
-  HistogramDef(treeNameIn, histNameIn, 1, variableIn, selectionIn, perEntryIn),
-  xBinning(xBinningIn)
-{;}
-
-HistogramDef1D::~HistogramDef1D()
-{;}
+#endif
