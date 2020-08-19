@@ -150,6 +150,7 @@ protected:
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
+  G4bool storeApertureImpactsHistograms;
   G4bool storePrimaries;
   /// @}
 
