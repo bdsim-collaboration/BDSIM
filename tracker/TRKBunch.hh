@@ -41,6 +41,7 @@ namespace GMAD
 class TRKBunch
 {
 public:
+  TRKBunch();
   TRKBunch(const GMAD::Beam& beam,
 	   BDSParticleDefinition* particle,
 	   long int nGenerate = 1);
@@ -70,8 +71,6 @@ public:
 
   
 private:
-  TRKBunch(); /// bunch must be instantiated with a number of particles
-
   long int population;
   std::vector <TRKParticle> bunch;
 

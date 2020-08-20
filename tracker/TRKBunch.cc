@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+TRKBunch::TRKBunch() : population(0) {}
+
 TRKBunch::TRKBunch(const GMAD::Beam& beam,
 		   BDSParticleDefinition* particle,
 		   long int nGenerate):
