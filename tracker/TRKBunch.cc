@@ -60,6 +60,9 @@ TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
   bunch = particleVectorIn;
 }
 
+TRKBunch::TRKBunch(std::vector<TRKParticle> &&particles)
+    : bunch(std::move(particles)) {}
+
 TRKBunch::~TRKBunch()
 {;}
 
