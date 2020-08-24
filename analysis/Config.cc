@@ -545,7 +545,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw RBDSException("Invalid bin specification.");}
+    {throw RBDSException("Too few binning dimensions specified (N dimension = " + std::to_string(nDim) + ") + \"" + bins + "\"");}
 }
 
 void Config::ParseBinning(const std::string& binning,
