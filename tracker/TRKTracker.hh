@@ -59,6 +59,7 @@ private:
   TRKStrategy* strategy;
   /// aperture check
   void CheckAperture(TRKBunch* bunch, TRKElement* element);
+  int NBisectionSteps(double interval) const;
   /// maximum number of turns
   unsigned int maxTurns;
   bool useaperture;

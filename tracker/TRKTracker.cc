@@ -161,63 +161,7 @@ void TRKTracker::Track(TRKBunch* bunch)
     }
 }
 
-/*void TRKTracker::Track(TRKBunch* bunch)
+int TRKTracker::NBisectionSteps(double interval) const
 {
-  
-  if (!bunch)
-    {return;} // can't track nothing
-  if (bunch->empty())
-    {return;} // even if bunch exists, there must be particles in it
-
-  TRKLineConstIter elIter = line->begin();
-  // iterate over number of turns - if linear, just 1 'turn'
-  BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
-  for (unsigned int i = 0; i < maxTurns; i++) 
-    {
-      //check if all particles have been lost before turns completed
-      if (bunch->empty())
-	{break;}
-      std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
-      //iterate over beamline elements
-      for (elIter = line->begin();elIter!=line->end(); ++elIter) 
-	{
-	  //check if all particles have been lost after previous element
-	  if (bunch->empty())
-	    {break;}
-	  
-	  //calculate optical functions if required - TBC
-
-	  //track all particles through an element
-	  (*elIter)->Track(bunch,strategy);
-	  
-	  // //check the aperture and decide whether to shift to bdsim
-	  // if (!dontuseaperture) //is aperture checking turned on?
-	  //   {
-	  //     TRKBunch* lostParticles = (*elIter)->CheckAperture(bunch);
-	  //     if (lostParticles)
-	  // 	{
-	  // 	  int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
-	  // 	  output->WriteTrackerPrimaryLoss(lostParticles, turnsTaken);
-	  // 	  delete lostParticles;
-	  // 	}
-	  //   }
-	  
-	  //confirm coordinates for particles that didn't 'hit' aperture
-	  // (*elIter)->ConfirmCoordinates(bunch);
-	} // end of beamline iteration
-      
-      BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
-      if (bunch->empty())
-	{
-	  std::cout << "No further particles to track" << std::endl;
-	  break;
-	}
-
-      // finish an event in the output which is a turn here
-      const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
-      output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-			nullptr, nullptr, nullptr, nullptr, scorerhits, i);
-    }// end of turns iteration
-    
-}*/
+  return std::ceil(std::log2(lossPrecision / interval));
+}
