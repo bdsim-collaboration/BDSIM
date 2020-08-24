@@ -124,7 +124,7 @@ void TRKTracker::Track(TRKBunch* bunch)
                 if (endPoint > SEnd)
                 {
                     step = SEnd - p.getS();
-                    advance = TRUE;
+                    advance = true;
 //                    std::cout << "Step limited!" << std::endl;
                 }
                 else
