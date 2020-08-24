@@ -47,32 +47,32 @@ void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
   nominalEnergy   = nominalEnergyIn;
 }
 
-void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle* particle)
+void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle& particle)
 {
   std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;
 
   double offsetX = el->GetOffsetX();
     double offsetY = el->GetOffsetY();
-    vector3 newPos(particle->X()-offsetX,particle->Y()-offsetY,particle->Z());
+    vector3 newPos(particle.X()-offsetX,particle.Y()-offsetY,particle.Z());
     // add offset (negatively as bunch is displaced, not element)
-    particle->SetPosMom(newPos, particle->Mom());
+    particle.SetPosMom(newPos, particle.Mom());
     // rotation
     // TODO, only tilt for new (counterclockwise)
     double sinphi, cosphi;
     //    sincos(el->GetPhi(), &sinphi, &cosphi);
     sinphi = std::sin(el->GetPhi());
     cosphi = std::cos(el->GetPhi());
-    double x  = particle->X();
-    double y  = particle->Y();
-    double xp = particle->Xp();
-    double yp = particle->Yp();
+    double x  = particle.X();
+    double y  = particle.Y();
+    double xp = particle.Xp();
+    double yp = particle.Yp();
 
     double newx  = cosphi*x  - sinphi*y;
     double newy  = sinphi*x  + cosphi*y;
     double newxp = cosphi*xp - sinphi*yp;
     double newyp = sinphi*xp + cosphi*xp;
-    newPos = vector3(newx,newy,particle->Z());
-    vector3 newMom(newxp,newyp,particle->Zp());
-    particle->SetPosMom(newPos, newMom);
+    newPos = vector3(newx,newy,particle.Z());
+    vector3 newMom(newxp,newyp,particle.Zp());
+    particle.SetPosMom(newPos, newMom);
 
 }

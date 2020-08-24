@@ -616,10 +616,10 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 }
 
 void BDSOutput::FillSamplerHitsTracker(G4int samplerIndex,
-				       TRKParticle* particle,
+				       TRKParticle& particle,
 				       double s)
 {
-  samplerTrees[samplerIndex + 1]->Fill(*particle, s);
+  samplerTrees[samplerIndex + 1]->Fill(particle, s);
 }
 
 void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,

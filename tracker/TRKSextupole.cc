@@ -32,7 +32,7 @@ TRKSextupole::TRKSextupole(double strengthIn,
 TRKSextupole::~TRKSextupole()
 {;}
 
-void TRKSextupole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKSextupole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)

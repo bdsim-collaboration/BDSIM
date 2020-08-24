@@ -58,16 +58,16 @@ public:
    */
   ///@{
   //void         Track(TRKElement*    el, TRKBunch* bunch);
-  virtual void Track(TRKDrift*      el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKSBend*      el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKRBend*      el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKDipoleFringe* el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKQuadrupole* el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKSextupole*  el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKOctupole*   el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKKicker*     el, TRKParticle* particle, double step)=0;
-  virtual void Track(TRKSolenoid*   el, TRKParticle* particle, double step)=0;
-  void         Track(TRKTiltOffset* el, TRKParticle* particle);
+  virtual void Track(TRKDrift*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSBend*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKRBend*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKDipoleFringe* el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKQuadrupole* el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSextupole*  el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKOctupole*   el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKKicker*     el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSolenoid*   el, TRKParticle& particle, double step)=0;
+  void         Track(TRKTiltOffset* el, TRKParticle& particle);
   ///@}
 
 protected:

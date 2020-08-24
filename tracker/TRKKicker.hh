@@ -45,7 +45,7 @@ public:
   double GetHKick() const { return hkick; }
   double GetVKick() const { return vkick; }
 
-  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
+  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
   
 protected:
   /// output stream

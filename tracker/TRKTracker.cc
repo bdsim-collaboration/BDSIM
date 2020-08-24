@@ -129,7 +129,7 @@ void TRKTracker::Track(TRKBunch* bunch)
                     step = ds;
                 }
 
-                element->Track(&p, step, strategy);
+                element->Track(p, step, strategy);
 
 //                std::cout << "Particle s (before): " << p.S << std::endl;
 //                std::cout << "Step: " << step << std::endl;

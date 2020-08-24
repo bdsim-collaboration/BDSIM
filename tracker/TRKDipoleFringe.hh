@@ -41,7 +41,7 @@ public:
   inline double GetPoleface() const {return poleface;}
   inline double GetK0() const {return k0;}
   
-  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
+  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
   
 protected:
   /// output stream

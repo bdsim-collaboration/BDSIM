@@ -34,7 +34,7 @@ TRKSampler::TRKSampler(std::string nameIn,
   s(sIn)
 {;}
 
-void TRKSampler::Track(TRKParticle* particle, double /*step*/, TRKStrategy* /*strategy*/)
+void TRKSampler::Track(TRKParticle& particle, double /*step*/, TRKStrategy* /*strategy*/)
 {
   output->FillSamplerHitsTracker(index, particle, s);
 }

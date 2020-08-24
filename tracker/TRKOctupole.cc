@@ -32,7 +32,7 @@ TRKOctupole::TRKOctupole(double        strengthIn,
 TRKOctupole::~TRKOctupole()
 {;}
 
-void TRKOctupole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKOctupole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)
