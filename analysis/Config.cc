@@ -147,8 +147,9 @@ Config* Config::Instance(const std::string& fileName,
 }
 
 void Config::ParseInputFile()
-{ 
-  std::ifstream f(optionsString.at("analysisfile").c_str());
+{
+  std::string fn = optionsString.at("analysisfile");
+  std::ifstream f(fn.c_str());
 
   if(!f)
     {throw RBDSException("Config::ParseInputFile>", "could not open file");}
@@ -169,18 +170,26 @@ void Config::ParseInputFile()
   while (std::getline(f, line))
     {
       lineCounter++;
-      if (std::all_of(line.begin(), line.end(), isspace))
-	{continue;} // skip empty lines
-      else if (std::regex_search(line, comment))
-	{continue;} // skip lines starting with '#'
-      else if (std::regex_search(line, histogram))
-        {ParseHistogramLine(line);} // any histogram - must be before settings
-      else if (std::regex_search(line, spectra))
-	{ParseSpectraLine(line);}
-      else if (std::regex_search(line, particleSet))
-        {ParseParticleSetLine(line);}
-      else
-	{ParseSetting(line);} // any setting
+      try
+	{
+	  if (std::all_of(line.begin(), line.end(), isspace))
+	    {continue;} // skip empty lines
+	  else if (std::regex_search(line, comment))
+	    {continue;} // skip lines starting with '#'
+	  else if (std::regex_search(line, histogram))
+	    {ParseHistogramLine(line);} // any histogram - must be before settings
+	  else if (std::regex_search(line, spectra))
+	    {ParseSpectraLine(line);}
+	  else if (std::regex_search(line, particleSet))
+	    {ParseParticleSetLine(line);}
+	  else
+	    {ParseSetting(line);} // any setting
+	}
+      catch (RBDSException& e)
+	{
+	  e.AppendToMessage("\nProblem is on line " + std::to_string(lineCounter) + " of configuration file: " + fn + "\n");
+	  throw e;
+	}
     }
   
   f.close();
@@ -232,21 +241,10 @@ void Config::ParseHistogramLine(const std::string& line)
   if (std::regex_search(line, match, histNDim))
     {
       int nDim = std::stoi(match[1]);
-      try
-	{ParseHistogram(line, nDim);}
-      catch(std::invalid_argument& e)
-	{
-	  std::string errString = "\nProblem with histogram definition on line #"
-	    + std::to_string(lineCounter) + ": \n\"" + line + "\"\n";
-	  throw std::invalid_argument(e.what() + errString);
-	}
+      ParseHistogram(line, nDim);
     }
   else
-    {
-      std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
-	+ ": \n\"" + line + "\"\n";
-      throw RBDSException(errString);
-    }
+    {throw RBDSException("Invalid histogram type");}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
@@ -266,17 +264,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     }
   
   if (results.size() < 7)
-    {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns (too few)";
-      throw RBDSException(errString);
-    }
+    {throw RBDSException("Too few columns in histogram definition.");}
   if (results.size() > 7)
-    {// ensure not too many columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-      + " - too many columns - check no extra whitespace";
-      throw RBDSException(errString);
-    }
+    {throw RBDSException("Too many columns in histogram definition.");}
 
   bool xLog = false;
   bool yLog = false;
@@ -372,17 +362,9 @@ void Config::ParseSpectraLine(const std::string& line)
   std::vector<std::string> results = SplitOnWhiteSpace(line);
   
   if (results.size() < 6)
-    {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-        + " - invalid number of columns (too few)";
-      throw RBDSException(errString);
-    }
+    {throw RBDSException("Too few columns in spectra definition.");}
   if (results.size() > 6)
-    {// ensure not too many columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-        + " - too many columns - check no extra whitespace";
-      throw RBDSException(errString);
-    }
+    {throw RBDSException("Too many columns in spectra definition - check there's no extra whitespace");}
   
   bool xLog = false;
   bool yLog = false; // duff values to fulfill function
@@ -421,11 +403,10 @@ void Config::ParseSpectraLine(const std::string& line)
   std::set<ParticleSpec> particles;
   try
     {particles = ParseParticles(results[4]);}
-  catch (const std::exception& e)
+  catch (RBDSException& e)
     {
-      std::string err = e.what();
-      err += "\nError in spectra particle definition on line " + std::to_string(lineCounter) + "\n";
-      throw RBDSException(err);
+      e.AppendToMessage("\nError in spectra particle definition.");
+      throw RBDSException(e);
     }
   
   // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
@@ -564,7 +545,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw RBDSException("Invalid bin specification on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Invalid bin specification.");}
 }
 
 void Config::ParseBinning(const std::string& binning,
@@ -614,7 +595,7 @@ void Config::ParseBinning(const std::string& binning,
 		  (*values[counter]).high = std::stod(matchR[2]);
 		}
 	      catch (std::invalid_argument&) // if stod can't convert number to double
-		{throw RBDSException("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+		{throw RBDSException("Invalid binning number: \"" + matchS + "\"");}
 	      if ((*values[counter]).high <= (*values[counter]).low)
 		{throw RBDSException("high bin edge is <= low bin edge \"" + binning + "\"");}
 	      if (isLog[counter])
@@ -627,11 +608,10 @@ void Config::ParseBinning(const std::string& binning,
     }
   
   if (counter == 0)
-    {throw RBDSException("Invalid binning specification: \"" + binning + "\" on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Invalid binning specification: \"" + binning + "\"");}
   else if (counter < nDim)
     {
-      std::string errString = "Insufficient number of binning dimensions on line #"
-	+ std::to_string(lineCounter) + "\n"
+      std::string errString = "Insufficient number of binning dimensions: \n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
 	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw RBDSException(errString);
@@ -757,5 +737,5 @@ void Config::ParseSetting(const std::string& line)
       {throw RBDSException("Invalid option \"" + key + "\"");}
     }
   else
-    {throw RBDSException("Invalid line #" + std::to_string(lineCounter) + "\n" + line);}
+    {throw RBDSException("Invalid option line \"" + line + "\"");}
 }
