@@ -252,8 +252,8 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   // doesn't inspect words themselves
   // checks number of words, ie number of columns is correct
   std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitepsace
-  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::regex wspace("\\s+"); // any whitespace
+  // -1 here makes it point to the suffix, ie the word rather than the whitespace
   std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
   std::sregex_token_iterator end;
   for (; iter != end; ++iter)
