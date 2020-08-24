@@ -54,14 +54,24 @@ public:
 };
 
 
-template<class T> class ParticleSet
+class ParticleSet
 {
 public:
-  void Fill(T      x,
-	    double weight = 1)
+  void Fill(long int x,
+	    double   weight = 1)
   {data[x].Fill(weight);}
+  
+  std::map<long int,BinValue>::iterator       begin()        {return data.begin();}
+  std::map<long int,BinValue>::iterator       end()          {return data.end();}
+  std::map<long int,BinValue>::const_iterator begin()  const {return data.begin();}
+  std::map<long int,BinValue>::const_iterator end()    const {return data.end();}
+  bool                                   empty()  const {return data.empty();}
+  
+  BinValue& operator[](const long int key)             {return data[key];}
+  const BinValue& operator[](const long int key) const {return data.at(key);}
 
-  std::map<T, BinValue> data;
+  std::map<long int, BinValue> data;
+  unsigned long nEntries;
 };
   
 #endif
