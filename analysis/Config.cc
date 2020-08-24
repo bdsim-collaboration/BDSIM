@@ -165,7 +165,7 @@ void Config::ParseInputFile()
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
   std::regex spectra("(?:simple)*spectra(?:TE|rigidity)*(?:log)*(?:\\s+)", std::regex_constants::icase);
   // match particleset ignoring case
-  std::regex particleSet("particleset", std::regex_constants::icase);
+  std::regex particleSet("(?:simple)*particleset", std::regex_constants::icase);
 
   while (std::getline(f, line))
     {
@@ -439,6 +439,16 @@ void Config::ParseParticleSetLine(const std::string& line)
     {throw RBDSException("Too few columns in particle set definition.");}
   if (results.size() > 2)
     {throw RBDSException("Too many columns in particle set definition - check there's no extra whitespace");}
+  
+  std::string samplerName = results[1];
+  SetBranchToBeActivated("Event", samplerName);
+  
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
+  if (perEntry)
+    {eventParticleSetBranches.push_back(samplerName);}
+  else
+    {eventParticleSetSimpleBranches.push_back(samplerName);}
 }
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const

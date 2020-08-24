@@ -66,6 +66,10 @@ private:
   std::vector<HistogramDefSet*> eventHistoDefSetsSimple;
   std::vector<HistogramDefSet*> eventHistoDefSetsPerEntry;
   
+  /// List of branches in event tree to produce ParticleSet objects on. (per event and simple).
+  std::vector<std::string> eventParticleSetBranches;
+  std::vector<std::string> eventParticleSetSimpleBranches;
+  
 public:
   virtual ~Config();
 
@@ -99,6 +103,9 @@ public:
 
   inline const std::vector<HistogramDefSet*>& EventHistogramSetDefinitionsPerEntry() const
   {return eventHistoDefSetsPerEntry;}
+  
+  inline const std::vector<std::string>& EventParticleSetNamesSimple()   const {return eventParticleSetSimpleBranches;}
+  inline const std::vector<std::string>& EventParticleSetNamesPerEntry() const {return eventParticleSetBranches;}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
