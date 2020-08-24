@@ -437,7 +437,9 @@ void Config::ParseParticleSetLine(const std::string& line)
 {
   std::vector<std::string> results = SplitOnWhiteSpace(line);
   if (results.size() < 2)
-    {;} // TBC TBC
+    {throw RBDSException("Too few columns in particle set definition.");}
+  if (results.size() > 2)
+    {throw RBDSException("Too many columns in particle set definition - check there's no extra whitespace");}
 }
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
@@ -545,7 +547,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw RBDSException("Too few binning dimensions specified (N dimension = " + std::to_string(nDim) + ") + \"" + bins + "\"");}
+    {throw RBDSException("Too few binning dimensions specified (N dimensions = " + std::to_string(nDim) + ") \"" + bins + "\"");}
 }
 
 void Config::ParseBinning(const std::string& binning,
