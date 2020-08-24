@@ -35,7 +35,7 @@ public:
 		TRKPlacement *placement);
   virtual ~TRKQuadrupole();
 
-  virtual void Track(TRKParticle* bunch, double step, TRKStrategy* strategy);
+  virtual void Track(TRKParticle& bunch, double step, TRKStrategy* strategy);
 
 protected:
   /// output stream

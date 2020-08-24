@@ -46,7 +46,7 @@ TRKElement::~TRKElement()
   delete offsetOut;
 }
 
-void TRKElement::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKElement::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)

@@ -32,7 +32,7 @@ TRKDipoleFringe::TRKDipoleFringe(
 TRKDipoleFringe::~TRKDipoleFringe()
 {;}
 
-void TRKDipoleFringe::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKDipoleFringe::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
 }

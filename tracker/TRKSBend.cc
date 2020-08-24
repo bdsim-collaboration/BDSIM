@@ -36,7 +36,7 @@ TRKSBend::TRKSBend(double        angleIn,
 TRKSBend::~TRKSBend()
 {;}
 
-void TRKSBend::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKSBend::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
 }
