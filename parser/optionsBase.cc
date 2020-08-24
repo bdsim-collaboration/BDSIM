@@ -323,6 +323,8 @@ OptionsBase::OptionsBase()
   trackingType             = "default";
   trackingSteps            = 1;
   useAperture              = true;
+  backtracking             = true;
+  lossPrecision            = 0.1; // m
 }
 
 

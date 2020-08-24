@@ -62,6 +62,8 @@ private:
   /// maximum number of turns
   unsigned int maxTurns;
   bool useaperture;
+  bool backtracking;
+  double lossPrecision;
 
   BDSOutput* output;
 };

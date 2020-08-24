@@ -473,4 +473,6 @@ void Options::PublishMembers()
   publish("trackingType",    &Options::trackingType);
   publish("trackingSteps",   &Options::trackingSteps);
   publish("useAperture",     &Options::useAperture);
+  publish("backtracking",    &Options::backtracking);
+  publish("lossPrecision",   &Options::lossPrecision);
 }

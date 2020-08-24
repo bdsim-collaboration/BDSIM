@@ -359,6 +359,8 @@ namespace GMAD
     std::string trackingType;
     int         trackingSteps;
     bool        useAperture;
+    bool        backtracking;
+    double      lossPrecision;
 
     /// print some properties
     void print() const;

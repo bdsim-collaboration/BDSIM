@@ -49,6 +49,8 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 {
   useaperture = options.useAperture;
   maxTurns = std::abs(options.nturns);
+  backtracking = options.backtracking;
+  lossPrecision = options.lossPrecision * CLHEP::m;
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
 #endif
