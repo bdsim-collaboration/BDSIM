@@ -49,10 +49,8 @@ std::vector<double>* RBDS::LoadBins(const std::string& fileName)
         {continue;}
 
       double binEdge;
-      try
-	{liness >> binEdge;}
-      catch (...)
-	{throw RBDSException("invalid bin edge on line " + std::to_string(lineNum));}
+      if (!(liness >> binEdge))
+        {throw RBDSException("invalid bin edge on line " + std::to_string(lineNum) + "\n\"" + line + "\"\nCannot convert to a double.");}
       result->push_back(binEdge);
   
       if (!liness.eof())
