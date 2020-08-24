@@ -224,8 +224,7 @@ void Config::ParseHistogramLine(const std::string& line)
 {
   // Settings with histogram in name can be misidentified - check here.
   // This is the easiest way to do it for now.
-  std::string copyLine = line;
-  std::transform(copyLine.begin(), copyLine.end(), copyLine.begin(), ::tolower); // convert to lower case
+  std::string copyLine = LowerCase(line);
   if (copyLine.find("mergehistograms") != std::string::npos)
     {
       ParseSetting(line);
@@ -444,18 +443,15 @@ void Config::ParseParticleSetLine(const std::string& line)
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
 {
-  std::string res = name;
-  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+  std::string res = LowerCase(name);
   perEntry = res.find("simple") == std::string::npos;
 }
 
 bool Config::ContainsWordCI(const std::string& input,
 			    const std::string& word) const
 {
-  std::string il = input;
-  std::string wl = word;
-  std::transform(il.begin(), il.end(), il.begin(), ::tolower); // convert to lower case
-  std::transform(wl.begin(), wl.end(), wl.begin(), ::tolower);
+  std::string il = LowerCase(input);
+  std::string wl = LowerCase(word);
   return il.find(wl) != std::string::npos;
 }
 
@@ -472,8 +468,7 @@ void Config::ParseLog(const std::string& definition,
   int index = 0;
   for (; iter != end; ++iter, ++index)
     {
-      std::string res = (*iter).str();
-      std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+      std::string res = LowerCase((*iter).str());
       *(results[index]) = res == "log";
     }
 }
