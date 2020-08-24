@@ -95,10 +95,10 @@ void TRKTracker::Track(TRKBunch* bunch)
 
             double ds = RandomStep();
             double endPoint = p.getS() + ds;
-            bool advance = FALSE;
+            bool advance = false;
 
             int count = 0;
-            while (eIt != line->end() and esIt != line->endS())
+            while (eIt != line->end() && esIt != line->endS())
             {
                 count++;
                 if (count > 1e6) {break;}
@@ -107,7 +107,7 @@ void TRKTracker::Track(TRKBunch* bunch)
                 {
                     element = *eIt++;
                     SEnd = *esIt++;
-                    advance = FALSE;
+                    advance = false;
                 }
 
                 if (fabs(endPoint - p.getS()) < endPoint * 1.E-6)
