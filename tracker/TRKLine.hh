@@ -26,6 +26,7 @@ class TRKElement;
 
 //typedef std::vector<TRKElement*>::iterator TRKLineIter;
 typedef std::vector<TRKElement*>::const_iterator TRKLineConstIter;
+typedef std::vector<double>::const_iterator TRKLineConstSIter;
 
 /**
  * @brief beamline
@@ -34,6 +35,7 @@ class TRKLine {
 private: 
   // in case we use FindElement a lot, probably good to make an index also (but something for later)
   std::vector<TRKElement*> elements;
+  std::vector<double> elementEndS;   /// Vector with the s-locations at the end of beam line elements
   std::string name;               ///< name of element
   bool circular;                  ///< circular flag for rings
   
@@ -42,8 +44,13 @@ public:
   ~TRKLine();
   /// Append TRKElement to Line
   void AddElement(TRKElement *e);
+  void AddSingleElement(TRKElement *e);
+
   /// Find first element with name eName
   TRKElement* FindElement(std::string eName)const;
+
+  /// Find element to which an s position belongs
+  TRKElement* FindElement(double s)const;
 
   std::string GetName()const{return name;}
   bool GetCircular()const{return circular;}
@@ -53,6 +60,9 @@ public:
 
   TRKLineConstIter begin()const {return elements.begin();}
   TRKLineConstIter end()const {return elements.end();}
+
+  TRKLineConstSIter beginS()const {return elementEndS.begin();}
+  TRKLineConstSIter endS()const {return elementEndS.end();}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);

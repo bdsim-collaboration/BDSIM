@@ -32,16 +32,16 @@ TRKQuadrupole::TRKQuadrupole(double        strengthIn,
 TRKQuadrupole::~TRKQuadrupole()
 {;}
 
-void TRKQuadrupole::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKQuadrupole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetIn,bunch);}
+    {strategy->Track(offsetIn, particle);}
 
-  strategy->Track(this,bunch);
+  strategy->Track(this, particle, step);
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetOut,bunch);}
+    {strategy->Track(offsetOut, particle);}
 }
 
 void TRKQuadrupole::Print(std::ostream &out) const

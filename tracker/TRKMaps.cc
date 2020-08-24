@@ -40,6 +40,56 @@ void trk::maps::drift(TRKBunch &bunch, double length) noexcept {
   }
 }
 
+void trk::maps::sbend(TRKParticle &particle, double length, double angle,
+                      double k1) noexcept {
+
+    if (length == 0){
+        return;
+    }
+    auto rho = length / angle;
+
+    auto k0 = 1. / rho;
+    auto h = k0;
+
+    auto rootx = std::sqrt(h * k0 + k1);
+    auto rootxl = rootx * length;
+    auto rooty = std::sqrt(k1);
+    auto rootyl = rooty * length;
+
+    auto sx = (rootx == 0) ? length : std::sin(rootxl) / rootx;
+    auto cx = std::cos(rootxl);
+
+    auto sy = (rooty == 0) ? length : std::sinh(rootyl) / rooty;
+    auto cy = std::cosh(rootyl);
+
+    auto hbar = h / particle.beta0;
+    auto x = particle.x;
+    auto px = particle.px;
+    auto y = particle.y;
+    auto py = particle.py;
+    auto pz = particle.pz;
+
+    particle.x = (x * cx
+            + px * sx
+            + pz * hbar * (1 - cx) / std::pow(rootx, 2));
+
+    particle.px = (x * -std::pow(rootx, 2) * sx
+            + px * cx
+            + pz * hbar * sx);
+
+    particle.y = y * cy + py * sy;
+    particle.py = (y * std::pow(rooty, 2) * sy
+            + py * cy);
+
+    particle.z = (x * -hbar * sx
+            + px * -hbar * (1 - cx) / std::pow(rootx, 2)
+            + pz * (length / std::pow(particle.beta0 * particle.gamma0, 2)
+                    - std::pow(hbar, 2)
+                    * (length - sx)
+                    / std::pow(rootx, 2))
+                    + particle.z);
+}
+
 void trk::maps::sbend(TRKBunch &bunch, double length, double angle,
                       double k1) noexcept {
 
@@ -87,6 +137,53 @@ void trk::maps::sbend(TRKBunch &bunch, double length, double angle,
 		    / std::pow(rootx, 2))
 	   + p.z);
   }
+}
+
+void trk::maps::quadrupole(TRKParticle &particle, double length, double k1) noexcept {
+    // Calculate matrix terms
+    if (k1 == 0) {
+        trk::maps::drift(particle, length);
+        return;
+    }
+
+    bool xdefocusing = k1 < 0;
+
+    k1 = std::abs(k1);
+
+    auto rootk = std::sqrt(k1);
+    auto rootkl = rootk * length;
+
+    // Focusing 2x2 matrix terms
+    auto f11 = std::cos(rootkl);
+    auto f12 = std::sin(rootkl) / rootk;
+    auto f21 = std::sin(rootkl) * -rootk;
+    auto f22 = f11;
+
+    // Defocusing 2x2 matrix terms
+    auto df11 = std::cosh(rootkl);
+    auto df12 = std::sinh(rootkl) / rootk;
+    auto df21 = std::sinh(rootkl) * rootk;
+    auto df22 = df11;
+
+    if (xdefocusing) {
+        std::swap(f11, df11);
+        std::swap(f12, df12);
+        std::swap(f21, df21);
+        std::swap(f22, df22);
+    }
+
+    auto x = particle.x;
+    auto px = particle.px;
+    auto y = particle.y;
+    auto py = particle.py;
+
+    particle.x = x * f11 + px * f12;
+    particle.px = x * f21 + px * f22;
+
+    particle.y = y * df11 + py * df12;
+    particle.py = y * df21 + py * df22;
+
+    particle.z = particle.z + particle.pz * length / std::pow(particle.beta0 * particle.gamma0, 2);
 }
 
 void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {

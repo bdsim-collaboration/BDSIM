@@ -50,6 +50,9 @@ public:
   /// move a particle to bdsim tracking queue and delete from bunch, 
   void Shift(TRKBunch* bunch, TRKBunch::iterator& iter);
 
+  /// Generate a random step length
+  double RandomStep();
+
 private:
   TRKLine*  line;
   /// tracking type

@@ -16,33 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TRKSextupole_h
-#define TRKSextupole_h
+#include "TRKDipoleFringe.hh"
+#include "TRKStrategy.hh"
 
-#include "TRKElement.hh"
+TRKDipoleFringe::TRKDipoleFringe(
+            std::string   nameIn,
+		   double        polefaceIn,
+		   TRKAperture  *apertureIn,
+		   TRKPlacement *placementIn,
+		   double        k0In=0.0):
+  TRKElement(nameIn, 0.0, apertureIn, placementIn),
+  poleface(polefaceIn), k0(k0In)
+{;}
 
-/**
- * @brief Sextupole. Strength in Tesla/meter^2.
- */
+TRKDipoleFringe::~TRKDipoleFringe()
+{;}
 
-class TRKSextupole: public TRKElement
+void TRKDipoleFringe::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
 {
-public:
-  TRKSextupole(double       strength,
-	       std::string  name,
-	       double       length,
-	       TRKAperture  *aperture,
-	       TRKPlacement *placement);
-  virtual ~TRKSextupole();
+  strategy->Track(this, particle, step);
+}
 
-  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
-
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
-
-private:
-  TRKSextupole(); ///< not implemented
-};
-
-#endif
+void TRKDipoleFringe::Print(std::ostream &out) const
+{
+  TRKElement::Print(out);
+  out << "; poleface: " << poleface << "rad" << ", k0: " << k0;
+}

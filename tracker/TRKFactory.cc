@@ -40,16 +40,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
+#include "TRKDipoleFringe.hh"
+#include "TRKElementLine.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
-#include "TRKDefaultStrategy.hh"
-#include "TRKHybrid.hh"
 #include "TRKParticleDefinition.hh"
-#include "TRKStrategy.hh"
-#include "TRKThick.hh"
-#include "TRKThin.hh"
-#include "TRKThinSymplectic.hh"
+#include "TRKDefaultStrategy.hh"
+//#include "TRKHybrid.hh"
+//#include "TRKStrategy.hh"
+//#include "TRKThick.hh"
+//#include "TRKThin.hh"
+//#include "TRKThinSymplectic.hh"
 
 #include "parser/beam.h"
 #include "parser/element.h"
@@ -126,16 +128,16 @@ TRKStrategy* TRKFactory::CreateStrategy()
   TRKStrategy* result = nullptr;
   switch(strategy)
     {
-    case TRK::THIN:
-      {result = new TRKThin(trackingsteps); break;}
+//    case TRK::THIN:
+//      {result = new TRKThin(trackingsteps); break;}
     case TRK::DEFAULT:
       {result = new TRKDefaultStrategy(); break;}
-    case TRK::THINSYMPLECTIC:
-      {result = new TRKThinSymplectic(trackingsteps); break;}
-    case TRK::THICK:
-      {result = new TRKThick(trackingsteps); break;}
-    case TRK::HYBRID:
-      {result = new TRKHybrid(trackingsteps); break;}
+//    case TRK::THINSYMPLECTIC:
+//      {result = new TRKThinSymplectic(trackingsteps); break;}
+//    case TRK::THICK:
+//      {result = new TRKThick(trackingsteps); break;}
+//    case TRK::HYBRID:
+//      {result = new TRKHybrid(trackingsteps); break;}
     default:
       {break;}
     }
@@ -384,12 +386,32 @@ TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKRBend(element.angle * CLHEP::rad,
-		      element.name,
-		      element.l * CLHEP::m,
-		      aperture,
-		      placement,
-		      element.k1 / CLHEP::m2);
+
+    double angle = element.angle * CLHEP::rad;
+    double length = element.l * CLHEP::m;
+
+    double poleface = angle / 2;
+    double k0 = angle / length;
+
+    std::string name = element.name;
+
+    auto fringeIn = new TRKDipoleFringe(name + "_fringeIn", poleface, aperture, nullptr, k0);
+    auto fringeOut = new TRKDipoleFringe(name + "_fringeOut", poleface, aperture, nullptr, k0);
+
+    auto body = new TRKSBend(element.angle,
+                             element.k1 / CLHEP::m2,
+                             element.name,
+                             length,
+                             aperture,
+                             placement
+    );
+
+    auto rbendLine = new TRKElementLine(name);
+    rbendLine->AddElement(fringeIn);
+    rbendLine->AddElement(body);
+    rbendLine->AddElement(fringeOut);
+
+    return rbendLine;
 }
 
 TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)

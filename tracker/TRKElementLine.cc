@@ -16,33 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TRKSextupole_h
-#define TRKSextupole_h
+#include <iostream>
 
 #include "TRKElement.hh"
+#include "TRKElementLine.hh"
 
-/**
- * @brief Sextupole. Strength in Tesla/meter^2.
- */
+TRKElementLine::TRKElementLine(std::string nameIn) :
+  TRKElement(nameIn, 0.0, nullptr, nullptr)
+{;}
 
-class TRKSextupole: public TRKElement
-{
-public:
-  TRKSextupole(double       strength,
-	       std::string  name,
-	       double       length,
-	       TRKAperture  *aperture,
-	       TRKPlacement *placement);
-  virtual ~TRKSextupole();
+void TRKElementLine::AddElement(TRKElement* e) {
+  line.push_back(e);
+  length += e->GetLength();
+}
 
-  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
-
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
-
-private:
-  TRKSextupole(); ///< not implemented
-};
-
-#endif
+/// output stream
+std::ostream& operator<< (std::ostream &out, const TRKElementLine &line) {
+  auto elIter = line.begin();
+  auto elIterEnd = line.end();
+  for (;elIter!=elIterEnd; ++elIter) {
+    out << **elIter << std::endl;
+  }
+  return out;
+}
