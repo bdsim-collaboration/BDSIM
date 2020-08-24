@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TRKTracker_h
 #define TRKTracker_h
 
-#include "TRKBunch.hh"
+#include "TRKParticle.hh"
+
+#include <deque>
 
 class BDSOutput;
 
+class TRKBunch;
 class TRKLine;
 class TRKStrategy;
 class TRKElement;
@@ -47,8 +50,9 @@ public:
   ~TRKTracker();
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
-  /// move a particle to bdsim tracking queue and delete from bunch, 
-  void Shift(TRKBunch* bunch, TRKBunch::iterator& iter);
+
+  void BacktrackToLossPoint(TRKParticle &lostParticle, TRKElement* it,
+			    double step) const;
 
   /// Generate a random step length
   double RandomStep();
@@ -65,6 +69,7 @@ private:
   bool useaperture;
   bool backtracking;
   double lossPrecision;
+  std::deque<TRKParticle> aperlosses;
 
   BDSOutput* output;
 };

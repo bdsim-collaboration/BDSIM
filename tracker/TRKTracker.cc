@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/options.h"
 
+#include "TRKAperture.hh"
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
 #include "TRKLine.hh"
@@ -139,10 +140,17 @@ void TRKTracker::Track(TRKBunch* bunch)
                 p.S += step;
                 ds -= step;
 
+		if (useaperture && element->GetAperture()->OutsideAperture(p))
+		  {
+		    BacktrackToLossPoint(p, element, step);
+		    aperlosses.push_back(p);
+		    break;
+		  }
 //                std::cout << "Particle s (after): " << p.S << std::endl;
 //                std::cout << "End point: "<< endPoint << "\n" << std::endl;
 
             }
+
         }
 
         BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
@@ -164,4 +172,21 @@ void TRKTracker::Track(TRKBunch* bunch)
 int TRKTracker::NBisectionSteps(double interval) const
 {
   return std::ceil(std::log2(lossPrecision / interval));
+}
+
+void TRKTracker::BacktrackToLossPoint(TRKParticle& lostParticle,
+				      TRKElement* element,
+				      double step) const
+{
+  auto maxsteps = NBisectionSteps(step);
+  for (int i = step; i < maxsteps; ++i)
+    {
+      step /= 2.0;
+      step = std::abs(step);
+      if (element->GetAperture()->OutsideAperture(lostParticle))
+	{ step *= -1; } // if outside then step back
+
+      element->Track(lostParticle, step, strategy);
+      lostParticle.S += step;
+    }
 }
