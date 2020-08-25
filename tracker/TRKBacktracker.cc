@@ -16,19 +16,21 @@ BDSHitApertureImpact TRKBacktracker::GetApertureImpact(
     TRKParticle &lostParticle, TRKElement *element, double step) const
 {
   BacktrackToLossPoint(lostParticle, element, step);
-  return BDSHitApertureImpact(lostParticle.energy,
-			      lostParticle.kineticEnergy,
+  return BDSHitApertureImpact(lostParticle.Energy(),
+			      lostParticle.KineticEnergy(),
 			      lostParticle.S,
 			      lostParticle.x,
-			      lostParticle.px,
 			      lostParticle.y,
+			      lostParticle.px,
 			      lostParticle.py,
 			      1, // weight
 			      -1, // time
 			      2212, // partID, always a proton (for now)
+			      0, // trackID
+			      0, // parentID
 			      0, // turn number, 0 for now
 			      0, // beamlineIndex,
-			      0, // nElectrons (???)
+			      0 // nElectrons (???)
 			      );
 }
 
