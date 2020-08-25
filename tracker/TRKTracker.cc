@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 
 #include "TRKAperture.hh"
+#include "TRKBacktracker.hh"
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
 #include "TRKLine.hh"
@@ -46,12 +47,16 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       TRKStrategy*   strategyIn,
 		       const GMAD::Options& options,
 		       BDSOutput*           outputIn):
-  line(lineIn), strategy(strategyIn), output(outputIn)
+  line(lineIn), strategy(strategyIn),
+  useaperture(options.useAperture),
+  maxTurns(options.nturns),
+  backtracker(strategyIn,
+	      options.backtracking,
+	      options.lossPrecision * CLHEP::m),
+  output(outputIn)
 {
-  useaperture = options.useAperture;
-  maxTurns = std::abs(options.nturns);
-  backtracking = options.backtracking;
-  lossPrecision = options.lossPrecision * CLHEP::m;
+  if (maxTurns > 0)
+    { throw std::runtime_error("Must be a positive number of turns"); }
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
 #endif
@@ -76,7 +81,7 @@ void TRKTracker::Track(TRKBunch* bunch)
 
     BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
 
-    for (unsigned int i = 0; i < maxTurns; i++)
+    for (int i = 0; i < maxTurns; i++)
     {
         for (auto &p : *bunch)
         {
@@ -142,8 +147,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 
 		if (useaperture && element->GetAperture()->OutsideAperture(p))
 		  {
-		    BacktrackToLossPoint(p, element, step);
-		    aperlosses.push_back(p);
 		    break;
 		  }
 //                std::cout << "Particle s (after): " << p.S << std::endl;
@@ -169,24 +172,3 @@ void TRKTracker::Track(TRKBunch* bunch)
     }
 }
 
-int TRKTracker::NBisectionSteps(double interval) const
-{
-  return std::ceil(std::log2(lossPrecision / interval));
-}
-
-void TRKTracker::BacktrackToLossPoint(TRKParticle& lostParticle,
-				      TRKElement* element,
-				      double step) const
-{
-  auto maxsteps = NBisectionSteps(step);
-  for (int i = step; i < maxsteps; ++i)
-    {
-      step /= 2.0;
-      step = std::abs(step);
-      if (element->GetAperture()->OutsideAperture(lostParticle))
-	{ step *= -1; } // if outside then step back
-
-      element->Track(lostParticle, step, strategy);
-      lostParticle.S += step;
-    }
-}
