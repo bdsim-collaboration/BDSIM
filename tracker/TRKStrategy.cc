@@ -27,18 +27,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 extern BDSOutputBase* trkOutput;
 
-TRKStrategy::TRKStrategy(int trackingStepsIn):
-  trackingSteps(trackingStepsIn)
-{;}
-
-TRKStrategy::~TRKStrategy()
-{;}
-
-/*
-void TRKStrategy::Track(TRKElement* el, TRKBunch* bunch) {
-  Track((TRKDrift*)el,bunch);
-}
-*/
 
 void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 				       double nominalEnergyIn)

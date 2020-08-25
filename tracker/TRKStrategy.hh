@@ -39,13 +39,13 @@ class TRKTiltOffset;
  */
 class TRKStrategy
 {
-public: 
-  TRKStrategy(int trackingSteps);
+public:
+  TRKStrategy(int trackingStepsIn) : trackingSteps(trackingStepsIn) {}
 
   void SetMomentumAndEnergy(double nominalMomentumIn,
 			    double nominalEnergyIn);
-  
-  virtual ~TRKStrategy(); 
+
+  virtual ~TRKStrategy() {}
 
   /// returns tracking type
   //  TRKType trackingType()const {return type;}
