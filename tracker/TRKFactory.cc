@@ -168,7 +168,7 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
 
   if (useaperture)
     {
-      return new TRKApertureCircular(element.aper1);
+      return new TRKApertureCircular(element.aper1 * CLHEP::m);
     }
   else
     {
