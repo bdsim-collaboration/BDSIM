@@ -1,0 +1,15 @@
+universe = vanilla
+executable = bdsimjob.sh
+arguments = /scratch2/lnevay/t11/2020-07-31-t11/t11.gmad /scratch2/lnevay/t11/data/$(ClusterId) $(ProcId) /scratch2/lnevay/t11/2020-07-31-t11/analysisConfig.txt $(ProcId) 2000
+output = emails/$(ProcId).out
+error = emails/$(ProcId).err
+log = emails/$(ProcId).log
+
+request_cpus = 1
+request_disk = 4000MB
+request_memory = 1300MB
+
+ShouldTransferFiles = YES
+when_to_transfer_output = ON_EXIT
++JobFlavour = "medium"
+queue 1000
