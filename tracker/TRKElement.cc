@@ -68,13 +68,6 @@ TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
     {return nullptr;}
 }
 
-void TRKElement::ConfirmCoordinates(TRKBunch* bunch)
-{
-  //in case we don't use aperture, we still have to confirm coordinates
-  for (auto& particle : *bunch)
-    {particle.ConfirmNewCoordinates();}
-}
-
 void TRKElement::SetOffset(double x, double y)
 {
   if (!offsetIn)
