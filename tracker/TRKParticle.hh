@@ -48,19 +48,13 @@ public:
   //accessors
   double getS()const      {return S;}
 
-  /// return coordinate in micrometres
-  ///@{
-  double X()const      {return posmom.X();}  
-  double Y()const      {return posmom.Y();}
-  ///@}
-  /// return coordinate in metres
-  double Z()const      {return posmom.Z();}
-  /// return momentum coordinate in rad
-  ///@{
-  double Xp()const     {return posmom.Xp();}
-  double Yp()const     {return posmom.Yp();}
-  double Zp()const     {return posmom.Zp();}
-  ///@}
+  inline double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
+  inline double KineticEnergy() const { return Energy() - mass; }
+  inline double ReferenceMomentum() const
+  {
+    return mass * std::sqrt(gamma0*gamma0 - 1);
+  }
+
   /// return kinetic energy in MeV
   double Ek()const      {return sqrt(p*p+mass*mass)-mass;}
   /// return mass in MeV / c^2
@@ -71,23 +65,6 @@ public:
   int    Charge()const {return charge;}
   /// return eventID
   int    EventID()const {return eventID;}
-
-  vector6 PosMom()const {return posmom;}
-  vector3 Pos()const    {return posmom.Pos();}
-  vector3 Mom()const    {return posmom.Mom();}
-
-  vector6 PosMomBefore()const {return posmombefore;}
-  vector3 PosBefore()const    {return posmombefore.Pos();}
-  vector3 MomBefore()const    {return posmombefore.Mom();}
-  double  PBefore()const      {return pbefore;}
-
-  //setting functions
-  void    SetPosMom(vector6 posmomIn);
-  void    SetPosMom(vector3 posIn, vector3 momIn);
-  void    SetP(double pIn){p=pIn;}
-
-  //toggle the beforeindex
-  void ConfirmNewCoordinates() {pbefore = p; posmombefore=posmom;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
@@ -106,11 +83,8 @@ public:
   double S;
 
 private:
-  /// position in micrometre (transverse) and metre (longitudinal) and momentum in rad
-  vector6 posmom;
-  vector6 posmombefore;
 
-  //mass and charge don't change in the tracker!
+  // mass and charge don't change in the tracker!
   /// momentum in MeV - can change in tracker
   double p; 
   double pbefore;
