@@ -19,13 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TRKTracker_h
 #define TRKTracker_h
 
-#include "TRKParticle.hh"
+#include <memory>
 
+#include "TRKParticle.hh"
 #include "TRKBacktracker.hh"
 
-#include <deque>
 
-class BDSOutput;
+
+class TRKOutput;
 
 class TRKBunch;
 class TRKLine;
@@ -48,7 +49,7 @@ public:
   TRKTracker(TRKLine*             line,
 	     TRKStrategy*         strategy,
 	     const GMAD::Options& options,
-	     BDSOutput*           outputIn);
+	     std::shared_ptr<TRKOutput> outputIn);
   ~TRKTracker();
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
@@ -66,8 +67,8 @@ private:
   int maxTurns;
   bool useaperture;
   TRKBacktracker backtracker;
+  std::shared_ptr<TRKOutput> output;
 
-  BDSOutput* output;
 };
 
 #endif

@@ -62,8 +62,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 TRKFactory::TRKFactory(const GMAD::Options&   options,
 		       BDSParticleDefinition* particle,
-		       BDSOutput*             outputIn):
-  output(outputIn)
+		       std::shared_ptr<TRKOutput> outputIn):
+  output(std::move(outputIn))
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;

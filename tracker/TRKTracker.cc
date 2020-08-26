@@ -22,10 +22,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <random>
 #include <map>
+#include <memory>
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutput.hh"
+#include "TRKOutput.hh"
 
 #include "parser/options.h"
 
@@ -46,14 +47,14 @@ typedef std::chrono::milliseconds milliseconds;
 TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       TRKStrategy*   strategyIn,
 		       const GMAD::Options& options,
-		       BDSOutput*           outputIn):
+		       std::shared_ptr<TRKOutput> outputIn):
   line(lineIn), strategy(strategyIn),
   useaperture(options.useAperture),
   maxTurns(options.nturns),
   backtracker(strategyIn,
 	      options.backtracking,
 	      options.lossPrecision * CLHEP::m),
-  output(outputIn)
+  output(std::move(outputIn))
 {
   if (maxTurns > 0)
     { throw std::runtime_error("Must be a positive number of turns"); }
@@ -165,9 +166,24 @@ void TRKTracker::Track(TRKBunch* bunch)
 
         // finish an event in the output which is a turn here
         const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
-        output->FillEvent(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                          nullptr, nullptr, nullptr, nullptr, scorerhits, i);
+        output->FillEvent(nullptr, // EventInfo
+			  nullptr, // vertex
+			  nullptr, // sampler hits plane
+			  nullptr, // sampler hits cylinder
+			  nullptr, // energy loss
+			  nullptr, // energy loss full
+                          nullptr, // energy loss vacuum
+			  nullptr, // energy loss tunnel
+			  nullptr, // energy loss world
+			  nullptr, // energy loss contents
+			  nullptr, // world exit hits
+			  nullptr, // primary hit
+                          nullptr, // primary loss
+			  nullptr, // trajectories
+			  nullptr, // collimator hits
+			  nullptr, // aperture impacts
+			  scorerhits, // scorer hits map
+			  i); // turns taken
 
     }
 }
