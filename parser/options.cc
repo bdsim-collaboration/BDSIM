@@ -432,6 +432,7 @@ void Options::PublishMembers()
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
+  publish("storeSamplerPolarCoordinates",   &Options::storeSamplerPolarCoords); ///< alternative
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
   publish("storeSamplerKineticEnergy",      &Options::storeSamplerKineticEnergy);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
