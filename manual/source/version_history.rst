@@ -83,6 +83,10 @@ General
   allows the static library to be compiled too (in addition to the shared one).
 * rebdsimCombine will exit if the first argument, which is meant to be the single output file, contains
   an asterix (*), as it is likely the arguments are in the wrong order.
+* BDSIM will exit if the option :code:`minimumKineticEnergy` is set to a value higher than the kinetic
+  energy of the beam particle. This takes into account the possibly different kinetic energy of the beam
+  particle versus the design particle. Such a combination of options would result in all primary particles
+  being immediately killed and not tracked through the model.
 
 Bug Fixes
 ---------
