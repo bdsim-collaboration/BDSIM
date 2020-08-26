@@ -81,6 +81,8 @@ General
 
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
+* rebdsimCombine will exit if the first argument, which is meant to be the single output file, contains
+  an asterix (*), as it is likely the arguments are in the wrong order.
 
 Bug Fixes
 ---------
