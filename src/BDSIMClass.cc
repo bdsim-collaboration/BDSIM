@@ -224,6 +224,9 @@ int BDSIM::Initialise()
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
+  G4double minEK = BDSGlobalConstants::Instance()->MinimumKineticEnergy();
+  if (beamParticle->KineticEnergy() < minEK && BDS::IsFinite(minEK))
+    {throw BDSException("option, minimumKineticEnergy is higher than kinetic energy of the beam - all primary particles wil be killed!");}
   if (usualPrintOut)
     {
       G4cout << "Design particle properties: " << G4endl << *designParticle;

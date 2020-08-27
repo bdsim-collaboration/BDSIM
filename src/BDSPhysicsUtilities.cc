@@ -571,7 +571,7 @@ void BDS::FixGeant105ThreshholdsForParticle(const G4ParticleDefinition* particle
   if (!particleDef)
     {return;}
   // taken from the Geant4.10.5 field01 example
-  // used to compensate for agressive killing in Geant4.10.5
+  // used to compensate for aggressive killing in Geant4.10.5
   G4double warningEnergy   =   1.0 * CLHEP::kiloelectronvolt;  // Arbitrary
   G4double importantEnergy =  10.0 * CLHEP::kiloelectronvolt;  // Arbitrary
   G4double numberOfTrials  =  1500;                            // Arbitrary
