@@ -62,8 +62,6 @@ private:
   TRKLine*  line;
   /// tracking type
   TRKStrategy* strategy;
-  /// aperture check
-  /// maximum number of turns
   int maxTurns;
   bool useaperture;
   TRKBacktracker backtracker;
