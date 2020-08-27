@@ -56,7 +56,7 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 	      options.lossPrecision * CLHEP::m),
   output(std::move(outputIn))
 {
-  if (maxTurns > 0)
+  if (maxTurns <= 0)
     { throw std::runtime_error("Must be a positive number of turns"); }
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
