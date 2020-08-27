@@ -1,4 +1,5 @@
-option, ngenerate=10;
+option, ngenerate=10,
+	useAperture=0;
 
 beam,  particle="proton",
        energy=6.5*TeV,
