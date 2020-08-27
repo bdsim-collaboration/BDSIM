@@ -15,7 +15,6 @@ TRKOutput::TRKOutput(std::string file) : filename(file)
 
 TRKOutput::~TRKOutput()
 {
-  CloseFile();
   delete output;
 }
 

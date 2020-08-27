@@ -101,8 +101,9 @@ int main (int argc, char** argv)
   //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);
 
+  output->CloseFile();
 
-  // free memory (good code test)
+  // // free memory (good code test)
   delete designParticle;
   delete beamParticle;
   delete factory;
