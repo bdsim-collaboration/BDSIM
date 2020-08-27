@@ -146,7 +146,7 @@ void TRKTracker::Track(TRKBunch* bunch)
                 p.S += step;
                 ds -= step;
 
-		if (useaperture && element->GetAperture()->OutsideAperture(p))
+		if (useaperture && element->OutsideAperture(p))
 		  {
 		    break;
 		  }

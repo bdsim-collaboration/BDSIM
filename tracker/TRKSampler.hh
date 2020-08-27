@@ -40,12 +40,14 @@ public:
 	     double s);
   virtual ~TRKSampler(){;}
 
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* /*strategy*/);
+  virtual void Track(TRKParticle &particle, double step,
+                     TRKStrategy*) override;
+  bool OutsideAperture(TRKParticle const &p) const override;
 
 protected:
   /// output stream
-  virtual void Print(std::ostream& out) const;
-  
+  void Print(std::ostream& out) const override;
+
 private:
   TRKSampler(); ///< not implemented
 

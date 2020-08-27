@@ -59,6 +59,10 @@ void TRKElement::Track(TRKParticle& particle, double step, TRKStrategy* strategy
 
 }
 
+bool TRKElement::OutsideAperture(TRKParticle const &p) const {
+  return GetAperture()->OutsideAperture(p);
+}
+
 TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
 {
   //use member instance of Aperture strategy called aperture
