@@ -158,6 +158,7 @@ protected:
   /// @{ Options for dynamic bits of output.
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
+  G4bool storeApertureImpactsHistograms;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
