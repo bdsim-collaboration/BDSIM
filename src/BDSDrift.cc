@@ -36,8 +36,8 @@ BDSDrift::~BDSDrift()
 
 void BDSDrift::Build()
 {
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
+  BDSBeamPipeFactory factory;
+  BDSBeamPipe* pipe = factory.CreateBeamPipe(name,
 					      chordLength,
 					      beamPipeInfo);
 

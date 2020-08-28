@@ -142,7 +142,8 @@ void BDSShield::BuildBeamPipe()
     }
   
   // construct and place beam pipe
-  auto bp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+  BDSBeamPipeFactory factory;
+  auto bp = factory.CreateBeamPipe(name,
 							   chordLength - lengthSafety,
 							   beamPipeInfo);
   RegisterDaughter(bp);

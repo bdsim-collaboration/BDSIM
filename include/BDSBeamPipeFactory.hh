@@ -44,8 +44,7 @@ class BDSBeamPipeFactoryBase;
 class BDSBeamPipeFactory
 {
 public:
-  static BDSBeamPipeFactory* Instance(); ///< Singleton accessor.
-  
+  BDSBeamPipeFactory();
   ~BDSBeamPipeFactory();
 
   BDSBeamPipe* CreateBeamPipe(G4String         name,
@@ -77,9 +76,6 @@ public:
 			      G4Material*     beamPipeMaterial);
 
 private:
-  BDSBeamPipeFactory(); ///< Private constructor as singleton pattern.
-  static BDSBeamPipeFactory* instance; ///< Singleton instance pointer.
-
   /// Return the appropriate factory singleton pointer given a type.
   BDSBeamPipeFactoryBase* GetAppropriateFactory(BDSBeamPipeType beamPipeTypeIn);
 

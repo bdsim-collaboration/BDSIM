@@ -152,7 +152,8 @@ void BDSMagnet::Build()
 
 void BDSMagnet::BuildBeampipe()
 {
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
+  BDSBeamPipeFactory factory;
+  beampipe = factory.CreateBeamPipe(name+"_bp",
 							    chordLength - 2*lengthSafety,
 							    beamPipeInfo);
 

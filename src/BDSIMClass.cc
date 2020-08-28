@@ -451,7 +451,6 @@ BDSIM::~BDSIM()
     {
       // order important here because of singletons relying on each other
 	  delete BDSSDManager::Instance();
-      delete BDSBeamPipeFactory::Instance();
       delete BDSCavityFactory::Instance();
       delete BDSGeometryFactory::Instance();
       delete BDSAcceleratorModel::Instance();

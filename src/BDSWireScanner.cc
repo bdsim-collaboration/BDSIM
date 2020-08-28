@@ -75,8 +75,8 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
 
 void BDSWireScanner::BuildContainerLogicalVolume()
 {
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name + "_beampipe",
+  BDSBeamPipeFactory factory;
+  BDSBeamPipe* pipe = factory.CreateBeamPipe(name + "_beampipe",
 					      chordLength,
 					      beamPipeInfo);
   RegisterDaughter(pipe);

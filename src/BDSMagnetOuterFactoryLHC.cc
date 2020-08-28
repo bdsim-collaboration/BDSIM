@@ -869,8 +869,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
-  //use beampipe factories to create another beampipe (note no magnetic field for now...)  
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+  //use beampipe factories to create another beampipe (note no magnetic field for now...)
+  BDSBeamPipeFactory factory;
+  BDSBeamPipe* secondBP = factory.CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
 									 name,
 									 2*secondBPHalfLength-2*lengthSafety,
 									 inputFaceNormal,
@@ -1464,7 +1465,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+  BDSBeamPipeFactory factory;
+  BDSBeamPipe* secondBP = factory.CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
 									 name,
 									 length-2*lengthSafety,
 									 2.202*CLHEP::cm,   // aper1

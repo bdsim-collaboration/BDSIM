@@ -128,9 +128,9 @@ void BDSUndulator::BuildContainerLogicalVolume()
 void BDSUndulator::Build()
 {
   BDSAcceleratorComponent::Build();
-
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength, beamPipeInfo);
+  
+  BDSBeamPipeFactory factory;
+  BDSBeamPipe* pipe = factory.CreateBeamPipe(name, chordLength, beamPipeInfo);
   RegisterDaughter(pipe);
 
   G4double singleMagnetLength = (undulatorPeriod * 0.5) - lengthSafetyLarge;

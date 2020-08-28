@@ -137,7 +137,6 @@ BDSComponentFactory::~BDSComponentFactory()
   // created through this class.
   try
     {//no exceptions in destructor
-      delete BDSBeamPipeFactory::Instance();
       delete BDSMagnetOuterFactory::Instance();
     }
   catch (...)

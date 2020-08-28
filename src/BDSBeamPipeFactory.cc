@@ -34,15 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSBeamPipeFactory* BDSBeamPipeFactory::instance = nullptr;
-
-BDSBeamPipeFactory* BDSBeamPipeFactory::Instance()
-{
-  if (!instance)
-    {instance = new BDSBeamPipeFactory();}
-  return instance;
-}
-
 BDSBeamPipeFactory::BDSBeamPipeFactory()
 {
   circular       = new BDSBeamPipeFactoryCircular();
