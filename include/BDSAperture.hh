@@ -42,7 +42,7 @@ class BDSAperture
 {
 public:
   explicit BDSAperture(BDSApertureType apertureTypeIn);
-  BDSAperture(BDSApertureType apertureTypeIn,
+  BDSAperture(BDSApertureType      apertureTypeIn,
 	      const BDSTiltOffset& tiltOffsetIn);
   virtual ~BDSAperture(){;}
 

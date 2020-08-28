@@ -21,7 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBeamPipeType.hh"
 
-#include "G4String.hh"
 #include "G4Types.hh"
 #include "G4ThreeVector.hh"
 
