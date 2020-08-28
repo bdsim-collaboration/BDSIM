@@ -75,7 +75,8 @@ class BDSComponentFactory
 {
 public:
   explicit BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
+			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr,
+			       G4bool usualPrintOut = true);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -184,7 +185,10 @@ public:
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
-  
+
+  /// Utility function to prepare crystal recipe for an element. Produces a unique object
+  /// this class doesn't own.
+  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
@@ -282,10 +286,6 @@ private:
 
   /// Prepare all crystals in defined the parser.
   void PrepareCrystals();
-
-  /// Utility funciton to prepare crystal recipe for an element. Produces a unique object
-  /// this class doesn't own.
-  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 
   /// Utility function to prepare model info. Retrieve from cache of ones translated
   /// parser objects or create a default based on the element's aperture if none specified.

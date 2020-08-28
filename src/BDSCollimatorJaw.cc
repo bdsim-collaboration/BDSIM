@@ -141,10 +141,10 @@ void BDSCollimatorJaw::Build()
 
   // update jaw half gap with offsets
   if (BDS::IsFinite(xSizeLeft))
-	{leftJawHalfGap = xSizeLeft;}
+    {leftJawHalfGap = xSizeLeft;}
   if (BDS::IsFinite(xSizeRight))
-	{rightJawHalfGap = xSizeRight;}
-
+    {rightJawHalfGap = xSizeRight;}
+  
   // jaws have to fit inside containerLogicalVolume so calculate full jaw widths given offsets
   G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
   G4double rightJawWidth = 0.5 * horizontalWidth - rightJawHalfGap;

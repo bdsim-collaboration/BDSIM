@@ -102,7 +102,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-					 BDSComponentFactoryUser* userComponentFactoryIn):
+					 BDSComponentFactoryUser*     userComponentFactoryIn,
+                                         G4bool                       usualPrintOut):
   designParticle(designParticleIn),
   userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
@@ -111,11 +112,14 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
+  if (!designParticle)
+    {throw BDSException(__METHOD_NAME__, "no valid design particle - required.");}
   brho  = designParticle->BRho();
   beta0 = designParticle->Beta();
   
   integratorSet = BDS::IntegratorSet(integratorSetType);
-  G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
+  if (usualPrintOut)
+    {G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;}
 
   PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
@@ -2223,7 +2227,12 @@ BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(const G4String& crystalN
 {
   auto result = crystalInfos.find(crystalName);
   if (result == crystalInfos.end())
-    {throw BDSException(__METHOD_NAME__, "unknown crystal \"" + crystalName + "\" - please define it");}
+    {
+      G4cout << "Defined crystals are:" << G4endl;
+      for (const auto& kv : crystalInfos)
+	{G4cout << kv.first << G4endl;}
+      throw BDSException(__METHOD_NAME__, "unknown crystal \"" + crystalName + "\" - please define it");
+    }
 
   // prepare a copy so the component can own that recipe
   BDSCrystalInfo* info = new BDSCrystalInfo(*(result->second));
