@@ -98,20 +98,20 @@ protected:
   virtual void CleanUp();
   
   /// finalise beampipe construction
-  void CommonConstruction(G4String    nameIn,
+  void CommonConstruction(const G4String&    nameIn,
 			  G4Material* vacuumMaterialIn,
 			  G4Material* beamPipeMaterialIn,
 			  G4double    length);
 
   /// build beampipe and register logical volumes
-  BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
+  BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(const BDSExtent& extent,
 					       G4double  containerRadius,
 					       G4bool    containerIsCircular = false);
   
-  // methods called by CommonConstruction, can be implmented by derived classes
+  // methods called by CommonConstruction, can be implemented by derived classes
   
   /// build logical volumes
-  virtual void BuildLogicalVolumes(G4String    nameIn,
+  virtual void BuildLogicalVolumes(const G4String&    nameIn,
 				   G4Material* vacuumMaterialIn,
 				   G4Material* beamPipeMaterialIn);
   /// Set visual attributes.
@@ -121,10 +121,10 @@ protected:
   virtual void SetUserLimits(G4double length);
 
   /// Place volumes.
-  virtual void PlaceComponents(G4String nameIn);
+  virtual void PlaceComponents(const G4String& nameIn);
   
   G4bool           sensitiveBeamPipe;    ///< Whether the beam pipe will record energy deposition.
-  G4bool           sensitiveVacuum;      ///< Wehther the vacuum will record any energy deposition.
+  G4bool           sensitiveVacuum;      ///< Whether the vacuum will record any energy deposition.
   G4bool           storeApertureImpacts; ///< Whether to store aperture impacts.
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;

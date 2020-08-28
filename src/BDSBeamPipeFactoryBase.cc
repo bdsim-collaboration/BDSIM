@@ -64,7 +64,7 @@ void BDSBeamPipeFactoryBase::CleanUpBase()
   outputFaceNormal = G4ThreeVector(0,0, 1);
 }
   
-void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
+void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
 						G4Material* vacuumMaterialIn,
 						G4Material* beamPipeMaterialIn,
 						G4double    length)
@@ -81,7 +81,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   PlaceComponents(nameIn);
 }
 
-void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
+void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
 						 G4Material* vacuumMaterialIn,
 						 G4Material* beamPipeMaterialIn)
 {
@@ -128,7 +128,7 @@ void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
   containerLV->SetUserLimits(ul);
 }
 
-void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
+void BDSBeamPipeFactoryBase::PlaceComponents(const G4String& nameIn)
 {
   // PLACEMENT
   // place the components inside the container
@@ -154,7 +154,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   allPhysicalVolumes.insert(beamPipePV);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
+BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(const BDSExtent& extent,
 								     G4double  containerRadius,
 								     G4bool    containerIsCircular)
 {  
