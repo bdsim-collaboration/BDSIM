@@ -46,7 +46,7 @@ public:
   BDSBeamPipeInfo2() = delete;
   /// Constructor to assign all members at once
   BDSBeamPipeInfo2(BDSBeamPipeType beamPipeTypeIn,
-                   BDSAperture*    apertureInIn,
+                   BDSAperture*    apertureIn,
                    G4Material*     vacuumMaterialIn,
                    G4double        beamPipeThicknessIn,
                    G4Material*     beamPipeMaterialIn,
@@ -58,23 +58,12 @@ public:
   BDSBeamPipeInfo2(const BDSBeamPipeInfo2& other);
   BDSBeamPipeInfo2& operator=(const BDSBeamPipeInfo2& other) = delete;
 
-  /// Return a BDSExtent instance for the transverse extents - extent in Z is 0 as this is
-  /// only aperture information. Includes beam pipe thickness.
-  BDSExtent Extent() const;
-
-  /// Return an extent for just the raw aperture.
-  BDSExtent ExtentInner() const;
-
-  /// Return an indicative extent of the beam pipe - typically the maximum of x or y extent.
-  G4double IndicativeRadius() const;
-
-  /// Return an indicative inner extent for the beam pipe vacuum.
-  G4double IndicativeRadiusInner() const;
+  ~BDSBeamPipeInfo2();
 
   //  Public member for direct access
   /// @{ Necessary members.
   BDSBeamPipeType beamPipeType;
-  BDSAperture*    apertureIn;
+  BDSAperture*    aperture;
   G4Material*     vacuumMaterial;
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;

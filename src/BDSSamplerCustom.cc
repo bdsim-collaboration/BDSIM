@@ -20,13 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
-#include "BDSException.hh"
 #include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSDSampler.hh"
 #include "BDSSDManager.hh"
 
-#include "G4LogicalVolume.hh"
 #include "G4String.hh"
 #include "G4Tubs.hh"
 #include "G4Types.hh"
@@ -40,44 +38,14 @@ BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
   // problems with overlapping faces - unlike normal samplers were
   // BDSIM strictly controls the layout.
   BDSApertureFactory fac;
-  containerSolid = fac.CreateAperture(name + "_aperture",
+  containerSolid = fac.CreateSolid(name + "_aperture",
 				      BDSSamplerPlane::chordLength,
 				      shape);
-  */
+  
   // We make the sampler 10x bigger than normal as it's still really small
   // but less likely to cause overlap problems. The original sampler width
   // is designed to be functional but as small as possible to avoid introducing
   // extra length for optical tracking.
-  switch (shape.apertureType.underlying())
-    {
-    case BDSApertureType::circular:
-    case BDSApertureType::circularvacuum:
-      {
-	containerSolid = new G4Tubs(name + "_solid",
-				    0,
-				    shape.aper1,
-				    10*BDSSamplerPlane::chordLength,
-				    0,
-				    CLHEP::twopi);
-	break;
-      }
-    case BDSApertureType::rectangular:
-      {
-	containerSolid = new G4Box(name + "_solid",
-				   shape.aper1,
-				   shape.aper2,
-				   10*BDSSamplerPlane::chordLength);
-	break;
-      }
-    default:
-      {
-	std::string msg = "Shape \"" + shape.apertureType.ToString() + "\" is not currently supported.\n";
-	msg += "Please use circular or rectangular.";
-	throw BDSException(__METHOD_NAME__, msg);
-	break;
-      }
-    }
-  
 
   BDSExtent ae = shape->Extent();
   G4double  dz = BDSSamplerPlane::chordLength * 0.5;
