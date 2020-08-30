@@ -33,34 +33,16 @@ class BDSBeamPipeFactoryLHCDetailed: public BDSBeamPipeFactoryBase
 public:
   BDSBeamPipeFactoryLHCDetailed();
   virtual ~BDSBeamPipeFactoryLHCDetailed(){;}
+  
+  BDSBeamPipe* CreateBeamPipe(const G4String&   name,
+                                      G4double          length,
+                                      BDSBeamPipeInfo2* bpi) override {return nullptr;}
 
   /// Access cooling pipe information from factory for parameter tests
   G4double GetFullWidthOfCoolingPipe();
 
   /// Clean up extra pointers particular to this factory before use
-  virtual void CleanUp();
-
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,
-				      G4double    lengthIn,
-				      G4double    aper1               = 0,
-				      G4double    aper2               = 0,
-				      G4double    aper3               = 0,
-				      G4double    aper4               = 0,
-				      G4Material* vacuumMaterialIn    = nullptr,
-				      G4double    beamPipeThicknessIn = 0,
-				      G4Material* beamPipeMaterialIn  = nullptr);
-  
-  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
-				      G4double      lengthIn,
-				      G4ThreeVector inputFaceNormalIn,
-				      G4ThreeVector outputFaceNormalIn,
-				      G4double      aper1               = 0,
-				      G4double      aper2               = 0,
-				      G4double      aper3               = 0,
-				      G4double      aper4               = 0,
-				      G4Material*   vacuumMaterialIn    = nullptr,
-				      G4double      beamPipeThicknessIn = 0,
-				      G4Material*   beamPipeMaterialIn  = nullptr);
+  void CleanUp() override;
 
 private:
   /// Do the actual clean up of members here in a non-virtual function so it can be
@@ -69,22 +51,22 @@ private:
   
   /// only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  group all this functionality together
-  BDSBeamPipe* CommonFinalConstruction(G4String    name,
+  BDSBeamPipe* CommonFinalConstruction(const G4String&    name,
 				       G4Material* vacuumMaterial,
 				       G4Material* beamPipeMaterial,
 				       G4double    length,
 				       G4double    containerRadius);
-  G4double CreateGeneralAngledSolids(G4String      name,
+  G4double CreateGeneralAngledSolids(const G4String&      name,
 				     G4double      length,
 				     G4ThreeVector inputface,
 				     G4ThreeVector outputface);
 
-  virtual void          BuildLogicalVolumes(G4String    nameIn,
+  void  BuildLogicalVolumes(const G4String&    nameIn,
 					    G4Material* vacuumMaterialIn,
-					    G4Material* beamPipeMaterialIn);
-  virtual void  SetVisAttributes();
-  virtual void  SetUserLimits(G4double length);
-  virtual void  PlaceComponents(G4String nameIn);
+					    G4Material* beamPipeMaterialIn) override;
+  void  SetVisAttributes() override;
+  void  SetUserLimits(G4double length) override;
+  void  PlaceComponents(const G4String& nameIn) override;
 
   /// Utility function to initialise the geometry parameters
   void InitialiseGeometricalParameters();

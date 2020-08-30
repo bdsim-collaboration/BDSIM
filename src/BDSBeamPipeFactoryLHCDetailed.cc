@@ -164,13 +164,13 @@ void BDSBeamPipeFactoryLHCDetailed::CalculateGeometricalParameters(G4double aper
     {buildCoolingPipe = false;}
 }
   
-
-BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
+/*
+BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(const G4String&    name,
 							   G4double    length,
 							   G4double    aper1,
 							   G4double    aper2,
 							   G4double    aper3,
-							   G4double    /*aper4*/,
+							   G4double    /*aper4*/,/*
 							   G4Material* vacuumMaterial,
 							   G4double    beamPipeThickness,
 							   G4Material* beamPipeMaterial)
@@ -334,6 +334,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
   return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial, length, containerRadius);
 }
 
+*/
+
+/*
+
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
 							   G4double      length,
 							   G4ThreeVector inputFaceNormalIn,
@@ -341,7 +345,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
 							   G4double      aper1,
 							   G4double      aper2,
 							   G4double      aper3,
-							   G4double      /*aper4*/,
+							   G4double      /*aper4*/,  /*
 							   G4Material*   vacuumMaterial,
 							   G4double      beamPipeThickness,
 							   G4Material*   beamPipeMaterial)
@@ -361,8 +365,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
   return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial,
 				 length, contRadius);
 }
+ */
 
-BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,
+BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(const G4String&    name,
 								    G4Material* vacuumMaterial,
 								    G4Material* beamPipeMaterial,
 								    G4double    length,
@@ -389,7 +394,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   return aPipe;
 }
 
-void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    name,
+void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(const G4String&    name,
 							G4Material* vacuumMaterialIn,
 							G4Material* beamPipeMaterialIn)
 {
@@ -453,7 +458,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
     {coolingPipeLV->SetUserLimits(ul);}
 }
 
-void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
+void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(const G4String& name)
 {
   BDSBeamPipeFactoryBase::PlaceComponents(name);
 
@@ -518,7 +523,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
   
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
 /// by grouping common construction tasks
-G4double BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name,
+G4double BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(const G4String&      name,
 								  G4double      length,
 								  G4ThreeVector inputface,
 								  G4ThreeVector outputface)

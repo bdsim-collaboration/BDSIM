@@ -33,6 +33,8 @@ class G4PVPlacement;
 class G4UserLimits;
 class G4VSolid;
 
+class BDSBeamPipeInfo2;
+
 /**
  * @brief Abstract base class for beampipe factory classes.
  * 
@@ -57,33 +59,10 @@ class G4VSolid;
 class BDSBeamPipeFactoryBase: public BDSFactoryBase
 {
 public:
-  /// create a flat ended beampipe
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                      // name
-				      G4double    lengthIn,                    // length [mm]
-				      G4double    aper1 = 0,                   // aperture parameter 1
-				      G4double    aper2 = 0,                   // aperture parameter 2
-				      G4double    aper3 = 0,                   // aperture parameter 3
-				      G4double    aper4 = 0,                   // aperture parameter 4
-				      G4Material* vacuumMaterialIn = nullptr,  // vacuum material
-				      G4double    beamPipeThicknessIn = 0,     // beampipe thickness [mm]
-				      G4Material* beamPipeMaterialIn = nullptr // beampipe material
-				      ) = 0;
-
-  /// Create a beam pipe with angled faces as described by unit normal vectors. The input
-  /// face normal vector must have a negative z component and the output face a positive
-  /// z component.
-  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
-				      G4double      lengthIn,
-				      G4ThreeVector inputFaceNormalIn,
-				      G4ThreeVector outputFaceNormalIn,
-				      G4double      aper1               = 0,
-				      G4double      aper2               = 0,
-				      G4double      aper3               = 0,
-				      G4double      aper4               = 0,
-				      G4Material*   vacuumMaterialIn    = nullptr,
-				      G4double      beamPipeThicknessIn = 0,
-				      G4Material*   beamPipeMaterialIn  = nullptr) = 0;
-
+  virtual BDSBeamPipe* CreateBeamPipe(const G4String&   name,
+                              G4double          length,
+                              BDSBeamPipeInfo2* bpi) = 0;
+  
   /// Virtual base destructor
   virtual ~BDSBeamPipeFactoryBase(){;}
 

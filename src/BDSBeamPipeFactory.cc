@@ -16,154 +16,62 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
-#include "BDSBeamPipeFactoryCircular.hh"
-#include "BDSBeamPipeFactoryCircularVacuum.hh"
-#include "BDSBeamPipeFactoryClicPCL.hh"
-#include "BDSBeamPipeFactoryElliptical.hh"
-#include "BDSBeamPipeFactoryRectangular.hh"
-#include "BDSBeamPipeFactoryLHC.hh"
+#include "BDSBeamPipeFactoryGeneral.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
-#include "BDSBeamPipeFactoryOctagonal.hh"
-#include "BDSBeamPipeFactoryRaceTrack.hh"
-#include "BDSBeamPipeFactoryRectEllipse.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "globals.hh"                        // geant4 globals / types
 
 BDSBeamPipeFactory::BDSBeamPipeFactory()
 {
-  circular       = new BDSBeamPipeFactoryCircular();
-  elliptical     = new BDSBeamPipeFactoryElliptical();
-  rectangular    = new BDSBeamPipeFactoryRectangular();
-  lhc            = new BDSBeamPipeFactoryLHC();
-  lhcdetailed    = new BDSBeamPipeFactoryLHCDetailed();
-  rectellipse    = new BDSBeamPipeFactoryRectEllipse();
-  racetrack      = new BDSBeamPipeFactoryRaceTrack();
-  octagonal      = new BDSBeamPipeFactoryOctagonal();
-  circularvacuum = new BDSBeamPipeFactoryCircularVacuum();
-  clicpcl        = new BDSBeamPipeFactoryClicPCL();
+  general     = new BDSBeamPipeFactoryGeneral();
+  lhcdetailed = new BDSBeamPipeFactoryLHCDetailed();
 }
 
 BDSBeamPipeFactory::~BDSBeamPipeFactory()
 {
-  delete circular;
-  delete elliptical;
-  delete rectangular;
-  delete lhc;
+  delete general;
   delete lhcdetailed;
-  delete rectellipse;
-  delete racetrack;
-  delete octagonal;
-  delete circularvacuum;
-  delete clicpcl;
-  instance = nullptr;
 }
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
 {
+  BDSBeamPipeFactoryBase* result;
   switch(type.underlying())
     {
     case BDSBeamPipeType::circular:
-      {return circular; break;}
     case BDSBeamPipeType::elliptical:
-      {return elliptical; break;}
     case BDSBeamPipeType::rectangular:
-      {return rectangular; break;}
     case BDSBeamPipeType::lhc:
-      {return lhc; break;}
-    case BDSBeamPipeType::lhcdetailed:
-      {return lhcdetailed; break;}
     case BDSBeamPipeType::rectellipse:
-      {return rectellipse; break;}
     case BDSBeamPipeType::racetrack:
-      {return racetrack; break;}
     case BDSBeamPipeType::octagonal:
-      {return octagonal; break;}
     case BDSBeamPipeType::circularvacuum:
-      {return circularvacuum; break;}
     case BDSBeamPipeType::clicpcl:
-      {return clicpcl; break;}
+      {result = general; break;}
+    case BDSBeamPipeType::lhcdetailed:
+      {result = lhcdetailed; break;}
     default:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;
-#endif
-      return circular;
-      break;
+      {
+	throw BDSException(__METHOD_NAME__, "unimplemented beam pipe type.");
+	break;
+      }
     }
+  return result;
 }
 
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
-						G4double         length,
-						BDSBeamPipeInfo* bpi)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "using beam pipe information" << G4endl;
-#endif
-  if ((bpi->inputFaceNormal.z() > -1) || (bpi->outputFaceNormal.z() < 1))
-    {
-      return CreateBeamPipe(bpi->beamPipeType,
-			    name,
-			    length,
-			    bpi->inputFaceNormal,
-			    bpi->outputFaceNormal,
-			    bpi->aper1,
-			    bpi->aper2,
-			    bpi->aper3,
-			    bpi->aper4,
-			    bpi->vacuumMaterial,
-			    bpi->beamPipeThickness,
-			    bpi->beamPipeMaterial);
-    }
-  else
-    {
-      return CreateBeamPipe(bpi->beamPipeType,
-			    name,
-			    length,
-			    bpi->aper1,
-			    bpi->aper2,
-			    bpi->aper3,
-			    bpi->aper4,
-			    bpi->vacuumMaterial,
-			    bpi->beamPipeThickness,
-			    bpi->beamPipeMaterial);
-    }
-}
-  
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
-						G4String        name,
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(const G4String& name,
 						G4double        length,
-						G4double        aper1,
-						G4double        aper2,
-						G4double        aper3,
-						G4double        aper4,
-						G4Material*     vacuumMaterial,
-						G4double        beamPipeThickness,
-						G4Material*     beamPipeMaterial)
+						BDSBeamPipeInfo2* bpi)
 {
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
-  return factory->CreateBeamPipe(name,length,aper1,aper2,aper3,aper4,
-				 vacuumMaterial,beamPipeThickness,beamPipeMaterial);
-}
-
-BDSBeamPipe*  BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
-						 G4String        name,
-						 G4double        length,
-						 G4ThreeVector   inputFaceNormal,
-						 G4ThreeVector   outputFaceNormal,
-						 G4double        aper1,
-						 G4double        aper2,
-						 G4double        aper3,
-						 G4double        aper4,
-						 G4Material*     vacuumMaterial,
-						 G4double        beamPipeThickness,
-						 G4Material*     beamPipeMaterial)
-{
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
-  return factory->CreateBeamPipe(name,length,inputFaceNormal,outputFaceNormal,aper1,
-				 aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-				 beamPipeMaterial);
+  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(bpi->beamPipeType);
+  return factory->CreateBeamPipe(name,length, bpi);
 }
