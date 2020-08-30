@@ -70,7 +70,8 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
 						G4double    length)
 {
   allSolids.insert(vacuumSolid);
-  allSolids.insert(beamPipeSolid);
+  if (beamPipeSolid)
+    {allSolids.insert(beamPipeSolid);}
   /// build logical volumes
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
@@ -86,29 +87,34 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
 						 G4Material* beamPipeMaterialIn)
 {
   // build the logical volumes
-  vacuumLV   = new G4LogicalVolume(vacuumSolid,
+  vacuumLV = new G4LogicalVolume(vacuumSolid,
 				   vacuumMaterialIn,
 				   nameIn + "_vacuum_lv");
+  allLogicalVolumes.insert(vacuumLV);
   
-  beamPipeLV = new G4LogicalVolume(beamPipeSolid,
-				   beamPipeMaterialIn,
-				   nameIn + "_beampipe_lv");
-
+  if (beamPipeSolid)
+  {
+    beamPipeLV = new G4LogicalVolume(beamPipeSolid,
+                                     beamPipeMaterialIn,
+                                     nameIn + "_beampipe_lv");
+    allLogicalVolumes.insert(beamPipeLV);
+  }
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    nameIn + "_container_lv");
-  allLogicalVolumes.insert(vacuumLV);
-  allLogicalVolumes.insert(beamPipeLV);
 }
 
 void BDSBeamPipeFactoryBase::SetVisAttributes()
 {
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
-  pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.insert(pipeVisAttr);
-  beamPipeLV->SetVisAttributes(pipeVisAttr);
+  if (beamPipeLV)
+  {
+    auto pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
+    pipeVisAttr->SetVisibility(true);
+    pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+    allVisAttributes.insert(pipeVisAttr);
+    beamPipeLV->SetVisAttributes(pipeVisAttr);
+  }
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   // container
@@ -124,7 +130,8 @@ void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
   if (ul != defaultUL) // if it's not the default register it
     {allUserLimits.insert(ul);}
   vacuumLV->SetUserLimits(ul);
-  beamPipeLV->SetUserLimits(ul);
+  if (beamPipeLV)
+    {beamPipeLV->SetUserLimits(ul);}
   containerLV->SetUserLimits(ul);
 }
 
@@ -141,17 +148,20 @@ void BDSBeamPipeFactoryBase::PlaceComponents(const G4String& nameIn)
 			       false,                    // no boolean operation
 			       0,                        // copy number
 			       checkOverlaps);           // whether to check overlaps
-  
-  beamPipePV = new G4PVPlacement(nullptr,                      // no rotation
-				 G4ThreeVector(),              // position
-				 beamPipeLV,                   // lv to be placed
-				 nameIn + "_beampipe_pipe_pv", // name
-				 containerLV,                  // mother lv to be placed in
-				 false,                        // no boolean operation
-				 0,                            // copy number
-				 checkOverlaps);               // whether to check overlaps
   allPhysicalVolumes.insert(vacuumPV);
-  allPhysicalVolumes.insert(beamPipePV);
+  
+	if (beamPipeLV)
+  {
+    beamPipePV = new G4PVPlacement(nullptr,                      // no rotation
+                                   G4ThreeVector(),              // position
+                                   beamPipeLV,                   // lv to be placed
+                                   nameIn + "_beampipe_pipe_pv", // name
+                                   containerLV,                  // mother lv to be placed in
+                                   false,                        // no boolean operation
+                                   0,                            // copy number
+                                   checkOverlaps);               // whether to check overlaps
+    allPhysicalVolumes.insert(beamPipePV);
+  }
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(const BDSExtent& extent,
@@ -159,7 +169,7 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(const BDSEx
 								     G4bool    containerIsCircular)
 {  
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
+  auto aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
 				       containerSubtractionSolid,
 				       vacuumLV,containerIsCircular,containerRadius,
 				       inputFaceNormal, outputFaceNormal);
