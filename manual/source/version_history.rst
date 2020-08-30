@@ -93,6 +93,9 @@ Bug Fixes
 
 * Tolerate "-" character in rebdsim input and output file names written inside the analysis configuration
   file. In the past, only the part up to this character was used.
+* Fix loading of a visualisation macro (:code:`--vis_mac=vis.mac`) when the file was called vis.mac and was
+  in the current directory. Previously, the bdsim default one would always be used. Fixed by appending the
+  current working directory to the macro search path for Geant4.
 
 Output Changes
 --------------
