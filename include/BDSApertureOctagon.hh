@@ -36,6 +36,7 @@ class BDSPolygon;
 class BDSApertureOctagon: public BDSAperture
 {
 public:
+  BDSApertureOctagon() = delete;
   BDSApertureOctagon(G4double xIn,
                      G4double yIn,
                      G4double xEdgeIn,
@@ -47,21 +48,18 @@ public:
   G4double xEdge;
   G4double yEdge;
 
-  virtual G4bool    Equals(const BDSAperture* other) const;
-  virtual void      CheckInfoOK()                    const;
-  virtual G4double  RadiusToEncompass()              const;
-  virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 8;}
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override;
+  BDSExtent Extent()                         const override;
+  G4int     MinimumNumberOfPoints()          const override {return 8;}
 
   BDSApertureOctagon        operator+ (G4double number) const;
   const BDSApertureOctagon& operator+=(G4double number);
   BDSApertureOctagon        operator* (G4double number) const;
   const BDSApertureOctagon& operator*=(G4double number);
 
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
-
-private:
-  BDSApertureOctagon() = delete;
+  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };
 
 #endif

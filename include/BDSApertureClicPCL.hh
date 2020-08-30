@@ -38,6 +38,7 @@ class BDSPolygon;
 class BDSApertureClicPCL: public BDSAperture
 {
 public:
+  BDSApertureClicPCL() = delete;
   BDSApertureClicPCL(G4double xIn,
 			         G4double yTopIn,
 			         G4double yBottomIn,
@@ -49,21 +50,18 @@ public:
   G4double yBottom;
   G4double ySep;
 
-  virtual G4bool    Equals(const BDSAperture* other) const;
-  virtual void      CheckInfoOK()                    const;
-  virtual G4double  RadiusToEncompass()              const {return std::max({yBottom, ySep+yTop, x}) + tiltOffset.Radius();}
-  virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 10;}
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override {return std::max({yBottom, ySep+yTop, x}) + tiltOffset.Radius();}
+  BDSExtent Extent()                         const override;
+  G4int     MinimumNumberOfPoints()          const override {return 10;}
 
   BDSApertureClicPCL        operator+ (G4double number) const;
   const BDSApertureClicPCL& operator+=(G4double number);
   BDSApertureClicPCL        operator* (G4double number) const;
   const BDSApertureClicPCL& operator*=(G4double number);
 
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
-
-private:
-  BDSApertureClicPCL() = delete;
+  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };
 
 #endif

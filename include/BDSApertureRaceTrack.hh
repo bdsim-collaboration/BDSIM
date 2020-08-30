@@ -36,6 +36,7 @@ class BDSPolygon;
 class BDSApertureRaceTrack: public BDSAperture
 {
 public:
+  BDSApertureRaceTrack() = delete;
   BDSApertureRaceTrack(G4double xIn,
 			           G4double yIn,
 			           G4double radiusIn);
@@ -45,21 +46,17 @@ public:
   G4double y;
   G4double radius;
 
-  virtual G4bool    Equals(const BDSAperture* other) const;
-  virtual void      CheckInfoOK()                    const;
-  virtual G4double  RadiusToEncompass()              const {return radius + tiltOffset.Radius();}
-  virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 16;}
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override {return radius + tiltOffset.Radius();}
+  BDSExtent Extent()                         const override;
+  G4int     MinimumNumberOfPoints()          const override {return 16;}
 
   BDSApertureRaceTrack        operator+ (G4double number) const;
   const BDSApertureRaceTrack& operator+=(G4double number);
   BDSApertureRaceTrack        operator* (G4double number) const;
   const BDSApertureRaceTrack& operator*=(G4double number);
-
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
-
-private:
-  BDSApertureRaceTrack() = delete;
+  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };
 
 #endif

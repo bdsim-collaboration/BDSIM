@@ -38,6 +38,7 @@ class BDSPolygon;
 class BDSApertureRectEllipse: public BDSAperture
 {
 public:
+  BDSApertureRectEllipse() = delete;
   explicit BDSApertureRectEllipse(G4double rectangleAIn,
 				                  G4double rectangleBIn,
 				                  G4double ellipseAIn,
@@ -49,18 +50,18 @@ public:
   G4double ellipseA;
   G4double ellipseB;
 
-  virtual G4bool    Equals(const BDSAperture* other) const;
-  virtual void      CheckInfoOK()                    const;
-  virtual G4double  RadiusToEncompass()              const {return std::max(ellipseA, ellipseB) + tiltOffset.Radius();}
-  virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return 10;}
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override {return std::max(ellipseA, ellipseB) + tiltOffset.Radius();}
+  BDSExtent Extent()                         const override;
+  G4int     MinimumNumberOfPoints()          const override {return 10;}
 
   BDSApertureRectEllipse        operator+ (G4double number) const;
   const BDSApertureRectEllipse& operator+=(G4double number);
   BDSApertureRectEllipse        operator* (G4double number) const;
   const BDSApertureRectEllipse& operator*=(G4double number);
 
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
+  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };
 
 #endif

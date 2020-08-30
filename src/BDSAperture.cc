@@ -34,7 +34,7 @@ BDSAperture::BDSAperture(BDSApertureType apertureTypeIn):
 {;}
 
 BDSAperture::BDSAperture(BDSApertureType      apertureTypeIn,
-			             const BDSTiltOffset& tiltOffsetIn):
+			 const BDSTiltOffset& tiltOffsetIn):
   apertureType(apertureTypeIn),
   tiltOffset(tiltOffsetIn)
 {;}

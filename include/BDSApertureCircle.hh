@@ -35,6 +35,7 @@ class BDSPolygon;
 class BDSApertureCircle: public BDSAperture
 {
 public:
+  BDSApertureCircle() = delete;
   explicit BDSApertureCircle(G4double radiusIn,
                              G4int    nPointsIn = 0);
   virtual ~BDSApertureCircle(){;}
@@ -42,21 +43,18 @@ public:
   G4double radius;
   G4int    nPoints;
 
-  virtual G4bool    Equals(const BDSAperture* other) const;
-  virtual void      CheckInfoOK()                    const;
-  virtual G4double  RadiusToEncompass()              const {return radius;}
-  virtual BDSExtent Extent()                         const;
-  virtual G4int     MinimumNumberOfPoints()          const {return nPoints;}
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override {return radius;}
+  BDSExtent Extent()                         const override;
+  G4int     MinimumNumberOfPoints()          const override {return nPoints;}
 
   BDSApertureCircle        operator+ (G4double number) const;
   const BDSApertureCircle& operator+=(G4double number);
   BDSApertureCircle        operator* (G4double number) const;
   const BDSApertureCircle& operator*=(G4double number);
 
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const;
-
-private:
-  BDSApertureCircle() = delete;
+  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };
 
 #endif
