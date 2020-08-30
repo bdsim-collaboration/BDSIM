@@ -53,6 +53,10 @@ public:
   const BDSApertureCircle& operator+=(G4double number);
   BDSApertureCircle        operator* (G4double number) const;
   const BDSApertureCircle& operator*=(G4double number);
+  
+  BDSAperture* Plus(G4double number) const override;
+  BDSAperture* Times(G4double number) const override;
+  BDSAperture* Clone() const override;
 
   BDSPolygon Polygon(G4int nPointsIn = 0) const override;
 };

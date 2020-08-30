@@ -100,6 +100,23 @@ const BDSApertureRectCircle& BDSApertureRectCircle::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureRectCircle::Plus(G4double number) const
+{
+  BDSApertureRectCircle result = (*this) + number;
+  return new BDSApertureRectCircle(result);
+}
+
+BDSAperture* BDSApertureRectCircle::Times(G4double number) const
+{
+  BDSApertureRectCircle result = (*this) * number;
+  return new BDSApertureRectCircle(result);
+}
+
+BDSAperture* BDSApertureRectCircle::Clone() const
+{
+  return new BDSApertureRectCircle(*this);
+}
+
 BDSPolygon BDSApertureRectCircle::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;

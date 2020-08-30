@@ -59,6 +59,10 @@ public:
   friend bool operator <= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs > rhs);}
   friend bool operator >= (const BDSAperture& lhs, const BDSAperture& rhs) {return !(lhs < rhs);}
   
+  virtual BDSAperture* Plus(G4double number)  const = 0;
+  virtual BDSAperture* Times(G4double number) const = 0;
+  virtual BDSAperture* Clone() const = 0;
+  
   virtual G4bool    Equals(const BDSAperture* other)   const = 0;
   virtual void      CheckInfoOK()                      const = 0;
   virtual G4double  RadiusToEncompass()                const = 0; // was IndicativeRadius RCWD
@@ -82,6 +86,7 @@ public:
   /// number of points which will be at least 3.
   virtual BDSPolygon Polygon(G4int nPointsIn = 0) const = 0;
 
+  
 protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.

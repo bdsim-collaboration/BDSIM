@@ -113,6 +113,23 @@ const BDSApertureOctagon& BDSApertureOctagon::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureOctagon::Plus(G4double number) const
+{
+  BDSApertureOctagon result = (*this) + number;
+  return new BDSApertureOctagon(result);
+}
+
+BDSAperture* BDSApertureOctagon::Times(G4double number) const
+{
+  BDSApertureOctagon result = (*this) * number;
+  return new BDSApertureOctagon(result);
+}
+
+BDSAperture* BDSApertureOctagon::Clone() const
+{
+  return new BDSApertureOctagon(*this);
+}
+
 BDSPolygon BDSApertureOctagon::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;

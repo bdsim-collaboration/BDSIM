@@ -100,6 +100,23 @@ const BDSApertureEllipse& BDSApertureEllipse::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureEllipse::Plus(G4double number) const
+{
+  BDSApertureEllipse result = (*this) + number;
+  return new BDSApertureEllipse(result);
+}
+
+BDSAperture* BDSApertureEllipse::Times(G4double number) const
+{
+  BDSApertureEllipse result = (*this) * number;
+  return new BDSApertureEllipse(result);
+}
+
+BDSAperture* BDSApertureEllipse::Clone() const
+{
+  return new BDSApertureEllipse(*this);
+}
+
 BDSPolygon BDSApertureEllipse::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? nPoints : nPointsIn;

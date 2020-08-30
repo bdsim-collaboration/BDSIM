@@ -110,6 +110,23 @@ const BDSApertureClicPCL& BDSApertureClicPCL::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureClicPCL::Plus(G4double number) const
+{
+  BDSApertureClicPCL result = (*this) + number;
+  return new BDSApertureClicPCL(result);
+}
+
+BDSAperture* BDSApertureClicPCL::Times(G4double number) const
+{
+  BDSApertureClicPCL result = (*this) * number;
+  return new BDSApertureClicPCL(result);
+}
+
+BDSAperture* BDSApertureClicPCL::Clone() const
+{
+  return new BDSApertureClicPCL(*this);
+}
+
 BDSPolygon BDSApertureClicPCL::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;

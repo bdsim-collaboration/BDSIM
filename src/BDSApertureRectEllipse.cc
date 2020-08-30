@@ -106,6 +106,23 @@ const BDSApertureRectEllipse& BDSApertureRectEllipse::operator*=(G4double number
   return *this;
 }
 
+BDSAperture* BDSApertureRectEllipse::Plus(G4double number) const
+{
+  BDSApertureRectEllipse result = (*this) + number;
+  return new BDSApertureRectEllipse(result);
+}
+
+BDSAperture* BDSApertureRectEllipse::Times(G4double number) const
+{
+  BDSApertureRectEllipse result = (*this) * number;
+  return new BDSApertureRectEllipse(result);
+}
+
+BDSAperture* BDSApertureRectEllipse::Clone() const
+{
+  return new BDSApertureRectEllipse(*this);
+}
+
 BDSPolygon BDSApertureRectEllipse::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;

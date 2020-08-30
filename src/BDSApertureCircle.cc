@@ -98,6 +98,23 @@ const BDSApertureCircle& BDSApertureCircle::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureCircle::Plus(G4double number) const
+{
+  BDSApertureCircle result = (*this) + number;
+  return new BDSApertureCircle(result);
+}
+
+BDSAperture* BDSApertureCircle::Times(G4double number) const
+{
+  BDSApertureCircle result = (*this) * number;
+  return new BDSApertureCircle(result);
+}
+
+BDSAperture* BDSApertureCircle::Clone() const
+{
+  return new BDSApertureCircle(*this);
+}
+
 BDSPolygon BDSApertureCircle::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
@@ -112,4 +129,3 @@ BDSPolygon BDSApertureCircle::Polygon(G4int nPointsIn) const
 
   return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
 }
-

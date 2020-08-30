@@ -93,6 +93,23 @@ const BDSApertureRectangle& BDSApertureRectangle::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureRectangle::Plus(G4double number) const
+{
+  BDSApertureRectangle result = (*this) + number;
+  return new BDSApertureRectangle(result);
+}
+
+BDSAperture* BDSApertureRectangle::Times(G4double number) const
+{
+  BDSApertureRectangle result = (*this) * number;
+  return new BDSApertureRectangle(result);
+}
+
+BDSAperture* BDSApertureRectangle::Clone() const
+{
+  return new BDSApertureRectangle(*this);
+}
+
 BDSPolygon BDSApertureRectangle::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;

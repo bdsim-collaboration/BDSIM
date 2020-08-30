@@ -103,6 +103,23 @@ const BDSApertureRaceTrack& BDSApertureRaceTrack::operator*=(G4double number)
   return *this;
 }
 
+BDSAperture* BDSApertureRaceTrack::Plus(G4double number) const
+{
+  BDSApertureRaceTrack result = (*this) + number;
+  return new BDSApertureRaceTrack(result);
+}
+
+BDSAperture* BDSApertureRaceTrack::Times(G4double number) const
+{
+  BDSApertureRaceTrack result = (*this) * number;
+  return new BDSApertureRaceTrack(result);
+}
+
+BDSAperture* BDSApertureRaceTrack::Clone() const
+{
+  return new BDSApertureRaceTrack(*this);
+}
+
 BDSPolygon BDSApertureRaceTrack::Polygon(G4int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
