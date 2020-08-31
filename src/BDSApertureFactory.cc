@@ -68,6 +68,8 @@ BDSApertureFactory::BDSApertureFactory():
 		     {MakePair(BDSApertureType::circle, BDSApertureType::circle),
 		      &BDSApertureFactory::CircleToCircle}
   };
+
+  // TBC other specialisations possible given combination of available shapes
 }
 
 BDSApertureFactory::~BDSApertureFactory()
@@ -410,7 +412,7 @@ G4VSolid* BDSApertureFactory::CreateRectEllipse() const
 }
 
 G4VSolid* BDSApertureFactory::CreateRaceTrack() const
-{return CreateExtrudedSolid();}
+{return CreateExtrudedSolid();} //TBC if this is the best way (not intersection?)
 
 G4VSolid* BDSApertureFactory::CreateOctagonal() const
 {return CreateExtrudedSolid();}
@@ -464,7 +466,7 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 }
 
 G4VSolid* BDSApertureFactory::CircleToCircle() const
-{return nullptr;}
+{return nullptr;} // TBC
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
 									BDSApertureType a2) const
