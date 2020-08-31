@@ -43,26 +43,33 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
                                                 BDSBeamPipeInfo2* bpi)
 {
   CleanUp();
+  
+  BDSAperture* apVacIn  = bpi->aperture;
+  BDSAperture* apVacOut = bpi->apertureOut ? bpi->apertureOut : bpi->aperture;
+  G4double containerThickness = bpi->vacuumOnly ? lengthSafetyLarge : bpi->beamPipeThickness + 2*lengthSafetyLarge;
+  BDSAperture* apBpInnerIn  = apVacIn->Plus(lengthSafetyLarge);
+  BDSAperture* apBpInnerOut = apVacOut->Plus(lengthSafetyLarge);
+  BDSAperture* apBpOuterIn  = apBpInnerIn->Plus(bpi->beamPipeThickness);
+  BDSAperture* apBpOuterOut = apBpInnerOut->Plus(bpi->beamPipeThickness);
+  BDSAperture* apContIn     = apVacIn->Plus(containerThickness);
+  BDSAperture* apContOut    = apVacOut->Plus(containerThickness);
+  BDSAperture* apContSubIn  = apVacIn->Plus(containerThickness + lengthSafety);
+  BDSAperture* apContSubOut = apVacOut->Plus(containerThickness + lengthSafety);
+  
   BDSApertureFactory fac;
-  vacuumSolid = fac.CreateSolid(name+"_vacuum", length, bpi->aperture, bpi->apertureOut, bpi->inputFaceNormal, bpi->outputFaceNormal);
-  // we ignore angled faces and make it longer
-  BDSAperture* apContSubIn  = bpi->aperture; // += 3; TBC
-  BDSAperture* apContSubOut = bpi->apertureOut ? bpi->apertureOut : nullptr;
-
-  delete apContSubIn; delete apContSubOut;
+  vacuumSolid = fac.CreateSolid(name+"_vacuum", length - lengthSafety, apVacIn, apVacOut,
+                                bpi->inputFaceNormal, bpi->outputFaceNormal);
   
   if (!bpi->vacuumOnly)
   {
-    BDSAperture* apBpInInside   = bpi->aperture;
-    BDSAperture* apBpOutInside  = bpi->apertureOut;
-    BDSAperture* apBpInOutside  = bpi->aperture;
-    BDSAperture* apBpOutOutside = bpi->apertureOut;
     beamPipeSolid = fac.CreateSolidWithInner(name, length,
-                                             apBpInInside, apBpInOutside,
-                                             apBpOutInside, apBpOutOutside,
+                                             apBpInnerIn, apBpOuterIn,
+                                             apBpInnerOut, apBpOuterOut,
                                              bpi->inputFaceNormal, bpi->outputFaceNormal);
-    delete apBpInInside; delete apBpOutInside; delete apBpOutInside; delete apBpOutOutside;
   }
+  
+  containerSolid = fac.CreateSolid(name + "_container_solid", length, apContIn, apContOut,
+  bpi->inputFaceNormal, bpi->outputFaceNormal);
   
   containerSubtractionSolid = fac.CreateSolid(name+"_container_sub",
                                               length, apContSubIn, apContSubOut,
@@ -72,9 +79,8 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
   BDSBeamPipeFactoryBase::CommonConstruction(name, bpi->vacuumMaterial, bpi->beamPipeMaterial, length);
 
   // record extents
-  BDSExtent ext = fac.
-  //BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
+  BDSExtent ext = std::max(apContIn->Extent(), apContOut->Extent());
 
   // true for containerIsGeneral - true for this factory
-  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, containerRadiusIn, true);
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, /*TBC*/containerThickness, true);
 }
