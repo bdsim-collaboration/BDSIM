@@ -90,7 +90,7 @@ public:
   inline G4double          GetArcLength()                 const {return component->GetArcLength();}
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
   inline G4double          GetAngle()                     const {return component->GetAngle();}
-  inline BDSBeamPipeInfo*  GetBeamPipeInfo()              const {return component->GetBeamPipeInfo();}
+  inline BDSBeamPipeInfo2* GetBeamPipeInfo()              const {return component->GetBeamPipeInfo();}
   inline BDSExtent         GetExtent()                    const {return component->GetExtent();}
   inline G4String          GetPlacementName()             const {return placementName;}
   inline G4int             GetCopyNo()                    const {return copyNumber;}

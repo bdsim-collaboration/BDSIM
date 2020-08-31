@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAcceleratorComponent.hh"
 
-class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 class BDSCrystal;
 class BDSCrystalInfo;
 
@@ -36,15 +36,15 @@ class BDSCrystalInfo;
 class BDSCollimatorCrystal: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimatorCrystal(const G4String&  name,
-		       G4double         length,
-		       BDSBeamPipeInfo* beamPipeInfoIn,
-		       BDSCrystalInfo*  crystalInfoLeftIn,
-		       BDSCrystalInfo*  crystalInfoRightIn = nullptr,
-		       G4double         halfGapLeftIn      = 0,
-		       G4double         halfGapRightIn     = 0,
-		       G4double         angleYAxisLeftIn   = 0,
-		       G4double         angleYAxisRightIn  = 0);
+  BDSCollimatorCrystal(const G4String&   name,
+		       G4double          length,
+		       BDSBeamPipeInfo2* beamPipeInfoIn,
+		       BDSCrystalInfo*   crystalInfoLeftIn,
+		       BDSCrystalInfo*   crystalInfoRightIn = nullptr,
+		       G4double          halfGapLeftIn      = 0,
+		       G4double          halfGapRightIn     = 0,
+		       G4double          angleYAxisLeftIn   = 0,
+		       G4double          angleYAxisRightIn  = 0);
   virtual ~BDSCollimatorCrystal();
 
   /// Override base class version and return crystal material.

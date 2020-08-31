@@ -49,7 +49,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 BDSBeamPipeInfo* beamPipeInfoIn,
+						 BDSBeamPipeInfo2* beamPipeInfoIn,
 						 G4ThreeVector    inputFaceNormalIn,
 						 G4ThreeVector    outputFaceNormalIn,
 						 BDSFieldInfo*    fieldInfoIn):

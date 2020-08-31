@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAcceleratorComponent.hh"
 
-class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 
 /**
  * @brief A piece of vacuum beam pipe.
@@ -38,9 +38,9 @@ class BDSBeamPipeInfo;
 class BDSDrift: public BDSAcceleratorComponent
 {
 public:
-  BDSDrift(G4String         name, 
-	   G4double         length,
-	   BDSBeamPipeInfo* beamPipeInfo);
+  BDSDrift(G4String          name, 
+	   G4double          length,
+	   BDSBeamPipeInfo2* beamPipeInfo);
   virtual ~BDSDrift();
 
   /// Override base class version and return beam pipe material if it exists.

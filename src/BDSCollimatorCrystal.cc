@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
@@ -39,15 +39,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn, 
-					   G4double         lengthIn,
-					   BDSBeamPipeInfo* beamPipeInfoIn,
-					   BDSCrystalInfo*  crystalInfoLeftIn,
-					   BDSCrystalInfo*  crystalInfoRightIn,
-					   G4double         halfGapLeftIn,
-					   G4double         halfGapRightIn,
-					   G4double         angleYAxisLeftIn,
-					   G4double         angleYAxisRightIn):
+BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&   nameIn, 
+					   G4double          lengthIn,
+					   BDSBeamPipeInfo2* beamPipeInfoIn,
+					   BDSCrystalInfo*   crystalInfoLeftIn,
+					   BDSCrystalInfo*   crystalInfoRightIn,
+					   G4double          halfGapLeftIn,
+					   G4double          halfGapRightIn,
+					   G4double          angleYAxisLeftIn,
+					   G4double          angleYAxisRightIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "crystalcol", beamPipeInfoIn),
   crystalInfoLeft(crystalInfoLeftIn),
   crystalInfoRight(crystalInfoRightIn),
@@ -72,8 +72,8 @@ void BDSCollimatorCrystal::Build()
 {
   BDSBeamPipeFactory factory;
   BDSBeamPipe* pipe = factory.CreateBeamPipe(name,
-					      chordLength,
-					      beamPipeInfo);
+					     chordLength,
+					     beamPipeInfo);
 
   RegisterDaughter(pipe);
   
