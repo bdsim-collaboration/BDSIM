@@ -170,7 +170,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(const G4String&    na
 							   G4double    aper1,
 							   G4double    aper2,
 							   G4double    aper3,
-							   G4double    /*aper4*/,/*
+							   G4double    /*aper4*//*,
 							   G4Material* vacuumMaterial,
 							   G4double    beamPipeThickness,
 							   G4Material* beamPipeMaterial)
@@ -345,7 +345,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
 							   G4double      aper1,
 							   G4double      aper2,
 							   G4double      aper3,
-							   G4double      /*aper4*/,  /*
+							   G4double      /*aper4*//*,
 							   G4Material*   vacuumMaterial,
 							   G4double      beamPipeThickness,
 							   G4Material*   beamPipeMaterial)
