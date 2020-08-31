@@ -65,8 +65,10 @@ namespace BDS
   public:
     explicit BDSCutTubsTemp(const G4CutTubs* solid):
       G4CutTubs(*solid){;}
-    virtual ~BDSCutTubsTemp() {;}
-    virtual void GetMaxMinZ(G4double& zmin, G4double& zmax) const {return G4CutTubs::GetMaxMinZ(zmin,zmax);};
+    virtual ~BDSCutTubsTemp(){;}
+    
+    /// We make this originall private function public.
+    using G4CutTubs::GetMaxMinZ;
   };
 }
 
