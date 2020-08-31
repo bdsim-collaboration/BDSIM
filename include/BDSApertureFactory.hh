@@ -66,25 +66,21 @@ public:
 			G4double           length,
 			const BDSAperture* apertureIn,
 			const BDSAperture* apertureOut = nullptr,
+			const G4ThreeVector* normalIn  = nullptr,
+			const G4ThreeVector* normalOut = nullptr,
 			G4double           lengthExtraForBoolean = 0);
-
-  /// Create any aperture shape with angled ends specified by unit normals.
-  G4VSolid* CreateSolid(const G4String&      name,
-			G4double             length,
-			const BDSAperture*   apertureIn,
-			const G4ThreeVector& normalIn,
-			const G4ThreeVector& normalOut,
-			const BDSAperture*   apertureOut = nullptr,
-			G4double             lengthExtraForBoolean = 0);
+  
+  G4VSolid* CreateSolidWithInner(const G4String& name,
+                                 G4double length,
+                                 const BDSAperture* apertureInOutside,
+                                 const BDSAperture* apertureInInside,
+                                 const BDSAperture* apertureOutOutside = nullptr,
+                                 const BDSAperture* apertureOutInside  = nullptr,
+                                 const G4ThreeVector* normalIn  = nullptr,
+                                 const G4ThreeVector* normalOut = nullptr,
+                                 G4double           lengthExtraForBoolean = 0);
 
 private:
-  /// Common construction code for the main CreateAperture interfaces.
-  G4VSolid* CommonConstruction(const G4String&    name,
-			       G4double           length,
-			       const BDSAperture* apertureIn,
-			       const BDSAperture* apertureOut,
-			       G4double           lengthExtraForBoolean);
-
   /// @{ Flat faced construction function.
   G4VSolid* CreateCircle()    const;
   G4VSolid* CreateRectangle() const;

@@ -134,44 +134,25 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
       {break;}
     }
   if (result)
-    {result->SetTiltOffset(BDSTiltOffset(tilt, offsetX, offsetY));}
+    {
+      result->CheckInfoOK();
+      result->SetTiltOffset(BDSTiltOffset(tilt, offsetX, offsetY));
+    }
   return result;
 }
 
 G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
-					  G4double           length,
-					  const BDSAperture* apertureIn,
-					  const BDSAperture* apertureOut,
-					  G4double           lengthExtraForBoolean)
+                                          G4double           length,
+                                          const BDSAperture* apertureIn,
+                                          const BDSAperture* apertureOut,
+                                          const G4ThreeVector* normalIn,
+                                          const G4ThreeVector* normalOut,
+                                          G4double           lengthExtraForBoolean)
 {
-  productNormalIn  = G4ThreeVector();
-  productNormalOut = G4ThreeVector();
-  angledFaces      = false;
-
-  return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
-}
-
-G4VSolid* BDSApertureFactory::CreateSolid(const G4String&      name,
-					  G4double             length,
-					  const BDSAperture*   apertureIn,
-					  const G4ThreeVector& normalIn,
-					  const G4ThreeVector& normalOut,
-					  const BDSAperture*   apertureOut,
-					  G4double             lengthExtraForBoolean)
-{
-  productNormalIn  = normalIn;
-  productNormalOut = normalOut;
-  angledFaces      = true;
-
-  return CommonConstruction(name, length, apertureIn, apertureOut, lengthExtraForBoolean);
-}
-
-G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
-						 G4double           length,
-						 const BDSAperture* apertureIn,
-						 const BDSAperture* apertureOut,
-						 G4double           lengthExtraForBoolean)
-{
+  productNormalIn  = normalIn  ? *normalIn : G4ThreeVector();
+  productNormalOut = normalOut ? *normalOut : G4ThreeVector();
+  angledFaces      = normalIn || normalOut;
+  
   if (!apertureIn)
     {throw BDSException(__METHOD_NAME__, "no aperture specified.");}
   G4bool variedAperture = (G4bool)apertureOut; // ie valid pointer for shape out.
@@ -190,11 +171,11 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
   switch (apertureIn->apertureType.underlying())
     {
     case BDSApertureType::circle:
-      {product = CreateCircle();    break;}
+      {product = CreateCircle();      break;}
     case BDSApertureType::rectangle:
-      {product = CreateRectangle(); break;}
+      {product = CreateRectangle();   break;}
     case BDSApertureType::ellipse:
-      {product = CreateEllipse();  break;}
+      {product = CreateEllipse();     break;}
     case BDSApertureType::rectcircle:
       {product = CreateRectCircle();  break;}
     case BDSApertureType::rectellipse:
@@ -210,6 +191,17 @@ G4VSolid* BDSApertureFactory::CommonConstruction(const G4String&    name,
     }
   return product;
 }
+
+G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
+                                                   G4double             length,
+                                                   const BDSAperture*   apertureInInside,
+                                                   const BDSAperture*   apertureInOutside,
+                                                   const BDSAperture*   apertureOutInside,
+                                                   const BDSAperture*   apertureOutOutside,
+                                                   const G4ThreeVector* normalIn,
+                                                   const G4ThreeVector* normalOut,
+                                                   G4double             lengthExtraForBoolean)
+{return nullptr;}
 
 G4VSolid* BDSApertureFactory::CreateCircle() const
 {
