@@ -38,11 +38,11 @@ public:
   BDSParticleExternal(BDSParticleDefinition* particleDefinitionIn,
 		      const BDSParticleCoordsFull& coordsIn,
 		      G4int                        indexIn);
-  /// Define copy constructor as this class owns the particleDefinition.
+  /// @{ Define copy, move and assignment constructor2 as this class owns the particleDefinition.
   BDSParticleExternal(const BDSParticleExternal& other);
-
   BDSParticleExternal(BDSParticleExternal&& other) noexcept;
   BDSParticleExternal& operator=(BDSParticleExternal&& other) noexcept;
+  /// @}
   ~BDSParticleExternal();
 
   BDSParticleDefinition* particleDefinition;

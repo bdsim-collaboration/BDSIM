@@ -46,11 +46,10 @@ public:
   virtual ~BDSLinkDetectorConstruction();
   virtual G4VPhysicalVolume* Construct();
 
-  BDSExtent WorldExtent() const {return worldExtent;}
-
+  /// Interface to append a collimator of jaw style to the linking.
   void AddLinkCollimatorJaw(const std::string& collimatorName,
-			                      const std::string& materialName,
-			                      G4double length,
+			    const std::string& materialName,
+			    G4double length,
                             G4double halfApertureLeft,
                             G4double halfApertureRight,
                             G4double rotation,
@@ -66,8 +65,12 @@ public:
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
   inline void SetPrimaryGeneratorAction(BDSLinkPrimaryGeneratorAction* pgIn) {primaryGeneratorAction = pgIn;}
 
-  inline BDSLinkRegistry* LinkRegistry() const {return linkRegistry;}
 
+  /// @{ Accessor.
+  inline BDSExtent WorldExtent() const {return worldExtent;}
+  inline BDSLinkRegistry* LinkRegistry() const {return linkRegistry;}
+  /// @}
+  
   void BuildPhysicsBias();
 
   inline const std::map<std::string, G4int>& NameToElementIndex() const {return nameToElementIndex;}
@@ -75,7 +78,6 @@ public:
   inline void SetSamplerWorldID(G4int samplerWorldIDIn) {samplerWorldID = samplerWorldIDIn;}
 
  private:
-
   /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the
   /// linkBeamline member. Update worldExtent member also.
   void UpdateWorldSolid();
