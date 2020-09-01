@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SubtractionSolid.hh"
 #include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
+#include "G4Version.hh"
 #include "G4VSolid.hh"
 
 #include <utility>
