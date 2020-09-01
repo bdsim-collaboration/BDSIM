@@ -218,6 +218,7 @@ private:
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
   
+  /// Fill sampler link hits into output structures.
   void FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits);
 
   /// Fill the hit where the primary particle impact.

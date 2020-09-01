@@ -50,9 +50,10 @@ public:
   /// clears everything up.
   virtual ~BDSLinkComponent(){;}
 
-  /// Accessor.
+  /// @{ Accessor.
   inline BDSLinkOpaqueBox* Component() const {return component;}
   inline G4String LinkName() const {return component ? component->LinkName() : "unknown";}
+  /// @}
 
 private:
   /// Private default constructor to force use of given one.
