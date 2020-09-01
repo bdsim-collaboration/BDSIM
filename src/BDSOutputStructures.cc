@@ -190,6 +190,7 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
+#ifdef SIXTRACKLINK
 G4int BDSOutputStructures::UpdateSamplerStructures()
 {
   G4int result = 0;
@@ -209,6 +210,7 @@ G4int BDSOutputStructures::UpdateSamplerStructures()
   }
   return result;
 }
+#endif
 
 void BDSOutputStructures::PrepareCollimatorInformation()
 {

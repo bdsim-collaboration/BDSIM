@@ -84,8 +84,11 @@ public:
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
-  
+
+#ifdef SIXTRACKLINK
+  /// Interface to allow updating samplers with dynamic construction.
   virtual void UpdateSamplers() {UpdateSamplerStructures();}
+#endif
   
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();

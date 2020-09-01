@@ -89,6 +89,13 @@ if(FIELDDOUBLEPRECISION)
     message(STATUS "Field double precision ON")
 endif()
 
+# Sixtrack linking bits of code that aren't needed otherwise
+option( SIXTRACKLINK "Include linking code for SixTrack." OFF )
+if(SIXTRACKLINK)
+  add_definitions("-DSIXTRACKLINK")
+  message(STATUS "SixTrack link ON")
+endif()
+
 # Find GEANT4
 include(cmake/Geant4.cmake)
 
