@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventGeneratorFileType.hh"
 
 #include "globals.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4VPrimaryGenerator.hh"
 
@@ -86,7 +87,6 @@ protected:
 
   /// Conversion from HepMC::GenEvent to G4Event.
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
-
   
   // We  have to take care for the position of primaries because
   // primary vertices outside the world voulme give rise to G4Execption.
@@ -108,6 +108,7 @@ private:
   BDSBunchEventGenerator*   bunch;
   G4bool                    removeUnstableWithoutDecay;
   BDSEventGeneratorFileType fileType;
+  G4RotationMatrix          referenceBeamMomentumOffset;
 };
 
 #endif

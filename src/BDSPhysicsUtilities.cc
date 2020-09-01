@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Gamma.hh"
 #include "G4GenericBiasingPhysics.hh"
 #include "G4GenericIon.hh"
+#include "G4IonElasticPhysics.hh"
 #include "G4IonTable.hh"
 #include "G4KaonMinus.hh"
 #include "G4KaonPlus.hh"
@@ -440,6 +441,7 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(G4bool useEMD,
 						       G4bool emss)
 {
   G4VModularPhysicsList* physlist = new FTFP_BERT();
+  physlist->RegisterPhysics(new G4IonElasticPhysics()); // not included by default in FTFP_BERT
   G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
   physlist->RegisterPhysics(new BDSPhysicsChannelling());
   if (!regular)
@@ -569,7 +571,7 @@ void BDS::FixGeant105ThreshholdsForParticle(const G4ParticleDefinition* particle
   if (!particleDef)
     {return;}
   // taken from the Geant4.10.5 field01 example
-  // used to compensate for agressive killing in Geant4.10.5
+  // used to compensate for aggressive killing in Geant4.10.5
   G4double warningEnergy   =   1.0 * CLHEP::kiloelectronvolt;  // Arbitrary
   G4double importantEnergy =  10.0 * CLHEP::kiloelectronvolt;  // Arbitrary
   G4double numberOfTrials  =  1500;                            // Arbitrary
