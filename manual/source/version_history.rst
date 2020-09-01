@@ -96,6 +96,8 @@ Bug Fixes
 * Fix loading of a visualisation macro (:code:`--vis_mac=vis.mac`) when the file was called vis.mac and was
   in the current directory. Previously, the bdsim default one would always be used. Fixed by appending the
   current working directory to the macro search path for Geant4.
+* Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
+  with a G4CutTubs as the container (outermost) solid.
 
 Output Changes
 --------------

@@ -53,23 +53,8 @@ namespace BDS
   /// Inspect a G4Tubs.
   std::pair<BDSExtent, BDSExtent> InspectTubs(const G4VSolid* solidIn);
 
-  /// Inpsect a G4CutTubs.
-  std::pair<BDSExtent, BDSExtent> InspectCutTubs(const G4VSolid* solidv); 
-
-  /**
-   * @brief Wrapper class to expose useful protected method of G4CutTubs.
-   * @author Laurie Nevay
-   */
-  class BDSCutTubsTemp: public G4CutTubs
-  {
-  public:
-    explicit BDSCutTubsTemp(const G4CutTubs* solid):
-      G4CutTubs(*solid){;}
-    virtual ~BDSCutTubsTemp(){;}
-    
-    /// We make this originall private function public.
-    using G4CutTubs::GetMaxMinZ;
-  };
+  /// Inspect a G4CutTubs.
+  std::pair<BDSExtent, BDSExtent> InspectCutTubs(const G4VSolid* solidIn);
 }
 
 #endif
