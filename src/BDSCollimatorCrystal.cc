@@ -58,12 +58,16 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn,
   crystalLeft(nullptr),
   crystalRight(nullptr)
 {
+#ifdef SIXTRACKLINK
   G4cout << "Left " << crystalInfoLeftIn << G4endl;
   G4cout << "Right " << crystalInfoRightIn << G4endl;
+#endif
   if (crystalInfoLeft)
     {crystalInfoLeft->bendingAngleYAxis *= -1.0;}
+#ifdef SIXTRACKLINK
   G4cout << "halfGapLeftIn " << halfGapLeftIn << G4endl;
   G4cout << "halfGapRightIn " << halfGapRightIn << G4endl;
+#endif
 }
 
 BDSCollimatorCrystal::~BDSCollimatorCrystal()
@@ -152,7 +156,9 @@ void BDSCollimatorCrystal::Build()
 				  0,
 				  true); // always check
       RegisterPhysicalVolume(cL);
+#ifdef SIXTRACKLINK
       G4cout << "Placement of left crystal " << placementOffsetL << G4endl;
+#endif
     }
   if (crystalRight)
     {

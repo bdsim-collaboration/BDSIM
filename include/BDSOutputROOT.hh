@@ -49,9 +49,10 @@ public:
 
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
-  
-  virtual void UpdateSamplers();
 
+#ifdef SIXTRACKLINK
+  virtual void UpdateSamplers();
+#endif
 private:
   /// Copy header and write to file.
   virtual void WriteHeader();
