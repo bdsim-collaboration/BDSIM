@@ -170,7 +170,11 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectCutTubs(const G4VSolid* solidIn)
 {
   G4ThreeVector zminV = G4ThreeVector();
   G4ThreeVector zmaxV = G4ThreeVector();
+#if G4VERSION_NUMBER > 1039
   solidIn->BoundingLimits(zminV, zmaxV);
+#else
+  solidIn->Extent(zminV, zmaxV);
+#endif
   
   const G4CutTubs* solid = dynamic_cast<const G4CutTubs*>(solidIn);
   if (!solid)
