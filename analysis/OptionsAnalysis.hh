@@ -46,7 +46,7 @@ public:
 		  bool     perEntryAnalysis = true,
 		  bool     debugIn          = false);
 
-  virtual ~OptionsAnalysis();
+  virtual ~OptionsAnalysis() noexcept;
 
   /// Operate on each entry in the options tree.
   virtual void Process();
