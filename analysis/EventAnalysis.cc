@@ -57,6 +57,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 			     long int eventEndIn):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
+  printModulo(1),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn),
   eventStart(eventStartIn),
