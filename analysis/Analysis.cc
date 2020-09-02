@@ -54,7 +54,6 @@ Analysis::Analysis(const std::string& treeNameIn,
 
 Analysis::~Analysis()
 {
-  delete chain;
   delete histoSum;
   for (auto pe : perEntryHistograms)
     {delete pe;}
