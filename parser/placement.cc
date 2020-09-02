@@ -47,9 +47,11 @@ void Placement::clear()
   axisY = 0;
   axisZ = 0;
   angle = 0;
-  sensitive     = true;
-  axisAngle     = false;
-  autoColour    = true;
+  sensitive  = true;
+  axisAngle  = false;
+  side       = "";
+  sideOffset = 0;
+  autoColour = true;
 }
 
 void Placement::PublishMembers()
@@ -151,6 +153,7 @@ Placement::Placement(const ScorerMesh& sm):
   axisZ     = sm.axisZ;
   angle     = sm.angle;
   axisAngle = sm.axisAngle;
+  autoColour = false;
 }
 
 Placement::Placement(const BLMPlacement& bp):
