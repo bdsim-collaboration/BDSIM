@@ -110,7 +110,7 @@ void EventAnalysis::Execute()
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  printModulo = (int)ceil(entries * fraction);
+  printModulo = (int)ceil((double)entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
