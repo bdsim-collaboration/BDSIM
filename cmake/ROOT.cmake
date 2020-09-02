@@ -10,6 +10,25 @@ endif()
 # find ROOT of at least version 6
 find_package(ROOT 6.0 REQUIRED)
 
+
+# ROOT can be compiled with C++17 and therefore BDSIM won't compile if it doesn't have
+# at leat that standard, so we pick apart ROOT stuff to find out and update the standard
+execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} --features OUTPUT_VARIABLE ROOT_FEATURES)
+list(REMOVE_DUPLICATES ROOT_FEATURES)
+if ("cxx17" IN_LIST ROOT_FEATURES)
+  message(STATUS "it's in the list")
+else()
+  message(STATUS "not in the list ${ROOT_FEATURES}")
+endif()
+
+string(FIND ${ROOT_FEATURES} "cxx17" _CXX17FOUND)
+if (_CXX17FOUND STRGREATER -1)
+  message(STATUS "ROOT compiled with cxx17 -> changing to C++17 for BDSIM")
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
+ 
 # ROOT doesn't implement the version and subversion number in CMAKE as it should, so
 # the above find package doesn't match the version required. Need to decode version ourselves
 if (ROOT_VERSION VERSION_LESS "6.00")
