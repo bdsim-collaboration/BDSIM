@@ -5,4 +5,4 @@ source /cvmfs/sft.cern.ch/lcg/releases/LCG_latestpython3/clhep/2.4.1.3/x86_64-ce
 source /cvmfs/sft.cern.ch/lcg/releases/LCG_latestpython3/ROOT/6.20.00/x86_64-centos7-gcc7-opt/ROOT-env.sh
 source /cvmfs/sft.cern.ch/lcg/releases/LCG_latestpython3/Geant4/10.06.p01/x86_64-centos7-gcc7-opt/Geant4-env.sh
 
-cmake ../bdsim-git/ -DBISON_EXECUTABLE=/usr/bin/bison
+cmake ../bdsim-git/ -DBISON_EXECUTABLE=/usr/bin/bison -DCMAKE_INSTALL_PREFIX=../bdsim/1.4-develop
