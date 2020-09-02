@@ -178,5 +178,7 @@ int main(int argc, char *argv[])
   catch (const std::string& error)
     {std::cerr << error << std::endl; exit(1);}
   delete dl;
+  for (auto analysis : analyses)
+    {delete analysis;}
   return 0;
 }

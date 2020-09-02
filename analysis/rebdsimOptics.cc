@@ -120,6 +120,7 @@ int main(int argc, char* argv[])
   delete outputFile;
   std::cout << "Result written to: " << outputFileName << std::endl;
   delete dl;
+  delete evtAnalysis;
   
   return 0;
 }
