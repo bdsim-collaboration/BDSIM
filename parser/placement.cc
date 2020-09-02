@@ -98,12 +98,12 @@ void Placement::print()const
     	    << "axisY "         << axisY         << std::endl
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
-	        << "sensitive "     << sensitive     << std::endl
-	        << "axisAngle "     << axisAngle     << std::endl
-	        << "side "          << side          << std::endl
+	    << "sensitive "     << sensitive     << std::endl
+	    << "axisAngle "     << axisAngle     << std::endl
+	    << "side "          << side          << std::endl
             << "sideOffset "    << sideOffset    << std::endl
-	        << "axisAngle "     << axisAngle     << std::endl
-	        << "autoColour "    << autoColour    << std::endl;
+	    << "axisAngle "     << axisAngle     << std::endl
+	    << "autoColour "    << autoColour    << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
