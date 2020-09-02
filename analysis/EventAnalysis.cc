@@ -114,7 +114,7 @@ void EventAnalysis::SetPrintModuloFraction(double fraction)
     {printModulo = 1;}
 }
 
-EventAnalysis::~EventAnalysis()
+EventAnalysis::~EventAnalysis() noexcept
 {
   for (auto& sa : samplerAnalyses)
     {delete sa;}

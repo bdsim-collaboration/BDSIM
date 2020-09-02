@@ -46,7 +46,7 @@ public:
 	      bool    perEntryAnalysis = true,
 	      bool    debugIn          = false);
 
-  virtual ~RunAnalysis();
+  virtual ~RunAnalysis() noexcept;
 
   /// Operate on each entry in the run tree.
   virtual void Process();
