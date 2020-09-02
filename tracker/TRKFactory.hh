@@ -91,6 +91,7 @@ private:
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
   std::shared_ptr<TRKOutput> output;
+  int nsamplers;
   
   /// particle properties
   int charge;

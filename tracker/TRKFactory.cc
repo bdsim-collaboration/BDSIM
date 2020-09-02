@@ -29,19 +29,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKApertureEllipsoidal.hh"
 #include "TRKApertureRectangular.hh"
 #include "TRKDecapole.hh"
+#include "TRKDipoleFringe.hh"
 #include "TRKElement.hh"
+#include "TRKElementLine.hh"
 #include "TRKFactory.hh"
 #include "TRKKicker.hh"
 #include "TRKLine.hh"
 #include "TRKOctupole.hh"
+#include "TRKOutput.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKRBend.hh"
 #include "TRKSBend.hh"
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
-#include "TRKDipoleFringe.hh"
-#include "TRKElementLine.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
@@ -63,7 +64,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 TRKFactory::TRKFactory(const GMAD::Options&   options,
 		       BDSParticleDefinition* particle,
 		       std::shared_ptr<TRKOutput> outputIn):
-  output(std::move(outputIn))
+  output(std::move(outputIn)),
+  nsamplers(0)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -214,6 +216,10 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 	      line->AddElement(sampler);
 	    }
 	}
+    }
+  if (nsamplers > 0)
+    {
+      output->AddNSamplers(nsamplers);
     }
   return line;
 }
@@ -419,6 +425,7 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
   std::string name = element.name;
   int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
   TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
+  ++nsamplers;
   return result;
 }
 

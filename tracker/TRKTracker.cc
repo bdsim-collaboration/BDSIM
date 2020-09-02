@@ -26,7 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "TRKOutput.hh"
 
 #include "parser/options.h"
 
@@ -35,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
 #include "TRKLine.hh"
+#include "TRKOutput.hh"
 #include "TRKParticle.hh"
 #include "TRKStrategy.hh"
 #include "TRKTracker.hh"
@@ -163,27 +163,6 @@ void TRKTracker::Track(TRKBunch* bunch)
             std::cout << "No further particles to track" << std::endl;
             break;
         }
-
-        // finish an event in the output which is a turn here
-        const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
-        output->FillEvent(nullptr, // EventInfo
-			  nullptr, // vertex
-			  nullptr, // sampler hits plane
-			  nullptr, // sampler hits cylinder
-			  nullptr, // energy loss
-			  nullptr, // energy loss full
-                          nullptr, // energy loss vacuum
-			  nullptr, // energy loss tunnel
-			  nullptr, // energy loss world
-			  nullptr, // energy loss contents
-			  nullptr, // world exit hits
-			  nullptr, // primary hit
-                          nullptr, // primary loss
-			  nullptr, // trajectories
-			  nullptr, // collimator hits
-			  nullptr, // aperture impacts
-			  scorerhits, // scorer hits map
-			  i); // turns taken
 
     }
 }

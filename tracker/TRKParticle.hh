@@ -55,16 +55,12 @@ public:
     return mass * std::sqrt(gamma0*gamma0 - 1);
   }
 
-  /// return kinetic energy in MeV
-  double Ek()const      {return sqrt(p*p+mass*mass)-mass;}
+  int EventID() const { return eventid; }
+
   /// return mass in MeV / c^2
   double M()const      {return mass;}
-  /// return momentum in MeV / c^2
-  double P()const      {return p;}
   /// return elementary charge
   int    Charge()const {return charge;}
-  /// return eventID
-  int    EventID()const {return eventID;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
@@ -83,17 +79,11 @@ public:
   double S;
 
 private:
-
-  // mass and charge don't change in the tracker!
-  /// momentum in MeV - can change in tracker
-  double p; 
-  double pbefore;
+  int eventid;
   /// mass in MeV / c^2
   double mass;
   /// charge in units of elementary charge
   int    charge;
-  /// event id for referencing in both tracker and bdsim output
-  int    eventID;
 };
 
 #endif

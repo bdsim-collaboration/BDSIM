@@ -2,10 +2,11 @@
 #define TRKOUTPUT_H
 
 #include <string>
-#include "BDSOutput.hh"
+
+#include "TRKOutputSamplers.hh"
 
 class TRKBunch;
-// class BDSOutput;
+class BDSOutput;
 
 class TRKOutput
 {
@@ -16,17 +17,19 @@ public:
   void CloseFile();
   void WritePrimaries(TRKBunch* bunch);
 
-  void FillSamplerHitsTracker(G4int samplerIndex,
+  void FillSamplerHitsTracker(int samplerIndex,
 			      TRKParticle& particle,
 			      double s);
-  template<typename ...Ts> void FillEvent(Ts ...args)
-  {
-    output->FillEvent(args...);
-  }
+
+  void RecordSamplerHit(int samplerIndex, TRKParticle const &particle, int turn,
+                        double s);
+
+  void AddNSamplers(int);
 
 private:
   std::string filename;
   BDSOutput* output;
+  TRKOutputSamplers samplers;
 
 };
 

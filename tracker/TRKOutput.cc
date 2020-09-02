@@ -36,8 +36,21 @@ void TRKOutput::WritePrimaries(TRKBunch* bunch)
     output->WriteTrackerBunch("primaries", bunch, true);
 }
 
-void TRKOutput::FillSamplerHitsTracker(G4int samplerIndex,
+void TRKOutput::FillSamplerHitsTracker(int samplerIndex,
                                        TRKParticle &particle, double s)
 {
   output->FillSamplerHitsTracker(samplerIndex, particle, s);
+}
+
+void TRKOutput::RecordSamplerHit(int samplerIndex,
+				 TRKParticle const &particle,
+				 int turn,
+                                 double s)
+{
+  samplers.RecordParticle(samplerIndex, particle, turn, s);
+}
+
+void TRKOutput::AddNSamplers(int n)
+{
+  samplers.AddNSamplers(n);
 }

@@ -36,7 +36,10 @@ TRKSampler::TRKSampler(std::string nameIn,
 
 void TRKSampler::Track(TRKParticle &particle, double /*step*/,
                        TRKStrategy * /*strategy*/) {
-  output->FillSamplerHitsTracker(index, particle, s);
+  output->RecordSamplerHit(index,
+			   particle,
+			   1, // turn
+			   s);
 }
 
 bool TRKSampler::OutsideAperture(TRKParticle const &) const { return false; }
