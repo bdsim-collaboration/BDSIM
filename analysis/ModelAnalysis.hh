@@ -45,7 +45,7 @@ public:
 		TChain* chain,
 		bool    perEntryAnalysis = true,
 		bool    debugIn          = false);
-  virtual ~ModelAnalysis(){};
+  virtual ~ModelAnalysis() noexcept;
 
   /// Operate on each entry in the model tree.
   virtual void Process();
