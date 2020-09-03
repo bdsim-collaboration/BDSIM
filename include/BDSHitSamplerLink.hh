@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHitSamplerLink: public BDSHitSampler
 {
 public:
+  BDSHitSamplerLink() = delete; ///< No default constructor.
   BDSHitSamplerLink(G4int samplerIDIn,
 		    const BDSParticleCoordsFull& coordsIn,
 		    G4double momentumIn,
@@ -56,12 +57,11 @@ public:
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
   
-  G4int                 Z;
-  G4int                 A;
-  G4int                 eventID;
-  
-private:
-  BDSHitSamplerLink() = delete; ///< No default constructor.
+  G4int Z;
+  G4int A;
+  G4int eventID;
+  G4int externalParticleID;
+  G4int externalParentID;
 };
 
 typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
