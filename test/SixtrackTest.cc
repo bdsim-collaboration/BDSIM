@@ -172,7 +172,7 @@ void AddParticle(BDSBunchSixTrackLink* stp)
     }
 
   if (particleDefinition)
-    {stp->AddParticle(particleDefinition, coords);}
+    {stp->AddParticle(particleDefinition, coords, 0, 0);}
 }
 
 void Summarise(BDSIMLink* bds)
