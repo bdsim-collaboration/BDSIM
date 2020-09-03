@@ -282,9 +282,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   tthc* thinThingHits = HCE ? dynamic_cast<tthc*>(HCE->GetHC(thinThingCollID)) : nullptr;
   
   std::map<G4String, G4THitsMap<G4double>*> scorerHits;
-  for (const auto& nameIndex : scorerCollectionIDs)
-    {scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
-  
+  if (HCE)
+    {
+      for (const auto& nameIndex : scorerCollectionIDs)
+	{scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
+    }
   // primary hit something? we infer this by seeing if there are any energy
   // deposition hits at all - if there are, the primary must have 'hit' something.
   // we don't check the world energy hits here because the hits could be from
