@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSHitSamplerLink.hh"
 #include "BDSLinkEventAction.hh"
+#include "BDSLinkEventInfo.hh"
 #include "BDSLinkRunAction.hh"
 #include "BDSOutput.hh"
 #include "BDSSDSampler.hh"
@@ -37,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SDManager.hh"
 #include "G4THitsMap.hh"
 #include "G4TransportationManager.hh"
+#include "G4VUserEventInformation.hh"
 
 #include <map>
 
@@ -105,13 +107,23 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
   slhc* samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
   typedef BDSHitsCollectionSampler shc;
   shc* sampHC = HCE ? dynamic_cast<shc*>(HCE->GetHC(collIDSampler)) : nullptr;
-
+  
+  G4VUserEventInformation* evtInfoG4 = evt->GetUserInformation();
+  BDSLinkEventInfo* evtInfo = dynamic_cast<BDSLinkEventInfo*>(evtInfoG4);
+  G4int primaryExternalParticleID = 0;
+  G4int primaryExternalParentID   = 0;
+  if (evtInfo)
+    {
+      primaryExternalParticleID = evtInfo->externalParticleIDofPrimary;
+      primaryExternalParentID   = evtInfo->externalParentIDofPrimary;
+    }
+  
   if (!samplerLink)
     {return;}
   if (samplerLink->entries() <= 0)
     {return;}
   else
-    {runAction->AppendHits(currentEventIndex, samplerLink);}
+    {runAction->AppendHits(currentEventIndex, primaryExternalParticleID, primaryExternalParentID, samplerLink);}
 
   output->FillEvent(nullptr,
 		    evt->GetPrimaryVertex(),

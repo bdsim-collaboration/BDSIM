@@ -41,18 +41,23 @@ public:
   virtual void EndOfRunAction(const G4Run* aRun);
 
   void AppendHits(G4int currentEventIndex,
-		  const BDSHitsCollectionSamplerLink* hits);
+		              G4int externalParticleID,
+		              G4int externalParentID,
+		              const BDSHitsCollectionSamplerLink* hits);
 
   BDSHitsCollectionSamplerLink* SamplerHits() const {return allHits;}
   void ClearSamplerHits() {delete allHits; allHits = nullptr;}
 
   inline G4int NSecondariesToReturn() const {return nSecondariesToReturn;}
   inline G4int NPrimariesToReturn()   const {return nPrimariesToReturn;}
+  inline G4int MaximumExternalParticleID() const {return maximumExternalParticleID;}
+  inline void SetMaximumExternalParticleID(G4int maxExtPartID) {maximumExternalParticleID = maxExtPartID;}
   
 private:
   BDSHitsCollectionSamplerLink* allHits;
   G4int nSecondariesToReturn;
   G4int nPrimariesToReturn;
+  G4int maximumExternalParticleID;
 };
 
 #endif
