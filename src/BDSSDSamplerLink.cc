@@ -141,7 +141,6 @@ G4bool BDSSDSamplerLink::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOu
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
-  G4String pName = pd->GetParticleName();
 
   BDSParticleCoordsFull coords(localPosition.x(),
 			       localPosition.y(),
