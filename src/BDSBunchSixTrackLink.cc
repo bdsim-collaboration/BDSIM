@@ -32,6 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBunchSixTrackLink::BDSBunchSixTrackLink():
   currentIndex(0),
+  currentExternalParticleID(0),
+  currentExternalParentID(0),
   size(0)
 {;}
 
@@ -55,13 +57,18 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   //UpdateGeant4ParticleDefinition(particleDefinition->PDGID());
   UpdateIonDefinition();
   
+  currentExternalParticleID = particle->externalParticleID;
+  currentExternalParentID   = particle->externalParentID;
+  
   return particle->coords;
 }
 
 void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefinitionIn,
-                                       const BDSParticleCoordsFull& coordsIn)
+                                       const BDSParticleCoordsFull& coordsIn,
+                                       int   externalParticleID,
+                                       int   externalParentID)
 {
-  particles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn, (G4int)particles.size()));
+  particles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn, externalParticleID, externalParentID));
   size = (G4int)particles.size();
   if (!particleDefinition)
     {particleDefinition = particles.back()->particleDefinition;}

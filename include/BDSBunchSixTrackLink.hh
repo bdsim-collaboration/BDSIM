@@ -43,16 +43,22 @@ public:
 
   /// Append particle to vector for tracking.
   void AddParticle(BDSParticleDefinition* particleDefinitionIn,
-		   const BDSParticleCoordsFull& coordsIn);
-
+		   const BDSParticleCoordsFull& coordsIn,
+		   int   externalParticleID,
+		   int   externalParentID);
+  
   void ClearParticles();
 
   inline size_t Size() const {return particles.size();}
+  inline int    CurrentExternalParticleID() const {return currentExternalParticleID;}
+  inline int    CurrentExternalParentID()   const {return currentExternalParentID;}
   
   void UpdateGeant4ParticleDefinition(G4int pdgID);
   
 private:
-  G4int currentIndex; ///< Index in the vector that we're currently at.
+  G4int currentIndex;
+  G4int currentExternalParticleID;
+  G4int currentExternalParentID;
   G4int size;         ///< Number of particles (1 counting).
   std::vector<BDSParticleExternal*> particles;
 };

@@ -24,21 +24,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSParticleExternal::BDSParticleExternal(BDSParticleDefinition* particleDefinitionIn,
 					 const BDSParticleCoordsFull& coordsIn,
-					 G4int                        indexIn):
+					 G4int                        externalParticleIDIn,
+					 G4int                        externalParentIDIn):
   particleDefinition(particleDefinitionIn),
   coords(coordsIn),
-  index(indexIn)
+  externalParticleID(externalParticleIDIn),
+  externalParentID(externalParentIDIn)
 {;}
 
 BDSParticleExternal::BDSParticleExternal(const BDSParticleExternal& other):
   particleDefinition(new BDSParticleDefinition(*other.particleDefinition)),
   coords(other.coords),
-  index(other.index)
+  externalParticleID(other.externalParticleID),
+  externalParentID(other.externalParentID)
 {;}
 
 BDSParticleExternal::BDSParticleExternal(BDSParticleExternal&& other) noexcept:
   coords(other.coords),
-  index(other.index)
+  externalParticleID(other.externalParticleID),
+  externalParentID(other.externalParentID)
 {
   particleDefinition = other.particleDefinition;
   other.particleDefinition = nullptr;
@@ -53,7 +57,8 @@ BDSParticleExternal& BDSParticleExternal::operator=(BDSParticleExternal&& other)
       other.particleDefinition = nullptr;
 
       coords = other.coords;
-      index  = other.index;
+      externalParticleID = other.externalParticleID;
+      externalParentID   = other.externalParentID;
     }
   return *this;
 }

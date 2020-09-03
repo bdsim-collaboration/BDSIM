@@ -35,9 +35,10 @@ class BDSParticleExternal
 public:
   /// Remove default constructor.
   BDSParticleExternal() = delete;
-  BDSParticleExternal(BDSParticleDefinition* particleDefinitionIn,
+  BDSParticleExternal(BDSParticleDefinition*       particleDefinitionIn,
 		      const BDSParticleCoordsFull& coordsIn,
-		      G4int                        indexIn);
+		      G4int                        externalParticleIDIn,
+		      G4int                        externalParentIDIn);
   /// @{ Define copy, move and assignment constructor2 as this class owns the particleDefinition.
   BDSParticleExternal(const BDSParticleExternal& other);
   BDSParticleExternal(BDSParticleExternal&& other) noexcept;
@@ -47,7 +48,8 @@ public:
 
   BDSParticleDefinition* particleDefinition;
   BDSParticleCoordsFull  coords;
-  G4int                  index;
+  G4int                  externalParticleID;
+  G4int                  externalParentID;
 };
 
 #endif
