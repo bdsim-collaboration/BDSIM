@@ -496,8 +496,16 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 
 BDSHitsCollectionSamplerLink* BDSIMLink::SamplerHits() const
 {
+  return runAction ? runAction->SamplerHits() : nullptr;
+}
+
+int BDSIMLink::GetCurrentMaximumSixTrackParticleID() const
+{
+  return runAction ? runAction->MaximumExternalParticleID() : 0;
+}
+
+void BDSIMLink::SetCurrentMaximumExternalParticleID(int currentMaximumExternalParticleID)
+{
   if (runAction)
-    {return runAction->SamplerHits();}
-  else
-    {return nullptr;}
+    {runAction->SetMaximumExternalParticleID(currentMaximumExternalParticleID);}
 }

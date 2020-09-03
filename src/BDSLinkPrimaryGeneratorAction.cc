@@ -17,12 +17,14 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunch.hh"
+#include "BDSBunchSixTrackLink.hh"
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSLinkDetectorConstruction.hh"
+#include "BDSLinkEventInfo.hh"
 #include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSLinkRegistry.hh"
 #include "BDSPrimaryVertexInformation.hh"
@@ -58,7 +60,7 @@ BDSLinkPrimaryGeneratorAction::~BDSLinkPrimaryGeneratorAction()
 void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // always save seed state in output
-  BDSEventInfo* eventInfo = new BDSEventInfo();
+  BDSLinkEventInfo* eventInfo = new BDSLinkEventInfo();
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
@@ -66,6 +68,12 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   try
     {
       coords = bunch->GetNextParticleLocal();
+      auto bunchSTL = dynamic_cast<BDSBunchSixTrackLink*>(bunch);
+      if (bunchSTL)
+	{
+	  eventInfo->externalParticleIDofPrimary = bunchSTL->CurrentExternalParticleID();
+	  eventInfo->externalParentIDofPrimary   = bunchSTL->CurrentExternalParentID();
+	}
     }
   catch (const BDSException& exception)
     {// we couldn't safely generate a particle -> abort

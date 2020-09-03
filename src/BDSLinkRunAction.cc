@@ -22,7 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkRunAction.hh"
 
 BDSLinkRunAction::BDSLinkRunAction():
-  allHits(nullptr)
+  allHits(nullptr),
+  nSecondariesToReturn(0),
+  nPrimariesToReturn(0),
+  maximumExternalParticleID(0)
 {;}
 
 BDSLinkRunAction::~BDSLinkRunAction()
@@ -54,6 +57,8 @@ void BDSLinkRunAction::EndOfRunAction(const G4Run* /*aRun*/)
 {;}
 
 void BDSLinkRunAction::AppendHits(G4int currentEventIndex,
+				  G4int externalParticleID,
+				  G4int externalParentID,
 				  const BDSHitsCollectionSamplerLink* hits)
 {
   if (!hits)
@@ -62,7 +67,19 @@ void BDSLinkRunAction::AppendHits(G4int currentEventIndex,
     {
       auto hit = new BDSHitSamplerLink(*(*hits)[i]);
       hit->eventID = currentEventIndex;
-      hit->parentID == 0 ? nPrimariesToReturn++ : nSecondariesToReturn++;
+      if (hit->parentID == 0)
+	{// use same ones from event which are the original ones for this primary
+	  hit->externalParticleID = externalParticleID;
+	  hit->externalParentID   = externalParentID;
+	  nPrimariesToReturn++;
+	}
+      else
+	{// new secondary - give it a new index (caching that), and new parentID
+	  maximumExternalParticleID++;
+	  hit->externalParticleID = maximumExternalParticleID;
+	  hit->externalParentID   = externalParticleID;
+	  nSecondariesToReturn++;
+	}
       allHits->insert(hit);
     }
 }

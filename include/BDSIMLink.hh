@@ -104,6 +104,9 @@ public:
 
   BDSHitsCollectionSamplerLink* SamplerHits() const;
   void ClearSamplerHits() {runAction->ClearSamplerHits();}
+  
+  int GetCurrentMaximumSixTrackParticleID() const;
+  void SetCurrentMaximumExternalParticleID(int currentMaximumExternalParticleID);
 
   inline G4int NSecondariesToReturn() const {return runAction ? runAction->NSecondariesToReturn() : 0;}
   inline G4int NPrimariesToReturn()   const {return runAction ? runAction->NPrimariesToReturn() : 0;}
