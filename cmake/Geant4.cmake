@@ -110,7 +110,9 @@ endif()
 # Geant4 adds some flags specifically setting the C++ standard which is annoying
 # and says we should just edit ourselves - no option to not do this
 # remove -std=c++11 or 14 17 (let us deal with this ensuring we're at least 11)
-string(REGEX REPLACE "\\-std=c\\+\\+[147]+" "" _TMPV ${CMAKE_CXX_FLAGS})
+# match suffix of one letter of lower case a to z
+#string(REGEX REPLACE "\\-std=c\\+\\+[0-9]+[a-z]?" "" _TMPV ${CMAKE_CXX_FLAGS})
+string(REGEX REPLACE "\\-std=\\(?:c|gnu\\)?\\+\\+[0-9]+[a-z]?" "" _TMPV ${CMAKE_CXX_FLAGS})
 set(CMAKE_CXX_FLAGS ${_TMPV})
 if($ENV{VERBOSE})
   message(STATUS "CMAKE_CXX_FLAGS after Geant4 ${CMAKE_CXX_FLAGS}")
