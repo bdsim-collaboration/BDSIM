@@ -202,6 +202,7 @@ public:
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
   inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
+  inline G4bool   StoreApertureImpactsHistograms()  const {return G4bool  (options.storeApertureImpactsHistograms);}
   inline G4double ApertureImpactsMinimumKE() const {return G4double(options.apertureImpactsMinimumKE*CLHEP::GeV);}
   inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
   inline G4bool   StoreCollimatorHits()      const {return G4bool  (options.storeCollimatorHits);}
