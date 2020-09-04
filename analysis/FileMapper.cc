@@ -237,7 +237,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  // instead get the directory from the output, knowing it now exists
 	  outDir = output->GetDirectory(histPath.c_str());
 	  output->cd(histPath.c_str()); // change into it so new histograms are added to it
-	  
+
 	  // create appropriate type of merge
 	  HistogramAccumulator* acc = nullptr;
 	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
@@ -266,7 +266,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
       else
 	{continue;} // don't care about other objects
     }
-  
+
   originalDir->cd();
 }
 
