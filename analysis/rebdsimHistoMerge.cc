@@ -146,5 +146,7 @@ int main(int argc, char *argv[])
   catch (const std::exception& error)
     {std::cerr << error.what(); exit(1);}
   delete dl;
+  for (auto analysis : analyses)
+    {delete analysis;}
   return 0;
 }

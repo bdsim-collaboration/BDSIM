@@ -81,12 +81,23 @@ General
 
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
+* rebdsimCombine will exit if the first argument, which is meant to be the single output file, contains
+  an asterix (*), as it is likely the arguments are in the wrong order.
+* BDSIM will exit if the option :code:`minimumKineticEnergy` is set to a value higher than the kinetic
+  energy of the beam particle. This takes into account the possibly different kinetic energy of the beam
+  particle versus the design particle. Such a combination of options would result in all primary particles
+  being immediately killed and not tracked through the model.
 
 Bug Fixes
 ---------
 
 * Tolerate "-" character in rebdsim input and output file names written inside the analysis configuration
   file. In the past, only the part up to this character was used.
+* Fix loading of a visualisation macro (:code:`--vis_mac=vis.mac`) when the file was called vis.mac and was
+  in the current directory. Previously, the bdsim default one would always be used. Fixed by appending the
+  current working directory to the macro search path for Geant4.
+* Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
+  with a G4CutTubs as the container (outermost) solid.
 
 Output Changes
 --------------

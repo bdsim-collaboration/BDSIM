@@ -57,7 +57,7 @@ public:
 		long int eventStartIn        = 0,
 		long int eventEndIn          = -1);
 
-  virtual ~EventAnalysis();
+  virtual ~EventAnalysis() noexcept;
 
   /// Method which calls all other methods in order. Here we also test if we
   /// have to process the samplers on whether to call Process().

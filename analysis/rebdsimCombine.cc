@@ -59,6 +59,13 @@ int main(int argc, char* argv[])
     }
 
   std::string outputFile = std::string(argv[1]);
+  if (outputFile.find("*") != std::string::npos)
+    {
+      std::cerr << "First argument for output file \"" << outputFile << "\" contains an *." << std::endl;
+      std::cerr << "Should only be a singular file - check order of arguments." << std::endl;
+      exit(1);
+    }
+  
   // output file must be opened before histograms are created because root does
   // everything statically behind the scenes
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");

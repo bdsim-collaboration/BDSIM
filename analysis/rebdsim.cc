@@ -180,5 +180,7 @@ int main(int argc, char *argv[])
     {std::cerr << error.what(); exit(1);}
 
   delete dl;
+  for (auto analysis : analyses)
+    {delete analysis;}
   return 0;
 }
