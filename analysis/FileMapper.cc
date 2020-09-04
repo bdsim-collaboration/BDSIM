@@ -205,23 +205,25 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	}
       else if (dirObject->InheritsFrom("TH1") or dirPath =="/Event/MergedHistograms" )
 	{
-
-      TH1* h = nullptr;
-      int nDim;
-      bool BDSBH4Dtype;
-
-	  if (!(dirObject->InheritsFrom("TH1"))) {
-          TTree* tree = static_cast<TTree*>(dirObject);
-          tree->SetBranchAddress("BDSBH4DBase",&h);
-          tree->GetEntry(0);
-          nDim=4;
-	      BDSBH4Dtype = true;}
-	  else {
+	  TH1* h = nullptr;
+	  int nDim;
+	  bool BDSBH4Dtype;
+	  
+	  if (!(dirObject->InheritsFrom("TH1")))
+	    {
+	      TTree* tree = static_cast<TTree*>(dirObject);
+	      tree->SetBranchAddress("BDSBH4DBase",&h);
+	      tree->GetEntry(0);
+	      nDim=4;
+	      BDSBH4Dtype = true;
+	    }
+	  else
+	    {
 	      h = static_cast<TH1*>(dirObject);
-          nDim = RBDS::DetermineDimensionality(h);
-          BDSBH4Dtype = false;
-	  }
-
+	      nDim = RBDS::DetermineDimensionality(h);
+	      BDSBH4Dtype = false;
+	    }
+	  
 	  if (debug)
 	    {gDirectory->pwd();}
 	  
@@ -235,7 +237,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  // instead get the directory from the output, knowing it now exists
 	  outDir = output->GetDirectory(histPath.c_str());
 	  output->cd(histPath.c_str()); // change into it so new histograms are added to it
-
+	  
 	  // create appropriate type of merge
 	  HistogramAccumulator* acc = nullptr;
 	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
@@ -264,7 +266,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
       else
 	{continue;} // don't care about other objects
     }
-
+  
   originalDir->cd();
 }
 

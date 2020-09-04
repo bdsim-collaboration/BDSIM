@@ -244,7 +244,6 @@ add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-
 if (BDSIM_BUILD_STATIC_LIBS)
   set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
 else()
@@ -255,7 +254,6 @@ bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
-
 
 include(CPack)
 
