@@ -190,30 +190,37 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
+
+  const BinSpecification& xbs = d->xBinning;
+  const BinSpecification& ybs = d->yBinning;
+  const BinSpecification& zbs = d->zBinning;
+  const BinSpecification& ebs = d->eBinning;
+
+  std::vector<double> binEdgesE = ebs.edges ? *(ebs.edges) : RBDS::LinSpace(ebs.low, ebs.high, ebs.n);
   
   if(d->eScale == "linear")
     {
-      result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale, d->eBinsEdges,
-						   d->xNBins, d->xLow, d->xHigh,
-						   d->yNBins, d->yLow, d->yHigh,
-						   d->zNBins, d->zLow, d->zHigh,
-						   d->eNBins, d->eLow, d->eHigh);
+      result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale, binEdgesE,
+						   xbs.n, xbs.low, xbs.high,
+						   ybs.n, ybs.low, ybs.high,
+						   zbs.n, zbs.low, zbs.high,
+						   ebs.n, ebs.low, ebs.high);
     }
   else if(d->eScale == "log")
     {
-      result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale, d->eBinsEdges,
-						d->xNBins, d->xLow, d->xHigh,
-						d->yNBins, d->yLow, d->yHigh,
-						d->zNBins, d->zLow, d->zHigh,
-						d->eNBins, d->eLow, d->eHigh);
+      result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale, binEdgesE,
+						xbs.n, xbs.low, xbs.high,
+						ybs.n, ybs.low, ybs.high,
+						zbs.n, zbs.low, zbs.high,
+						ebs.n, ebs.low, ebs.high);
     }
   else if(d->eScale == "user")
     {
-      result = new BDSBH4D<boost_histogram_variable>(name, title, d->eScale, d->eBinsEdges,
-						     d->xNBins, d->xLow, d->xHigh,
-						     d->yNBins, d->yLow, d->yHigh,
-						     d->zNBins, d->zLow, d->zHigh,
-						     d->eNBins, d->eLow, d->eHigh);
+      result = new BDSBH4D<boost_histogram_variable>(name, title, d->eScale, binEdgesE,
+						     xbs.n, xbs.low, xbs.high,
+						     ybs.n, ybs.low, ybs.high,
+						     zbs.n, zbs.low, zbs.high,
+						     ebs.n, ebs.low, ebs.high);
     }
   return result;
 }
