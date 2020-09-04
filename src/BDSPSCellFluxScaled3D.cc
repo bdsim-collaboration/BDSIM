@@ -39,9 +39,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
+BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&         scorerName,
                                              const BDSHistBinMapper* mapperIn,
-                                             const G4String&           unitIn,
+                                             const G4String&         unitIn,
                                              G4int ni,
                                              G4int nj,
                                              G4int nk,
@@ -62,10 +62,10 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
   fNk = nk;
 }
 
-BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerName,
+BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&         scorerName,
                                              const BDSHistBinMapper* mapperIn,
-                                             const G4String&           filename,
-                                             const G4String&           unitIn,
+                                             const G4String&         filename,
+                                             const G4String&         unitIn,
                                              G4int ni,
                                              G4int nj,
                                              G4int nk,

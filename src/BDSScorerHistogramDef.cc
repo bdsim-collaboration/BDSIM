@@ -25,11 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <string>
 
-BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo&  mesh,
-					     const G4String&           uniqueNameIn,
-					     const G4String&           primitiveScorerNameIn,
-					     G4double                  primitiveScorerUnitValueIn,
-					     const BDSHistBinMapper& coordinateMapperIn):
+BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo& mesh,
+					     const G4String&          uniqueNameIn,
+					     const G4String&          primitiveScorerNameIn,
+					     G4double                 primitiveScorerUnitValueIn,
+					     const BDSHistBinMapper&  coordinateMapperIn):
   BDSScorerMeshInfo(mesh),
   uniqueName(uniqueNameIn),
   primitiveScorerName(primitiveScorerNameIn),

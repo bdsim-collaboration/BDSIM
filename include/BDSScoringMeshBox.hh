@@ -65,7 +65,6 @@ protected:
   G4double scorerSize[3];
   G4int nSegment[3];
   G4int nEnergySegments;
-
 };
 
 #endif

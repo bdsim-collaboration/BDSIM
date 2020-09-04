@@ -46,8 +46,8 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
   mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nEnergySegments, recipe.energyAxis);
 }
 
-BDSScoringMeshBox::BDSScoringMeshBox(const G4String& name,
-                                     const G4ThreeVector& translation,
+BDSScoringMeshBox::BDSScoringMeshBox(const G4String&         name,
+                                     const G4ThreeVector&    translation,
                                      const G4RotationMatrix& rotation):
   G4ScoringBox(name),
   mapper(nullptr)
@@ -61,10 +61,9 @@ const BDSHistBinMapper* BDSScoringMeshBox::Mapper() const
   if (!sizeIsSet)
     {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
   if (!mapper)
-  {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" mapper has mysteriously disapeared");}
+    {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" mapper has mysteriously disapeared");}
   return mapper;
 }
-
 
 BDSScoringMeshBox::~BDSScoringMeshBox()
 {

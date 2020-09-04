@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <fstream>
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
@@ -27,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/scorermesh.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
+
+#include <fstream>
 
 BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 {
@@ -64,39 +65,42 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 		     yLow, yHigh,
 		     zLow, zHigh);
 
-  if (eScale == "user") {
+  if (eScale == "user")
+    {
       std::string const BinsEdgesFile(mesh.eBinsEdgesFilenamePath);
       std::ifstream file(BinsEdgesFile.c_str());
-
-      if (file) {
-          // Reading of the bins edges file.
+      
+      if (file)
+	{
+	  // Reading of the bins edges file.
           std::istream_iterator<double> it(file);
           std::istream_iterator<double> end;
           std::back_insert_iterator<std::vector<double>> it2(eBinsEdges);
-
+	  
           copy(it, end, it2);
-      } else { throw BDSException(__METHOD_NAME__, "eBinsEdgesFilenamePath must be the path to a .txt file"); }
+	}
+      else
+	{throw BDSException(__METHOD_NAME__, "eBinsEdgesFilenamePath must be the path to a .txt file");}
 
       nBinsE = eBinsEdges.size()-1;
       eLow = eBinsEdges[0];
       eHigh = eBinsEdges[nBinsE];
-
-  }
-
-  if (nBinsE > 1) {
-    if (eScale == "linear") {
-        energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");
     }
-    else if (eScale == "log") {
-        energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");
+  
+  if (nBinsE > 1)
+    {
+      if (eScale == "linear")
+	{energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");}
+      else if (eScale == "log")
+	{energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");}
+      else if (eScale == "user")
+	{
+	  std::vector<double> eBinsEdgesEnergyAxis;
+	  for (int i=0; i < (int)eBinsEdges.size(); i++)
+	    {eBinsEdgesEnergyAxis.push_back(eBinsEdges[i]*CLHEP::GeV);}
+	  energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
+	}
+      else
+	{throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
     }
-    else if (eScale == "user") {
-        std::vector<double> eBinsEdgesEnergyAxis;
-        for (int i=0; i < (int)eBinsEdges.size(); i++)
-	  {eBinsEdgesEnergyAxis.push_back(eBinsEdges[i]*CLHEP::GeV);}
-        energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
-    }
-    else {throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
-  }
-
 }

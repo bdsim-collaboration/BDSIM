@@ -51,7 +51,6 @@ if (NOT USE_BOOST)
 else()
   set(BOOSTINCLUDES "-I${Boost_INCLUDE_DIRS}")
 endif()
-message(STATUS "XYZ2 ${BOOSTINCLUDES}")
 
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)

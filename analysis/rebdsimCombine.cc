@@ -114,20 +114,20 @@ int main(int argc, char* argv[])
 	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
 
 	      TH1* h = nullptr;
-
-	      if (hist.BDSBH4Dtype == false){
-              h = static_cast<TH1*>(f->Get(histPath.c_str()));
-	      }
-	      else{
-              TDirectory* rootDir = static_cast<TDirectory*>(f);
-              TObject* dirObject = rootDir->Get(histPath.c_str());
-              TTree* tree = static_cast<TTree*>(dirObject);
-              tree->SetBranchAddress("BDSBH4DBase",&h);
-              tree->GetEntry(0);
-	      }
+	      
+	      if (hist.BDSBH4Dtype == false)
+		{h = static_cast<TH1*>(f->Get(histPath.c_str()));}
+	      else
+		{
+		  TDirectory* rootDir = static_cast<TDirectory*>(f);
+		  TObject* dirObject = rootDir->Get(histPath.c_str());
+		  TTree* tree = static_cast<TTree*>(dirObject);
+		  tree->SetBranchAddress("BDSBH4DBase",&h);
+		  tree->GetEntry(0);
+		}
 
 	      if (!h)
-	      {RBDS::WarningMissingHistogram(histPath, file); continue;}
+		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
 	    }
 	}
@@ -142,22 +142,23 @@ int main(int argc, char* argv[])
     {
       TH1* result = hist.accumulator->Terminate();
 
-      if (hist.BDSBH4Dtype == false){
+      if (hist.BDSBH4Dtype == false)
+	{
           result->SetDirectory(hist.outputDir);
           hist.outputDir->Add(result);
           delete hist.accumulator; // this removes temporary histograms from the file
-      }
-      else {
-         BDSBH4DBase *h = dynamic_cast<BDSBH4DBase *>(result);
-         TTree *tree = new TTree(h->GetName(), "BDSBH4DBase Tree");
-         tree->Branch("BDSBH4DBase", &h, 32000, 0);
-         tree->Fill();
-         hist.outputDir->WriteTObject(tree,result->GetName(),"",32000);
-         delete h;
-         delete tree;
-         delete hist.accumulator;
-      }
-
+	}
+      else
+	{
+	  BDSBH4DBase *h = dynamic_cast<BDSBH4DBase *>(result);
+	  TTree *tree = new TTree(h->GetName(), "BDSBH4DBase Tree");
+	  tree->Branch("BDSBH4DBase", &h, 32000, 0);
+	  tree->Fill();
+	  hist.outputDir->WriteTObject(tree,result->GetName(),"",32000);
+	  delete h;
+	  delete tree;
+	  delete hist.accumulator;
+	}
     }
 
   output->Write(nullptr,TObject::kOverwrite);

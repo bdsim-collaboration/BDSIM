@@ -28,7 +28,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdexcept>
 #include <string>
 
-
 ClassImp(HistogramAccumulator)
 
 HistogramAccumulator::HistogramAccumulator():
@@ -82,10 +81,10 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
       }
     case 4:
       {
-    mean =  dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(meanName.c_str());
-    variance = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(variName.c_str());
-    result   = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(resultHistName.c_str());
-    break;
+	mean     = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(meanName.c_str());
+	variance = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(variName.c_str());
+	result   = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(resultHistName.c_str());
+	break;
       }
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}

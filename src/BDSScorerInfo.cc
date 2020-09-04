@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <iostream>
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSMaterials.hh"
@@ -27,11 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/scorer.h"
 #include "parser/scorermesh.h"
 
-
 #include "G4ParticleTable.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
-
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -39,7 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, G4bool upgradeTo3D):
+BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
+			     G4bool              upgradeTo3D):
   particle(nullptr)
 {
   const std::map<std::string, std::string> replacements = {
@@ -48,8 +46,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer, G4bool upgradeTo3D):
 							   {"depositedenergy", "depositedenergy3d"},
 							   {"population",      "population3d"},
 							   {"cellflux",        "cellflux3d"},
-                               {"cellfluxscaled",  "cellfluxscaled3d"},
-                               {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
+							   {"cellfluxscaled",  "cellfluxscaled3d"},
+							   {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;

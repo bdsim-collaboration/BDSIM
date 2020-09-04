@@ -38,10 +38,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4String&           scorerName,
+BDSPSCellFluxScaledPerParticle3D::BDSPSCellFluxScaledPerParticle3D(const G4String&         scorerName,
                                                                    const BDSHistBinMapper* mapperIn,
-                                                                   const G4String&           pathname,
-                                                                   const G4String&           unitIn,
+                                                                   const G4String&         pathname,
+                                                                   const G4String&         unitIn,
                                                                    G4int ni,
                                                                    G4int nj,
                                                                    G4int nk,
