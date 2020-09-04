@@ -16,15 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef BDSIM_BDSHISTBINMAPPER_HH
-#define BDSIM_BDSHISTBINMAPPER_HH
+#ifndef BDSIM_BDSHISTBINMAPPER_H
+#define BDSIM_BDSHISTBINMAPPER_H
 
 #include "BDSBHTypedefs.hh"
 #include "G4ThreeVector.hh"
 
 
-class BDSHistBinMapper {
+class BDSHistBinMapper
+{
 public:
     BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn, boost_histogram_axes_variant energyAxisIn);
 
@@ -55,4 +55,4 @@ protected:
     boost_histogram_axes_variant energyAxis;
 };
 
-#endif //BDSIM_BDSHISTBINMAPPER_HH
+#endif

@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef ROOT_TEST_BDSBH4DLINKDEF_H
 #define ROOT_TEST_BDSBH4DLINKDEF_H
 
@@ -61,4 +60,4 @@ typedef double boost_histogram_storage_type;
 #pragma link C++ class BDSBH4D<boost_histogram_log>+;
 #pragma link C++ class BDSBH4D<boost_histogram_variable>+;
 
-#endif //ROOT_TEST_BDSBH4DLINKDEF_H
+#endif

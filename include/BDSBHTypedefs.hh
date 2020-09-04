@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #ifndef BDSIM_BDSBHTYPEDEFS_H
 #define BDSIM_BDSBHTYPEDEFS_H
 
@@ -40,4 +39,4 @@ typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis,
 typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis      >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_log;
 typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_variable_axis >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_variable;
 
-#endif //BDSIM_BDSBHTYPEDEFS_H
+#endif
