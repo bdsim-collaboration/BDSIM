@@ -132,7 +132,7 @@ int main(int /*argc*/, char** /*argv*/)
   
   BDSFieldMag* biCubic = nullptr;
   try
-    {BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);}
+    {biCubic = BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);}
   catch (const BDSException& e)
     {std::cout << e.what() << std::endl; return 1;}
 

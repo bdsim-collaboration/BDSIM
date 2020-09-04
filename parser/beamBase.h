@@ -131,6 +131,8 @@ namespace GMAD
       double eventGeneratorMaxYp;
       double eventGeneratorMinZp;
       double eventGeneratorMaxZp;
+      double eventGeneratorMinRp;
+      double eventGeneratorMaxRp;
       double eventGeneratorMinT;
       double eventGeneratorMaxT;
       double eventGeneratorMinEK;
