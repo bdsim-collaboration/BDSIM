@@ -1409,7 +1409,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
   // include base thickness in each wedge so it covers the whole beam aperture when set to the thickest
   // possible amount of material, otherwise a fraction of the beam wouldn't pass through the wedges.
-  G4double baseWidth = PrepareBeamPipeInfo(element)->aper1;
+  auto bpi = PrepareBeamPipeInfo(element);
+  G4double baseWidth = bpi->aper1;
+  delete bpi;
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
