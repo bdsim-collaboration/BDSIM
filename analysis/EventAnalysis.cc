@@ -57,6 +57,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 			     long int eventEndIn):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
+  printModulo(1),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn),
   eventStart(eventStartIn),
@@ -110,12 +111,12 @@ void EventAnalysis::Execute()
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  printModulo = (int)ceil(entries * fraction);
+  printModulo = (int)ceil((double)entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
 
-EventAnalysis::~EventAnalysis()
+EventAnalysis::~EventAnalysis() noexcept
 {
   for (auto& sa : samplerAnalyses)
     {delete sa;}

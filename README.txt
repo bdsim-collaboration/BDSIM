@@ -23,7 +23,7 @@ Originally started by G.A. Blair. See manual for full authorship.
 History
 =======
 
-v1.4:   31.12.19
+v1.4:   08.06.20
 v1.3.3: 21.05.19
 v1.3.2: 20.04.19
 v1.3.1: 05.03.19
@@ -61,16 +61,17 @@ Installation
 System requirements:
 
 tested on:
-    os: Linux (Scientific Linux Cern 6), Mac OS 10.10 onwards
+    os: Linux (Scientific Linux Cern 6 and 7), Mac OS 10.14 onwards
     architecture: x86_64
-    compiler: gcc 4.9, clang 6 (fully c++ 11 compliant)
+    compiler: gcc 4.9, clang 6 or later (fully c++ 11 compliant)
    
 mandatory:
+   - CMake 3.1 or higher
    - BISON
    - CLHEP (recommended version 2.3.3.0 - check with Geant4 version)
    - FLEX
    - Geant4 versions Geant4.10 or greater (10.4.p03 recommended)
-     Latest patch version recommended of any 10.X version. 
+     or latest patch version recommended of any 10.X version. 
    - ROOT 6
 
 optional: 

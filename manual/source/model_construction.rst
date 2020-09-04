@@ -730,13 +730,14 @@ to an increase in :math:`p_y` for a positively charged particle.
 .. warning:: :code:`vkick` will supercede the strength even if :code:`B` is specified. Therefore, the
 	     user should specify only :code:`vkick` or :code:`B`.
 
-In the case of a thick kicker, the resulting bending angle is calculated using:
+In the case of a thick vertical kicker, the resulting bending angle is calculated using:
 
 .. math::
 
-   \theta = \sin^{-1}(\,p_x)
+   \theta = \sin^{-1}(\,p_y),
 
-The dipole field strength is then calculated with respect to the chord length:
+where :math:`p_y` is the fractional change in vertical momentum. The dipole field strength is
+then calculated with respect to the chord length:
 
 .. math::
 
@@ -1647,13 +1648,15 @@ Example with field: ::
 
   detectorfield: field, type="bmap2d",
                         bScaling = 0.5,
-			magneticFile = "bdsim2d:/Path/To/File.dat",
-			magneticInterpolator="cubic2d";
+			magneticFile = "bdsim2d:/Path/To/File.dat";
 
   detec: element, geometryFile="gdml:twoboxes.gdml",
                   fieldAll="detectorfield",
 		  l=5*m,
 		  horizontalWidth=0.76*m;
+
+Here, in the field definition, cubic interpolation (2D to match the field type) by default and
+the integrator (for the particle motion) will be the default "g4classicalrk4" (4th order Runge Kutta).
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does

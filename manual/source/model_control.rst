@@ -744,7 +744,7 @@ appropriate parameters need to be defined for each individual distribution.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
 
 +---------------+--------------------------------+------------------------+
 | **Variable**  | **Description**                | **Coordinates Used**   |
@@ -2383,6 +2383,12 @@ with the following options.
 | storeApertureImpactsAll            | If `storeApertureImpacts` is on, the information will be generated |
 |                                    | for all particles leaving the beam pipe when this option is turned |
 |                                    | on.                                                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsHistograms     | Whether to store the primary first aperture impact histogram       |
+|                                    | `PFirstAI`.  This will automatically be on if                      |
+|                                    | `storeApertureImpacts` is on, and is on by default otherwise.      |
+|                                    | If both this and `storeApertureImpacts` is off, no aperture        |
+|                                    | impact hits will be generating and will save some memory.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |
