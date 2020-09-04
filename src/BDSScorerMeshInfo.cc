@@ -66,10 +66,10 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 		     zLow, zHigh);
 
   if (eScale == "user")
-    {
+    {// In future we can move RBDS::BinLoader to a separate library and use that both here and in rebdsim
       std::string const BinsEdgesFile(mesh.eBinsEdgesFilenamePath);
       std::ifstream file(BinsEdgesFile.c_str());
-      
+        
       if (file)
 	{
 	  // Reading of the bins edges file.
