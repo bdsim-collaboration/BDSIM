@@ -16,52 +16,31 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BinSpecification.hh"
 #include "HistogramDef4D.hh"
 
 ClassImp(HistogramDef4D)
 
 HistogramDef4D::HistogramDef4D():
-        eNBins(0),
-        eLow(0),
-        eHigh(0),
-        eScale("log"),
-        eBinsEdges({}),
-        logarithmicE(false)
+eBinning(BinSpecification())
 {;}
 
-HistogramDef4D::HistogramDef4D(std::string treeNameIn,
-                               std::string histNameIn,
-                               int         xNBinsIn,
-                               int         yNBinsIn,
-                               int         zNBinsIn,
-                               int         eNBinsIn,
-                               double      xLowIn,
-                               double      xHighIn,
-                               double      yLowIn,
-                               double      yHighIn,
-                               double      zLowIn,
-                               double      zHighIn,
-                               double      eLowIn,
-                               double      eHighIn,
-                               std::string eScaleIn,
-                               std::vector<double> eBinsEdgesIn,
-                               std::string plotIn,
-                               std::string selectionIn,
-                               bool        perEntryIn,
-                               bool        logarithmicXIn,
-                               bool        logarithmicYIn,
-                               bool        logarithmicZIn,
-                               bool        logarithmicEIn):
-        HistogramDef3D(treeNameIn, histNameIn, xNBinsIn, yNBinsIn, zNBinsIn,
-                       xLowIn, xHighIn, yLowIn, yHighIn, zLowIn, zHighIn,
-                       plotIn, selectionIn, perEntryIn,
-                       logarithmicXIn, logarithmicYIn, logarithmicZIn),
-        eNBins(eNBinsIn),
-        eScale(eScaleIn),
-        eBinsEdges(eBinsEdgesIn),
-        eLow(eLowIn),
-        eHigh(eHighIn),
-        logarithmicE(logarithmicEIn)
+HistogramDef4D::HistogramDef4D(const std::string&      treeNameIn,
+                               const std::string&      histNameIn,
+			       const BinSpecification& xBinningIn,
+			       const BinSpecification& yBinningIn,
+			       const BinSpecification& zBinningIn,
+			       const BinSpecification& eBinningIn,
+                               const std::string&      variableIn,
+			       const std::string&      eScaleIn,
+                               const std::string&      selectionIn,
+                               bool                    perEntryIn):
+  HistogramDef3D(treeNameIn, histNameIn, xBinningIn, yBinningIn, zBinningIn, variableIn, selectionIn, perEntryIn),
+  eBinning(eBinningIn),
+  eScale(eScaleIn)
 {
-    nDimensions = 4;
+  nDimensions = 4;
 }
+
+HistogramDef4D::~HistogramDef4D()
+{;}

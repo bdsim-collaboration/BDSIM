@@ -25,47 +25,36 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
-class HistogramDef4D : public HistogramDef3D
+/**
+ * @brief Specification for 4D Histogram.
+ *
+ * @author E. Ramoisiaux
+ */
+
+class HistogramDef4D: public HistogramDef3D
 {
 public:
-    /// Public constructor only for compatibility with ROOT - not indended for use.
-    HistogramDef4D();
+  /// Public constructor only for compatibility with ROOT - not indended for use.
+  HistogramDef4D();
+  
+  /// Use this constructor.
+  HistogramDef4D(const std::string& treeNameIn,
+		 const std::string& histNameIn,
+		 const BinSpecification& xBinningIn,
+		 const BinSpecification& yBinningIn,
+		 const BinSpecification& zBinningIn,
+		 const BinSpecification& eBinningIn,
+		 const std::string&      variableIn,
+		 const std::string&      eScaleIn,
+		 const std::string&      selectionIn = "1",
+		 bool                    perEntryIn  = true);
+  
+  virtual ~HistogramDef4D();
 
-    /// Use this constructor.
-    HistogramDef4D(std::string treeNameIn,
-    std::string histNameIn,
-    int         xNBinsIn,
-    int         yNBinsIn,
-    int         zNBinsIn,
-    int         eNBinsIn,
-    double      xLowIn,
-    double      xHighIn,
-    double      yLowIn,
-    double      yHighIn,
-    double      zLowIn,
-    double      zHighIn,
-    double      eLowIn,
-    double      eHighIn,
-    std::string eScaleIn,
-    std::vector<double> eBinsEdgesIn,
-    std::string plotIn,
-    std::string selectionIn    = "1",
-    bool        perEntryIn     = true,
-    bool        logarithmicXIn = false,
-    bool        logarithmicYIn = false,
-    bool        logarithmicZIn = false,
-    bool        logarithmicEIn = false);
-    virtual ~HistogramDef4D(){;}
+  BinSpecification eBinning;
+  std::string eScale;
 
-    int         eNBins;
-    double      eLow;
-    double      eHigh;
-    std::string eScale;
-    std::vector<double> eBinsEdges;
-
-    bool        logarithmicE;
-
-ClassDef(HistogramDef4D, 1);
+  ClassDef(HistogramDef4D, 1);
 };
 
 #endif
