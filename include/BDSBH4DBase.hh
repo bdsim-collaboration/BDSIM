@@ -27,8 +27,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TFile.h"
 #include "TObject.h"
 
-class BDSBH4DBase : public TH1D {
+#include <string>
+#include <vector>
 
+/** @brief 4D histogram class.
+ *
+ * @author Eliott Ramoisiaux
+ */
+
+class BDSBH4DBase: public TH1D
+{
 public:
     ~BDSBH4DBase() override = default;
 
@@ -80,4 +88,4 @@ ClassDef(BDSBH4DBase,1);
 
 };
 
-#endif //BDSBH4DBASE_HH
+#endif
