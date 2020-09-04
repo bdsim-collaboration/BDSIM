@@ -60,8 +60,6 @@ mark_as_advanced(BDSIM_REGRESSION_PREFIX)
 # Find Packages #
 #################
 
-
-
 # GIT - optional - for software version in output & copying only example source files
 # minimum version 1.8.2.1 for git ls-files for example copying
 find_package(Git 1.8.2.1 QUIET)

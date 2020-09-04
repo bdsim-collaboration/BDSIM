@@ -74,7 +74,7 @@ public:
 			  const std::string& overRideName  = "",
 			  const std::string& overRideTitle = "");
 
-  /// Create 3D histogram.
+  /// Create 4D histogram.
   BDSBH4DBase* CreateHistogram4D(const HistogramDef4D* d,
                                  const std::string& overRideName  = "",
                                  const std::string& overRideTitle = "");

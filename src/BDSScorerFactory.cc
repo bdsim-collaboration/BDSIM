@@ -64,9 +64,9 @@ G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*    info,
   return primitiveScorer;
 }
 
-G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo    &info,
-							   const BDSHistBinMapper *mapper,
-							   G4double               *unit)
+G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo&    info,
+							   const BDSHistBinMapper* mapper,
+							   G4double*               unit)
 {
   G4VPrimitiveScorer *result = nullptr;
   switch (info.scorerType.underlying())
@@ -138,7 +138,7 @@ G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo  
 }
 
 BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
-					       const BDSScorerInfo* info,
+					                           const BDSScorerInfo* info,
                                                G4LogicalVolume*     worldLV) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
