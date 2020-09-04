@@ -92,8 +92,8 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
     }
     else if (eScale == "user") {
         std::vector<double> eBinsEdgesEnergyAxis;
-        for (int i = 0;i<eBinsEdges.size();i++)
-            eBinsEdgesEnergyAxis.push_back(eBinsEdges[i]*CLHEP::GeV);
+        for (int i=0; i < (int)eBinsEdges.size(); i++)
+	  {eBinsEdgesEnergyAxis.push_back(eBinsEdges[i]*CLHEP::GeV);}
         energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
     }
     else {throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
