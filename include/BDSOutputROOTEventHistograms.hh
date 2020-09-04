@@ -77,7 +77,10 @@ public:
 			  std::vector<double>& xedges,
 			  std::vector<double>& yedges,
 			  std::vector<double>& zedges);
-  G4int Create4DHistogram(G4String name, G4String title, std::string eScale, std::vector<double> eBinsEdges,
+  G4int Create4DHistogram(const G4String& name,
+			  const G4String& title,
+			  const G4String& eScale,
+			  const std::vector<double>& eBinsEdges,
                           unsigned int nxbins, G4double xmin, G4double xmax,
                           unsigned int nybins, G4double ymin, G4double ymax,
                           unsigned int nzbins, G4double zmin, G4double zmax,
