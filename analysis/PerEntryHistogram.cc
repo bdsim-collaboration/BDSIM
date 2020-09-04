@@ -94,10 +94,10 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
       }
     case 4:
       {
-    const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
-    baseHist = factory.CreateHistogram4D(d, baseName, baseName);
-    temp = dynamic_cast<BDSBH4DBase*>(baseHist->Clone(tempName.c_str()));
-    break;
+	const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+	baseHist = factory.CreateHistogram4D(d, baseName, baseName);
+	temp = dynamic_cast<BDSBH4DBase*>(baseHist->Clone(tempName.c_str()));
+	break;
       }
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}

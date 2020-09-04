@@ -45,10 +45,10 @@ public:
   ~BDSScorerFactory(){;}
   
   /// Main function to create a scorer.
-  G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo*      info,
+  G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo*    info,
 				   const BDSHistBinMapper* mapper,
-				   G4double*                 unit    = nullptr,
-				   G4LogicalVolume*          worldLV = nullptr);
+				   G4double*               unit    = nullptr,
+				   G4LogicalVolume*        worldLV = nullptr);
   
 private:  
   ///@{ Unused default constructors.

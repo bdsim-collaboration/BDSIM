@@ -68,5 +68,4 @@ public:
 ClassDef(HistogramDef4D, 1);
 };
 
-
-#endif //BDSIM_HISTOGRAMDEF4D_HH
+#endif

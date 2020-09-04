@@ -49,26 +49,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSScorerFactory::BDSScorerFactory()
 {;}
 
-G4VPrimitiveScorer *BDSScorerFactory::CreateScorer(
-        const BDSScorerInfo *info,
-        const BDSHistBinMapper *mapper,
-        G4double *unit,
-        G4LogicalVolume *worldLV) {
+G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*    info,
+						   const BDSHistBinMapper* mapper,
+						   G4double*               unit,
+						   G4LogicalVolume*        worldLV)
+{
   // here we create the scorer with the information from BDSScorerInfo.
-  G4VPrimitiveScorer *primitiveScorer = GetAppropriateScorer(*info, mapper, unit);
+  G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(*info, mapper, unit);
 
   BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info, worldLV);
-  if (filter) {
-    primitiveScorer->SetFilter(filter);
-  }
+  if (filter)
+    {primitiveScorer->SetFilter(filter);}
 
   return primitiveScorer;
 }
 
-G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(
-        const BDSScorerInfo    &info,
-        const BDSHistBinMapper *mapper,
-        G4double               *unit) {
+G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo    &info,
+							   const BDSHistBinMapper *mapper,
+							   G4double               *unit)
+{
   G4VPrimitiveScorer *result = nullptr;
   switch (info.scorerType.underlying()) {// if adding new 3D ones, remember to update the 3D upgrade mapping in BDSScorerInfo
     case BDSScorerType::cellcharge: {

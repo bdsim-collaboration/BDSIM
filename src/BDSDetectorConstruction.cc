@@ -1160,7 +1160,7 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
     {
       BDSScorerInfo si = BDSScorerInfo(scorer, true); // true = upgrade to 3d as required for 3d mesh here
       scorerRecipes.insert(std::make_pair(si.name, si));
-  }
+    }
 
   // construct meshes
   BDSScorerFactory scorerFactory;

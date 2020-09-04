@@ -36,11 +36,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSScorerHistogramDef: public BDSScorerMeshInfo
 {
 public:
-  BDSScorerHistogramDef(const BDSScorerMeshInfo&  meshInfo,
-			const G4String&           uniqueNameIn,
-			const G4String&           primitiveScorerNameIn,
-			G4double                  primitiveScorerUnitValueIn,
-			const BDSHistBinMapper& coordinateMapperIn);
+  BDSScorerHistogramDef(const BDSScorerMeshInfo& meshInfo,
+			const G4String&          uniqueNameIn,
+			const G4String&          primitiveScorerNameIn,
+			G4double                 primitiveScorerUnitValueIn,
+			const BDSHistBinMapper&  coordinateMapperIn);
 
   virtual ~BDSScorerHistogramDef(){;}
 

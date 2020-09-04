@@ -20,5 +20,3 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersion.hh     ${CMAKE_CURRENT_BIN
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersionData.hh ${CMAKE_CURRENT_BINARY_DIR}/BDSVersionData.hh @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bdsim.sh.in       ${CMAKE_BINARY_DIR}/bin/bdsim.sh              @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/bin/bdsim.sh DESTINATION bin)
-
-

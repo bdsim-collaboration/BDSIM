@@ -50,7 +50,8 @@ public:
 
   /// Constructor. If upgradeTo3D is true, some scorer types will
   /// be upgraded to 3d as required for use in a mesh.
-  explicit BDSScorerInfo(const GMAD::Scorer& scorer, G4bool upgradeTo3D = false);
+  explicit BDSScorerInfo(const GMAD::Scorer& scorer,
+			 G4bool upgradeTo3D = false);
 
   /// Utility function to check valid pointer and throw exception if not.
   void CheckParticle(G4ParticleDefinition* particleIn,

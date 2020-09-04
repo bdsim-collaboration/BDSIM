@@ -73,9 +73,10 @@ TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
       }
     case 4:
       {
-    const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
-    result = CreateHistogram4D(d, overRideName, overRideTitle);
-    break;
+	const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+	if (d)
+	  {result = CreateHistogram4D(d, overRideName, overRideTitle);}
+	break;
       }
     default:
       {break;}
@@ -182,34 +183,35 @@ TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
 }
 
 BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
-                                                 std::string overRideName,
-                                                 std::string overRideTitle) {
-    BDSBH4DBase *result = nullptr;
-    std::string name = d->histName;
-    std::string title = name;
-    CheckNameAndTitle(name, title, overRideName, overRideTitle);
-
-    if(d->eScale == "linear") {
-        result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale, d->eBinsEdges,
-                             d->xNBins, d->xLow, d->xHigh,
-                             d->yNBins, d->yLow, d->yHigh,
-                             d->zNBins, d->zLow, d->zHigh,
-                             d->eNBins, d->eLow, d->eHigh);
-    }
-    else if(d->eScale == "log") {
-        result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale, d->eBinsEdges,
-                                d->xNBins, d->xLow, d->xHigh,
-                                d->yNBins, d->yLow, d->yHigh,
-                                d->zNBins, d->zLow, d->zHigh,
-                                d->eNBins, d->eLow, d->eHigh);
-    }
-    else if(d->eScale == "user") {
-        result = new BDSBH4D<boost_histogram_variable>(name, title, d->eScale, d->eBinsEdges,
-                                                  d->xNBins, d->xLow, d->xHigh,
-                                                  d->yNBins, d->yLow, d->yHigh,
-                                                  d->zNBins, d->zLow, d->zHigh,
-                                                  d->eNBins, d->eLow, d->eHigh);
-    }
-
-    return result;
+                                                 const std::string& overRideName,
+                                                 const std::string& overRideTitle)
+{
+  BDSBH4DBase* result = nullptr;
+  std::string name  = d->histName;
+  std::string title = name;
+  CheckNameAndTitle(name, title, overRideName, overRideTitle);
+  
+  if(d->eScale == "linear") {
+    result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale, d->eBinsEdges,
+						 d->xNBins, d->xLow, d->xHigh,
+						 d->yNBins, d->yLow, d->yHigh,
+						 d->zNBins, d->zLow, d->zHigh,
+						 d->eNBins, d->eLow, d->eHigh);
+  }
+  else if(d->eScale == "log") {
+    result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale, d->eBinsEdges,
+					      d->xNBins, d->xLow, d->xHigh,
+					      d->yNBins, d->yLow, d->yHigh,
+					      d->zNBins, d->zLow, d->zHigh,
+					      d->eNBins, d->eLow, d->eHigh);
+  }
+  else if(d->eScale == "user") {
+    result = new BDSBH4D<boost_histogram_variable>(name, title, d->eScale, d->eBinsEdges,
+						   d->xNBins, d->xLow, d->xHigh,
+						   d->yNBins, d->yLow, d->yHigh,
+						   d->zNBins, d->zLow, d->zHigh,
+						   d->eNBins, d->eLow, d->eHigh);
+  }
+  
+  return result;
 }

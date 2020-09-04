@@ -74,11 +74,12 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
   // convert all the parser scorer definitions into recipes (including parameter checking)
   std::map<G4String, BDSScorerInfo> scorerRecipes;
-  for (const auto &scorer : scorers) {
-    BDSScorerInfo si = BDSScorerInfo(scorer);
-    scorerRecipes.insert(std::make_pair(si.name, si));
-  }
-
+  for (const auto& scorer : scorers)
+    {
+      BDSScorerInfo si = BDSScorerInfo(scorer);
+      scorerRecipes.insert(std::make_pair(si.name, si));
+    }
+  
   std::set<std::set<G4String> > scorerSetsToMake;
   // cache a map of set of scorers and combined name by BLM name so we don't have to do it later again
   std::map<std::string, std::pair<std::set<G4String>, G4String> >blmScoringInfo;
