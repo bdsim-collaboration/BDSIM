@@ -19,19 +19,6 @@ else()
    find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG)
 endif()
 
-if (NOT Geant4_FOUND AND USE_AFS)
-   # Use AFS directory
-   if(APPLE)
-      message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
-   elseif(RHL6)
-      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/10.3.p01/x86_64-slc6-gcc49-opt/share/include)
-      set(Geant4_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/geant4/10.3.p01/x86_64-slc6-gcc49-opt/lib64)
-      set(Geant4_DIR          /afs/cern.ch/sw/lcg/external/geant4/10.3.p01/x86_64-slc6-gcc49-opt/lib64/Geant4-10.3.1)
-      set(Geant4_VERSION 10.3.1)
-   endif()
-   find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR} NO_DEFAULT_PATH)
-endif()
-
 if (Geant4_FOUND)
       message(STATUS "Geant4 Use File: ${Geant4_USE_FILE}")
       include(${Geant4_USE_FILE})
@@ -120,14 +107,8 @@ if (${G4_MINOR_VERSION} GREATER 5)
   add_definitions("-DG4UI_USE")
 endif()
 
-# Geant4 adds some flags specifically setting the C++ standard which is annoying
-# and says we should just edit ourselves - no option to not do this
-# remove -std=c++11 or 14 17 (let us deal with this ensuring we're at least 11)
-string(REGEX REPLACE "\\-std=c\\+\\+[147]+" "" _TMPV ${CMAKE_CXX_FLAGS})
-set(CMAKE_CXX_FLAGS ${_TMPV})
-if($ENV{VERBOSE})
-  message(STATUS "CMAKE_CXX_FLAGS after Geant4 ${CMAKE_CXX_FLAGS}")
-endif()
+# remove the C++ standard set by geant4 so we can enforce our own
+removeCXXStandardFlags(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
 
 # now remove any duplicates we have to keep things tidy
 removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)

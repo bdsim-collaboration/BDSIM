@@ -110,7 +110,9 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeCollimatorInfo        = g->StoreCollimatorInfo();
+  storeApertureImpactsHistograms = storeApertureImpacts || g->StoreApertureImpactsHistograms() ||
+    g->StoreApertureImpactsAll() || g->StoreApertureImpactsIons();
+  storeCollimatorInfo = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   // store primary hits if ion hits or links hits are turned on
@@ -203,10 +205,12 @@ void BDSOutput::FillModel()
 {
   if (storeModel)
     {
+      const auto& smpm = BDSAcceleratorModel::Instance()->ScorerMeshPlacementsMap();
       modelOutput->Fill(collimatorIndices,
 			collimatorIndicesByName,
 			collimatorInfo,
-			collimatorNames);
+			collimatorNames,
+			&smpm);
       WriteModel();
       ClearStructuresModel();
     }
@@ -464,7 +468,14 @@ void BDSOutput::CreateHistograms()
 							 "Energy Loss in Vacuum per Element" ,
 							 binedges);
     }
-  
+
+  if (storeApertureImpactsHistograms)
+    {
+      histIndices1D["PFirstAI"] = Create1DHistogram("PFirstAIHisto",
+						    "Primary aperture impacts",
+						    nbins, smin, smax);
+    }
+
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
   if (!tunnelBeamline)
@@ -903,7 +914,7 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 
 void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits)
 {
-  if (!storeApertureImpacts || !hits)
+  if ((!storeApertureImpacts && !storeApertureImpactsHistograms) || !hits)
     {return;}
 
   G4int nPrimaryImpacts = 0;
@@ -912,11 +923,16 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
     {
       const BDSHitApertureImpact* hit = (*hits)[i];
       if (hit->parentID == 0)
-	{nPrimaryImpacts += 1;}
+	{
+	  nPrimaryImpacts += 1;
+	  if (storeApertureImpactsHistograms && nPrimaryImpacts == 1)
+	    {evtHistos->Fill1DHistogram(histIndices1D["PFirstAI"], hit->S / CLHEP::m);}
+        }
       // hits are generated in order as the particle progresses
       // through the model, so the first one in the collection
       // for the primary is the first one in S.
-      apertureImpacts->Fill(hit, nPrimaryImpacts==1);
+      if (storeApertureImpacts)
+	{apertureImpacts->Fill(hit, nPrimaryImpacts==1);}
     }
 }
 
