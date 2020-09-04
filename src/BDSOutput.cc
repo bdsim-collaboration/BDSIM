@@ -961,7 +961,7 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
     {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
 
   if (!(histIndices3D.find(histogramDefName) == histIndices3D.end()))
-  {
+    {
       G4int histIndex = histIndices3D[histogramDefName];
       G4double unit   = BDS::MapGetWithDefault(histIndexToUnits3D, histIndex, 1.0);
       // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
@@ -971,19 +971,19 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 #if G4VERSION < 1039
       for (const auto& hit : *hitMap->GetMap())
 #else
-          for (const auto& hit : *hitMap)
+	for (const auto& hit : *hitMap)
 #endif
-      {
-          // convert from scorer global index to 3d i,j,k index of 3d scorer
-          mapper.IJKLFromGlobal(hit.first, x,y,z,e);
-          G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
-          evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second / unit);
-      }
+	  {
+	    // convert from scorer global index to 3d i,j,k index of 3d scorer
+	    mapper.IJKLFromGlobal(hit.first, x,y,z,e);
+	    G4int rootGlobalIndex = (hist->GetBin(x + 1, y + 1, z + 1)); // convert to root system (add 1 to avoid underflow bin)
+	    evtHistos->Set3DHistogramBinContent(histIndex, rootGlobalIndex, *hit.second / unit);
+	  }
       runHistos->AccumulateHistogram3D(histIndex, evtHistos->Get3DHistogram(histIndex));
-  }
-
+    }
+  
   if (!(histIndices4D.find(histogramDefName) == histIndices4D.end()))
-  {
+    {
       G4int histIndex = histIndices4D[histogramDefName];
       G4double unit   = BDS::MapGetWithDefault(histIndexToUnits4D, histIndex, 1.0);
       // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
@@ -992,16 +992,15 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 #if G4VERSION < 1039
       for (const auto& hit : *hitMap->GetMap())
 #else
-          for (const auto& hit : *hitMap)
+	for (const auto& hit : *hitMap)
 #endif
-      {
-          // convert from scorer global index to 4d i,j,k,e index of 4d scorer
-          mapper.IJKLFromGlobal(hit.first, x,y,z,e);
-          evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e, *hit.second / unit);
-      }
+	  {
+	    // convert from scorer global index to 4d i,j,k,e index of 4d scorer
+	    mapper.IJKLFromGlobal(hit.first, x,y,z,e);
+	    evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e, *hit.second / unit);
+	  }
       runHistos->AccumulateHistogram4D(histIndex, evtHistos->Get4DHistogram(histIndex));
-  }
-
+    } 
 }
 
 void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,

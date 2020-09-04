@@ -69,84 +69,76 @@ G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo  
 							   G4double               *unit)
 {
   G4VPrimitiveScorer *result = nullptr;
-  switch (info.scorerType.underlying()) {// if adding new 3D ones, remember to update the 3D upgrade mapping in BDSScorerInfo
-    case BDSScorerType::cellcharge: {
-      result = new G4PSCellCharge(info.name);
-      break;
-    }
-    case BDSScorerType::cellcharge3d: {
-      result = new G4PSCellCharge3D(info.name);
-      break;
-    }
-    case BDSScorerType::depositeddose: {
-      result = new G4PSDoseDeposit(info.name);
-      break;
-    }
-    case BDSScorerType::depositeddose3d: {
-      result = new G4PSDoseDeposit3D(info.name);
-      break;
-    }
-    case BDSScorerType::depositedenergy: {
-      result = new G4PSEnergyDeposit(info.name, "GeV");
-      break;
-    }
-    case BDSScorerType::depositedenergy3d: {
-      result = new G4PSEnergyDeposit3D(info.name, "GeV");
-      break;
-    }
-    case BDSScorerType::population: {
-      G4PSPopulation *scorer = new G4PSPopulation(info.name);
-      scorer->Weighted(true);
-      result = scorer;
-      break;
-    }
-    case BDSScorerType::population3d: {
-      G4PSPopulation3D *scorer = new G4PSPopulation3D(info.name);
-      scorer->Weighted(true);
-      result = scorer;
-      break;
-    }
-    case BDSScorerType::cellflux: {
-      G4PSCellFlux *scorer = new G4PSCellFlux(info.name, "percm2");
-      scorer->Weighted(true);
-      result = scorer;
-      break;
-    }
-    case BDSScorerType::cellflux3d: {
-      G4PSCellFlux3D *scorer = new G4PSCellFlux3D(info.name, "percm2");
-      scorer->Weighted(true);
-      result = scorer;
-      break;
-    }
-    case BDSScorerType::cellflux4d: {
-      result = new BDSPSCellFlux4D(info.name, mapper, "percm2");
-      break;
-    }
-    case BDSScorerType::cellfluxscaledperparticle3d: {
-      result = new BDSPSCellFluxScaledPerParticle3D(info.name, mapper, info.pathname);
-      break;
-    }
-    case BDSScorerType::cellfluxscaled3d: {
-      result = new BDSPSCellFluxScaled3D(info.name, mapper, info.filename, "percm2");
-      break;
-    }
+  switch (info.scorerType.underlying())
+    {// if adding new 3D ones, remember to update the 3D upgrade mapping in BDSScorerInfo
+    case BDSScorerType::cellcharge:
+      {result = new G4PSCellCharge(info.name);    break;}
+    case BDSScorerType::cellcharge3d:
+      {result = new G4PSCellCharge3D(info.name);  break;}
+    case BDSScorerType::depositeddose:
+      {result = new G4PSDoseDeposit(info.name);   break;}
+    case BDSScorerType::depositeddose3d:
+      {result = new G4PSDoseDeposit3D(info.name); break;}
+    case BDSScorerType::depositedenergy:
+      {result = new G4PSEnergyDeposit(info.name, "GeV"); break;}
+    case BDSScorerType::depositedenergy3d:
+      {result = new G4PSEnergyDeposit3D(info.name, "GeV"); break;}
+    case BDSScorerType::population:
+      {
+	G4PSPopulation *scorer = new G4PSPopulation(info.name);
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::population3d:
+      {
+	G4PSPopulation3D *scorer = new G4PSPopulation3D(info.name);
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::cellflux:
+      {
+	G4PSCellFlux *scorer = new G4PSCellFlux(info.name, "percm2");
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::cellflux3d:
+      {
+	G4PSCellFlux3D *scorer = new G4PSCellFlux3D(info.name, "percm2");
+	scorer->Weighted(true);
+	result = scorer;
+	break;
+      }
+    case BDSScorerType::cellflux4d:
+      {
+	result = new BDSPSCellFlux4D(info.name, mapper, "percm2");
+	break;
+      }
+    case BDSScorerType::cellfluxscaledperparticle3d:
+      {result = new BDSPSCellFluxScaledPerParticle3D(info.name, mapper, info.pathname); break;}
+    case BDSScorerType::cellfluxscaled3d:
+      {result = new BDSPSCellFluxScaled3D(info.name, mapper, info.filename, "percm2"); break;}
     case BDSScorerType::cellfluxscaled:
-    case BDSScorerType::cellfluxscaledperparticle: {
-      throw BDSException(__METHOD_NAME__, "unimplemented scorer \"" + info.scorerType.ToString() + "\"");
-      break;
+    case BDSScorerType::cellfluxscaledperparticle:
+      {
+	throw BDSException(__METHOD_NAME__, "unimplemented scorer \"" + info.scorerType.ToString() + "\"");
+	break;
+      }
+    default:
+      {
+	throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + info.scorerType.ToString() + "\"");
+	break;
+      }
     }
-    default: {
-      throw BDSException(__METHOD_NAME__, "unknown scorer type \"" + info.scorerType.ToString() + "\"");
-      break;
-    }
-  }
   if (unit)
-    { *unit = result->GetUnitValue(); }
+    {*unit = result->GetUnitValue();}
   return result;
 }
 
 BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
-					                           const BDSScorerInfo* info,
+					       const BDSScorerInfo* info,
                                                G4LogicalVolume*     worldLV) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
