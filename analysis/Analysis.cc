@@ -54,7 +54,6 @@ Analysis::Analysis(const std::string& treeNameIn,
 
 Analysis::~Analysis()
 {
-  delete chain;
   delete histoSum;
   for (auto pe : perEntryHistograms)
     {delete pe;}
@@ -100,7 +99,7 @@ void Analysis::PreparePerEntryHistograms()
   auto c = Config::Instance();
   if (c)
     {
-      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
+      const auto& definitions = c->HistogramDefinitionsPerEntry(treeName);
       for (const auto& def : definitions)
         {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
     }

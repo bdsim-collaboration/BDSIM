@@ -75,6 +75,8 @@ int main(int argc, char* argv[])
       evtAnalysis->WriteOrbit(outputFile);
       outputFile->Close();
       std::cout << "Result written to: " << outputFileName << std::endl;
+      delete outputFile;
+      delete evtAnalysis;
     }
   catch (const RBDSException& error)
     {std::cerr << error.what(); exit(1);}
