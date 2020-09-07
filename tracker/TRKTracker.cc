@@ -84,6 +84,7 @@ void TRKTracker::Track(TRKBunch* bunch)
 
     for (int i = 0; i < maxTurns; i++)
     {
+      output->currentTurn = i;
         for (auto &p : *bunch)
         {
             auto eIt = line->begin();

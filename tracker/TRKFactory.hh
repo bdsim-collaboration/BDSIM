@@ -82,6 +82,7 @@ private:
   
   //TRKElement* CreateMultipole(GMAD::Element& element);
   //TRKElement* CreateGmadElement(GMAD::Element& element);
+  TRKElement* CreateSampler(std::string name, int samplerIndex, double s);
   TRKElement* CreateSampler(GMAD::Element& element, double s);
   //TRKElement* CreateTransform3D(GMAD::Element& element);
 
@@ -91,7 +92,6 @@ private:
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
   std::shared_ptr<TRKOutput> output;
-  int nsamplers;
   
   /// particle properties
   int charge;

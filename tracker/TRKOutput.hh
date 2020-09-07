@@ -24,12 +24,19 @@ public:
   void RecordSamplerHit(int samplerIndex, TRKParticle const &particle, int turn,
                         double s);
 
-  void AddNSamplers(int);
+  void PushBackSampler();
+
+  void WriteEvents();
+  int currentTurn;
 
 private:
   std::string filename;
   BDSOutput* output;
   TRKOutputSamplers samplers;
+  int nevents;
+
+  
+  void FillSamplerOutputStructures();
 
 };
 

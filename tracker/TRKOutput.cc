@@ -7,10 +7,13 @@
 
 #include "TRKOutput.hh"
 
-TRKOutput::TRKOutput(std::string file) : filename(file)
+TRKOutput::TRKOutput(std::string file) :
+  nevents(0),
+  filename(file)
 {
   output = BDSOutputFactory::CreateOutput(
       BDSGlobalConstants::Instance()->OutputFormat(), filename);
+  nevents = BDSGlobalConstants::Instance()->NGenerate();
 }
 
 TRKOutput::~TRKOutput()
@@ -47,10 +50,53 @@ void TRKOutput::RecordSamplerHit(int samplerIndex,
 				 int turn,
                                  double s)
 {
-  samplers.RecordParticle(samplerIndex, particle, turn, s);
+  samplers.RecordParticle(samplerIndex, particle, currentTurn, s);
 }
 
-void TRKOutput::AddNSamplers(int n)
+void TRKOutput::PushBackSampler()
 {
-  samplers.AddNSamplers(n);
+  samplers.PushBackSampler();
+}
+
+void TRKOutput::WriteEvents()
+{
+  FillSamplerOutputStructures();
+}
+
+void TRKOutput::FillSamplerOutputStructures()
+{
+  
+  for (int i = 0; i < nevents; ++i)  // Loop event IDs
+    {
+      // Loop sampler indices
+      for (int isampler = 0; isampler < samplers.NSamplers(); ++isampler)
+	{
+        auto range = samplers.GetSamplerData(isampler).EventRange(i);
+        // Loop particles recorded in that sampler for this event ID.
+        for (auto it = range.first; it != range.second; ++it) {
+	  std::cout << "EventID: " << i << ", sampler: " << isampler << it->particle << "\n";
+          output->FillSamplerHitsTracker(isampler, it->particle, it->s);
+        }
+      }
+      const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
+      output->FillEvent(nullptr, // EventInfo
+			nullptr, // vertex
+			nullptr, // sampler hits plane
+			nullptr, // sampler hits cylinder
+			nullptr, // energy loss
+			nullptr, // energy loss full
+			nullptr, // energy loss vacuum
+			nullptr, // energy loss tunnel
+			nullptr, // energy loss world
+			nullptr, // energy loss contents
+			nullptr, // world exit hits
+			nullptr, // primary hit
+			nullptr, // primary loss
+			nullptr, // trajectories
+			nullptr, // collimator hits
+			nullptr, // aperture impacts
+			scorerhits, // scorer hits map
+			10); // turns taken
+
+    }
 }

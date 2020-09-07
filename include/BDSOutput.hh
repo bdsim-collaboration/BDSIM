@@ -141,9 +141,9 @@ public:
   void WriteTrackerBunch(G4String, TRKBunch*, G4bool=false) {;}
 
   void FillSamplerHitsTracker(G4int samplerIndex,
-			      TRKParticle& particle,
-			      double s);
-  
+			      TRKParticle const &particle,
+                              double s);
+
   /// Test whether a sampler name is invalid or not.
   static G4bool InvalidSamplerName(const G4String& samplerName);
 

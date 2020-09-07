@@ -64,8 +64,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 TRKFactory::TRKFactory(const GMAD::Options&   options,
 		       BDSParticleDefinition* particle,
 		       std::shared_ptr<TRKOutput> outputIn):
-  output(std::move(outputIn)),
-  nsamplers(0)
+  output(std::move(outputIn))
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -199,7 +198,7 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 {
   TRKLine* line = new TRKLine("beamline",circular);
   // Quick fix to get Primary branch filled.  index=-1 being key here.
-  line->AddElement(new TRKSampler("primaries", -1, output, 0.0));
+  CreateSampler("primaries", -1, 0.0);
   auto s = 0.0;
   for (auto it : beamline_list)
     {
@@ -216,10 +215,6 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 	      line->AddElement(sampler);
 	    }
 	}
-    }
-  if (nsamplers > 0)
-    {
-      output->AddNSamplers(nsamplers);
     }
   return line;
 }
@@ -424,8 +419,13 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 {
   std::string name = element.name;
   int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
+  return CreateSampler(name, samplerIndex, s);
+}
+
+TRKElement* TRKFactory::CreateSampler(std::string name, int samplerIndex,
+				      double s) {
   TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
-  ++nsamplers;
+  output->PushBackSampler();
   return result;
 }
 

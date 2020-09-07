@@ -100,7 +100,7 @@ int main (int argc, char** argv)
 
   //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);
-
+  output->WriteEvents();
   output->CloseFile();
 
   // // free memory (good code test)
