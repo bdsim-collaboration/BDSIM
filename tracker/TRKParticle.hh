@@ -37,16 +37,15 @@ class TRKParticle
 { 
 public:
   //constructors
-  //  TRKParticle();
-  TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
-  TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
+  TRKParticle() = delete;
   TRKParticle(double xIn, double pxIn, double yIn, double pyIn, double zIn,
-              double pzIn, double beta0In, double gamma0In, double SIn)
+              double pzIn, double beta0In, double gamma0In, double SIn,
+              int eventidIn)
       : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
-        gamma0(gamma0In), S(SIn) {}
+        gamma0(gamma0In), S(SIn), eventid(eventidIn) {}
 
   //accessors
-  double getS()const      {return S;}
+  inline double getS() const { return S; }
 
   inline double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
   inline double KineticEnergy() const { return Energy() - mass; }
@@ -58,9 +57,9 @@ public:
   int EventID() const { return eventid; }
 
   /// return mass in MeV / c^2
-  double M()const      {return mass;}
+  double M() const { return mass; }
   /// return elementary charge
-  int    Charge()const {return charge;}
+  int Charge() const { return charge; }
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
@@ -74,6 +73,7 @@ public:
 
   double beta0;
   double gamma0;
+
 
   // s-position of the particle, needed for arbitrary step-length tracking
   double S;
