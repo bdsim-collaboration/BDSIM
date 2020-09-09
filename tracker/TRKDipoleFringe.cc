@@ -16,27 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "TRKDecapole.hh"
+#include "TRKDipoleFringe.hh"
 #include "TRKStrategy.hh"
 
-TRKDecapole::TRKDecapole(double        strengthIn,
-			 std::string   nameIn,
-			 double        lengthIn,
-			 TRKAperture*  apertureIn,
-			 TRKPlacement* placementIn):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
+TRKDipoleFringe::TRKDipoleFringe(
+            std::string   nameIn,
+		   double        polefaceIn,
+		   TRKAperture  *apertureIn,
+		   TRKPlacement *placementIn,
+		   double        k0In=0.0):
+  TRKElement(nameIn, 0.0, apertureIn, placementIn),
+  poleface(polefaceIn), k0(k0In)
 {;}
 
-TRKDecapole::~TRKDecapole()
+TRKDipoleFringe::~TRKDipoleFringe()
 {;}
 
-void TRKDecapole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
+void TRKDipoleFringe::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
 }
 
-void TRKDecapole::Print(std::ostream &out) const
+void TRKDipoleFringe::Print(std::ostream &out) const
 {
   TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m^4";
+  out << "; poleface: " << poleface << "rad" << ", k0: " << k0;
 }

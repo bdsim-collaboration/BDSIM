@@ -16,27 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "TRKDecapole.hh"
-#include "TRKStrategy.hh"
+#include <iostream>
 
-TRKDecapole::TRKDecapole(double        strengthIn,
-			 std::string   nameIn,
-			 double        lengthIn,
-			 TRKAperture*  apertureIn,
-			 TRKPlacement* placementIn):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
+#include "TRKElement.hh"
+#include "TRKElementLine.hh"
+
+TRKElementLine::TRKElementLine(std::string nameIn) :
+  TRKElement(nameIn, 0.0, nullptr, nullptr)
 {;}
 
-TRKDecapole::~TRKDecapole()
-{;}
-
-void TRKDecapole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
-{
-  strategy->Track(this, particle, step);
+void TRKElementLine::AddElement(TRKElement* e) {
+  line.push_back(e);
+  length += e->GetLength();
 }
 
-void TRKDecapole::Print(std::ostream &out) const
-{
-  TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m^4";
+/// output stream
+std::ostream& operator<< (std::ostream &out, const TRKElementLine &line) {
+  auto elIter = line.begin();
+  auto elIterEnd = line.end();
+  for (;elIter!=elIterEnd; ++elIter) {
+    out << **elIter << std::endl;
+  }
+  return out;
 }

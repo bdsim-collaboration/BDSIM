@@ -31,6 +31,7 @@ class TRKOctupole;
 class TRKSolenoid;
 class TRKKicker;
 class TRKSampler;
+class TRKDipoleFringe;
 class TRKTiltOffset;
 
 /**
@@ -50,21 +51,23 @@ public:
   //  TRKType trackingType()const {return type;}
 
   /**
-   * Tracks a bunch through an element
+   * Tracks a particle for a given step length in an element
    * @param[in]  el    The TRKElement.
-   * @param[in]  bunch The bunch.
+   * @param[in]  particle The particle.
+   * @param[in]  step The step length.
    */
   ///@{
   //void         Track(TRKElement*    el, TRKBunch* bunch);
-  virtual void Track(TRKDrift*      el, TRKBunch* bunch)=0;
-  virtual void Track(TRKSBend*      el, TRKBunch* bunch)=0;
-  virtual void Track(TRKRBend*      el, TRKBunch* bunch)=0;
-  virtual void Track(TRKQuadrupole* el, TRKBunch* bunch)=0;
-  virtual void Track(TRKSextupole*  el, TRKBunch* bunch)=0;
-  virtual void Track(TRKOctupole*   el, TRKBunch* bunch)=0;
-  virtual void Track(TRKKicker*     el, TRKBunch* bunch)=0;
-  virtual void Track(TRKSolenoid*   el, TRKBunch* bunch)=0;
-  void         Track(TRKTiltOffset* el, TRKBunch* bunch);
+  virtual void Track(TRKDrift*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSBend*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKRBend*      el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKDipoleFringe* el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKQuadrupole* el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSextupole*  el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKOctupole*   el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKKicker*     el, TRKParticle& particle, double step)=0;
+  virtual void Track(TRKSolenoid*   el, TRKParticle& particle, double step)=0;
+  void         Track(TRKTiltOffset* el, TRKParticle& particle);
   ///@}
 
 protected:

@@ -16,30 +16,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TRKRBend_h
-#define TRKRBend_h
+#ifndef TRKDipoleFringe_h
+#define TRKDipoleFringe_h
 
 #include "TRKElement.hh"
 
 /**
- * @brief bend
+ * @brief dipole fringe
  * 
- * dipole tracking but reference s-position is changed
+ * dipole fringe tracking
  */
 
-class TRKRBend: public TRKElement
+class TRKDipoleFringe: public TRKElement
 {
 public:
-  TRKRBend(double        angle,
-	   std::string   name,
-	   double        length,
+    TRKDipoleFringe(std::string   name,
+	   double        poleface,
 	   TRKAperture  *aperture,
 	   TRKPlacement *placement,
-	   double        k1);
-  virtual ~TRKRBend();
+	   double        k0);
+
+  virtual ~TRKDipoleFringe();
   
-  inline double GetAngle() const {return angle;}
-  inline double GetK1() const {return k1;}  
+  inline double GetPoleface() const {return poleface;}
+  inline double GetK0() const {return k0;}
   
   virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
   
@@ -48,11 +48,11 @@ protected:
   virtual void Print(std::ostream& out) const;
 
 private:
-  TRKRBend(); ///< not implemented
+  TRKDipoleFringe(); ///< not implemented
 
-  /// bending angle in rad
-  double angle;
-  double k1;
+  /// Poleface in radians
+  double poleface;
+  double k0;
 };
 
 #endif

@@ -46,16 +46,16 @@ TRKElement::~TRKElement()
   delete offsetOut;
 }
 
-void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
+void TRKElement::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetIn,bunch);}
+    {strategy->Track(offsetIn, particle);}
 
-  strategy->Track(this,bunch);
+  strategy->Track(this, particle, step);
 
   if (offsetIn && offsetOut)
-    {strategy->Track(offsetOut,bunch);}
+    {strategy->Track(offsetOut, particle);}
 
 }
 
