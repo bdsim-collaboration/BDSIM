@@ -82,9 +82,9 @@ void TRKTracker::Track(TRKBunch* bunch)
 
     BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
 
-    for (int i = 0; i < maxTurns; i++)
+    for (int turn = 0; turn < maxTurns; turn++)
     {
-      output->currentTurn = i;
+      output->currentTurn = turn;
         for (auto &p : *bunch)
         {
             auto eIt = line->begin();
@@ -92,7 +92,8 @@ void TRKTracker::Track(TRKBunch* bunch)
             auto element = *eIt;
             auto SEnd = *esIt;
 
-            if (i == 0)
+
+            if (turn == 0)
             {
                 /// On the first turn, find the element where the particle starts off in
                 auto startElement = line->FindElement(p.getS());
