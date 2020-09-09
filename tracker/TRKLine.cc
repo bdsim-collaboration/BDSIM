@@ -52,36 +52,28 @@ void TRKLine::AddSingleElement(TRKElement* e) {
   elementEndS.push_back(lastS + e->GetLength());
 }
 
-TRKElement* TRKLine::FindElement(std::string eName)const {
- TRKLineConstIter elIter = elements.begin();
- TRKLineConstIter elIterEnd = elements.end();
-  for (;elIter!=elIterEnd; ++elIter) {
-    if ((*elIter)->GetName() == eName) {
-      return (*elIter);
-    }
-  }
-  /// if not found return NULL
-  return NULL;
+// TRKElement* TRKLine::FindElement(std::string eName)const {
+//  TRKLineConstIter elIter = elements.begin();
+//  TRKLineConstIter elIterEnd = elements.end();
+//   for (;elIter!=elIterEnd; ++elIter) {
+//     if ((*elIter)->GetName() == eName) {
+//       return (*elIter);
+//     }
+//   }
+//   /// if not found return NULL
+//   return NULL;
+// }
+
+TRKLine::const_iterator TRKLine::FindElement(double s) const {
+  auto it = std::lower_bound(elementEndS.begin(), elementEndS.end(), s);
+  auto result = begin();
+  std::advance(result, std::distance(elementEndS.begin(), it));
+  return result;
 }
 
-TRKElement* TRKLine::FindElement(double s)const {
-    auto it = std::lower_bound(elementEndS.begin(), elementEndS.end(), s);
-    if (it != elementEndS.end())
-    {
-        int index = it - elementEndS.begin();
-        return elements.at(index);
-    }
-
-    /// if not found return NULL
-    return NULL;
-}
-
-/// output stream
-std::ostream& operator<< (std::ostream &out, const TRKLine &line) {
-  TRKLineConstIter elIter = line.begin();
-  TRKLineConstIter elIterEnd = line.end();
-  for (;elIter!=elIterEnd; ++elIter) {
-    out << **elIter << std::endl;
+std::ostream &operator<<(std::ostream &out, const TRKLine &line) {
+  for (const auto &el : line) {
+    out << (*el) << std::endl;
   }
   return out;
 }
