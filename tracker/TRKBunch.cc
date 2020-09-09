@@ -117,7 +117,8 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
       bunch.emplace_back(c.local.x, px, c.local.y, py,
 			 z, pz,  // longitudinal coordinates
 			 beta0, gamma0, // reference relativistic
-			 0.0);
+			 0.0,
+			 i);
 
       //weight not required - maybe should be kept though to pass on to bdsim
     }
