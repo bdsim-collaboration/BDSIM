@@ -14,11 +14,8 @@ namespace {
   }
 }
 
-
-TRKSamplerData::TRKSamplerData(int reserve)
-{
-  particles.reserve(reserve);
-}
+TRKSamplerData::TRKSamplerData(std::string name)
+    : samplerName(name), particles(), sorted(true) {}
 
 void TRKSamplerData::RecordParticle(TRKParticle p, int turn, double s)
 {

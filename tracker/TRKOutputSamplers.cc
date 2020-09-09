@@ -7,7 +7,7 @@ void TRKOutputSamplers::RecordParticle(int samplerIndex, TRKParticle p, int turn
   samplers.at(samplerIndex).RecordParticle(p, turn, s);
 }
 
-void TRKOutputSamplers::PushBackSampler()
+void TRKOutputSamplers::PushBackSampler(const std::string& name)
 {
-  samplers.push_back(TRKSamplerData());
+  samplers.push_back(TRKSamplerData(name));
 }

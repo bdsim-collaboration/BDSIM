@@ -53,9 +53,9 @@ void TRKOutput::RecordSamplerHit(int samplerIndex,
   samplers.RecordParticle(samplerIndex, particle, currentTurn, s);
 }
 
-void TRKOutput::PushBackSampler()
+void TRKOutput::PushBackSampler(const std::string& name)
 {
-  samplers.PushBackSampler();
+  samplers.PushBackSampler(name);
 }
 
 void TRKOutput::WriteEvents()

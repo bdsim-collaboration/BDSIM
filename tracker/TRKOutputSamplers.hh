@@ -2,6 +2,7 @@
 #define TRKOUTPUTSAMPLERS_H
 
 #include <vector>
+#include <string>
 
 #include "TRKParticle.hh"
 #include "TRKSamplerData.hh"
@@ -17,7 +18,7 @@ public:
   TRKOutputSamplers(int nsamplers) : samplers(nsamplers) {}
   void RecordParticle(int samplerIndex, TRKParticle p, int turn,
 		      double s);
-  void PushBackSampler();  
+  void PushBackSampler(const std::string& name);
 
   using iterator = SamplersData::iterator;
   using const_iterator = SamplersData::const_iterator;

@@ -425,7 +425,7 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 TRKElement* TRKFactory::CreateSampler(std::string name, int samplerIndex,
 				      double s) {
   TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
-  output->PushBackSampler();
+  output->PushBackSampler(name);
   return result;
 }
 

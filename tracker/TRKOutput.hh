@@ -24,7 +24,7 @@ public:
   void RecordSamplerHit(int samplerIndex, TRKParticle const &particle, int turn,
                         double s);
 
-  void PushBackSampler();
+  void PushBackSampler(const std::string& name);
 
   void WriteEvents();
   int currentTurn;

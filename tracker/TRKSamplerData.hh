@@ -17,7 +17,7 @@ public:
   using SamplerParticles = std::vector<TRKSamplerDatum>;
 
   TRKSamplerData() = default;
-  TRKSamplerData(int reserve);
+  TRKSamplerData(std::string name);
 
   void RecordParticle(TRKParticle p, int turn, double s);
 
@@ -34,6 +34,7 @@ public:
 
 
 private:
+  std::string samplerName;
   SamplerParticles particles;
   bool sorted; // dirty bit
   void SortIfNotSorted();
