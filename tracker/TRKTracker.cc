@@ -158,13 +158,22 @@ void TRKTracker::Track(TRKBunch* bunch)
 
         }
 
-        BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
-        if (bunch->empty())
-        {
-            std::cout << "No further particles to track" << std::endl;
-            break;
-        }
+	EndOfTurn(*bunch);
+
 
     }
 }
 
+void TRKTracker::EndOfTurn(TRKBunch& bunch)
+{
+  BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
+  ResetS(bunch);
+}
+
+void TRKTracker::ResetS(TRKBunch& bunch)
+{
+  for (auto &p: bunch)
+    {
+      p.S = 0.0;
+    }
+}

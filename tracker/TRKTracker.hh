@@ -67,6 +67,9 @@ private:
   TRKBacktracker backtracker;
   std::shared_ptr<TRKOutput> output;
 
+  void EndOfTurn(TRKBunch&);
+  void ResetS(TRKBunch&);
+
 };
 
 #endif
