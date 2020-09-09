@@ -111,8 +111,11 @@ void TRKTracker::Track(TRKBunch* bunch)
             int count = 0;
             while (eIt != line->end() && esIt != line->endS())
             {
-                count++;
-                if (count > 1e6) {break;}
+              count++; // Maximum tries
+              if (count > 1e6) {
+                throw std::runtime_error(
+                    "Reached maximum number of tries in stepper");
+              }
 
                 if (advance)
                 {
