@@ -149,7 +149,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 		  }
 
 		// Track the particle with this proposed step.
-		assert(step > 0.0);
 		auto name = element->GetName();
 		std::cout << step << "\n";
 		element->Track(p, step, strategy);
