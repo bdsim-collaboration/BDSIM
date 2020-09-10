@@ -35,21 +35,19 @@ void TRKSamplerData::SortIfNotSorted()
 }
 
 std::pair<TRKSamplerData::const_iterator, TRKSamplerData::const_iterator>
-TRKSamplerData::EventRange(int id)  {
+TRKSamplerData::EventRange(int eventid) {
   SortIfNotSorted();
   struct Comp  // For heterogeneous comparison (as opposed to a lambda)
   {
-    bool operator()(TRKSamplerDatum const &lhs, int id) {
-      return lhs.particle.EventID() == id;
+    bool operator()(TRKSamplerDatum const &lhs, int eventid) {
+      return lhs.particle.EventID() < eventid;
     }
-    bool operator()(int id, TRKSamplerDatum const &lhs) {
-      return lhs.particle.EventID() == id;
+    bool operator()(int eventid, TRKSamplerDatum const &lhs) {
+      return lhs.particle.EventID() < eventid;
     }
   };
 
   auto range = std::equal_range(particles.begin(), particles.end(),
-                                id, Comp{});
+                                eventid, Comp{});
   return range;
 }
-
-// std::
