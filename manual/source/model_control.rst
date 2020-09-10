@@ -2575,9 +2575,9 @@ with the following options.
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
 | trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
-|                                    | of the specified filters will be stored. This is opposite to the   |
-|                                    | more inclusive OR logic used where a trajectory will be stored if  |
-|                                    | matches any of the specified filters.                              |
+|                                    | all of the specified filters will be stored. This is opposite to   |
+|                                    | the more inclusive OR logic used where a trajectory will be stored |
+|                                    | if matches any of the specified filters.                           |
 +------------------------------------+--------------------------------------------------------------------+
 
 
