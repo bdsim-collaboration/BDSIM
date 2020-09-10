@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
 #include "TRKLine.hh"
+#include "TRKLineUtils.hh"
 #include "TRKOutput.hh"
 #include "TRKParticle.hh"
 #include "TRKStrategy.hh"
@@ -58,9 +59,10 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
 {
   if (maxTurns <= 0)
     { throw std::runtime_error("Must be a positive number of turns"); }
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
-#endif
+  if (trk::BeamlineLength(line) <= 0.0) {
+    throw std::runtime_error(
+        "Tracked line must have a positive, non-zero length.");
+  }
 }
 
 TRKTracker::~TRKTracker()
