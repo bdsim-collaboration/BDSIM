@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <random>
 #include <map>
 #include <memory>
+#include <cassert>
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -147,6 +148,7 @@ void TRKTracker::Track(TRKBunch* bunch)
 		  }
 
 		// Track the particle with this proposed step.
+		assert(step > 0.0);
 		element->Track(p, step, strategy);
 
 		// Update the particle's s position in light of step taken.
