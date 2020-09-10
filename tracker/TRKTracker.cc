@@ -103,9 +103,8 @@ void TRKTracker::Track(TRKBunch* bunch)
 		std::advance(esIt, std::distance(line->cbegin(), eIt));
 	      }
 
-	    double ds = (*eIt)->GetLength();
-	    // double ds = RandomStep();
-	    double endPoint = p.getS() + ds;
+	    double proposedStep = RandomStep();
+	    double proposedEndPoint = p.getS() + proposedStep;
 	    bool advance = false;
 
 	    int count = 0;
@@ -125,36 +124,40 @@ void TRKTracker::Track(TRKBunch* bunch)
 		    advance = false;
 		  }
 
-		if (fabs(endPoint - p.getS()) < endPoint * 1.E-6)
+		// Check if current step (maybe applied over multiple
+		// elements) has finished being applied.
+		if (fabs(proposedEndPoint - p.getS()) < proposedEndPoint * 1.E-6)
 		  {
 		    /// Step is completed, prepare a new step
-		    ds = RandomStep();
-		    endPoint = p.getS() + ds;
+		    proposedStep = RandomStep();
+		    proposedEndPoint = p.getS() + proposedStep;
 		  }
 
 		//  If current step goes beyond this element's boundary
 		//  then reduce step to the distance to the boundary and
 		//  mark advance to true to progress line iterators on next
-		//  go of while loop
+		//  go of while loop.
 		double step;
-		if (endPoint > SEnd)
+		if (proposedEndPoint > SEnd)
 		  {
 		    step = SEnd - p.getS();
 		    advance = true;
 		  } else // We can use the proposed step as the actual step.
 
 		  {
-		    step = ds;
+		    step = proposedStep;
 		  }
 
 		// Track the particle with this proposed step.
 		assert(step > 0.0);
+		auto name = element->GetName();
+		std::cout << step << "\n";
 		element->Track(p, step, strategy);
 
 		// Update the particle's s position in light of step taken.
 		p.S += step;
 		// Decrement the proposed step for some reason?
-		ds -= step;
+		proposedStep -= step;
 	      }
 	  }
 
