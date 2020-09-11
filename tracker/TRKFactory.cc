@@ -197,8 +197,6 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
 TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list)
 {
   TRKLine* line = new TRKLine("beamline",circular);
-  // Quick fix to get Primary branch filled.  index=-1 being key here.
-  line->AddElement(CreateSampler("primaries", -1, 0.0));
   auto s = 0.0;
   for (auto it : beamline_list)
     {
