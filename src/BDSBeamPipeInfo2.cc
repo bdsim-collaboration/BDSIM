@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 #include "G4Types.hh"
 
-
 BDSBeamPipeInfo2::BDSBeamPipeInfo2(BDSBeamPipeType beamPipeTypeIn,
 				   BDSAperture*    apertureIn,
 				   G4Material*     vacuumMaterialIn,
@@ -59,8 +58,10 @@ BDSBeamPipeInfo2::BDSBeamPipeInfo2(const BDSBeamPipeInfo2& other):
 
 BDSBeamPipeInfo2::~BDSBeamPipeInfo2()
 {
+  // permit the use of two apertures to be specified but ar degenerate
+  if (apertureOut != aperture)
+    {delete apertureOut;}
   delete aperture;
-  delete apertureOut;
   delete inputFaceNormal;
   delete outputFaceNormal;
 }
