@@ -23,17 +23,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSExtent.hh"
 
-#include "globals.hh"                      // geant4 globals / types
 #include "G4CutTubs.hh"
-#include "G4LogicalVolume.hh"
+#include "G4String.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
+#include "G4Types.hh"
 #include "G4VSolid.hh"
 
-#include <cmath>
-#include <set>
-#include <utility>               // for std::pair
+#include <algorithm>
 
 BDSBeamPipeFactoryGeneral::BDSBeamPipeFactoryGeneral()
 {;}
@@ -49,12 +45,11 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
   G4double containerThickness = bpi->vacuumOnly ? lengthSafetyLarge : bpi->beamPipeThickness + 2*lengthSafetyLarge;
   BDSAperture* apBpInnerIn  = apVacIn->Plus(lengthSafetyLarge);
   BDSAperture* apBpInnerOut = apVacOut->Plus(lengthSafetyLarge);
-  BDSAperture* apBpOuterIn  = apBpInnerIn->Plus(bpi->beamPipeThickness);
-  BDSAperture* apBpOuterOut = apBpInnerOut->Plus(bpi->beamPipeThickness);
   BDSAperture* apContIn     = apVacIn->Plus(containerThickness);
   BDSAperture* apContOut    = apVacOut->Plus(containerThickness);
   BDSAperture* apContSubIn  = apVacIn->Plus(containerThickness + lengthSafety);
   BDSAperture* apContSubOut = apVacOut->Plus(containerThickness + lengthSafety);
+  /// TBC -> deletion of these aperture objects
   
   BDSApertureFactory fac;
   vacuumSolid = fac.CreateSolid(name+"_vacuum", length - lengthSafety, apVacIn, apVacOut,
@@ -62,9 +57,8 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
   
   if (!bpi->vacuumOnly)
   {
-    beamPipeSolid = fac.CreateSolidWithInner(name, length,
-                                             apBpInnerIn, apBpOuterIn,
-                                             apBpInnerOut, apBpOuterOut,
+    beamPipeSolid = fac.CreateSolidWithInnerInvariant(name, length,
+                                             apBpInnerIn, apBpInnerOut, bpi->beamPipeThickness,
                                              bpi->inputFaceNormal, bpi->outputFaceNormal);
   }
   
