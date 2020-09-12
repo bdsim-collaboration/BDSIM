@@ -120,6 +120,5 @@ BDSPolygon BDSApertureEllipse::PolygonNPoints(unsigned int nPointsIn) const
   G4double dTheta = CLHEP::twopi / (G4double)nPointsIn;
   for (unsigned int i = 0; i < nPointsIn; i++)
     {r.emplace_back(G4TwoVector(a * std::cos(i*dTheta), b * std::sin(i*dTheta)));}
-  
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
+  return BDSPolygon(r);
 }

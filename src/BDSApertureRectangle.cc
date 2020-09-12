@@ -119,6 +119,5 @@ BDSPolygon BDSApertureRectangle::PolygonNPoints(unsigned int nPointsIn) const
   r.emplace_back(G4TwoVector(-a,  b));
   r.emplace_back(G4TwoVector(-a, -b));
   r.emplace_back(G4TwoVector( a, -b));
-  
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
+  return BDSPolygon(r);
 }

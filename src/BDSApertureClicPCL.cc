@@ -138,6 +138,5 @@ BDSPolygon BDSApertureClicPCL::PolygonNPoints(unsigned int nPointsIn) const
   r.emplace_back(G4TwoVector(x, ySep));
   AppendAngleEllipse(r, CLHEP::halfpi, CLHEP::halfpi + CLHEP::pi, x, yBottom, nPoints, 0, 0);
   r.emplace_back(G4TwoVector(-x, 0));
-
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
+  return BDSPolygon(r);
 }

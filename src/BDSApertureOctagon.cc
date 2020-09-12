@@ -143,6 +143,5 @@ BDSPolygon BDSApertureOctagon::PolygonNPoints(unsigned int nPointsIn) const
   r.emplace_back(G4TwoVector(-x,      yEdge));
   r.emplace_back(G4TwoVector(-xEdge,  y));
   r.emplace_back(G4TwoVector( xEdge,  y));
-  
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
+  return BDSPolygon(r);
 }

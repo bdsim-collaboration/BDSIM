@@ -136,6 +136,5 @@ BDSPolygon BDSApertureRaceTrack::PolygonNPoints(unsigned int nPointsIn) const
   r.emplace_back(-x - radius, -y);
   AppendAngleEllipse(r, (3. / 2) * CLHEP::pi, CLHEP::twopi, radius, radius, pointsPerCurve, -x, y);
   r.emplace_back(-x, y + radius);
-
-  return BDSPolygon(r).ApplyTiltOffset(tiltOffset);
+  return BDSPolygon(r);
 }
