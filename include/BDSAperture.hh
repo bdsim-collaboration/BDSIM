@@ -67,8 +67,9 @@ public:
   virtual void      CheckInfoOK()                      const = 0;
   virtual G4double  RadiusToEncompass()                const = 0; // was IndicativeRadius RCWD
   virtual BDSExtent Extent()                           const = 0;
+  
   /// Minimal number of 2D points to represent the shape, e.g. 3 for a triangle; 4 for a rectangle etc.
-  virtual G4int     MinimumNumberOfPoints()            const = 0;
+  virtual unsigned int MinimumNumberOfPoints() const = 0;
 
   /// Check flagged parameters (variable number) are non-zero and throw exception if not.
   void CheckRequiredParametersSet(G4double aper1,     G4bool aper1Set,
@@ -98,7 +99,7 @@ protected:
 				 G4double finishAngle,
 				 G4double radiusA,
 				 G4double radiusB,
-				 G4int    nPoints,
+                                 unsigned int nPoints,
 				 G4double xOffset,
 				 G4double yOffset);
 };

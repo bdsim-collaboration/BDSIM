@@ -110,13 +110,13 @@ BDSAperture* BDSApertureRectangle::Clone() const
   return new BDSApertureRectangle(*this);
 }
 
-BDSPolygon BDSApertureRectangle::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureRectangle::PolygonNPoints(unsigned int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
-  //np = BDS::NextMultiple(np,4); // ensure multiple of 4
+  nPointsIn = BDS::NextMultiple(nPointsIn,4); // ensure multiple of 4
   /// TODO deal with nPoints
   std::vector<G4TwoVector> r;
   r.emplace_back(G4TwoVector( a,  b));

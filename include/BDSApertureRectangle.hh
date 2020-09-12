@@ -50,7 +50,7 @@ public:
   void      CheckInfoOK()                    const override;
   G4double  RadiusToEncompass()              const override {return std::hypot(a,b) + tiltOffset.Radius();}
   BDSExtent Extent()                         const override;
-  G4int     MinimumNumberOfPoints()          const override {return 4;}
+  unsigned int MinimumNumberOfPoints()       const override {return 4;}
 
   BDSApertureRectangle        operator+ (G4double number) const;
   const BDSApertureRectangle& operator+=(G4double number);

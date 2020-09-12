@@ -50,7 +50,7 @@ public:
   void      CheckInfoOK()                    const override;
   G4double  RadiusToEncompass()              const override {return radius + tiltOffset.Radius();}
   BDSExtent Extent()                         const override;
-  G4int     MinimumNumberOfPoints()          const override {return 10;}
+  unsigned int MinimumNumberOfPoints()       const override {return 10;}
 
   BDSApertureRectCircle        operator+ (G4double number) const;
   const BDSApertureRectCircle& operator+=(G4double number);

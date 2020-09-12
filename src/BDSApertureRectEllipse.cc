@@ -123,13 +123,12 @@ BDSAperture* BDSApertureRectEllipse::Clone() const
   return new BDSApertureRectEllipse(*this);
 }
 
-BDSPolygon BDSApertureRectEllipse::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureRectEllipse::PolygonNPoints(unsigned int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-
-  BDSApertureEllipse  ae = BDSApertureEllipse(ellipseA, ellipseB, np);
+  BDSApertureEllipse   ae = BDSApertureEllipse(ellipseA, ellipseB, nPointsIn);
   BDSApertureRectangle ar = BDSApertureRectangle(rectangleA, rectangleB);
   BDSPolygon pEllipse = ae.Polygon();
   BDSPolygon pRectangle = ar.Polygon();

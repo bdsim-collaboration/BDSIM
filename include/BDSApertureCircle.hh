@@ -41,13 +41,13 @@ public:
   virtual ~BDSApertureCircle(){;}
 
   G4double radius;
-  G4int    nPoints;
+  unsigned int nPoints;
 
   G4bool    Equals(const BDSAperture* other) const override;
   void      CheckInfoOK()                    const override;
   G4double  RadiusToEncompass()              const override {return radius;}
   BDSExtent Extent()                         const override;
-  G4int     MinimumNumberOfPoints()          const override {return nPoints;}
+  unsigned int MinimumNumberOfPoints() const override {return nPoints;}
 
   BDSApertureCircle        operator+ (G4double number) const;
   const BDSApertureCircle& operator+=(G4double number);

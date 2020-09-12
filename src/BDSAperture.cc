@@ -74,7 +74,7 @@ void BDSAperture::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
 				     G4double finishAngle,
 				     G4double radiusA,
 				     G4double radiusB,
-				     G4int    nPoints,
+                                     unsigned int nPoints,
 				     G4double xOffset,
 				     G4double yOffset)
 {

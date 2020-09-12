@@ -130,7 +130,7 @@ BDSAperture* BDSApertureOctagon::Clone() const
   return new BDSApertureOctagon(*this);
 }
 
-BDSPolygon BDSApertureOctagon::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureOctagon::PolygonNPoints(unsigned int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())

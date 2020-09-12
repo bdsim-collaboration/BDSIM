@@ -117,13 +117,12 @@ BDSAperture* BDSApertureRectCircle::Clone() const
   return new BDSApertureRectCircle(*this);
 }
 
-BDSPolygon BDSApertureRectCircle::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureRectCircle::PolygonNPoints(unsigned int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-
-  BDSApertureCircle    ac = BDSApertureCircle(radius, np);
+  BDSApertureCircle    ac = BDSApertureCircle(radius, nPointsIn);
   BDSApertureRectangle ar = BDSApertureRectangle(a, b);
   BDSPolygon pCircle    = ac.Polygon();
   BDSPolygon pRectangle = ar.Polygon();

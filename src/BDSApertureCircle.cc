@@ -115,16 +115,16 @@ BDSAperture* BDSApertureCircle::Clone() const
   return new BDSApertureCircle(*this);
 }
 
-BDSPolygon BDSApertureCircle::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureCircle::PolygonNPoints(unsigned int nPointsIn) const
 {
   G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
   if (np < 3 || np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < 3.");}
 
   std::vector<G4TwoVector> r;
-  r.reserve(np);
-  G4double dTheta = CLHEP::twopi / (G4double)np;
-  for (G4int i = 0; i < np; i++)
+  r.reserve(nPointsIn);
+  G4double dTheta = CLHEP::twopi / (G4double)nPointsIn;
+  for (unsigned int i = 0; i < nPointsIn; i++)
     {r.emplace_back(G4TwoVector(radius * std::cos(i*dTheta), radius * std::sin(i*dTheta)));}
 
   return BDSPolygon(r).ApplyTiltOffset(tiltOffset);

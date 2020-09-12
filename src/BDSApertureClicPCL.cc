@@ -127,15 +127,15 @@ BDSAperture* BDSApertureClicPCL::Clone() const
   return new BDSApertureClicPCL(*this);
 }
 
-BDSPolygon BDSApertureClicPCL::Polygon(G4int nPointsIn) const
+BDSPolygon BDSApertureClicPCL::PolygonNPoints(unsigned int nPointsIn) const
 {
-  G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
+  unsigned int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
   if (np < MinimumNumberOfPoints())
     {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
 
   std::vector<G4TwoVector> r;
-  np = BDS::NextMultiple(np, 2); // ensure multiple of 2
-  G4int nPoints = np / 2;
+  nPointsIn = BDS::NextMultiple(nPointsIn, 2); // ensure multiple of 2
+  G4int nPoints = nPointsIn / 2;
   AppendAngleEllipse(r, -CLHEP::halfpi, CLHEP::halfpi, x, yTop, nPoints, 0, ySep);
   r.emplace_back(G4TwoVector(x, ySep));
   AppendAngleEllipse(r, CLHEP::halfpi, CLHEP::halfpi + CLHEP::pi, x, yBottom, nPoints, 0, 0);
