@@ -225,7 +225,7 @@ namespace GMAD
     bool   angleSet;
 
     /// in case the element is a list itself (line)
-    std::list <Element> *lst;
+    std::list<Element>* lst;
 
     /// print method
     void print(int ident=0)const;

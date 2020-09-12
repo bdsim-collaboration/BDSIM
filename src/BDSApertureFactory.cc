@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "parser/aperture.h"
+#include "parser/element.h"
 #include "parser/samplerplacement.h"
 
 #include "G4Box.hh"
@@ -74,6 +75,16 @@ BDSApertureFactory::BDSApertureFactory():
 
 BDSApertureFactory::~BDSApertureFactory()
 {;}
+
+BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
+{
+  return CreateAperture(BDS::DetermineApertureType(el.apertureType),
+    el.aper1 * CLHEP::m,
+    el.aper2 * CLHEP::m,
+    el.aper3 * CLHEP::m,
+    el.aper4 * CLHEP::m,
+    0, 0, 0, 0);
+}
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 {

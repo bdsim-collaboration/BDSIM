@@ -33,6 +33,7 @@ class G4VSolid;
 namespace GMAD
 {
   class Aperture;
+  struct Element;
   class SamplerPlacement;
 }
 
@@ -48,6 +49,7 @@ public:
   BDSApertureFactory();
   ~BDSApertureFactory();
 
+  BDSAperture* CreateAperture(const GMAD::Element& el) const;
   BDSAperture* CreateAperture(const GMAD::Aperture& ap) const;
   BDSAperture* CreateAperture(const GMAD::SamplerPlacement& sp) const;
   BDSAperture* CreateAperture(BDSApertureType at,
@@ -82,9 +84,9 @@ public:
 
 private:
   /// @{ Flat faced construction function.
-  G4VSolid* CreateCircle()    const;
-  G4VSolid* CreateRectangle() const;
-  G4VSolid* CreateEllipse()  const;
+  G4VSolid* CreateCircle()      const;
+  G4VSolid* CreateRectangle()   const;
+  G4VSolid* CreateEllipse()     const;
   G4VSolid* CreateRectCircle()  const;
   G4VSolid* CreateRectEllipse() const;
   G4VSolid* CreateRaceTrack()   const;
