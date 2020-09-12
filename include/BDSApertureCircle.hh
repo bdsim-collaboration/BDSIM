@@ -19,10 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSAPERTURECIRCLE_H
 #define BDSAPERTURECIRCLE_H
 
-#include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 
 #include "G4Types.hh"
 
+class BDSAperture;
 class BDSExtent;
 class BDSPolygon;
 
@@ -32,22 +33,21 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureCircle: public BDSAperture
+class BDSApertureCircle: public BDSApertureCurved
 {
 public:
   BDSApertureCircle() = delete;
-  explicit BDSApertureCircle(G4double radiusIn,
-                             G4int    nPointsIn = 0);
+  explicit BDSApertureCircle(G4double     radiusIn,
+                             unsigned int nPointsIn = 0);
   virtual ~BDSApertureCircle(){;}
 
   G4double radius;
-  unsigned int nPoints;
 
   G4bool    Equals(const BDSAperture* other) const override;
   void      CheckInfoOK()                    const override;
   G4double  RadiusToEncompass()              const override {return radius;}
   BDSExtent Extent()                         const override;
-  unsigned int MinimumNumberOfPoints() const override {return nPoints;}
+  unsigned int MinimumNumberOfPoints() const override {return 10;}
 
   BDSApertureCircle        operator+ (G4double number) const;
   const BDSApertureCircle& operator+=(G4double number);
@@ -57,8 +57,7 @@ public:
   BDSAperture* Plus(G4double number) const override;
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
-
-protected:
+  
   BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };
 

@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
 #include "BDSApertureClicPCL.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -36,8 +37,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSApertureClicPCL::BDSApertureClicPCL(G4double xIn,
                                        G4double yTopIn,
                                        G4double yBottomIn,
-                                       G4double ySepIn):
-  BDSAperture(BDSApertureType::clicpcl),
+                                       G4double ySepIn,
+                                       unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::clicpcl, nPointsIn),
   x(xIn),
   yTop(yTopIn),
   yBottom(yBottomIn),

@@ -18,14 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSAPERTURERECTELLIPSE_H
 #define BDSAPERTURERECTELLIPSE_H
-
-#include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSTiltOffset.hh"
 
 #include "G4Types.hh"
 
 #include <algorithm>
 
+class BDSAperture;
 class BDSExtent;
 class BDSPolygon;
 
@@ -35,14 +35,15 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureRectEllipse: public BDSAperture
+class BDSApertureRectEllipse: public BDSApertureCurved
 {
 public:
   BDSApertureRectEllipse() = delete;
   explicit BDSApertureRectEllipse(G4double rectangleAIn,
 				                  G4double rectangleBIn,
 				                  G4double ellipseAIn,
-				                  G4double ellipseBIn);
+				                  G4double ellipseBIn,
+                                  unsigned int nPointsIn);
   virtual ~BDSApertureRectEllipse(){;}
 
   G4double rectangleA;
@@ -64,8 +65,7 @@ public:
   BDSAperture* Plus(G4double number) const override;
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
-
-protected:
+  
   BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };
 

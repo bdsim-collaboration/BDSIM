@@ -18,14 +18,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSAPERTURECLICPCL_H
 #define BDSAPERTURECLICPCL_H
-
-#include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSTiltOffset.hh"
 
 #include "G4Types.hh"
 
 #include <algorithm>
 
+class BDSAperture;
 class BDSExtent;
 class BDSPolygon;
 
@@ -35,14 +35,15 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureClicPCL: public BDSAperture
+class BDSApertureClicPCL: public BDSApertureCurved
 {
 public:
   BDSApertureClicPCL() = delete;
   BDSApertureClicPCL(G4double xIn,
 			         G4double yTopIn,
 			         G4double yBottomIn,
-			         G4double ySepIn);
+			         G4double ySepIn,
+                     unsigned int nPointsIn);
   virtual ~BDSApertureClicPCL(){;}
 
   G4double x;
@@ -64,8 +65,7 @@ public:
   BDSAperture* Plus(G4double number) const override;
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
-
-protected:
+  
   BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };
 

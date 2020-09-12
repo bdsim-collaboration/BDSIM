@@ -91,8 +91,11 @@ void BDSAperture::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
 
 BDSPolygon BDSAperture::Polygon(unsigned int nPointsIn) const
 {
-  unsigned int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
-  if (np < MinimumNumberOfPoints())
-    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-  return PolygonNPoints(MinimumNumberOfPoints());
+  unsigned int mnp = MinimumNumberOfPoints();
+  unsigned int rnp = RecommendedNumberOfPoints();
+  unsigned int np = nPointsIn == 0 ? rnp : nPointsIn;
+  if (np < mnp)
+    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(mnp) + ".");}
+  BDSPolygon r = PolygonNPoints(MinimumNumberOfPoints());
+  return r.ApplyTiltOffset(tiltOffset);
 }

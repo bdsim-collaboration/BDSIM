@@ -115,21 +115,21 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
   switch (at.underlying())
     {
     case BDSApertureType::circle:
-      {result = new BDSApertureCircle(a1, nPoints);         break;}
+      {result = new BDSApertureCircle(a1, nPoints);                  break;}
     case BDSApertureType::ellipse:
-      {result = new BDSApertureEllipse(a1, a2, nPoints);    break;}
+      {result = new BDSApertureEllipse(a1, a2, nPoints);             break;}
     case BDSApertureType::rectangle:
-      {result = new BDSApertureRectangle(a1, a2);           break;}
+      {result = new BDSApertureRectangle(a1, a2);                    break;}
     case BDSApertureType::rectcircle:
-      {result = new BDSApertureRectCircle(a1, a2, a3);      break;}
+      {result = new BDSApertureRectCircle(a1, a2, a3, nPoints);      break;}
     case BDSApertureType::rectellipse:
-      {result = new BDSApertureRectEllipse(a1, a2, a3, a4); break;}
+      {result = new BDSApertureRectEllipse(a1, a2, a3, a4, nPoints); break;}
     case BDSApertureType::racetrack:
-      {result = new BDSApertureRaceTrack(a1, a2, a3);       break;}
+      {result = new BDSApertureRaceTrack(a1, a2, a3, nPoints);       break;}
     case BDSApertureType::octagon:
-      {result = new BDSApertureOctagon(a1, a2, a3, a4);     break;}
+      {result = new BDSApertureOctagon(a1, a2, a3, a4);              break;}
     case BDSApertureType::clicpcl:
-      {result = new BDSApertureClicPCL(a1, a2, a3, a4);     break;}
+      {result = new BDSApertureClicPCL(a1, a2, a3, a4, nPoints);     break;}
     default:
       {break;}
     }

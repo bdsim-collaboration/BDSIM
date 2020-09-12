@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSApertureCircle.hh"
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
@@ -32,8 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSApertureRectCircle::BDSApertureRectCircle(G4double aIn,
 					                         G4double bIn,
-					                         G4double radiusIn):
-  BDSAperture(BDSApertureType::rectcircle),
+					                         G4double radiusIn,
+					                         unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::rectcircle, nPointsIn),
   a(aIn),
   b(bIn),
   radius(radiusIn)

@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSApertureCircle.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
@@ -35,15 +35,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <vector>
 
-BDSApertureCircle::BDSApertureCircle(G4double radiusIn,
-                                     G4int    nPointsIn):
-  BDSAperture(BDSApertureType::circle),
-  radius(radiusIn),
-  nPoints(nPointsIn)
-{
-  if (nPoints == 0)
-    {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
-}
+BDSApertureCircle::BDSApertureCircle(G4double     radiusIn,
+                                     unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::circle, nPointsIn),
+  radius(radiusIn)
+{;}
 
 G4bool BDSApertureCircle::Equals(const BDSAperture* other) const
 {

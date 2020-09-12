@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSApertureEllipse.hh"
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectEllipse.hh"
@@ -33,8 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSApertureRectEllipse::BDSApertureRectEllipse(G4double rectangleAIn,
 					       G4double rectangleBIn,
 					       G4double ellipseAIn,
-					       G4double ellipseBIn):
-  BDSAperture(BDSApertureType::rectellipse),
+					       G4double ellipseBIn,
+					       unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::rectellipse, nPointsIn),
   rectangleA(rectangleAIn),
   rectangleB(rectangleBIn),
   ellipseA(ellipseAIn),

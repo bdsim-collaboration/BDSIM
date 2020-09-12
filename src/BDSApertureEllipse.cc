@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSPolygon.hh"
 #include "BDSUtilities.hh"
 
@@ -39,10 +38,7 @@ BDSApertureEllipse::BDSApertureEllipse(G4double aIn,
   a(aIn),
   b(bIn),
   nPoints(nPointsIn)
-{
-  if (nPoints == 0)
-    {nPoints = BDSGlobalConstants::Instance()->NSegmentsPerCircle();}
-}
+{;}
 
 G4bool BDSApertureEllipse::Equals(const BDSAperture* other) const
 {

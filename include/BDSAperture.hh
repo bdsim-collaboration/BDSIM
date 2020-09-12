@@ -70,6 +70,7 @@ public:
   
   /// Minimal number of 2D points to represent the shape, e.g. 3 for a triangle; 4 for a rectangle etc.
   virtual unsigned int MinimumNumberOfPoints() const = 0;
+  virtual unsigned int RecommendedNumberOfPoints() const {return MinimumNumberOfPoints();}
 
   /// Check flagged parameters (variable number) are non-zero and throw exception if not.
   void CheckRequiredParametersSet(G4double aper1,     G4bool aper1Set,
@@ -86,12 +87,12 @@ public:
   /// Generate a set of x,y points to represent the aperture. Number == 0 means minimal
   /// number of points which will be at least 3.
   BDSPolygon Polygon(unsigned int nPointsIn = 0) const;
-
-protected:
+  
   /// Protected interface - no protection over the value of nPoints used. This should therefore
   /// be called from the public Polygon() function that will check the value.
   virtual BDSPolygon PolygonNPoints(unsigned int nPointsIn) const = 0;
-  
+
+protected:
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.
   inline BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}

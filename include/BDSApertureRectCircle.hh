@@ -18,12 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSAPERTURERECTCIRCLE_H
 #define BDSAPERTURERECTCIRCLE_H
-
-#include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSTiltOffset.hh"
 
 #include "G4Types.hh"
 
+class BDSAperture;
 class BDSExtent;
 class BDSPolygon;
 
@@ -33,13 +33,14 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureRectCircle: public BDSAperture
+class BDSApertureRectCircle: public BDSApertureCurved
 {
 public:
   BDSApertureRectCircle() = delete;
   BDSApertureRectCircle(G4double aIn,
 			            G4double bIn,
-			            G4double radiusIn);
+			            G4double radiusIn,
+                        unsigned int nPointsIn);
   virtual ~BDSApertureRectCircle(){;}
 
   G4double a;
@@ -60,8 +61,7 @@ public:
   BDSAperture* Plus(G4double number) const override;
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
-
-protected:
+  
   BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };
 

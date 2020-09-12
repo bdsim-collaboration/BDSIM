@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSApertureRaceTrack.hh"
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
@@ -35,8 +36,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSApertureRaceTrack::BDSApertureRaceTrack(G4double xIn,
 					                       G4double yIn,
-					                       G4double radiusIn):
-  BDSAperture(BDSApertureType::racetrack),
+					                       G4double radiusIn,
+                                           unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::racetrack, nPointsIn),
   x(xIn),
   y(yIn),
   radius(radiusIn)
