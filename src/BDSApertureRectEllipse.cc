@@ -129,8 +129,8 @@ BDSPolygon BDSApertureRectEllipse::PolygonNPoints(unsigned int nPointsIn) const
 {
   BDSApertureEllipse   ae = BDSApertureEllipse(ellipseA, ellipseB, nPointsIn);
   BDSApertureRectangle ar = BDSApertureRectangle(rectangleA, rectangleB);
-  BDSPolygon pEllipse = ae.Polygon();
-  BDSPolygon pRectangle = ar.Polygon();
+  BDSPolygon pEllipse   = ae.PolygonNPoints(nPointsIn);
+  BDSPolygon pRectangle = ar.PolygonNPoints(nPointsIn);
   BDSPolygon result = pEllipse.Intersection(pRectangle);
   return result;
 }

@@ -123,8 +123,8 @@ BDSPolygon BDSApertureRectCircle::PolygonNPoints(unsigned int nPointsIn) const
 {
   BDSApertureCircle    ac = BDSApertureCircle(radius, nPointsIn);
   BDSApertureRectangle ar = BDSApertureRectangle(a, b);
-  BDSPolygon pCircle    = ac.Polygon();
-  BDSPolygon pRectangle = ar.Polygon();
+  BDSPolygon pCircle    = ac.PolygonNPoints(nPointsIn);
+  BDSPolygon pRectangle = ar.PolygonNPoints(nPointsIn);
   BDSPolygon result = pCircle.Intersection(pRectangle);
   return result;
 }
