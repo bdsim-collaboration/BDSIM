@@ -117,10 +117,6 @@ BDSAperture* BDSApertureCircle::Clone() const
 
 BDSPolygon BDSApertureCircle::PolygonNPoints(unsigned int nPointsIn) const
 {
-  G4int np = nPointsIn == 0 ? nPoints : nPointsIn;
-  if (np < 3 || np < MinimumNumberOfPoints())
-    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < 3.");}
-
   std::vector<G4TwoVector> r;
   r.reserve(nPointsIn);
   G4double dTheta = CLHEP::twopi / (G4double)nPointsIn;

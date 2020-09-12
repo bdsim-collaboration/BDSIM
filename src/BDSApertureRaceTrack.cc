@@ -122,10 +122,6 @@ BDSAperture* BDSApertureRaceTrack::Clone() const
 
 BDSPolygon BDSApertureRaceTrack::PolygonNPoints(unsigned int nPointsIn) const
 {
-  G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
-  if (np < MinimumNumberOfPoints())
-    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-
   nPointsIn = BDS::NextMultiple(nPointsIn, 4); // ensure multiple of 4
   std::vector<G4TwoVector> r;
   r.reserve(nPointsIn);

@@ -129,10 +129,6 @@ BDSAperture* BDSApertureClicPCL::Clone() const
 
 BDSPolygon BDSApertureClicPCL::PolygonNPoints(unsigned int nPointsIn) const
 {
-  unsigned int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
-  if (np < MinimumNumberOfPoints())
-    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-
   std::vector<G4TwoVector> r;
   nPointsIn = BDS::NextMultiple(nPointsIn, 2); // ensure multiple of 2
   G4int nPoints = nPointsIn / 2;

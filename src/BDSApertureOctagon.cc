@@ -132,11 +132,7 @@ BDSAperture* BDSApertureOctagon::Clone() const
 
 BDSPolygon BDSApertureOctagon::PolygonNPoints(unsigned int nPointsIn) const
 {
-  G4int np = nPointsIn == 0 ? MinimumNumberOfPoints() : nPointsIn;
-  if (np < MinimumNumberOfPoints())
-    {throw BDSException(__METHOD_NAME__, "number of points for aperture specified < " + std::to_string(MinimumNumberOfPoints()) + ".");}
-
-  np = BDS::NextMultiple(np, 8); // ensure multiple of 8
+  nPointsIn = BDS::NextMultiple(nPointsIn, 8); // ensure multiple of 8
   /// TODO deal with nPoints
   std::vector<G4TwoVector> r;
   r.emplace_back(G4TwoVector( x,      yEdge));

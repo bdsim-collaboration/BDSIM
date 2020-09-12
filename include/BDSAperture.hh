@@ -82,13 +82,16 @@ public:
 				const G4String& nameToWarn) const;
   
   virtual G4bool LessThan(const BDSAperture* other) const;
-
+  
   /// Generate a set of x,y points to represent the aperture. Number == 0 means minimal
   /// number of points which will be at least 3.
-  virtual BDSPolygon Polygon(G4int nPointsIn = 0) const = 0;
+  BDSPolygon Polygon(unsigned int nPointsIn = 0) const;
 
-  
 protected:
+  /// Protected interface - no protection over the value of nPoints used. This should therefore
+  /// be called from the public Polygon() function that will check the value.
+  virtual BDSPolygon PolygonNPoints(unsigned int nPointsIn) const = 0;
+  
   /// Apply the members offsetX, offsetY and tilt to an extent. Utility
   /// function for Extent() implemented in derived classes.
   inline BDSExtent ExtentOffsetTilt(const BDSExtent& simpleExtent) const {return simpleExtent.TiltOffset(&tiltOffset);}

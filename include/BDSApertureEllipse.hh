@@ -65,7 +65,8 @@ public:
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
 
-  BDSPolygon Polygon(G4int nPointsIn = 0) const override;
+protected:
+  BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };
 
 #endif
