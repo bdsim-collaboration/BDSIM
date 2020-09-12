@@ -72,6 +72,14 @@ public:
 			const G4ThreeVector* normalOut = nullptr,
 			G4double           lengthExtraForBoolean = 0);
   
+  G4VSolid* CreateSolidWithInnerInvariant(const G4String&      name,
+                                                              G4double             length,
+                                                              const BDSAperture*   apertureInInside,
+                                                              const BDSAperture*   apertureOutInside,
+                                                              G4double             thickness,
+                                                              const G4ThreeVector* normalIn,
+                                                              const G4ThreeVector* normalOut,
+                                                              G4double             lengthExtraForBoolean = 0);
   G4VSolid* CreateSolidWithInner(const G4String& name,
                                  G4double length,
                                  const BDSAperture* apertureInOutside,
@@ -107,7 +115,12 @@ private:
   
   G4VSolid* CreateTubeByPoints()  const;
 
+  /// @{ Specialisation for particular solids.
   G4VSolid* CircleToCircle() const;
+  /// @}
+  /// @{ Specialisation for particular solids for hollow solid.
+  G4VSolid* HollowCircleToCircle() const;
+  /// @}
 
   /// Ratio of radii used for an intersection solid - greater than 1 and
   /// defined arbitrarily.
@@ -134,6 +147,8 @@ private:
 
   /// Map of unique aperture type pairs to member function pointers.
   std::map<std::pair<BDSApertureType, BDSApertureType>, Constructor> specialisations;
+  
+  std::map<std::pair<BDSApertureType, BDSApertureType>, Constructor> hollowSpecialisations;
 };
 
 

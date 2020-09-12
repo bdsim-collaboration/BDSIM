@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
@@ -80,6 +81,9 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 					     options.vacMaterial,
 					     options.beampipeThickness * CLHEP::m,
 					     options.beampipeMaterial);
+  
+  
+  defaultBeamPipeModel = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(options.apertureType),
   
   // magnet geometry
   G4double horizontalWidth = options.horizontalWidth * CLHEP::m;

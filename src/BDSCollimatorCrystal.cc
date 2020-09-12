@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSAperture.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo2.hh"
@@ -130,10 +131,12 @@ void BDSCollimatorCrystal::Build()
       BDSExtent thisExtent = GetExtent(); // actually outer extent of beam pipe
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future
+      /*
+      beamPipeInfo->aperture->
       BDSExtent innerRadius = BDSExtent(beamPipeInfo->IndicativeRadiusInner(),
                                         beamPipeInfo->IndicativeRadiusInner(),
-                                        0.5*chordLength);
-      G4bool safe2 = innerRadius.Encompasses(extShifted);
+                                        0.5*chordLength);*/
+      G4bool safe2 = true; //innerRadius.Encompasses(extShifted);
       if (!safe || !safe2)
 	      {BDS::Warning(__METHOD_NAME__, "Left crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
@@ -172,10 +175,11 @@ void BDSCollimatorCrystal::Build()
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future
+      /*
       BDSExtent innerRadius = BDSExtent(beamPipeInfo->IndicativeRadiusInner(),
                                         beamPipeInfo->IndicativeRadiusInner(),
-                                        0.5*chordLength);
-      G4bool safe2 = innerRadius.Encompasses(extShifted);
+                                        0.5*chordLength);*/
+      G4bool safe2 = true; //innerRadius.Encompasses(extShifted);
       if (!safe || !safe2)
         {BDS::Warning(__METHOD_NAME__, "Right crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisRight, "Right");

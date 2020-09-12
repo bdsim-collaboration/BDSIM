@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSApertureCircle.hh"
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSCavity.hh"
@@ -42,11 +43,11 @@ BDSCavityElement::BDSCavityElement(G4String             nameIn,
   cavityInfo(cavityInfoIn),
   vacuumMaterial(vacuumMaterialIn)
 {
-  beamPipeInfo = new BDSBeamPipeInfo(BDSBeamPipeType::circular,
-				     cavityInfo->irisRadius, 0, 0, 0,
-				     vacuumMaterialIn,
-				     cavityInfo->thickness,
-				     cavityInfo->material);
+  auto ap = new BDSApertureCircle(cavityInfoIn->irisRadius);
+  beamPipeInfo = new BDSBeamPipeInfo2(BDSBeamPipeType::circular,
+  ap,vacuumMaterialIn,
+                                      cavityInfo->thickness,
+                                      cavityInfo->material);
 }
 
 BDSCavityElement::~BDSCavityElement()

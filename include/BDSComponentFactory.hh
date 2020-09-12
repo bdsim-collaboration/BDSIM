@@ -18,7 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
-
+#include "BDSApertureFactory.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSFieldType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
@@ -42,6 +43,7 @@ namespace GMAD
 }
 class BDSAcceleratorComponent;
 class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 class BDSCavityInfo;
 class BDSComponentFactoryUser;
 class BDSCrystalInfo;
@@ -109,6 +111,10 @@ public:
   /// from the curvilinear coordinates for the tilt and offset of the magnet.
   static G4Transform3D CreateFieldTransform(GMAD::Element const* el);
 
+  static BDSBeamPipeInfo2* PrepareBeamPipeInfo2(GMAD::Element const* el,
+                                                                    const G4ThreeVector& inputFaceNormalIn,
+                                                                    const G4ThreeVector& outputFaceNormalIn);
+  
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
@@ -120,6 +126,8 @@ public:
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
 					      G4double angleIn,
 					      G4double angleOut);
+  
+  static BDSApertureType ApertureTypeFromBeamPipeType(BDSBeamPipeType at);
 
   /// Determine which side the yoke of an asymmetric bend should go on based on the angle
   /// of the bend and the overriding setting in the element.
@@ -193,6 +201,7 @@ private:
   /// No default constructor
   BDSComponentFactory() = delete;
 
+  BDSApertureFactory apertureFactory;
   const BDSParticleDefinition* designParticle; ///< Particle w.r.t. which elements are built.
   G4double brho;              ///< Rigidity in T*m (G4units) for beam particles.
   G4double beta0;             ///< Cache of relativisitic beta for primary particle.
@@ -390,5 +399,7 @@ private:
 
   /// Variable used to pass around the possibly modified name of an element.
   G4String elementName;
+  
+  const static std::map<BDSBeamPipeType, BDSApertureType> beampipeToApertureTypes;
 };
 #endif

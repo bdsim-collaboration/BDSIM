@@ -42,6 +42,7 @@ class G4UserLimits;
 class G4VisAttributes;
 
 class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 class BDSTunnelInfo;
 
 /**
@@ -313,6 +314,7 @@ public:
   inline G4double              CurvilinearDiameter()     const {return curvilinearDiameter;}
   inline G4bool                CurvilinearDiameterShrunkForBends() const {return curvilinearDiameterShrunkForBends;}
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
+  inline BDSBeamPipeInfo2*     DefaultBeamPipeModel2()   const {return defaultBeamPipeModel2;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
@@ -359,6 +361,7 @@ private:
 
   /// Default beam pipe model information
   BDSBeamPipeInfo* defaultBeamPipeModel;
+  BDSBeamPipeInfo2* defaultBeamPipeModel2;
   
   /// Tunnel model
   BDSTunnelInfo* tunnelInfo;

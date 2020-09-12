@@ -50,8 +50,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSLine.hh"
@@ -101,9 +104,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
+const std::map<BDSBeamPipeType, BDSApertureType> BDSComponentFactory::beampipeToApertureTypes =
+  {
+    {BDSBeamPipeType::circular,       BDSApertureType::circle},
+    {BDSBeamPipeType::circularvacuum, BDSApertureType::circle},
+    {BDSBeamPipeType::rectangular,    BDSApertureType::rectangle},
+    {BDSBeamPipeType::elliptical,     BDSApertureType::ellipse},
+    {BDSBeamPipeType::lhc,            BDSApertureType::rectcircle},
+    {BDSBeamPipeType::lhcdetailed,    BDSApertureType::rectcircle},
+    {BDSBeamPipeType::racetrack,      BDSApertureType::racetrack},
+    {BDSBeamPipeType::octagonal,      BDSApertureType::octagon},
+    {BDSBeamPipeType::clicpcl,        BDSApertureType::clicpcl}
+  };
+
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
+                                         apertureFactory(BDSApertureFactory()),
   designParticle(designParticleIn),
   userComponentFactory(userComponentFactoryIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
@@ -464,10 +481,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   const G4double length = element->l*CLHEP::m;
 
   // Beampipeinfo needed here to get aper1 for check.
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
+  BDSBeamPipeInfo2* beamPipeInfo = PrepareBeamPipeInfo2(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent extent = beamPipeInfo->Extent();
+  const BDSExtent extent = beamPipeInfo->aperture->Extent();
+    // TBC Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
 						 length, extent, extent);
 
@@ -2074,6 +2092,34 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
     {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
+  return result;
+}
+
+BDSApertureType BDSComponentFactory::ApertureTypeFromBeamPipeType(BDSBeamPipeType bpt)
+{
+  return beampipeToApertureTypes.at(bpt);
+}
+
+BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
+                                                           const G4ThreeVector& inputFaceNormalIn,
+const G4ThreeVector& outputFaceNormalIn)
+{
+  BDSBeamPipeInfo2* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel2();
+  BDSBeamPipeInfo2* result;
+  if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
+  {
+    result = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(el->apertureType),
+                                  apertureFactory.CreateAperture(*el),
+                                  BDSMaterials::Instance()->GetMaterial(el->vacuumMaterial),
+                                  el->beampipeThickness * CLHEP::m,
+      BDSMaterials::Instance()->GetMaterial(el->beampipeMaterial));
+  }
+  else
+  {// ignore the aperture model from the element and use the global one
+    result = new BDSBeamPipeInfo2(*defaultModel); // ok as only pointers to materials
+    result->inputFaceNormal  = new G4ThreeVector(inputFaceNormalIn);
+    result->outputFaceNormal = new G4ThreeVector(outputFaceNormalIn);
+  }
   return result;
 }
 

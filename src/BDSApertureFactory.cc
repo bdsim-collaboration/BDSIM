@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureRectEllipse.hh"
 #include "BDSApertureType.hh"
+#include "BDSBeamPipeType.hh"
+#include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSPolygon.hh"
@@ -69,6 +71,10 @@ BDSApertureFactory::BDSApertureFactory():
 		     {MakePair(BDSApertureType::circle, BDSApertureType::circle),
 		      &BDSApertureFactory::CircleToCircle}
   };
+  
+  hollowSpecialisations = {
+    {MakePair(BDSApertureType::circle, BDSApertureType::circle), &BDSApertureFactory::HollowCircleToCircle}
+  };
 
   // TBC other specialisations possible given combination of available shapes
 }
@@ -78,7 +84,9 @@ BDSApertureFactory::~BDSApertureFactory()
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
 {
-  return CreateAperture(BDS::DetermineApertureType(el.apertureType),
+  BDSBeamPipeType bpt = BDS::DetermineBeamPipeType(el.apertureType);
+  BDSApertureType apt = BDSComponentFactory::ApertureTypeFromBeamPipeType(bpt);
+  return CreateAperture(apt,
     el.aper1 * CLHEP::m,
     el.aper2 * CLHEP::m,
     el.aper3 * CLHEP::m,
@@ -203,6 +211,18 @@ G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
   return product;
 }
 
+G4VSolid* BDSApertureFactory::CreateSolidWithInnerInvariant(const G4String&      name,
+                                                   G4double             length,
+                                                   const BDSAperture*   apertureInInside,
+                                                   const BDSAperture*   apertureOutInside,
+                                                   G4double             thickness,
+                                                   const G4ThreeVector* normalIn,
+                                                   const G4ThreeVector* normalOut,
+                                                   G4double             lengthExtraForBoolean)
+{
+  return nullptr;
+}
+
 G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
                                                    G4double             length,
                                                    const BDSAperture*   apertureInInside,
@@ -212,7 +232,13 @@ G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
                                                    const G4ThreeVector* normalIn,
                                                    const G4ThreeVector* normalOut,
                                                    G4double             lengthExtraForBoolean)
-{return nullptr;}
+{
+  productNormalIn  = normalIn  ? *normalIn : G4ThreeVector();
+  productNormalOut = normalOut ? *normalOut : G4ThreeVector();
+  angledFaces      = normalIn || normalOut;
+  
+  return nullptr;
+}
 
 G4VSolid* BDSApertureFactory::CreateCircle() const
 {
@@ -469,6 +495,9 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 }
 
 G4VSolid* BDSApertureFactory::CircleToCircle() const
+{return nullptr;} // TBC
+
+G4VSolid* BDSApertureFactory::HollowCircleToCircle() const
 {return nullptr;} // TBC
 
 std::pair<BDSApertureType,BDSApertureType> BDSApertureFactory::MakePair(BDSApertureType a1,
