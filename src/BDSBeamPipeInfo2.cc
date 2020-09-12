@@ -41,6 +41,7 @@ BDSBeamPipeInfo2::BDSBeamPipeInfo2(BDSBeamPipeType beamPipeTypeIn,
   beamPipeThickness(beamPipeThicknessIn),
   beamPipeMaterial(beamPipeMaterialIn),
   vacuumOnly(vacuumOnlyIn),
+  apertureOut(apertureOutIn),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {;}
