@@ -19,8 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAperture.hh"
 #include "BDSApertureOctagon.hh"
 #include "BDSApertureType.hh"
-#include "BDSDebug.hh"
-#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"

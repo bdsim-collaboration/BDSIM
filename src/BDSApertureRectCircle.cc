@@ -22,8 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureType.hh"
-#include "BDSDebug.hh"
-#include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSPolygon.hh"
 #include "BDSTiltOffset.hh"
