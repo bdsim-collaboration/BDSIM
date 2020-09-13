@@ -16,8 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
+#include "BDSApertureType.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSColours.hh"
@@ -870,8 +874,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
+  BDSApertureFactory apFac;
+  BDSAperture* ap = apFac.CreateAperture(BDSApertureType::rectcircle,
+                                         2.202*CLHEP::cm,
+                                         1.714*CLHEP::cm,
+                                         2.202*CLHEP::cm,
+                                         0,0,0,0,0);
+  BDSBeamPipeInfo2* bpi2 = new BDSBeamPipeInfo2(BDSBeamPipeType::lhcdetailed,
+                                                ap,
+                                                vacuumMaterial,
+                                                1*CLHEP::mm,
+                                                beamPipeMaterial);
   BDSBeamPipeFactory factory;
-  BDSBeamPipe* secondBP = factory.CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+  BDSBeamPipe* secondBP = factory.CreateBeamPipe(name, 2*secondBPHalfLength-2*lengthSafety, bpi2);
+  delete bpi2;/*
+    BDSBeamPipeType::lhcdetailed,
 									 name,
 									 2*secondBPHalfLength-2*lengthSafety,
 									 inputFaceNormal,
@@ -882,7 +899,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 									 0,
 									 vacuumMaterial,
 									 1*CLHEP::mm,
-									 beamPipeMaterial);
+									 beamPipeMaterial);*/
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
   secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
@@ -1465,7 +1482,20 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
+  BDSApertureFactory apFac;
+  BDSAperture* ap = apFac.CreateAperture(BDSApertureType::rectcircle,
+                                         2.202*CLHEP::cm,
+                                         1.714*CLHEP::cm,
+                                         2.202*CLHEP::cm,
+                                         0,0,0,0,0);
+  BDSBeamPipeInfo2* bpi2 = new BDSBeamPipeInfo2(BDSBeamPipeType::lhcdetailed,
+                                                ap,
+                                                vacuumMaterial,
+                                                1*CLHEP::mm,
+                                                beamPipeMaterial);
   BDSBeamPipeFactory factory;
+  BDSBeamPipe* secondBP = factory.CreateBeamPipe(name, length-2*lengthSafety, bpi2);
+  /*
   BDSBeamPipe* secondBP = factory.CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
 									 name,
 									 length-2*lengthSafety,
@@ -1476,6 +1506,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 									 vacuumMaterial,    // vacuum material
 									 1*CLHEP::mm,       // beampipeThickness
 									 beamPipeMaterial); // beampipe material
+									 */
   
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation

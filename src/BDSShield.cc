@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSDebug.hh"
 #include "BDSSDType.hh"
 #include "BDSShield.hh"
@@ -34,14 +34,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class G4Colour;
 class G4Material;
 
-BDSShield::BDSShield(G4String         nameIn,
-		     G4double         lengthIn,
-		     G4double         horizontalWidthIn,
-		     G4double         xSizeIn,
-		     G4double         ySizeIn,
-		     G4Material*      materialIn,
-		     G4Colour*        colourIn,
-		     BDSBeamPipeInfo* beamPipeInfoIn):
+BDSShield::BDSShield(const G4String&   nameIn,
+		     G4double          lengthIn,
+		     G4double          horizontalWidthIn,
+		     G4double          xSizeIn,
+		     G4double          ySizeIn,
+		     G4Material*       materialIn,
+		     G4Colour*         colourIn,
+		     BDSBeamPipeInfo2* beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
   horizontalWidth(horizontalWidthIn),
   xSize(xSizeIn),
@@ -135,8 +135,8 @@ void BDSShield::BuildBeamPipe()
     {return;}
   
   // check beam pipe fits
-  if ((xSize < (beamPipeInfo->aper1 + beamPipeInfo->beamPipeThickness)) || (ySize < (beamPipeInfo->aper2 + beamPipeInfo->beamPipeThickness)))
-    {
+  if (beamPipeInfo->Extent().TransverselyGreaterEquals(BDSExtent(xSize,ySize,0)))
+    {//TBC
       G4cout << __METHOD_NAME__ << "Shield will not fit around beam pipe - not building beam pipe!" << G4endl << G4endl;
       return;
     }

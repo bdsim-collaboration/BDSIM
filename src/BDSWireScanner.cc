@@ -20,9 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSUtilities.hh"
 #include "BDSWireScanner.hh"
 
@@ -38,14 +39,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSWireScanner::BDSWireScanner(G4String nameIn,
-			       G4double lengthIn,
-			       BDSBeamPipeInfo* beamPipeInfoIn,
-			       G4Material* wireMaterialIn,
-			       G4double wireDiameterIn,
-			       G4double wireLengthIn,
-			       G4double wireAngleIn,
-			       G4ThreeVector wireOffsetIn):
+BDSWireScanner::BDSWireScanner(const G4String&   nameIn,
+			       G4double          lengthIn,
+			       BDSBeamPipeInfo2* beamPipeInfoIn,
+			       G4Material*       wireMaterialIn,
+			       G4double          wireDiameterIn,
+			       G4double          wireLengthIn,
+			       G4double          wireAngleIn,
+			       G4ThreeVector     wireOffsetIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner", beamPipeInfoIn),
   wireMaterial(wireMaterialIn),
   wireDiameter(wireDiameterIn),
@@ -68,7 +69,7 @@ BDSWireScanner::BDSWireScanner(G4String nameIn,
   tipBot.rotate(CLHEP::pi);
   tipTop += offsetXY;
   tipBot += offsetXY;
-  G4double innerRadius = beamPipeInfo->IndicativeRadiusInner();
+  G4double innerRadius = beamPipeInfo->Extent().MaximumAbsTransverse();
   if (tipTop.mag() > innerRadius || tipBot.mag() > innerRadius)
     {throw BDSException(__METHOD_NAME__, "wire for \"" + name + "\" is too big to fit in beam pipe give offsets.");}
 }
@@ -77,8 +78,8 @@ void BDSWireScanner::BuildContainerLogicalVolume()
 {
   BDSBeamPipeFactory factory;
   BDSBeamPipe* pipe = factory.CreateBeamPipe(name + "_beampipe",
-					      chordLength,
-					      beamPipeInfo);
+					     chordLength,
+					     beamPipeInfo);
   RegisterDaughter(pipe);
   
   // make the beam pipe container, this object's container

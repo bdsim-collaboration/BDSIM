@@ -703,7 +703,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
-  auto bp = PrepareBeamPipeInfo(element);
+  auto bp = PrepareBeamPipeInfo2(element);
   BDSMagnetOuterInfo* oiCheck = PrepareMagnetOuterInfo("checking", element,
                                                        -incomingFaceAngle, -outgoingFaceAngle,
                                                        bp, element->yokeOnInside);
@@ -961,7 +961,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   //auto bpInf = PrepareBeamPipeInfo2(element); // TBC
-  auto bpInf = PrepareBeamPipeInfo(element);
+  auto bpInf = PrepareBeamPipeInfo2(element);
   
   // Decide on a default horizontalWidth for the kicker - try 0.3x ie smaller kicker
   // than typical magnet, but if that would not fit around the beam pipe - go back to
@@ -1099,7 +1099,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angleIn)
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
+  BDSBeamPipeInfo2* beamPipeInfo = PrepareBeamPipeInfo2(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
 							       -angleIn, angleIn, beamPipeInfo);
@@ -1123,9 +1123,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					    0, nullptr,  // default values for optional args (angle, outerFieldInfo)
 					    true);       // isThin
 
-  thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,
+  /*thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,
 				     beamPipeInfo->aper1,
-				     thinElementLength*0.5));
+				     thinElementLength*0.5));*/ // TBC
 
   return thinMultipole;
 }
@@ -1217,7 +1217,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // Do not use CreateMagnet method as solenoid body length needs to be reduced to conserve total
   // element length. The solenoid strength is scaled accordingly.
 
-  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSBeamPipeInfo2* bpInfo = PrepareBeamPipeInfo2(element);
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::solenoid);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
@@ -1351,7 +1351,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 					      fieldTrans);
   BDSFieldInfo* vacuumField = new BDSFieldInfo();
 
-  auto bpInfo = PrepareBeamPipeInfo(element);
+  auto bpInfo = PrepareBeamPipeInfo2(element);
   
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       elementName,
@@ -1368,7 +1368,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSBeamPipeInfo2* bpInfo = PrepareBeamPipeInfo2(element);
 
   G4Colour* colour = PrepareColour(element);
   G4Material* material = PrepareMaterial(element, "concrete");
@@ -1445,7 +1445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
   
   return (new BDSWireScanner(elementName,
 			     element->l*CLHEP::m,
-			     PrepareBeamPipeInfo(element),
+			     PrepareBeamPipeInfo2(element),
 			     PrepareMaterial(element),
 			     element->wireDiameter*CLHEP::m,
 			     element->wireLength*CLHEP::m,
@@ -1460,7 +1460,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 
   const BDSFieldType undField = BDSFieldType::undulator;
 
-  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSBeamPipeInfo2* bpInfo = PrepareBeamPipeInfo2(element);
   BDSIntegratorType intType = integratorSet->Integrator(undField);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSMagnetStrength* st = new BDSMagnetStrength();
@@ -1597,7 +1597,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
   
   BDSScreen* theScreen = new BDSScreen( elementName,
 					element->l*CLHEP::m,
-					PrepareBeamPipeInfo(element),
+					PrepareBeamPipeInfo2(element),
 					size,
 					element->angle); 
   if (element->layerThicknesses.size() != element->layerMaterials.size())
@@ -1749,12 +1749,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 								BDSFieldType             fieldType,
 								G4double                 beamPipeRadius)
 {
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
+  BDSBeamPipeInfo2* beamPipeInfo = PrepareBeamPipeInfo2(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
 
   // override beampipe radius if supplied - must be set to be iris size for cavity model fringes.
-  if (BDS::IsFinite(beamPipeRadius))
-	{beamPipeInfo->aper1 = beamPipeRadius;}
+  //if (BDS::IsFinite(beamPipeRadius))
+	//{beamPipeInfo->aper1 = beamPipeRadius;} // TBC
 
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
                                                                -angleIn, angleIn, beamPipeInfo);
@@ -1767,7 +1767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
                                                st,
                                                true,
                                                fieldTrans);
-  vacuumField->SetBeamPipeRadius(beamPipeInfo->aper1);
+  vacuumField->SetBeamPipeRadius(beamPipeInfo->Extent().MaximumAbsTransverse()); // TBC
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
                                           name,
@@ -1778,9 +1778,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
                                           0, nullptr,  // default values for optional args (angle, outerFieldInfo)
                                           true);       // isThin
 
-  thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
-                                   beamPipeInfo->aper1,
-                                   thinElementLength*0.5));
+  BDSExtent ex = beamPipeInfo->Extent();
+  thinRMatrix->SetExtent(BDSExtent(ex.ExtentPositive().x(),
+                                   ex.ExtentPositive().y(),
+                                   thinElementLength*0.5)); // TBC
 
   return thinRMatrix;
 }
@@ -1803,7 +1804,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     G4double             angle,
 					     const G4String&      nameSuffix) const
 {
-  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSBeamPipeInfo2* bpInfo = PrepareBeamPipeInfo2(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
@@ -1887,7 +1888,7 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 
 BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
 							       const BDSFieldType&       fieldType,
-							       const BDSBeamPipeInfo*    bpInfo,
+							       const BDSBeamPipeInfo2*   bpInfo,
 							       const BDSMagnetOuterInfo* outerInfo,
 							       const G4Transform3D&      fieldTransform,
 							       const BDSIntegratorSet*   integratorSetIn,
@@ -1950,14 +1951,14 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     }
 
   if (bpInfo)
-    {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
+    {outerField->SetBeamPipeRadius(bpInfo->Extent().MaximumAbsTransverse());} // TBC
   return outerField;
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
 								const Element* el,
 								const BDSMagnetStrength* st,
-								const BDSBeamPipeInfo* beamPipe,
+								const BDSBeamPipeInfo2* beamPipe,
 								G4double defaultHorizontalWidth,
 								G4double defaultVHRatio,
 								G4double defaultCoilWidthFraction,
@@ -1975,7 +1976,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 								const Element*  el,
 								const G4double  angleIn,
 								const G4double  angleOut,
-								const BDSBeamPipeInfo* beamPipe,
+								const BDSBeamPipeInfo2* beamPipe,
 								const G4bool    yokeOnLeft,
 								G4double        defaultHorizontalWidth,
 								G4double        defaultVHRatio,
@@ -2004,7 +2005,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
   // inner radius of magnet geometry - TODO when poles can be built away from beam pipe
-  info->innerRadius = beamPipe->IndicativeRadius();
+  info->innerRadius = beamPipe->Extent().MaximumAbsTransverse(); //TBC this the right size?
 
   // outer material
   G4Material* outerMaterial;
@@ -2105,6 +2106,16 @@ BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo2(Element const* el,
     }
   return result;
 }
+
+BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo2(Element const* el,
+                                                            G4double angleIn,
+                                                            G4double angleOut)
+{
+  auto faces = BDS::CalculateFaces(angleIn, angleOut);
+  BDSBeamPipeInfo2* info = PrepareBeamPipeInfo2(el, faces.first, faces.second);
+  return info;
+}
+
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
 							  const G4ThreeVector inputFaceNormalIn,

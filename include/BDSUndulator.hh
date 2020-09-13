@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 class BDSFieldInfo;
 
 /**
@@ -38,16 +38,16 @@ class BDSFieldInfo;
 class BDSUndulator: public BDSAcceleratorComponent
 {
 public:
-  BDSUndulator(const G4String&  nameIn,
-               G4double         lengthIn,
-               G4double         periodIn,
-               G4double         magnetHeightIn,
-               G4double         magnetWidthIn,
-               G4double         undulatorGapIn,
-               BDSBeamPipeInfo* beamPipeInfoIn,
-               BDSFieldInfo*    vacuumFieldInfoIn,
-               BDSFieldInfo*    outerFieldInfoIn,
-               const G4String&  materialIn = "iron");
+  BDSUndulator(const G4String&   nameIn,
+               G4double          lengthIn,
+               G4double          periodIn,
+               G4double          magnetHeightIn,
+               G4double          magnetWidthIn,
+               G4double          undulatorGapIn,
+               BDSBeamPipeInfo2* beamPipeInfoIn,
+               BDSFieldInfo*     vacuumFieldInfoIn,
+               BDSFieldInfo*     outerFieldInfoIn,
+               const G4String&   materialIn = "iron");
 
   virtual ~BDSUndulator();
 

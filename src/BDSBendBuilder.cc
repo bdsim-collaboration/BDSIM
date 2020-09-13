@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -137,7 +138,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 						   true,
 						   fieldTiltOffset);
       // prepare one sbend segment
-      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle,
+      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, -incomingFaceAngle,
 							     -outgoingFaceAngle);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(baseName, element,
 								-incomingFaceAngle,
@@ -227,7 +228,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 						   true,
 						   fieldTiltOffset);
   
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(centralName, element,
 							    0.5*semiAngle, 0.5*semiAngle, bpInfo,
 							    yokeOnLeft);
@@ -441,7 +442,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 G4bool                   yokeOnLeft,
 				 const BDSFieldInfo*      outerFieldIn)
 {
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, angleIn, angleOut);
   
   BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength); // the copy is crucial to copy the field strength
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element, angleIn, angleOut, bpInfo, yokeOnLeft);
@@ -651,7 +652,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 					       true,
 					       fieldTiltOffset);
 
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, centralInputFaceAngle, centralOutputFaceAngle);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, centralInputFaceAngle, centralOutputFaceAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, centralInputFaceAngle, centralOutputFaceAngle, bpInfo, yokeOnLeft);
   mgInfo->name = elementName;
 
@@ -696,7 +697,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  const BDSIntegratorSet*  integratorSet,
 				  BDSFieldType             dipoleFieldType)
 {
-  BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  BDSBeamPipeInfo2* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element,
 								     angleIn, angleOut, beamPipeInfo);

@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeInfo2.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -39,16 +39,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSUndulator::BDSUndulator(const G4String&  nameIn,
-			   G4double         lengthIn,
-			   G4double         periodIn,
-			   G4double         undulatorMagnetHeightIn,
-			   G4double         horizontalWidthIn,
-			   G4double         undulatorGapIn,
-			   BDSBeamPipeInfo* beamPipeInfoIn,
-			   BDSFieldInfo*    vacuumFieldInfoIn,
-			   BDSFieldInfo*    outerFieldInfoIn,
-			   const G4String&  materialIn):
+BDSUndulator::BDSUndulator(const G4String&   nameIn,
+			   G4double          lengthIn,
+			   G4double          periodIn,
+			   G4double          undulatorMagnetHeightIn,
+			   G4double          horizontalWidthIn,
+			   G4double          undulatorGapIn,
+			   BDSBeamPipeInfo2* beamPipeInfoIn,
+			   BDSFieldInfo*     vacuumFieldInfoIn,
+			   BDSFieldInfo*     outerFieldInfoIn,
+			   const G4String&   materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -67,7 +67,7 @@ BDSUndulator::BDSUndulator(const G4String&  nameIn,
     {material = materialIn;}
 
   if (vacuumFieldInfo)
-    {vacuumFieldInfo->SetBeamPipeRadius(beamPipeInfoIn->IndicativeRadius());}
+    {vacuumFieldInfo->SetBeamPipeRadius(beamPipeInfoIn->Extent().MaximumAbsTransverse());} // TBC
 }
 
 BDSUndulator::~BDSUndulator()
@@ -87,7 +87,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
   // can now cast num magnets to integer as above check should catch if it isnt an integer.
   numMagnets = (G4int) 2*chordLength/undulatorPeriod;
 
-  G4double beampipeThickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->beamPipeThickness;
+  G4double beampipeThickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel2()->beamPipeThickness;
   if (!BDS::IsFinite(undulatorGap))
     {
       G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height." << G4endl;

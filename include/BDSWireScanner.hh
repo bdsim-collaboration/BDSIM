@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 #include "G4ThreeVector.hh"
 
-class BDSBeamPipeInfo;
+class BDSBeamPipeInfo2;
 class G4Material;
 
 /**
@@ -37,14 +37,14 @@ class G4Material;
 class BDSWireScanner: public BDSAcceleratorComponent
 {
 public:
-  BDSWireScanner(G4String         nameIn,
-		 G4double         lengthIn,
-		 BDSBeamPipeInfo* beamPipeInfoIn,
-		 G4Material*      wireMaterialIn,
-		 G4double         wireDiameterIn,
-		 G4double         wireLengthIn,
-		 G4double         wireAngleIn  = 0,
-		 G4ThreeVector    wireOffsetIn = G4ThreeVector());
+  BDSWireScanner(const G4String&   nameIn,
+		 G4double          lengthIn,
+		 BDSBeamPipeInfo2* beamPipeInfoIn,
+		 G4Material*       wireMaterialIn,
+		 G4double          wireDiameterIn,
+		 G4double          wireLengthIn,
+		 G4double          wireAngleIn  = 0,
+		 G4ThreeVector     wireOffsetIn = G4ThreeVector());
 
   virtual ~BDSWireScanner(){;}
 
