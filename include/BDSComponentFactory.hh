@@ -112,8 +112,8 @@ public:
   static G4Transform3D CreateFieldTransform(GMAD::Element const* el);
 
   static BDSBeamPipeInfo2* PrepareBeamPipeInfo2(GMAD::Element const* el,
-                                                                    const G4ThreeVector& inputFaceNormalIn,
-                                                                    const G4ThreeVector& outputFaceNormalIn);
+                                                                    const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+                                                                    const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0,1));
   
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.

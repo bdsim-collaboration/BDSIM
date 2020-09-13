@@ -471,8 +471,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo2* beamPipeInfo = PrepareBeamPipeInfo2(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent extent = beamPipeInfo->aperture->Extent();
-    // TBC Extent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
 						 length, extent, extent);
 
@@ -961,6 +960,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
+  //auto bpInf = PrepareBeamPipeInfo2(element); // TBC
   auto bpInf = PrepareBeamPipeInfo(element);
   
   // Decide on a default horizontalWidth for the kicker - try 0.3x ie smaller kicker
@@ -1562,7 +1562,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
   
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,
-				   PrepareBeamPipeInfo(element),
+				   PrepareBeamPipeInfo2(element),
 				   left,
 				   right,
 				   element->xsize*CLHEP::m, // symmetric for now
@@ -2082,27 +2082,27 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
   return result;
 }
 
-
-BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
-                                                           const G4ThreeVector& inputFaceNormalIn,
-const G4ThreeVector& outputFaceNormalIn)
+BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo2(Element const* el,
+                                                            const G4ThreeVector& inputFaceNormalIn,
+                                                            const G4ThreeVector& outputFaceNormalIn)
 {
+  BDSApertureFactory apFac;
   BDSBeamPipeInfo2* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel2();
   BDSBeamPipeInfo2* result;
   if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
-  {
-    result = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(el->apertureType),
-                                  apertureFactory.CreateAperture(*el),
-                                  BDSMaterials::Instance()->GetMaterial(el->vacuumMaterial),
-                                  el->beampipeThickness * CLHEP::m,
-      BDSMaterials::Instance()->GetMaterial(el->beampipeMaterial));
-  }
+    {
+      result = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(el->apertureType),
+				    apFac.CreateAperture(*el),
+				    BDSMaterials::Instance()->GetMaterial(el->vacuumMaterial),
+				    el->beampipeThickness * CLHEP::m,
+				    BDSMaterials::Instance()->GetMaterial(el->beampipeMaterial));
+    }
   else
-  {// ignore the aperture model from the element and use the global one
-    result = new BDSBeamPipeInfo2(*defaultModel); // ok as only pointers to materials
-    result->inputFaceNormal  = new G4ThreeVector(inputFaceNormalIn);
-    result->outputFaceNormal = new G4ThreeVector(outputFaceNormalIn);
-  }
+    {// ignore the aperture model from the element and use the global one
+      result = new BDSBeamPipeInfo2(*defaultModel); // ok as only pointers to materials
+      result->inputFaceNormal  = new G4ThreeVector(inputFaceNormalIn);
+      result->outputFaceNormal = new G4ThreeVector(outputFaceNormalIn);
+    }
   return result;
 }
 
