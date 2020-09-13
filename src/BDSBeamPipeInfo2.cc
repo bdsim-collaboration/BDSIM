@@ -19,11 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAperture.hh"
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 
-#include "G4Material.hh"
 #include "G4Types.hh"
+
+#include <algorithm>
 
 BDSBeamPipeInfo2::BDSBeamPipeInfo2(BDSBeamPipeType beamPipeTypeIn,
 				   BDSAperture*    apertureIn,
@@ -64,4 +64,18 @@ BDSBeamPipeInfo2::~BDSBeamPipeInfo2()
   delete aperture;
   delete inputFaceNormal;
   delete outputFaceNormal;
+}
+
+BDSExtent BDSBeamPipeInfo2::Extent() const
+{
+  BDSExtent result = aperture->Extent();
+  result.ExpandBy(beamPipeThickness); // a slight underestimate as no lengthSafety
+  if (apertureOut && (apertureOut != aperture))
+    {
+      BDSExtent apOutExt = apertureOut->Extent();
+      apOutExt.ExpandBy(beamPipeThickness);
+      return std::max(result, apOutExt);
+    }
+  else
+    {return result;}
 }

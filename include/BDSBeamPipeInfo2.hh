@@ -58,6 +58,9 @@ public:
   BDSBeamPipeInfo2& operator=(const BDSBeamPipeInfo2& other) = delete;
 
   ~BDSBeamPipeInfo2();
+  
+  /// This gives the maximal extent of both the entrance and exit faces.
+  BDSExtent Extent() const;
 
   //  Public member for direct access
   /// @{ Necessary members.
