@@ -97,6 +97,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 {
+  if (ap.nPoints < 0)
+    {throw BDSException(__METHOD_NAME__, "negative \"nPoints\" in aperture definition \"" + ap.name + "\"");}
   return CreateAperture(BDS::DetermineApertureType(ap.apertureType),
 			ap.aper1 * CLHEP::m,
 			ap.aper2 * CLHEP::m,
@@ -105,7 +107,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 			ap.tilt  * CLHEP::rad,
 			ap.offsetX * CLHEP::m,
 			ap.offsetY * CLHEP::m,
-			ap.nPoints);
+			(unsigned int)ap.nPoints);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp) const
@@ -118,7 +120,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp
 			sp.tilt  * CLHEP::rad,
 			0,
 			0,
-            (unsigned int)sp.nPoints);
+			(unsigned int)sp.nPoints);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
