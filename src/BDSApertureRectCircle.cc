@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+#include <array>
+
 BDSApertureRectCircle::BDSApertureRectCircle(G4double aIn,
 					                         G4double bIn,
 					                         G4double radiusIn,
@@ -117,6 +119,11 @@ BDSAperture* BDSApertureRectCircle::Times(G4double number) const
 BDSAperture* BDSApertureRectCircle::Clone() const
 {
   return new BDSApertureRectCircle(*this);
+}
+
+std::array<G4double,7> BDSApertureRectCircle::ApertureNumbers() const
+{
+  return {a,b,radius,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureRectCircle::PolygonNPoints(unsigned int nPointsIn) const

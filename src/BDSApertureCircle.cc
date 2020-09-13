@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include <array>
 #include <cmath>
 #include <vector>
 
@@ -109,6 +110,11 @@ BDSAperture* BDSApertureCircle::Times(G4double number) const
 BDSAperture* BDSApertureCircle::Clone() const
 {
   return new BDSApertureCircle(*this);
+}
+
+std::array<G4double,7> BDSApertureCircle::ApertureNumbers() const
+{
+  return {radius,0,0,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureCircle::PolygonNPoints(unsigned int nPointsIn) const

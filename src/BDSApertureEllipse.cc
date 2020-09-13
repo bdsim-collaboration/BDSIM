@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
+#include <array>
 #include <cmath>
 #include <vector>
 
@@ -111,6 +112,11 @@ BDSAperture* BDSApertureEllipse::Times(G4double number) const
 BDSAperture* BDSApertureEllipse::Clone() const
 {
   return new BDSApertureEllipse(*this);
+}
+
+std::array<G4double,7> BDSApertureEllipse::ApertureNumbers() const
+{
+  return {a,b,0,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureEllipse::PolygonNPoints(unsigned int nPointsIn) const

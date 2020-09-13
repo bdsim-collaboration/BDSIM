@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <algorithm>
+#include <array>
 
 class BDSExtent;
 class BDSPolygon;
@@ -64,6 +65,7 @@ public:
   BDSAperture* Plus(G4double number) const override;
   BDSAperture* Times(G4double number) const override;
   BDSAperture* Clone() const override;
+  std::array<G4double, 7> ApertureNumbers() const override;
   
   BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
 };

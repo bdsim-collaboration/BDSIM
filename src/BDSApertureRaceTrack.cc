@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include <array>
 #include <vector>
 
 BDSApertureRaceTrack::BDSApertureRaceTrack(G4double xIn,
@@ -120,6 +121,11 @@ BDSAperture* BDSApertureRaceTrack::Times(G4double number) const
 BDSAperture* BDSApertureRaceTrack::Clone() const
 {
   return new BDSApertureRaceTrack(*this);
+}
+
+std::array<G4double,7> BDSApertureRaceTrack::ApertureNumbers() const
+{
+  return {x,y,radius,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureRaceTrack::PolygonNPoints(unsigned int nPointsIn) const

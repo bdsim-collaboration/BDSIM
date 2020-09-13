@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+#include <array>
+
 BDSApertureRectEllipse::BDSApertureRectEllipse(G4double rectangleAIn,
 					       G4double rectangleBIn,
 					       G4double ellipseAIn,
@@ -123,6 +125,11 @@ BDSAperture* BDSApertureRectEllipse::Times(G4double number) const
 BDSAperture* BDSApertureRectEllipse::Clone() const
 {
   return new BDSApertureRectEllipse(*this);
+}
+
+std::array<G4double,7> BDSApertureRectEllipse::ApertureNumbers() const
+{
+  return {rectangleA,rectangleB,ellipseA,ellipseB,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureRectEllipse::PolygonNPoints(unsigned int nPointsIn) const

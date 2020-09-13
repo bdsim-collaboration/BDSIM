@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <vector>
 
@@ -128,6 +129,11 @@ BDSAperture* BDSApertureOctagon::Times(G4double number) const
 BDSAperture* BDSApertureOctagon::Clone() const
 {
   return new BDSApertureOctagon(*this);
+}
+
+std::array<G4double,7> BDSApertureOctagon::ApertureNumbers() const
+{
+  return {x,y,xEdge,yEdge,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureOctagon::PolygonNPoints(unsigned int nPointsIn) const

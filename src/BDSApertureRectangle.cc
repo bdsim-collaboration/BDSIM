@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+#include <array>
 #include <vector>
 
 BDSApertureRectangle::BDSApertureRectangle(G4double aIn,
@@ -108,6 +109,11 @@ BDSAperture* BDSApertureRectangle::Times(G4double number) const
 BDSAperture* BDSApertureRectangle::Clone() const
 {
   return new BDSApertureRectangle(*this);
+}
+
+std::array<G4double,7> BDSApertureRectangle::ApertureNumbers() const
+{
+  return {a,b,0,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureRectangle::PolygonNPoints(unsigned int nPointsIn) const

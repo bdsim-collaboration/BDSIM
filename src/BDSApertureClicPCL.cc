@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include <array>
 #include <vector>
 
 BDSApertureClicPCL::BDSApertureClicPCL(G4double xIn,
@@ -127,6 +128,11 @@ BDSAperture* BDSApertureClicPCL::Times(G4double number) const
 BDSAperture* BDSApertureClicPCL::Clone() const
 {
   return new BDSApertureClicPCL(*this);
+}
+
+std::array<G4double,7> BDSApertureClicPCL::ApertureNumbers() const
+{
+  return {x,yTop,yBottom,ySep,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
 }
 
 BDSPolygon BDSApertureClicPCL::PolygonNPoints(unsigned int nPointsIn) const

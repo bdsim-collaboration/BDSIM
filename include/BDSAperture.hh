@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
-#include <vector>
+#include <array>
 
 class BDSExtent;
 class BDSPolygon;
@@ -62,6 +62,9 @@ public:
   virtual BDSAperture* Plus(G4double number)  const = 0;
   virtual BDSAperture* Times(G4double number) const = 0;
   virtual BDSAperture* Clone() const = 0;
+  
+  /// Return an array containing the aperture parameters (a1,a2,a3,a4,offsetX,offsetY,tilt).
+  virtual std::array<G4double,7> ApertureNumbers() const = 0;
   
   virtual G4bool    Equals(const BDSAperture* other)   const = 0;
   virtual void      CheckInfoOK()                      const = 0;
