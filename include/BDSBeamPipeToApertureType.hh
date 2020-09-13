@@ -16,33 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBEAMPIPETYPE_H
-#define BDSBEAMPIPETYPE_H
+#ifndef BDSBEAMPIPETOAPERTURETYPE_H
+#define BDSBEAMPIPETOAPERTURETYPE_H
+#include "BDSApertureType.hh"
+#include "BDSBeamPipeType.hh"
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+#include <map>
 
 /**
- * @brief Type definition for beampipes - used for comparison
- * in factory methods
+ * @brief Mapping from older beam pipe types to newer aperture types.
  * 
  * @author Laurie Nevay
  */
 
-struct beampipetypes_def
-{
-  // if more are added, update BDSBeamPipeTypeToApertureType
-  enum type {circular, rectangular, elliptical, lhc,
-	     lhcdetailed, rectellipse, racetrack, octagonal,
-	     circularvacuum, clicpcl};
-};
-
-typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
-
 namespace BDS
 {
-  /// function that gives corresponding enum value for string (case-insensitive)
-  BDSBeamPipeType DetermineBeamPipeType(G4String apertureType);
+  static const std::map<BDSBeamPipeType, BDSApertureType> beamPipeToApertureTypes;
+  
+  /// Map one type to another. No safety checks as at compile time we ensure there
+  /// is an entry for every possible type of BDSBeamPipeType.
+  BDSApertureType ApertureTypeFromBeamPipeType(BDSBeamPipeType at);
 }
 
 #endif

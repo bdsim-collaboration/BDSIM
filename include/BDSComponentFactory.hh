@@ -126,8 +126,6 @@ public:
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
 					      G4double angleIn,
 					      G4double angleOut);
-  
-  static BDSApertureType ApertureTypeFromBeamPipeType(BDSBeamPipeType at);
 
   /// Determine which side the yoke of an asymmetric bend should go on based on the angle
   /// of the bend and the overriding setting in the element.
@@ -399,7 +397,5 @@ private:
 
   /// Variable used to pass around the possibly modified name of an element.
   G4String elementName;
-  
-  const static std::map<BDSBeamPipeType, BDSApertureType> beampipeToApertureTypes;
 };
 #endif

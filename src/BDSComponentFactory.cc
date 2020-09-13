@@ -104,19 +104,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-const std::map<BDSBeamPipeType, BDSApertureType> BDSComponentFactory::beampipeToApertureTypes =
-  {
-    {BDSBeamPipeType::circular,       BDSApertureType::circle},
-    {BDSBeamPipeType::circularvacuum, BDSApertureType::circle},
-    {BDSBeamPipeType::rectangular,    BDSApertureType::rectangle},
-    {BDSBeamPipeType::elliptical,     BDSApertureType::ellipse},
-    {BDSBeamPipeType::lhc,            BDSApertureType::rectcircle},
-    {BDSBeamPipeType::lhcdetailed,    BDSApertureType::rectcircle},
-    {BDSBeamPipeType::racetrack,      BDSApertureType::racetrack},
-    {BDSBeamPipeType::octagonal,      BDSApertureType::octagon},
-    {BDSBeamPipeType::clicpcl,        BDSApertureType::clicpcl}
-  };
-
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
@@ -2095,10 +2082,6 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
   return result;
 }
 
-BDSApertureType BDSComponentFactory::ApertureTypeFromBeamPipeType(BDSBeamPipeType bpt)
-{
-  return beampipeToApertureTypes.at(bpt);
-}
 
 BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
                                                            const G4ThreeVector& inputFaceNormalIn,

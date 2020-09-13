@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureRectEllipse.hh"
 #include "BDSApertureType.hh"
+#include "BDSBeamPipeToApertureType.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -85,7 +86,7 @@ BDSApertureFactory::~BDSApertureFactory()
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
 {
   BDSBeamPipeType bpt = BDS::DetermineBeamPipeType(el.apertureType);
-  BDSApertureType apt = BDSComponentFactory::ApertureTypeFromBeamPipeType(bpt);
+  BDSApertureType apt = BDS::ApertureTypeFromBeamPipeType(bpt);
   return CreateAperture(apt,
     el.aper1 * CLHEP::m,
     el.aper2 * CLHEP::m,
