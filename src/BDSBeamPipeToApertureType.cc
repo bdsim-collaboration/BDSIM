@@ -22,20 +22,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-const std::map<BDSBeamPipeType, BDSApertureType> BDS::beampipeToApertureTypes =
+static const std::map<BDSBeamPipeType, BDSApertureType> beamPipeToApertureTypes =
   {
-    {BDSBeamPipeType::circular,       BDSApertureType::circle},
+    {BDSBeamPipeType::circular, BDSApertureType::circle},
     {BDSBeamPipeType::circularvacuum, BDSApertureType::circle},
-    {BDSBeamPipeType::rectangular,    BDSApertureType::rectangle},
-    {BDSBeamPipeType::elliptical,     BDSApertureType::ellipse},
-    {BDSBeamPipeType::lhc,            BDSApertureType::rectcircle},
-    {BDSBeamPipeType::lhcdetailed,    BDSApertureType::rectcircle},
-    {BDSBeamPipeType::racetrack,      BDSApertureType::racetrack},
-    {BDSBeamPipeType::octagonal,      BDSApertureType::octagon},
-    {BDSBeamPipeType::clicpcl,        BDSApertureType::clicpcl}
+    {BDSBeamPipeType::rectangular, BDSApertureType::rectangle},
+    {BDSBeamPipeType::elliptical, BDSApertureType::ellipse},
+    {BDSBeamPipeType::lhc, BDSApertureType::rectcircle},
+    {BDSBeamPipeType::lhcdetailed, BDSApertureType::rectcircle},
+    {BDSBeamPipeType::racetrack, BDSApertureType::racetrack},
+    {BDSBeamPipeType::octagonal, BDSApertureType::octagon},
+    {BDSBeamPipeType::clicpcl, BDSApertureType::clicpcl}
   };
 
 BDSApertureType BDS::ApertureTypeFromBeamPipeType(BDSBeamPipeType bpt)
 {
-  return beampipeToApertureTypes.at(bpt);
+  return beamPipeToApertureTypes.at(bpt);
 }

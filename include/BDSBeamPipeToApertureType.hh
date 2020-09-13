@@ -31,8 +31,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace BDS
 {
-  static const std::map<BDSBeamPipeType, BDSApertureType> beamPipeToApertureTypes;
-  
   /// Map one type to another. No safety checks as at compile time we ensure there
   /// is an entry for every possible type of BDSBeamPipeType.
   BDSApertureType ApertureTypeFromBeamPipeType(BDSBeamPipeType at);
