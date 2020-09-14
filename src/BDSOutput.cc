@@ -137,6 +137,8 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
+  storeTrajectoryStepPoints  = g->StoreTrajectoryStepPoints();
+  storeTrajectoryStepPointLast = g->StoreTrajectoryStepPointLast();
   
   // easy option for everything - overwrite bools we've just set individually
   if (g->StoreSamplerAll())
@@ -833,7 +835,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 
 void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 {
-  traj->Fill(trajectories);
+  traj->Fill(trajectories, storeTrajectoryStepPoints, storeTrajectoryStepPointLast);
 }
 
 void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
