@@ -133,136 +133,60 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       // now we convert the geant4 type based BDSTrajectory information into
       // basic C++ and ROOT types for the output
       // 't' prefix for single trajectory - avoid name clash with members
-      std::vector<int>    tpreProcessType;
-      std::vector<int>    tpreProcessSubType;
-      std::vector<int>    tpostProcessType;
-      std::vector<int>    tpostProcessSubType;
-      std::vector<double> tpreWeight;
-      std::vector<double> tpostWeight;
-      std::vector<double> tenergyDeposit;
-
-      std::vector<TVector3> tXYZ;
-      std::vector<TVector3> tPXPYPZ;
-      std::vector<double>   tS;
-      std::vector<double>   tT;
-
-      std::vector<TVector3> txyz;
-      std::vector<TVector3> tpxpypz;
-
-      std::vector<int>      tcharge;
-      std::vector<double>   tkineticEnergy;
-      std::vector<int>      tturn;
-      std::vector<double>   tmass;
-      std::vector<double>   trigidity;
-
-      std::vector<bool>     tisIon;
-      std::vector<int>      tionA;
-      std::vector<int>      tionZ;
-      std::vector<int>      tnElectrons;
-
-      std::vector<int>      tmodelIndex;
-
-      // loop over trajectory points in this trajectory and fill structures
-      for (auto i = 0; i < traj->GetPointEntries(); ++i)
-	{
-	  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
-	  
-	  // Position
-	  G4ThreeVector pos = point->GetPosition();
-	  tXYZ.push_back(TVector3(pos.getX() / CLHEP::m,
-				  pos.getY() / CLHEP::m,
-				  pos.getZ() / CLHEP::m));
-	  
-	  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
-	  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
-	  if(theInfo)
-	    {tmodelIndex.push_back(theInfo->GetBeamlineIndex());}
-	  else
-	    {tmodelIndex.push_back(-1);}
-
-	  // Process types
-	  tpreProcessType.push_back(point->GetPreProcessType());
-	  tpreProcessSubType.push_back(point->GetPreProcessSubType());
-	  tpostProcessType.push_back(point->GetPostProcessType());
-	  tpostProcessSubType.push_back(point->GetPostProcessSubType());
-	  
-	  tpreWeight.push_back(point->GetPreWeight());
-	  tpostWeight.push_back(point->GetPostWeight());
-	  tenergyDeposit.push_back(point->GetEnergy());
-	  G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
-	  tPXPYPZ.push_back(TVector3(mom.getX(),
-				     mom.getY(),
-				     mom.getZ()));
-	  tS.push_back(point->GetPreS() / CLHEP::m);
-	  tT.push_back(point->GetPreGlobalTime() / CLHEP::ns);
-	  
-	  if (point->extraLocal)
-	    {
-	      G4ThreeVector localPos = point->GetPositionLocal() / CLHEP::m;
-	      G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
-	      txyz.push_back(TVector3(localPos.getX(),
-				      localPos.getY(),
-				      localPos.getZ()));
-	      tpxpypz.push_back(TVector3(localMom.getX(),
-					 localMom.getY(),
-					 localMom.getZ()));
-	    }
-	  
-	  if (point->extraLink)
-	    {
-	      tcharge.push_back(point->GetCharge());
-	      tkineticEnergy.push_back(point->GetKineticEnergy());
-	      tturn.push_back(point->GetTurnsTaken());
-	      tmass.push_back(point->GetMass());
-	      trigidity.push_back(point->GetRigidity());
-	    }
-	  
-	  if (point->extraIon)
-	    {
-	      tisIon.push_back(point->GetIsIon());
-	      tionA.push_back(point->GetIonA());
-	      tionZ.push_back(point->GetIonZ());
-	      tnElectrons.push_back(point->GetNElectrons());
-	    }	  
+      IndividualTrajectory itj;
+      if (storeStepPointsN > 0)
+	{// store specific number of step points along the trajectory
+	  G4int nSteps = traj->GetPointEntries();
+	  G4int nPoints = std::min(nSteps, storeStepPointsN);
+	  for (G4int i = 0; i < nPoints; ++i)
+	    {FillIndividualTrajectory(itj, traj, i);}
+	  // optionally include the last point if required and not already stored
+	  if (storeStepPointLast && (nPoints < nSteps))
+	    {FillIndividualTrajectory(itj, traj, nSteps-1);}
 	}
-
+      else
+	{// store all points as usual
+	  for (auto i = 0; i < traj->GetPointEntries(); ++i)
+	    {FillIndividualTrajectory(itj, traj, i);}
+	}
+      
       // record the filters that were matched for this trajectory
       filters.push_back(trajectories->filtersMatched.at(traj));
       
-      XYZ.push_back(tXYZ);
-      modelIndicies.push_back(tmodelIndex);
-      PXPYPZ.push_back(tPXPYPZ);
-      S.push_back(tS);
-      preProcessTypes.push_back(tpreProcessType);
-      preProcessSubTypes.push_back(tpreProcessSubType);
-      postProcessTypes.push_back(tpostProcessType);
-      postProcessSubTypes.push_back(tpostProcessSubType);
-      preWeights.push_back(tpreWeight);
-      postWeights.push_back(tpostWeight);
-      energyDeposit.push_back(tenergyDeposit);
-      T.push_back(tT);
+      XYZ.push_back(itj.XYZ);
+      modelIndicies.push_back(itj.modelIndex);
+      PXPYPZ.push_back(itj.PXPYPZ);
+      S.push_back(itj.S);
+      preProcessTypes.push_back(itj.preProcessType);
+      preProcessSubTypes.push_back(itj.preProcessSubType);
+      postProcessTypes.push_back(itj.postProcessType);
+      postProcessSubTypes.push_back(itj.postProcessSubType);
+      preWeights.push_back(itj.preWeight);
+      postWeights.push_back(itj.postWeight);
+      energyDeposit.push_back(itj.energyDeposit);
+      T.push_back(itj.T);
 
-      if (txyz.size()>0)
+      if (itj.xyz.size()>0)
 	{
-          xyz.push_back(txyz);
-          pxpypz.push_back(tpxpypz);
+          xyz.push_back(itj.xyz);
+          pxpypz.push_back(itj.pxpypz);
 	}
 
-      if (tcharge.size()>0)
+      if (itj.charge.size()>0)
 	{
-          charge.push_back(tcharge);
-          kineticEnergy.push_back(tkineticEnergy);
-          turnsTaken.push_back(tturn);
-          mass.push_back(tmass);
-          rigidity.push_back(trigidity);
+          charge.push_back(itj.charge);
+          kineticEnergy.push_back(itj.kineticEnergy);
+          turnsTaken.push_back(itj.turn);
+          mass.push_back(itj.mass);
+          rigidity.push_back(itj.rigidity);
 	}
       
-      if (tisIon.size()>0)
+      if (itj.isIon.size()>0)
 	{
-	  isIon.push_back(tisIon);
-	  ionA.push_back(tionA);
-          ionZ.push_back(tionZ);
-          nElectrons.push_back(tnElectrons);
+	  isIon.push_back(itj.isIon);
+	  ionA.push_back(itj.ionA);
+          ionZ.push_back(itj.ionZ);
+          nElectrons.push_back(itj.nElectrons);
 	}
       
       // recursively search for primary interaction step
@@ -311,6 +235,71 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 #endif
 }
 
+void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory& itj,
+							    BDSTrajectory* traj,
+							    int i)
+{
+  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
+  
+  // Position
+  G4ThreeVector pos = point->GetPosition();
+  itj.XYZ.push_back(TVector3(pos.getX() / CLHEP::m,
+			     pos.getY() / CLHEP::m,
+			     pos.getZ() / CLHEP::m));
+  
+  G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
+  if(theInfo)
+    {itj.modelIndex.push_back(theInfo->GetBeamlineIndex());}
+  else
+    {itj.modelIndex.push_back(-1);}
+  
+  // Process types
+  itj.preProcessType.push_back(point->GetPreProcessType());
+  itj.preProcessSubType.push_back(point->GetPreProcessSubType());
+  itj.postProcessType.push_back(point->GetPostProcessType());
+  itj.postProcessSubType.push_back(point->GetPostProcessSubType());
+  
+  itj.preWeight.push_back(point->GetPreWeight());
+  itj.postWeight.push_back(point->GetPostWeight());
+  itj.energyDeposit.push_back(point->GetEnergy());
+  G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
+  itj.PXPYPZ.push_back(TVector3(mom.getX(),
+				mom.getY(),
+				mom.getZ()));
+  itj.S.push_back(point->GetPreS() / CLHEP::m);
+  itj.T.push_back(point->GetPreGlobalTime() / CLHEP::ns);
+  
+  if (point->extraLocal)
+    {
+      G4ThreeVector localPos = point->GetPositionLocal() / CLHEP::m;
+      G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
+      itj.xyz.push_back(TVector3(localPos.getX(),
+				 localPos.getY(),
+				 localPos.getZ()));
+      itj.pxpypz.push_back(TVector3(localMom.getX(),
+				    localMom.getY(),
+				    localMom.getZ()));
+    }
+  
+  if (point->extraLink)
+    {
+      itj.charge.push_back(point->GetCharge());
+      itj.kineticEnergy.push_back(point->GetKineticEnergy());
+      itj.turn.push_back(point->GetTurnsTaken());
+      itj.mass.push_back(point->GetMass());
+      itj.rigidity.push_back(point->GetRigidity());
+    }
+  
+  if (point->extraIon)
+    {
+      itj.isIon.push_back(point->GetIsIon());
+      itj.ionA.push_back(point->GetIonA());
+      itj.ionZ.push_back(point->GetIonZ());
+      itj.nElectrons.push_back(point->GetNElectrons());
+    }	  
+}
+  
 void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition* phc)
 {
   G4cout << phc->GetSize() << G4endl;
