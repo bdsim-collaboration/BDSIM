@@ -112,7 +112,9 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(const BDSTrajectoriesToStore* t);
+  void Fill(const BDSTrajectoriesToStore* t,
+            int  storeStepPointsN,
+            bool storeStepPointLast);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 #endif
 

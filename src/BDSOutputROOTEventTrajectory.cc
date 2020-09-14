@@ -59,7 +59,9 @@ int findPrimaryStepIndex(BDSTrajectory* traj)
     {return findPrimaryStepIndex(traj->GetParent());}
 }
 
-void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectories)
+void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectories,
+                                        int  storeStepPointsN,
+                                        bool storeStepPointLast)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories->trajectories.size() << G4endl;
