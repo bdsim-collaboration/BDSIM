@@ -116,6 +116,38 @@ public:
             int  storeStepPointsN,
             bool storeStepPointLast);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
+
+  /// Temporary structure for an individual trajectory used to convert types.
+  struct IndividualTrajectory
+  {
+    std::vector<int>      preProcessType;
+    std::vector<int>      preProcessSubType;
+    std::vector<int>      postProcessType;
+    std::vector<int>      postProcessSubType;
+    std::vector<double>   preWeight;
+    std::vector<double>   postWeight;
+    std::vector<double>   energyDeposit;
+    std::vector<TVector3> XYZ;
+    std::vector<TVector3> PXPYPZ;
+    std::vector<double>   S;
+    std::vector<double>   T;    
+    std::vector<TVector3> xyz;
+    std::vector<TVector3> pxpypz;  
+    std::vector<int>      charge;
+    std::vector<double>   kineticEnergy;
+    std::vector<int>      turn;
+    std::vector<double>   mass;
+    std::vector<double>   rigidity;    
+    std::vector<bool>     isIon;
+    std::vector<int>      ionA;
+    std::vector<int>      ionZ;
+    std::vector<int>      nElectrons;
+    std::vector<int>      modelIndex;
+  };
+    
+  void FillIndividualTrajectory(IndividualTrajectory& itj,
+				BDSTrajectory* trajc,
+				int i);
 #endif
 
   /// Required to find beamline index careful including in streamer.
@@ -124,6 +156,7 @@ public:
   void Flush();
   void Fill(const BDSOutputROOTEventTrajectory* other);
 
+    
   int n;
   std::vector<std::bitset<BDS::NTrajectoryFilters> > filters;
   std::vector<int>                   partID;
