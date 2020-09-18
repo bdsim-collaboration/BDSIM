@@ -150,7 +150,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 
 		// Track the particle with this proposed step.
 		auto name = element->GetName();
-		std::cout << step << "\n";
 		element->Track(p, step, strategy);
 
 		// Update the particle's s position in light of step taken.
