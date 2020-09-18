@@ -44,7 +44,7 @@ public:
   virtual ~TRKElement();
 
   /// track method, visitor pattern
-  virtual void Track(TRKParticle* particle, double step, TRKStrategy* strategy);
+  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
   TRKBunch* CheckAperture(TRKBunch* bunch);
   // for when no aperture is used - we have to copy after state to before / confirm coordinates
   void ConfirmCoordinates(TRKBunch* bunch);

@@ -32,7 +32,7 @@ TRKSolenoid::TRKSolenoid(double        strengthIn,
 TRKSolenoid::~TRKSolenoid()
 {;}
 
-void TRKSolenoid::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKSolenoid::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)

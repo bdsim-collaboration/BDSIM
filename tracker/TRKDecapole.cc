@@ -30,7 +30,7 @@ TRKDecapole::TRKDecapole(double        strengthIn,
 TRKDecapole::~TRKDecapole()
 {;}
 
-void TRKDecapole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKDecapole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
 }

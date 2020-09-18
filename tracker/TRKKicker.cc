@@ -32,7 +32,7 @@ TRKKicker::TRKKicker(double hkickIn, double vkickIn, std::string nameIn,
 
 TRKKicker::~TRKKicker() { ; }
 
-void TRKKicker::Track(TRKParticle* particle, double step, TRKStrategy* strategy) {
+void TRKKicker::Track(TRKParticle& particle, double step, TRKStrategy* strategy) {
   strategy->Track(this, particle, step);
 }
 

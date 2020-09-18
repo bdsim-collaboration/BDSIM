@@ -32,7 +32,7 @@ TRKQuadrupole::TRKQuadrupole(double        strengthIn,
 TRKQuadrupole::~TRKQuadrupole()
 {;}
 
-void TRKQuadrupole::Track(TRKParticle* particle, double step, TRKStrategy* strategy)
+void TRKQuadrupole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
 
   if (offsetIn && offsetOut)
