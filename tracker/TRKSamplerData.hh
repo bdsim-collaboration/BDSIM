@@ -1,7 +1,9 @@
 #ifndef TRKSAMPLERDATA_H
 #define TRKSAMPLERDATA_H
 
+#include <cstddef>
 #include <vector>
+
 
 #include "TRKParticle.hh"
 
@@ -32,6 +34,7 @@ public:
 
   std::pair<const_iterator, const_iterator> EventRange(int eventNumber);
 
+  void reserve(std::size_t newcap);
 
 private:
   std::string samplerName;

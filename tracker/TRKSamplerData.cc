@@ -24,7 +24,10 @@ void TRKSamplerData::RecordParticle(TRKParticle p, int turn, double s)
   sorted = false;
 }
 
-
+void TRKSamplerData::reserve(std::size_t newcap)
+{
+  particles.reserve(newcap);
+}
 
 void TRKSamplerData::SortIfNotSorted()
 {

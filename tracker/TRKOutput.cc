@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <string>
 
 #include "BDSParser.hh"
@@ -5,11 +6,14 @@
 #include "BDSOutputFactory.hh"
 #include "BDSGlobalConstants.hh"
 
+
+#include "TRKBunch.hh"
 #include "TRKOutput.hh"
+#include "TRKParticle.hh"
 
 TRKOutput::TRKOutput(std::string file) :
-  nevents(0),
-  filename(file)
+  filename(file),
+  nevents(0)
 {
   output = BDSOutputFactory::CreateOutput(
       BDSGlobalConstants::Instance()->OutputFormat(), filename);
@@ -36,7 +40,8 @@ void TRKOutput::CloseFile()
 
 void TRKOutput::WritePrimaries(TRKBunch* bunch)
 {
-    output->WriteTrackerBunch("primaries", bunch, true);
+  for (const auto &p: *bunch)
+    primaries.RecordParticle(p, 0, 0); // FIXME: account for non-zero S-start
 }
 
 void TRKOutput::FillSamplerHitsTracker(int samplerIndex,
@@ -58,26 +63,25 @@ void TRKOutput::PushBackSampler(const std::string& name)
   samplers.PushBackSampler(name);
 }
 
-void TRKOutput::WriteEvents()
+void TRKOutput::PushBackSampler(const std::string &name,
+                                std::size_t reserved)
 {
-  FillSamplerOutputStructures();
+  samplers.PushBackSampler(name);
+  samplers.LastSampler().reserve(reserved);
 }
 
-void TRKOutput::FillSamplerOutputStructures()
+void TRKOutput::WriteEvents()
 {
-  
-  for (int i = 0; i < nevents; ++i)  // Loop event IDs
+  FillEventOutputStructures();
+}
+
+void TRKOutput::FillEventOutputStructures()
+{
+  for (int eventid = 0; eventid < nevents; ++eventid)  // Loop event IDs
     {
       // Loop sampler indices
-      for (int isampler = 0; isampler < samplers.NSamplers(); ++isampler)
-	{
-        auto range = samplers.GetSamplerData(isampler).EventRange(i);
-        // Loop particles recorded in that sampler for this event ID.
-        for (auto it = range.first; it != range.second; ++it) {
-	  std::cout << "EventID: " << i << ", sampler: " << isampler << it->particle << "\n";
-          output->FillSamplerHitsTracker(isampler, it->particle, it->s);
-        }
-      }
+      PrimaryFillOutput(eventid);
+      SamplersFillOutput(eventid);
       const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
       output->FillEvent(nullptr, // EventInfo
 			nullptr, // vertex
@@ -98,5 +102,26 @@ void TRKOutput::FillSamplerOutputStructures()
 			scorerhits, // scorer hits map
 			10); // turns taken
 
+    }
+}
+
+void TRKOutput::PrimaryFillOutput(int eventid)
+{
+  auto range = primaries.EventRange(eventid);
+  std::for_each(range.first, range.second,
+		[this](const TRKSamplerData::TRKSamplerDatum &d)
+		{this->output->FillPrimary(d.particle, d.s);});
+}
+
+void TRKOutput::SamplersFillOutput(int eventid)
+{
+  for (int isampler = 0; isampler < samplers.NSamplers(); ++isampler)
+    {
+      auto range = samplers.GetSamplerData(isampler).EventRange(eventid);
+      // Loop particles recorded in that sampler for this event ID.
+      for (auto it = range.first; it != range.second; ++it) {
+	std::cout << "EventID: " << eventid << ", sampler: " << isampler << it->particle << "\n";
+	output->FillSamplerHitsTracker(isampler, it->particle, it->s);
+      }
     }
 }

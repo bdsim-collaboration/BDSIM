@@ -241,6 +241,11 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
     }
 }
 
+void BDSOutput::FillPrimary(const TRKParticle& p, double s)
+{
+  primary->Fill(p, s);
+}
+
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 				     const BDSParticleDefinition*       particle)
 {

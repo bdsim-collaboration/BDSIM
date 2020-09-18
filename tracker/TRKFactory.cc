@@ -62,50 +62,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(const GMAD::Options&   options,
-		       BDSParticleDefinition* particle,
+		       BDSParticleDefinition* particleIn,
 		       std::shared_ptr<TRKOutput> outputIn):
-  output(std::move(outputIn))
+  particle(particleIn),
+  output(std::move(outputIn)),
+  placement(nullptr),
+  ngenerate(options.nGenerate),
+  nturns(options.nturns),
+  circular(nturns > 1),
+  strategy(SetStrategyEnum(options.trackingType)),
+  trackingsteps(options.trackingSteps),
+  useaperture(options.useAperture)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
-#endif
-  // define charge and momentum from options
-  charge   = particle->Charge();
-  momentum = particle->Momentum();
-  energy   = particle->TotalEnergy();
-  brho     = particle->BRho();
-
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << "Rigidity (Brho) : " << brho/(CLHEP::tesla*CLHEP::m) << " T*m" << std::endl;
-  std::cout << "ffact    : " << options.ffact << std::endl;
-  std::cout << "momentum : " << momentum << " GeV" << std::endl;
-  std::cout << "charge   : " << charge << std::endl;
-#endif
-
-  /// start placement, could be updated after every new element
-  placement = nullptr;//new TRKPlacement();
-
-  //pull out info from options
-  strategy        = SetStrategyEnum(options.trackingType);
-  // aperturetype    = SetApertureEnum(options.apertureType);
-  // beampiperadius  = options.aper1;
-  trackingsteps   = options.trackingSteps;
-  defaultaperture = new TRKApertureCircular(beampiperadius);
-  useaperture = options.useAperture;
-  if (options.nturns > 1)
-    {circular = true;}
-  else
-    {circular = false;}
 }
 
 std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
 {
   out << "TRKFactory Instance - details:"                      << std::endl
       << "Tracking Strategy (enum): " << factory.strategy         << std::endl
-      << "Aperture Type:            " << factory.aperturetype     << std::endl
-      << "Beam Pipe Radius (m):     " << factory.beampiperadius   << std::endl
       << "Tracking Steps:           " << factory.trackingsteps    << std::endl
-      << "Default Aperture Type:    " << *factory.defaultaperture << std::endl
       << "Use Aperture:             " << factory.useaperture;
   return out;
 }
@@ -143,7 +118,8 @@ TRKStrategy* TRKFactory::CreateStrategy()
       {break;}
     }
   if (result)
-    {result->SetMomentumAndEnergy(momentum, energy);}
+    {result->SetMomentumAndEnergy(particle->Momentum(),
+				  particle->TotalEnergy());}
   return result;
 }
 
@@ -363,7 +339,7 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
     //    element.ks  = (bField/brho) / CLHEP::m;
   }
   else{
-    bField = (element.ks/CLHEP::m) * brho;
+    bField = (element.ks/CLHEP::m) * particle->BRho();
     //    element.B = bField/CLHEP::tesla;
   }
 
@@ -423,7 +399,7 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 TRKElement* TRKFactory::CreateSampler(std::string name, int samplerIndex,
 				      double s) {
   TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
-  output->PushBackSampler(name);
+  output->PushBackSampler(name, nturns * ngenerate);
   return result;
 }
 

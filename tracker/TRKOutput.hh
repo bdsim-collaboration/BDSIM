@@ -25,6 +25,8 @@ public:
                         double s);
 
   void PushBackSampler(const std::string& name);
+  void PushBackSampler(const std::string& name, std::size_t reserved);
+  
 
   void WriteEvents();
   int currentTurn;
@@ -32,11 +34,13 @@ public:
 private:
   std::string filename;
   BDSOutput* output;
+  TRKSamplerData primaries;
   TRKOutputSamplers samplers;
   int nevents;
 
-  
-  void FillSamplerOutputStructures();
+  void FillEventOutputStructures();
+  void PrimaryFillOutput(int eventID);
+  void SamplersFillOutput(int eventID);
 
 };
 

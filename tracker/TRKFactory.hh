@@ -89,31 +89,23 @@ private:
   /// set common properties
   void AddCommonProperties(TRKElement* trkel, GMAD::Element& el);
 
+  BDSParticleDefinition* particle;
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
   std::shared_ptr<TRKOutput> output;
-  
-  /// particle properties
-  int charge;
-  /// beam momentum in GeV
-  double momentum;
-  double energy;
-  double brho;
 
   /// global placement position
   TRKPlacement* placement;
   
-  /// circular flag
+  int ngenerate;
+  int nturns;
   bool circular;
+
   
   /// tracking strategy
   TRK::Strategy strategy;
   int   trackingsteps;
   
-  /// aperture
-  TRKAperture* defaultaperture; /// default aperture
-  TRK::Aperture aperturetype;   /// enum of aperture type
-  double beampiperadius;
   bool   useaperture;
 };
 

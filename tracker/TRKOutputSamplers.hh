@@ -28,10 +28,11 @@ public:
   const_iterator end() const { return samplers.end(); }
   const_iterator cbegin() const { return samplers.cbegin(); }
   const_iterator cend() const { return samplers.cend(); }
+  SamplersData::reference LastSampler() { return samplers.back(); }
 
-  inline int NSamplers() const { return samplers.size(); }
+  int NSamplers() const { return samplers.size(); }
 
-  inline TRKSamplerData GetSamplerData(int i) { return samplers.at(i); }
+  SamplersData::reference GetSamplerData(int i) { return samplers.at(i); }
 
 private:
   SamplersData samplers;
