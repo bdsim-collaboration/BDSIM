@@ -100,14 +100,18 @@ void TRKTracker::Track(TRKBunch* bunch)
             int count = 0;
             while (eIt != line->end() and esIt != line->endS())
             {
-                count++;
-                if (count > 1e6) {break;}
+                count++; /// Keep track of number of steps taken without advancing in the element
+                if (count > 1e6)
+                {
+                    throw std::runtime_error("Particle not advancing.");
+                }
 
                 if (advance)
                 {
                     element = *eIt++;
                     SEnd = *esIt++;
                     advance = FALSE;
+                    count = 0;
                 }
 
                 if (fabs(endPoint - p.getS()) < endPoint * 1.E-6)
