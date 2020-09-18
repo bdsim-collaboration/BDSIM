@@ -122,7 +122,7 @@ void TRKTracker::Track(TRKBunch* bunch)
                 }
 
                 double step;
-                if (endPoint > SEnd)
+                if (endPoint >= SEnd)
                 {
                     step = SEnd - p.getS();
                     advance = TRUE;
