@@ -289,7 +289,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
       G4double charge = ionDef->Charge(); // correct even if overridden
       particleDefB = new BDSParticleDefinition(particleName, mass, charge,
 					       totalEnergyIn, kineticEnergyIn, momentumIn, ffact, ionDef, ionPDGID);
-      // this particle definition takes ownership of the ion definition
+      delete ionDef;
     }
   else
     {
