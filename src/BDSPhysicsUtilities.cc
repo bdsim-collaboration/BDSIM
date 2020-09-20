@@ -323,7 +323,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
   return particleDefB;
 }
 
-void BDS::ConstructBeamParticleG4(G4String name)
+void BDS::ConstructBeamParticleG4(const G4String& name)
 {
   if (name == "proton")
     {G4Proton::ProtonDefinition();}
