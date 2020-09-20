@@ -28,13 +28,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 							  const BDSParticleDefinition*       particle):
   primaryVertex(primaryVertexIn),
-  momentum(particle->Momentum()),
+  momentum(0),
   charge(particle->Charge()),
-  rigidity(particle->BRho()),
+  rigidity(0),
   mass(particle->Mass()),
   pdgID(particle->ParticleDefinition()->GetPDGEncoding()),
   nElectrons(particle->NElectrons())
-{;}
+{
+  // temporarily construct one of our particle definitions to calculate momentum and rigidity
+  // for this particular particle. Note, "particle" is the general bunch particle, not the individual coords.
+  auto thisParticle = new BDSParticleDefinition(particle->ParticleDefinition(),
+						primaryVertexIn.local.totalEnergy, 0, 0,
+						particle->FFact(),
+						particle->IonDefinition());
+  momentum = thisParticle->Momentum();
+  rigidity = thisParticle->BRho();
+  delete thisParticle;
+}
 
 BDSPrimaryVertexInformation::BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
 							  G4double       momentumIn,
