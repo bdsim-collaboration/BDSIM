@@ -47,12 +47,12 @@ BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoord
 }
 
 BDSPrimaryVertexInformation::BDSPrimaryVertexInformation(const BDSParticleCoordsFullGlobal& primaryVertexIn,
-							  G4double       momentumIn,
-							  G4double chargeIn,
-							  G4double rigidityIn,
-							  G4double massIn,
-							  G4int    pdgIDIn,
-							  G4int    nElectronsIn):
+							 G4double momentumIn,
+							 G4double chargeIn,
+							 G4double rigidityIn,
+							 G4double massIn,
+							 G4int    pdgIDIn,
+							 G4int    nElectronsIn):
   primaryVertex(primaryVertexIn),
   momentum(momentumIn),
   charge(chargeIn),
