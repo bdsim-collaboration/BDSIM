@@ -57,7 +57,7 @@ std::ostream& operator<< (std::ostream& out, BDSIonDefinition const& io)
 
 void BDSIonDefinition::Parse(const G4String& definition)
 {
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace("\\s+"); // any whitespace
   
   // A Z Q E
   G4int counter = 0;
