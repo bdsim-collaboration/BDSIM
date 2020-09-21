@@ -2487,6 +2487,9 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
 +------------------------------------+--------------------------------------------------------------------+
+| storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
+|                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
 | storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
 |                                    | Equivalent to turning on `storeSamplerCharge`,                     |
 |                                    | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
