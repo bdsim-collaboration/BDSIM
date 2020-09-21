@@ -36,6 +36,8 @@ public:
 
   void reserve(std::size_t newcap);
 
+  std::string Name() const { return samplerName; }
+
 private:
   std::string samplerName;
   SamplerParticles particles;
