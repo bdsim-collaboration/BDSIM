@@ -304,6 +304,7 @@ namespace GMAD
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
     bool        storeGeant4Data;
+    bool        storePrimaries;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
@@ -330,8 +331,7 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
-
-    bool        writePrimaries;
+    
     bool        storeModel;
 
     // circular options

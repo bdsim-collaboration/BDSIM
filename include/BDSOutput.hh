@@ -145,7 +145,7 @@ protected:
   G4String GetNextFileName();
 
   /// Whether primaries are to be written to file or not.
-  inline G4bool WritePrimaries() const {return writePrimaries;}
+  inline G4bool StorePrimaries() const {return storePrimaries;}
 
   /// Whether to create the collimator structures in the output or not.
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
@@ -263,7 +263,7 @@ private:
   const G4String fileExtension; ///< File extension to add to each file.
   G4int numberEventPerFile; ///< Number of events stored per file.
   G4int outputFileNumber;   ///< Number of output file.
-  G4bool writePrimaries;    ///< Whether to write primaries or not.
+  G4bool storePrimaries;    ///< Whether to write primaries or not.
 
   /// Invalid names for samplers - kept here as this is where the output structures are created.
   const static std::set<G4String> protectedNames;

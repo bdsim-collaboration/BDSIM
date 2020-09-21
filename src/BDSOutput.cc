@@ -106,7 +106,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
-  writePrimaries     = g->WritePrimaries();
+  storePrimaries     = g->StorePrimaries();
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();

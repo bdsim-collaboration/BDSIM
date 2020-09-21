@@ -413,7 +413,8 @@ void Options::PublishMembers()
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeGeant4Data",                &Options::storeGeant4Data);
-  
+  publish("storePrimaries",                 &Options::storePrimaries);
+  publish("storePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
@@ -443,8 +444,7 @@ void Options::PublishMembers()
   publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
-
-  publish("writePrimaries",                 &Options::writePrimaries);
+  
   publish("storeModel",                     &Options::storeModel);
 
   // circular options
