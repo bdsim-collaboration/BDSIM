@@ -106,7 +106,6 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
-  storePrimaries     = g->StorePrimaries();
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
@@ -131,6 +130,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
   storeGeant4Data            = g->StoreGeant4Data();
   storeModel                 = g->StoreModel();
+  storePrimaries             = g->StorePrimaries();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
   storeSamplerCharge         = g->StoreSamplerCharge();
   storeSamplerKineticEnergy  = g->StoreSamplerKineticEnergy();
