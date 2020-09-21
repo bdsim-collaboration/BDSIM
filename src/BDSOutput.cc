@@ -296,7 +296,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
-  if (vertex)
+  if (vertex && storePrimaries)
     {FillPrimary(vertex, turnsTaken);}
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
