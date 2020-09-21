@@ -45,8 +45,8 @@ TRKSamplerData::EventRange(int eventid) {
     bool operator()(TRKSamplerDatum const &lhs, int eventid) {
       return lhs.particle.EventID() < eventid;
     }
-    bool operator()(int eventid, TRKSamplerDatum const &lhs) {
-      return lhs.particle.EventID() < eventid;
+    bool operator()(int eventid, TRKSamplerDatum const &rhs) {
+      return eventid < rhs.particle.EventID();
     }
   };
 

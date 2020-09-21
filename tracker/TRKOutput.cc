@@ -115,13 +115,12 @@ void TRKOutput::PrimaryFillOutput(int eventid)
 
 void TRKOutput::SamplersFillOutput(int eventid)
 {
-  for (int isampler = 0; isampler < samplers.NSamplers(); ++isampler)
-    {
-      auto range = samplers.GetSamplerData(isampler).EventRange(eventid);
-      // Loop particles recorded in that sampler for this event ID.
-      for (auto it = range.first; it != range.second; ++it) {
-	std::cout << "EventID: " << eventid << ", sampler: " << isampler << it->particle << "\n";
-	output->FillSamplerHitsTracker(isampler, it->particle, it->s);
-      }
+  for (int isampler = 0; isampler < samplers.NSamplers(); ++isampler) {
+    auto samplerdata = samplers.GetSamplerData(isampler);
+    auto range = samplerdata.EventRange(eventid);
+    // Loop particles recorded in that sampler for this event ID.
+    for (auto it = range.first; it != range.second; ++it) {
+      output->FillSamplerHitsTracker(isampler, it->particle, it->s);
     }
+  }
 }
