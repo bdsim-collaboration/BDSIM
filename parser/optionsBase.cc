@@ -268,6 +268,7 @@ OptionsBase::OptionsBase()
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
   storeGeant4Data            = true;
+  storePrimaries             = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 0;
@@ -297,7 +298,6 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   
-  writePrimaries           = true;
   storeModel               = true;
 
   // circular options

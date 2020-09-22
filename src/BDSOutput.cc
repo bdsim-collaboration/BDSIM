@@ -106,7 +106,6 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
-  writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
@@ -131,6 +130,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
   storeGeant4Data            = g->StoreGeant4Data();
   storeModel                 = g->StoreModel();
+  storePrimaries             = g->StorePrimaries();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
   storeSamplerCharge         = g->StoreSamplerCharge();
   storeSamplerKineticEnergy  = g->StoreSamplerKineticEnergy();
@@ -298,7 +298,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
-  if (vertex)
+  if (vertex && storePrimaries)
     {FillPrimary(vertex, turnsTaken);}
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}

@@ -110,7 +110,8 @@ protected:
   G4double secondFringeCorr;
   /// Poleface curvature
   G4double polefaceCurvature;
-  /// Nominal magnet bending radius
+  /// Nominal magnet bending radius, calculated from the field which should be scaled in
+  /// BDSComponentFactory so don't scale here
   const G4double rho;
 
   G4ThreeVector unitField;       ///< Cache of the unit field direction.
