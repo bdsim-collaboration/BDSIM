@@ -77,6 +77,9 @@ New Features
 | storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
 |                                    | `PFirstAI`, on by default.                                         |
 +------------------------------------+--------------------------------------------------------------------+
+| storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
+|                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints          | Integer number of step points to store for each trajectory that is |
 |                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
 |                                    | only the first creation point is stored.                           |
@@ -109,6 +112,7 @@ Bug Fixes
   current working directory to the macro search path for Geant4.
 * Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
   with a G4CutTubs as the container (outermost) solid.
+* Fixed bug in the dipole fringe integrator where applying scaling cancelled out the already scaled field.
 
 Output Changes
 --------------
@@ -1220,7 +1224,7 @@ Bug Fixes
 * Fixed possible overlap in vkicker, hkicker, and h-style dipole geometry with highly asymmetric
   beam pipes.
 * Fixed incorrect report that beam pipe wouldn't fit in magnet for various aperture shapes. Issue #253.
-* Fixed issue where the option :code:`writePrimaries = 0` would result in the hits for the first sampler
+* Fixed issue where the option :code:`storePrimaries = 0` would result in the hits for the first sampler
   being written to the primary sampler structure. Issue #245.
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
