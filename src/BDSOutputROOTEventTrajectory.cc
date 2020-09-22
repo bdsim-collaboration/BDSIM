@@ -542,11 +542,20 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 
 void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
-  int wdt = 11;
-
-  std::cout << std::setw(wdt) << "trIx"      << " " << std::setw(wdt) << "trkId"    << " "
-            << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
-            << std::setw(wdt) << "prStpIx"   << " " << std::setw(wdt) << "pID"      << " "
+  int wdt = 11; // width of columns for print out
+  
+  if (i+1 > n) // safety
+    {std::cout << "Index chosen is greater than maximum index of: " << n-1 << std::endl; return;}
+  
+  // print out regarding the trajectory generally
+  std::cout << "Trajectory index " << std::setw(wdt) << i
+            << ", PDG ID "         << std::setw(wdt) << partID[i]
+            << ", Track ID "       << std::setw(wdt) << trackID[i]
+            << ", Parent ID "      << std::setw(wdt) << parentID[i] << std::endl;
+  std::cout << "Created by Track ID " << parentID[i] << ", with index " << parentIndex[i] << ", and at step index " << parentStepIndex[i] << std::endl;
+  
+  // print out regarding each step of the trajectory
+  std::cout << std::setw(wdt) << "step ind"  << " "
             << std::setw(wdt) << "prePrcT"   << " " << std::setw(wdt) << "prePrcST" << " "
             << std::setw(wdt) << "pstPrcT"   << " " << std::setw(wdt) << "pstPrcST" << " "
             << std::setw(wdt) << "X"         << " " << std::setw(wdt) << "Y"        << " "
@@ -557,16 +566,14 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 
   for (size_t j=0; j<XYZ[i].size(); ++j)
     {
-      std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
-		<< std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
-		<< std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
-		<< std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
-		<< std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
-		<< std::setw(wdt) << XYZ[i][j].X() << " " << std::setw(wdt) << XYZ[i][j].Y()   << " "
-		<< std::setw(wdt) << XYZ[i][j].Z() << " " << std::setw(wdt) << energyDeposit[i][j]           << " "
-		<< std::setw(wdt) << PXPYPZ[i][j].Mag()    << " " << std::setw(wdt) << PXPYPZ[i][j].X()        << " "
-		<< std::setw(wdt) << PXPYPZ[i][j].Y()      << " " << std::setw(wdt) << PXPYPZ[i][j].Z()        << " "
-		<< std::setw(wdt) << T[i][j]             << std::endl;
+      std::cout << std::setw(wdt) << j << " "
+      << std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j]  << " "
+		  << std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j] << " "
+		  << std::setw(wdt) << XYZ[i][j].X()          << " " << std::setw(wdt) << XYZ[i][j].Y()             << " "
+		  << std::setw(wdt) << XYZ[i][j].Z()          << " " << std::setw(wdt) << energyDeposit[i][j]       << " "
+		  << std::setw(wdt) << PXPYPZ[i][j].Mag()     << " " << std::setw(wdt) << PXPYPZ[i][j].X()          << " "
+		  << std::setw(wdt) << PXPYPZ[i][j].Y()       << " " << std::setw(wdt) << PXPYPZ[i][j].Z()          << " "
+		  << std::setw(wdt) << T[i][j]                << std::endl;
     }
 }
 
