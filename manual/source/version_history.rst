@@ -101,7 +101,6 @@ Bug Fixes
   current working directory to the macro search path for Geant4.
 * Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
   with a G4CutTubs as the container (outermost) solid.
-* Fixed bug in the dipole fringe integrator where applying scaling cancelled out the already scaled field.
 
 Output Changes
 --------------
