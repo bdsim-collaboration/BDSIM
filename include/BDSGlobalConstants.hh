@@ -198,7 +198,7 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StorePrimaries()           const {return G4bool  (options.storePrimaries);}
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
   inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
@@ -230,6 +230,8 @@ public:
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4bool   StoreTrajectoryAll()       const {return          options.storeTrajectoryDepth == -1;}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
+  inline G4int    StoreTrajectoryStepPoints()const {return G4int   (options.storeTrajectoryStepPoints);}
+  inline G4bool   StoreTrajectoryStepPointLast()const{return G4bool(options.storeTrajectoryStepPointLast);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}

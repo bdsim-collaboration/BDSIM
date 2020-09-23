@@ -453,7 +453,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	  
 	  // fill track ID map
-	  trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+	  trackIDMap.insert(std::pair<int, BDSTrajectory*>(traj->GetTrackID(), traj));
 	  
 	  // fill depth map
 	  if (traj->GetParentID() == 0) 
