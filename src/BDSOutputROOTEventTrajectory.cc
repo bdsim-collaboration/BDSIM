@@ -132,13 +132,12 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 
       // now we convert the geant4 type based BDSTrajectory information into
       // basic C++ and ROOT types for the output
-      // 't' prefix for single trajectory - avoid name clash with members
       IndividualTrajectory itj;
       if (storeStepPointsN > 0)
 	{// store specific number of step points along the trajectory
 	  G4int nSteps = traj->GetPointEntries();
 	  G4int nPoints = std::min(nSteps, storeStepPointsN);
-	  for (G4int i = 0; i < nPoints; ++i)
+	  for (int i = 0; i < nPoints; ++i)
 	    {FillIndividualTrajectory(itj, traj, i);}
 	  // optionally include the last point if required and not already stored
 	  if (storeStepPointLast && (nPoints < nSteps))
@@ -146,7 +145,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	}
       else
 	{// store all points as usual
-	  for (auto i = 0; i < traj->GetPointEntries(); ++i)
+	  for (int i = 0; i < traj->GetPointEntries(); ++i)
 	    {FillIndividualTrajectory(itj, traj, i);}
 	}
       
@@ -194,8 +193,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 
       // geant4 trackID to trackIndex in this table
       trackID_trackIndex.insert(std::pair<int,int>(traj->GetTrackID(),n));
-
-      // this->printTrajectoryInfo(n);
+      
       n++;
     }
   
@@ -236,8 +234,8 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 }
 
 void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory& itj,
-							    BDSTrajectory* traj,
-							    int i)
+							    BDSTrajectory*        traj,
+							    int                   i)
 {
   BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
   
@@ -249,7 +247,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
-  if(theInfo)
+  if (theInfo)
     {itj.modelIndex.push_back(theInfo->GetBeamlineIndex());}
   else
     {itj.modelIndex.push_back(-1);}

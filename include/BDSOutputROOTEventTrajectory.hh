@@ -144,10 +144,12 @@ public:
     std::vector<int>      nElectrons;
     std::vector<int>      modelIndex;
   };
-    
+
+  /// Fill an trajectory point with index 'i' into the IndividualTrajectory struct
+  /// (basic C++ / ROOT types) from Geant4 types from 'traj' trajectory for 1 track.
   void FillIndividualTrajectory(IndividualTrajectory& itj,
-				BDSTrajectory* trajc,
-				int i);
+				BDSTrajectory*        traj,
+				int                   i);
 #endif
 
   /// Required to find beamline index careful including in streamer.
