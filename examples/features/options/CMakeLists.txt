@@ -57,6 +57,7 @@ simple_testing(option-ignore-local-magnet-geometry "--file=overrideMagnetGeometr
 simple_testing(option-noeloss-beampipes            "--file=noeloss-beampipes.gmad"        "")
 simple_testing(option-noeloss-outer                "--file=noeloss-outer.gmad"            "")
 simple_testing(option-ptc-otm                      "--file=ptcOneTurnMap.gmad --circular" "")
+simple_testing(option-storePrimaries               "--file=storePrimaries.gmad "          "")
 simple_testing(option-verboseEvent                 "--file=verboseEvent.gmad"             "")
 simple_testing(option-verboseEvent-primaries       "--file=verboseEvent-primaries.gmad"   "")
 simple_testing(option-verboseSteppingBDSIM         "--file=verboseSteppingBDSIM.gmad"     "")
