@@ -1,3 +1,6 @@
-component: hkicker,  l=1, hkick=1e-4;
+thickkick: hkicker,  l=1, hkick=1e-4;
+thinkick: hkicker,  l=0, hkick=1e-4;
+
+component: line = (thickkick, thinkick);
 
 include run_settings.gmad;
