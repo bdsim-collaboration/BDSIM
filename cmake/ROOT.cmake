@@ -94,3 +94,10 @@ endforeach()
 
 # remove C++ standard flags from root library linking flags
 string(REPLACE "-stdlib=libc++"  "" ROOT_LIBRARIES ${ROOT_LIBRARIES})
+
+
+
+# fix the version number from root
+# nice regex from CRMC pacakge in their search for ROOT also
+STRING (REGEX REPLACE "[ \t\r\n]+" "" ROOT_VERSION "${ROOT_VERSION}")
+STRING (REGEX REPLACE "/" "." ROOT_VERSION "${ROOT_VERSION}")
