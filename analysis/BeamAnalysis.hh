@@ -46,7 +46,7 @@ public:
 	       bool    perEntryAnalysis = true,
 	       bool    debugIn          = false);
 
-  virtual ~BeamAnalysis();
+  virtual ~BeamAnalysis() noexcept;
 
   /// Operate on each entry in the run tree.
   virtual void Process();

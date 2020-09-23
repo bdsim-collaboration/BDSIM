@@ -38,10 +38,8 @@ BeamAnalysis::BeamAnalysis(Beam*   beamIn,
   beam(beamIn)
 {;}
 
-BeamAnalysis::~BeamAnalysis()
-{
-  delete beam;
-}
+BeamAnalysis::~BeamAnalysis() noexcept
+{;}
 
 void BeamAnalysis::Process()
 {

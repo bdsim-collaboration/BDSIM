@@ -34,10 +34,8 @@ OptionsAnalysis::OptionsAnalysis(Options* optionsIn,
   options(optionsIn)
 {;}
 
-OptionsAnalysis::~OptionsAnalysis()
-{
-  delete options;
-}
+OptionsAnalysis::~OptionsAnalysis() noexcept
+{;}
 
 void OptionsAnalysis::Process()
 {
