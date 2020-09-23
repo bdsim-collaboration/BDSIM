@@ -91,6 +91,3 @@ foreach(header ${linkHeaders})
   set(root_files ${root_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${className}.cc)
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
 endforeach()
-
-# remove C++ standard flags from root library linking flags
-string(REPLACE "-stdlib=libc++"  "" ROOT_LIBRARIES ${ROOT_LIBRARIES})
