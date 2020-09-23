@@ -110,7 +110,8 @@ protected:
   G4double secondFringeCorr;
   /// Poleface curvature
   G4double polefaceCurvature;
-  /// Nominal magnet bending radius
+  /// Nominal magnet bending radius - undo field scaling so rho is truly nominal, is required
+  /// for matching mad matrices
   const G4double rho;
 
   G4ThreeVector unitField;       ///< Cache of the unit field direction.
