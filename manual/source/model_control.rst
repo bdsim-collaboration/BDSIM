@@ -2615,7 +2615,7 @@ Some of the following options are available through executable options (with dif
 
 Recommendations:
 
-* `-\\-verboseSteppingLevel=2` to see one line per entry / exit of a volume to see where a particle is going.
+* `-\-verboseSteppingLevel=2` to see one line per entry / exit of a volume to see where a particle is going.
 * "Tracking" refers to a particle track which is essentially one particle being put through the simulation.
 * Stepping is the incremental step of each particle trajectory through the simulation.
 * Event is the minimal unit of simulation - usually in BDSIM this is the propagation of 1 primary particle.
