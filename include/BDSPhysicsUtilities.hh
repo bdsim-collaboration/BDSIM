@@ -91,7 +91,7 @@ namespace BDS
 						     G4double ffact = 1);
 
   /// Ensure required beam particle has been constructed for Geant4 purposes.
-  void ConstructBeamParticleG4(G4String name);
+  void ConstructBeamParticleG4(const G4String& name);
   
   /// Construct the minimum particle set required (gamma, electron, positron,
   /// proton and anti-proton.

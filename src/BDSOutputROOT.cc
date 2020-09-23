@@ -99,7 +99,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Summary.",   "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  if (WritePrimaries())
+  if (storePrimaries)
     {
       theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,       32000, 1);
       theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,  1);
