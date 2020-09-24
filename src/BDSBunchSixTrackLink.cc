@@ -80,6 +80,7 @@ void BDSBunchSixTrackLink::ClearParticles()
   size = 0;
   for (auto p : particles)
     {delete p;}
+  particles.clear();
 }
 
 void BDSBunchSixTrackLink::UpdateGeant4ParticleDefinition(G4int pdgID)
