@@ -132,6 +132,8 @@ protected:
 
   BDSIntegratorMultipoleThin* multipoleIntegrator;
 
+  G4bool isEntrance; ///< store if fringe is entrance or exit
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;

@@ -62,6 +62,10 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
       secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 0);
     }
 
+  // store if instance is for entrance or exit fringe - determines which element parameters are used in kick
+  // and ordering of kick & dipole transport
+  isEntrance = (*strengthIn)["isentrance"];
+
   // thin sextupole strength for curved polefaces
   G4double thinSextStrength = (-polefaceCurvature / rho) * 1.0 / std::pow(std::cos(polefaceAngle),3);
 
@@ -132,8 +136,18 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   // container for dipole step output, used as fringe step input
   G4double yTemp[7];
 
-  // do the dipole kick and step using base class
-  BDSIntegratorDipoleRodrigues2::Stepper(yMultipoleOut, dydx, h, yTemp, yErr); // yErr is correct output variable
+  // only do the dipole transport before the fringe kick if it's an exit fringe, otherwise copy the
+  // coords and continue
+  if (!isEntrance)
+    {
+	  // do the dipole kick and step using base class
+	  BDSIntegratorDipoleRodrigues2::Stepper(yMultipoleOut, dydx, h, yTemp, yErr); // yErr is correct output variable
+    }
+  else
+    {
+  	  for (G4int i = 0; i < 7; i++)
+        {yTemp[i] = yMultipoleOut[i];}
+    }
 
   // only apply the kick if we're taking a step longer than half the length of the item,
   // in which case, apply the full kick. This appears more robust than scaling the kick
@@ -219,13 +233,29 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   G4ThreeVector globalMomU = globalMom.unit();
   globalMomU *= 1e-8;
 
-  // write out values and errors
+  // container if dipole step still needs to be taken if fringe is an entrance fringe
+  G4double yTempOut[7];
+
+  // copy out values and errors
   for (G4int i = 0; i < 3; i++)
     {
-      yOut[i]     = pos[i];
-      yOut[i + 3] = globalMom[i];
-      yErr[i]     = globalMomU[i];
-      yErr[i + 3] = 1e-40;
+	  yTempOut[i]     = pos[i];
+	  yTempOut[i + 3] = globalMom[i];
+      yErr[i]         = globalMomU[i];
+      yErr[i + 3]     = 1e-40;
+    }
+
+  // now only do the dipole transport after the fringe kick if it's an entrance fringe, otherwise copy the
+  // coords to the output container
+  if (isEntrance)
+    {
+      // do the dipole kick and step using base class
+      BDSIntegratorDipoleRodrigues2::Stepper(yTempOut, dydx, h, yOut, yErr); // yErr is correct output variable
+    }
+  else
+    {
+      for (G4int i = 0; i < 7; i++)
+        {yOut[i] = yTempOut[i];}
     }
 }
 
