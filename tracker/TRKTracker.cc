@@ -85,82 +85,72 @@ void TRKTracker::Track(TRKBunch* bunch)
 
     BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
 
-    for (int turn = 0; turn < maxTurns; turn++)
-      {
-	output->currentTurn = turn;
-	for (auto &p : *bunch)
-	  {
-	    auto eIt = line->cbegin();
-	    auto esIt = line->beginS();
-	    auto element = *eIt;
-	    auto SEnd = *esIt;
+    for (int turn = 0; turn < maxTurns; turn++) {
+      output->currentTurn = turn;
+      for (auto &p : *bunch) {
+        auto eIt = line->cbegin();
+        auto esIt = line->beginS();
+        auto element = *eIt;
+        auto SEnd = *esIt;
 
-	    if (turn == 0)
-	      {
-		/// On the first turn, find the element where the particle starts
-		/// off in
-		eIt = line->FindElement(p.getS());
-		std::advance(esIt, std::distance(line->cbegin(), eIt));
-	      }
+        if (turn == 0) {
+          /// On the first turn, find the element where the particle starts
+          /// off in
+          eIt = line->FindElement(p.getS());
+          std::advance(esIt, std::distance(line->cbegin(), eIt));
+        }
 
-	    double proposedStep = RandomStep();
-	    double proposedEndPoint = p.getS() + proposedStep;
-	    bool advance = false;
+        double proposedStep = RandomStep();
+        double proposedEndPoint = p.getS() + proposedStep;
+        bool advance = false;
 
-	    int count = 0;
-	    while (eIt != line->end() && esIt != line->endS())
-	      {
-		count++; // Maximum tries
-		if (count > 1e6)
-		  {
-		    throw std::runtime_error(
-                      "Reached maximum number of tries in stepper");
-		  }
+        int count = 0;
+        while (eIt != line->end() && esIt != line->endS()) {
+          count++; // Maximum tries
+          if (count > 1e6) {
+            throw std::runtime_error(
+                "Reached maximum number of tries in stepper");
+          }
 
-                if (advance)
-		  {
-		    element = *eIt++;
-		    SEnd = *esIt++;
-		    advance = false;
-		  }
+          if (advance) {
+            element = *eIt++;
+            SEnd = *esIt++;
+            advance = false;
+          }
 
-		// Check if current step (maybe applied over multiple
-		// elements) has finished being applied.
-		if (fabs(proposedEndPoint - p.getS()) < proposedEndPoint * 1.E-6)
-		  {
-		    /// Step is completed, prepare a new step
-		    proposedStep = RandomStep();
-		    proposedEndPoint = p.getS() + proposedStep;
-		  }
+          // Check if current step (maybe applied over multiple
+          // elements) has finished being applied.
+          if (fabs(proposedEndPoint - p.getS()) < proposedEndPoint * 1.E-6) {
+            /// Step is completed, prepare a new step
+            proposedStep = RandomStep();
+            proposedEndPoint = p.getS() + proposedStep;
+          }
 
-		//  If current step goes beyond this element's boundary
-		//  then reduce step to the distance to the boundary and
-		//  mark advance to true to progress line iterators on next
-		//  go of while loop.
-		double step;
-		if (proposedEndPoint > SEnd)
-		  {
-		    step = SEnd - p.getS();
-		    advance = true;
-		  } else // We can use the proposed step as the actual step.
+          //  If current step goes beyond this element's boundary
+          //  then reduce step to the distance to the boundary and
+          //  mark advance to true to progress line iterators on next
+          //  go of while loop.
+          double step;
+          if (proposedEndPoint > SEnd) {
+            step = SEnd - p.getS();
+            advance = true;
+          } else // We can use the proposed step as the actual step.
 
-		  {
-		    step = proposedStep;
-		  }
+          {
+            step = proposedStep;
+          }
 
-		// Track the particle with this proposed step.
-		auto name = element->GetName();
-		element->Track(p, step, strategy);
+          // Track the particle with this proposed step.
+          element->Track(p, step, strategy);
 
-		// Update the particle's s position in light of step taken.
-		p.S += step;
-		// Decrement the proposed step for some reason?
-		proposedStep -= step;
-	      }
-	  }
-
-	EndOfTurn(*bunch);
+          // Update the particle's s position in light of step taken.
+          p.S += step;
+          // Decrement the proposed step for some reason?
+          proposedStep -= step;
+        }
       }
+      EndOfTurn(*bunch);
+    }
 }
 
 void TRKTracker::EndOfTurn(TRKBunch& bunch)

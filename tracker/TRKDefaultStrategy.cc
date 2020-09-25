@@ -58,9 +58,21 @@ void TRKDefaultStrategy::Track(TRKSolenoid *el, TRKParticle& particle, double st
 }
 
 void TRKDefaultStrategy::Track(TRKKicker *el, TRKParticle& particle, double step) {
-  auto hkick = el->GetHKick() * step/el->GetLength();
-  auto vkick = el->GetVKick() * step/el->GetLength();
-  trk::maps::kicker(particle, hkick/2., vkick/2.);
-  trk::maps::drift(particle, step);
-  trk::maps::kicker(particle, hkick/2., vkick/2.);
+
+  auto length = el->GetLength();
+  auto hkick = el->GetHKick();
+  auto vkick = el->GetVKick();
+
+  if (length == 0.0)
+    {
+      trk::maps::kicker(particle, hkick, vkick);
+    }
+  else
+    {
+      hkick *= step / length;
+      vkick *= step / length;
+      trk::maps::kicker(particle, hkick/2., vkick/2.);
+      trk::maps::drift(particle, step);
+      trk::maps::kicker(particle, hkick/2., vkick/2.);
+    }
 }
