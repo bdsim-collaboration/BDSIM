@@ -50,7 +50,7 @@ BDSBH4D<boost_histogram_linear>::BDSBH4D()
     h_zmax = 1;
     h_emin = 1;
     h_emax = 230;
-    h_escale = 'linear';
+    h_escale = "linear";
 
 }
 
@@ -79,7 +79,7 @@ BDSBH4D<boost_histogram_log>::BDSBH4D()
     h_zmax = 1;
     h_emin = 1;
     h_emax = 230;
-    h_escale = 'log';
+    h_escale = "log";
 
 }
 
@@ -108,7 +108,7 @@ BDSBH4D<boost_histogram_variable>::BDSBH4D()
     h_zmax = 1;
     h_emin = 0.001;
     h_emax = 0.230;
-    h_escale = 'user';
+    h_escale = "user";
     h_ebinsedges = std::vector<double>{0.001,0.1,0.230};
 
 }
@@ -297,7 +297,7 @@ void BDSBH4D<T>::SetError(int x,
 
 template <class T>
 void BDSBH4D<T>::Add(BDSBH4DBase* otherHistogram) {
-    BDSBH4D<T>* tmp = dynamic_cast<BDSBH4D<T>*>(otherHistogram);
+    auto tmp = dynamic_cast<BDSBH4D<T>*>(otherHistogram);
     h += tmp->h;
 }
 
@@ -341,7 +341,7 @@ void BDSBH4D<T>::Print(bool with_zero_values) {
     std::ostringstream os4;
     for (auto&& x : indexed(this->h)) {
 
-        if (with_zero_values == false and *x != 0){
+        if (!with_zero_values and *x != 0){
             os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
                    % x.index(0) % x.index(1) % x.index(2) % x.index(3)
                    % x.bin(0).lower() % x.bin(0).upper()
@@ -351,7 +351,7 @@ void BDSBH4D<T>::Print(bool with_zero_values) {
                    % *x;
 
         }
-        else if (with_zero_values == true){
+        else if (with_zero_values){
             os4 << boost::format("(%i, %i, %i, %i) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) [%.3f, %.3f) %i\n")
                    % x.index(0) % x.index(1) % x.index(2) % x.index(3)
                    % x.bin(0).lower() % x.bin(0).upper()
