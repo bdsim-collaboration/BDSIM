@@ -447,6 +447,8 @@ void Options::PublishMembers()
   publish("writePrimaries",                 &Options::writePrimaries);
   publish("storeModel",                     &Options::storeModel);
 
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+
   // circular options
   publish("nturns",                   &Options::nturns);
   publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
