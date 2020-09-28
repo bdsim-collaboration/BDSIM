@@ -109,7 +109,7 @@ OptionsBase::OptionsBase()
 
   eventNumberOffset       = 0;
 
-  // general geometrical prameters
+  // general geometrical parameters
   checkOverlaps           = false;
   xsize=0.0, ysize=0.0;
 
@@ -297,6 +297,8 @@ OptionsBase::OptionsBase()
   
   writePrimaries           = true;
   storeModel               = true;
+
+  samplersSplitLevel       = 0;
 
   // circular options
   nturns                   = 1;

@@ -248,6 +248,7 @@ public:
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
   inline G4bool   StoreModel()               const {return G4bool  (options.storeModel);}
+  inline G4int    SamplersSplitLevel()       const {return G4int   (options.samplersSplitLevel);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}

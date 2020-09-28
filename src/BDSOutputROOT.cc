@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -126,6 +127,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
 
   // build sampler structures
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)
     {
       auto samplerTreeLocal = samplerTrees.at(i);
@@ -133,7 +135,7 @@ void BDSOutputROOT::NewFile()
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 samplerTreeLocal,32000,1);
+                                 samplerTreeLocal,32000,globals->SamplersSplitLevel());
     }
 
   // build collimator structures
