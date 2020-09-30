@@ -42,13 +42,9 @@ TRKBunch *TRKAperture::CheckAperture(TRKBunch *bunch) {
       [this](TRKParticle p) { return !this->OutsideAperture(p); });
 
   if (lostIt == bunch->end()) {
-    return new TRKBunch();;
+    return new TRKBunch();
   }
-  auto nlost = std::distance(lostIt, bunch->end());
-  std::vector<TRKParticle> lostParticles;
-  lostParticles.reserve(nlost);
-  std::copy(lostIt, bunch->end(), lostParticles.begin());
-  
+  std::vector<TRKParticle> lostParticles(lostIt, bunch->end());
   bunch->Erase(lostIt, bunch->end());
   return new TRKBunch(std::move(lostParticles));
 }
