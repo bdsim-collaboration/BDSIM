@@ -357,6 +357,7 @@ namespace GMAD
     double zmax;
     bool   useScoringMap;
 
+    std::string tracker;
     std::string trackingType;
     int         trackingSteps;
     bool        useAperture;

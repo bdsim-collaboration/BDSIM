@@ -471,6 +471,7 @@ void Options::PublishMembers()
   publish("useScoringMap", &Options::useScoringMap);
 
   // tracker
+  publish("tracker",         &Options::tracker);
   publish("trackingType",    &Options::trackingType);
   publish("trackingSteps",   &Options::trackingSteps);
   publish("useAperture",     &Options::useAperture);

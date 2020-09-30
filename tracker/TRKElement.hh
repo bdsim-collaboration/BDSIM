@@ -45,6 +45,7 @@ public:
 
   /// track method, visitor pattern
   virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
+  virtual void Track(TRKBunch*  bunch, double step, TRKStrategy* strategy);
   virtual bool OutsideAperture(TRKParticle const &) const;
   TRKBunch* CheckAperture(TRKBunch* bunch);
 

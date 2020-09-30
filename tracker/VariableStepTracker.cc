@@ -23,12 +23,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <random>
 #include <map>
 #include <memory>
-#include <cassert>
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include "TRKAperture.hh"
 #include "TRKBacktracker.hh"
@@ -39,17 +40,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKOutput.hh"
 #include "TRKParticle.hh"
 #include "TRKStrategy.hh"
-#include "TRKTracker.hh"
+#include "VariableStepTracker.hh"
 
-class BDSTrajectory;
+namespace trk {
 
-typedef std::chrono::high_resolution_clock Clock;
-typedef std::chrono::milliseconds milliseconds;
-
-TRKTracker::TRKTracker(TRKLine*       lineIn,
-		       TRKStrategy*   strategyIn,
-		       const GMAD::Options& options,
-		       std::shared_ptr<TRKOutput> outputIn):
+VariableStepTracker::VariableStepTracker(TRKLine*       lineIn,
+					 TRKStrategy*   strategyIn,
+					 const GMAD::Options& options,
+					 std::shared_ptr<TRKOutput> outputIn):
   line(lineIn), strategy(strategyIn),
   maxTurns(options.nturns),
   useaperture(options.useAperture),
@@ -66,17 +64,14 @@ TRKTracker::TRKTracker(TRKLine*       lineIn,
   }
 }
 
-TRKTracker::~TRKTracker()
-{}
-
-double TRKTracker::RandomStep()
+double VariableStepTracker::RandomStep()
 {
     ///double rn = (((double) rand() / (RAND_MAX))) * 0.1e3;
     double rn = 50;
     return rn;
 }
 
-void TRKTracker::Track(TRKBunch* bunch)
+void VariableStepTracker::Track(TRKBunch* bunch)
 {
   if (!bunch)
     {throw std::runtime_error("No bunch has been provided.");}
@@ -153,16 +148,18 @@ void TRKTracker::Track(TRKBunch* bunch)
     }
 }
 
-void TRKTracker::EndOfTurn(TRKBunch& bunch)
+void VariableStepTracker::EndOfTurn(TRKBunch& bunch)
 {
   BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
   ResetS(bunch);
 }
 
-void TRKTracker::ResetS(TRKBunch& bunch)
+void VariableStepTracker::ResetS(TRKBunch& bunch)
 {
   for (auto &p: bunch)
     {
       p.S = 0.0;
     }
+}
+
 }

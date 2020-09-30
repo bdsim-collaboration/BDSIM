@@ -24,7 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
-#include "tracker/TRKTracker.hh"
+#include "tracker/FixedStepTracker.hh"
+#include "tracker/VariableStepTracker.hh"
+#include "tracker/TrackerUtils.hh"
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -96,10 +98,10 @@ int main (int argc, char** argv)
   output->WritePrimaries(bunch);
 
   /// Build tracker
-  TRKTracker tracker(beamline, strategy, options, output);
+  auto tracker = trk::CreateTracker(beamline, strategy, options, output);
 
   //run tracking - all output through bdsim / samplers
-  tracker.Track(bunch);
+  tracker->Track(bunch);
   output->WriteEvents();
   output->CloseFile();
 

@@ -37,8 +37,6 @@ void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 
 void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle& particle)
 {
-  std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;
-
   double offsetX = el->GetOffsetX();
   double offsetY = el->GetOffsetY();
   particle.x -= offsetX;
