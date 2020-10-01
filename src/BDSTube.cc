@@ -97,7 +97,8 @@ BDSTube::BDSTube(const G4String& nameIn,
       for (unsigned int i = 0; i < numberOfSuggestedZSections; i++)
 	{
 	  G4double t = (G4double)i * dzNorm;
-	  z.push_back(BDS::Linear1D(dZNegative, dZPositive, t));
+	  G4double points[2] = {dZNegative,dZPositive}; // TBC
+	  z.push_back(BDS::Linear1D(points, t));
 	}
       RegularConstruction(z, startingPoints, finishingPoints);   
     }
@@ -129,10 +130,12 @@ void BDSTube::RegularConstruction(const std::vector<G4double>&    z,
 	  if (j == limit)
 	    {j = 0;}
 
-	  G4TwoVector si = BDS::Linear1D(sp[i], fp[i], (G4double)zi   * dzNorm);
-	  G4TwoVector sj = BDS::Linear1D(sp[j], fp[j], (G4double)zi   * dzNorm);
-	  G4TwoVector fi = BDS::Linear1D(sp[i], fp[i], ((G4double)zi+1) * dzNorm);
-	  G4TwoVector fj = BDS::Linear1D(sp[j], fp[j], ((G4double)zi+1) * dzNorm);
+	  G4TwoVector ii[2] = {sp[i],fp[i]}; // TBC
+	  G4TwoVector jj[2] = {sp[j],fp[j]};
+	  G4TwoVector si = BDS::Linear1D(ii, (G4double)zi   * dzNorm);
+	  G4TwoVector sj = BDS::Linear1D(jj, (G4double)zi   * dzNorm);
+	  G4TwoVector fi = BDS::Linear1D(ii, ((G4double)zi+1) * dzNorm);
+	  G4TwoVector fj = BDS::Linear1D(jj, ((G4double)zi+1) * dzNorm);
 	  
 	  G4TriangularFacet* facet1 = new G4TriangularFacet(G4TV(si.x(), si.y(), za),
 							    G4TV(sj.x(), sj.y(), za),
