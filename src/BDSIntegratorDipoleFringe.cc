@@ -140,15 +140,15 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   // coords and continue
   if (!isEntrance)
     {
-	  // do the dipole kick and step using base class
-	  BDSIntegratorDipoleRodrigues2::Stepper(yMultipoleOut, dydx, h, yTemp, yErr); // yErr is correct output variable
+      // do the dipole kick and step using base class
+      BDSIntegratorDipoleRodrigues2::Stepper(yMultipoleOut, dydx, h, yTemp, yErr); // yErr is correct output variable
     }
   else
     {
-  	  for (G4int i = 0; i < 7; i++)
+      for (G4int i = 0; i < 7; i++)
         {yTemp[i] = yMultipoleOut[i];}
     }
-
+  
   // only apply the kick if we're taking a step longer than half the length of the item,
   // in which case, apply the full kick. This appears more robust than scaling the kick
   // by h / thinElementLength as the precise geometrical length depends on the geometry
