@@ -76,9 +76,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   x.push_back((U &&) (hit->coords.x / CLHEP::m));
   y.push_back((U &&) (hit->coords.y / CLHEP::m));
 
-  xp.push_back((U &&) (hit->coords.xp / CLHEP::radian));
-  yp.push_back((U &&) (hit->coords.yp / CLHEP::radian));
-  zp.push_back((U &&) (hit->coords.zp / CLHEP::radian));
+  xp.push_back((U &&) (hit->coords.xp));
+  yp.push_back((U &&) (hit->coords.yp));
+  zp.push_back((U &&) (hit->coords.zp));
   p.push_back((U &&) (hit->momentum / CLHEP::GeV));
   T.push_back((U &&) (hit->coords.T / CLHEP::ns));
   
@@ -130,9 +130,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   x.push_back((U &&)  (coords.x  / CLHEP::m));
   y.push_back((U &&)  (coords.y  / CLHEP::m));
   z = (U) (coords.z / CLHEP::m);
-  xp.push_back((U &&) (coords.xp / CLHEP::radian));
-  yp.push_back((U &&) (coords.yp / CLHEP::radian));
-  zp.push_back((U &&) (coords.zp / CLHEP::radian));
+  xp.push_back((U &&) (coords.xp));
+  yp.push_back((U &&) (coords.yp));
+  zp.push_back((U &&) (coords.zp));
   p.push_back((U &&) (momentumIn / CLHEP::GeV));
   T.push_back((U &&) (coords.T / CLHEP::ns));
   weight.push_back((const U &) coords.weight);

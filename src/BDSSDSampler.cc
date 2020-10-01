@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-BDSSDSampler::BDSSDSampler(G4String name):
+BDSSDSampler::BDSSDSampler(const G4String& name):
   BDSSensitiveDetector("sampler/" + name),
   SamplerCollection(nullptr),
   itsCollectionName(name),
