@@ -791,10 +791,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   G4bool finiteEntrFringe = false;
   G4bool finiteExitFringe = false;
   if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) ||
-          BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
+      BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
     {finiteEntrFringe = true;}
   if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) ||
-        BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
+      BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
     {finiteExitFringe = true;}
 
   // only build the fringe elements if the poleface rotation or fringe field correction terms are finite
@@ -874,9 +874,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       G4double angleX = std::asin(hkick * scaling);
       G4double angleY = std::asin(vkick * scaling);
 
-      if (isnan(angleX))
+      if (std::isnan(angleX))
         {throw BDSException(__METHOD_NAME__, "hkick too strong for element \"" + element->name + "\" ");}
-      if (isnan(angleY))
+      if (std::isnan(angleY))
         {throw BDSException(__METHOD_NAME__, "vkick too strong for element \"" + element->name + "\" ");}
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
