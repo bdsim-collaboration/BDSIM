@@ -570,7 +570,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   if (field)
     {field->SetTransform(info.TransformComplete());}
   
-  if (!info.MagneticSubFieldName().empty())
+  if (!info.MagneticSubFieldName().empty() && field)
     {
       // set the transform of the 'main' field to only the transform defined in that field definition
       field->SetTransform(info.Transform());

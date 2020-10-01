@@ -55,11 +55,13 @@ struct fieldtypes_def
 	     multipoleouterdecapole,
 	     skewmultipoleouterquadrupole, skewmultipoleoutersextupole,
 	     skewmultipoleouteroctupole, skewmultipoleouterdecapole,
-	     multipoleouterdipole3d, multipoleouterdipolelhc, multipoleouterquadrupolelhc,
-         multipoleoutersextupolelhc};
+	     multipoleouterdipole3d,
+	     multipoleouterdipolelhc, multipoleouterquadrupolelhc, multipoleoutersextupolelhc};
 };
 
-// NOTE - when adding a new field type, BDSFieldClassType should also be updated
+// NOTE - when adding a new field type:
+//  - BDSFieldClassType should also be updated
+//  - BDSIntegratorSet::Integrator() should also be updated
 
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
 
