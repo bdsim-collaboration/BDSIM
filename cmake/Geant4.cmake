@@ -106,3 +106,9 @@ if (${G4_MINOR_VERSION} GREATER 5)
   add_definitions("-DG4VIS_USE")
   add_definitions("-DG4UI_USE")
 endif()
+
+# remove the C++ standard set by geant4 so we can enforce our own
+removeCXXStandardFlags(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
+
+# now remove any duplicates we have to keep things tidy
+removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)

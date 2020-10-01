@@ -73,8 +73,8 @@ Requirements \& Environment
 
 1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher,
    or clang 6 or higher.
-2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
-3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended.
+2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended but must be compatible with Geant4 version.
 4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled with Python support (default is 3 series).
 6) *Optional* - Qt5 libraries for best Geant4 visualiser.
