@@ -131,12 +131,15 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
   storeGeant4Data            = g->StoreGeant4Data();
   storeModel                 = g->StoreModel();
+  storePrimaries             = g->StorePrimaries();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
   storeSamplerCharge         = g->StoreSamplerCharge();
   storeSamplerKineticEnergy  = g->StoreSamplerKineticEnergy();
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
+  storeTrajectoryStepPoints  = g->StoreTrajectoryStepPoints();
+  storeTrajectoryStepPointLast = g->StoreTrajectoryStepPointLast();
   
   // easy option for everything - overwrite bools we've just set individually
   if (g->StoreSamplerAll())
@@ -296,7 +299,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
-  if (vertex)
+  if (vertex && storePrimaries)
     {FillPrimary(vertex, turnsTaken);}
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
@@ -833,7 +836,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 
 void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 {
-  traj->Fill(trajectories);
+  traj->Fill(trajectories, storeTrajectoryStepPoints, storeTrajectoryStepPointLast);
 }
 
 void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,

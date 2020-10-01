@@ -295,6 +295,8 @@ private:
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
+  G4int  storeTrajectoryStepPoints;
+  G4bool storeTrajectoryStepPointLast;
   /// @}
 
   /// Whether to create collimator output structures or not - based on

@@ -304,9 +304,12 @@ namespace GMAD
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
     bool        storeGeant4Data;
+    bool        storePrimaries;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
+    int         storeTrajectoryStepPoints;
+    bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
@@ -330,8 +333,7 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
-
-    bool        storePrimaries;
+    
     bool        storeModel;
 
     // circular options
