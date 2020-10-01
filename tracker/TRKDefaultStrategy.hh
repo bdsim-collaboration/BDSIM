@@ -9,7 +9,6 @@ class TRKRBend;
 class TRKSBend;
 class TRKSextupole;
 class TRKKicker;
-class TRKSolenoid;
 class TRKDipoleFringe;
 typedef class TRKElement TRKDrift;
 
@@ -28,7 +27,6 @@ public:
   void Track(TRKQuadrupole* el, TRKParticle& particle, double step) override;
   void Track(TRKSextupole* el, TRKParticle& particle, double step) override;
   void Track(TRKOctupole* el, TRKParticle& particle, double step) override;
-  void Track(TRKSolenoid* el, TRKParticle& particle, double step) override;
   void Track(TRKKicker* el, TRKParticle& particle, double step) override;
 
 };

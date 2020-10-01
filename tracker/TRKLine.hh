@@ -47,7 +47,10 @@ public:
   
   TRKLine() = delete;
   explicit TRKLine(std::string name, bool circular=false);
-  ~TRKLine();
+
+  std::string GetName() const { return name; }
+  bool GetCircular() const { return circular; }
+
   /// Append TRKElement to Line
   void AddElement(TRKElement *e);
   void AddSingleElement(TRKElement *e);
@@ -64,15 +67,6 @@ public:
   const_iterator cend() const { return elements.cend(); }
   TRKLineConstSIter beginS()const {return elementEndS.begin();}
   TRKLineConstSIter endS()const {return elementEndS.end();}
-
-
-
-
-  inline std::string GetName() const { return name; }
-  inline bool GetCircular() const { return circular; }
-
-  /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);
 
 };
 

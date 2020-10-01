@@ -39,7 +39,6 @@ private:
 
 public:
     explicit TRKElementLine(std::string name);
-    virtual ~TRKElementLine(){;}
 
     /// Add a component to the line.
     void AddElement(TRKElement* component);

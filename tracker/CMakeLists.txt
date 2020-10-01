@@ -11,7 +11,7 @@ include_directories(../include)
 file(GLOB TRKsources *.cc )
 
 add_library(tracker SHARED ${TRKsources})
-target_link_libraries(tracker bdsim gmad)
+target_link_libraries(tracker bdsim gmad rebdsim)
 
 
 #############

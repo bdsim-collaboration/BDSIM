@@ -7,7 +7,7 @@
 
 #include "TRKBacktracker.hh"
 
-class TRKOutput;
+
 
 class TRKBunch;
 class TRKLine;
@@ -19,8 +19,8 @@ namespace GMAD
   class Options;
 }
 
-
 namespace trk {
+class EventOutput;
   
 
 class FixedStepTracker: public Tracker
@@ -29,7 +29,7 @@ public:
   FixedStepTracker(TRKLine*             line,
 		   TRKStrategy*         strategy,
 		   const GMAD::Options& options,
-		   std::shared_ptr<TRKOutput> outputIn);
+		   std::shared_ptr<EventOutput> outputIn);
   void Track(TRKBunch*) override;
 
 private:
@@ -38,7 +38,7 @@ private:
   int maxturns;
   bool useaperture;
   TRKBacktracker backtracker;
-  std::shared_ptr<TRKOutput> output;
+  std::shared_ptr<EventOutput> output;
 
 };
 

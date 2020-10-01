@@ -28,21 +28,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKDecapole: public TRKElement
 { 
 public:
-  TRKDecapole(double        strength,
-	      std::string   name,
+  TRKDecapole() = delete;
+  TRKDecapole(std::string   name,
 	      double        length,
+	      double        k5,
 	      TRKAperture  *aperture,
 	      TRKPlacement *placement);
-  virtual ~TRKDecapole();
 
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-  
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
+  void Track(TRKParticle &particle, double step,
+             TRKStrategy *strategy) override;
+
+  double GetK5() { return k5; }
 
 private:
-  TRKDecapole(); ///< not implemented
+  double k5;
 };
 
 #endif

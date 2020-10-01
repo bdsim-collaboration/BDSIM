@@ -19,24 +19,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKDecapole.hh"
 #include "TRKStrategy.hh"
 
-TRKDecapole::TRKDecapole(double        strengthIn,
-			 std::string   nameIn,
+TRKDecapole::TRKDecapole(std::string   nameIn,
 			 double        lengthIn,
+			 double        k5in,
 			 TRKAperture*  apertureIn,
 			 TRKPlacement* placementIn):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
-{;}
-
-TRKDecapole::~TRKDecapole()
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn),
+  k5(k5in)
 {;}
 
 void TRKDecapole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
-}
-
-void TRKDecapole::Print(std::ostream &out) const
-{
-  TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m^4";
 }

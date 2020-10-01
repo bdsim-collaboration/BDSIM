@@ -28,21 +28,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKQuadrupole: public TRKElement
 {
 public:
-  TRKQuadrupole(double        strength,
-		std::string   name,
+  TRKQuadrupole(std::string   name,
 		double        length,
+		double        k1,
 		TRKAperture  *aperture,
 		TRKPlacement *placement);
-  virtual ~TRKQuadrupole();
-
-  virtual void Track(TRKParticle& bunch, double step, TRKStrategy* strategy);
-
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
+  void Track(TRKParticle& bunch, double step, TRKStrategy* strategy) override;
+  double GetK1() const { return k1; }
 
 private:
-  TRKQuadrupole(); ///< not implemented
+  double k1;
 };
 
 #endif

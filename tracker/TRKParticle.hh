@@ -42,17 +42,20 @@ public:
               double pzIn, double beta0In, double gamma0In, double SIn,
               int eventidIn)
       : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
-        gamma0(gamma0In), S(SIn), eventid(eventidIn) {}
+        gamma0(gamma0In), S(SIn), eventid(eventidIn), mass(938.27231) {}
 
   //accessors
-  inline double getS() const { return S; }
+ double getS() const { return S; }
 
-  inline double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
-  inline double KineticEnergy() const { return Energy() - mass; }
-  inline double ReferenceMomentum() const
+  double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
+  double KineticEnergy() const { return Energy() - mass; }
+  double Momentum() const { return std::sqrt(Energy()*Energy() - M() * M()); }
+  double ReferenceMomentum() const
   {
     return mass * std::sqrt(gamma0*gamma0 - 1);
   }
+  double Xp() const { return px * ReferenceMomentum() / Momentum(); }
+  double Yp() const { return py * ReferenceMomentum() / Momentum(); }
 
   int EventID() const { return eventid; }
 

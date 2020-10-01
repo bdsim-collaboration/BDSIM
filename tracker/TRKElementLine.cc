@@ -29,13 +29,3 @@ void TRKElementLine::AddElement(TRKElement* e) {
   line.push_back(e);
   length += e->GetLength();
 }
-
-/// output stream
-std::ostream& operator<< (std::ostream &out, const TRKElementLine &line) {
-  auto elIter = line.begin();
-  auto elIterEnd = line.end();
-  for (;elIter!=elIterEnd; ++elIter) {
-    out << **elIter << std::endl;
-  }
-  return out;
-}

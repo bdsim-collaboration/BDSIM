@@ -30,26 +30,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKRBend: public TRKElement
 {
 public:
-  TRKRBend(double        angle,
-	   std::string   name,
+  TRKRBend() = delete;
+  TRKRBend(std::string   name,
+	   double        angle,
+	   double        k1,
 	   double        length,
 	   TRKAperture  *aperture,
-	   TRKPlacement *placement,
-	   double        k1);
-  virtual ~TRKRBend();
+	   TRKPlacement *placement);
+  void Track(TRKParticle& particle, double step, TRKStrategy* strategy) override;
   
   inline double GetAngle() const {return angle;}
   inline double GetK1() const {return k1;}  
-  
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-  
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
 
 private:
-  TRKRBend(); ///< not implemented
-
   /// bending angle in rad
   double angle;
   double k1;

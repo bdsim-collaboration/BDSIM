@@ -480,4 +480,5 @@ void Options::PublishMembers()
   publish("useAperture",     &Options::useAperture);
   publish("backtracking",    &Options::backtracking);
   publish("lossPrecision",   &Options::lossPrecision);
+  publish("trackerOptics",   &Options::trackerOptics);
 }

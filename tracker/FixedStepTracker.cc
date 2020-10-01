@@ -8,12 +8,12 @@
 #include "TRKBunch.hh"
 #include "TRKElement.hh"
 #include "TRKLine.hh"
-#include "TRKOutput.hh"
+#include "EventOutput.hh"
 
 namespace trk {
 FixedStepTracker::FixedStepTracker(TRKLine *line, TRKStrategy *strategyIn,
                                    const GMAD::Options &options,
-                                   std::shared_ptr<TRKOutput> outputIn)
+                                   std::shared_ptr<EventOutput> outputIn)
     : beamline(line), strategy(strategyIn), maxturns(options.nturns),
       useaperture(options.useAperture),
       backtracker(strategyIn, options.backtracking,
@@ -29,7 +29,8 @@ void FixedStepTracker::Track(TRKBunch *bunch) {
   }
 
   for (int turn = 0; turn < maxturns; ++turn) {
-    output->currentTurn = turn;
+    if (output)
+      output->currentTurn = turn;
     for (auto it = beamline->cbegin(); it != beamline->cend(); ++it) {
       (*it)->Track(bunch, (*it)->GetLength(), strategy);
     }

@@ -16,33 +16,44 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TRKSolenoid_h
-#define TRKSolenoid_h
+#ifndef TRKOpticsSampler_h
+#define TRKOpticsSampler_h
+
+#include <memory>
+#include <string>
 
 #include "TRKElement.hh"
 
+class SamplerAnalysis;
+class TRKStrategy;
+class TRKBunch;
+
+
+namespace trk
+{
+  class EventOutput;
+  class OpticsAccumulator;
+}
+
 /**
- * @brief Solenoid. Strength in Tesla/metre.
+ * @brief sampler class - output from tracker
  */
 
-class TRKSolenoid: public TRKElement
+class TRKOpticsSampler : public TRKElement
 {
 public:
-  TRKSolenoid(double        strength,
-	      std::string   name,
-	      double        length,
-	      TRKAperture  *aperture,
-	      TRKPlacement *placement);
-  virtual ~TRKSolenoid();
-
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-  
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
+  TRKOpticsSampler() = delete;
+  TRKOpticsSampler(std::string nameIn,
+		   int         indexIn,
+		   double s,
+		   std::shared_ptr<trk::OpticsAccumulator>);
+  void Track(TRKParticle &particle, double step,
+             TRKStrategy *strategy) override;
 
 private:
-  TRKSolenoid(); ///< not implemented
+  int index;
+  double s;
+  std::shared_ptr<trk::OpticsAccumulator> optics;
 };
 
 #endif

@@ -21,20 +21,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKTiltOffset.hh"
 #include "TRKBunch.hh"
 
-TRKSextupole::TRKSextupole(double strengthIn,
-			   std::string nameIn,
+TRKSextupole::TRKSextupole(std::string nameIn,
 			   double lengthIn,
+			   double k2In,
 			   TRKAperture *apertureIn,
 			   TRKPlacement *placementIn):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
-{;}
-
-TRKSextupole::~TRKSextupole()
-{;}
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn),
+  k2(k2In)
+{}
 
 void TRKSextupole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
-
   if (offsetIn && offsetOut)
     {strategy->Track(offsetIn, particle);}
 
@@ -42,11 +39,4 @@ void TRKSextupole::Track(TRKParticle& particle, double step, TRKStrategy* strate
   
   if (offsetIn && offsetOut)
     {strategy->Track(offsetOut, particle);}
-
-}
-
-void TRKSextupole::Print(std::ostream &out) const
-{
-  TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m^2";
 }

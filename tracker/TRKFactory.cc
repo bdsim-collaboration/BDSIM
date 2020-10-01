@@ -36,13 +36,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKKicker.hh"
 #include "TRKLine.hh"
 #include "TRKOctupole.hh"
-#include "TRKOutput.hh"
+#include "EventOutput.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKRBend.hh"
 #include "TRKSBend.hh"
 #include "TRKSampler.hh"
+#include "TRKOpticsSampler.hh"
 #include "TRKSextupole.hh"
-#include "TRKSolenoid.hh"
+#include "OpticsAccumulator.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
@@ -59,22 +60,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/elementtype.h"
 #include "parser/options.h"
 
+#include "analysis/SamplerAnalysis.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(const GMAD::Options&   options,
 		       BDSParticleDefinition* particleIn,
-		       std::shared_ptr<TRKOutput> outputIn):
+		       std::shared_ptr<trk::EventOutput> eventOutputIn,
+		       std::shared_ptr<trk::OpticsAccumulator> opticsIn):
   particle(particleIn),
-  output(std::move(outputIn)),
+  eventOutput(std::move(eventOutputIn)),
   placement(nullptr),
   ngenerate(options.nGenerate),
   nturns(options.nturns),
   circular(nturns > 1),
   strategy(SetStrategyEnum(options.trackingType)),
   trackingsteps(options.trackingSteps),
-  useaperture(options.useAperture)
+  useaperture(options.useAperture),
+  optics(opticsIn)
 {
 }
+
+TRKFactory::~TRKFactory() = default;
 
 std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
 {
@@ -174,32 +181,50 @@ TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_li
 {
   TRKLine* line = new TRKLine("beamline",circular);
   auto s = 0.0;
-  for (auto it : beamline_list)
+  auto samplerAnalysesIndex = 0;
+  for (auto gmadel : beamline_list)
     {
-      TRKElement* element = CreateElement(it);
+      TRKElement* element = CreateElement(gmadel);
       if (element)
 	{
+	  if (optics)
+	    { // Precede every element with an optics sampler.
+            auto osampler =
+                CreateOpticsSampler(gmadel, samplerAnalysesIndex++, s);
+            line->AddElement(osampler);
+	    }
+
 	  line->AddElement(element);
 	  s += element->GetLength();
 	  // if the element is flagged as a sampler, we create
 	  // a sampler element and put it in the beam line
-	  if (it.samplerType != "none")
+	  if (gmadel.samplerType != "none")
 	    {
-	      TRKElement* sampler = CreateSampler(it, s);
+	      TRKElement* sampler = CreateSampler(gmadel, s);
 	      line->AddElement(sampler);
 	    }
 	}
     }
+
+  if (optics && !beamline_list.empty()) // Put last optics sampler at end.
+    {
+      auto osampler = CreateOpticsSampler(*std::prev(beamline_list.end()),
+					  samplerAnalysesIndex++,
+					  s);
+      line->AddElement(osampler);
+    }
+
   return line;
 }
 
 
 TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
 {
-  TRKElement* trkelement = NULL;
+  TRKElement* trkelement = nullptr;
   switch (element.type)
     {
     case GMAD::ElementType::_LINE:
+    case GMAD::ElementType::_MARKER:
       trkelement = CreateLine(element);
       break;
     case GMAD::ElementType::_DRIFT:
@@ -223,9 +248,6 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
     // case GMAD::ElementType::_DECAPOLE:
     //   trkelement = CreateDecapole(element);
     //    break;
-    case GMAD::ElementType::_SOLENOID:
-      trkelement = CreateSolenoid(element);
-      break;
     case GMAD::ElementType::_MULT:
       //TEMPORARY
       trkelement = CreateDrift(element);
@@ -254,7 +276,9 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       trkelement = CreateVKicker(element);
       break;
     default:
-      trkelement = NULL;
+      throw std::runtime_error(std::string("Unknown element type: ") +
+			       GMAD::typestr(element.type));
+
       break;
   }
   // TBC - implement sampler here based on element.samplerType - str - defualt 'none'
@@ -293,9 +317,9 @@ TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKQuadrupole(element.k1 / CLHEP::m2,  // m^-2
-			   element.name,
+  return new TRKQuadrupole(element.name,
 			   element.l * CLHEP::m,
+			   element.k1 / CLHEP::m2,  // m^-2
 			   aperture,
 			   placement);
 }
@@ -303,9 +327,9 @@ TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKSextupole(element.k2 / CLHEP::m3,
-			  element.name,
+  return new TRKSextupole(element.name,
 			  element.l * CLHEP::m,
+			  element.k2 / CLHEP::m3,
 			  aperture,
 			  placement);
 }
@@ -313,49 +337,27 @@ TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 {
   TRKAperture* aperture = CreateAperture(element);
-  return new TRKOctupole(element.k3 / CLHEP::m2 / CLHEP::m2,
-			 element.name,
+  return new TRKOctupole(element.name,
 			 element.l * CLHEP::m,
+			 element.k3 / CLHEP::m2 / CLHEP::m2,
 			 aperture,
 			 placement);
 }
 
 TRKElement* TRKFactory::CreateDecapole(GMAD::Element& /*element*/)
 {
-  //TRKAperture* aperture = CreateAperture(element);
-  return NULL;
-}
-
-TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
-{
-  //
-  // magnetic field
-  //
-  // B = B/Brho * Brho = ks * Brho
-  // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
-  double bField;
-  if(element.B != 0){
-    bField = element.B * CLHEP::tesla;
-    //    element.ks  = (bField/brho) / CLHEP::m;
-  }
-  else{
-    bField = (element.ks/CLHEP::m) * particle->BRho();
-    //    element.B = bField/CLHEP::tesla;
-  }
-
-  TRKAperture* aperture = CreateAperture(element);
-  return new TRKSolenoid(bField,
-			 element.name,
-			 element.l * CLHEP::m,
-			 aperture,
-			 placement);
+  throw std::runtime_error("Decapole is currently unsupported.");
 }
 
 TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKSBend(element.angle * CLHEP::rad, element.k1 / CLHEP::m2,
-                      element.name, element.l * CLHEP::m, aperture, placement);
+  return new TRKSBend(element.name,
+                      element.l * CLHEP::m,
+		      element.angle * CLHEP::rad,
+		      element.k1 / CLHEP::m2,
+		      aperture,
+		      placement);
 }
 
 TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
@@ -373,10 +375,10 @@ TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
     auto fringeIn = new TRKDipoleFringe(name + "_fringeIn", poleface, aperture, nullptr, k0);
     auto fringeOut = new TRKDipoleFringe(name + "_fringeOut", poleface, aperture, nullptr, k0);
 
-    auto body = new TRKSBend(element.angle,
-                             element.k1 / CLHEP::m2,
-                             element.name,
+    auto body = new TRKSBend(element.name,
                              length,
+			     element.angle,
+                             element.k1 / CLHEP::m2,
                              aperture,
                              placement
     );
@@ -398,25 +400,48 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 
 TRKElement* TRKFactory::CreateSampler(std::string name, int samplerIndex,
 				      double s) {
-  TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
-  output->PushBackSampler(name, nturns * ngenerate);
+  auto result = new TRKSampler(name, samplerIndex, s, eventOutput);
+  eventOutput->PushBackSampler(name, nturns * ngenerate);
   return result;
+}
+
+TRKElement* TRKFactory::CreateOpticsSampler(const GMAD::Element &element,
+                                            int analysesIndex, double s) {
+  auto name = element.name;
+  auto opticsSampler = new TRKOpticsSampler(element.name,
+					    analysesIndex,
+					    s,
+					    optics);
+  optics->AppendAnalysis(s);
+  return opticsSampler;
 }
 
 TRKElement *TRKFactory::CreateKicker(GMAD::Element& element) {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKKicker(element.hkick, element.vkick, element.name,
-                       element.l * CLHEP::m, aperture, nullptr);
+  return new TRKKicker(element.name,
+                       element.l * CLHEP::m,
+		       element.hkick,
+		       element.vkick, 
+		       aperture,
+		       nullptr);
 }
 
 TRKElement *TRKFactory::CreateHKicker(GMAD::Element& element) {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKKicker(element.hkick, 0, element.name, element.l * CLHEP::m,
-                       aperture, nullptr);
+  return new TRKKicker(element.name,
+		       element.l * CLHEP::m,
+		       element.hkick,
+		       0,
+                       aperture,
+		       nullptr);
 }
 
 TRKElement *TRKFactory::CreateVKicker(GMAD::Element& element) {
   TRKAperture *aperture = CreateAperture(element);
-  return new TRKKicker(0., element.vkick, element.name, element.l * CLHEP::m,
-                       aperture, nullptr);
+  return new TRKKicker(element.name,
+		       element.l * CLHEP::m,
+		       0.,
+		       element.vkick,
+                       aperture,
+		       nullptr);
 }

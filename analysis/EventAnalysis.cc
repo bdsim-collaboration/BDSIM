@@ -40,11 +40,11 @@ EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
   printModulo(1),
-  processSamplers(false),
+  processSamplers(true),
   emittanceOnTheFly(false),
   eventStart(0),
   eventEnd(-1)
-{;}
+{}
 
 EventAnalysis::EventAnalysis(Event*   eventIn,
 			     TChain*  chainIn,
@@ -303,4 +303,9 @@ void EventAnalysis::Initialise()
       for (auto s : samplerAnalyses)
 	{s->Initialise();}
     }
+}
+
+void EventAnalysis::AddSamplerAnalyses(std::vector<SamplerAnalysis*>&& sain)
+{
+  samplerAnalyses = std::move(sain);
 }

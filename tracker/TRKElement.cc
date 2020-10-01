@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TRKElement.hh"
 
+#include "TRKSampler.hh"
 #include "TRKAperture.hh"
 #include "TRKPlacement.hh"
 #include "TRKStrategy.hh"
@@ -26,17 +27,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 TRKElement::TRKElement(std::string  nameIn,
 		       double       lengthIn,
 		       TRKAperture *apertureIn,
-		       TRKPlacement *placementIn,
-		       double        strengthIn):
+		       TRKPlacement *placementIn):
   name(nameIn),
   length(lengthIn),
-  strength(strengthIn),
   aperture(apertureIn),
-  placement(placementIn)
-{
-  offsetIn  = nullptr;
-  offsetOut = nullptr;
-} 
+  placement(placementIn),
+  offsetIn(nullptr),
+  offsetOut(nullptr)
+{}
+
+TRKElement::TRKElement(std::string nameIn)
+    : name(nameIn),
+      length(0.),
+      aperture(nullptr),
+      placement(nullptr),
+      offsetIn(nullptr),
+      offsetOut(nullptr)
+{}
 
 TRKElement::~TRKElement()
 {
@@ -127,13 +134,4 @@ void TRKElement::AddTilt(double phi, double theta, double psi)
     }
   else
     {SetTilt(phi,theta,psi);}
-}
-
-void TRKElement::Print(std::ostream& out) const
-{
-  out << name << "; L= " << length << "m";
-  if (aperture)
-    {out << "; Aperture: " << *(aperture);}
-  if (placement)
-    {out << "; Placement: " << *(placement);}
 }

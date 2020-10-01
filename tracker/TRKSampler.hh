@@ -20,40 +20,41 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define TRKSampler_h
 
 #include <memory>
+#include <string>
 
 #include "TRKElement.hh"
-#include "TRKStrategy.hh"
-#include "TRKBunch.hh"
 
-class TRKOutput;
+class SamplerAnalysis;
+class TRKStrategy;
+class TRKBunch;
+
+
+namespace trk
+{
+  class EventOutput;
+  class OpticsAccumulator;
+}
 
 /**
  * @brief sampler class - output from tracker
  */
 
-class TRKSampler: public TRKElement
+class TRKSampler : public TRKElement
 {
 public:
+  TRKSampler() = delete;
   TRKSampler(std::string nameIn,
 	     int         indexIn,
-	     std::shared_ptr<TRKOutput> outputIn,
-	     double s);
-  virtual ~TRKSampler(){;}
+	     double s,
+	     std::shared_ptr<trk::EventOutput> = nullptr);
+  void Track(TRKParticle &particle, double step,
+             TRKStrategy *strategy) override;
 
-  virtual void Track(TRKParticle &particle, double step,
-                     TRKStrategy*) override;
-  bool OutsideAperture(TRKParticle const &p) const override;
-
-protected:
-  /// output stream
-  void Print(std::ostream& out) const override;
 
 private:
-  TRKSampler(); ///< not implemented
-
-  int        index;
-  std::shared_ptr<TRKOutput> output;
+  int index;
   double s;
+  std::shared_ptr<trk::EventOutput> eventOutput;
 };
 
 #endif

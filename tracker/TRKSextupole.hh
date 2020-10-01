@@ -28,21 +28,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKSextupole: public TRKElement
 {
 public:
-  TRKSextupole(double       strength,
-	       std::string  name,
+  TRKSextupole() = delete;
+  TRKSextupole(std::string  name,
 	       double       length,
+	       double       k2,
 	       TRKAperture  *aperture,
 	       TRKPlacement *placement);
-  virtual ~TRKSextupole();
-
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
+  void Track(TRKParticle &particle, double step,
+             TRKStrategy *strategy) override;
+  double GetK2() const { return k2; }
 
 private:
-  TRKSextupole(); ///< not implemented
+  double k2;
 };
 
 #endif

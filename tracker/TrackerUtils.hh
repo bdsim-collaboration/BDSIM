@@ -9,16 +9,16 @@ namespace GMAD {
 
 class TRKLine;
 class TRKStrategy;
-class TRKOutput;
 
 namespace trk
 {
   class Tracker;
+  class EventOutput;
 
   std::unique_ptr<Tracker> CreateTracker(TRKLine*,
 					 TRKStrategy*,
 					 const GMAD::Options &options,
-					 std::shared_ptr<TRKOutput>);
+					 std::shared_ptr<EventOutput>);
   
 }
 

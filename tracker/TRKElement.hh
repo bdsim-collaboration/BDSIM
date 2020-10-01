@@ -36,11 +36,12 @@ class TRKTiltOffset;
 class TRKElement
 { 
 public:
+  TRKElement() = delete;
   TRKElement(std::string   name,
 	     double        length,
 	     TRKAperture*  aperture,
-	     TRKPlacement* placement,
-	     double        strength = 0);
+	     TRKPlacement* placement);
+  TRKElement(std::string name);
   virtual ~TRKElement();
 
   /// track method, visitor pattern
@@ -51,12 +52,7 @@ public:
 
   inline std::string  GetName()     const {return name;}
   inline double       GetLength()   const {return length;}
-  inline double       GetStrength() const {return strength;}
   inline TRKAperture* GetAperture() const {return aperture;}
-
-
-  /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
   /// @{ Set and add offsets.
   void SetOffset(double x, double y);
@@ -68,29 +64,17 @@ public:
 protected : 
   std::string    name;              ///< name of element -- do we need this? JS
   double         length;            ///< length of component [m]
-  double         strength;          ///< strength parameter used differently in each derived class
   TRKAperture*   aperture;          ///< aperture of element
   TRKPlacement*  placement;         ///< location of element
   TRKTiltOffset* offsetIn;          ///< tilt and offset entrance of element
   TRKTiltOffset* offsetOut;         ///< tilt and offset exit of element
 
-  /// virtual print method for overloading operator<<. Virtual Friend Function Idiom
-  virtual void Print(std::ostream& out) const;
-
 private :
-  TRKElement(); ///< not implemented
-  
   /// global coordinates of local point - perhaps not needed
   double* LocalToGlobal(double /*vOut*/[]){return NULL;}
 };
 
 // declare drift
 typedef TRKElement TRKDrift;
-
-inline std::ostream& operator<< (std::ostream &out, const TRKElement &element)
-{
-  element.Print(out);
-  return out;
-}
 
 #endif

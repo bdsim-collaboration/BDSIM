@@ -48,7 +48,7 @@ Analysis::Analysis(const std::string& treeNameIn,
   mergedHistogramName(mergedHistogramNameIn),
   histoSum(nullptr),
   debug(debugIn),
-  entries(chain->GetEntries()),
+  entries(chain ? chain->GetEntries() : 0),
   perEntry(perEntryAnalysis)
 {;}
 

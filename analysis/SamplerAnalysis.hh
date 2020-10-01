@@ -32,6 +32,9 @@ class SamplerAnalysis
 public:
   SamplerAnalysis();
 
+  SamplerAnalysis(double sIn)
+    : s(nullptr), S(sIn), debug(false) { CommonCtor(); }
+
   // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>* samplerIn,
@@ -50,6 +53,10 @@ public:
   /// Loop over all entries in the sampler and accumulate power sums over variuos moments.
   void Process(bool firstTime = false);
 
+  /// Similar to Process except the one particle is accumulated unconditionally.
+  void AddParticle(double x, double xp, double y, double yp, double momentum,
+                   double time);
+
   /// Calculate optical functions based on combinations of moments already accumulated.
   std::vector<double>  Terminate(std::vector<double> emittance,
 				 bool useEmittanceFromFirstSampler = true);
@@ -58,6 +65,7 @@ public:
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
   static void UpdateMass(SamplerAnalysis* s);
+  static void UpdateMass(double mass) { particleMass = mass; }
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
@@ -65,9 +73,10 @@ public:
   BDSOutputROOTEventSampler<double> *s;
   BDSOutputROOTEventSampler<double> *p;
 #endif
+  static double particleMass;
 protected:
 
-  static double particleMass;
+
   
   // sums - initialised to zero as that's what they start at
   long long int npart;
@@ -137,6 +146,7 @@ protected:
 
 private:
   bool debug;
+  bool setNewOffset {true};
 };
 
 #endif

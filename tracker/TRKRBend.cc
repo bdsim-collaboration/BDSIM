@@ -19,26 +19,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKRBend.hh"
 #include "TRKStrategy.hh"
 
-TRKRBend::TRKRBend(double        angleIn,
-		   std::string   nameIn,
+TRKRBend::TRKRBend(std::string   nameIn,
+		   double        angleIn,
+		   double        k1In,
 		   double        lengthIn,
 		   TRKAperture  *apertureIn,
-		   TRKPlacement *placementIn,
-		   double        k1In=0.0):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn),
+		   TRKPlacement *placementIn):
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn),
   angle(angleIn), k1(k1In)
-{;}
-
-TRKRBend::~TRKRBend()
 {;}
 
 void TRKRBend::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
 {
   strategy->Track(this, particle, step);
-}
-
-void TRKRBend::Print(std::ostream &out) const
-{
-  TRKElement::Print(out);
-  out << "; Angle: " << angle << "rad";
 }

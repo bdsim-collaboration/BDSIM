@@ -39,9 +39,9 @@ class TFile;
 class EventAnalysis: public Analysis
 {
 public:
-  /// The default constructor is not intended for use and will not
-  /// work for the purpose of analysis. It is required by the ROOT
-  /// C++ reflection system in case you wish to save the object.
+  /// The default constructor should be used when calculating the optical
+  /// functions for a set of samplers dynamically. It is also required by
+  /// the ROOT C++ reflection system in case you wish to save the object.
   EventAnalysis();
   
   /// Constructor intended for use to construct an event analysis object.
@@ -69,6 +69,8 @@ public:
 
   /// Write analysis including optical functions to an output file.
   virtual void Write(TFile* outputFileName);
+
+  void AddSamplerAnalyses(std::vector<SamplerAnalysis *> &&sain);
 
 protected:
   Event* event; ///< Event object that data loaded from the file will be loaded into.

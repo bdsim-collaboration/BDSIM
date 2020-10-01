@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/beam.h"
 #include "parser/options.h"
 
-#include "tracker/TRKOutput.hh"
+#include "tracker/EventOutput.hh"
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
@@ -36,6 +36,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsUtilities.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 
+
+#include "Options.hh"
+#include "OpticsAccumulator.hh"
 #include <stdexcept>
 
 int main (int argc, char** argv)
@@ -62,7 +65,9 @@ int main (int argc, char** argv)
   const GMAD::Options& options = BDSParser::Instance()->GetOptions();
   const GMAD::Beam&    beam    = BDSParser::Instance()->GetBeam();
 
-  auto output = std::make_shared<TRKOutput>(globalConstants->OutputFileName());
+  auto eventOutput =
+      std::make_shared<trk::EventOutput>(globalConstants->OutputFileName());
+  auto opticsAccumulator = std::make_shared<trk::OpticsAccumulator>();
 
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
@@ -86,24 +91,29 @@ int main (int argc, char** argv)
 
   TRKBunch* bunch = new TRKBunch(beam, beamParticle, nGenerate);
 
+
+
   /// Build beamline
-  TRKFactory* factory   = new TRKFactory(options, designParticle, output);
+  TRKFactory *factory =
+      new TRKFactory(options, designParticle, eventOutput, opticsAccumulator);
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
   /// Get the mass of the particle
   std::cout << "Mass: " << bunch->mass << std::endl;
 
-  output->NewFile();
-  output->WritePrimaries(bunch);
+  eventOutput->NewFile();
+  eventOutput->WritePrimaries(bunch);
 
   /// Build tracker
-  auto tracker = trk::CreateTracker(beamline, strategy, options, output);
+  auto tracker = trk::CreateTracker(beamline, strategy, options, eventOutput);
 
   //run tracking - all output through bdsim / samplers
   tracker->Track(bunch);
-  output->WriteEvents();
-  output->CloseFile();
+  eventOutput->WriteEvents();
+  eventOutput->CloseFile();
+
+  opticsAccumulator->Write(globalConstants->OutputFileName());
 
   // // free memory (good code test)
   delete designParticle;

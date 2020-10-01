@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKBacktracker.hh"
 #include "Tracker.hh"
 
-class TRKOutput;
+class EventOutput;
 
 class TRKBunch;
 class TRKLine;
@@ -44,7 +44,7 @@ class VariableStepTracker : public Tracker {
 public:
   VariableStepTracker(TRKLine *line, TRKStrategy *strategy,
                       const GMAD::Options &options,
-                      std::shared_ptr<TRKOutput> outputIn);
+                      std::shared_ptr<EventOutput> outputIn);
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch *bunch);
 
@@ -58,7 +58,7 @@ private:
   int maxTurns;
   bool useaperture;
   TRKBacktracker backtracker;
-  std::shared_ptr<TRKOutput> output;
+  std::shared_ptr<EventOutput> output;
 
   void EndOfTurn(TRKBunch &);
   void ResetS(TRKBunch &);

@@ -22,21 +22,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKKicker.hh"
 #include "TRKStrategy.hh"
 
-TRKKicker::TRKKicker(double hkickIn, double vkickIn, std::string nameIn,
-                     double lengthIn, TRKAperture *apertureIn,
+TRKKicker::TRKKicker(std::string nameIn, double lengthIn, double hkickIn,
+                     double vkickIn, TRKAperture *apertureIn,
                      TRKPlacement *placementIn)
     : TRKElement(nameIn, lengthIn, apertureIn, placementIn), hkick(hkickIn),
-      vkick(vkickIn) {
-  ;
-}
+      vkick(vkickIn) {}
 
-TRKKicker::~TRKKicker() { ; }
-
-void TRKKicker::Track(TRKParticle& particle, double step, TRKStrategy* strategy) {
+void TRKKicker::Track(TRKParticle &particle, double step,
+                      TRKStrategy *strategy) {
   strategy->Track(this, particle, step);
-}
-
-void TRKKicker::Print(std::ostream &out) const {
-  TRKElement::Print(out);
-  out << "; Angle: " << angle << "rad";
 }

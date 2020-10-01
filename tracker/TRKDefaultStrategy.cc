@@ -8,7 +8,6 @@
 #include "TRKOctupole.hh"
 #include "TRKSBend.hh"
 #include "TRKRBend.hh"
-#include "TRKSolenoid.hh"
 #include "TRKDipoleFringe.hh"
 
 #include <cmath>
@@ -40,20 +39,16 @@ void TRKDefaultStrategy::Track(TRKRBend* el, TRKParticle& particle, double step)
 }
 
 void TRKDefaultStrategy::Track(TRKQuadrupole* el, TRKParticle& particle, double step) {
-  trk::maps::quadrupole(particle, step, el->GetStrength());
+  trk::maps::quadrupole(particle, step, el->GetK1());
 }
 
 void TRKDefaultStrategy::Track(TRKSextupole* el, TRKParticle& particle, double step) {
     trk::maps::drift(particle, step / 2);
-    trk::maps::sextupole(particle, step, el->GetStrength());
+    trk::maps::sextupole(particle, step, el->GetK2());
     trk::maps::drift(particle, step / 2);
 }
 
 void TRKDefaultStrategy::Track(TRKOctupole *el, TRKParticle& particle, double step) {
-  trk::maps::drift(particle, step);
-}
-
-void TRKDefaultStrategy::Track(TRKSolenoid *el, TRKParticle& particle, double step) {
   trk::maps::drift(particle, step);
 }
 

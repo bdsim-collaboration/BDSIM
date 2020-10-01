@@ -21,15 +21,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKTiltOffset.hh"
 #include "TRKBunch.hh"
 
-TRKOctupole::TRKOctupole(double        strengthIn,
-			 std::string   nameIn,
+TRKOctupole::TRKOctupole(std::string   nameIn,
 			 double        lengthIn,
+			 double        k3In,
 			 TRKAperture  *apertureIn,
 			 TRKPlacement *placementIn):
-  TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
-{;}
-
-TRKOctupole::~TRKOctupole()
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn),
+  k3(k3In)
 {;}
 
 void TRKOctupole::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
@@ -43,10 +41,4 @@ void TRKOctupole::Track(TRKParticle& particle, double step, TRKStrategy* strateg
   if (offsetIn && offsetOut)
     {strategy->Track(offsetOut, particle);}
 
-}
-
-void TRKOctupole::Print(std::ostream &out) const
-{
-  TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m^3";
 }

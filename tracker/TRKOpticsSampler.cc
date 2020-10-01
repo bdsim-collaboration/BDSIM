@@ -16,20 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "TRKDipoleFringe.hh"
+#include <string>
+#include <memory>
+
+#include "OpticsAccumulator.hh"
+#include "EventOutput.hh"
+#include "TRKOpticsSampler.hh"
 #include "TRKStrategy.hh"
 
-TRKDipoleFringe::TRKDipoleFringe(
-            std::string   nameIn,
-		   double        polefaceIn,
-		   TRKAperture  *apertureIn,
-		   TRKPlacement *placementIn,
-		   double        k0In=0.0):
-  TRKElement(nameIn, 0.0, apertureIn, placementIn),
-  poleface(polefaceIn), k0(k0In)
-{;}
+#include "analysis/SamplerAnalysis.hh"
 
-void TRKDipoleFringe::Track(TRKParticle& particle, double step, TRKStrategy* strategy)
-{
-  strategy->Track(this, particle, step);
+TRKOpticsSampler::TRKOpticsSampler(std::string nameIn,
+				   int         indexIn,
+				   double sIn,
+				   std::shared_ptr<trk::OpticsAccumulator> opticsIn):
+  TRKElement(nameIn),
+  index(indexIn),
+  s(sIn),
+  optics(std::move(opticsIn))
+{}
+
+void TRKOpticsSampler::Track(TRKParticle &particle, double, TRKStrategy *) {
+  optics->AccumulateParticle(index, particle);
 }

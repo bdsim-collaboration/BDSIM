@@ -30,26 +30,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKDipoleFringe: public TRKElement
 {
 public:
+    TRKDipoleFringe() = delete;
     TRKDipoleFringe(std::string   name,
 	   double        poleface,
 	   TRKAperture  *aperture,
 	   TRKPlacement *placement,
 	   double        k0);
-
-  virtual ~TRKDipoleFringe();
   
+  void Track(TRKParticle& particle, double step, TRKStrategy* strategy) override;
+
   inline double GetPoleface() const {return poleface;}
   inline double GetK0() const {return k0;}
   
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-  
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
-
 private:
-  TRKDipoleFringe(); ///< not implemented
-
   /// Poleface in radians
   double poleface;
   double k0;

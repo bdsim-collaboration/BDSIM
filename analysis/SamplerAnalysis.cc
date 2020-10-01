@@ -191,6 +191,44 @@ void SamplerAnalysis::Process(bool firstTime)
   }
 }
 
+void SamplerAnalysis::AddParticle(double x, double xp, double y, double yp,
+				  double momentum, double time)
+{
+
+  coordinates[0] = x;
+  coordinates[1] = xp;
+  coordinates[2] = y;
+  coordinates[3] = yp;
+  coordinates[4] = momentum;
+  coordinates[5] = time;
+  npart++;
+
+  if (setNewOffset)
+    {
+      offsets = coordinates;
+      setNewOffset = false;
+    }
+
+  // power sums
+  for(int a=0;a<6;++a)
+    {
+      for(int b=0;b<6;++b)
+	{
+	  for (int j = 0; j <= 4; ++j)
+	    {
+	      for (int k = 0; k <= 4; ++k)
+		{
+                powSums[a][b][j][k] +=
+                    std::pow(coordinates[a] - offsets[a], j)
+		  * std::pow(coordinates[b] - offsets[b], k);
+                }
+	    }
+	}
+    }
+}
+
+  
+
 std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
 					       bool useEmittanceFromFirstSampler)
 {

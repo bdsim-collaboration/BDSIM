@@ -28,21 +28,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class TRKOctupole: public TRKElement
 {  
 public:
-  TRKOctupole(double        strength,
-	      std::string   name,
+  TRKOctupole() = delete;
+  TRKOctupole(std::string   name,
 	      double        length,
-	      TRKAperture  *aperture,
-	      TRKPlacement *placement);
-  virtual ~TRKOctupole();
+	      double        k3,
+	      TRKAperture*  aperture,
+	      TRKPlacement* placement);
+  void Track(TRKParticle& particle, double step, TRKStrategy* strategy) override;
 
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
-
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
+  double GetK3() const { return k3; }
 
 private:
-  TRKOctupole(); ///< not implemented
+  double k3;
 };
 
 #endif

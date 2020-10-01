@@ -24,9 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKTiltOffset.hh"
 #include "vector3.hh"
 #include "vector6.hh"
-
-extern BDSOutputBase* trkOutput;
-
+#include "TRKParticle.hh"
 
 void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 				       double nominalEnergyIn)
@@ -37,6 +35,7 @@ void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 
 void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle& particle)
 {
+  return;
   double offsetX = el->GetOffsetX();
   double offsetY = el->GetOffsetY();
   particle.x -= offsetX;

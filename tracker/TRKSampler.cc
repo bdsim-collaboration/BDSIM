@@ -17,34 +17,27 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <string>
-#include <iostream>
 #include <memory>
 
-#include "TRKOutput.hh"
+#include "OpticsAccumulator.hh"
+#include "EventOutput.hh"
 #include "TRKSampler.hh"
 #include "TRKStrategy.hh"
 
+#include "analysis/SamplerAnalysis.hh"
+
 TRKSampler::TRKSampler(std::string nameIn,
 		       int         indexIn,
-		       std::shared_ptr<TRKOutput> outputIn,
-		       double sIn):
-  TRKElement(nameIn+"_sampler",0,nullptr,nullptr),
+		       double sIn,
+		       std::shared_ptr<trk::EventOutput> eventOutputIn):
+  TRKElement(nameIn),
   index(indexIn),
-  output(std::move(outputIn)),
-  s(sIn)
-{;}
+  s(sIn),
+  eventOutput(std::move(eventOutputIn))
+{}
 
-void TRKSampler::Track(TRKParticle &particle, double /*step*/,
-                       TRKStrategy * /*strategy*/) {
-  output->RecordSamplerHit(index,
-			   particle,
-			   1, // turn
-			   s);
-}
-
-bool TRKSampler::OutsideAperture(TRKParticle const &) const { return false; }
-
-void TRKSampler::Print(std::ostream &out) const
-{
-  out << "Sampler: " << name << " ";
+void TRKSampler::Track(TRKParticle &particle, double, TRKStrategy *) {
+  eventOutput->RecordSamplerHit(index, particle,
+				1, // turn
+				s);
 }

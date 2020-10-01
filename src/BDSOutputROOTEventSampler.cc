@@ -182,12 +182,13 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKParticle& particle, double sIn)
 
     n++;
     x.push_back(particle.x / CLHEP::m);
-    // std::cout << particle.x / CLHEP::m << "\n";
-    xp.push_back((p0 / momentum) * particle.px / CLHEP::rad);
     y.push_back(particle.y / CLHEP::m);
-    yp.push_back((p0 / momentum) * particle.py / CLHEP::rad);
-    z = particle.z / CLHEP::m;
-    zp.push_back(zp_);
+    z = 0.0;
+    auto xp_ = (p0 / momentum) * particle.px / CLHEP::rad;
+    auto yp_ = (p0 / momentum) * particle.py / CLHEP::rad;
+    xp.push_back(xp_);
+    yp.push_back(yp_);
+    zp.push_back(std::sqrt(1 - xp_*xp_ - yp_*yp_) / CLHEP::rad);
 
     weight.push_back(1);
 

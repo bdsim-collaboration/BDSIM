@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKElement.hh"
 #include "TRKLine.hh"
 #include "TRKLineUtils.hh"
-#include "TRKOutput.hh"
+#include "EventOutput.hh"
 #include "TRKParticle.hh"
 #include "TRKStrategy.hh"
 #include "VariableStepTracker.hh"
@@ -47,7 +47,7 @@ namespace trk {
 VariableStepTracker::VariableStepTracker(TRKLine*       lineIn,
 					 TRKStrategy*   strategyIn,
 					 const GMAD::Options& options,
-					 std::shared_ptr<TRKOutput> outputIn):
+					 std::shared_ptr<EventOutput> outputIn):
   line(lineIn), strategy(strategyIn),
   maxTurns(options.nturns),
   useaperture(options.useAperture),

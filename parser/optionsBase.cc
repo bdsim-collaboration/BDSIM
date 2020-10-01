@@ -330,6 +330,7 @@ OptionsBase::OptionsBase()
   useAperture              = true;
   backtracking             = true;
   lossPrecision            = 0.1; // m
+  trackerOptics            = true;
 }
 
 

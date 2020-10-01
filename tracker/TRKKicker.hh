@@ -28,33 +28,25 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 class TRKKicker: public TRKElement
 {
-private: 
-  /// bending angle in rad
-  double angle;
-  double k1;
 
 public:
-  TRKKicker(double        hkick,
-	   double        vkick,
-	   std::string   name,
-	   double        length,
-	   TRKAperture  *aperture,
-	   TRKPlacement *placement);
-  virtual ~TRKKicker();
+  TRKKicker() = delete;
+  TRKKicker(std::string   name,
+	    double        length,
+	    double        hkick,
+	    double        vkick,
+	    TRKAperture  *aperture,
+	    TRKPlacement *placement);
+  void Track(TRKParticle &particle, double step,
+             TRKStrategy *strategy) override;
 
   double GetHKick() const { return hkick; }
   double GetVKick() const { return vkick; }
-
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
   
-protected:
-  /// output stream
-  virtual void Print(std::ostream& out) const;
 
 private:
   double hkick;
   double vkick;
-  TRKKicker(); ///< not implemented
 };
 
 #endif

@@ -365,6 +365,7 @@ namespace GMAD
     bool        useAperture;
     bool        backtracking;
     double      lossPrecision;
+    bool        trackerOptics;
 
     /// print some properties
     void print() const;

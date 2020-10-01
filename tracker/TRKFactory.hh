@@ -25,8 +25,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/fastlist.h"
 
-class TRKOutput;
+
 class BDSParticleDefinition;
+
+namespace trk
+{
+  class EventOutput;
+  class OpticsAccumulator;
+}
 
 namespace GMAD
 {
@@ -42,6 +48,8 @@ class TRKAperture;
 class TRKLine;
 class TRKPlacement;
 class TRKStrategy;
+class TRKOpticsSampler;
+
 
 /**
  * @brief factory to create beamline elements
@@ -52,8 +60,9 @@ class TRKFactory
  public:
   TRKFactory(const GMAD::Options&   options,
 	     BDSParticleDefinition* particle,
-	     std::shared_ptr<TRKOutput> outputIn);
-
+	     std::shared_ptr<trk::EventOutput> = nullptr,
+	     std::shared_ptr<trk::OpticsAccumulator> = nullptr);
+  ~TRKFactory();
   TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
 
@@ -75,16 +84,14 @@ private:
   TRKElement* CreateSextupole(GMAD::Element& element);
   TRKElement* CreateOctupole(GMAD::Element& element);
   TRKElement* CreateDecapole(GMAD::Element& element);
-  TRKElement* CreateSolenoid(GMAD::Element& element);
   TRKElement* CreateKicker(GMAD::Element& element);
   TRKElement* CreateHKicker(GMAD::Element& element);
   TRKElement* CreateVKicker(GMAD::Element& element);
   
-  //TRKElement* CreateMultipole(GMAD::Element& element);
-  //TRKElement* CreateGmadElement(GMAD::Element& element);
   TRKElement* CreateSampler(std::string name, int samplerIndex, double s);
   TRKElement* CreateSampler(GMAD::Element& element, double s);
-  //TRKElement* CreateTransform3D(GMAD::Element& element);
+  TRKElement* CreateOpticsSampler(const GMAD::Element &element, int analysesIndex,
+					double s);
 
   /// set common properties
   void AddCommonProperties(TRKElement* trkel, GMAD::Element& el);
@@ -92,7 +99,8 @@ private:
   BDSParticleDefinition* particle;
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
-  std::shared_ptr<TRKOutput> output;
+  std::shared_ptr<trk::EventOutput> eventOutput;
+  std::shared_ptr<trk::OpticsAccumulator> optics;
 
   /// global placement position
   TRKPlacement* placement;
@@ -107,6 +115,8 @@ private:
   int   trackingsteps;
   
   bool   useaperture;
+
+
 };
 
 #endif
