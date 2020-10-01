@@ -111,7 +111,6 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeApertureImpacts       = g->StoreApertureImpacts();
   storeApertureImpactsHistograms = storeApertureImpacts || g->StoreApertureImpactsHistograms() ||
     g->StoreApertureImpactsAll() || g->StoreApertureImpactsIons();
-  storePrimaries             = g->StorePrimaries();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
