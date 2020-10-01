@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSTrajectoryFilter.hh"       // no G4 types and for size of filters
 #include "BDSVersion.hh"
+#include "BDSVersionData.hh"
 
 #include "G4Version.hh"
 
@@ -48,8 +49,7 @@ void BDSOutputROOTEventHeader::FlushLocal()
   clhepVersion  = CLHEP::Version::String();
   timeStamp     = "";
   fileType      = "BDSIM";
-  dataVersion   = 5; // update analysis/DataLoader.cc default when this changes
-  // also in comparator/Compare.cc at top - EXPECTEDDATAVERSION
+  dataVersion   = BDSIM_DATA_VERSION;
   analysedFiles.clear();
   combinedFiles.clear();
   nTrajectoryFilters = BDS::NTrajectoryFilters;

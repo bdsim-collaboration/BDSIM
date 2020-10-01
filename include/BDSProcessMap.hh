@@ -45,7 +45,7 @@ public:
   {return operator()(type, subType);}
 
 private:
-  /// Private default constructor as singelton pattern.
+  /// Private default constructor as singleton pattern.
   BDSProcessMap();
 
   /// Singleton instance
