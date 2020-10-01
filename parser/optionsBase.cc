@@ -242,6 +242,8 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  storeApertureImpacts       = true;
+  storeApertureImpactsHistograms = true;
   apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
@@ -266,9 +268,12 @@ OptionsBase::OptionsBase()
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
   storeParticleData          = true;
+  storePrimaries             = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 0;
+  storeTrajectoryStepPoints      = 0;
+  storeTrajectoryStepPointLast   = false;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
@@ -293,7 +298,6 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   
-  writePrimaries           = true;
   storeModel               = true;
 
   // circular options

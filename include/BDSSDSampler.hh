@@ -44,7 +44,7 @@ class BDSSDSampler: public BDSSensitiveDetector
 { 
 public:
   /// Construct a sampler with name and type (plane/cylinder).
-  explicit BDSSDSampler(G4String name);
+  explicit BDSSDSampler(const G4String& name);
   virtual ~BDSSDSampler();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with

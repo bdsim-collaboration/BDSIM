@@ -371,6 +371,7 @@ void Options::PublishMembers()
   publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
+  publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
@@ -412,11 +413,13 @@ void Options::PublishMembers()
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeParticleData",              &Options::storeParticleData);
-  publish("storeGeant4Data",                &Options::storeParticleData);
-  
+  publish("storePrimaries",                 &Options::storePrimaries);
+  publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryStepPoints",          &Options::storeTrajectoryStepPoints);
+  publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
@@ -432,6 +435,7 @@ void Options::PublishMembers()
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
+  publish("storeSamplerPolarCoordinates",   &Options::storeSamplerPolarCoords); ///< alternative
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
   publish("storeSamplerKineticEnergy",      &Options::storeSamplerKineticEnergy);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
@@ -442,8 +446,7 @@ void Options::PublishMembers()
   publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
-
-  publish("writePrimaries",                 &Options::writePrimaries);
+  
   publish("storeModel",                     &Options::storeModel);
 
   // circular options
