@@ -34,6 +34,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/BDSIMTargets.cmake")
 find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED CONFIG)
 include(${ROOT_USE_FILE})
 
-set(BDSIM_LIBRARIES bdsim gmad rebdsim bdsimRootEvent)
+set(BDSIM_LIBRARIES gmadShared bdsim rebdsim bdsimRootEvent)
 
 check_required_components(bdsim)
