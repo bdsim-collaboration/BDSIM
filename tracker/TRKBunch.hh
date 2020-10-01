@@ -41,10 +41,12 @@ namespace GMAD
 class TRKBunch
 {
 public:
+  TRKBunch();
   TRKBunch(const GMAD::Beam& beam,
 	   BDSParticleDefinition* particle,
 	   long int nGenerate = 1);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
+  TRKBunch(std::vector<TRKParticle>&& particleVectorIn);
   ~TRKBunch();
 
   typedef std::vector<TRKParticle>::iterator iterator;
@@ -55,6 +57,7 @@ public:
   const_iterator end()    const {return bunch.end();}
   int            size()   const {return bunch.size();}
   bool           empty()  const {return bunch.empty();}
+
 
   /// erase method, returns iterator to element
   iterator Erase(iterator iter) {return bunch.erase(iter);}
@@ -70,8 +73,6 @@ public:
 
   
 private:
-  TRKBunch(); /// bunch must be instantiated with a number of particles
-
   long int population;
   std::vector <TRKParticle> bunch;
 

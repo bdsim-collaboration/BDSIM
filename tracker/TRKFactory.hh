@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/fastlist.h"
 
-class BDSOutput;
+class TRKOutput;
 class BDSParticleDefinition;
 
 namespace GMAD
@@ -52,7 +52,7 @@ class TRKFactory
  public:
   TRKFactory(const GMAD::Options&   options,
 	     BDSParticleDefinition* particle,
-	     BDSOutput*             outputIn);
+	     std::shared_ptr<TRKOutput> outputIn);
 
   TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
@@ -76,44 +76,37 @@ private:
   TRKElement* CreateOctupole(GMAD::Element& element);
   TRKElement* CreateDecapole(GMAD::Element& element);
   TRKElement* CreateSolenoid(GMAD::Element& element);
-  TRKElement *CreateKicker(GMAD::Element& element);
-  TRKElement *CreateHKicker(GMAD::Element& element);
-  TRKElement *CreateVKicker(GMAD::Element& element);
+  TRKElement* CreateKicker(GMAD::Element& element);
+  TRKElement* CreateHKicker(GMAD::Element& element);
+  TRKElement* CreateVKicker(GMAD::Element& element);
   
   //TRKElement* CreateMultipole(GMAD::Element& element);
   //TRKElement* CreateGmadElement(GMAD::Element& element);
+  TRKElement* CreateSampler(std::string name, int samplerIndex, double s);
   TRKElement* CreateSampler(GMAD::Element& element, double s);
   //TRKElement* CreateTransform3D(GMAD::Element& element);
 
   /// set common properties
   void AddCommonProperties(TRKElement* trkel, GMAD::Element& el);
 
+  BDSParticleDefinition* particle;
   /// Cache of main output so samplers can be constructed with this
   /// output instance.
-  BDSOutput* output;
-  
-  /// particle properties
-  int charge;
-  /// beam momentum in GeV
-  double momentum;
-  double energy;
-  double brho;
+  std::shared_ptr<TRKOutput> output;
 
   /// global placement position
   TRKPlacement* placement;
   
-  /// circular flag
+  int ngenerate;
+  int nturns;
   bool circular;
+
   
   /// tracking strategy
   TRK::Strategy strategy;
   int   trackingsteps;
   
-  /// aperture
-  TRKAperture* defaultaperture; /// default aperture
-  TRK::Aperture aperturetype;   /// enum of aperture type
-  double beampiperadius;
-  bool   dontuseaperture;
+  bool   useaperture;
 };
 
 #endif

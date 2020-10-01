@@ -243,6 +243,11 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
     }
 }
 
+void BDSOutput::FillPrimary(const TRKParticle& p, double s)
+{
+  primary->Fill(p, s);
+}
+
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 				     const BDSParticleDefinition*       particle)
 {
@@ -627,7 +632,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 }
 
 void BDSOutput::FillSamplerHitsTracker(G4int samplerIndex,
-				       TRKParticle& particle,
+				       TRKParticle const& particle,
 				       double s)
 {
   samplerTrees[samplerIndex + 1]->Fill(particle, s);

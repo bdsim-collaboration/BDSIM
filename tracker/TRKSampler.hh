@@ -19,11 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TRKSampler_h
 #define TRKSampler_h
 
+#include <memory>
+
 #include "TRKElement.hh"
 #include "TRKStrategy.hh"
 #include "TRKBunch.hh"
 
-class BDSOutput;
+class TRKOutput;
 
 /**
  * @brief sampler class - output from tracker
@@ -34,21 +36,23 @@ class TRKSampler: public TRKElement
 public:
   TRKSampler(std::string nameIn,
 	     int         indexIn,
-	     BDSOutput*  outputIn,
+	     std::shared_ptr<TRKOutput> outputIn,
 	     double s);
   virtual ~TRKSampler(){;}
 
-  virtual void Track(TRKParticle& particle, double step, TRKStrategy* /*strategy*/);
+  virtual void Track(TRKParticle &particle, double step,
+                     TRKStrategy*) override;
+  bool OutsideAperture(TRKParticle const &p) const override;
 
 protected:
   /// output stream
-  virtual void Print(std::ostream& out) const;
-  
+  void Print(std::ostream& out) const override;
+
 private:
   TRKSampler(); ///< not implemented
 
   int        index;
-  BDSOutput* output;
+  std::shared_ptr<TRKOutput> output;
   double s;
 };
 

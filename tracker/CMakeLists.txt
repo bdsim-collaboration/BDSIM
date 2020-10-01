@@ -20,7 +20,7 @@ target_link_libraries(tracker bdsim gmad)
 
 set(trackerName "tracker")
 
-add_executable(trackerexec tracker.cc)
+add_executable(trackerexec main.cc)
 set_target_properties(trackerexec
   PROPERTIES
   OUTPUT_NAME "${trackerName}"

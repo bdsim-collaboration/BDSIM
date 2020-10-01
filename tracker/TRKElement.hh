@@ -45,15 +45,16 @@ public:
 
   /// track method, visitor pattern
   virtual void Track(TRKParticle& particle, double step, TRKStrategy* strategy);
+  virtual void Track(TRKBunch*  bunch, double step, TRKStrategy* strategy);
+  virtual bool OutsideAperture(TRKParticle const &) const;
   TRKBunch* CheckAperture(TRKBunch* bunch);
-  // for when no aperture is used - we have to copy after state to before / confirm coordinates
-  void ConfirmCoordinates(TRKBunch* bunch);
 
   inline std::string  GetName()     const {return name;}
   inline double       GetLength()   const {return length;}
   inline double       GetStrength() const {return strength;}
   inline TRKAperture* GetAperture() const {return aperture;}
-  
+
+
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 

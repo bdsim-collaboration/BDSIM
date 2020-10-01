@@ -29,19 +29,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TRKApertureEllipsoidal.hh"
 #include "TRKApertureRectangular.hh"
 #include "TRKDecapole.hh"
+#include "TRKDipoleFringe.hh"
 #include "TRKElement.hh"
+#include "TRKElementLine.hh"
 #include "TRKFactory.hh"
 #include "TRKKicker.hh"
 #include "TRKLine.hh"
 #include "TRKOctupole.hh"
+#include "TRKOutput.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKRBend.hh"
 #include "TRKSBend.hh"
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
-#include "TRKDipoleFringe.hh"
-#include "TRKElementLine.hh"
 
 //tracking strategies / routines
 #include "TRK.hh"
@@ -61,51 +62,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(const GMAD::Options&   options,
-		       BDSParticleDefinition* particle,
-		       BDSOutput*             outputIn):
-  output(outputIn)
+		       BDSParticleDefinition* particleIn,
+		       std::shared_ptr<TRKOutput> outputIn):
+  particle(particleIn),
+  output(std::move(outputIn)),
+  placement(nullptr),
+  ngenerate(options.nGenerate),
+  nturns(options.nturns),
+  circular(nturns > 1),
+  strategy(SetStrategyEnum(options.trackingType)),
+  trackingsteps(options.trackingSteps),
+  useaperture(options.useAperture)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
-#endif
-  // define charge and momentum from options
-  charge   = particle->Charge();
-  momentum = particle->Momentum();
-  energy   = particle->TotalEnergy();
-  brho     = particle->BRho();
-
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << "Rigidity (Brho) : " << brho/(CLHEP::tesla*CLHEP::m) << " T*m" << std::endl;
-  std::cout << "ffact    : " << options.ffact << std::endl;
-  std::cout << "momentum : " << momentum << " GeV" << std::endl;
-  std::cout << "charge   : " << charge << std::endl;
-#endif
-
-  /// start placement, could be updated after every new element
-  placement = nullptr;//new TRKPlacement();
-
-  //pull out info from options
-  strategy        = SetStrategyEnum(options.trackingType);
-  // aperturetype    = SetApertureEnum(options.apertureType);
-  // beampiperadius  = options.aper1;
-  trackingsteps   = options.trackingSteps;
-  defaultaperture = new TRKApertureCircular(beampiperadius);
-  dontuseaperture = options.dontUseAperture;
-  if (options.nturns > 1)
-    {circular = true;}
-  else
-    {circular = false;}
 }
 
 std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
 {
   out << "TRKFactory Instance - details:"                      << std::endl
       << "Tracking Strategy (enum): " << factory.strategy         << std::endl
-      << "Aperture Type:            " << factory.aperturetype     << std::endl
-      << "Beam Pipe Radius (m):     " << factory.beampiperadius   << std::endl
       << "Tracking Steps:           " << factory.trackingsteps    << std::endl
-      << "Default Aperture Type:    " << *factory.defaultaperture << std::endl
-      << "Don't Use Aperture:       " << factory.dontuseaperture;
+      << "Use Aperture:             " << factory.useaperture;
   return out;
 }
 
@@ -142,7 +118,8 @@ TRKStrategy* TRKFactory::CreateStrategy()
       {break;}
     }
   if (result)
-    {result->SetMomentumAndEnergy(momentum, energy);}
+    {result->SetMomentumAndEnergy(particle->Momentum(),
+				  particle->TotalEnergy());}
   return result;
 }
 
@@ -166,10 +143,14 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
   //possible. it will just default to the general kind.
   //default case = aperturetype
 
-  if (dontuseaperture)
-    {return NULL;} //no aperture at all - will never be check with this setting so no seg fault
+  if (useaperture)
+    {
+      return new TRKApertureCircular(element.aper1 * CLHEP::m);
+    }
   else
-    {return new TRKApertureCircular(element.aper1);}
+    {
+      return NULL;  //no aperture at all - will never be check with this setting so no seg fault
+    }
   /*
     // THIS SHOULD BE FIXED GIVEN THE NEW APERTURE MODELS AVAILABLE
   else if ((element.aperX != 0) && (element.aperY !=0)) {
@@ -192,8 +173,6 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
 TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list)
 {
   TRKLine* line = new TRKLine("beamline",circular);
-  // Quick fix to get Primary branch filled.  index=-1 being key here.
-  line->AddElement(new TRKSampler("primaries", -1, output, 0.0));
   auto s = 0.0;
   for (auto it : beamline_list)
     {
@@ -360,7 +339,7 @@ TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
     //    element.ks  = (bField/brho) / CLHEP::m;
   }
   else{
-    bField = (element.ks/CLHEP::m) * brho;
+    bField = (element.ks/CLHEP::m) * particle->BRho();
     //    element.B = bField/CLHEP::tesla;
   }
 
@@ -414,7 +393,13 @@ TRKElement* TRKFactory::CreateSampler(GMAD::Element& element, double s)
 {
   std::string name = element.name;
   int samplerIndex = BDSSamplerRegistry::Instance()->RegisterSampler(name, nullptr);
+  return CreateSampler(name, samplerIndex, s);
+}
+
+TRKElement* TRKFactory::CreateSampler(std::string name, int samplerIndex,
+				      double s) {
   TRKElement* result = new TRKSampler(name, samplerIndex, output, s);
+  output->PushBackSampler(name, nturns * ngenerate);
   return result;
 }
 

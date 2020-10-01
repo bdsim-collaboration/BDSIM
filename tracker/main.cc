@@ -19,16 +19,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/beam.h"
 #include "parser/options.h"
 
+#include "tracker/TRKOutput.hh"
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
-#include "tracker/TRKTracker.hh"
+#include "tracker/FixedStepTracker.hh"
+#include "tracker/VariableStepTracker.hh"
+#include "tracker/TrackerUtils.hh"
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
-#include "BDSOutputFactory.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
@@ -60,9 +62,7 @@ int main (int argc, char** argv)
   const GMAD::Options& options = BDSParser::Instance()->GetOptions();
   const GMAD::Beam&    beam    = BDSParser::Instance()->GetBeam();
 
-  /// Initialise output
-  BDSOutput* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
-						     globalConstants->OutputFileName());
+  auto output = std::make_shared<TRKOutput>(globalConstants->OutputFileName());
 
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
@@ -91,49 +91,25 @@ int main (int argc, char** argv)
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
-  /// Check the element lookup works
-//  std::cout << ">>> Checking s-lookup" << std::endl;
-//  double s = 4*CLHEP::m;
-//  TRKElement* el = beamline->FindElement(s);
-//  if (el)
-//  {
-//      std::cout << "Element at s= " << s << " is: " << el->GetName() << std::endl;
-//  }
-//  else
-//  {
-//      std::cout << "Element at s= " << s << " is out of bounds for beamline" << std::endl;
-//  }
-
-  /// Check S-allocation in bunch generation
-//    std::cout << ">>> Checking s-coordinates of particles" << std::endl;
-//  for (const auto& p : *bunch){
-//      std::cout << p.getS() << std::endl;
-//  }
-
   /// Get the mass of the particle
   std::cout << "Mass: " << bunch->mass << std::endl;
 
-  /// Write primaries to output file
-  output->InitialiseGeometryDependent();
   output->NewFile();
-  output->FillModel();
-  output->FillBeam(BDSParser::Instance()->GetBeamBase());
-  output->WriteTrackerBunch("primaries",bunch,true);
+  output->WritePrimaries(bunch);
 
   /// Build tracker
-  TRKTracker tracker(beamline,strategy,options,output);
+  auto tracker = trk::CreateTracker(beamline, strategy, options, output);
 
   //run tracking - all output through bdsim / samplers
-  tracker.Track(bunch);
-
+  tracker->Track(bunch);
+  output->WriteEvents();
   output->CloseFile();
 
-  // free memory (good code test)
+  // // free memory (good code test)
   delete designParticle;
   delete beamParticle;
   delete factory;
   delete bunch;
-  delete output;
 
   //done
   return 0;

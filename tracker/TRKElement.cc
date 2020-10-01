@@ -59,6 +59,17 @@ void TRKElement::Track(TRKParticle& particle, double step, TRKStrategy* strategy
 
 }
 
+void TRKElement::Track(TRKBunch *bunch, double step, TRKStrategy *strategy) {
+  std::for_each(bunch->begin(), bunch->end(),
+                [this, step, &strategy](TRKParticle &particle) {
+		  this->Track(particle, step, strategy);
+                });
+}
+
+bool TRKElement::OutsideAperture(TRKParticle const &p) const {
+  return GetAperture()->OutsideAperture(p);
+}
+
 TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
 {
   //use member instance of Aperture strategy called aperture
@@ -66,13 +77,6 @@ TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
     {return aperture->CheckAperture(bunch);}
   else
     {return nullptr;}
-}
-
-void TRKElement::ConfirmCoordinates(TRKBunch* bunch)
-{
-  //in case we don't use aperture, we still have to confirm coordinates
-  for (auto& particle : *bunch)
-    {particle.ConfirmNewCoordinates();}
 }
 
 void TRKElement::SetOffset(double x, double y)
