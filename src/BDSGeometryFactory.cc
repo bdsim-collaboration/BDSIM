@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
@@ -86,9 +87,10 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     }
 }
 
-BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
-						       G4String  formatAndFileName,
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componentName,
+						       const G4String&  formatAndFileName,
 						       std::map<G4String, G4Colour*>* colourMapping,
+						       G4bool                 autoColour,
 						       G4double               suggestedLength,
 						       G4double               suggestedHorizontalWidth,
 						       std::vector<G4String>* namedVacuumVolumes,
@@ -105,14 +107,14 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String  componentName,
 
   // Check the file exists.
   if (!BDS::FileExists(fileName))
-    {G4cerr << __METHOD_NAME__ << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+    {throw BDSException(__METHOD_NAME__, "No such file \"" + fileName + "\"");}
   
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
   BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);
   if (!factory)
     {return nullptr;}
   
-  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping,
+  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping, autoColour,
 					       suggestedLength, suggestedHorizontalWidth,
 					       namedVacuumVolumes);
   

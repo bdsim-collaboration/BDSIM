@@ -42,10 +42,16 @@ public:
 			  G4double    yAperture    = 0,
 			  G4double    xOutAperture = 0,
 			  G4double    yOutAperture = 0,
-			  G4Colour*   colour         = nullptr);
+			  G4Colour*   colour         = nullptr,
+			  G4bool      circularOuter = false);
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();
+
+protected:
+  /// Check and update parameters before construction. Called at the start of Build() as
+  /// we can't call a virtual function in a constructor.
+  virtual void CheckParameters();
 
 private:
   /// Private default constructor to force the use of the supplied one.

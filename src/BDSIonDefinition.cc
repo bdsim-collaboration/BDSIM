@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <regex>
 #include <stdexcept>
 
-BDSIonDefinition::BDSIonDefinition(G4String definition):
+BDSIonDefinition::BDSIonDefinition(const G4String& definition):
   a(1),
   z(1),
   charge(1),
@@ -57,7 +57,7 @@ std::ostream& operator<< (std::ostream& out, BDSIonDefinition const& io)
 
 void BDSIonDefinition::Parse(const G4String& definition)
 {
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace("\\s+"); // any whitespace
   
   // A Z Q E
   G4int counter = 0;

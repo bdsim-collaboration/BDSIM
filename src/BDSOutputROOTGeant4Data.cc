@@ -195,7 +195,7 @@ int BDSOutputROOTGeant4Data::IonZ(const int& pdgID) const
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
+void BDSOutputROOTGeant4Data::Fill(G4bool fillIons)
 {
   G4ParticleTable* pt = G4ParticleTable::GetParticleTable();
 

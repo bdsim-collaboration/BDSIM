@@ -9,6 +9,7 @@ Things to update immediately before a release  (i.e. from a release candidate br
 2. CMakeLists.txt - change major, minor and patch version at the very top.
 
 For each submodule:
+
     * Update version in setup.py.
     * Update version in setup.cfg.
     * Update version in docs/source/conf.py in two places.
@@ -26,8 +27,8 @@ For each submodule:
    header structure.
    
    * Check data version in :code:`configuration/BDSVersionData.hh`.
-   * Regenerate data samples in :code:`examples/features/data/`.
-   * Regenerate data sample :code:`examples/features/beam/userfile-sample.root`.
+   * Regenerate data samples in :code:`examples/features/data/` using regenerateSamples.sh
+   * Regenerate data sample :code:`examples/features/beam/userfile/userfile-sample.root` using regenerateUserFileSample.sh.
 
 
 6. Update version history (including submodule and data versions) in
@@ -40,12 +41,13 @@ For each submodule:
 
 7. If BDSColours has changed, run BDSIM with DEBUGOUTPUT build and copy print out of
    colours to manual (already in correct format).
-8. Regenerate BDSIM manual and commit new version. Upload to website.
-9. Merge release candidate branch back into develop.
-10. In develop, put back README, CMakeLists.txt to new version.develop.
-11. Merge release candidate branch into master then delete.
-12. Check all tests complete locally given merge before pushing.
-13. Tag master branch for version number.
+8. Check that the build (in ccmake) has USE_SPHINX_GOOGLE set to on. 
+9. Regenerate BDSIM manual and commit new version. Upload to website.
+10. Merge release candidate branch back into develop.
+11. In develop, put back README, CMakeLists.txt to new version.develop.
+12. Merge release candidate branch into master then delete.
+13. Check all tests complete locally given merge before pushing.
+14. Tag master branch for version number.
 
 
 Change Of Year or Licence

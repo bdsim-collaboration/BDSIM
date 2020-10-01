@@ -48,7 +48,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <stdexcept>
 #include <utility>
-#include <vector>
 
 BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
@@ -69,8 +68,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   numberToGenerate = G4int(options.nGenerate);
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
+  curvilinearDiameter = 5*CLHEP::m;
+  curvilinearDiameterShrunkForBends = false;
 
-  // beampipe
+  // beam pipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,
 					     options.aper2 * CLHEP::m,
@@ -87,7 +88,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" " << horizontalWidth
 	     << " must be greater than 2x (\"aper1\" + \"beamPipeThickness\") ("
 	     << defaultBeamPipeModel->aper1 << " + " << defaultBeamPipeModel->beamPipeThickness << ")" << G4endl;
-      exit(1);
+      throw BDSException(__METHOD_NAME__,"error in beam pipe defaults");
     }
   magnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
@@ -209,7 +210,7 @@ G4int BDSGlobalConstants::PrintModuloEvents() const
     {printModulo = 1;}
 
   if (!Batch())
-    {printModulo = 1;} // interative -> print every event
+    {printModulo = 1;} // interactive -> print every event
   return printModulo;
 }
 
@@ -222,7 +223,7 @@ G4int BDSGlobalConstants::PrintModuloTurns() const
     {printModulo = 1;}
 
   if (!Batch())
-    {printModulo = 1;} // interative -> print every turn
+    {printModulo = 1;} // interactive -> print every turn
   return printModulo;
 }
 

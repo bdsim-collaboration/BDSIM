@@ -48,15 +48,17 @@ public:
 
   /// Constructor with extent in only local frame + transform. We use only the
   /// G4Transform3D to avoid ambiguity about active or passive transforms.
-  BDSExtentGlobal(const BDSExtent&     extentIn,
-		  const G4Transform3D& transformIn);
+  explicit BDSExtentGlobal(const BDSExtent&     extentIn,
+		  const G4Transform3D& transformIn = G4Transform3D::Identity);
 
   /// Constructor with extents already in global frame. The transform here is the
   /// transform that the points were created with respect to. It is not applied to the points.
+  /*
   BDSExtentGlobal(G4double extXNegIn, G4double extXPosIn,
 		  G4double extYNegIn, G4double extYPosIn,
 		  G4double extZNegIn, G4double extZPosIn,
 		  const G4Transform3D& transformIn);
+  */
 	    
   virtual ~BDSExtentGlobal();
 

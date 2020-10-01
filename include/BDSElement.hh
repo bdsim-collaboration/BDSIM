@@ -43,7 +43,8 @@ public:
 	     G4double horizontalWidthIn,
 	     G4String geometry,
 	     G4double angle                              = 0,
-	     std::vector<G4String>* namedVacuumVolumesIn = nullptr);
+	     std::vector<G4String>* namedVacuumVolumesIn = nullptr,
+	     G4bool   autoColourGeometryIn               = true);
   virtual ~BDSElement(){;}
 
   // This is a little convoluted because ultimately we can't change the
@@ -62,6 +63,7 @@ public:
   virtual std::map<G4LogicalVolume*, BDSSDType> GetAllSensitiveVolumes() const;
   virtual std::set<G4LogicalVolume*>   GetAllBiasingVolumes()   const;
   virtual void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
+  virtual void AttachSensitiveDetectors();
   /// @}
    
 private:
@@ -79,6 +81,7 @@ private:
   G4double horizontalWidth;
   G4String geometryFileName;
   std::vector<G4String> namedVacuumVolumes;
+  G4bool   autoColourGeometry;
 
   /// Cache of the constructed geometry.  Used to forward onto various BDSGeometryComponent functions.
   BDSGeometryExternal* geometry;

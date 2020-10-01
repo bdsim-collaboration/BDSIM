@@ -1,8 +1,12 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0042 NEW)
+cmake_policy(SET CMP0057 NEW)
 if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GenerateExportHeader)
 
@@ -42,7 +46,7 @@ include(cmake/CompilerBuildFlags.cmake)
 # Check if compiler is compatible
 include(cmake/CompilerCheck.cmake)
 
-# Check AFS and OS
+# Identify operating system
 include(cmake/SystemCheck.cmake)
 
 # Regression testing flag
@@ -74,8 +78,8 @@ include(cmake/ROOT.cmake)
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
-    add_definitions("-DUSE_GDML")
-    message(STATUS "GDML support ON")
+  add_definitions("-DUSE_GDML")
+  message(STATUS "GDML support ON")
 endif()
 
 # HEPMC3
@@ -84,8 +88,8 @@ include(cmake/HepMC.cmake)
 # Field double precision (off by default)
 option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
 if(FIELDDOUBLEPRECISION)
-    add_definitions("-DFIELDDOUBLE")
-    message(STATUS "Field double precision ON")
+  add_definitions("-DFIELDDOUBLE")
+  message(STATUS "Field double precision ON")
 endif()
 
 # Find GEANT4
@@ -110,10 +114,11 @@ include(root_test_macros)
 if (USE_HEPMC3)
   #TBC - need to test if we can just use this
   #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
-  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib;${HEPMC3_ROOT_DIR}/lib")
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib;${HEPMC3_ROOT_DIR}/lib;${ROOT_LIBRARY_DIR}")
   #message(STATUS "rpath = ${CMAKE_INSTALL_RPATH}")
 else()
-  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
+  set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib;${ROOT_LIBRARY_DIR}")
+  #message(STATUS "rpath = ${CMAKE_INSTALL_RPATH}")
 endif()
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
@@ -124,6 +129,7 @@ include(bdsim_install)
 
 # Before any linkages we define library names
 set(BDSIM_LIB_NAME "bdsim")
+set(BDSIM_LIB_NAME_STATIC "bdsim-static")
 
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
@@ -173,15 +179,22 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
 
 # BDSIM library and binaries
-add_library(${BDSIM_LIB_NAME} ${root_dicts} ${bdsim_sources} )
+option( BDSIM_BUILD_STATIC_LIBS "Build static BDSIM library."  OFF )
+if (BDSIM_BUILD_STATIC_LIBS)
+  add_library(${BDSIM_LIB_NAME_STATIC} STATIC ${root_dicts} ${bdsim_sources})
+  generate_export_header(${BDSIM_LIB_NAME_STATIC})
+endif()
+add_library(${BDSIM_LIB_NAME} SHARED ${root_dicts} ${bdsim_sources})
+target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
+target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
-target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
-target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
+
 if (USE_GZSTREAM)
   #preprocessor flag
   add_definitions("-DUSE_GZSTREAM")
@@ -223,7 +236,11 @@ add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
+if (BDSIM_BUILD_STATIC_LIBS)
+  set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
+else()
+  set(libraries ${BDSIM_LIB_NAME} bdsimRootEvent)
+endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
@@ -233,12 +250,13 @@ bdsim_install_headers(${headers} ${root_dicts_headers})
 include(CPack)
 
 option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+mark_as_advanced(BUILD_MACOSX_APP)
 
 if (BUILD_MACOSX_APP AND APPLE)
     # building a macos executablemaking a bundle of 
     add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-    target_link_libraries(bdsimapp bdsim gmad)
+    target_link_libraries(bdsimapp ${BDSIM_LIB_NAME} gmad)
     bdsim_install_bundle(bdsim)
 endif()
 

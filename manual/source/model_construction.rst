@@ -34,7 +34,7 @@ The overall program structure should follow:
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
 6) A beam definition (see :ref:`beam-parameters`)
 
-* Specifing and option or definition again, will overwrite the previous value.
+* Specifying and option or definition again, will overwrite the previous value.
 * The only **order specific** part is the **use** command (see :ref:`the-use-command`) as this
   copied whatever sequence is *used* at that point, so any further updates to the component
   definitions will not be observed.
@@ -137,6 +137,8 @@ The following elements may be defined
 * `crystalcol`_
 * `undulator`_
 * `transform3d`_
+* `rmatrix`_
+* `thinrmatrix`_
 * `element`_
 * `marker`_
 * `wirescanner`_
@@ -334,6 +336,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
@@ -469,6 +476,11 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this.
+
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
@@ -496,8 +508,8 @@ A few points about sbends:
    the option `includeFringeFields=0` (see :ref:`bdsim-options`).
 7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
    fringefield magnet.
-8) Sbends are limited in angle to less than :math:`2\pi`. If the sbends are not split with the option dontSplitSBends,
-   an sbend will be limited in angle to a maximum of :math:`\pi/2`.
+8) Sbends are limited in angle to less than :math:`2\pi`. If the sbends are not split with the
+   option :code:`dontSplitSBends`, an sbend will be limited in angle to a maximum of :math:`\pi/2`.
 9) A positive `tilt` angle corresponds to a clockwise rotation when looking along the beam direction as
    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
    positive bending angle will produce a vertical bend where the beam is bent downwards.
@@ -536,6 +548,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in :ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -556,7 +570,7 @@ sextupole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{2}B_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -570,6 +584,8 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+  as described in ref:`fields-multipole-outer-lhc`.
 
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
@@ -590,7 +606,7 @@ octupole
 
 .. math::
 
-   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
+   k_{3} = \frac{1}{B \rho}\,\frac{d^{3}B_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -623,7 +639,7 @@ decapole
 
 .. math::
 
-   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
+   k_{2} = \frac{1}{B \rho}\,\frac{d^{4}B_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 Parameter         Description                  Default     Required
@@ -651,7 +667,7 @@ multipole
 
 .. math::
 
-   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+   knl[n] = \frac{1}{B \rho} \frac{d^{n}B_{y}}{dx^{n}}\,[m^{-(n+1)}]
 
 starting with the **quadrupole** component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
@@ -714,13 +730,14 @@ to an increase in :math:`p_y` for a positively charged particle.
 .. warning:: :code:`vkick` will supercede the strength even if :code:`B` is specified. Therefore, the
 	     user should specify only :code:`vkick` or :code:`B`.
 
-In the case of a thick kicker, the resulting bending angle is calculated using:
+In the case of a thick vertical kicker, the resulting bending angle is calculated using:
 
 .. math::
 
-   \theta = \sin^{-1}(\,p_x)
+   \theta = \sin^{-1}(\,p_y),
 
-The dipole field strength is then calculated with respect to the chord length:
+where :math:`p_y` is the fractional change in vertical momentum. The dipole field strength is
+then calculated with respect to the chord length:
 
 .. math::
 
@@ -893,20 +910,22 @@ the edge effects are provided by default and are controllable with the option `i
   is also an rf cavity.
 * The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
   model is supplied, the cavity fringes are built with the same radius as the model iris radius.
-
-If `tOffset` is specified, a phase offset is calculated from this time for the **speed
-of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
-element is used to find the phase offset.
-
+* If `phase` is specified, this is added to the calculated phase offset from either the lattice
+  position or `tOffset`.
+* The step length in the cavity is limited for all particles to be 2.5% of the minimum
+  of the element length and the wavelength (given the frequency). In the case of 0 frequency,
+  only the length is considered. This is to ensure accurate numerical integration of the
+  motion through the varying field.
+* If `tOffset` is specified, a phase offset is calculated from this time for the **speed
+  of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
+  element is used to find the phase offset.
+* In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
+  used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
+  
 .. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
 	  only correct for already relativistic beams. Development is underway to improve
 	  this calculation for sub-relativistic beams.
 
-If `phase` is specified, this is added to the calculated phase offset from either the lattice
-position or `tOffset`.
-
-In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
-used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
 
 Simple examples: ::
 
@@ -939,23 +958,26 @@ rcol
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-+--------------------+------------------------------+--------------+---------------+
-| **Parameter**      | **Description**              | **Default**  | **Required**  |
-+====================+==============================+==============+===============+
-| `l`                | Length [m]                   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `xsize`            | Horizontal half aperture [m] | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `ysize`            | Half height of jaws [m]      | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | None         | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
++--------------------+-----------------------------------+----------------+---------------+
+| **Parameter**      | **Description**                   | **Default**    | **Required**  |
++====================+===================================+================+===============+
+| `l`                | Length [m]                        | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsize`            | Horizontal half aperture [m]      | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysize`            | Half height of jaws [m]           | 0              | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `material`         | Outer material                    | None           | Yes           |
++--------------------+-----------------------------------+----------------+---------------+
+| `horizontalWidth`  | Outer full width [m]              | 0.5 m          | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `xsizeOut`         | Horizontal exit half aperture [m] | `xsize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `ysizeOut`         | Vertical exit half aperture [m]   | `ysize` value  | No            |
++--------------------+-----------------------------------+----------------+---------------+
+| `colour`           | Name of colour desired for block  | ""             | No            |
+|                    | See :ref:`colours`.               |                |               |
++--------------------+-----------------------------------+----------------+---------------+
 
 Notes: 
 
@@ -991,12 +1013,12 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half-axes respectively.
+**half-axes** respectively.
 
 * A circular aperture collimator can be achieved by setting `xsize` and `ysize` to the
   same value.
 * When tapered, the ratio between the horizontal and vertical half-axes of the entrance
-  aperture must be the same ratio for the exit aperture.
+  aperture (`xsize` and `ysize`) **must** be the same ratio for the exit aperture (`xsizeOut` and `ysizeOut`).
 * All the same conditions for `rcol` apply for `ecol`.
 
 jcol
@@ -1030,6 +1052,9 @@ apertures which are the distances from the centre of element to the left and rig
 +--------------------+------------------------------+--------------+---------------+
 | `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
 +--------------------+------------------------------+--------------+---------------+
+| `colour`           | Name of colour desired for   | ""           | No            |
+|                    | block. See :ref:`colours`.   |              |               |
++--------------------+------------------------------+--------------+---------------+
 
 
 Notes: 
@@ -1042,7 +1067,7 @@ Notes:
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
   as a box with no aperture.
-* Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
+* For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
   that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
   no jaws will be built and BDSIM will exit.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
@@ -1055,11 +1080,15 @@ Notes:
 
 Examples: ::
 
-   ! Standard
+   ! standard
    TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
-   ! with kinetic energy limit
-   TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+   ! two separately specified jaws
+   j1: jcol, l=1*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=1.5*cm;
+
+   ! only left jaw
+   j2: jcol, l=0.9*m, horizontalWidth=1*m, material="Cu", xsizeLeft=1*cm, xsizeRight=2*m;
+
 
 
 degrader
@@ -1075,6 +1104,19 @@ used, this is capable of reducing the beam energy. This happens only through int
 and the use of a physics list. Note, the default physics list in BDSIM is no physics and
 only magnetic tracking, in which case this component will have no effect.
 
+* If 1 wedge is specified, the degrader will be composed of 1 half wedge on each side.
+* If 2 wedges are specified, the degrader will be a half, a whole then a half wedge.
+* The above diagram shows a degrader with 3 wedges specified.
+
+.. warning:: The nominal beam energy of each magnet after the degrader is unchanged and
+	     is still the design energy of the machine. It is not possible to accurately
+	     calculate the degradation in kinetic energy for all materials and particles
+	     analytically. The user should use the :code:`scaling` parameter for any
+	     magnet placed after the degrader to linearly scale the field strength. Or in
+	     the case where there are no magnets before the degrader, set the design energy
+	     of using the beam command as the energy afterwards and the :code:`E0` to the
+	     higher input energy.
+
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
 ===================    =======================================  ==========  ===========
@@ -1087,14 +1129,23 @@ Parameter              Description                              Default     Requ
 `degraderOffset`       Horizontal offset of both wedge sets     0           Yes/No*
 `material`             Degrader material                        Carbon      Yes
 `horizontalWidth`      Outer full width [m]                     global      No
+`colour`               Colour of block. See :ref:`colours`      ""          No
 ===================    =======================================  ==========  ===========
 
 .. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal
 	  lateral wedge position, and consequently the total material thickness the beam can propagate
-	  through. If both are specified, `degraderOffset` will be ignored. When numberWedges is specified
-	  to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges. When viewed from
-	  above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a
-	  right-angled triangle.
+	  through. An offset of zero will corresponds to a full closed degrader, and is equivalent to a
+	  materialThickness being the degrader length. If both are specified, `degraderOffset` will be ignored.
+.. note:: When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and
+      two `half` wedges. When viewed from above, a `full` wedge appears as an isosceles triangle, and
+      a `half` wedge appears as a right-angled triangle.
+.. note:: A base is included with each wedge. Without it, if the materialThickness were to be set to
+      the same as the degrader length, only half the beam would be degraded when passing through a wedge.
+      The base provides material such that the whole width of the beam pipe would see material when the
+      degrader is fully closed. As such, the degrader offset must be greater than or equal to zero.
+      Negative offsets causes BDSIM to exit.
+.. note:: If the user wants a fully open degrader, the degrader offset should be set to a value larger
+      than the wedgeLength.
 
 
 Examples: ::
@@ -1133,14 +1184,15 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-=================  ==================================  ==========  ===========
-Parameter          Description                         Default     Required
-`l`                Length [m]                          0           Yes
-`material`         Outer material                      Iron        No
-`horizontalWidth`  Outer full width [m]                global      No
-`xsize`            Horizontal inner half aperture [m]  0           Yes
-`ysize`            Vertical inner half aperture [m]    0           No
-=================  ==================================  ==========  ===========
+=================  ===================================  ==========  ===========
+Parameter          Description                          Default     Required
+`l`                Length [m]                           0           Yes
+`material`         Outer material                       Iron        No
+`horizontalWidth`  Outer full width [m]                 global      No
+`xsize`            Horizontal inner half aperture [m]   0           Yes
+`ysize`            Vertical inner half aperture [m]     0           No
+`colour`           Colour of block. See :ref:`colours`  ""          No
+=================  ===================================  ==========  ===========
 
 Notes:
 
@@ -1337,6 +1389,11 @@ Parameter                   Description                                         
 
 Notes:
 
+* A postive crystalAngleYAxisLeft will result in the crystal being rotated away from the z axis of the
+  collimator. Therefore, a positive angle for both a left and right crystal will result in diverging
+  crystals.
+* The bending angle of the left crystal is reversed from the definition. Therefore a positive bending angle
+  will result in the crystal bending away from the z axis of the collimator for both left and right crystals.
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
 * If both `crystalLeft` and `crystalRight` are specified, both will be constructed uniquely and placed.
@@ -1445,19 +1502,99 @@ Examples: ::
 
    rcolrot: transform3d, psi=pi/2;
 
+.. _element-rmatrix:
+
+rmatrix
+^^^^^^^
+
+`rmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam for
+an element of finite length. The effect of an rmatrix describes the total effect through the full length of
+the element, but is applied in a single instantaneous kick. As BDSIM is designed to track particles in a 3D model,
+to apply this rmatrix in finite length geometry, BDSIM uses a parallel transporter to simply advance the particles
+along S but without changing the particles transverse coordinates. The transverse effect from the matrix is applied
+once in the middle of the element, whereafter particles are once again parallel transported to the end of the
+element. This way, the correct transverse effect is applied, the recorded tracking time is correct as the particle
+has tracked through a finite length element, and the model is constructed with the correct physical length.
+
+The mathematical effect of the matrix on a particle is:
+
+.. math::
+
+   \begin{pmatrix}
+   x_1    \\
+   x'_1   \\
+   y_1    \\
+   y'_1   \\
+   \end{pmatrix}
+   =
+    \begin{pmatrix}
+    R_{11} & R_{12} & R_{13} & R_{14} \\
+    R_{21} & R_{22} & R_{23} & R_{24} \\
+    R_{31} & R_{32} & R_{33} & R_{34} \\
+    R_{41} & R_{42} & R_{43} & R_{44} \\
+   \end{pmatrix}
+   \begin{pmatrix}
+   x_0    \\
+   x'_0   \\
+   y_0    \\
+   y'_0   \\
+   \end{pmatrix}
+
+The geometry of an rmatrix element is simply that of a drift tube of the same length.
+
+================  =============================  ==========  ==========
+Parameter         Description                     Default     Required
+`l`               Length [m]                         0           Yes
+`rmat11`          matrix element :math:`R_{11}`      1           No
+`rmat12`          matrix element :math:`R_{12}`      0           No
+`rmat13`          matrix element :math:`R_{13}`      0           No
+`rmat14`          matrix element :math:`R_{14}`      0           No
+`rmat21`          matrix element :math:`R_{21}`      0           No
+`rmat22`          matrix element :math:`R_{22}`      1           No
+`rmat23`          matrix element :math:`R_{23}`      0           No
+`rmat24`          matrix element :math:`R_{24}`      0           No
+`rmat31`          matrix element :math:`R_{31}`      0           No
+`rmat32`          matrix element :math:`R_{32}`      0           No
+`rmat33`          matrix element :math:`R_{33}`      1           No
+`rmat34`          matrix element :math:`R_{34}`      0           No
+`rmat41`          matrix element :math:`R_{41}`      0           No
+`rmat42`          matrix element :math:`R_{42}`      0           No
+`rmat43`          matrix element :math:`R_{43}`      0           No
+`rmat44`          matrix element :math:`R_{44}`      1           No
+================  =============================  ==========  ==========
+
+Examples: ::
+
+   rm1: rmatrix, rmat12=0.997, rmat21=-0.924;
+
+thinrmatrix
+^^^^^^^^^^^
+
+`thinrmatrix` defines an arbitrary 4 :math:`\times` 4 R matrix which represents a physical effect on the beam
+within a thin element. Unlike the rmatrix, a thinrmatrix is an instantaneous effect in a thin element, therefore
+no geometry is constructed. The parameters for a thinmatrix are the same as those for an :ref:`element-rmatrix` except
+for the length, `l`, which is not required.
+
+.. note:: The length of the thinrmatrix can be changed by setting `thinElementLength` (see :ref:`bdsim-options`).
+
+Examples: ::
+
+   rm1: thinrmatrix, rmat12=0.997, rmat21=-0.924;
+
 .. _element:
 
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by externally provided geometry. It includes
-the possibility of overlaying a field as well. Several geometry formats are supported. The user
-must supply the length (accurately) as well as a diameter, such that the geometry will be
-contained in a box that has horizontal and vertical sizes of diameter.
+`element` defines an arbitrary beam line element that's defined by externally provided geometry.
+It includes the possibility of overlaying a field as well. Several geometry formats are supported.
+The user must supply the length (accurately) as well as a `horizontalWidth` (full width), such
+that the geometry will be contained in a box that has horizontal and vertical sizes of `horizontalWidth`.
 
-The geometry is simply placed in the beam line. There is no placement offset other than the
-offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
-with the placement as required.
+The outermost volume of the loaded geometry is simply placed in the beam line. There is no placement
+offset other than the :code:`offsetX`, :code:`offsetY` and :code:`tilt` of that element in the beam line.
+Therefore, the user must prepare geometry with the placement of the contents in the outermost volume
+as required.
 
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
@@ -1485,6 +1622,10 @@ and make a placement at the appropriate point in global coordinates.
 |                      | considered 'vacuum' for biasing  |              |               |
 |                      | purposes.                        |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `autoColour`         | 1 or 0. Whether the geometry     | 1            | No            |
+|                      | should be automatically coloured |              |               |
+|                      | according to density.            |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1497,7 +1638,7 @@ and make a placement at the appropriate point in global coordinates.
 	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
 	  than the size required for the geometry, the beam may be mismatched into the rest of
-	  the accelerator. A common practice is to add a picometre to the length of the geometry.
+	  the accelerator. A common practice is to add a nanometre to the length of the geometry.
 
 Simple example::
 
@@ -1505,16 +1646,17 @@ Simple example::
 
 Example with field: ::
 
-  somefield: field, type="ebmap2d",
-		    eScaling = 3.1e3,
-		    bScaling = 0.5,
-		    integrator = "g4classicalrk4",
-		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
-		    electricInterpolator = "linear2D";
+  detectorfield: field, type="bmap2d",
+                        bScaling = 0.5,
+			magneticFile = "bdsim2d:/Path/To/File.dat";
 
-   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, horizontalWidth=0.76*m;
+  detec: element, geometryFile="gdml:twoboxes.gdml",
+                  fieldAll="detectorfield",
+		  l=5*m,
+		  horizontalWidth=0.76*m;
+
+Here, in the field definition, cubic interpolation (2D to match the field type) by default and
+the integrator (for the particle motion) will be the default "g4classicalrk4" (4th order Runge Kutta).
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
@@ -1637,7 +1779,7 @@ may specify an initial offset and rotation for the beam line with respect to the
 volume using the options described in :ref:`beamline-offset`.
 
 .. warning:: When the :code:`use` command is called, the elements are copied internally,
-	     so their definition is fixed. Any element parameter adjustmments or redefinitions
+	     so their definition is fixed. Any element parameter adjustments or redefinitions
 	     after the :code:`use` command will therefore not be observed.
 
 Multiple beam lines may also be visualised - but only visualised (not suitable for
@@ -1805,12 +1947,44 @@ Below are the available parameters. A BLM is created using the `blm` command.::
 Either a simple geometric shape can be used, which is a single volume of one material, or a
 user supplied geometry file can be used.
 
+The quantity produced by the BLM per event is defined using a scorer (see :ref:`scorer`) and
+attached to the BLM with the `scoreQuantity` parameter. If this is not defined, it is simply
+passive material.
+
+The BLM signals are put in a 1D histogram for each scorer used with any BLM where each bin
+is a BLM in order it appears in construction. If a certain scorer isn't attached to a BLM, the
+corresponding bin in that scorer histogram will always be 0. The best way to view the BLM signals
+from a run is to use `rebdsimHistoMerge` as described in :ref:`output-analysis-quick-recipes`. See
+also :ref:`detectors-blm-output`.
+
 The placement parameters are the same as the general placements (see :ref:`placements`). So the
 BLM can be placed with respect to a beam line element or generally in curvilinear coordinates, or
 in global Cartesian coordinates.
+
+Bias objects may be attached to a BLM via the :code:`bias` attribute. This names a defined
+bias object (see :ref:`physics-bias-cross-section-biasing`). This is applied to all logical
+volumes in the BLM.
+
+.. note:: If multiple BLMs use the same external geometry file, the biasing
+	  will be applied to all of them as there is only one copy of the geometry in memory.
   
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
++-------------------------+--------------------------------------------------------------------+
+| blmMaterial             | Name of material to use for simple geometry                        |
++-------------------------+--------------------------------------------------------------------+
+| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
++-------------------------+--------------------------------------------------------------------+
+| blm2                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm3                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| blm4                    | BLM shape parameter 2                                              |
++-------------------------+--------------------------------------------------------------------+
+| scoreQuantity           | Name of a scorer object that should be used for record a quantity  |
+|                         | in the BLM. See :ref:`scorer`.                                     |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -1836,27 +2010,22 @@ in global Cartesian coordinates.
 +-------------------------+--------------------------------------------------------------------+
 | axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
 +-------------------------+--------------------------------------------------------------------+
-| sensitive               | Whether the geometry records energy deposition (default true)      |
-+-------------------------+--------------------------------------------------------------------+
 | referenceElement        | Name of element to place geometry with respect to (string)         |
 +-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | Optional file to use for geometry of BLM including format          |
 +-------------------------+--------------------------------------------------------------------+
-| geometryType            | Name of simple geometry to use ("cylinder", "cube", "sphere")      |
+| side                    | Optional which side of `referenceElement` the BLM is placed with   |
+|                         | respect to. One of :code:`left`, :code:`right`, :code:`top` and    |
+|                         | :code:`bottom`.                                                    |
 +-------------------------+--------------------------------------------------------------------+
-| blmMaterial             | Name of material to use for simple geometry                        |
+| sideOffset              | Distance from the (square) extent of an object the BLM is placed.  |
 +-------------------------+--------------------------------------------------------------------+
-| blm1                    | BLM shape parameter 1 - different depending on the shape used      |
+| bias                    | Name of bias object to apply to all volumes in the BLM.            |
 +-------------------------+--------------------------------------------------------------------+
-| blm2                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
-| blm3                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
-| blm4                    | BLM shape parameter 2                                              |
-+-------------------------+--------------------------------------------------------------------+
+
 
 BLM Shapes
 **********
@@ -1874,6 +2043,93 @@ are described below. NA means non-applicable to this shape.
 | sphere          | radius                   | NA                    | NA                    | NA            |
 +-----------------+--------------------------+-----------------------+-----------------------+---------------+
 
+.. _detectors-blm-output:
+
+BLM Output
+**********
+
+BLM signals (integrals / scores per event per BLM) are stored in 1D histograms alongside other 1D
+histograms such as the usual energy deposition histogram. There is 1 histogram per scorer used in any
+BLM. All BLM histograms have the same number of bins which is the total number of BLMs in the model and
+they are in the order they are constructed in the input. Here is an example that will clarify. This
+example can be found in :code:`bdsim/examples/features/detectors/blms/blm-output-example.gmad`.
+
+::
+
+  r1: rcol, l=10*m, horizontalWidth=1*cm, material="Al";
+  l1: line=(r1);
+  use, l1;
+
+  beam, particle="e-",
+        energy=10*GeV;
+
+  option, physicsList="em";
+
+  chrg: scorer, type="cellcharge";
+  dose: scorer, type="depositeddose";
+  eDep: scorer, type="depositedenergy";
+
+  BLM_t1: blm, s=10*cm,
+               side="top",
+	       geometryType="cylinder",
+	       blmMaterial="Al",
+	       blm1=2*cm,
+	       blm2=1*cm,
+	       scoreQuantity="eDep dose chrg";
+
+  BLM_t2: blm, s=5*cm,
+               side="left",
+	       geometryType="cylinder",
+	       blmMaterial="Al",
+	       blm1=2*cm,
+	       blm2=1*cm,
+	       scoreQuantity="dose eDep";
+
+  BLM_t3: blm, s=30*cm,
+               side="top",
+	       geometryType="cylinder",
+	       blmMaterial="Al",
+	       blm1=2*cm,
+	       blm2=1*cm,
+	       scoreQuantity="chrg dose";
+
+This model creates a scene with 1x 10m long block of aluminium (a closed rcol) and a beam of 10 GeV
+electrons fired into it. 3 different scorers are used ("chrg", "dose" and "eDep"). However, only 1 BLM
+("BLM_t1") uses all 3.
+
+The output will contain 3 histograms (1 for each scorer used with a BLM) containing 3 bins (1 for each BLM).
+The histograms will be called "BLM_chrg", "BLM_dose" and "BLM_eDep". The second bin of the BLM_chrg histogram
+(bin index #1) will always be 0 as the 2nd BLM (in order of construction) "BLM_t2" does not use the "chrg"
+scorer. This is done so that a given BLM is always in the same bin in all BLM histograms.
+
+.. note:: The 2nd bin in each output histogram (bin index #1) will be for "BLM_t2" as it is the second
+	  to be constructed, even though it is placed geometrically before "BLM_t1" with respect to the
+	  beam line (s = 5cm vs s = 10cm).
+
+The model was run with 10 events and the output summarised using `rebdsimHistoMerge`. ::
+
+  bdsim --file=blm-output-example.gmad --outfile=t1 --batch --ngenerate=10
+  rebdsimHistoMerge t1.root t1-histos.root
+  root -l t1-histos.root
+  > TBrowser tb;
+
+
+.. figure:: figures/blm-histos1.png
+	    :width: 90%
+	    :align: center
+
+            Preview of "eDep" scorer histogram for all BLMs from above example. 3rd bin is empty
+            as the 3rd BLM doesn't use this scorer.
+
+
+.. figure:: figures/blm-histos2.png
+	    :width: 90%
+	    :align: center
+
+            Preview of "dose" scorer histogram for all BLMs from above example. All bins are filled
+            as all BLMs use this scorer.
+
+
 Examples
 ********
 
@@ -1890,7 +2146,7 @@ Examples
 2) A simple cylinder made of silicon. It's placed globally with an offset in x of 3.2 m and y of 25 cm.
 
    ::
-
+      
       minidetector: blm, x=3.2*m, y=0.25*m,
 	      	    geometryType="cylinder",
 		    blmMaterial="Si",
@@ -1900,10 +2156,12 @@ Examples
 3) User defined geometry in a GDML file.
 
    ::
-
+      
+      blmdose: scorer, type="depositedenery";
       minidetector: blm, x=0.4*m, y=0.25*m,
                     geometryFile="gdml:simpleshape.gdml",
 		    blmMaterial="N",
 		    blm1=20*cm,
-		    blm2=5*cm;
+		    blm2=5*cm,
+		    scorerQuantity="blmdose";
 

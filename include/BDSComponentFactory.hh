@@ -75,7 +75,8 @@ class BDSComponentFactory
 {
 public:
   explicit BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr);
+			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr,
+			       G4bool usualPrintOut = true);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -94,9 +95,9 @@ public:
 
   /// Public creation for object that accounts for slight offset between ends of a ring.
   /// The z component of the delta three vector is used for the length of the teleporter.
-  BDSAcceleratorComponent* CreateTeleporter(const G4double teleporterLength,
-					    const G4double teleporterWidth,
-					    const G4Transform3D transformIn);
+  BDSAcceleratorComponent* CreateTeleporter(const G4double       teleporterLength,
+					    const G4double       teleporterWidth,
+					    const G4Transform3D& transformIn);
 
   /// Create the tilt and offset information object by inspecting the parser element
   static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
@@ -179,12 +180,15 @@ public:
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double horizontalWidth,
-					     G4String name = "not given");
+					     const G4String& name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
-  
+
+  /// Utility function to prepare crystal recipe for an element. Produces a unique object
+  /// this class doesn't own.
+  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
@@ -238,20 +242,20 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateWireScanner();
   BDSAcceleratorComponent* CreateRMatrix();
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double        angleIn,
+					     const G4String& name);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
 					     const BDSMagnetStrength* stIn,
-					     G4String name,
-					     BDSIntegratorType intType = BDSIntegratorType::rmatrixthin,
-					     BDSFieldType fieldType = BDSFieldType::rmatrix,
-					     G4double beamPipeRadius = 0);
-  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
-					     G4String name);
+					     const G4String&          name,
+					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
+					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
+					     G4double                 beamPipeRadius = 0);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
-  BDSAcceleratorComponent* CreateCavityFringe(G4double angleIn,
-	                     const BDSMagnetStrength* stIn,
-	                     G4String name,
-	                     G4double irisRadius);
+  BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
+					      const BDSMagnetStrength* stIn,
+					      const G4String&          name,
+					      G4double                 irisRadius);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
@@ -260,15 +264,15 @@ private:
 
   /// Helper method for common magnet construction
   BDSMagnet* CreateMagnet(const GMAD::Element* el,
-			  BDSMagnetStrength* st,
-			  BDSFieldType  fieldType,
-			  BDSMagnetType magnetType,
-			  G4double      angle = 0.0,
-  G4String nameSuffix = "") const;
+			  BDSMagnetStrength*   st,
+			  BDSFieldType         fieldType,
+			  BDSMagnetType        magnetType,
+			  G4double             angle = 0.0,
+			  const G4String&      nameSuffix = "") const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
-				    const G4bool& printWarning = true);
+				    G4bool               printWarning = true);
 
   /// Prepare the vacuum material from the element or resort to default in options.
   G4Material* PrepareVacuumMaterial(GMAD::Element const* el) const;
@@ -282,10 +286,6 @@ private:
 
   /// Prepare all crystals in defined the parser.
   void PrepareCrystals();
-
-  /// Utility funciton to prepare crystal recipe for an element. Produces a unique object
-  /// this class doesn't own.
-  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 
   /// Utility function to prepare model info. Retrieve from cache of ones translated
   /// parser objects or create a default based on the element's aperture if none specified.

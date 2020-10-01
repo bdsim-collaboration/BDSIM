@@ -97,9 +97,9 @@ namespace BDS
 			    G4String& filename);
 
   /// Split a filename.ext into filename and extension. Extension includes '.'.
-  void SplitFileAndExtention(const G4String& fileName,
-			     G4String&       file,
-			     G4String&       extension);
+  void SplitFileAndExtension(const G4String& fileName,
+                             G4String&       file,
+                             G4String&       extension);
 
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.
@@ -134,7 +134,7 @@ namespace BDS
   G4int Sign(T val)
   {return G4int((T(0) < val) - (val < T(0)));}
 
-  inline G4String BoolToString(const G4bool& in)
+  inline G4String BoolToString(G4bool in)
   {return in ? "true" : "false";}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.

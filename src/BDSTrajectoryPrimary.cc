@@ -51,14 +51,14 @@ BDSTrajectoryPrimary::BDSTrajectoryPrimary(const G4Track* aTrack,
 					   G4bool         suppressTransportationStepsIn,
 					   G4bool         storeTrajectoryLocalIn,
 					   G4bool         storeTrajectoryLinksIn,
-					   G4bool         storeTrajectoryIonsIn,
+					   G4bool         storeTrajectoryIonIn,
 					   G4bool         storeTrajectoryPointsIn):
   BDSTrajectory(aTrack,
 		interactiveIn,
 		suppressTransportationStepsIn,
 		storeTrajectoryLocalIn,
 		storeTrajectoryLinksIn,
-		storeTrajectoryIonsIn),
+		storeTrajectoryIonIn),
   firstHit(nullptr),
   lastPoint(nullptr),
   storeTrajectoryPoints(storeTrajectoryPointsIn)
@@ -76,10 +76,7 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
     {
       // particle is being killed, ie end of track. update last point
       delete lastPoint;
-      lastPoint = new BDSTrajectoryPoint(aStep,
-					 storeTrajectoryLocal,
-					 storeTrajectoryLinks,
-					 storeTrajectoryIons);
+      lastPoint = new BDSTrajectoryPoint(aStep, true, true, true);
     }
   
   G4bool isScatteringPoint = BDSTrajectoryPoint::IsScatteringPoint(aStep);
@@ -87,10 +84,7 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
   // if we don't have a first hit already and it's a scattering point, record it
   if (!firstHit && isScatteringPoint)
     {
-      firstHit = new BDSTrajectoryPoint(aStep,
-					storeTrajectoryLocal,
-					storeTrajectoryLinks,
-					storeTrajectoryIons);
+      firstHit = new BDSTrajectoryPoint(aStep, true, true, true);
       hasScatteredThisTurn = true;
     }
   else if (isScatteringPoint && !hasScatteredThisTurn)

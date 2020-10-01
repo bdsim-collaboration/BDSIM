@@ -28,9 +28,9 @@ template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
       {BDSFieldType::none,             	           "none"},
-      {BDSFieldType::bzero,            	           "bzero"},
-      {BDSFieldType::ezero,            	           "ezero"},
-      {BDSFieldType::ebzero,           	           "ebzero"},
+      {BDSFieldType::bfieldzero,                   "bfieldzero"},
+      {BDSFieldType::efieldzero,                   "efieldzero"},
+      {BDSFieldType::ebfieldzero,                  "ebfieldzero"},
       {BDSFieldType::teleporter,       	           "teleporter"},
       {BDSFieldType::bmap1d,           	           "bmap1d"},
       {BDSFieldType::bmap2d,           	           "bmap2d"},
@@ -74,16 +74,19 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewmultipoleoutersextupole,  "skewmultipoleoutersextupole"},
       {BDSFieldType::skewmultipoleouteroctupole,   "skewmultipoleouteroctupole"},
       {BDSFieldType::skewmultipoleouterdecapole,   "skewmultipoleouterdecapole"},
-      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"}
+      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"},
+      {BDSFieldType::multipoleouterdipolelhc,      "multipoleouterdipolelhc"},
+      {BDSFieldType::multipoleouterquadrupolelhc, "multipoleouterquadrupolelhc"},
+      {BDSFieldType::multipoleoutersextupolelhc,  "multipoleoutersextupolelhc"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
 {
   std::map<G4String, BDSFieldType> types;
   types["none"]             = BDSFieldType::none;
-  types["bzero"]            = BDSFieldType::bzero;
-  types["ezero"]            = BDSFieldType::ezero;
-  types["ebzero"]           = BDSFieldType::ebzero;
+  types["bfieldzero"]       = BDSFieldType::bfieldzero;
+  types["efieldzero"]       = BDSFieldType::efieldzero;
+  types["ebfieldzero"]      = BDSFieldType::ebfieldzero;
   types["teleporter"]       = BDSFieldType::teleporter;
   types["bmap1d"]           = BDSFieldType::bmap1d;
   types["bmap2d"]           = BDSFieldType::bmap2d;
@@ -128,6 +131,9 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewmultipoleouteroctupole"]   = BDSFieldType::skewmultipoleouteroctupole;
   types["skewmultipoleouterdecapole"]   = BDSFieldType::skewmultipoleouterdecapole;
   types["multipoleouterdipole3d"]       = BDSFieldType::multipoleouterdipole3d;
+  types["multipoleouterdipolelhc"]      = BDSFieldType::multipoleouterdipolelhc;
+  types["multipoleouterquadrupolelhc"]  = BDSFieldType::multipoleouterquadrupolelhc;
+  types["multipoleoutersextupolelhc"]   = BDSFieldType::multipoleoutersextupolelhc;
   
   bType.toLower();
 

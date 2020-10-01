@@ -2,10 +2,9 @@
 Welcome to BDSIM's documentation!
 #################################
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
+   :caption: User Guide
 
    licence
    authorship
@@ -28,10 +27,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 1
+   :caption: Developer Guide
    
    history
-
    developer
+   model_description
 
 
 Indices and tables

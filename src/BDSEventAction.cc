@@ -55,6 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Run.hh"
 #include "G4SDManager.hh"
 #include "G4StackManager.hh"
+#include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
 #include "G4TransportationManager.hh"
@@ -70,21 +71,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std::chrono;
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
-
-namespace {
-  // Function to recursively connect t
-  void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
-  {
-    BDSTrajectory* t2 = t->GetParent();
-    if (t2)
-      {
-	interestingTraj[t2] = true;
-	connectTraj(interestingTraj, t2);
-      }
-    else
-      {return;}
-  }
-}
 
 BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   output(outputIn),
@@ -108,7 +94,8 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   primaryAbsorbedInCollimator(false),
   seedStateAtStart(""),
   currentEventIndex(0),
-  eventInfo(nullptr)
+  eventInfo(nullptr),
+  nTracks(0)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   verboseEventBDSIM         = globals->VerboseEventBDSIM();
@@ -143,6 +130,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+  nTracks = 0;
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
   currentEventIndex = evt->GetEventID();
@@ -206,6 +194,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
       apertureCollID           = g4SDMan->GetCollectionID(bdsSDMan->ApertureImpacts()->GetName());
       thinThingCollID          = g4SDMan->GetCollectionID(bdsSDMan->ThinThing()->GetName());
+      std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
+      for (const auto& name : scorerNames)
+        {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
     }
   FireLaserCompton=true;
 
@@ -235,6 +226,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Record if event was aborted - ie whether it's useable for analyses.
   eventInfo->SetAborted(evt->IsAborted());
+  eventInfo->SetNTracks(nTracks);
 
   // Calculate the elapsed CPU time for the event.
   auto cpuEndTime = std::clock();
@@ -262,7 +254,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-
+  
   // samplers
   typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = HCE ? dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane)) : nullptr;
@@ -289,10 +281,18 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   typedef BDSHitsCollectionThinThing tthc;
   tthc* thinThingHits = HCE ? dynamic_cast<tthc*>(HCE->GetHC(thinThingCollID)) : nullptr;
   
-  // primary hit something?
-  // we infer this by seeing if there are any energy deposition hits at all - if there
-  // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
-  // may fool this..
+  std::map<G4String, G4THitsMap<G4double>*> scorerHits;
+  if (HCE)
+    {
+      for (const auto& nameIndex : scorerCollectionIDs)
+	{scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
+    }
+  // primary hit something? we infer this by seeing if there are any energy
+  // deposition hits at all - if there are, the primary must have 'hit' something.
+  // we don't check the world energy hits here because the hits could be from
+  // intended transport through air in part of the machine (a gap). similarly, there
+  // could be ionisation of the vacuum gas without a real impact so we don't check
+  // the vacuum energy deposition
   if (eCounterHits)
     {
       if (verboseThisEvent)
@@ -314,10 +314,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (eCounterTunnelHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
-  // we don't check the world energy hits here because the hits could be from
-  // intended transport through air in part of the machine (a gap).
-  // similarly, there could be ionisation of the vacuum gas without a real impact
-  // so we don't check the vacuum energy deposition
 
   // collimator hits if any
   typedef BDSHitsCollectionCollimator chc;
@@ -397,6 +393,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    interestingTrajectories,
 		    collimatorHits,
 		    apertureImpactHits,
+                    scorerHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end
@@ -455,7 +452,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	  
 	  // fill track ID map
-	  trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+	  trackIDMap.insert(std::pair<int, BDSTrajectory*>(traj->GetTrackID(), traj));
 	  
 	  // fill depth map
 	  if (traj->GetParentID() == 0) 
@@ -625,15 +622,30 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
       
       // Connect trajectory graphs
       if (trajConnect && trackIDMap.size() > 1)
-	{
-	  for (auto i : interestingTraj)
-	    if (i.second) 
-	      {connectTraj(interestingTraj, i.first);}
-	}
+        {
+          for (auto i : interestingTraj)
+            if (i.second)
+              {ConnectTrajectory(interestingTraj, i.first, trajectoryFilters);}
+        }
       // Output interesting trajectories
       if (verbose)
-	{G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
+	    {G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
   
   return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
+}
+
+void BDSEventAction::ConnectTrajectory(std::map<BDSTrajectory*, bool>& interestingTraj,
+                                       BDSTrajectory*                  trajectoryToConnect,
+                                       std::map<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> >& trajectoryFilters) const
+{
+  BDSTrajectory* parentTrajectory = trajectoryToConnect->GetParent();
+  if (parentTrajectory)
+    {
+      interestingTraj[parentTrajectory] = true;
+      trajectoryFilters[parentTrajectory][BDSTrajectoryFilter::connect] = true;
+      ConnectTrajectory(interestingTraj, parentTrajectory, trajectoryFilters);
+    }
+  else
+    {return;}
 }

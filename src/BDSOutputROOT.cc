@@ -16,10 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSOutputROOT.hh"
-
-#include "parser/options.h"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSOutputROOT.hh"
 #include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
@@ -36,13 +35,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
 
+#include "parser/options.h"
+
 #include "TFile.h"
 #include "TObject.h"
 #include "TTree.h"
 
-BDSOutputROOT::BDSOutputROOT(G4String fileName,
-			     G4int    fileNumberOffset):
+BDSOutputROOT::BDSOutputROOT(const G4String& fileName,
+			     G4int           fileNumberOffset,
+			     G4int           compressionLevelIn):
   BDSOutput(fileName, ".root", fileNumberOffset),
+  compressionLevel(compressionLevelIn),
   theRootOutputFile(nullptr),
   theHeaderOutputTree(nullptr),
   theGeant4DataTree(nullptr),
@@ -55,7 +58,7 @@ BDSOutputROOT::BDSOutputROOT(G4String fileName,
 
 BDSOutputROOT::~BDSOutputROOT()
 {
-  CloseFile();
+  Close();
 }
 
 void BDSOutputROOT::NewFile() 
@@ -64,10 +67,12 @@ void BDSOutputROOT::NewFile()
   
   theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
   if (theRootOutputFile->IsZombie())
-    {
-      G4cerr << __METHOD_NAME__ << "Unable to open output file: \"" << newFileName << "\"" << G4endl;
-      exit(1);
-    }
+    {throw BDSException(__METHOD_NAME__, "Unable to open output file: \"" + newFileName +"\"");}
+ 
+  if (compressionLevel > 9 || compressionLevel < -1)
+    {throw BDSException(__METHOD_NAME__, "invalid ROOT compression level (" + std::to_string(compressionLevel) + ") must be 0 - 9.");}
+  if (compressionLevel > -1)
+    {theRootOutputFile->SetCompressionLevel(compressionLevel);}
   
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
@@ -94,7 +99,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Summary.",   "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  if (WritePrimaries())
+  if (storePrimaries)
     {
       theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,       32000, 1);
       theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,  1);
@@ -195,16 +200,21 @@ void BDSOutputROOT::WriteFileRunLevel()
 
 void BDSOutputROOT::CloseFile()
 {
+  Close();
+}
+
+void BDSOutputROOT::Close()
+{
   if (theRootOutputFile)
-      {
-	if (theRootOutputFile->IsOpen())
-	  {
-	    theRootOutputFile->cd();
-	    theRootOutputFile->Write(0,TObject::kOverwrite);
-	    G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
-	    theRootOutputFile->Close();
-	    delete theRootOutputFile;
-	    theRootOutputFile = nullptr;
-	  }
-      }
+    {
+      if (theRootOutputFile->IsOpen())
+	{
+	  theRootOutputFile->cd();
+	  theRootOutputFile->Write(0,TObject::kOverwrite);
+	  G4cout << __METHOD_NAME__ << "Data written to file: " << theRootOutputFile->GetName() << G4endl;
+	  theRootOutputFile->Close();
+	  delete theRootOutputFile;
+	  theRootOutputFile = nullptr;
+	}
+    }
 }

@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH3.h"
 #include "TTree.h"
 
+#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -57,6 +58,13 @@ int main(int argc, char* argv[])
     }
 
   std::string outputFile = std::string(argv[1]);
+  if (outputFile.find("*") != std::string::npos)
+    {
+      std::cerr << "First argument for output file \"" << outputFile << "\" contains an *." << std::endl;
+      std::cerr << "Should only be a singular file - check order of arguments." << std::endl;
+      exit(1);
+    }
+  
   // output file must be opened before histograms are created because root does
   // everything statically behind the scenes
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");
@@ -83,7 +91,11 @@ int main(int argc, char* argv[])
     {f = new TFile(inputFiles[0].c_str(), "READ");}
   catch (const std::exception& e)
     {std::cerr << e.what() << std::endl; return 1;}
-  HistogramMap* histMap = new HistogramMap(f, output); // map out first file
+  HistogramMap* histMap = nullptr;
+  try
+    {histMap = new HistogramMap(f, output);} // map out first file
+  catch (const std::exception& e)
+    {std::cout << e.what() << std::endl; return 1;}
   f->Close();
   delete f;
 
@@ -123,6 +135,7 @@ int main(int argc, char* argv[])
   output->Write(nullptr,TObject::kOverwrite);
   output->Close();
   delete output;
+  std::cout << "Combined result of " << inputFiles.size() << " files written to: " << outputFile << std::endl;
   
   return 0;
 }

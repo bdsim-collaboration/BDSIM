@@ -38,6 +38,7 @@ OptionsBase::OptionsBase()
 #else
   outputDoublePrecision = false;
 #endif
+  outputCompressionLevel= 5;
   survey                = false;
   surveyFileName        = "survey.dat";
   batch                 = false;
@@ -79,6 +80,7 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList                    = ""; //default - only transportation
   physicsVerbose                 = false;
+  physicsVerbosity               = 1;
   physicsEnergyLimitLow          = 0;
   physicsEnergyLimitHigh         = 0;
   g4PhysicsUseBDSIMRangeCuts     = true;
@@ -132,6 +134,7 @@ OptionsBase::OptionsBase()
   includeFringeFieldsCavities = true;
 
   yokeFields           = true;
+  yokeFieldsMatchLHCGeometry = true;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
@@ -147,6 +150,7 @@ OptionsBase::OptionsBase()
   emptyMaterial        = "G4_Galactic";
   worldMaterial        = "G4_AIR";
   worldGeometryFile    = "";
+  autoColourWorldGeometryFile = true;
   importanceWorldGeometryFile = "";
   importanceVolumeMap  = "";
   worldVolumeMargin = 5; //m
@@ -238,6 +242,8 @@ OptionsBase::OptionsBase()
   storeApertureImpacts       = true;
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
+  storeApertureImpacts       = true;
+  storeApertureImpactsHistograms = true;
   apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
@@ -262,9 +268,12 @@ OptionsBase::OptionsBase()
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
   storeGeant4Data            = true;
+  storePrimaries             = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 0;
+  storeTrajectoryStepPoints      = 0;
+  storeTrajectoryStepPointLast   = false;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
   storeTrajectoryEnergyThreshold = -1.0;
@@ -274,7 +283,7 @@ OptionsBase::OptionsBase()
   trajNoTransportation               = false; ///< kept only for backwards compatibility.
   storeTrajectoryLocal           = false;
   storeTrajectoryLinks           = false;
-  storeTrajectoryIons            = false;
+  storeTrajectoryIon             = false;
   trajectoryFilterLogicAND       = false;
   
   storeSamplerAll          = false;
@@ -289,7 +298,6 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   
-  writePrimaries           = true;
   storeModel               = true;
 
   // circular options

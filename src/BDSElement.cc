@@ -35,11 +35,13 @@ BDSElement::BDSElement(G4String nameIn,
 		       G4double horizontalWidthIn,
 		       G4String geometryIn,
 		       G4double angleIn,
-		       std::vector<G4String>* namedVacuumVolumesIn):
+		       std::vector<G4String>* namedVacuumVolumesIn,
+		       G4bool   autoColourGeometryIn):
   BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, "element"),
   horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
   namedVacuumVolumes(*namedVacuumVolumesIn),
+  autoColourGeometry(autoColourGeometryIn),
   geometry(nullptr)
 {;}
 
@@ -47,7 +49,7 @@ void BDSElement::BuildContainerLogicalVolume()
 {
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
   // differently.
-  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
+  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
 									    chordLength, horizontalWidth,
 									    &namedVacuumVolumes);
   
@@ -61,9 +63,8 @@ void BDSElement::BuildContainerLogicalVolume()
   containerLogicalVolume = geometry->GetContainerLogicalVolume();
   containerSolid         = geometry->GetContainerSolid();
 
-  std::set<G4LogicalVolume*> namedVacuumLVs = geometry->VacuumVolumes();
-  if (!namedVacuumLVs.empty())
-    {SetAcceleratorVacuumLogicalVolume(*namedVacuumLVs.begin());}
+  // register named vacuum volumes that have been identified
+  SetAcceleratorVacuumLogicalVolume(geometry->VacuumVolumes());
 
   // set placement offset from geom so it's placed correctly in the beam line
   SetPlacementOffset(geometry->GetPlacementOffset());
@@ -151,3 +152,9 @@ void BDSElement::ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv)
     {geometry->ExcludeLogicalVolumeFromBiasing(lv);}
 }
 
+void BDSElement::AttachSensitiveDetectors()
+{
+  BDSGeometryComponent::AttachSensitiveDetectors();
+  if (geometry)
+    {geometry->AttachSensitiveDetectors();}
+}

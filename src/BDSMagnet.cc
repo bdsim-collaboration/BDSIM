@@ -202,7 +202,7 @@ void BDSMagnet::BuildOuter()
 							       chordLength,
 							       beampipe);
 
-  if(outer)
+  if (outer)
     {
       // copy necessary bits out of BDSGeometryComponent that holds
       // container information for whole magnet object provided by
@@ -215,7 +215,7 @@ void BDSMagnet::BuildOuter()
       SetPlacementOffset(contOffset);
 
       RegisterDaughter(outer);
-      InheritExtents(container); // update extents
+      InheritExtents(container, contOffset); // update extents
 
       // Only clear after extents etc have been used
       outer->ClearMagnetContainer();

@@ -151,6 +151,7 @@ void Options::PublishMembers()
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
+  publish("outputCompressionLevel",&Options::outputCompressionLevel);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
   
@@ -207,6 +208,7 @@ void Options::PublishMembers()
   // physics
   publish("physicsList",       &Options::physicsList);
   publish("physicsVerbose",    &Options::physicsVerbose);
+  publish("physicsVerbosity",  &Options::physicsVerbosity);
   publish("physicsEnergyLimitLow",          &Options::physicsEnergyLimitLow);
   publish("physicsEnergyLimitHigh",         &Options::physicsEnergyLimitHigh);
   publish("g4PhysicsUseBDSIMRangeCuts",     &Options::g4PhysicsUseBDSIMRangeCuts);
@@ -248,6 +250,7 @@ void Options::PublishMembers()
   publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
+  publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);
@@ -263,6 +266,7 @@ void Options::PublishMembers()
   publish("emptyMaterial",        &Options::emptyMaterial);
   publish("worldMaterial",        &Options::worldMaterial);
   publish("worldGeometryFile",    &Options::worldGeometryFile);
+  publish("autoColourWorldGeometryFile",    &Options::autoColourWorldGeometryFile);
   publish("importanceWorldGeometryFile",    &Options::importanceWorldGeometryFile);
   publish("importanceVolumeMap",  &Options::importanceVolumeMap);
   publish("worldVolumeMargin",    &Options::worldVolumeMargin);
@@ -367,6 +371,7 @@ void Options::PublishMembers()
   publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
+  publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
@@ -408,10 +413,13 @@ void Options::PublishMembers()
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeGeant4Data",                &Options::storeGeant4Data);
-  
+  publish("storePrimaries",                 &Options::storePrimaries);
+  publish("storePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryStepPoints",          &Options::storeTrajectoryStepPoints);
+  publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
@@ -421,11 +429,13 @@ void Options::PublishMembers()
   publish("trajNoTransportation",               &Options::trajNoTransportation); ///< kept only for backwards compatibility.
   publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
-  publish("storeTrajectoryIons",                &Options::storeTrajectoryIons);
+  publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);
+  publish("storeTrajectoryIons",                &Options::storeTrajectoryIon); ///< alternative for backwards compatibility.
   publish("trajectoryFilterLogicAND",           &Options::trajectoryFilterLogicAND);
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
+  publish("storeSamplerPolarCoordinates",   &Options::storeSamplerPolarCoords); ///< alternative
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
   publish("storeSamplerKineticEnergy",      &Options::storeSamplerKineticEnergy);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
@@ -436,8 +446,7 @@ void Options::PublishMembers()
   publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
-
-  publish("writePrimaries",                 &Options::writePrimaries);
+  
   publish("storeModel",                     &Options::storeModel);
 
   // circular options

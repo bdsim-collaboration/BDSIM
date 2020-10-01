@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
@@ -30,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4UserLimits.hh"
 
@@ -61,7 +59,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   type(typeIn),
   angle(angleIn),
   beamPipeInfo(beamPipeInfoIn),
-  acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   userLimits(nullptr),
@@ -153,6 +150,15 @@ void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
   fieldInfo = fieldInfoIn;
 }
 
+G4double BDSAcceleratorComponent::Sagitta() const
+{
+  if (!BDS::IsFinite(angle))
+    {return 0;}
+  G4double bendingRadius = arcLength / angle;
+  G4double sagitta = bendingRadius - std::sqrt(std::pow(bendingRadius,2) - std::pow(chordLength, 2));
+  return sagitta;
+}
+
 G4bool BDSAcceleratorComponent::AngledInputFace() const
 {
   G4ThreeVector zeroAngle = G4ThreeVector(0,0,-1);
@@ -178,4 +184,14 @@ void BDSAcceleratorComponent::BuildUserLimits()
   if (ul != defaultUL) // if it's not the default register it
     {RegisterUserLimits(ul);}
   userLimits = ul; // assign to member
+}
+
+std::set<G4LogicalVolume*> BDSAcceleratorComponent::GetAcceleratorMaterialLogicalVolumes() const
+{
+  // get full set minus ones marked to be excluded completely from biasing
+  std::set<G4LogicalVolume*> result = GetAllBiasingVolumes();
+
+  for (auto lv : acceleratorVacuumLV)
+    {result.erase(lv);}
+  return result;
 }

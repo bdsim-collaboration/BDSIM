@@ -5,21 +5,30 @@ if (NOT ROOTSYS STREQUAL "")
 elseif (DEFINED ENV{ROOTSYS})
   message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
   set (ROOTSYS "$ENV{ROOTSYS}" CACHE PATH "Which ROOT installation to use." FORCE)
-elseif(USE_AFS)
-  # add ROOT afs library to PATH (only in cmake)
-  if (APPLE)
-    set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.08/x86_64-mac1011-clang73-opt/root" CACHE PATH  "Which ROOT installation to use." FORCE)
-  elseif (RHL6)
-    set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc49-opt/root" CACHE PATH "Which ROOT installation to use." FORCE)
-  endif()
-  if($ENV{VERBOSE})
-    message(STATUS "ROOTSYS: ${ROOTSYS}")
-  endif()
 endif()
 
 # find ROOT of at least version 6
 find_package(ROOT 6.0 REQUIRED)
 
+# remove the C++ standard set by ROOT so CMake can handle it correctly for the
+# compiler we find
+removeCXXStandardFlags("${CMAKE_CXX_FLAGS}" CMAKE_CXX_FLAGS)
+
+# now remove any duplicates we have to keep things tidy
+removeDuplicateSubstring("${CMAKE_CXX_FLAGS}" $CMAKE_CXX_FLAGS)
+
+# ROOT can be compiled with C++17 and therefore BDSIM won't compile if it doesn't have
+# at leat that standard, so we pick apart ROOT stuff to find out and update the standard
+execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} --features OUTPUT_VARIABLE ROOT_FEATURES)
+list(REMOVE_DUPLICATES ROOT_FEATURES)
+string(FIND ${ROOT_FEATURES} "cxx17" _CXX17FOUND)
+if (_CXX17FOUND STRGREATER -1)
+  message(STATUS "ROOT compiled with cxx17 feature -> changing to C++17 for BDSIM")
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
+ 
 # ROOT doesn't implement the version and subversion number in CMAKE as it should, so
 # the above find package doesn't match the version required. Need to decode version ourselves
 if (ROOT_VERSION VERSION_LESS "6.00")
@@ -27,7 +36,7 @@ if (ROOT_VERSION VERSION_LESS "6.00")
 endif()
 
 # add ROOT include directory
-include_directories(${ROOT_INCLUDE_DIR})
+include_directories(SYSTEM ${ROOT_INCLUDE_DIR})
 
 option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
 if(ROOT_DOUBLE_OUTPUT)
@@ -82,3 +91,13 @@ foreach(header ${linkHeaders})
   set(root_files ${root_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${className}.cc)
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
 endforeach()
+
+# remove C++ standard flags from root library linking flags
+string(REPLACE "-stdlib=libc++"  "" ROOT_LIBRARIES ${ROOT_LIBRARIES})
+
+
+
+# fix the version number from root
+# nice regex from CRMC pacakge in their search for ROOT also
+STRING (REGEX REPLACE "[ \t\r\n]+" "" ROOT_VERSION "${ROOT_VERSION}")
+STRING (REGEX REPLACE "/" "." ROOT_VERSION "${ROOT_VERSION}")

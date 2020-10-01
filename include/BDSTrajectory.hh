@@ -48,7 +48,7 @@ public:
 		G4bool         suppressTransportationStepsIn,
 		G4bool         storeTrajectoryLocalIn,
 		G4bool         storeTrajectoryLinksIn,
-		G4bool         storeTrajectoryIonsIn);
+		G4bool         storeTrajectoryIonIn);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
 
@@ -66,6 +66,11 @@ public:
   /// it again, which involves coordinate transforms.
   void AppendStep(const BDSTrajectoryPoint* pointIn);
 
+  /// Apply the options to store a trajectory extra delete them if not storing them.
+  /// Used to compensate when copying a fuller primary trajectory point that will always
+  /// have extra information, but may not be needed when appending to the primary trajectory.
+  void CleanPoint(BDSTrajectoryPoint* point) const;
+
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
@@ -73,7 +78,7 @@ public:
   virtual G4VTrajectoryPoint* GetPoint(G4int i) const {return (*fpBDSPointsContainer)[i];}
 
   /// Get number of trajectory points in this trajectory.
-  virtual int GetPointEntries() const {return fpBDSPointsContainer->size();}
+  virtual int GetPointEntries() const {return (int)fpBDSPointsContainer->size();}
 
   /// Method to identify which one is a primary. Overridden in derived class.
   virtual G4bool IsPrimary() const {return false;}
@@ -115,7 +120,7 @@ protected:
   const G4bool   suppressTransportationSteps;
   const G4bool   storeTrajectoryLocal;
   const G4bool   storeTrajectoryLinks;
-  const G4bool   storeTrajectoryIons;
+  const G4bool   storeTrajectoryIon;
   BDSTrajectory* parent;
   G4int          trajIndex;
   G4int          parentIndex;

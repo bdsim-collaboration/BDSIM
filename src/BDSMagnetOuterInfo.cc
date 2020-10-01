@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-#include "globals.hh"             // geant4 globals / types
+#include "globals.hh"
 #include "G4Colour.hh"
 #include "G4Material.hh"
 
@@ -38,12 +38,13 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   buildEndPieces(true),
   coilWidthFraction(0.65),
   coilHeightFraction(0.8),
-  geometryTypeAndPath("")
+  geometryTypeAndPath(""),
+  autoColour(true)
 {
   colour = BDSColours::Instance()->GetColour("default");
 }
 
-BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
+BDSMagnetOuterInfo::BDSMagnetOuterInfo(const G4String&         nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,
 				       G4double              horizontalWidthIn,
 				       G4Material*           outerMaterialIn,
@@ -57,7 +58,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4double              coilWidthFractionIn,
 				       G4double              coilHeightFractionIn,
 				       const G4String&       geometryTypeAndPathIn,
-				       G4Colour*             colourIn):
+				       G4Colour*             colourIn,
+				       G4bool                autoColourIn):
   name(nameIn),
   geometryType(geometryTypeIn),
   horizontalWidth(horizontalWidthIn),
@@ -72,5 +74,6 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
   coilWidthFraction(coilWidthFractionIn),
   coilHeightFraction(coilHeightFractionIn),
   geometryTypeAndPath(geometryTypeAndPathIn),
-  colour(colourIn)
+  colour(colourIn),
+  autoColour(autoColourIn)
 {;}

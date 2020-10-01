@@ -20,9 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDFACTORY_H
 
 #include "BDSFieldType.hh"
+#include "BDSInterpolatorType.hh"
 #include "BDSMagnetType.hh"
 
-#include "globals.hh" // geant4 globals / types
+#include "globals.hh"
 
 #include <map>
 #include <vector>
@@ -34,6 +35,7 @@ namespace GMAD
 
 class BDSField;
 class BDSFieldInfo;
+class BDSFieldMag;
 class BDSFieldObjects;
 class BDSMagnetStrength;
 class BDSParticleDefinition;
@@ -81,17 +83,20 @@ public:
   /// Main interface to field factory.
   BDSFieldObjects* CreateField(const BDSFieldInfo&      info,
 			       const BDSMagnetStrength* scalingStrength = nullptr,
-			       const G4String           scalingKey      = "none");
+			       const G4String&          scalingKey      = "none");
 
   /// Return a BDSFieldInfo instance from the parser definitions. Will
   /// exit if no matching field definition found.
-  BDSFieldInfo* GetDefinition(G4String name) const;
+  BDSFieldInfo* GetDefinition(const G4String& name) const;
+
+  /// Suggest a default interpolator.
+  static BDSInterpolatorType DefaultInterpolatorType(G4int numberOfDimensions);
 
 private:
   /// Create a purely magnetic field.
   BDSFieldObjects* CreateFieldMag(const BDSFieldInfo&      info,
 				  const BDSMagnetStrength* scalingStrength = nullptr,
-				  const G4String           scalingKey      = "none");
+				  const G4String&          scalingKey      = "none");
 
   /// Create a general EM field.
   BDSFieldObjects* CreateFieldEM(const BDSFieldInfo& info);
@@ -101,6 +106,10 @@ private:
 
   /// Create an irregular (special) field.
   BDSFieldObjects* CreateFieldIrregular(const BDSFieldInfo& info);
+  
+  BDSFieldMag* CreateFieldMagRaw(const BDSFieldInfo&      info,
+				 const BDSMagnetStrength* scalingStrength = nullptr,
+				 const G4String&          scalingKey      = "none");
 
   /// Create a purely magnetic integrator. As it's purely magnetic, this
   /// requires a G4Mag_EqRhs* equation of motion instance.
@@ -118,23 +127,6 @@ private:
   /// on their examples. examples/extended/field/field02/src/F02ElectricFieldSetup.cc
   G4MagIntegratorStepper* CreateIntegratorE(const BDSFieldInfo& info,
 					    G4EquationOfMotion* eqOfM);
-
-  /// Create only a local field object
-  //BDSField* CreateFieldMagLocal(const BDSFieldType       type,
-  //				const BDSMagnetStrength* strength,
-  //				const G4double           brho);
-
-  /// Create a pure magnetic field as described by an equation, such as a quadupole or
-  /// dipole field.  All associated objects are created and packaged together.
-  //BDSFieldObjects* CreateFieldEquation(const BDSFieldType       type,
-  //				       const BDSMagnetStrength* strength,
-  //				       const G4double           brho);
-
-  /// Create a pure magnetic field as described by an equation, such as a quadupole or
-  /// dipole field.  All associated objects are created and packaged together.
-  //BDSFieldObjects* CreateFieldMagEquation(const BDSMagnetType      type,
-  //					  const BDSMagnetStrength* strength,
-  //					  const G4double           brho);
 
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.

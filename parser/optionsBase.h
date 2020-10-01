@@ -45,6 +45,7 @@ namespace GMAD
     std::string outputFileName;
     std::string outputFormat;
     bool        outputDoublePrecision;
+    int         outputCompressionLevel;
     ///@}
   
     ///@{ Parameter for survey
@@ -107,6 +108,7 @@ namespace GMAD
     /// list of physics processes
     std::string physicsList;
     bool        physicsVerbose;
+    int         physicsVerbosity;
     double      physicsEnergyLimitLow;
     double      physicsEnergyLimitHigh;
     bool        g4PhysicsUseBDSIMRangeCuts;
@@ -161,6 +163,7 @@ namespace GMAD
     bool      dontSplitSBends;
 
     bool      yokeFields;
+    bool      yokeFieldsMatchLHCGeometry;
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
 
@@ -179,6 +182,7 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
     std::string worldGeometryFile;
+    bool        autoColourWorldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
     // see verboseImportance
@@ -275,6 +279,7 @@ namespace GMAD
     bool        storeApertureImpacts;
     bool        storeApertureImpactsIons;
     bool        storeApertureImpactsAll;
+    bool        storeApertureImpactsHistograms;
     double      apertureImpactsMinimumKE;
     bool        storeCollimatorInfo;
     bool        storeCollimatorHits;
@@ -299,9 +304,12 @@ namespace GMAD
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
     bool        storeGeant4Data;
+    bool        storePrimaries;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
+    int         storeTrajectoryStepPoints;
+    bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
@@ -311,7 +319,7 @@ namespace GMAD
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
-    bool        storeTrajectoryIons;
+    bool        storeTrajectoryIon;
     bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
@@ -325,8 +333,7 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
-
-    bool        writePrimaries;
+    
     bool        storeModel;
 
     // circular options
