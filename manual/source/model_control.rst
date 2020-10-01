@@ -2487,6 +2487,9 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
 +------------------------------------+--------------------------------------------------------------------+
+| storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
+|                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
 | storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
 |                                    | Equivalent to turning on `storeSamplerCharge`,                     |
 |                                    | `storeSamplerKineticEnergy`, `storeSamplerMass`,                   |
@@ -2530,6 +2533,14 @@ with the following options.
 |                                    | the primary, 1 is the first generation of secondaries, etc. -1     |
 |                                    | can be used to store all (i.e. to infinite depth).                 |
 +------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
+|                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
+|                                    | only the first creation point is stored.                           |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryStepPointLast (\*)  | Boolean. If true, and used in combination with the option          |
+|                                    | `storeTrajectoryStepPoints`, the end point of the trajectory is    |
+|                                    | also stored.                                                       |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryELossSRange         | Ranges in curvilinear S coordinate that if a particular track      |
 |                                    | causes energy deposition in this range, its trajectory will be     |
 |                                    | stored. The value should be a string inside which are pairs of     |
@@ -2560,7 +2571,7 @@ with the following options.
 |                                    | trajectory point. Legacy option is :code:`trajNoTransportation`    |
 |                                    | that is opposite to this option.                                   |
 +------------------------------------+--------------------------------------------------------------------+
-| trajectoryConnect                  | Stores all the trajectories that connect a trajectory to be        |
+| trajectoryConnect (\*)             | Stores all the trajectories that connect a trajectory to be        |
 |                                    | stored all the way to the primary particle. For example, if the    |
 |                                    | filters from other trajectory options are to store only muons      |
 |                                    | with an energy greater than 10 GeV, the few trajectories stored    |
@@ -2575,11 +2586,16 @@ with the following options.
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
 | trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
-|                                    | of the specified filters will be stored. This is opposite to the   |
-|                                    | more inclusive OR logic used where a trajectory will be stored if  |
-|                                    | matches any of the specified filters.                              |
+|                                    | all of the specified filters will be stored. This is opposite to   |
+|                                    | the more inclusive OR logic used where a trajectory will be stored |
+|                                    | if matches any of the specified filters.                           |
 +------------------------------------+--------------------------------------------------------------------+
 
+.. note:: (\*) If the option :code:`storeTrajectoryStepPoints` (as well as possibly
+	  :code:`storeTrajectoryStepPointLast`) are used, then the :code:`trajectoryConnect` option may
+	  not work as intended. Although the correct trajectories for connection will be prepared, they
+	  will be cut short by when writing to the output according to the number of step points desired.
+	  Therefore, the connection point (and trajectory point index) may not be valid.
 
 .. _bdsim-options-verbosity:
 
@@ -2599,7 +2615,7 @@ Some of the following options are available through executable options (with dif
 
 Recommendations:
 
-* `-\\-verboseSteppingLevel=2` to see one line per entry / exit of a volume to see where a particle is going.
+* `-\-verboseSteppingLevel=2` to see one line per entry / exit of a volume to see where a particle is going.
 * "Tracking" refers to a particle track which is essentially one particle being put through the simulation.
 * Stepping is the incremental step of each particle trajectory through the simulation.
 * Event is the minimal unit of simulation - usually in BDSIM this is the propagation of 1 primary particle.
