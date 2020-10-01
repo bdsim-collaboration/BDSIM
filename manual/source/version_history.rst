@@ -101,6 +101,8 @@ General
   energy of the beam particle. This takes into account the possibly different kinetic energy of the beam
   particle versus the design particle. Such a combination of options would result in all primary particles
   being immediately killed and not tracked through the model.
+* Linear and cubic interpolation implementation has be switched from hard coded types to templates. No
+  difference in results, but this makes the code useable elsewhere.
 
 Bug Fixes
 ---------
