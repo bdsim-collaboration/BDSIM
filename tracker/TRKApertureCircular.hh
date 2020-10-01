@@ -39,7 +39,7 @@ public:
   
 private:
   double radius;
-  double radiusSq;
+  double squareRadius;
   TRKApertureCircular(); ///< not implemented
 };
 

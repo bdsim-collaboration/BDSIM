@@ -24,22 +24,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class TRKElement;
 
-//typedef std::vector<TRKElement*>::iterator TRKLineIter;
-typedef std::vector<TRKElement*>::const_iterator TRKLineConstIter;
 typedef std::vector<double>::const_iterator TRKLineConstSIter;
 
 /**
  * @brief beamline
  */
 class TRKLine {
-private: 
-  // in case we use FindElement a lot, probably good to make an index also (but something for later)
-  std::vector<TRKElement*> elements;
-  std::vector<double> elementEndS;   /// Vector with the s-locations at the end of beam line elements
+private:
+  using Elements = std::vector<TRKElement*>;
+  using ElementEnds = std::vector<double>;
+
+  Elements elements;
+  ElementEnds elementEndS;
+
   std::string name;               ///< name of element
   bool circular;                  ///< circular flag for rings
   
 public:
+  using iterator = Elements::iterator;
+  using const_iterator = Elements::const_iterator;
+
+  
+  TRKLine() = delete;
   explicit TRKLine(std::string name, bool circular=false);
   ~TRKLine();
   /// Append TRKElement to Line
@@ -47,28 +53,27 @@ public:
   void AddSingleElement(TRKElement *e);
 
   /// Find first element with name eName
-  TRKElement* FindElement(std::string eName)const;
+  // const_iterator FindElement(std::string eName) const;
+  const_iterator FindElement(double s) const;
 
-  /// Find element to which an s position belongs
-  TRKElement* FindElement(double s)const;
-
-  std::string GetName()const{return name;}
-  bool GetCircular()const{return circular;}
-
-  // TRKLineIter begin() {return elements.begin();}
-  // TRKLineIter end() {return elements.end();}
-
-  TRKLineConstIter begin()const {return elements.begin();}
-  TRKLineConstIter end()const {return elements.end();}
-
+  iterator begin() { return elements.begin(); }
+  iterator end() { return elements.end(); }
+  const_iterator begin() const { return elements.begin(); }
+  const_iterator end() const { return elements.end(); }
+  const_iterator cbegin() const { return elements.cbegin(); }
+  const_iterator cend() const { return elements.cend(); }
   TRKLineConstSIter beginS()const {return elementEndS.begin();}
   TRKLineConstSIter endS()const {return elementEndS.end();}
+
+
+
+
+  inline std::string GetName() const { return name; }
+  inline bool GetCircular() const { return circular; }
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);
 
-private:
-  TRKLine(); ///< not implemented
 };
 
 #endif

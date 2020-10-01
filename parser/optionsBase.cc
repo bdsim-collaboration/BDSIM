@@ -322,9 +322,12 @@ OptionsBase::OptionsBase()
   useScoringMap = false;
 
   // tracker options
+  tracker                  = "varstep";
   trackingType             = "default";
   trackingSteps            = 1;
-  dontUseAperture          = false;
+  useAperture              = true;
+  backtracking             = true;
+  lossPrecision            = 0.1; // m
 }
 
 

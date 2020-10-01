@@ -27,18 +27,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 extern BDSOutputBase* trkOutput;
 
-TRKStrategy::TRKStrategy(int trackingStepsIn):
-  trackingSteps(trackingStepsIn)
-{;}
-
-TRKStrategy::~TRKStrategy()
-{;}
-
-/*
-void TRKStrategy::Track(TRKElement* el, TRKBunch* bunch) {
-  Track((TRKDrift*)el,bunch);
-}
-*/
 
 void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 				       double nominalEnergyIn)
@@ -49,30 +37,27 @@ void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
 
 void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle& particle)
 {
-  std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;
-
   double offsetX = el->GetOffsetX();
-    double offsetY = el->GetOffsetY();
-    vector3 newPos(particle.X()-offsetX,particle.Y()-offsetY,particle.Z());
-    // add offset (negatively as bunch is displaced, not element)
-    particle.SetPosMom(newPos, particle.Mom());
-    // rotation
-    // TODO, only tilt for new (counterclockwise)
-    double sinphi, cosphi;
-    //    sincos(el->GetPhi(), &sinphi, &cosphi);
-    sinphi = std::sin(el->GetPhi());
-    cosphi = std::cos(el->GetPhi());
-    double x  = particle.X();
-    double y  = particle.Y();
-    double xp = particle.Xp();
-    double yp = particle.Yp();
+  double offsetY = el->GetOffsetY();
+  particle.x -= offsetX;
+  particle.y -= offsetY;
+  // rotation
+  // TODO, only tilt for new (counterclockwise)
+  double sinphi, cosphi;
+  //    sincos(el->GetPhi(), &sinphi, &cosphi);
+  sinphi = std::sin(el->GetPhi());
+  cosphi = std::cos(el->GetPhi());
+  double x = particle.x;
+  double y = particle.y;
+  double px = particle.px;
+  double py = particle.py;
 
-    double newx  = cosphi*x  - sinphi*y;
-    double newy  = sinphi*x  + cosphi*y;
-    double newxp = cosphi*xp - sinphi*yp;
-    double newyp = sinphi*xp + cosphi*xp;
-    newPos = vector3(newx,newy,particle.Z());
-    vector3 newMom(newxp,newyp,particle.Zp());
-    particle.SetPosMom(newPos, newMom);
-
+  double newx = cosphi * x - sinphi * y;
+  double newy = sinphi * x + cosphi * y;
+  double newpx = cosphi * px - sinphi * py;
+  double newpy = sinphi * px + cosphi * px;
+  particle.x = newx;
+  particle.y = newy;
+  particle.px = newpx;
+  particle.py = newpy;
 }

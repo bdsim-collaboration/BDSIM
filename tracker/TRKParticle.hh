@@ -37,57 +37,29 @@ class TRKParticle
 { 
 public:
   //constructors
-  //  TRKParticle();
-  TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
-  TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
+  TRKParticle() = delete;
   TRKParticle(double xIn, double pxIn, double yIn, double pyIn, double zIn,
-              double pzIn, double beta0In, double gamma0In, double SIn)
+              double pzIn, double beta0In, double gamma0In, double SIn,
+              int eventidIn)
       : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
-        gamma0(gamma0In), S(SIn) {}
+        gamma0(gamma0In), S(SIn), eventid(eventidIn) {}
 
   //accessors
-  double getS()const      {return S;}
+  inline double getS() const { return S; }
 
-  /// return coordinate in micrometres
-  ///@{
-  double X()const      {return posmom.X();}  
-  double Y()const      {return posmom.Y();}
-  ///@}
-  /// return coordinate in metres
-  double Z()const      {return posmom.Z();}
-  /// return momentum coordinate in rad
-  ///@{
-  double Xp()const     {return posmom.Xp();}
-  double Yp()const     {return posmom.Yp();}
-  double Zp()const     {return posmom.Zp();}
-  ///@}
-  /// return kinetic energy in MeV
-  double Ek()const      {return sqrt(p*p+mass*mass)-mass;}
+  inline double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
+  inline double KineticEnergy() const { return Energy() - mass; }
+  inline double ReferenceMomentum() const
+  {
+    return mass * std::sqrt(gamma0*gamma0 - 1);
+  }
+
+  int EventID() const { return eventid; }
+
   /// return mass in MeV / c^2
-  double M()const      {return mass;}
-  /// return momentum in MeV / c^2
-  double P()const      {return p;}
+  double M() const { return mass; }
   /// return elementary charge
-  int    Charge()const {return charge;}
-  /// return eventID
-  int    EventID()const {return eventID;}
-
-  vector6 PosMom()const {return posmom;}
-  vector3 Pos()const    {return posmom.Pos();}
-  vector3 Mom()const    {return posmom.Mom();}
-
-  vector6 PosMomBefore()const {return posmombefore;}
-  vector3 PosBefore()const    {return posmombefore.Pos();}
-  vector3 MomBefore()const    {return posmombefore.Mom();}
-  double  PBefore()const      {return pbefore;}
-
-  //setting functions
-  void    SetPosMom(vector6 posmomIn);
-  void    SetPosMom(vector3 posIn, vector3 momIn);
-  void    SetP(double pIn){p=pIn;}
-
-  //toggle the beforeindex
-  void ConfirmNewCoordinates() {pbefore = p; posmombefore=posmom;}
+  int Charge() const { return charge; }
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
@@ -102,24 +74,16 @@ public:
   double beta0;
   double gamma0;
 
+
   // s-position of the particle, needed for arbitrary step-length tracking
   double S;
 
 private:
-  /// position in micrometre (transverse) and metre (longitudinal) and momentum in rad
-  vector6 posmom;
-  vector6 posmombefore;
-
-  //mass and charge don't change in the tracker!
-  /// momentum in MeV - can change in tracker
-  double p; 
-  double pbefore;
+  int eventid;
   /// mass in MeV / c^2
   double mass;
   /// charge in units of elementary charge
   int    charge;
-  /// event id for referencing in both tracker and bdsim output
-  int    eventID;
 };
 
 #endif
