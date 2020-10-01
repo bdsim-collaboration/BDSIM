@@ -77,7 +77,7 @@ void Compare::Directories(TDirectory* d1,
       std::string objectName = std::string(keyObject->GetName());
       std::string className  = std::string(d1o->ClassName());
 
-      // get writePrimaries from options tree.
+      // get storePrimaries from options tree.
       if (objectName == "Options" && className == "TTree")
         {
           std::vector<const char *> names;
@@ -85,7 +85,7 @@ void Compare::Directories(TDirectory* d1,
           Options *optLocal = new Options();
           optLocal->SetBranchAddress(options);
           options->GetEntry(0);
-          hasPrimaries = optLocal->options->writePrimaries;
+          hasPrimaries = optLocal->options->storePrimaries;
           delete optLocal;  // delete - no need to store in memory.
         }
 

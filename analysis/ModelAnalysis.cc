@@ -35,6 +35,9 @@ ModelAnalysis::ModelAnalysis(Model*  modelIn,
   model(modelIn)
 {;}
 
+ModelAnalysis::~ModelAnalysis() noexcept
+{;}
+
 void ModelAnalysis::Process()
 {
   for (int i = 0; i < entries; i++)

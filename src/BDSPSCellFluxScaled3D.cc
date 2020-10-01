@@ -72,7 +72,7 @@ BDSPSCellFluxScaled3D::BDSPSCellFluxScaled3D(const G4String&           scorerNam
                                              G4int depi,
                                              G4int depj,
                                              G4int depk):
-  BDSPSCellFluxScaled3D(scorerName, mapperIn, unitIn, ni, nj, nk, depi, depk, depj)
+  BDSPSCellFluxScaled3D(scorerName, mapperIn, unitIn, ni, nj, nk, depi, depj, depk)
 {
   if (filename.empty())
     {throw BDSException(__METHOD_NAME__, "no conversionFactorFile provided for \"" + scorerName + "\" - required");}
