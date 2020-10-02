@@ -791,10 +791,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   G4bool finiteEntrFringe = false;
   G4bool finiteExitFringe = false;
   if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) ||
-          BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
+      BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
     {finiteEntrFringe = true;}
   if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) ||
-        BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
+      BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
     {finiteExitFringe = true;}
 
   // only build the fringe elements if the poleface rotation or fringe field correction terms are finite
@@ -829,6 +829,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
               G4cout << __METHOD_NAME__ << "WARNING - finite B field required for kicker pole face and fringe fields,"
                         " effects are unavailable for element ""\"" << elementName << "\"." << G4endl;
             }
+          buildEntranceFringe = false;
+          buildExitFringe = false;
         }
       // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
       // field direction cannot be assumed. Therefore we are unsure of poleface angle and fringe
@@ -841,6 +843,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
               G4cerr << __METHOD_NAME__ << " Poleface and fringe field effects are unavailable "
                      << "for the thin (t)kicker element ""\"" << elementName << "\"." << G4endl;
             }
+          buildEntranceFringe = false;
+          buildExitFringe = false;
         }
       // Good to apply fringe effects.
       else
@@ -849,9 +853,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           // kicker information from copying previously.
 	  delete st;
           st = new BDSMagnetStrength(*fringeStIn);
-          // supply the field for a thin kicker field as it is required to calculate the
-          // effective bending radius needed for fringe field and poleface effects
-          (*st)["field"] = element->B * CLHEP::tesla;
+          // supply the scaled field for a thin kicker field as it is required to calculate
+          // the effective bending radius needed for fringe field and poleface effects
+          (*st)["field"] = element->B * CLHEP::tesla  * scaling;
+          (*fringeStIn) ["field"] = (*st)["field"];
+          (*fringeStOut) ["field"] = (*st)["field"];
 
           // set field for vertical kickers - element needs rotating as poleface rotation is assumed
           // to be about the vertical axis unless explicitly tilted.
@@ -868,6 +874,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       G4double angleX = std::asin(hkick * scaling);
       G4double angleY = std::asin(vkick * scaling);
 
+      if (std::isnan(angleX))
+        {throw BDSException(__METHOD_NAME__, "hkick too strong for element \"" + element->name + "\" ");}
+      if (std::isnan(angleY))
+        {throw BDSException(__METHOD_NAME__, "vkick too strong for element \"" + element->name + "\" ");}
+
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
@@ -882,9 +893,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 	    {// 'X' and 'Y' are the angle of bending here, not the B field direction.
 	    case KickerType::horizontal:
 	    case KickerType::general:
-	      {fieldX = element->B * CLHEP::tesla; break;}
+	      {fieldX = element->B * CLHEP::tesla * scaling; break;}
 	    case KickerType::vertical:
-	      {fieldY = element->B * CLHEP::tesla; break;}
+	      {fieldY = element->B * CLHEP::tesla * scaling; break;}
 	    default:
 	      {break;} // do nothing - no field - just for compiler warnings
 	    }
@@ -917,6 +928,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 	}
       
       // note field for kick in x is unit Y, hence B = (y,x,0) here
+      // field calculated from scaled angle so no need to scale field here
       G4ThreeVector     field = G4ThreeVector(fieldY, fieldX, 0);
       G4double       fieldMag = field.mag();
       G4ThreeVector unitField = field.unit();
@@ -924,6 +936,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["field"] = fieldMag;
       (*st)["bx"]    = unitField.x();
       (*st)["by"]    = unitField.y();
+
+      // preserve sign of field strength for fringe integrators
+      // needed to calculate correct value of rho
+      (*fringeStIn)["field"] = (*st)["field"];
+      (*fringeStOut)["field"] = (*st)["field"];
+      if (fieldX < 0 || fieldY < 0)
+        {
+          (*fringeStIn)["field"] *= -1;
+          (*fringeStOut)["field"] *= -1;
+        }
     }
 
   (*fringeStIn) ["bx"] = (*st)["bx"];

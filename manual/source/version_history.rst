@@ -114,6 +114,10 @@ Bug Fixes
   current working directory to the macro search path for Geant4.
 * Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
   with a G4CutTubs as the container (outermost) solid.
+* Fixed bug in dipole fringe scaling with the `bdsimmatrixfringescaling` integrator set where the particle
+  bending radius was scaled twice and arguments were passed into the base stepper in the wrong order.
+* Dipole fringes now apply the fringe kick and dipole transport in the correct order depending on if the fringe
+  is at the entrance or exit of the dipole.
 
 Output Changes
 --------------
