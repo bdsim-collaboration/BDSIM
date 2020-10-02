@@ -3461,7 +3461,7 @@ like the LHC, where speed matters and the pole faces are not a strong feature.
 .. note:: The dipole fringe matrix used for poleface rotations and fringe field tracking
       (see :ref:`dipole-fringe-integrator`) has no terms that are momentum dependant, therefore to match
       MAD-X, the dipole fringe integrator in the `bdsimmatrix` set does not normalise the fringe kick to
-      the particle's momentum. This of course means that the fringe's effect on the beam optics is independant
+      the particle's momentum. This of course means that the fringe's effect on the beam optics is independent
       of energy spread. As a particle's bending radius should depend on it's momentum, the user can instead
       use the `bdsimmatrixfringescaling` integrator set which is identical to the `bdsimmatrix` set except
       for the dipole fringe integrator which does normalises to momentum on a per-particle basis. This integrator
