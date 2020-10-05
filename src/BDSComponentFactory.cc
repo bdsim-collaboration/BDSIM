@@ -772,6 +772,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   G4double           hkick      = 0;
   G4double           vkick      = 0;
   GetKickValue(hkick, vkick, type);
+  (*st)["scaling"] = scaling; // needed in kicker fringes otherwise default is zero
   (*st)["hkick"] = scaling * hkick;
   (*st)["vkick"] = scaling * vkick;
 
