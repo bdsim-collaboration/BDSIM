@@ -37,7 +37,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 minimumRadiusOfCurvatureIn,
 						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  rho((std::abs(brhoIn)/(*strengthIn)["field"]) * (*strengthIn)["scaling"]),
+  rho(1.0),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
@@ -66,6 +66,13 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   // and ordering of kick & dipole transport
   isEntrance = (*strengthIn)["isentrance"];
 
+  // check if field or scaling is finite, if not then set to be zero strength to later advance as a drift,
+  // otherwise then calculate rho by undo-ing field scaling so rho is truly nominal for matching mad matrices
+  if (!BDS::IsFinite((*strengthIn)["field"]) || !BDS::IsFinite((*strengthIn)["scaling"]))
+    {zeroStrength = true;}
+  else
+    {rho = (std::abs(brhoIn)/(*strengthIn)["field"]) * (*strengthIn)["scaling"];}
+
   // thin sextupole strength for curved polefaces
   G4double thinSextStrength = (-polefaceCurvature / rho) * 1.0 / std::pow(std::cos(polefaceAngle),3);
 
@@ -78,8 +85,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   // integrator for thin sextupole
   multipoleIntegrator = new BDSIntegratorMultipoleThin(sextStrength, brhoIn, eqOfMIn);
   delete sextStrength;
-    
-  zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
+
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
   delete dipoleField;
