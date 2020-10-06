@@ -3458,6 +3458,16 @@ like the LHC, where speed matters and the pole faces are not a strong feature.
 	  physical angled faces in the model as well as accurate tracking, using the MAD-X style matrix
 	  integrators.
 
+.. note:: The dipole fringe matrix used for poleface rotations and fringe field tracking
+      (see :ref:`dipole-fringe-integrator`) has no terms that are momentum dependant, therefore to match
+      MAD-X, the dipole fringe integrator in the `bdsimmatrix` set does not normalise the fringe kick to
+      the particle's momentum. This of course means that the fringe's effect on the beam optics is independent
+      of energy spread. As a particle's bending radius should depend on it's momentum, the user can instead
+      use the `bdsimmatrixfringescaling` integrator set which is identical to the `bdsimmatrix` set except
+      for the dipole fringe integrator which does normalises to momentum on a per-particle basis. This integrator
+      set would therefore produce a slightly different optic performance if the beam has an energy spread and may
+      not match MAD-X.
+
 Large Angle Bends
 ^^^^^^^^^^^^^^^^^
 For a model that includes large angle bends (for example > 0.1rad), the user should consider reducing
@@ -3475,3 +3485,28 @@ overlap checks.
 In short, we recommend running with :code:`option, checkOverlaps=1;` once to verify there are no
 problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
 to the typical full width of a magnet.
+
+Dipole Scaling
+^^^^^^^^^^^^^^
+When scaling a dipole, BDSIM internally scales the dipole field and therefore scales the bending radius as the
+machine's nominal rigidity remains unchanged. This same field is also used in the dipole fringes for particle
+transport through the element, therefore the magnitude of the fringe kick should also scale due to it's dependence
+on the bending radius.
+
+The default integrator set, `bdsimmatrix`, however, is designed to match the behaviour of MAD-X and MAD-8 where
+the standard fringe matrix has no energy dependant terms (see :ref:`dipole-fringe-integrator`). The same kick is
+therefore applied to every charged particle irrespective of it's momentum.
+
+As the kick would be calculated from the scaled bending radius, whilst it would be physically accurate for the
+particle, it would not match MAD which would apply the kick as if the particle were nominal. In the `bdsimmatrix`
+integrator set we therefore undo any scaling in the fringes and apply the nominal kick that MAD would.
+
+Should the user need or wish to scale the fringes then they should user the `bdsimmatrixfringescaling` integrator
+set which is identical to the default `bdsimmatrix` set except for the fringe integrator. This integrator calculates
+the bending radius on a per particle basis, accounting for both scaled field and any energy deviation.
+
+Should the model be designed to scale a field by a factor `N` to account for a factor `N` change in central momentum,
+then the behaviour of the fringe kick would be the same as the `bdsimmatrix` fringe integrator, as the field scaling
+would counteract the momentum deviation and the bending radius should be calculated as nominal for that magnet. The
+result may not entirely match that if using the `bdsimmatrix` set due to the aforementioned effect of energy spread.
+
