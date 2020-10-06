@@ -743,6 +743,7 @@ then calculated with respect to the chord length:
 
    \mathbf{B} = B\rho\, \frac{\theta}{\mathrm{chord\,length}}
 
+For thin kickers, the magnetic field :code:`B` is ignored and the element is treated as a drift.
 
 * The :ref:`aperture-parameters` may also be specified.
 * For a vkicker with a finite length, the :ref:`magnet-geometry-parameters` may also be specified.
@@ -797,6 +798,8 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
 	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
 	  the opposite of a bend where a positive *angle* causes a deflection in negative
 	  `x`.
+
+For thin kickers, the magnetic field :code:`B` is ignored and the element is treated as a drift.
 
 * The :ref:`aperture-parameters` may also be specified.
 * For a hkicker with a finite length, the :ref:`magnet-geometry-parameters` may also be specified.
