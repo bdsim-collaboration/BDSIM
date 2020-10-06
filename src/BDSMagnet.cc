@@ -50,7 +50,7 @@ class G4Userlimits;
 
 
 BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
-		     G4String            nameIn,
+		     const G4String&     nameIn,
 		     G4double            lengthIn,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
