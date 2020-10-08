@@ -20,11 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSMaterials.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -34,17 +31,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include <cstdlib>
-#include <cmath>
-#include <string>
+#include "CLHEP/Units/SystemOfUnits.h"
 
 class G4Userlimits;
 
