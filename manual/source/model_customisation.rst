@@ -736,7 +736,7 @@ The magnet geometry is controlled by the following parameters.
 	  basis, but in this case they act as a default that will be used if none are
 	  specified by the element.
 
-.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), any
+.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), **all**
 	  per-element magnet geometry definitions will be ignored and the ones specified
 	  in Options will be used.
 
@@ -1279,15 +1279,14 @@ The beam pipe is not placed 'inside' the yoke.
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
 `decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
-Example::
+Example: ::
 
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
 
 
-* :code:`autoColour=1` can also be used to automatically colour the supplied geometry by
-  density if desired. This is on by default.  Example to turn it off:
-
-::
+:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
+density if desired. This is on by default.  Example to turn it off: ::
+    
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
 
