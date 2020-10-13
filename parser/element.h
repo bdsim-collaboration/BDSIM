@@ -112,6 +112,7 @@ namespace GMAD
   
     // magnet geometry
     std::string magnetGeometryType;
+    bool dontSplitOuter;
     double horizontalWidth; // formerly outerDiameter
     bool   yokeOnInside;
     int    hStyle;  ///< -1 = unset; 0 = false (ie c style); 1 = true, use hstyle

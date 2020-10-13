@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -385,6 +386,42 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   return sbendline;
 }
 
+BDSAcceleratorComponent* BDS::SBendWithSingleOuter(const G4String&         elementName,
+                                             const Element*          element,
+                                             BDSMagnetStrength*      st,
+                                             G4double                brho,
+                                             const BDSIntegratorSet* integratorSet,
+                                             G4double                incomingFaceAngle,
+                                             G4double                outgoingFaceAngle,
+                                             G4bool                  buildFringeFields,
+                                             const GMAD::Element*    prevElement,
+                                             const GMAD::Element*    nextElement)
+{
+
+    Element* el = new Element(*element);
+    el->magnetGeometryType = "none";
+    BDSLine* pipe_line = dynamic_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
+    delete el;
+
+    const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
+
+    auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle,
+                                                           -outgoingFaceAngle);
+    auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element,
+                                                              -incomingFaceAngle,
+                                                              -outgoingFaceAngle,
+                                                              bpInfo,
+                                                              yokeOnLeft);
+
+    const G4double            arcLength = element->l  * CLHEP::m;
+
+    BDSLine::iterator it = pipe_line->begin();
+
+    BDSMagnetOuter* magnetOuter = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, mgInfo, arcLength, pipe_line->GetChordLength(),pipe_line->operator[](0).);
+
+
+}
+
 void BDS::UpdateSegmentAngles(G4int index,
 			      G4int nSBends,
 			      G4double semiAngle,
@@ -473,6 +510,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   
   return magnet;
 }
+
+
 
 BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const Element*          element,

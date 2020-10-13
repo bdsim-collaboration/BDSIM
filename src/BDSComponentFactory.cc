@@ -663,11 +663,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double incomingFaceAngle = IncomingFaceAngle(element);
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
-  auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
-                                       incomingFaceAngle, outgoingFaceAngle,
-				       includeFringeFields, prevElement, nextElement);
-  
-  return sBendLine;
+  if (element->dontSplitOuter && !(element->magnetGeometryType.empty()))
+  {return BDS::SBendWithSingleOuter(elementName, element, st, brho, integratorSet,
+                                    incomingFaceAngle, outgoingFaceAngle,
+                                    includeFringeFields, prevElement, nextElement);}
+
+  else if (element->dontSplitOuter && element->magnetGeometryType.empty())
+  {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}
+
+  else
+  { return BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
+                                        incomingFaceAngle, outgoingFaceAngle,
+                                        includeFringeFields, prevElement, nextElement);}
+
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
@@ -2005,7 +2013,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   info->name = elementNameIn;
-  
+
   // magnet geometry type
   if (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry())
    {info->geometryType = globals->MagnetGeometryType();}
