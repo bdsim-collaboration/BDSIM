@@ -31,10 +31,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetOuterFactory.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSLine.hh"
+#include "BDSBeamPipe.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSUtilities.hh"
+#include "G4PVPlacement.hh"
+#include "BDSSimpleComponent.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
@@ -400,27 +405,60 @@ BDSAcceleratorComponent* BDS::SBendWithSingleOuter(const G4String&         eleme
 
     Element* el = new Element(*element);
     el->magnetGeometryType = "none";
-    BDSLine* pipe_line = dynamic_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
+    BDSLine* pipeLine = dynamic_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
     delete el;
 
     const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
+    auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
+    auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
+    const G4double arcLength = pipeLine->GetArcLength()* CLHEP::m;
+    const G4double chordLength = pipeLine->GetChordLength()* CLHEP::m;
 
-    auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle,
-                                                           -outgoingFaceAngle);
-    auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element,
-                                                              -incomingFaceAngle,
-                                                              -outgoingFaceAngle,
-                                                              bpInfo,
-                                                              yokeOnLeft);
+    BDSLine::iterator it = pipeLine->begin();
 
-    const G4double            arcLength = element->l  * CLHEP::m;
+    if (buildFringeFields)
+      {std::advance(it, 1);}
 
-    BDSLine::iterator it = pipe_line->begin();
+    BDSMagnetOuter* magnetOuter = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, mgInfo, arcLength, chordLength, dynamic_cast<BDSBeamPipe*>(*it));
 
-    BDSMagnetOuter* magnetOuter = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, mgInfo, arcLength, pipe_line->GetChordLength(),pipe_line->operator[](0).);
+    G4double offsetAngle = element->angle/2;
+    G4double offsetLength = chordLength/2;
+
+    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
+
+    G4ThreeVector u = G4ThreeVector( std::cos(offsetAngle), std::sin(offsetAngle),0);
+    G4ThreeVector v = G4ThreeVector(0, 1,0);
+    G4ThreeVector w = G4ThreeVector(-std::sin(offsetAngle), std::cos(offsetAngle),0);
+    G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
+
+    G4double          initialS = 0;
+
+    BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition,initialGlobalRotation, initialS);
+    beamline->AddComponent(pipeLine);
+
+    G4int i = 0;
+    for (auto element : *beamline)
+    {
+        G4String placementName = element->GetPlacementName() + "_pv";
+        G4Transform3D* placementTransform = element->GetPlacementTransform();
+        G4int copyNumber = i;
+        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                    element->GetContainerLogicalVolume(), // volume to be placed
+                                    placementName,                        // placement name
+                                    magnetOuter->GetContainerLogicalVolume(),// volume to place it in
+                                    false,                                // no boolean operation
+                                    copyNumber,                           // copy number
+                                    true);                       // overlap checking
+
+        i++; // for incremental copy numbers
+    }
+
+    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", reinterpret_cast<BDSGeometryComponent *>(beamline), pipeLine->GetArcLength(), element->angle, G4ThreeVector(0, 0, -1), G4ThreeVector(0, 0, 1), bpInfo);
 
 
+    return sbend;
 }
+
 
 void BDS::UpdateSegmentAngles(G4int index,
 			      G4int nSBends,
