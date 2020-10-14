@@ -436,6 +436,8 @@ BDSAcceleratorComponent* BDS::SBendWithSingleOuter(const G4String&         eleme
     BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition,initialGlobalRotation, initialS);
     beamline->AddComponent(pipeLine);
 
+    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", reinterpret_cast<BDSGeometryComponent *>(beamline), pipeLine->GetArcLength(), element->angle, G4ThreeVector(0, 0, -1), G4ThreeVector(0, 0, 1), bpInfo);
+
     G4int i = 0;
     for (auto element : *beamline)
     {
@@ -450,11 +452,15 @@ BDSAcceleratorComponent* BDS::SBendWithSingleOuter(const G4String&         eleme
                                     copyNumber,                           // copy number
                                     true);                       // overlap checking
 
+        sbend->RegisterDaughter(reinterpret_cast<BDSGeometryComponent *>(element));
+
+        for (auto subElement : *reinterpret_cast<BDSLine*>(element))
+        {
+            sbend->RegisterDaughter(subElement);
+        }
+
         i++; // for incremental copy numbers
     }
-
-    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", reinterpret_cast<BDSGeometryComponent *>(beamline), pipeLine->GetArcLength(), element->angle, G4ThreeVector(0, 0, -1), G4ThreeVector(0, 0, 1), bpInfo);
-
 
     return sbend;
 }
