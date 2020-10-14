@@ -1,0 +1,8 @@
+MADX job to generate a thick and thin TFS files for the lattice, peform a PTC tracking run with a 1000 particles and prepare SixTrack input
+
+To run:
+madx < job_2018_optics_30cm.madx
+
+Must be ran from a location with access to AFS
+
+For PTC, the initial distirbution is in a separate inrays file. The particle distribution is generated using BDSIM and the closed orbit is subtracted from the coordinates, as PTC expects the coordinates to be defined about the closed orbit, not the reference orbit, in the case when the closed_orbit flag is enabled.

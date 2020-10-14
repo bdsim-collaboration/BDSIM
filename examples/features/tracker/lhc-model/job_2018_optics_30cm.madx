@@ -1,0 +1,192 @@
+! Links definitions
+option, warn,info;
+system,"ln -fns /afs/cern.ch/eng/lhc/optics/runII/2017 db5";
+system,"ln -fns /afs/cern.ch/eng/lhc/optics/runII/2018/PROTON ats";
+
+REAL CONST l.TAN   = 0.0  ;REAL CONST l.TANAL = l.TAN;
+REAL CONST l.TANAR = l.TAN;REAL CONST l.TANC  = l.TAN;
+REAL CONST l.TCT   = 1.0;REAL CONST l.TCTH  = l.TCT;REAL CONST l.TCTVA = l.TCT;
+REAL CONST l.MBAS2             =0 ; REAL CONST l.MBAW              =0 ;
+REAL CONST l.MBCS2             =0 ; REAL CONST l.MBLS2             =0 ;
+REAL CONST l.MBLW              =0 ; REAL CONST l.MBWMD             =0 ;
+REAL CONST l.MBXWH             =0 ; REAL CONST l.MBXWS             =0 ;
+REAL CONST l.MBXWT             =0 ;
+
+
+!Option, -echo,-warn,-info;
+
+
+call,file="db5/toolkit/macro.madx";
+call,file="db5/lhc_as-built.seq";
+!call,file="db5/lhcb4_as-built.seq";
+
+call,   file="db5/aperture/aperture_as-built.b1.madx";
+call,   file="db5/aperture/aperture_as-built.b2.madx";
+call,   file="db5/aperture/aper_tol_as-built.b1.madx";
+call,   file="db5/aperture/aper_tol_as-built.b2.madx";
+
+
+mylhcbeam=1;
+!mylhcbeam=4;
+
+exec,mk_beam(6500);
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 30 cm ATS
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+call, file="ats/opticsfile.22_ctpps2";
+on_sep1=0.55; on_sep5 =    0.550  ;  on_ov5 =    -1.800  ; !2018 the IP shift is 1.8
+on_x1=160; on_x5=160;
+
+
+! Start from s.ds.l1.b1 for BDSIM
+seqedit, sequence=lhcb1;
+   flatten;
+   cycle, start=IP1;
+ endedit;
+
+use, sequence=lhcb1; twiss,file="twiss_lhc_b1_from_ip1.tfs";
+
+! Start from s.ds.l1.b1 for BDSIM
+seqedit, sequence=lhcb1;
+   flatten;
+    cycle, start=IP1;
+!   cycle,start=s.ds.l1.b1;
+ endedit;
+
+seqedit, sequence=lhcb2;
+   flatten;
+   cycle, start=IP1;	
+ endedit;
+
+
+set,format="22.15e";
+select,flag=twiss,clear;
+
+use, sequence=lhcb1; twiss,file="twiss_lhc_b1.tfs";
+
+use, sequence=lhcb1;
+
+PTC_CREATE_UNIVERSE;
+PTC_CREATE_LAYOUT, model=2,method=6, nst=10, exact=true, time=false;
+
+call, file="lhc_b1_inrays.madx";
+
+ptc_align;
+
+!PTC_OBSERVE, place=DRIFT_53;
+!PTC_OBSERVE, place=DRIFT_366;
+!PTC_OBSERVE, place=MQSX.3L1;
+!PTC_OBSERVE, place=IP1;
+
+
+!PTC_TRACK, icase=5,dump, turns=20, ffile=1, maxaper={1e5, 1e5, 1e5, 1e5, 1e5, 1e5}, recloss, element_by_element=true, closed_orbit=false;;
+
+PTC_TRACK, icase=6, turns=1, maxaper={1e5, 1e5, 1e5, 1e5, 1e5, 1e5}, element_by_element=true, dump, onetable, closed_orbit;
+
+PTC_TRACK_END;
+
+! PTC_NORMAL,maptable,icase=5,no=12;
+! write,table="map_table",file="lhcmaptable_order12", closed_orbit=false;
+
+PTC_END;
+
+stop;
+
+! Start from IP1 for SixTrack
+seqedit, sequence=lhcb1;
+   flatten;
+   cycle, start=IP1;
+endedit;
+
+set,    format="12.6f";
+select, flag=twiss,clear;
+select,flag=twiss, column=keyword,name,s,betx,bety,x,y,px,py,angle,k1l,mux,muy,dx,dpx,dy,dpy,l;
+
+
+! twiss 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+! Sequence definition
+Option, -echo,-warn,-info;
+if (mylhcbeam==1){
+
+slicefactor=4;
+select, flag=makethin, clear;
+select, flag=makethin, class=MB,    slice= 2;select, flag=makethin, class=MQ,    slice=2 * slicefactor;
+select, flag=makethin, class=mqxa,  slice=32* slicefactor;select, flag=makethin, class=mqxb, slice=32* slicefactor;
+select, flag=makethin, pattern=mbx\. ,   slice=4;
+select, flag=makethin, pattern=mbrb\.,   slice=4;
+select, flag=makethin, pattern=mbrc\.,   slice=4;
+select, flag=makethin, pattern=mbrs\.,   slice=4;
+select, flag=makethin, pattern=mqwa\.,   slice=4;
+select, flag=makethin, pattern=mqwb\.,   slice=4;
+select, flag=makethin, pattern=mqy\.,    slice=4* slicefactor;
+select, flag=makethin, pattern=mqm\.,    slice=4* slicefactor;
+select, flag=makethin, pattern=mqmc\.,   slice=4* slicefactor;
+select, flag=makethin, pattern=mqml\.,   slice=4* slicefactor;
+select, flag=makethin, pattern=mqtlh\.,  slice=2* slicefactor;
+select, flag=makethin, pattern=mqtli\.,  slice=2* slicefactor;
+select, flag=makethin, pattern=mqt\.  ,  slice=2* slicefactor;
+
+use,sequence=lhcb1; makethin, sequence=lhcb1, makedipedge=false, style=teapot;
+
+
+use, sequence=lhcb1;twiss,file="twiss_ats_30cm_thin.b1.tfs";
+
+
+set,    format="20.14f";
+value,table(twiss,IP1,betx),table(twiss,IP1,bety),table(twiss,IP5,betx),table(twiss,IP5,bety),table(twiss,IP2,betx),table(twiss,IP2,bety),table(twiss,IP8,betx);
+value,table(twiss,IP7,x)*1e6,table(twiss,IP7,y)*1e6,table(twiss,IP1,x),table(twiss,IP1,py),table(twiss,IP5,y),table(twiss,IP5,px);
+
+
+sixtrack, LONG_NAMES=TRUE,APERTURE=TRUE,CAVALL=TRUE,radius=17E-03;
+
+
+} else {
+
+
+
+
+slicefactor=4;
+select, flag=makethin, clear;
+select, flag=makethin, class=MB,    slice= 2;select, flag=makethin, class=MQ,    slice=2 * slicefactor;
+select, flag=makethin, class=mqxa,  slice=32* slicefactor;select, flag=makethin, class=mqxb, slice=32* slicefactor;
+select, flag=makethin, pattern=mbx\. ,   slice=4;
+select, flag=makethin, pattern=mbrb\.,   slice=4;
+select, flag=makethin, pattern=mbrc\.,   slice=4;
+select, flag=makethin, pattern=mbrs\.,   slice=4;
+select, flag=makethin, pattern=mqwa\.,   slice=4;
+select, flag=makethin, pattern=mqwb\.,   slice=4;
+select, flag=makethin, pattern=mqy\.,    slice=4* slicefactor;
+select, flag=makethin, pattern=mqm\.,    slice=4* slicefactor;
+select, flag=makethin, pattern=mqmc\.,   slice=4* slicefactor;
+select, flag=makethin, pattern=mqml\.,   slice=4* slicefactor;
+select, flag=makethin, pattern=mqtlh\.,  slice=2* slicefactor;
+select, flag=makethin, pattern=mqtli\.,  slice=2* slicefactor;
+select, flag=makethin, pattern=mqt\.  ,  slice=2* slicefactor;
+
+
+use, sequence=lhcb2;makethin,sequence=lhcb2,makedipedge=false,style=teapot;
+
+
+use, sequence=lhcb2;twiss,file="twiss_ats_30cm_thin.b2.tfs";
+
+
+set, format="20.14f";
+value,table(twiss,IP1,betx),table(twiss,IP1,bety),table(twiss,IP5,betx),table(twiss,IP5,bety),table(twiss,IP2,betx),table(twiss,IP2,bety),table(twiss,IP8,betx);
+value,table(twiss,IP7,x)*1e6,table(twiss,IP7,y)*1e6,table(twiss,IP1,x),table(twiss,IP1,py),table(twiss,IP5,y),table(twiss,IP5,px);
+
+
+
+sixtrack, LONG_NAMES=TRUE,APERTURE=TRUE,CAVALL=TRUE,radius=17E-03;
+
+
+
+
+}
+
+
+system, "rm db5 ats";
+system, "mv fc.2 fort.2";
+stop;
