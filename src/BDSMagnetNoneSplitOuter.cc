@@ -166,7 +166,7 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
 {
     Element* el = new Element(*element);
     el->magnetGeometryType = "none";
-    BDSLine* pipeLine = dynamic_cast<BDSLine*>(BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
+    BDSLine* pipeLine = BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
     delete el;
 
     const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
@@ -187,33 +187,33 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
 
     G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
 
-    G4ThreeVector u = G4ThreeVector( std::cos(offsetAngle), std::sin(offsetAngle),0);
+    G4ThreeVector u = G4ThreeVector( std::cos(offsetAngle), 0, std::sin(offsetAngle));
     G4ThreeVector v = G4ThreeVector(0, 1,0);
-    G4ThreeVector w = G4ThreeVector(-std::sin(offsetAngle), std::cos(offsetAngle),0);
+    G4ThreeVector w = G4ThreeVector(-std::sin(offsetAngle), 0, std::cos(offsetAngle));
     G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
 
     G4double          initialS = 0;
 
     BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition,initialGlobalRotation, initialS);
+
     beamline->AddComponent(pipeLine);
 
-    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", reinterpret_cast<BDSGeometryComponent *>(beamline), pipeLine->GetArcLength(), element->angle, G4ThreeVector(0, 0, -1), G4ThreeVector(0, 0, 1), bpInfo);
+    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),magnetOuter->GetContainerSolid(),magnetOuter->GetContainerLogicalVolume(),magnetOuter->GetExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),bpInfo);
 
     G4int i = 0;
     for (BDSBeamlineElement* el : *beamline)
     {
-        G4String placementName = el->GetPlacementName() + "_pv";
-        G4Transform3D* placementTransform = el->GetPlacementTransform();
+        G4String placementName = el->GetAcceleratorComponent()->GetName()+ "_pv";
+        G4Transform3D placementTransform = el->GetAcceleratorComponent()->GetPlacementTransform();
         G4int copyNumber = i;
-        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                    el->GetContainerLogicalVolume(), // volume to be placed
+        /*auto pv = new G4PVPlacement(placementTransform,                  // placement transform
+                                    el->GetAcceleratorComponent()->GetContainerLogicalVolume(), // volume to be placed
                                     placementName,                        // placement name
                                     sbend->GetContainerLogicalVolume(),// volume to place it in
                                     false,                                // no boolean operation
                                     copyNumber,                           // copy number
-                                    true);                       // overlap checking
-
-        sbend->RegisterDaughter(reinterpret_cast<BDSGeometryComponent *>(el));
+                                    true);                       // overlap checking*/
+        sbend->RegisterDaughter(el->GetAcceleratorComponent());
 
         i++; // for incremental copy numbers
     }
@@ -222,7 +222,7 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
 }
 
 
-BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::BuildSBendLine(const G4String&         elementName,
+BDSLine* BDSMagnetNoneSplitOuter::BuildSBendLine(const G4String&         elementName,
                                              const Element*          element,
                                              BDSMagnetStrength*      st,
                                              G4double                brho,

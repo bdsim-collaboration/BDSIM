@@ -101,7 +101,7 @@ public:
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
 
-  BDSAcceleratorComponent*  BuildSBendLine(const G4String&         elementName,
+  BDSLine*  BuildSBendLine(const G4String&         elementName,
                         const GMAD::Element*          element,
                         BDSMagnetStrength*      st,
                         G4double                brho,
