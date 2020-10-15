@@ -99,6 +99,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <utility>
 
+#include "BDSMagnetNoneSplitOuter.hh"
+
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
@@ -664,9 +666,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
   if (element->dontSplitOuter && !(element->magnetGeometryType.empty()))
-  {return BDS::SBendWithSingleOuter(elementName, element, st, brho, integratorSet,
-                                    incomingFaceAngle, outgoingFaceAngle,
-                                    includeFringeFields, prevElement, nextElement);}
+  {
+      const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
+      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
+
+      BDSMagnetNoneSplitOuter* magnetNoneSplitOuter = new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, elementName, element->l, bpInfo, mgInfo, nullptr, element->angle, nullptr, false);
+
+      return magnetNoneSplitOuter->SBendWithSingleOuter(elementName, element, st, brho, integratorSet,
+                                                        incomingFaceAngle, outgoingFaceAngle,
+                                                        includeFringeFields, prevElement, nextElement);}
 
   else if (element->dontSplitOuter && element->magnetGeometryType.empty())
   {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}
