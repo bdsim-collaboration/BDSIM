@@ -201,22 +201,40 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),magnetOuter->GetContainerSolid(),magnetOuter->GetContainerLogicalVolume(),magnetOuter->GetExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),bpInfo);
 
     G4int i = 0;
-    for (BDSBeamlineElement* el : *beamline)
-    {
-        G4String placementName = el->GetAcceleratorComponent()->GetName()+ "_pv";
-        G4Transform3D placementTransform = el->GetAcceleratorComponent()->GetPlacementTransform();
-        G4int copyNumber = i;
-        /*auto pv = new G4PVPlacement(placementTransform,                  // placement transform
-                                    el->GetAcceleratorComponent()->GetContainerLogicalVolume(), // volume to be placed
-                                    placementName,                        // placement name
-                                    sbend->GetContainerLogicalVolume(),// volume to place it in
-                                    false,                                // no boolean operation
-                                    copyNumber,                           // copy number
-                                    true);                       // overlap checking*/
-        sbend->RegisterDaughter(el->GetAcceleratorComponent());
 
-        i++; // for incremental copy numbers
+    G4int j = 0;
+
+    for (BDSBeamlineElement *el : *beamline) {
+
+        std::set<BDSGeometryComponent*> daughtersSet = (*el).GetAcceleratorComponent()->GetAllDaughters();
+        std::set<BDSGeometryComponent*>::iterator it;
+
+        if(j!=100) {
+
+            for (it = daughtersSet.begin(); it != daughtersSet.end(); ++it) {
+
+                G4String placementName = (*it)->GetName() + "_pv";
+                //G4Transform3D placementTransform = el->GetAcceleratorComponent()->GetPlacementTransform();
+                G4Transform3D placementTransform = (*it)->GetPlacementTransform();
+                G4int copyNumber = i;
+                auto pv = new G4PVPlacement(placementTransform,                  // placement transform
+                                            (*it)->GetContainerLogicalVolume(), // volume to be placed
+                                            placementName,                        // placement name
+                                            magnetOuter->GetContainerLogicalVolume(),// volume to place it in
+                                            false,                                // no boolean operation
+                                            copyNumber,                           // copy number
+                                            true);                       // overlap checking
+                sbend->RegisterDaughter((*it));
+
+                i++; // for incremental copy numbers
+
+            }
+        }
+        j++;
+
     }
+
+
 
     return sbend;
 }
