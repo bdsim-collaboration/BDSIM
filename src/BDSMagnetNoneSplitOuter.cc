@@ -50,6 +50,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 #include "BDSIntegratorSet.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
+
 
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -185,7 +188,7 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     G4double offsetAngle = element->angle/2;
     G4double offsetLength = chordLength/2;
 
-    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
+    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength*20) ;
 
     G4ThreeVector u = G4ThreeVector( std::cos(offsetAngle), 0, std::sin(offsetAngle));
     G4ThreeVector v = G4ThreeVector(0, 1,0);
@@ -200,42 +203,29 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
 
     BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),magnetOuter->GetContainerSolid(),magnetOuter->GetContainerLogicalVolume(),magnetOuter->GetExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),bpInfo);
 
+
     G4int i = 0;
+    for (auto element : *beamline)
+    {
 
-    G4int j = 0;
+        G4String placementName = element->GetPlacementName() + "_pv";
+        G4Transform3D* placementTransform = element->GetPlacementTransform();
+        G4int copyNumber = i;
 
-    for (BDSBeamlineElement *el : *beamline) {
+        G4LogicalVolume* test = reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume();
 
-        std::set<BDSGeometryComponent*> daughtersSet = (*el).GetAcceleratorComponent()->GetAllDaughters();
-        std::set<BDSGeometryComponent*>::iterator it;
+        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                    reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
+                                    placementName,                        // placement name
+                                    magnetOuter->GetContainerLogicalVolume(),// volume to place it in
+                                    false,                                // no boolean operation
+                                    copyNumber,                           // copy number
+                                    checkOverlaps);                       // overlap checking
 
-        if(j!=100) {
 
-            for (it = daughtersSet.begin(); it != daughtersSet.end(); ++it) {
-
-                G4String placementName = (*it)->GetName() + "_pv";
-                //G4Transform3D placementTransform = el->GetAcceleratorComponent()->GetPlacementTransform();
-                G4Transform3D placementTransform = (*it)->GetPlacementTransform();
-                G4int copyNumber = i;
-                auto pv = new G4PVPlacement(placementTransform,                  // placement transform
-                                            (*it)->GetContainerLogicalVolume(), // volume to be placed
-                                            placementName,                        // placement name
-                                            magnetOuter->GetContainerLogicalVolume(),// volume to place it in
-                                            false,                                // no boolean operation
-                                            copyNumber,                           // copy number
-                                            true);                       // overlap checking
-                sbend->RegisterDaughter((*it));
-
-                i++; // for incremental copy numbers
-
-            }
-        }
-        j++;
-
+        i++; // for incremental copy numbers
     }
-
-
-
+    
     return sbend;
 }
 
