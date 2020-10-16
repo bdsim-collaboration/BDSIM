@@ -69,26 +69,6 @@ public:
                           BDSFieldInfo*       outerFieldInfoIn = nullptr,
                           G4bool              isThinIn = false);
 
-  BDSMagnetNoneSplitOuter* BuildSingleSBend(const GMAD::Element*     element,
-                     const G4String&          name,
-                     G4double                 arcLength,
-                     G4double                 angle,
-                     G4double                 angleIn,
-                     G4double                 angleOut,
-                     const BDSMagnetStrength* strength,
-                     G4double                 brho,
-                     const BDSIntegratorSet*  integratorSet,
-                     G4bool                   yokeOnLeft,
-                     const BDSFieldInfo*      outerFieldIn);
-
-  BDSMagnetNoneSplitOuter*  BuildDipoleFringe(const GMAD::Element*     element,
-                      G4double                 angleIn,
-                      G4double                 angleOut,
-                      const G4String&          name,
-                      const BDSMagnetStrength* st,
-                      G4double                 brho,
-                      const BDSIntegratorSet*  integratorSet,
-                      BDSFieldType             dipoleFieldType);
 
   BDSAcceleratorComponent* SBendWithSingleOuter(const G4String&         elementName,
                         const GMAD::Element*          element,
@@ -101,18 +81,6 @@ public:
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
 
-  BDSLine*  BuildSBendLine(const G4String&         elementName,
-                        const GMAD::Element*          element,
-                        BDSMagnetStrength*      st,
-                        G4double                brho,
-                        const BDSIntegratorSet* integratorSet,
-                        G4double                incomingFaceAngle,
-                        G4double                outgoingFaceAngle,
-                        G4bool                  buildFringeFields,
-                        const GMAD::Element*    prevElement,
-                        const GMAD::Element*    nextElement);
-
-  BDSBeamPipe* BeamPipe(){return beampipe;};
 
 protected:
 
