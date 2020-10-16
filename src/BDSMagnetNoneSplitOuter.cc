@@ -188,16 +188,17 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     G4double offsetAngle = element->angle/2;
     G4double offsetLength = chordLength/2;
 
-    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength*20) ;
+    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength/1000) ;
 
-    G4ThreeVector u = G4ThreeVector( std::cos(offsetAngle), 0, std::sin(offsetAngle));
+    G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
     G4ThreeVector v = G4ThreeVector(0, 1,0);
-    G4ThreeVector w = G4ThreeVector(-std::sin(offsetAngle), 0, std::cos(offsetAngle));
+    G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
     G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
 
     G4double          initialS = 0;
 
-    BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition,initialGlobalRotation, initialS);
+    //BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, nullptr, initialS);
+    BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
 
     beamline->AddComponent(pipeLine);
 
@@ -207,25 +208,21 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     G4int i = 0;
     for (auto element : *beamline)
     {
+            G4String placementName = element->GetPlacementName() + "_pv";
+            G4Transform3D* placementTransform = element->GetPlacementTransform();
+            G4int copyNumber = i;
 
-        G4String placementName = element->GetPlacementName() + "_pv";
-        G4Transform3D* placementTransform = element->GetPlacementTransform();
-        G4int copyNumber = i;
+            auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                        reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
+                                        placementName,                        // placement name
+                                        magnetOuter->GetContainerLogicalVolume(),// volume to place it in
+                                        false,                                // no boolean operation
+                                        copyNumber,                           // copy number
+                                        checkOverlaps);                       // overlap checking
+            i++;
 
-        G4LogicalVolume* test = reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume();
-
-        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                    reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
-                                    placementName,                        // placement name
-                                    magnetOuter->GetContainerLogicalVolume(),// volume to place it in
-                                    false,                                // no boolean operation
-                                    copyNumber,                           // copy number
-                                    checkOverlaps);                       // overlap checking
-
-
-        i++; // for incremental copy numbers
     }
-    
+
     return sbend;
 }
 
