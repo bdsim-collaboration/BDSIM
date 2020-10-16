@@ -59,15 +59,21 @@ public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
 
-  BDSMagnetNoneSplitOuter(BDSMagnetType       typeIn,
-                          const G4String&     nameIn,
-                          G4double            lengthIn,
-                          BDSBeamPipeInfo*    beamPipeInfoIn,
-                          BDSMagnetOuterInfo* magnetOuterInfoIn,
-                          BDSFieldInfo*       vacuumFieldInfoIn,
-                          G4double            angleIn = 0,
-                          BDSFieldInfo*       outerFieldInfoIn = nullptr,
-                          G4bool              isThinIn = false);
+  BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
+                          BDSBeamPipeInfo *beamPipeInfoIn,
+                          BDSMagnetOuterInfo *magnetOuterInfoIn,
+                          BDSFieldInfo *vacuumFieldInfoIn,
+                          BDSFieldInfo *outerFieldInfoIn,
+                          G4bool isThinIn,
+                          const GMAD::Element*          elementIn,
+                          BDSMagnetStrength*      stIn,
+                          G4double                brhoIn,
+                          const BDSIntegratorSet* integratorSetIn,
+                          G4double                incomingFaceAngleIn,
+                          G4double                outgoingFaceAngleIn,
+                          G4bool                  buildFringeFieldsIn,
+                          const GMAD::Element*    prevElementIn,
+                          const GMAD::Element*    nextElementIn);
 
 
   BDSAcceleratorComponent* SBendWithSingleOuter(const G4String&         elementName,
@@ -81,10 +87,15 @@ public:
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
 
+  inline BDSAcceleratorComponent* SBend() {return sbend;};
 
 protected:
 
     void Build();
+
+private:
+
+    BDSAcceleratorComponent* sbend;
 
 };
 

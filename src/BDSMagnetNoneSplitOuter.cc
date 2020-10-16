@@ -66,12 +66,27 @@ using namespace GMAD;
 
 class G4Userlimits;
 
-BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn, const G4String &nameIn, G4double lengthIn,
-                                                 BDSBeamPipeInfo *beamPipeInfoIn, BDSMagnetOuterInfo *magnetOuterInfoIn,
-                                                 BDSFieldInfo *vacuumFieldInfoIn, G4double angleIn,
-                                                 BDSFieldInfo *outerFieldInfoIn, G4bool isThinIn)
-                                                 :BDSMagnet(typeIn, nameIn, lengthIn, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, angleIn, outerFieldInfoIn, isThinIn)
-{;}
+BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
+                                                 BDSBeamPipeInfo *beamPipeInfoIn,
+                                                 BDSMagnetOuterInfo *magnetOuterInfoIn,
+                                                 BDSFieldInfo *vacuumFieldInfoIn,
+                                                 BDSFieldInfo *outerFieldInfoIn,
+                                                 G4bool isThinIn,
+                                                 const Element*          elementIn,
+                                                 BDSMagnetStrength*      stIn,
+                                                 G4double                brhoIn,
+                                                 const BDSIntegratorSet* integratorSetIn,
+                                                 G4double                incomingFaceAngleIn,
+                                                 G4double                outgoingFaceAngleIn,
+                                                 G4bool                  buildFringeFieldsIn,
+                                                 const GMAD::Element*    prevElementIn,
+                                                 const GMAD::Element*    nextElementIn)
+                                                 :BDSMagnet(typeIn, elementIn->name, elementIn->l, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, elementIn->angle, outerFieldInfoIn, isThinIn)
+{
+    sbend = SBendWithSingleOuter(elementIn->name, elementIn, stIn, brhoIn, integratorSetIn,
+                         incomingFaceAngleIn, outgoingFaceAngleIn, buildFringeFieldsIn,
+                         prevElementIn, nextElementIn);
+}
 
 
 BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         elementName,

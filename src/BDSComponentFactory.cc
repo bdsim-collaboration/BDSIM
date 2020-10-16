@@ -671,11 +671,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
 
-      BDSMagnetNoneSplitOuter* magnetNoneSplitOuter = new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, elementName, element->l, bpInfo, mgInfo, nullptr, element->angle, nullptr, false);
-
-      return magnetNoneSplitOuter->SBendWithSingleOuter(elementName, element, st, brho, integratorSet,
-                                                        incomingFaceAngle, outgoingFaceAngle,
-                                                        includeFringeFields, prevElement, nextElement);}
+      return (new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, nullptr,nullptr,
+                                         false,element, st, brho,integratorSet, incomingFaceAngle,
+                                         outgoingFaceAngle, includeFringeFields, prevElement,nextElement))->SBend();}
 
   else if (element->dontSplitOuter && element->magnetGeometryType.empty())
   {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}
