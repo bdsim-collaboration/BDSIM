@@ -83,9 +83,15 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
                                                  const GMAD::Element*    nextElementIn)
                                                  :BDSMagnet(typeIn, elementIn->name, elementIn->l, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, elementIn->angle, outerFieldInfoIn, isThinIn)
 {
-    sbend = SBendWithSingleOuter(elementIn->name, elementIn, stIn, brhoIn, integratorSetIn,
-                         incomingFaceAngleIn, outgoingFaceAngleIn, buildFringeFieldsIn,
-                         prevElementIn, nextElementIn);
+    element           = elementIn;
+    st                = stIn;
+    brho              = brhoIn;
+    integratorSet     = integratorSetIn;
+    incomingFaceAngle = incomingFaceAngleIn;
+    outgoingFaceAngle = outgoingFaceAngleIn;
+    buildFringeFields = buildFringeFieldsIn;
+    prevElement       = prevElementIn;
+    nextElement       = nextElementIn;
 }
 
 
@@ -105,7 +111,10 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     BDSLine* pipeLine = reinterpret_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
     delete el;
 
-    for (auto pipe : *pipeLine) {pipe->Initialise();}
+    for (auto pipe : *pipeLine)
+    {
+        pipe->Initialise();
+    }
 
     const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
     auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
@@ -153,6 +162,8 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
                                         checkOverlaps);                       // overlap checking
             i++;
 
+            sbend->RegisterDaughter(reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent()));
+
     }
 
     return sbend;
@@ -169,4 +180,12 @@ void BDSMagnetNoneSplitOuter::Build()
     BuildContainerLogicalVolume();
     BuildOuterField(); // must be done when the containerLV exists
     PlaceComponents();
+}
+
+BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBend()
+{
+    sbend = SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
+                                 incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
+                                 prevElement, nextElement);
+    return sbend;
 }

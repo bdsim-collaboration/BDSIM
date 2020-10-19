@@ -670,8 +670,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
-
-      return (new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, nullptr,nullptr,
+      
+      return (new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, nullptr, nullptr,
                                          false,element, st, brho,integratorSet, incomingFaceAngle,
                                          outgoingFaceAngle, includeFringeFields, prevElement,nextElement))->SBend();}
 

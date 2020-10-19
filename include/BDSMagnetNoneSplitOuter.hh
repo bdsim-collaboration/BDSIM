@@ -87,7 +87,7 @@ public:
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
 
-  inline BDSAcceleratorComponent* SBend() {return sbend;};
+  BDSAcceleratorComponent* SBend();
 
 protected:
 
@@ -95,7 +95,16 @@ protected:
 
 private:
 
-    BDSAcceleratorComponent* sbend;
+    const GMAD::Element*        element;
+    BDSMagnetStrength*          st;
+    G4double                    brho;
+    const BDSIntegratorSet*     integratorSet;
+    G4double                    incomingFaceAngle;
+    G4double                    outgoingFaceAngle;
+    G4bool                      buildFringeFields;
+    const GMAD::Element*        prevElement;
+    const GMAD::Element*        nextElement;
+    BDSAcceleratorComponent*    sbend;
 
 };
 
