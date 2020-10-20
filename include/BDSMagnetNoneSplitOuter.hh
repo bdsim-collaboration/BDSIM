@@ -76,7 +76,7 @@ public:
                           const GMAD::Element*    nextElementIn);
 
 
-  BDSAcceleratorComponent* SBendWithSingleOuter(const G4String&         elementName,
+  void SBendWithSingleOuter(const G4String&         elementName,
                         const GMAD::Element*          element,
                         BDSMagnetStrength*      st,
                         G4double                brho,
@@ -86,8 +86,6 @@ public:
                         G4bool                  buildFringeFields,
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
-
-  BDSAcceleratorComponent* SBend();
 
 protected:
 
@@ -104,7 +102,6 @@ private:
     G4bool                      buildFringeFields;
     const GMAD::Element*        prevElement;
     const GMAD::Element*        nextElement;
-    BDSAcceleratorComponent*    sbend;
 
 };
 

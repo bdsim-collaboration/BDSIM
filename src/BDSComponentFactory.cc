@@ -670,10 +670,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
-      
-      return (new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, nullptr, nullptr,
+
+      BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::dipolequadrupole,
+                                                 brho,
+                                                 BDSIntegratorType::g4classicalrk4,
+                                                 st,
+                                                 true);
+
+      BDSFieldInfo* outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
+
+
+      return new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
                                          false,element, st, brho,integratorSet, incomingFaceAngle,
-                                         outgoingFaceAngle, includeFringeFields, prevElement,nextElement))->SBend();}
+                                         outgoingFaceAngle, includeFringeFields, prevElement,nextElement);}
 
   else if (element->dontSplitOuter && element->magnetGeometryType.empty())
   {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}

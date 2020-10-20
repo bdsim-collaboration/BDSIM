@@ -52,6 +52,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSet.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSAcceleratorComponentRegistry.hh"
 
 
 
@@ -95,7 +96,7 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
 }
 
 
-BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         elementName,
+void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         elementName,
                                                  const Element*          element,
                                                  BDSMagnetStrength*      st,
                                                  G4double                brho,
@@ -111,10 +112,7 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
     BDSLine* pipeLine = reinterpret_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
     delete el;
 
-    for (auto pipe : *pipeLine)
-    {
-        pipe->Initialise();
-    }
+    pipeLine->Initialise();
 
     const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
     auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
@@ -145,7 +143,6 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
 
     BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),magnetOuter->GetContainerSolid(),magnetOuter->GetContainerLogicalVolume(),magnetOuter->GetExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),bpInfo);
 
-
     G4int i = 0;
     for (auto element : *beamline)
     {
@@ -154,38 +151,40 @@ BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4S
             G4int copyNumber = i;
 
             auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                        reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
+                                        reinterpret_cast<BDSMagnet*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
                                         placementName,                        // placement name
                                         magnetOuter->GetContainerLogicalVolume(),// volume to place it in
                                         false,                                // no boolean operation
                                         copyNumber,                           // copy number
                                         checkOverlaps);                       // overlap checking
+
             i++;
 
             sbend->RegisterDaughter(reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent()));
 
     }
 
-    return sbend;
+    RegisterDaughter(sbend);
+
+    containerLogicalVolume = sbend->GetContainerLogicalVolume();
+    containerSolid = sbend->GetContainerSolid();
+    outerExtent = sbend->GetExtent();
+    innerExtent = sbend->GetInnerExtent();
+
+    G4ThreeVector     lengthOffset = G4ThreeVector(0,0, offsetLength/1000) ;
+    G4ThreeVector a = G4ThreeVector( std::cos(offsetAngle), 0, std::sin(offsetAngle));
+    G4ThreeVector b = G4ThreeVector(0, 1,0);
+    G4ThreeVector c = G4ThreeVector(-std::sin(offsetAngle), 0, std::cos(offsetAngle));
+    G4RotationMatrix* angleOffset  =  new G4RotationMatrix(a, b, c);
+
+    placementOffset = lengthOffset;
+    placementRotation = angleOffset;
+
 }
 
 void BDSMagnetNoneSplitOuter::Build()
 {
-    BuildUserLimits();
-    BuildVacuumField();
-    BuildOuter();
-    // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
-    // to control user limits in the case where there is no container and we just inherit
-    // the beam pipe container
-    BuildContainerLogicalVolume();
-    BuildOuterField(); // must be done when the containerLV exists
-    PlaceComponents();
-}
-
-BDSAcceleratorComponent* BDSMagnetNoneSplitOuter::SBend()
-{
-    sbend = SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
-                                 incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
-                                 prevElement, nextElement);
-    return sbend;
+    SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
+                         incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
+                         prevElement, nextElement);
 }
