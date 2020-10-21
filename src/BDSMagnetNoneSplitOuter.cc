@@ -168,15 +168,7 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     containerLogicalVolume = sbend->GetContainerLogicalVolume();
     containerSolid = sbend->GetContainerSolid();
-    outerExtent = sbend->GetExtent();
-    innerExtent = sbend->GetInnerExtent();
 
-    G4ThreeVector     lengthOffset = G4ThreeVector(0,0, offsetLength/1000) ;
-    G4ThreeVector a = G4ThreeVector( std::cos(offsetAngle), 0, std::sin(offsetAngle));
-    G4ThreeVector b = G4ThreeVector(0, 1,0);
-    G4ThreeVector c = G4ThreeVector(-std::sin(offsetAngle), 0, std::cos(offsetAngle));
-    G4RotationMatrix* angleOffset  =  new G4RotationMatrix(a, b, c);
-    
 }
 
 void BDSMagnetNoneSplitOuter::Build()
