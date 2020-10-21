@@ -90,6 +90,7 @@ public:
 protected:
 
     void Build();
+    void BuildOuter();
 
 private:
 

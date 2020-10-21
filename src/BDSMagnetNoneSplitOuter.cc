@@ -82,7 +82,7 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
                                                  G4bool                  buildFringeFieldsIn,
                                                  const GMAD::Element*    prevElementIn,
                                                  const GMAD::Element*    nextElementIn)
-                                                 :BDSMagnet(typeIn, elementIn->name, elementIn->l, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, elementIn->angle, outerFieldInfoIn, isThinIn)
+                                                 :BDSMagnet(typeIn, elementIn->name, elementIn->l* CLHEP::m, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, -elementIn->angle, outerFieldInfoIn, isThinIn)
 {
     element           = elementIn;
     st                = stIn;
@@ -93,6 +93,10 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
     buildFringeFields = buildFringeFieldsIn;
     prevElement       = prevElementIn;
     nextElement       = nextElementIn;
+    beamPipeInfo = beamPipeInfoIn;
+    magnetOuterInfo = magnetOuterInfoIn;
+    vacuumFieldInfo = vacuumFieldInfoIn;
+    outerFieldInfo = outerFieldInfoIn;
 }
 
 
@@ -109,28 +113,38 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 {
     Element* el = new Element(*element);
     el->magnetGeometryType = "none";
-    BDSLine* pipeLine = reinterpret_cast<BDSLine*>(BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement));
+    BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
     delete el;
 
     pipeLine->Initialise();
 
-    const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
-    auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
-    auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
-    const G4double arcLength = pipeLine->GetArcLength()* CLHEP::m;
-    const G4double chordLength = pipeLine->GetChordLength()* CLHEP::m;
+    beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
+                                                              chordLength - 2*lengthSafety,
+                                                              beamPipeInfo);
 
-    BDSLine::iterator it = pipeLine->begin();
+    beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();
+
+    RegisterDaughter(beampipe);
+    InheritExtents(beampipe);
+
+    SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
+    /// Update record of normal vectors now beam pipe has been constructed.
+    SetInputFaceNormal(BDS::RotateToReferenceFrame(beampipe->InputFaceNormal(), angle));
+    SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
+
+
+    BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
 
     if (buildFringeFields)
     {std::advance(it, 1);}
 
-    BDSMagnetOuter* magnetOuter = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, mgInfo, arcLength, chordLength, reinterpret_cast<BDSMagnet*>(*it)->BeamPipe());
+    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, arcLength, chordLength, beampipe);
 
     G4double offsetAngle = element->angle/2;
     G4double offsetLength = chordLength/2;
 
-    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength/1000) ;
+    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
     G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
     G4ThreeVector v = G4ThreeVector(0, 1,0);
     G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
@@ -141,7 +155,7 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     beamline->AddComponent(pipeLine);
 
-    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),magnetOuter->GetContainerSolid(),magnetOuter->GetContainerLogicalVolume(),magnetOuter->GetExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),bpInfo);
+    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),outer->GetContainerSolid(),outer->GetContainerLogicalVolume(),outer->GetInnerExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),beamPipeInfo);
 
     G4int i = 0;
     for (auto element : *beamline)
@@ -153,14 +167,14 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
             auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
                                         reinterpret_cast<BDSMagnet*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
                                         placementName,                        // placement name
-                                        magnetOuter->GetContainerLogicalVolume(),// volume to place it in
+                                        outer->GetContainerLogicalVolume(),// volume to place it in
                                         false,                                // no boolean operation
                                         copyNumber,                           // copy number
                                         checkOverlaps);                       // overlap checking
 
             i++;
 
-            sbend->RegisterDaughter(reinterpret_cast<BDSMagnetNoneSplitOuter*>(element->GetAcceleratorComponent()));
+            RegisterPhysicalVolume(pv);
 
     }
 
@@ -169,6 +183,9 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
     containerLogicalVolume = sbend->GetContainerLogicalVolume();
     containerSolid = sbend->GetContainerSolid();
 
+    innerExtent = sbend->GetInnerExtent();
+    outerExtent = sbend->GetExtent();
+
 }
 
 void BDSMagnetNoneSplitOuter::Build()
@@ -176,4 +193,41 @@ void BDSMagnetNoneSplitOuter::Build()
     SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
+
+    BuildUserLimits();
+    BuildVacuumField();
+    BuildOuter();
+    // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
+    // to control user limits in the case where there is no container and we just inherit
+    // the beam pipe container
+    //BuildContainerLogicalVolume();
+    //BuildOuterField(); // must be done when the containerLV exists
+    //PlaceComponents(); // place things (if needed) in container
+}
+
+void BDSMagnetNoneSplitOuter::BuildOuter()
+{
+        // copy necessary bits out of BDSGeometryComponent that holds
+        // container information for whole magnet object provided by
+        // magnet outer factory.
+        BDSGeometryComponent* container = outer->GetMagnetContainer();
+        containerSolid    = container->GetContainerSolid()->Clone();
+        G4ThreeVector contOffset = container->GetPlacementOffset();
+        // set the main offset of the whole magnet which is placed w.r.t. the
+        // zero coordinate of the container solid
+        SetPlacementOffset(contOffset);
+
+        RegisterDaughter(outer);
+        InheritExtents(container, contOffset); // update extents
+
+        // Only clear after extents etc have been used
+        outer->ClearMagnetContainer();
+
+        endPieceBefore = outer->EndPieceBefore();
+        endPieceAfter  = outer->EndPieceAfter();
+
+        /// Update record of normal vectors now beam pipe has been constructed.
+        SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
+        SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
+
 }
