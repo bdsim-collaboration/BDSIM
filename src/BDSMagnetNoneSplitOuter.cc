@@ -93,10 +93,10 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
     buildFringeFields = buildFringeFieldsIn;
     prevElement       = prevElementIn;
     nextElement       = nextElementIn;
-    beamPipeInfo = beamPipeInfoIn;
-    magnetOuterInfo = magnetOuterInfoIn;
-    vacuumFieldInfo = vacuumFieldInfoIn;
-    outerFieldInfo = outerFieldInfoIn;
+    beamPipeInfo      = beamPipeInfoIn;
+    magnetOuterInfo   = magnetOuterInfoIn;
+    vacuumFieldInfo   = vacuumFieldInfoIn;
+    outerFieldInfo    = outerFieldInfoIn;
 }
 
 
@@ -118,28 +118,12 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     pipeLine->Initialise();
 
-    beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
-                                                              chordLength - 2*lengthSafety,
-                                                              beamPipeInfo);
-
-    beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();
-
-    RegisterDaughter(beampipe);
-    InheritExtents(beampipe);
-
-    SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
-
-    /// Update record of normal vectors now beam pipe has been constructed.
-    SetInputFaceNormal(BDS::RotateToReferenceFrame(beampipe->InputFaceNormal(), angle));
-    SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
-
-
     BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
 
     if (buildFringeFields)
     {std::advance(it, 1);}
 
-    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, arcLength, chordLength, beampipe);
+    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, arcLength, chordLength, reinterpret_cast<BDSMagnet*>(*it)->BeamPipe());
 
     G4double offsetAngle = element->angle/2;
     G4double offsetLength = chordLength/2;
@@ -164,18 +148,26 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
             G4Transform3D* placementTransform = element->GetPlacementTransform();
             G4int copyNumber = i;
 
-            auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                        reinterpret_cast<BDSMagnet*>(element->GetAcceleratorComponent())->BeamPipe()->GetContainerLogicalVolume(), // volume to be placed
-                                        placementName,                        // placement name
-                                        outer->GetContainerLogicalVolume(),// volume to place it in
-                                        false,                                // no boolean operation
-                                        copyNumber,                           // copy number
-                                        checkOverlaps);                       // overlap checking
+            std::set<G4LogicalVolume*> LV = reinterpret_cast<BDSMagnet*>(element->GetAcceleratorComponent())->BeamPipe()->GetVolumesForField();
 
-            i++;
+            std::set<G4LogicalVolume*>::iterator lv = LV.begin();
 
-            RegisterPhysicalVolume(pv);
+            for (lv;lv!=LV.end();lv++)
+            {
+                auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                            *lv, // volume to be placed
+                                            placementName,                        // placement name
+                                            outer->GetContainerLogicalVolume(),// volume to place it in
+                                            false,                                // no boolean operation
+                                            copyNumber,                           // copy number
+                                            checkOverlaps);
 
+                i++;
+
+                RegisterPhysicalVolume(pv);
+            }
+
+            RegisterDaughter(element->GetAcceleratorComponent());
     }
 
     RegisterDaughter(sbend);
@@ -194,9 +186,9 @@ void BDSMagnetNoneSplitOuter::Build()
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
-    BuildUserLimits();
-    BuildVacuumField();
-    BuildOuter();
+    //BuildUserLimits();
+    //BuildVacuumField();
+    //BuildOuter();
     // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
     // to control user limits in the case where there is no container and we just inherit
     // the beam pipe container
