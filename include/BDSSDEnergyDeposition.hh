@@ -44,6 +44,11 @@ public:
   BDSSDEnergyDeposition(const G4String& name,
 			G4bool   storeExtrasIn);
   virtual ~BDSSDEnergyDeposition();
+  
+  /// assignment and copy constructor not implemented nor used
+  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&) = delete;
+  BDSSDEnergyDeposition(BDSSDEnergyDeposition&) = delete;
+  BDSSDEnergyDeposition() = delete;
 
   virtual void Initialize(G4HCofThisEvent* HCE);
 
@@ -64,11 +69,6 @@ public:
   virtual G4VHit* last() const;
   
 private:
-  /// assignment and copy constructor not implemented nor used
-  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition() = delete;
-  
   G4bool   storeExtras;     ///< Whether to store extra information.
   G4String colName;         ///< Collection name.
   BDSHitsCollectionEnergyDeposition* hits;
