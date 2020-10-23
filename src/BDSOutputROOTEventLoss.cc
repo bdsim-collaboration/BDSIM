@@ -26,7 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventLoss)
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss()
+#ifndef __ROOTBUILD__
+:
   storeTurn(false),
   storeLinks(false),
   storeModelID(false),
@@ -35,10 +37,12 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   storeTime(false),
   storeStepLength(false),
   storePhysicsProcesses(false)
+#endif
 {
   Flush();
 }
 
+#ifndef __ROOTBUILD__
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeLinksIn,
 					       bool storeModelIDIn,
@@ -60,6 +64,7 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 {
   Flush();
 }
+#endif
 
 BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 {;}
@@ -104,6 +109,7 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
   // don't store stepLength for trajectory point - not possible
   // don't store kinetic energy for trajectory point - not possible
 }
+
 void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
 {
   n++;
@@ -153,7 +159,6 @@ void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
       postStepProcessSubType.push_back(hit->GetPostStepProcessSubType());
     }
 }
-
 #endif
 
 void BDSOutputROOTEventLoss::Fill(const BDSOutputROOTEventLoss* other)
