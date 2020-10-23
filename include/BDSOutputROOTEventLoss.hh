@@ -37,7 +37,10 @@ class BDSTrajectoryPoint;
 class BDSOutputROOTEventLoss: public TObject
 {
 public:
-  int                       n = 0;   ///< Number of entries
+  BDSOutputROOTEventLoss();
+  virtual ~BDSOutputROOTEventLoss();
+  
+  int                       n;       ///< Number of entries
   std::vector<float>        energy;  ///< Energy deposited in step
   std::vector<float>        S;       ///< Global curvilinear S coordinate
   std::vector<float>        weight;  ///< Weight associated with loss
@@ -68,8 +71,12 @@ public:
 
   std::vector<int>          postStepProcessType;
   std::vector<int>          postStepProcessSubType;
-
-  BDSOutputROOTEventLoss();
+  
+  /// Fill from another instance.
+  void Fill(const BDSOutputROOTEventLoss* other);
+  virtual void Flush();
+  
+#ifndef __ROOTBUILD__
   BDSOutputROOTEventLoss(bool storeTurnIn,
 			 bool storeLinksIn,
 			 bool storeModleIDIn,
@@ -77,15 +84,10 @@ public:
 			 bool storeGobalIn,
                          bool storeTimeIn,
 			 bool storeStepLengthIn,
-			 bool storePreStepKineticEnergyIn);
-  virtual ~BDSOutputROOTEventLoss();
-#ifndef __ROOTBUILD__
+			 bool storePreStepKineticEnergyIn,
+			 bool storePhysicsProcessesIn);
   void Fill(const BDSTrajectoryPoint* hit);
   void Fill(const BDSHitEnergyDeposition* hit);
-#endif
-  /// Fill from another instance.
-  void Fill(const BDSOutputROOTEventLoss* other);
-  virtual void Flush();
 
   bool storeTurn       = false; ///< Store turn number.
   bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors.

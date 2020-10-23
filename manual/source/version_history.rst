@@ -126,6 +126,10 @@ Output Changes
 
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
 * Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
+* The various storage Boolean options for the BDSOutputROOTEventLoss class have been removed from
+  the output as these are only needed at run time and are not needed as a copy for each event in the output.
+  The options preserve what was stored and it is not expected that these change between events so this
+  was completely unnecessary and wasteful.
 
 Output Class Versions
 ---------------------
