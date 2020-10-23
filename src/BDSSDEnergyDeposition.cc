@@ -207,7 +207,7 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 {
   G4int    parentID   = track->GetParentID(); // needed later on too
   G4int    ptype      = track->GetDefinition()->GetPDGEncoding();
-  G4double energy       = track->GetTotalEnergy();
+  G4double energy     = track->GetTotalEnergy();
   G4double globalTime = track->GetGlobalTime();
   G4double weight     = track->GetWeight();
   G4int    trackID    = track->GetTrackID();
