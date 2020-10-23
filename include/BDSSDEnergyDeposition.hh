@@ -41,7 +41,7 @@ class G4Track;
 class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
-  BDSSDEnergyDeposition(G4String name,
+  BDSSDEnergyDeposition(const G4String& name,
 			G4bool   storeExtrasIn);
   virtual ~BDSSDEnergyDeposition();
 
