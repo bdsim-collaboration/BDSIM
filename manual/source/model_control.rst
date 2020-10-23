@@ -2466,6 +2466,8 @@ with the following options.
 |                                    | was in. If `storeElossLinks` is on, this will be on irrespective   |
 |                                    | of this option.                                                    |
 +------------------------------------+--------------------------------------------------------------------+
+| storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
++------------------------------------+--------------------------------------------------------------------+
 | storeElossTime                     | The time since the start of the event will be stored for each point|
 |                                    | of energy deposition and trajectory. Default off.                  |
 +------------------------------------+--------------------------------------------------------------------+
