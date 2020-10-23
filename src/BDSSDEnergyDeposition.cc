@@ -180,6 +180,20 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   G4int    trackID     = track->GetTrackID();
   G4int    turnsTaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
+  G4int postStepProcessType    = -1;
+  G4int postStepProcessSubType = -1;
+  if (storeExtras)
+  {
+    // physics processes
+    const G4StepPoint* postPoint = aStep->GetPostStepPoint();
+    const G4VProcess* postProcess = postPoint->GetProcessDefinedStep();
+    if (postProcess)
+    {
+      postStepProcessType = postProcess->GetProcessType();
+      postStepProcessSubType = postProcess->GetProcessSubType();
+    }
+  }
+  
   //create hits and put in hits collection of the event
   BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(energy,
 							   sHit,
@@ -194,7 +208,9 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 							   parentID,
 							   turnsTaken,
 							   stepLength,
-							   beamlineIndex);
+							   beamlineIndex,
+							   postStepProcessType,
+							   postStepProcessSubType);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hits->insert(hit);
