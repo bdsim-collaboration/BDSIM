@@ -33,7 +33,8 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   storeLocal(false),
   storeGlobal(false),
   storeTime(false),
-  storeStepLength(false)
+  storeStepLength(false),
+  storePhysicsProcesses(false)
 {
   Flush();
 }
@@ -45,7 +46,8 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeGlobalIn,
 					       bool storeTimeIn,
 					       bool storeStepLengthIn,
-					       bool storePreStepKineticEnergyIn):
+					       bool storePreStepKineticEnergyIn,
+					       bool storePhysicsProcessesIn):
   storeTurn(storeTurnIn),
   storeLinks(storeLinksIn),
   storeModelID(storeModelIDIn),
@@ -53,7 +55,8 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
   storeGlobal(storeGlobalIn),
   storeTime(storeTimeIn),
   storeStepLength(storeStepLengthIn),
-  storePreStepKineticEnergy(storePreStepKineticEnergyIn)
+  storePreStepKineticEnergy(storePreStepKineticEnergyIn),
+  storePhysicsProcesses(storePhysicsProcessesIn)
 {
   Flush();
 }
@@ -91,6 +94,11 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
   if (storeTime)
     {
       T.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
+    }
+  if (storePhysicsProcesses)
+    {
+      postStepProcessType.push_back(hit->GetPostProcessType());
+      postStepProcessSubType.push_back(hit->GetPostProcessSubType());
     }
 
   // don't store stepLength for trajectory point - not possible
@@ -138,6 +146,12 @@ void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
   
   if (storePreStepKineticEnergy)
     {preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);}
+
+  if (storePhysicsProcesses)
+    {
+      postStepProcessType.push_back(hit->GetPostStepProcessType());
+      postStepProcessSubType.push_back(hit->GetPostStepProcessSubType());
+    }
 }
 
 #endif
@@ -164,6 +178,8 @@ void BDSOutputROOTEventLoss::Fill(const BDSOutputROOTEventLoss* other)
   T = other->T;  
   stepLength           = other->stepLength;
   preStepKineticEnergy = other->preStepKineticEnergy;
+  postStepProcessType  = other->postStepProcessType;
+  postStepProcessSubType = other->postStepProcessSubType;
 }
 
 void BDSOutputROOTEventLoss::Flush()
@@ -186,4 +202,6 @@ void BDSOutputROOTEventLoss::Flush()
   T.clear();
   stepLength.clear();
   preStepKineticEnergy.clear();
+  postStepProcessType.clear();
+  postStepProcessSubType.clear();
 }

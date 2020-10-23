@@ -66,6 +66,9 @@ public:
   std::vector<float>        stepLength; ///< Step length taken for hit.
   std::vector<float>        preStepKineticEnergy; ///< Kinetic energy in GeV at pre step point.
 
+  std::vector<int>          postStepProcessType;
+  std::vector<int>          postStepProcessSubType;
+
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(bool storeTurnIn,
 			 bool storeLinksIn,
@@ -92,8 +95,10 @@ public:
   bool storeTime       = false; ///< Whether to store global time.
   bool storeStepLength = false; ///< Whether to store step length.
   bool storePreStepKineticEnergy = false; ///< Whether to store pre step kinetic energy.
+  bool storePhysicsProcesses = false;
+#endif
 
-  ClassDef(BDSOutputROOTEventLoss,4);
+  ClassDef(BDSOutputROOTEventLoss,5);
 };
 
 #endif
