@@ -297,7 +297,7 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   G4int postStepProcessSubType = -1;
   if (storeExtras)
     {// physics processes
-      G4Step* aStep = track->GetStep();
+      const G4Step* aStep = track->GetStep();
       if (aStep)
 	{
 	  const G4StepPoint* postPoint = aStep->GetPostStepPoint();
