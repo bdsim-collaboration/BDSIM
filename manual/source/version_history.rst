@@ -120,6 +120,8 @@ Bug Fixes
   bending radius was scaled twice and arguments were passed into the base stepper in the wrong order.
 * Dipole fringes now apply the fringe kick and dipole transport in the correct order depending on if the fringe
   is at the entrance or exit of the dipole.
+* Fix wrong variable name print out for halo beam distribution.
+* Improve cryptic error for wrongly specified composite beam distribution.
 
 Output Changes
 --------------
