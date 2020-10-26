@@ -215,7 +215,7 @@ void BDSBunchHalo::CheckParameters()
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
   
   if (haloNSigmaYInner <= 0)
-    {throw BDSException(__METHOD_NAME__, "haloYSigmaXInner <= 0");}
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner <= 0");}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner cannot be less than haloNSigmaXOuter");}
