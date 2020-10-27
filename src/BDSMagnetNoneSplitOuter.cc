@@ -137,9 +137,18 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
 
-    beamline->AddComponent(pipeLine);
+    BDSLine::iterator it2 = reinterpret_cast<BDSLine*>(pipeLine)->begin();
+
+    for(it2;it2!=reinterpret_cast<BDSLine*>(pipeLine)->end();it2++)
+
+    {
+     beamline->AddComponent(reinterpret_cast<BDSMagnet*>(*it2));
+    }
+
 
     BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),outer->GetContainerSolid(),outer->GetContainerLogicalVolume(),outer->GetInnerExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),beamPipeInfo);
+
+
 
     G4int i = 0;
     for (auto element : *beamline)
@@ -155,17 +164,22 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
             for (lv;lv!=LV.end();lv++)
             {
                 auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                            *lv, // volume to be placed
+                                            reinterpret_cast<G4LogicalVolume*>(*lv), // volume to be placed
                                             placementName,                        // placement name
                                             outer->GetContainerLogicalVolume(),// volume to place it in
                                             false,                                // no boolean operation
                                             copyNumber,                           // copy number
                                             checkOverlaps);
 
+
                 i++;
 
                 RegisterPhysicalVolume(pv);
             }
+
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                  element->GetContainerLogicalVolume(),
+                                                                  true);
 
             RegisterDaughter(element->GetAcceleratorComponent());
     }
@@ -182,7 +196,7 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
 void BDSMagnetNoneSplitOuter::Build()
 {
-    SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
+   SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
@@ -197,29 +211,3 @@ void BDSMagnetNoneSplitOuter::Build()
     //PlaceComponents(); // place things (if needed) in container
 }
 
-void BDSMagnetNoneSplitOuter::BuildOuter()
-{
-        // copy necessary bits out of BDSGeometryComponent that holds
-        // container information for whole magnet object provided by
-        // magnet outer factory.
-        BDSGeometryComponent* container = outer->GetMagnetContainer();
-        containerSolid    = container->GetContainerSolid()->Clone();
-        G4ThreeVector contOffset = container->GetPlacementOffset();
-        // set the main offset of the whole magnet which is placed w.r.t. the
-        // zero coordinate of the container solid
-        SetPlacementOffset(contOffset);
-
-        RegisterDaughter(outer);
-        InheritExtents(container, contOffset); // update extents
-
-        // Only clear after extents etc have been used
-        outer->ClearMagnetContainer();
-
-        endPieceBefore = outer->EndPieceBefore();
-        endPieceAfter  = outer->EndPieceAfter();
-
-        /// Update record of normal vectors now beam pipe has been constructed.
-        SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
-        SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
-
-}
