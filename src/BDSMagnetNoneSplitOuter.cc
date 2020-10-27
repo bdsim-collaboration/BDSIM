@@ -145,43 +145,34 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
      beamline->AddComponent(reinterpret_cast<BDSMagnet*>(*it2));
     }
 
-
     BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),outer->GetContainerSolid(),outer->GetContainerLogicalVolume(),outer->GetInnerExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),beamPipeInfo);
-
-
 
     G4int i = 0;
     for (auto element : *beamline)
     {
-            G4String placementName = element->GetPlacementName() + "_pv";
-            G4Transform3D* placementTransform = element->GetPlacementTransform();
-            G4int copyNumber = i;
 
-            std::set<G4LogicalVolume*> LV = reinterpret_cast<BDSMagnet*>(element->GetAcceleratorComponent())->BeamPipe()->GetVolumesForField();
+        G4String placementName = element->GetPlacementName() + "_pv";
+        G4Transform3D* placementTransform = element->GetPlacementTransform();
+        G4int copyNumber = i;
+        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                    element->GetContainerLogicalVolume(), // volume to be placed
+                                    placementName,                        // placement name
+                                    outer->GetContainerLogicalVolume(),                          // volume to place it in
+                                    false,                                // no boolean operation
+                                    copyNumber,                           // copy number
+                                    checkOverlaps);                       // overlap checking
 
-            std::set<G4LogicalVolume*>::iterator lv = LV.begin();
+        i++; // for incremental copy numbers
 
-            for (lv;lv!=LV.end();lv++)
-            {
-                auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                            reinterpret_cast<G4LogicalVolume*>(*lv), // volume to be placed
-                                            placementName,                        // placement name
-                                            outer->GetContainerLogicalVolume(),// volume to place it in
-                                            false,                                // no boolean operation
-                                            copyNumber,                           // copy number
-                                            checkOverlaps);
+        sbend->RegisterPhysicalVolume(pv);
 
+    }
 
-                i++;
+    BDSLine::iterator it3 = reinterpret_cast<BDSLine*>(pipeLine)->begin();
 
-                RegisterPhysicalVolume(pv);
-            }
-
-            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-                                                                  element->GetContainerLogicalVolume(),
-                                                                  true);
-
-            RegisterDaughter(element->GetAcceleratorComponent());
+    for(it3;it3!=reinterpret_cast<BDSLine*>(pipeLine)->end();it3++)
+    {
+        sbend->RegisterDaughter(*it3);
     }
 
     RegisterDaughter(sbend);
@@ -210,4 +201,3 @@ void BDSMagnetNoneSplitOuter::Build()
     //BuildOuterField(); // must be done when the containerLV exists
     //PlaceComponents(); // place things (if needed) in container
 }
-

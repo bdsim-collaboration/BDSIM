@@ -87,6 +87,7 @@ public:
                         const GMAD::Element*    prevElement,
                         const GMAD::Element*    nextElement);
 
+
 protected:
 
     void Build();
