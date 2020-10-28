@@ -173,7 +173,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
                                                        G4double yOffset,
                                                        G4bool   buildLeftJaw,
                                                        G4bool   buildRightJaw,
-                                                       G4bool   /*isACrystal*/,
+                                                       G4bool   isACrystalIn,
                                                        G4double crystalAngle,
                                                        G4bool   /*sampleIn*/)
 {
@@ -181,16 +181,20 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
 
   std::map<std::string, std::string> collimatorToCrystal =
     {
-     {"cry.mio.b1", "stf75"},   //b1 h
-     {"cry.mio.b2", "tcp76"},   //b2 h
+     {"cry.mio.b1", "stf75"},   // b1 h
+     {"cry.mio.b2", "tcp76"},   // b2 h
      {"tcpv.a6l7.b1", "qmp34"}, // b1 v
-     {"tcpv.a6r7.b2", "qmp53"}  // b2 v
+     {"tcpv.a6r7.b2", "qmp53"}, // b2 v
+     {"tcpch.a4l7.b1", "stf75"},// b1 h new name
+     {"tcpcv.a6l7.b1", "tcp76"} // b2 v new name
     };
   G4String collimatorLower = collimatorName;
   collimatorLower.toLower();
   auto searchC = collimatorToCrystal.find(collimatorLower); // will use later if needed
   G4bool isACrystal = searchC != collimatorToCrystal.end();
-  //G4cout << "XYZ isACrystal " << isACrystal << G4endl;
+  if (!isACrystal && isACrystalIn)
+    {throw BDSException("BDSLinkDetectorConstruction", "no matching crystal name found but it is flagged as a crystal in input");}
+  G4cout << "XYZ isACrystal " << isACrystal << G4endl;
   if (isACrystal)
     {G4cout << "crystal name " << searchC->first << " " << searchC->second << G4endl;}
 
