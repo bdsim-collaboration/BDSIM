@@ -26,6 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonConstructor.hh"
 #include "G4ProcessManager.hh"
 
+#ifdef G4EMDPROCESSID
+#include "G4HadronicProcessType.hh"
+#endif
+
 BDSPhysicsEMDissociation::BDSPhysicsEMDissociation():
   G4VPhysicsConstructor("BDSPhysicsEMDissociation")
 {;}
@@ -45,6 +49,11 @@ void BDSPhysicsEMDissociation::ConstructProcess()
     {return;}
 
   G4HadronInelasticProcess* inelProcIon = new G4HadronInelasticProcess("ionInelastic", G4GenericIon::GenericIon());
+#ifdef G4EMDPROCESSID
+  // in our customised Geant4 we explicitly label EMD to allow identification and biasing
+  // as opposed to just general fHadronicInelastic
+  inelProcIon->SetProcessSubType(G4HadronicProcessType::fEMDissociation);
+#endif
 
   G4EMDissociationCrossSection* crossSectionData = new G4EMDissociationCrossSection();
   inelProcIon->AddDataSet(crossSectionData);
