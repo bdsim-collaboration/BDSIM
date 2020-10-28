@@ -146,6 +146,14 @@ void BDSCollimatorCrystal::Build()
 	      {BDS::Warning(__METHOD_NAME__, "Left crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
 
+#ifdef SIXTRACKLINK
+      G4cout << "left crystal placement offset   " << placementOffsetL << G4endl;
+      if (placementRot)
+      {
+        G4cout << "left crystal placement rotation " << *placementRot << G4endl;
+      }
+#endif
+      
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
       auto cL = new G4PVPlacement(placementRot,
 				  placementOffsetL,
@@ -190,6 +198,14 @@ void BDSCollimatorCrystal::Build()
       if (!safe || !safe2)
         {BDS::Warning(__METHOD_NAME__, "Right crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisRight, "Right");
+
+#ifdef SIXTRACKLINK
+    G4cout << "right crystal placement offset   " << placementOffsetL << G4endl;
+    if (placementRot)
+    {
+      G4cout << "right crystal placement rotation " << *placementRot << G4endl;
+    }
+#endif
 
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
       auto cR = new G4PVPlacement(placementRot,
