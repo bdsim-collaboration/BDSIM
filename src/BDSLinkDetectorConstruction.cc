@@ -276,8 +276,9 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
   BDSAcceleratorComponent* component = nullptr;
   try
     {component = componentFactory->CreateComponent(&el, nullptr, nullptr, 0);}
-  catch (const BDSException&)
+  catch (const BDSException& e)
     {
+      G4cout << e.what() << G4endl;
       G4cout << "Replacing component " << el.name << " with drift" << G4endl;
       // well it didn't work (maybe ridiculous unphysical gap - so replace it with a drift
       el.type = GMAD::ElementType::_DRIFT;
