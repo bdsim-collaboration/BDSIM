@@ -423,7 +423,7 @@ BDSIMLink::~BDSIMLink()
   catch (...)
     {;} // ignore any exception as this is a destructor
 
-  delete bdsBunch;
+  //delete bdsBunch;
   delete parser;
 
   if (usualPrintOut)
