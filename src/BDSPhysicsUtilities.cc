@@ -295,7 +295,8 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
     {
       BDS::ConstructBeamParticleG4(particleName); // enforce construction of some basic particles
       G4ParticleDefinition* particleDef = nullptr;
-      if(particleName == "photon") {particleName = "gamma";}
+      if (particleName == "photon")
+	{particleName = "gamma";} // mapping to Geant4 name
       // try and see if it's an integer and therefore PDG ID, if not search by string
       try
         {

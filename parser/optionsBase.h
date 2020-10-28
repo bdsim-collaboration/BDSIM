@@ -303,6 +303,7 @@ namespace GMAD
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
+    bool        storeElossPhysicsProcesses;
     bool        storeGeant4Data;
     bool        storePrimaries;
     

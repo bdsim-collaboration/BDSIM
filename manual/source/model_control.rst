@@ -743,6 +743,7 @@ The horizontal, vertical and longitudinal phase spaces can be defined independen
 appropriate parameters need to be defined for each individual distribution.
 
 * All parameters from `reference`_ distribution are used as centroids.
+* The default for `xDistrType`, `yDistrType` and `zDistrType` are `reference`.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
 
@@ -2465,6 +2466,8 @@ with the following options.
 | storeElossModelID                  | Store the beam line index of the object the energy deposition hit  |
 |                                    | was in. If `storeElossLinks` is on, this will be on irrespective   |
 |                                    | of this option.                                                    |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossTime                     | The time since the start of the event will be stored for each point|
 |                                    | of energy deposition and trajectory. Default off.                  |

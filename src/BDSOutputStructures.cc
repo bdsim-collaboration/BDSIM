@@ -66,6 +66,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeStepLength = globals->StoreELossStepLength();
   G4bool storePreStepKineticEnergy = globals->StoreELossPreStepKineticEnergy();
   G4bool storeModelID    = globals->StoreELossModelID();
+  G4bool storeELPhysics  = globals->StoreELossPhysicsProcesses();
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 
@@ -77,19 +78,19 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
   eLoss       = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossVacuum = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossTunnel = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossWorld         = new BDSOutputROOTEventLossWorld();
   eLossWorldExit     = new BDSOutputROOTEventLossWorld();
   eLossWorldContents = new BDSOutputROOTEventLossWorld();
 
-  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
-  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
 
   apertureImpacts = new BDSOutputROOTEventAperture();
   
