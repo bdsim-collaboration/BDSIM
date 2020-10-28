@@ -105,6 +105,8 @@ General
   being immediately killed and not tracked through the model.
 * Linear and cubic interpolation implementation has be switched from hard coded types to templates. No
   difference in results, but this makes the code useable elsewhere.
+* :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
+  if a given dimension isn't specified it'll be the default.
 
 Bug Fixes
 ---------

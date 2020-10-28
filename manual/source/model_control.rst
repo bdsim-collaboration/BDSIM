@@ -743,6 +743,7 @@ The horizontal, vertical and longitudinal phase spaces can be defined independen
 appropriate parameters need to be defined for each individual distribution.
 
 * All parameters from `reference`_ distribution are used as centroids.
+* The default for `xDistrType`, `yDistrType` and `zDistrType` are `reference`.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
 
