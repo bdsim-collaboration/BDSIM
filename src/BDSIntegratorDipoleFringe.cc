@@ -139,7 +139,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   if (multipoleIntegrator)
     {MultipoleStep(yIn, yMultipoleOut, h);}
 
-  // container for dipole step output, used as fringe step input
+  // container for copying multipole kick output (entrance fringe) or dipole step output (exit fringe)
   G4double yTemp[7];
 
   // only do the dipole transport before the fringe kick if it's an exit fringe, otherwise copy the
@@ -163,16 +163,20 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   // can be taken resulting in a double kick.
   G4double lengthFraction = h / thinElementLength;
 
-  // don't do fringe kick if we're sampling the field for a long step
-  // or if it's a half step inside the thin element apply the dipole
-  // motion but not the one-off fringe kick
+  // don't do fringe kick if we're sampling the field for a long step or if it's a half
+  // step inside the thin element. Apply the dipole motion only if this step is in an
+  // entrance fringe, it should have already been applied if is is an exit face
   if ((h > 1*CLHEP::cm) || (lengthFraction < 0.501))
     {
-      // copy output from dipole kick output
-      for (G4int i = 0; i < 3; i++)
+      if (isEntrance)
+        {BDSIntegratorDipoleRodrigues2::Stepper(yTemp, dydx, h, yOut, yErr);}
+      else
         {
-          yOut[i]     = yTemp[i];
-          yOut[i + 3] = yTemp[i + 3];
+          for (G4int i = 0; i < 3; i++)
+            {
+              yOut[i]     = yTemp[i];
+              yOut[i + 3] = yTemp[i + 3];
+            }
         }
       return;
     }
@@ -189,14 +193,22 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   G4ThreeVector localMomU = localMom.unit();
 
   // check for forward going paraxial particles - only
+  // if this is an entrance face then the dipole transport hasn't been applied yet, so apply it to ensure
+  // the particle advances along the step and then exit. If it's an exit face, then the dipole transport
+  // has already been applied, so simply copy the output from the dipole transport above and exit.
   if (localMomU.z() < 0.9)
-    {// copy output from dipole kick output
-      for (G4int i = 0; i < 3; i++)
-	{
-	  yOut[i]     = yTemp[i];
-	  yOut[i + 3] = yTemp[i + 3];
-	}
-      return; // note distchord comes from inherited BDSIntegratorDipoleRodrigues2
+    {
+      if (isEntrance)
+        {BDSIntegratorDipoleRodrigues2::Stepper(yTemp, dydx, h, yOut, yErr);}
+      else
+        {
+          for (G4int i = 0; i < 3; i++)
+            {
+              yOut[i]     = yTemp[i];
+              yOut[i + 3] = yTemp[i + 3];
+            }
+        }		
+      return;
     }
 
   // calculate new position and momentum kick from fringe effect only

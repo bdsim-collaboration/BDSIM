@@ -95,7 +95,8 @@ BDSSDManager::BDSSDManager()
     || g->StoreELossStepLength()
     || g->StoreELossPreStepKineticEnergy()
     || g->StoreELossModelID()
-    || g->StoreTrajectory(); // if we store trajectories, we need the edep track id
+    || g->StoreTrajectory() // if we store trajectories, we need the edep track id
+    || g->StoreELossPhysicsProcesses();
   generateCollimatorHits = storeCollimatorHitsAll
                            || storeCollimatorHitsIons
                            || g->StoreCollimatorInfo()
