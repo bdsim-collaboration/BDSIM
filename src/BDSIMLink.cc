@@ -51,6 +51,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkPrimaryGeneratorAction.hh"
 #include "BDSLinkRunAction.hh"
 #include "BDSLinkStackingAction.hh"
+#include "BDSLinkTrackingAction.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
@@ -267,15 +268,15 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   BDSLinkEventAction* eventAction = new BDSLinkEventAction(bdsOutput, runAction, trackerDebug);
   runManager->SetUserAction(eventAction);
   runManager->SetUserAction(runAction);
-  //G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
-  //G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
-  //                                                        globalConstants->VerboseSteppingEventContinueFor());
-  /*runManager->SetUserAction(new BDSLinkTrackingAction(globalConstants->Batch(),
+  G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
+  G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
+                                                          globalConstants->VerboseSteppingEventContinueFor());
+  runManager->SetUserAction(new BDSLinkTrackingAction(globalConstants->Batch(),
                                                       eventAction,
                                                       verboseSteppingEventStart,
                                                       verboseSteppingEventStop,
                                                       globalConstants->VerboseSteppingPrimaryOnly(),
-                                                      globalConstants->VerboseSteppingLevel()));*/
+                                                      globalConstants->VerboseSteppingLevel()));
   runManager->SetUserAction(new BDSLinkStackingAction(globalConstants, std::set<G4int>(), protonsAndIonsOnly, minimumKineticEnergy));
   
   /*
