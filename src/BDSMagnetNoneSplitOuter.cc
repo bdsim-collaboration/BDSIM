@@ -53,6 +53,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
+#include "BDSGeometryFactoryGDML.hh"
+#include "BDSGeometryExternal.hh"
 
 
 
@@ -118,12 +120,41 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     pipeLine->Initialise();
 
-    BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
+    /*BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
 
     if (buildFringeFields)
-    {std::advance(it, 1);}
+    {std::advance(it, 1);}*/
 
-    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, arcLength, chordLength, reinterpret_cast<BDSMagnet*>(*it)->BeamPipe());
+    BDSBeamPipeInfo* beamPipeInfo1 = new BDSBeamPipeInfo(*beamPipeInfo);
+    //beamPipeInfo1->inputFaceNormal.set(0.1,0,-0.99498743710662);
+    //beamPipeInfo1->outputFaceNormal.set(1,0,0.99);
+
+    BDSBeamPipe* beamPipeTest = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
+                                                   chordLength - 2*lengthSafety,
+                                                                           beamPipeInfo1);
+
+    //outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength-2*lengthSafety, chordLength, reinterpret_cast<BDSMagnet*>(*it)->BeamPipe());
+    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength-2*lengthSafety, chordLength, beamPipeTest);
+
+    delete beamPipeTest;
+    delete beamPipeInfo1;
+
+    BDSGeometryComponent* container = outer->GetMagnetContainer();
+    containerLogicalVolume = container->GetContainerLogicalVolume();
+    containerSolid    = container->GetContainerSolid()->Clone();
+    G4ThreeVector contOffset = container->GetPlacementOffset();
+    // set the main offset of the whole magnet which is placed w.r.t. the
+    // zero coordinate of the container solid
+    SetPlacementOffset(contOffset);
+    RegisterDaughter(outer);
+    InheritExtents(container, contOffset); // update extents
+    // Only clear after extents etc have been used
+    outer->ClearMagnetContainer();
+    endPieceBefore = outer->EndPieceBefore();
+    endPieceAfter  = outer->EndPieceAfter();
+    /// Update record of normal vectors now beam pipe has been constructed.
+    SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
+    SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
 
     G4double offsetAngle = element->angle/2;
     G4double offsetLength = chordLength/2;
@@ -137,15 +168,7 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
 
-    BDSLine::iterator it2 = reinterpret_cast<BDSLine*>(pipeLine)->begin();
-
-    for(it2;it2!=reinterpret_cast<BDSLine*>(pipeLine)->end();it2++)
-
-    {
-     beamline->AddComponent(reinterpret_cast<BDSMagnet*>(*it2));
-    }
-
-    BDSSimpleComponent* sbend = new BDSSimpleComponent("sbend", beamline->GetTotalArcLength(), beamline->GetTotalAngle(),outer->GetContainerSolid(),outer->GetContainerLogicalVolume(),outer->GetInnerExtent(),G4ThreeVector(0,0,-1),G4ThreeVector(0,0,1),beamPipeInfo);
+    beamline->AddComponent(pipeLine);
 
     G4int i = 0;
     for (auto element : *beamline)
@@ -154,34 +177,37 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
         G4String placementName = element->GetPlacementName() + "_pv";
         G4Transform3D* placementTransform = element->GetPlacementTransform();
         G4int copyNumber = i;
-        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+        /*auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
                                     element->GetContainerLogicalVolume(), // volume to be placed
                                     placementName,                        // placement name
-                                    outer->GetContainerLogicalVolume(),                          // volume to place it in
+                                    containerLogicalVolume,                          // volume to place it in
                                     false,                                // no boolean operation
                                     copyNumber,                           // copy number
                                     checkOverlaps);                       // overlap checking
-
+*/
         i++; // for incremental copy numbers
 
-        sbend->RegisterPhysicalVolume(pv);
+        //RegisterPhysicalVolume(pv);
 
     }
 
-    BDSLine::iterator it3 = reinterpret_cast<BDSLine*>(pipeLine)->begin();
+    G4ThreeVector u1 = G4ThreeVector( 0, -1, 0);
+    G4ThreeVector v1 = G4ThreeVector(1, 0,0);
+    G4ThreeVector w1 = G4ThreeVector(0, 0, 1);
+    G4RotationMatrix* initialGlobalRotation1  =  new G4RotationMatrix(u1, v1, w1);
 
-    for(it3;it3!=reinterpret_cast<BDSLine*>(pipeLine)->end();it3++)
-    {
-        sbend->RegisterDaughter(*it3);
-    }
+    //G4ThreeVector outerOffset = outer->GetPlacementOffset();
+    G4ThreeVector outerOffset = G4ThreeVector(0,0, 0);
 
-    RegisterDaughter(sbend);
-
-    containerLogicalVolume = sbend->GetContainerLogicalVolume();
-    containerSolid = sbend->GetContainerSolid();
-
-    innerExtent = sbend->GetInnerExtent();
-    outerExtent = sbend->GetExtent();
+    G4PVPlacement* magnetOuterPV = new G4PVPlacement(initialGlobalRotation1,                // rotation
+                                                     outerOffset,            // at normally (0,0,0)
+                                                     outer->GetContainerLogicalVolume(), // its logical volume
+                                                     name+"_outer_pv",       // its name
+                                                     containerLogicalVolume, // its mother  volume
+                                                     false,                  // no boolean operation
+                                                     0,                      // copy number
+                                                     checkOverlaps);
+    RegisterPhysicalVolume(magnetOuterPV);
 
 }
 

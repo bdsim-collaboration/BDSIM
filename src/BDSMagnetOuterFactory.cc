@@ -43,6 +43,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
+#include "G4Torus.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
 
@@ -275,7 +276,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(const G4
   BDSExtent outer = external->GetExtent();
   G4VSolid* containerSolid;
   BDSExtent containerExt;
-  if ((inputFace.z() > -1) || (outputFace.z() < 1))
+  /*if ((inputFace.z() > -1) || (outputFace.z() < 1))
     {// use a cut tubs for angled face
       G4double posR = std::hypot(outer.XPos(),outer.YPos());
       G4double negR = std::hypot(outer.XNeg(),outer.YNeg());
@@ -294,11 +295,18 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(const G4
     {// flat faces so use a box
       G4double radius = outer.MaximumAbsTransverse() + 1*CLHEP::mm; // generous margin
       containerSolid = new G4Box(name + "_container_solid", // name
-				 radius,
-				 radius,
-				 length*0.5);
+				 radius*3,
+				 radius*3,
+				 length*0.5*3);
       containerExt = BDSExtent(radius, radius, length*0.5);
-    }
+    }*/
+
+  G4double angle = 1.57;
+  G4double rho = length/angle;
+  G4double radius = outer.MaximumAbsTransverse() + 1*CLHEP::mm;
+
+  containerSolid = new G4Torus(name+"_container_solid",0,radius,rho,-angle/2,angle/2);
+  containerExt = BDSExtent(radius, radius, 0.5*length);
 
   G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
