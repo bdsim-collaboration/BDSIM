@@ -113,27 +113,24 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
                                                  const GMAD::Element*    prevElement,
                                                  const GMAD::Element*    nextElement)
 {
-    Element* el = new Element(*element);
-    el->magnetGeometryType = "none";
-    BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
-    delete el;
-
+    Element el = Element(*element);
+    el.magnetGeometryType = "none";
+    BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
     pipeLine->Initialise();
-
     /*BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
 
     if (buildFringeFields)
     {std::advance(it, 1);}*/
 
     BDSBeamPipeInfo* beamPipeInfo1 = new BDSBeamPipeInfo(*beamPipeInfo);
-    //beamPipeInfo1->inputFaceNormal.set(0.1,0,-0.99498743710662);
-    //beamPipeInfo1->outputFaceNormal.set(1,0,0.99);
+    std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(el.angle/2 + incomingFaceAngle, el.angle/2 + outgoingFaceAngle);
+    beamPipeInfo1->inputFaceNormal = faces.first;
+    beamPipeInfo1->outputFaceNormal = faces.second;
 
     BDSBeamPipe* beamPipeTest = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
                                                    chordLength - 2*lengthSafety,
                                                                            beamPipeInfo1);
 
-    //outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength-2*lengthSafety, chordLength, reinterpret_cast<BDSMagnet*>(*it)->BeamPipe());
     outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength-2*lengthSafety, chordLength, beamPipeTest);
 
     delete beamPipeTest;
@@ -177,17 +174,17 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
         G4String placementName = element->GetPlacementName() + "_pv";
         G4Transform3D* placementTransform = element->GetPlacementTransform();
         G4int copyNumber = i;
-        /*auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
                                     element->GetContainerLogicalVolume(), // volume to be placed
                                     placementName,                        // placement name
                                     containerLogicalVolume,                          // volume to place it in
                                     false,                                // no boolean operation
                                     copyNumber,                           // copy number
                                     checkOverlaps);                       // overlap checking
-*/
+
         i++; // for incremental copy numbers
 
-        //RegisterPhysicalVolume(pv);
+        RegisterPhysicalVolume(pv);
 
     }
 
@@ -199,15 +196,27 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
     //G4ThreeVector outerOffset = outer->GetPlacementOffset();
     G4ThreeVector outerOffset = G4ThreeVector(0,0, 0);
 
-    G4PVPlacement* magnetOuterPV = new G4PVPlacement(initialGlobalRotation1,                // rotation
-                                                     outerOffset,            // at normally (0,0,0)
-                                                     outer->GetContainerLogicalVolume(), // its logical volume
-                                                     name+"_outer_pv",       // its name
-                                                     containerLogicalVolume, // its mother  volume
-                                                     false,                  // no boolean operation
-                                                     0,                      // copy number
-                                                     checkOverlaps);
-    RegisterPhysicalVolume(magnetOuterPV);
+    std::cout << "placing the content of the gdml file" << std::endl;
+    auto gdml_world = outer->GetContainerLogicalVolume();
+    for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++)
+    {
+      const auto& pv = gdml_world->GetDaughter(j);
+      G4String placementName = pv->GetName() + "_pv";
+      std::cout << "placing " << placementName << std::endl;
+      G4int copyNumber = 1;
+
+      auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
+                                  pv->GetLogicalVolume(), // volume to be placed
+                                  placementName,                        // placement name
+                                  containerLogicalVolume,                          // volume to place it in
+                                  false,                                // no boolean operation
+                                  copyNumber,                           // copy number
+                                  checkOverlaps);                       // overlap checking
+      RegisterPhysicalVolume(vv);
+
+    }
+
+
 
 }
 
