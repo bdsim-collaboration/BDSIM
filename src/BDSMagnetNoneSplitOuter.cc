@@ -117,10 +117,6 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
     el.magnetGeometryType = "none";
     BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
     pipeLine->Initialise();
-    /*BDSLine::iterator it = reinterpret_cast<BDSLine*>(pipeLine)->begin();
-
-    if (buildFringeFields)
-    {std::advance(it, 1);}*/
 
     BDSBeamPipeInfo* beamPipeInfo1 = new BDSBeamPipeInfo(*beamPipeInfo);
     std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(el.angle/2 + incomingFaceAngle, el.angle/2 + outgoingFaceAngle);
@@ -188,13 +184,7 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     }
 
-    G4ThreeVector u1 = G4ThreeVector( 0, -1, 0);
-    G4ThreeVector v1 = G4ThreeVector(1, 0,0);
-    G4ThreeVector w1 = G4ThreeVector(0, 0, 1);
-    G4RotationMatrix* initialGlobalRotation1  =  new G4RotationMatrix(u1, v1, w1);
-
-    //G4ThreeVector outerOffset = outer->GetPlacementOffset();
-    G4ThreeVector outerOffset = G4ThreeVector(0,0, 0);
+    G4ThreeVector outerOffset = outer->GetPlacementOffset();
 
     std::cout << "placing the content of the gdml file" << std::endl;
     auto gdml_world = outer->GetContainerLogicalVolume();
@@ -226,13 +216,5 @@ void BDSMagnetNoneSplitOuter::Build()
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
-    //BuildUserLimits();
-    //BuildVacuumField();
-    //BuildOuter();
-    // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
-    // to control user limits in the case where there is no container and we just inherit
-    // the beam pipe container
-    //BuildContainerLogicalVolume();
-    //BuildOuterField(); // must be done when the containerLV exists
-    //PlaceComponents(); // place things (if needed) in container
+    BuildOuterField(); // must be done when the containerLV exists
 }
