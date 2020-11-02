@@ -160,7 +160,7 @@ void BDSCollimator::Build()
   else
     {colRotate = nullptr;}
 
-  G4VSolid* outerSolid = nullptr;
+  G4VSolid* outerSolid;
   if (circularOuter)
     {
       outerSolid = new G4Tubs(name + "_outer_solid",
