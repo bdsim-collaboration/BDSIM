@@ -1153,13 +1153,13 @@ the start and end of that step.
 
 Examples: ::
 
-  energies[][0]
+  energyDeposit[][0]
 
-(above) This is the total energy of the first point of all trajectories in this event.  ::
+(above) This is the energy depostied along the first (0th) step of all trajectories in this event.  ::
 
-  energies[0][]
+  energyDeposit[0][]
 
-This is the first trajectory for each event and the total energy of all steps of that trajectory.
+This is the first (0th) trajectory for each event and the energy deposited of all steps of that trajectory.
 
 * These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
   :code:`[]` means `all`.
