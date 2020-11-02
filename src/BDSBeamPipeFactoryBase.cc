@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
+#include <limits>
 #include <set>
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
