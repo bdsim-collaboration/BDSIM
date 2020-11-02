@@ -1219,13 +1219,14 @@ This is the first trajectory for each event and the total energy of all steps of
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle                                      |
+| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle (GeV)                    |
+| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
+|                          |                                     | (GeV)                                                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle                                        |
+| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle (GeV)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | rigidity (\**)           | std::vector<std::vector<double>>    | Rigidity of the particle (Tm)                           |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
