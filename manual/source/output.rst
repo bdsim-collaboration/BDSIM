@@ -1208,11 +1208,11 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 | XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| S                        | std::vector<std::vector<double>>    | Curvilinear S of the trajectory point (m)               |
+| S                        | std::vector<std::vector<double>>    | Curvilinear pre-step S of the trajectory point (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the track - global Cartesian (GeV)          |
+| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the pre-step point - global Cartesian (GeV) |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| T                        | std::vector<std::vector<double>>    | Global time of the trajectory point (ns)                |
+| T                        | std::vector<std::vector<double>>    | Global pres-step time of the trajectory point (ns)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
