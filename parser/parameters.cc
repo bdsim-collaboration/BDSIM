@@ -96,6 +96,7 @@ Parameters::Parameters()
   setMap["dontSplitOuter"]     = false;
   setMap["extractOuterContainer"] = false;
   setMap["horizontalWidth"]    = false;
+  setMap["containerRadius"]    = false;
   setMap["yokeOnInside"]       = false;
   setMap["hStyle"]             = false;
   setMap["vhRatio"]            = false;

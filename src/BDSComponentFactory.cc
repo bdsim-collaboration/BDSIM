@@ -672,10 +672,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, -incomingFaceAngle, -outgoingFaceAngle, bpInfo, yokeOnLeft);
 
       BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::dipolequadrupole,
-                                                 brho,
-                                                 BDSIntegratorType::g4classicalrk4,
-                                                 st,
-                                                 true);
+                                         brho,
+                                         BDSIntegratorType::g4classicalrk4,
+                                         st,
+                                         true);
 
       BDSFieldInfo* outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
 
@@ -2044,6 +2044,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   
   // horizontal width
   info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
+
+  info->containerRadius = el->containerRadius;
 
   // inner radius of magnet geometry - TODO when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();

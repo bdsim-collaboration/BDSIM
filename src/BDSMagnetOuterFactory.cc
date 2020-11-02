@@ -225,7 +225,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 						      BDSMagnetOuterInfo* info,
 						      G4double          /*length*/,
-                                                      G4double            magnetContainerLength,
+						      G4double            magnetContainerLength,
 						      BDSBeamPipe*        beampipe)
 {
   std::map<G4String, G4Colour*> defaultMap = {
@@ -244,7 +244,12 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
-  
+
+  if (info->containerRadius*CLHEP::m > 1e-6)
+  {//containerRadius set
+      geom->SetExtent(BDSExtent(info->containerRadius*CLHEP::m,info->containerRadius*CLHEP::m, geom->GetExtent().ZPos()));
+  }
+
   if (magInner.TransverselyLessThan(bpExtent))
     {
       std::stringstream ss, ss2, ss3;

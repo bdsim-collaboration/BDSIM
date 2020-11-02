@@ -224,4 +224,5 @@ void BDSMagnetNonSplitOuter::Build()
    {
        BuildOuterField(); // must be done when the containerLV exists
    }
+
 }

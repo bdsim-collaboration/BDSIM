@@ -64,6 +64,7 @@ public:
   G4String              name;
   BDSMagnetGeometryType geometryType;
   G4double              horizontalWidth;
+  G4double              containerRadius;
   G4Material*           outerMaterial;
   G4double              innerRadius;
   G4double              vhRatio;

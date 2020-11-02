@@ -124,6 +124,7 @@ void Element::PublishMembers()
   publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
   publish("horizontalWidth",  &Element::horizontalWidth);
+  publish("containerRadius", &Element::containerRadius);
   publish("outerDiameter",    &Element::horizontalWidth);
   alternativeNames["outerDiameter"] = "horizontalWidth";
   publish("xsize",            &Element::xsize);
