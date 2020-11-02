@@ -281,11 +281,11 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   if (point->extraLink)
     {
-      itj.charge.push_back(point->GetCharge());
-      itj.kineticEnergy.push_back(point->GetKineticEnergy());
+      itj.charge.push_back(point->GetCharge() / (G4double)CLHEP::eplus);
+      itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
       itj.turn.push_back(point->GetTurnsTaken());
-      itj.mass.push_back(point->GetMass());
-      itj.rigidity.push_back(point->GetRigidity());
+      itj.mass.push_back(point->GetMass() / CLHEP::GeV);
+      itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));
     }
   
   if (point->extraIon)
