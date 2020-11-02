@@ -99,7 +99,7 @@ public:
   inline G4double GetPostWeight()              const {return postWeight;}
   inline G4double GetPreEnergy()               const {return preEnergy;}
   inline G4double GetPostEnergy()              const {return postEnergy;}
-  inline G4double GetEnergy()                  const {return energy;}
+  inline G4double GetEnergyDeposit()           const {return energyDeposit;}
   inline G4ThreeVector GetPreMomentum()        const {return preMomentum;}
   inline G4ThreeVector GetPostMomentum()       const {return postMomentum;}
   inline G4double GetPreS()                    const {return preS;}
@@ -174,7 +174,7 @@ private:
   G4double postEnergy;            ///< Kinetic energy of post step point
   G4ThreeVector preMomentum;      ///< Momentum of pre-step point
   G4ThreeVector postMomentum;     ///< Momentum of post-step point
-  G4double energy;                ///< Total energy deposited during step
+  G4double energyDeposit;         ///< Total energy deposited during step
   G4double preS;                  ///< Global curvilinear S coordinate of pre-step point
   G4double postS;                 ///< Global curvilinear S coordinate of post step point
   G4double preGlobalTime;         ///< Time since event started of pre-step point.

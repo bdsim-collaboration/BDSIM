@@ -259,7 +259,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   itj.preWeight.push_back(point->GetPreWeight());
   itj.postWeight.push_back(point->GetPostWeight());
-  itj.energyDeposit.push_back(point->GetEnergy());
+  itj.energyDeposit.push_back(point->GetEnergyDeposit());
   G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
   itj.PXPYPZ.emplace_back(TVector3(mom.getX(),
 				mom.getY(),

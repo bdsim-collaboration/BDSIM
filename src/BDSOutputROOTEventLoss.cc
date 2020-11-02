@@ -74,7 +74,7 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
 {
   n++;
-  energy.push_back( (float &&) hit->GetEnergy() / CLHEP::GeV);
+  energy.push_back( (float &&) hit->GetEnergyDeposit() / CLHEP::GeV);
   S.push_back     ( (float &&) hit->GetPostS()  / CLHEP::m);
   weight.push_back( (float &&) hit->GetPostWeight());
   modelID.push_back((int &&)   hit->GetBeamLineIndex());
