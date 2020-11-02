@@ -125,7 +125,7 @@ public:
   /// @}
 
   /// @{ Accessor for the extra information ions.
-  inline G4bool   GetIsIon()      const {return extraIon ? extraIon->isIon      : 0;}
+  inline G4bool   GetIsIon()      const {return extraIon ? extraIon->isIon      : false;}
   inline G4int    GetIonA()       const {return extraIon ? extraIon->ionA       : 0;}
   inline G4int    GetIonZ()       const {return extraIon ? extraIon->ionZ       : 0;}
   inline G4int    GetNElectrons() const {return extraIon ? extraIon->nElectrons : 0;}
