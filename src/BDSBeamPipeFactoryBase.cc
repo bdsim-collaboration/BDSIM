@@ -111,9 +111,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
-  // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  // container
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
