@@ -39,6 +39,7 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
   sensitiveBeamPipe     = g->SensitiveBeamPipe();
   sensitiveVacuum       = g->StoreELossVacuum();
   storeApertureImpacts  = g->StoreApertureImpacts();
+  minKineticEnergy      = 0;
   CleanUpBase(); // non-virtual call in constructor
 }
 
@@ -121,10 +122,20 @@ void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
 
+  if (BDSGlobalConstants::Instance()->BeamPipeIsInfiniteAbsorber())
+    {minKineticEnergy = std::numeric_limits<double>::max();}
+
+  // new beam pipe user limits, copy from updated default user limits above
+  G4UserLimits* beamPipeUL = new G4UserLimits(*ul);
+  if (BDS::IsFinite(minKineticEnergy))
+    {beamPipeUL->SetUserMinEkine(minKineticEnergy);}
+
   if (ul != defaultUL) // if it's not the default register it
     {allUserLimits.insert(ul);}
+  if (beamPipeUL != defaultUL) // if it's not the default register it
+    {allUserLimits.insert(beamPipeUL);}
   vacuumLV->SetUserLimits(ul);
-  beamPipeLV->SetUserLimits(ul);
+  beamPipeLV->SetUserLimits(beamPipeUL);
   containerLV->SetUserLimits(ul);
 }
 

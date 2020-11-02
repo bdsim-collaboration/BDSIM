@@ -203,6 +203,7 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
   
