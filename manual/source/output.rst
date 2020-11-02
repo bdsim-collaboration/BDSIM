@@ -1203,7 +1203,7 @@ This is the first trajectory for each event and the total energy of all steps of
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point               |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
+| energyDeposit            | std::vector<std::vector<double>>    | Total energy deposit in the current step (GeV)          |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
