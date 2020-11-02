@@ -164,13 +164,13 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       energyDeposit.push_back(itj.energyDeposit);
       T.push_back(itj.T);
 
-      if (itj.xyz.size()>0)
+      if (!itj.xyz.empty())
 	{
           xyz.push_back(itj.xyz);
           pxpypz.push_back(itj.pxpypz);
 	}
 
-      if (itj.charge.size()>0)
+      if (!itj.charge.empty())
 	{
           charge.push_back(itj.charge);
           kineticEnergy.push_back(itj.kineticEnergy);
@@ -179,7 +179,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
           rigidity.push_back(itj.rigidity);
 	}
       
-      if (itj.isIon.size()>0)
+      if (!itj.isIon.empty())
 	{
 	  isIon.push_back(itj.isIon);
 	  ionA.push_back(itj.ionA);
