@@ -119,8 +119,6 @@ protected:
 
   /// Set user limits.
   virtual void SetUserLimits(G4double length);
-  ///< Optional minimum kinetic energy for beam pipe material
-  G4double minKineticEnergy;
 
   /// Place volumes.
   virtual void PlaceComponents(G4String nameIn);
