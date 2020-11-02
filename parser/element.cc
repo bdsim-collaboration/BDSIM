@@ -207,6 +207,7 @@ void Element::PublishMembers()
   publish("apertureType",        &Element::apertureType);
   publish("magnetGeometryType",  &Element::magnetGeometryType);
   publish("dontSplitOuter",     &Element::dontSplitOuter);
+  publish("extractOuterContainer", &Element::extractOuterContainer);
   publish("beampipeMaterial",    &Element::beampipeMaterial);
   publish("vacuumMaterial",      &Element::vacuumMaterial);
   publish("scintmaterial",       &Element::scintmaterial);

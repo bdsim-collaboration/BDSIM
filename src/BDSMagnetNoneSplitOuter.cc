@@ -184,25 +184,28 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
     }
 
-    G4ThreeVector outerOffset = outer->GetPlacementOffset();
-
-    std::cout << "placing the content of the gdml file" << std::endl;
-    auto gdml_world = outer->GetContainerLogicalVolume();
-    for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++)
+    if (!element->extractOuterContainer)
     {
-      const auto& pv = gdml_world->GetDaughter(j);
-      G4String placementName = pv->GetName() + "_pv";
-      std::cout << "placing " << placementName << std::endl;
-      G4int copyNumber = 1;
+        G4ThreeVector outerOffset = outer->GetPlacementOffset();
 
-      auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
-                                  pv->GetLogicalVolume(), // volume to be placed
-                                  placementName,                        // placement name
-                                  containerLogicalVolume,                          // volume to place it in
-                                  false,                                // no boolean operation
-                                  copyNumber,                           // copy number
-                                  checkOverlaps);                       // overlap checking
-      RegisterPhysicalVolume(vv);
+        std::cout << "placing the content of the gdml file" << std::endl;
+        auto gdml_world = outer->GetContainerLogicalVolume();
+        for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++)
+        {
+            const auto& pv = gdml_world->GetDaughter(j);
+            G4String placementName = pv->GetName() + "_pv";
+            std::cout << "placing " << placementName << std::endl;
+            G4int copyNumber = 1;
+
+            auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
+                                        pv->GetLogicalVolume(), // volume to be placed
+                                        placementName,                        // placement name
+                                        containerLogicalVolume,                          // volume to place it in
+                                        false,                                // no boolean operation
+                                        copyNumber,                           // copy number
+                                        checkOverlaps);                       // overlap checking
+            RegisterPhysicalVolume(vv);
+    }
 
     }
 

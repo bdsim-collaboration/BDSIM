@@ -94,6 +94,7 @@ Parameters::Parameters()
   setMap["vacuumMaterial"]     = false;
   setMap["magnetGeometryType"] = false;
   setMap["dontSplitOuter"]     = false;
+  setMap["extractOuterContainer"] = false;
   setMap["horizontalWidth"]    = false;
   setMap["yokeOnInside"]       = false;
   setMap["hStyle"]             = false;
