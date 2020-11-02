@@ -2144,6 +2144,10 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| beamPipeIsInfiniteAbsorber       | When turned on, all particles that hit the material   |
+|                                  | of the beam pipe are killed and the energy recorded as|
+|                                  | being deposited there.                                |
++----------------------------------+-------------------------------------------------------+
 | collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
