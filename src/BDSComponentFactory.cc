@@ -99,7 +99,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <utility>
 
-#include "BDSMagnetNoneSplitOuter.hh"
+#include "BDSMagnetNonSplitOuter.hh"
 
 using namespace GMAD;
 
@@ -679,7 +679,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
       BDSFieldInfo* outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
 
-      return new BDSMagnetNoneSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
+      return new BDSMagnetNonSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
                                          false,element, st, brho,integratorSet, incomingFaceAngle,
                                          outgoingFaceAngle, includeFringeFields, prevElement,nextElement);}
 

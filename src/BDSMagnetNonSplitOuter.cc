@@ -63,13 +63,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 
-#include "BDSMagnetNoneSplitOuter.hh"
+#include "BDSMagnetNonSplitOuter.hh"
 
 using namespace GMAD;
 
 class G4Userlimits;
 
-BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
+BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
                                                  BDSBeamPipeInfo *beamPipeInfoIn,
                                                  BDSMagnetOuterInfo *magnetOuterInfoIn,
                                                  BDSFieldInfo *vacuumFieldInfoIn,
@@ -102,7 +102,7 @@ BDSMagnetNoneSplitOuter::BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
 }
 
 
-void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         elementName,
+void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elementName,
                                                  const Element*          element,
                                                  BDSMagnetStrength*      st,
                                                  G4double                brho,
@@ -149,43 +149,44 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
     SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
     SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
 
-    G4double offsetAngle = element->angle/2;
-    G4double offsetLength = chordLength/2;
-
-    G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
-    G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
-    G4ThreeVector v = G4ThreeVector(0, 1,0);
-    G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
-    G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
-    G4double          initialS = 0;
-
-    BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
-
-    beamline->AddComponent(pipeLine);
-
-    G4int i = 0;
-    for (auto element : *beamline)
-    {
-
-        G4String placementName = element->GetPlacementName() + "_pv";
-        G4Transform3D* placementTransform = element->GetPlacementTransform();
-        G4int copyNumber = i;
-        auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                    element->GetContainerLogicalVolume(), // volume to be placed
-                                    placementName,                        // placement name
-                                    containerLogicalVolume,                          // volume to place it in
-                                    false,                                // no boolean operation
-                                    copyNumber,                           // copy number
-                                    checkOverlaps);                       // overlap checking
-
-        i++; // for incremental copy numbers
-
-        RegisterPhysicalVolume(pv);
-
-    }
-
     if (!element->extractOuterContainer)
     {
+
+        G4double offsetAngle = element->angle/2;
+        G4double offsetLength = chordLength/2;
+
+        G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
+        G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
+        G4ThreeVector v = G4ThreeVector(0, 1,0);
+        G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
+        G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
+        G4double          initialS = 0;
+
+        BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
+
+        beamline->AddComponent(pipeLine);
+
+        G4int i = 0;
+        for (auto element : *beamline)
+        {
+
+            G4String placementName = element->GetPlacementName() + "_pv";
+            G4Transform3D* placementTransform = element->GetPlacementTransform();
+            G4int copyNumber = i;
+            auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                        element->GetContainerLogicalVolume(), // volume to be placed
+                                        placementName,                        // placement name
+                                        containerLogicalVolume,                          // volume to place it in
+                                        false,                                // no boolean operation
+                                        copyNumber,                           // copy number
+                                        checkOverlaps);                       // overlap checking
+
+            i++; // for incremental copy numbers
+
+            RegisterPhysicalVolume(pv);
+
+        }
+
         G4ThreeVector outerOffset = outer->GetPlacementOffset();
 
         std::cout << "placing the content of the gdml file" << std::endl;
@@ -213,13 +214,13 @@ void BDSMagnetNoneSplitOuter::SBendWithSingleOuter(const G4String&         eleme
 
 }
 
-void BDSMagnetNoneSplitOuter::Build()
+void BDSMagnetNonSplitOuter::Build()
 {
    SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
-   if (element->fieldOuter != "")
+   if (element->fieldOuter != "" and !(element->extractOuterContainer))
    {
        BuildOuterField(); // must be done when the containerLV exists
    }

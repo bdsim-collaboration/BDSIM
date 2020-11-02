@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSMAGNETNONESPLITOUTER_H
-#define BDSMAGNETNONESPLITOUTER_H
+#ifndef BDSMAGNETNONSPLITOUTER_H
+#define BDSMAGNETNONSPLITOUTER_H
 
 #include "globals.hh"
 #include "BDSMagnet.hh"
@@ -53,13 +53,13 @@ namespace GMAD
  * @author Laurie Nevay
  */
 
-class BDSMagnetNoneSplitOuter: public BDSMagnet
+class BDSMagnetNonSplitOuter: public BDSMagnet
 {
 public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
 
-  BDSMagnetNoneSplitOuter(BDSMagnetType typeIn,
+  BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
                           BDSBeamPipeInfo *beamPipeInfoIn,
                           BDSMagnetOuterInfo *magnetOuterInfoIn,
                           BDSFieldInfo *vacuumFieldInfoIn,
