@@ -108,7 +108,7 @@ protected:
 					       G4double  containerRadius,
 					       G4bool    containerIsCircular = false);
   
-  // methods called by CommonConstruction, can be implmented by derived classes
+  // methods called by CommonConstruction, can be implemented by derived classes
   
   /// build logical volumes
   virtual void BuildLogicalVolumes(G4String    nameIn,
@@ -119,12 +119,14 @@ protected:
 
   /// Set user limits.
   virtual void SetUserLimits(G4double length);
+  ///< Optional minimum kinetic energy for beam pipe material
+  G4double minKineticEnergy;
 
   /// Place volumes.
   virtual void PlaceComponents(G4String nameIn);
   
   G4bool           sensitiveBeamPipe;    ///< Whether the beam pipe will record energy deposition.
-  G4bool           sensitiveVacuum;      ///< Wehther the vacuum will record any energy deposition.
+  G4bool           sensitiveVacuum;      ///< Whether the vacuum will record any energy deposition.
   G4bool           storeApertureImpacts; ///< Whether to store aperture impacts.
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
