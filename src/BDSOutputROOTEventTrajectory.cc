@@ -26,7 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
 
-#include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -71,7 +70,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
-  // assign trajectory indicies
+  // assign trajectory indices
   int idx = 0;
   for (auto trajFlag : trajectories->trajectories)
     {
@@ -85,7 +84,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	{traj->SetTrajIndex(-1);}
     }
 
-  // assign parent (and step) indicies
+  // assign parent (and step) indices
   for (auto trajFlag : trajectories->trajectories)
     {
       BDSTrajectory* traj   = trajFlag.first;
