@@ -240,7 +240,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   // Position
   G4ThreeVector pos = point->GetPosition();
-  itj.XYZ.push_back(TVector3(pos.getX() / CLHEP::m,
+  itj.XYZ.emplace_back(TVector3(pos.getX() / CLHEP::m,
 			     pos.getY() / CLHEP::m,
 			     pos.getZ() / CLHEP::m));
   
@@ -261,7 +261,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   itj.postWeight.push_back(point->GetPostWeight());
   itj.energyDeposit.push_back(point->GetEnergy());
   G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
-  itj.PXPYPZ.push_back(TVector3(mom.getX(),
+  itj.PXPYPZ.emplace_back(TVector3(mom.getX(),
 				mom.getY(),
 				mom.getZ()));
   itj.S.push_back(point->GetPreS() / CLHEP::m);
@@ -271,10 +271,10 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
     {
       G4ThreeVector localPos = point->GetPositionLocal() / CLHEP::m;
       G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
-      itj.xyz.push_back(TVector3(localPos.getX(),
+      itj.xyz.emplace_back(TVector3(localPos.getX(),
 				 localPos.getY(),
 				 localPos.getZ()));
-      itj.pxpypz.push_back(TVector3(localMom.getX(),
+      itj.pxpypz.emplace_back(TVector3(localMom.getX(),
 				    localMom.getY(),
 				    localMom.getZ()));
     }
