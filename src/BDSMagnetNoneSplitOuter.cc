@@ -216,5 +216,8 @@ void BDSMagnetNoneSplitOuter::Build()
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
-    BuildOuterField(); // must be done when the containerLV exists
+   if (element->fieldOuter != "")
+   {
+       BuildOuterField(); // must be done when the containerLV exists
+   }
 }
