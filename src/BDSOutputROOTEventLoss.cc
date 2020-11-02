@@ -26,9 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventLoss)
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss()
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
+n(0)
 #ifndef __ROOTBUILD__
-:
+,
   storeTurn(false),
   storeLinks(false),
   storeModelID(false),
@@ -52,6 +53,7 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeStepLengthIn,
 					       bool storePreStepKineticEnergyIn,
 					       bool storePhysicsProcessesIn):
+  n(0),
   storeTurn(storeTurnIn),
   storeLinks(storeLinksIn),
   storeModelID(storeModelIDIn),
