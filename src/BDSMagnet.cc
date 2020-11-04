@@ -213,7 +213,7 @@ void BDSMagnet::BuildOuter()
 
       RegisterDaughter(outer);
       InheritExtents(container, contOffset); // update extents
-      
+
       endPieceBefore = outer->EndPieceBefore();
       endPieceAfter  = outer->EndPieceAfter();
 
@@ -272,7 +272,7 @@ void BDSMagnet::BuildContainerLogicalVolume()
 
 void BDSMagnet::PlaceComponents()
 {
-  if (placeBeamPipe)
+  if (placeBeamPipe and !(magnetOuterInfo->extractOuterContainer))
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
@@ -288,7 +288,7 @@ void BDSMagnet::PlaceComponents()
       RegisterPhysicalVolume(beamPipePV);
     }
 
-  if (outer) {
+  if (outer and !(magnetOuterInfo->extractOuterContainer)) {
       auto gdml_world = outer->GetContainerLogicalVolume();
       for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++) {
           const auto &pv = gdml_world->GetDaughter(j);
