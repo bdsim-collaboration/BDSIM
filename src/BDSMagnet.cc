@@ -213,9 +213,6 @@ void BDSMagnet::BuildOuter()
 
       RegisterDaughter(outer);
       InheritExtents(container, contOffset); // update extents
-
-      // Only clear after extents etc have been used
-      outer->ClearMagnetContainer();
       
       endPieceBefore = outer->EndPieceBefore();
       endPieceAfter  = outer->EndPieceAfter();
@@ -255,10 +252,8 @@ void BDSMagnet::BuildContainerLogicalVolume()
   if (outer)
     {//build around that
       // container solid will have been updated in BuildOuter if the outer exists
-      containerLogicalVolume = new G4LogicalVolume(containerSolid,
-						   emptyMaterial,
-						   name + "_container_lv");
-      
+      containerLogicalVolume = outer->GetMagnetContainer()->GetContainerLogicalVolume();
+      outer->ClearMagnetContainer();
       // user limits - provided by BDSAcceleratorComponent
       containerLogicalVolume->SetUserLimits(userLimits);
       containerLogicalVolume->SetVisAttributes(containerVisAttr);
@@ -293,23 +288,25 @@ void BDSMagnet::PlaceComponents()
       RegisterPhysicalVolume(beamPipePV);
     }
 
-  if (outer)
-    {
-      //G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
-      G4ThreeVector outerOffset = outer->GetPlacementOffset();
-      
-      // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                // rotation
-						       outerOffset,            // at normally (0,0,0)
-						       outer->GetContainerLogicalVolume(), // its logical volume
-						       name+"_outer_pv",       // its name
-						       containerLogicalVolume, // its mother  volume
-						       false,                  // no boolean operation
-						       0,                      // copy number
-                                                       checkOverlaps);
+  if (outer) {
+      auto gdml_world = outer->GetContainerLogicalVolume();
+      for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++) {
+          const auto &pv = gdml_world->GetDaughter(j);
+          G4String placementName = pv->GetName() + "_pv";
+          std::cout << "placing " << placementName << std::endl;
+          G4int copyNumber = 1;
 
-      RegisterPhysicalVolume(magnetOuterPV);
-    }
+          auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
+                                      pv->GetLogicalVolume(), // volume to be placed
+                                      placementName,                        // placement name
+                                      containerLogicalVolume,                          // volume to place it in
+                                      false,                                // no boolean operation
+                                      copyNumber,                           // copy number
+                                      checkOverlaps);                       // overlap checking
+          RegisterPhysicalVolume(vv);
+
+      }
+  }
 }
 
 void BDSMagnet::SetOuterField(BDSFieldInfo* outerFieldInfoIn)

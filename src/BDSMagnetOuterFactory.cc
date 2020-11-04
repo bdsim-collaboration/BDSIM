@@ -289,7 +289,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(const G4
       containerSolid = new G4CutTubs(name + "_container_solid",   // name
 				     0,                           // inner radius
 				     magnetContainerRadius,       // outer radius
-				     length * 0.5,                // z half length
+				     (length+lengthSafetyLarge) * 0.5,                // z half length
 				     0,                           // starting angle
 				     CLHEP::twopi,                // sweep angle
 				     inputFace,
