@@ -99,6 +99,7 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
     magnetOuterInfo   = magnetOuterInfoIn;
     vacuumFieldInfo   = vacuumFieldInfoIn;
     outerFieldInfo    = outerFieldInfoIn;
+    namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
 }
 
 
@@ -199,6 +200,13 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
             std::cout << "placing " << placementName << std::endl;
             G4int copyNumber = 1;
 
+            if (std::find(namedVacuumVolumes.begin(), namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(9).c_str()) != namedVacuumVolumes.end())
+            {
+                BDSFieldBuilder::Instance()->RegisterFieldForConstruction(this->vacuumFieldInfo,
+                                                                          pv->GetLogicalVolume(),
+                                                                          true);
+            }
+
             auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
                                         pv->GetLogicalVolume(), // volume to be placed
                                         placementName,                        // placement name
@@ -207,13 +215,12 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
                                         copyNumber,                           // copy number
                                         checkOverlaps);                       // overlap checking
             RegisterPhysicalVolume(vv);
+
+        }
     }
-
-    }
-
-
 
 }
+
 
 void BDSMagnetNonSplitOuter::Build()
 {

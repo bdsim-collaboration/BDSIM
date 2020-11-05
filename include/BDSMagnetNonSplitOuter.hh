@@ -103,6 +103,7 @@ private:
     G4bool                      buildFringeFields;
     const GMAD::Element*        prevElement;
     const GMAD::Element*        nextElement;
+    std::vector<G4String>       namedVacuumVolumes;
 
 };
 
