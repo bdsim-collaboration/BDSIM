@@ -38,8 +38,7 @@ std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
    {BDSBeamPipeType::racetrack,      "racetrack"},
    {BDSBeamPipeType::octagonal,      "octagonal"},
    {BDSBeamPipeType::circularvacuum, "circularvacuum"},
-   {BDSBeamPipeType::clicpcl,        "clicpcl"},
-   {BDSBeamPipeType::none,            "none"}
+   {BDSBeamPipeType::clicpcl,        "clicpcl"}
 });	
 
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)

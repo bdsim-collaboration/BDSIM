@@ -37,8 +37,7 @@ std::map<BDSApertureType, std::string>* BDSApertureType::dictionary =
   {BDSApertureType::racetrack,      "racetrack"},
   {BDSApertureType::octagonal,      "octagonal"},
   {BDSApertureType::circularvacuum, "circularvacuum"},
-  {BDSApertureType::clicpcl,        "clicpcl"},
-  {BDSApertureType::none,           "none"}
+  {BDSApertureType::clicpcl,        "clicpcl"}
                                               });
 
 BDSApertureType BDS::DetermineApertureType(G4String apertureType)
@@ -55,7 +54,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["octagonal"]      = BDSApertureType::octagonal;
   types["circularvacuum"] = BDSApertureType::circularvacuum;
   types["clicpcl"]        = BDSApertureType::clicpcl;
-  types["none"]           = BDSApertureType::none;
+  types["none"]           = BDSApertureType::circular; // circular aperture is still used to build a pipe but will not be placed
 
   apertureType.toLower();
 

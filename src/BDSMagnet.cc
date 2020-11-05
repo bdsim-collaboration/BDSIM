@@ -272,7 +272,7 @@ void BDSMagnet::BuildContainerLogicalVolume()
 
 void BDSMagnet::PlaceComponents()
 {
-  if (placeBeamPipe and !(magnetOuterInfo->extractOuterContainer))
+  if (placeBeamPipe and !(magnetOuterInfo->extractOuterContainer) and (this->beamPipeInfo->beamPipeType != BDSBeamPipeType::none))
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
