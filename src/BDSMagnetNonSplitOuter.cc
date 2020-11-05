@@ -114,14 +114,19 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
                                                  const GMAD::Element*    prevElement,
                                                  const GMAD::Element*    nextElement)
 {
-    Element el = Element(*element);
-    el.magnetGeometryType = "none";
-    el.l -= lengthSafety;
-    BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
-    pipeLine->Initialise();
+    BDSAcceleratorComponent* pipeLine;
+
+    if (element->apertureType != "none")
+    {
+        Element el = Element(*element);
+        el.magnetGeometryType = "none";
+        el.l -= lengthSafety;
+        pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
+        pipeLine->Initialise();
+    }
 
     BDSBeamPipeInfo* beamPipeInfo1 = new BDSBeamPipeInfo(*beamPipeInfo);
-    std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(el.angle/2 + incomingFaceAngle, el.angle/2 + outgoingFaceAngle);
+    std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(element->angle/2 + incomingFaceAngle, element->angle/2 + outgoingFaceAngle);
     beamPipeInfo1->inputFaceNormal = faces.first;
     beamPipeInfo1->outputFaceNormal = faces.second;
 
@@ -166,26 +171,30 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 
         BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
 
-        beamline->AddComponent(pipeLine);
-
-        G4int i = 0;
-        for (auto element : *beamline)
+        if (element->apertureType != "none")
         {
+            beamline->AddComponent(pipeLine);
 
-            G4String placementName = element->GetPlacementName() + "_pv";
-            G4Transform3D* placementTransform = element->GetPlacementTransform();
-            G4int copyNumber = i;
-            auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                        element->GetContainerLogicalVolume(), // volume to be placed
-                                        placementName,                        // placement name
-                                        containerLogicalVolume,                          // volume to place it in
-                                        false,                                // no boolean operation
-                                        copyNumber,                           // copy number
-                                        checkOverlaps);                       // overlap checking
+            G4int i = 0;
+            for (auto element : *beamline)
+            {
 
-            i++; // for incremental copy numbers
+                G4String placementName = element->GetPlacementName() + "_pv";
+                G4Transform3D* placementTransform = element->GetPlacementTransform();
+                G4int copyNumber = i;
+                auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                            element->GetContainerLogicalVolume(), // volume to be placed
+                                            placementName,                        // placement name
+                                            containerLogicalVolume,                          // volume to place it in
+                                            false,                                // no boolean operation
+                                            copyNumber,                           // copy number
+                                            checkOverlaps);                       // overlap checking
 
-            RegisterPhysicalVolume(pv);
+                i++; // for incremental copy numbers
+
+                RegisterPhysicalVolume(pv);
+
+            }
 
         }
 

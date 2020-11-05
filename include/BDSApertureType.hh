@@ -33,7 +33,7 @@ struct aperturetypes_def
 {
   enum type {circular, rectangular, elliptical, lhc,
 	     lhcdetailed, rectellipse, racetrack, octagonal,
-	     circularvacuum, clicpcl};
+	     circularvacuum, clicpcl, none};
 };
 
 typedef BDSTypeSafeEnum<aperturetypes_def,int> BDSApertureType;
