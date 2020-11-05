@@ -115,6 +115,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 {
     Element el = Element(*element);
     el.magnetGeometryType = "none";
+    el.l -= lengthSafety;
     BDSAcceleratorComponent* pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
     pipeLine->Initialise();
 
@@ -124,8 +125,8 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
     beamPipeInfo1->outputFaceNormal = faces.second;
 
     BDSBeamPipe* beamPipeTest = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
-                                                   chordLength,
-                                                   beamPipeInfo1);
+                                                                               arcLength,
+                                                                               beamPipeInfo1);
 
     outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength, chordLength, beamPipeTest);
 
