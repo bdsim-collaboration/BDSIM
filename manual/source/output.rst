@@ -1153,13 +1153,13 @@ the start and end of that step.
 
 Examples: ::
 
-  energies[][0]
+  energyDeposit[][0]
 
-(above) This is the total energy of the first point of all trajectories in this event.  ::
+(above) This is the energy depostied along the first (0th) step of all trajectories in this event.  ::
 
-  energies[0][]
+  energyDeposit[0][]
 
-This is the first trajectory for each event and the total energy of all steps of that trajectory.
+This is the first (0th) trajectory for each event and the energy deposited of all steps of that trajectory.
 
 * These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
   :code:`[]` means `all`.
@@ -1203,29 +1203,30 @@ This is the first trajectory for each event and the total energy of all steps of
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point               |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
+| energyDeposit            | std::vector<std::vector<double>>    | Total energy deposit in the current step (GeV)          |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| S                        | std::vector<std::vector<double>>    | Curvilinear S of the trajectory point (m)               |
+| S                        | std::vector<std::vector<double>>    | Curvilinear pre-step S of the trajectory point (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the track - global Cartesian (GeV)          |
+| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the pre-step point - global Cartesian (GeV) |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| T                        | std::vector<std::vector<double>>    | Global time of the trajectory point (ns)                |
+| T                        | std::vector<std::vector<double>>    | Global pres-step time of the trajectory point (ns)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle                                      |
+| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle (GeV)                    |
+| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
+|                          |                                     | (GeV)                                                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle                                        |
+| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle (GeV)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | rigidity (\**)           | std::vector<std::vector<double>>    | Rigidity of the particle (Tm)                           |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
