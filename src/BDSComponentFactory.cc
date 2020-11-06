@@ -128,9 +128,9 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
 
 BDSComponentFactory::~BDSComponentFactory()
 {
-  for (auto info : cavityInfos)
+  for (const auto& info : cavityInfos)
     {delete info.second;}
-  for (auto info : crystalInfos)
+  for (const auto&  info : crystalInfos)
     {delete info.second;}
 
   // Deleted here although not used directly here as new geometry can only be
@@ -1934,7 +1934,6 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     case BDSFieldType::skewdecapole:
       {outerType = BDSFieldType::skewmultipoleouterdecapole;   break;}
     case BDSFieldType::dipole3d:
-      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     default:
@@ -2447,7 +2446,7 @@ G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
 }
 
 G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
-						 G4String defaultMaterialName)
+						 const G4String& defaultMaterialName)
 {
   G4String materialName = el->material;
   if (materialName.empty())

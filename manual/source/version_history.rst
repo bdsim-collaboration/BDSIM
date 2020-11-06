@@ -66,6 +66,9 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| beamPipeIsInfiniteAbsorber         | When turned on, all particles that hit the material of the beam    |
+|                                    | pipe are killed and the energy recorded as being deposited there.  |
++------------------------------------+--------------------------------------------------------------------+
 | outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
 |                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
 |                                    | compression and 1 minimal. 5 is the default.                       |
@@ -124,7 +127,8 @@ Bug Fixes
   is at the entrance or exit of the dipole.
 * Fix wrong variable name print out for halo beam distribution.
 * Improve cryptic error for wrongly specified composite beam distribution.
-
+* Units for :code:`kineticEnergy` and :code:`rigidity` variables in the trajectory output were fixed.
+  
 Output Changes
 --------------
 
@@ -134,6 +138,9 @@ Output Changes
   the output as these are only needed at run time and are not needed as a copy for each event in the output.
   The options preserve what was stored and it is not expected that these change between events so this
   was completely unnecessary and wasteful.
+* Units for :code:`kineticEnergy`, :code:`rigidity` and :code:`mass` variables in the trajectory output were
+  fixed. These were previously in Geant4 units but are now consistent with those in the rest of the output
+  such as samplers and are GeV and Tm.
 
 Output Class Versions
 ---------------------

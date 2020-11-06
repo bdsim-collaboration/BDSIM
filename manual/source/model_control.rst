@@ -1441,21 +1441,30 @@ Notes:
   if required. The defaults are 1 mm, the same as Geant4.
 * If the option :code:`minimumKineticEnergy` is set to a value greater than 0 (the default), a
   physics process will be attached to the Geant4 reference physics list to enforce this cut. This
-  must be 0 and :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
-  process to enforce cuts and limits and therefore achieve the exact reference physics list. This
-  is the default option.
+  must be 0 **and** the :code:`g4PhysicsUseBDSIMCutsAndLimits` option off to **not** use the physics
+  processes to enforce cuts and limits and therefore achieve the exact reference physics list.
+  The default is that the :code:`minimumKineticEnergy` option is 0 and therefore not applied.
+  Also, by default, :code:`g4PhysicsUseBDSIMCutsAndLimits` is on (1).
 
-.. warning:: Turning off all limits may result in tracking warnings. The events should still proceed
+.. warning:: Turning off all limits (:code:`option, g4PhysicsUseBDSIMCutsAndLimits=0;`) may result
+	     in tracking warnings. The events should still proceed
 	     as normal, but Geant4 by default requests step lengths of 10 km or more, which often
 	     break the validity of the accelerator tracking routines. This is unavoidable, hence
 	     why we use the limits by default. BDSIM, by default applies step length limits of 110%
-	     the length of each volume.
+	     the length of each volume. This should make nominally no difference to our results.
 
 .. warning:: Turning off all limits will break the control required to stop primary particles after
-	     a certain number of turns in circular machines.
+	     a certain number of turns in circular machines. BDSIM will print out a warning about this
+	     with a short pause in running. Note, by default synchrotron radiation is not included
+	     (too many low energy photons to track) so charged particles never lose energy and can
+	     proceed indefinitely in a circular stable accelerator. Each event terminates when all
+	     particles have left the world or have been tracked down to zero energy. In this case,
+	     this never happens and the simulation will continue indefinitely. Hence, why we introduce
+	     a special terminator volume with dynamic user limits to kill all particles of any energy
+	     after the primary particle has completed the desired number of turns.
   
 The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
-prefix with "g4" to work in BDSIM.
+prefixed with "g4" in order to work in BDSIM.
 
 * FTFP_BERT
 * FTFP_BERT_TRV
@@ -2144,6 +2153,10 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| beamPipeIsInfiniteAbsorber       | When turned on, all particles that hit the material   |
+|                                  | of the beam pipe are killed and the energy recorded as|
+|                                  | being deposited there.                                |
++----------------------------------+-------------------------------------------------------+
 | collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |

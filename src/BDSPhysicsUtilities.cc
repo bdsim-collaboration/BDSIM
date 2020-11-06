@@ -137,10 +137,10 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
 	  else if (!g->G4PhysicsUseBDSIMCutsAndLimits() && g->Circular())
-      {
+	    {
 	      G4String message = "g4PhysicsUseBDSIMCutsAndLimits turned off but using a circular machine - circular mechanics will be broken";
 	      BDS::Warning(__METHOD_NAME__, message);
-      }
+	    }
 	}
     }
   else if (completePhysics)

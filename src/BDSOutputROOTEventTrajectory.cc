@@ -26,7 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 #include "G4VPhysicalVolume.hh"
 
-#include "BDSDebug.hh"
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -71,7 +70,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
-  // assign trajectory indicies
+  // assign trajectory indices
   int idx = 0;
   for (auto trajFlag : trajectories->trajectories)
     {
@@ -85,7 +84,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	{traj->SetTrajIndex(-1);}
     }
 
-  // assign parent (and step) indicies
+  // assign parent (and step) indices
   for (auto trajFlag : trajectories->trajectories)
     {
       BDSTrajectory* traj   = trajFlag.first;
@@ -165,13 +164,13 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       energyDeposit.push_back(itj.energyDeposit);
       T.push_back(itj.T);
 
-      if (itj.xyz.size()>0)
+      if (!itj.xyz.empty())
 	{
           xyz.push_back(itj.xyz);
           pxpypz.push_back(itj.pxpypz);
 	}
 
-      if (itj.charge.size()>0)
+      if (!itj.charge.empty())
 	{
           charge.push_back(itj.charge);
           kineticEnergy.push_back(itj.kineticEnergy);
@@ -180,7 +179,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
           rigidity.push_back(itj.rigidity);
 	}
       
-      if (itj.isIon.size()>0)
+      if (!itj.isIon.empty())
 	{
 	  isIon.push_back(itj.isIon);
 	  ionA.push_back(itj.ionA);
@@ -241,7 +240,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   // Position
   G4ThreeVector pos = point->GetPosition();
-  itj.XYZ.push_back(TVector3(pos.getX() / CLHEP::m,
+  itj.XYZ.emplace_back(TVector3(pos.getX() / CLHEP::m,
 			     pos.getY() / CLHEP::m,
 			     pos.getZ() / CLHEP::m));
   
@@ -260,9 +259,9 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   itj.preWeight.push_back(point->GetPreWeight());
   itj.postWeight.push_back(point->GetPostWeight());
-  itj.energyDeposit.push_back(point->GetEnergy());
+  itj.energyDeposit.push_back(point->GetEnergyDeposit());
   G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
-  itj.PXPYPZ.push_back(TVector3(mom.getX(),
+  itj.PXPYPZ.emplace_back(TVector3(mom.getX(),
 				mom.getY(),
 				mom.getZ()));
   itj.S.push_back(point->GetPreS() / CLHEP::m);
@@ -272,21 +271,21 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
     {
       G4ThreeVector localPos = point->GetPositionLocal() / CLHEP::m;
       G4ThreeVector localMom = point->GetMomentumLocal() / CLHEP::GeV;
-      itj.xyz.push_back(TVector3(localPos.getX(),
+      itj.xyz.emplace_back(TVector3(localPos.getX(),
 				 localPos.getY(),
 				 localPos.getZ()));
-      itj.pxpypz.push_back(TVector3(localMom.getX(),
+      itj.pxpypz.emplace_back(TVector3(localMom.getX(),
 				    localMom.getY(),
 				    localMom.getZ()));
     }
   
   if (point->extraLink)
     {
-      itj.charge.push_back(point->GetCharge());
-      itj.kineticEnergy.push_back(point->GetKineticEnergy());
+      itj.charge.push_back(point->GetCharge() / (G4double)CLHEP::eplus);
+      itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
       itj.turn.push_back(point->GetTurnsTaken());
-      itj.mass.push_back(point->GetMass());
-      itj.rigidity.push_back(point->GetRigidity());
+      itj.mass.push_back(point->GetMass() / CLHEP::GeV);
+      itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));
     }
   
   if (point->extraIon)
