@@ -82,6 +82,9 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
 +------------------------------------+--------------------------------------------------------------------+
+| storeParticleData                  | Control whether the basic particle data is stored in the output    |
+|                                    | for all particles used or not. Renamed from `storeGeant4Data`.     |
++------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
 +------------------------------------+--------------------------------------------------------------------+
@@ -874,9 +877,6 @@ New Features
 |                                  | default but turned on automatically when using importance        |
 |                                  | sampling. Allows the user to distinguish energy deposition in    |
 |                                  | the air as stored in ElossWorld from the contents of the world.  |
-+----------------------------------+------------------------------------------------------------------+
-| storeParticleData                | Control whether the basic particle data is stored in the output  |
-|                                  | for all particles used or not.                                   |
 +----------------------------------+------------------------------------------------------------------+
 | storeSamplerAll                  | Conveniently store all optional sampler data with one option.    |
 +----------------------------------+------------------------------------------------------------------+

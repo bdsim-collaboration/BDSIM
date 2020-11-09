@@ -91,7 +91,7 @@ void DataLoader::CommonCtor(std::string fileName)
   run = new Run(debug, dataVersion);
   
   heaChain = new TChain("Header",      "Header");
-  if (dataVersion > 5)
+  if (dataVersion > 6)
     {parChain = new TChain("ParticleData", "ParticleData");}
   beaChain = new TChain("Beam",       "Beam");
   optChain = new TChain("Options",    "Options");
@@ -104,7 +104,7 @@ void DataLoader::CommonCtor(std::string fileName)
   ChainTrees();
   SetBranchAddress(allBranchesOn, branchesToTurnOn);
 
-  if (dataVersion > 5)
+  if (dataVersion > 6)
     {
       parChain->GetEntry(0); // load particle data
 #ifdef __ROOTDOUBLE__
@@ -241,7 +241,7 @@ void DataLoader::BuildEventBranchNameList()
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
-  if (dataVersion > 5)
+  if (dataVersion > 6)
     {parChain->Add(fileNames[0].c_str());} // only require 1 copy
   for (const auto& filename : fileNames)
     {
@@ -257,7 +257,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
-  if (dataVersion > 5)
+  if (dataVersion > 6)
     {par->SetBranchAddress(parChain);}
   hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
