@@ -415,7 +415,8 @@ void Options::PublishMembers()
   publish("storeELossModelID",              &Options::storeElossModelID);
   publish("storeElossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
   publish("storeELossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
-  publish("storeGeant4Data",                &Options::storeGeant4Data);
+  publish("storeParticleData",              &Options::storeParticleData);
+  publish("storeGeant4Data",                &Options::storeParticleData); // backwards compatibility
   publish("storePrimaries",                 &Options::storePrimaries);
   publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
