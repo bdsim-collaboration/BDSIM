@@ -30,9 +30,9 @@ BeamBase::BeamBase()
   beamKineticEnergy    = 0;
   beamMomentum         = 0;
   distrType            = "reference";
-  xDistrType           = "";
-  yDistrType           = "";
-  zDistrType           = "";
+  xDistrType           = "reference";
+  yDistrType           = "reference";
+  zDistrType           = "reference";
   distrFile            = "";
   distrFileFormat      = "";
   matchDistrFileLength = true;

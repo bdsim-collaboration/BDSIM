@@ -174,6 +174,7 @@ public:
   inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
   inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
   inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
+  inline G4bool   BeamPipeIsInfiniteAbsorber() const {return G4bool(options.beamPipeIsInfiniteAbsorber);}
   inline G4bool   CollimatorsAreInfiniteAbsorbers() const {return G4bool(options.collimatorsAreInfiniteAbsorbers);}
   inline G4bool   TunnelIsInfiniteAbsorber() const {return G4bool  (options.tunnelIsInfiniteAbsorber);}
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
@@ -226,6 +227,7 @@ public:
   inline G4bool   StoreELossStepLength()     const {return G4bool  (options.storeElossStepLength);}
   inline G4bool   StoreELossPreStepKineticEnergy() const {return G4bool (options.storeElossPreStepKineticEnergy);}
   inline G4bool   StoreELossModelID()        const {return G4bool  (options.storeElossModelID);}
+  inline G4bool   StoreELossPhysicsProcesses()const{return G4bool  (options.storeElossPhysicsProcesses);}
   inline G4bool   StoreParticleData()        const {return G4bool  (options.storeParticleData);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4bool   StoreTrajectoryAll()       const {return          options.storeTrajectoryDepth == -1;}

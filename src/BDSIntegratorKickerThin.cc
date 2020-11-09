@@ -78,7 +78,7 @@ BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* streng
       hasExitFringe = false;
     }
 
-  // tilt for vertial kickers. Poleface rotations are assumed to be about the vertical axis,
+  // tilt for vertical kickers. Poleface rotations are assumed to be about the vertical axis,
   // so effect should be applied to rotated axes.
   tiltAngle = 0;
   if (!BDS::IsFinite((*strength)["by"]) && ((*strength)["bx"] == 1.0))
