@@ -31,7 +31,7 @@ class BDSHitCollimator;
 #include <utility>
 #include <vector>
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTParticleData;
 
 /**
  * @brief Data stored for each collimator per event.
@@ -105,7 +105,7 @@ public:
   /// Flush this instance.
   virtual void Flush();
 
-  static BDSOutputROOTGeant4Data* particleTable;
+  static BDSOutputROOTParticleData* particleTable;
 
   ClassDef(BDSOutputROOTEventCollimator, 1);
 };

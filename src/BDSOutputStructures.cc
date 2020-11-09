@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 #include "BDSHitSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -69,7 +69,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 
-  geant4DataOutput = new BDSOutputROOTGeant4Data();
+  particleDataOutput = new BDSOutputROOTParticleData();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
@@ -111,7 +111,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
-  delete geant4DataOutput;
+  delete particleDataOutput;
   delete headerOutput;
   delete beamOutput;
   delete optionsOutput;
@@ -228,9 +228,9 @@ void BDSOutputStructures::InitialiseCollimators()
     }
 }
 
-void BDSOutputStructures::ClearStructuresGeant4Data()
+void BDSOutputStructures::ClearStructuresParticleData()
 {
-  geant4DataOutput->Flush();
+  particleDataOutput->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresHeader()

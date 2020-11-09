@@ -16,29 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "Geant4Data.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "ParticleData.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "TTree.h"
 
-ClassImp(Geant4Data)
+ClassImp(ParticleData)
 
-Geant4Data::Geant4Data():
-  Geant4Data(false)
+ParticleData::ParticleData():
+  ParticleData(false)
 {;}
 
-Geant4Data::Geant4Data(bool debugIn):
+ParticleData::ParticleData(bool debugIn):
   debug(debugIn)
 {
-  geant4Data = new BDSOutputROOTGeant4Data();
+  particleData = new BDSOutputROOTParticleData();
 }
 
-Geant4Data::~Geant4Data()
+ParticleData::~ParticleData()
 {
-  delete geant4Data;
+  delete particleData;
 }
 
-void Geant4Data::SetBranchAddress(TTree* t)
+void ParticleData::SetBranchAddress(TTree* t)
 {
-  t->SetBranchAddress("Geant4Data.", &geant4Data);
+  t->SetBranchAddress("ParticleData.", &particleData);
 }
