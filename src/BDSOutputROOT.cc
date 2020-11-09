@@ -33,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTEventParticleData.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "parser/options.h"
 
@@ -87,7 +87,7 @@ void BDSOutputROOT::NewFile()
 
   // Build branches for each object
   theHeaderOutputTree->Branch("Header.",       "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theParticleDataTree->Branch("ParticleData.", "BDSOutputROOTEventParticleData", particleDataOutput, 32000, 1);
+  theParticleDataTree->Branch("ParticleData.", "BDSOutputROOTParticleData",   particleDataOutput,32000, 1);
   theBeamOutputTree->Branch("Beam.",           "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
   theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
   theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",     modelOutput,      32000, 1);

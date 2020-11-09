@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventSampler.hh"
-#include "BDSOutputROOTEventParticleData.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "TTree.h"
 
-class BDSOutputROOTEventParticleData;
+class BDSOutputROOTParticleData;
 
 #ifndef __ROOTBUILD__
 #include "BDSHitSampler.hh"
@@ -37,7 +37,7 @@ class BDSOutputROOTEventParticleData;
 templateClassImp(BDSOutputROOTEventSampler)
 
 template <class U>
-BDSOutputROOTEventParticleData* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
+BDSOutputROOTParticleData* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
 template <class U>
 BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():

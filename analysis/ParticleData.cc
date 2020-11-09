@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ParticleData.hh"
-#include "BDSOutputROOTEventParticleData.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "TTree.h"
 
@@ -30,7 +30,7 @@ ParticleData::ParticleData():
 ParticleData::ParticleData(bool debugIn):
   debug(debugIn)
 {
-  particleData = new BDSOutputROOTEventParticleData();
+  particleData = new BDSOutputROOTParticleData();
 }
 
 ParticleData::~ParticleData()

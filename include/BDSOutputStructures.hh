@@ -43,7 +43,7 @@ class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 template<class T> class BDSOutputROOTEventSampler;
 class BDSOutputROOTEventTrajectory;
-class BDSOutputROOTEventParticleData;
+class BDSOutputROOTParticleData;
 
 /**
  * @brief Holder for output information.
@@ -109,7 +109,7 @@ protected:
 			  G4int    nBinsZ, G4double zMin, G4double zMax);
   ///@}
 
-  BDSOutputROOTEventParticleData* particleDataOutput; ///< Geant4 information / particle tables.
+  BDSOutputROOTParticleData* particleDataOutput; ///< Geant4 information / particle tables.
   BDSOutputROOTEventHeader*  headerOutput;     ///< Information about the file.
   BDSOutputROOTEventBeam*    beamOutput;       ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput;    ///< Options output.
