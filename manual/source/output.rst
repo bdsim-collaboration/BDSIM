@@ -119,7 +119,7 @@ consider the following points to reduce output data size:
   turn these off with the option :code:`storeELoss`.
 * Eloss normally dominates the size of the output file as it has the largest number of hits with
   typically :math:`10^4` energy deposition hits per primary.
-* By default some basic information is store in "Geant4Data" for all particles used
+* By default some basic information is store in "ParticleData" for all particles used
   in the simulation.
   For a big study, it is worth turning this off as it's replicated in every file.
 * :code:`sample, all;` is convenient, especially at the start of a study, but you should only
@@ -431,25 +431,25 @@ of the BDSIM classes.  The trees are:
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.8\textwidth}|
 
-+-------------+---------------------------------------------------------------------+
-| Tree Name   | Description                                                         |
-+=============+=====================================================================+
-| Header      | Details about the file type and software versions                   |
-+-------------+---------------------------------------------------------------------+
-| Geant4Data  | Information about all particles and ions used in the simulation     |
-+-------------+---------------------------------------------------------------------+
-| Beam        | A record of all options associated with the beam definition         |
-+-------------+---------------------------------------------------------------------+
-| Options     | A record of all options used by BDSIM                               |
-+-------------+---------------------------------------------------------------------+
-| Model       | A record of the lengths and placement transforms of every element   |
-|             | built by BDSIM in the accelerator beam line suitable for recreating |
-|             | global coordinates or visualising trajectories                      |
-+-------------+---------------------------------------------------------------------+
-| Run         | Information collected per Run                                       |
-+-------------+---------------------------------------------------------------------+
-| Event       | Information collected per Event                                     |
-+-------------+---------------------------------------------------------------------+
++--------------+---------------------------------------------------------------------+
+| Tree Name    | Description                                                         |
++==============+=====================================================================+
+| Header       | Details about the file type and software versions                   |
++--------------+---------------------------------------------------------------------+
+| ParticleData | Information about all particles and ions used in the simulation     |
++--------------+---------------------------------------------------------------------+
+| Beam         | A record of all options associated with the beam definition         |
++--------------+---------------------------------------------------------------------+
+| Options      | A record of all options used by BDSIM                               |
++--------------+---------------------------------------------------------------------+
+| Model        | A record of the lengths and placement transforms of every element   |
+|              | built by BDSIM in the accelerator beam line suitable for recreating |
+|              | global coordinates or visualising trajectories                      |
++--------------+---------------------------------------------------------------------+
+| Run          | Information collected per Run                                       |
++--------------+---------------------------------------------------------------------+
+| Event        | Information collected per Event                                     |
++--------------+---------------------------------------------------------------------+
 
 Header Tree
 ^^^^^^^^^^^
@@ -504,34 +504,34 @@ BDSOutputROOTEventHeader
 | trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
 +------------------------+--------------------------+---------------------------------------+
 
-Geant4Data Tree
-^^^^^^^^^^^^^^^
+ParticleData Tree
+^^^^^^^^^^^^^^^^^
 
-.. figure:: figures/rootevent_geant4data.png
+.. figure:: figures/rootevent_particledata.png
 	    :width: 40%
 	    :align: center
 
-The Geant4Data tree contains a single branch called "Geant4Data." (note the "."). This
-branch represents a single instance of :code:`BDSOutputROOTGeant4Data`. This stores
+The ParticleData tree contains a single branch called "ParticleData." (note the "."). This
+branch represents a single instance of :code:`BDSOutputROOTParticleData`. This stores
 two maps (like dictionaries) of the particle and ion information for each particle / ion
 used in the simulation (only, i.e. not all that Geant4 supports). The map goes from
 an integer, the Particle Data Group ID, to the particle or ion info that are stored
-in simple C++ structures called :code:`BDSOutputROOTGeant4Data::ParticleInfo` and
-:code:`BDSOutputROOTGeant4Data::IonInfo` respectively. These contain the name, charge,
+in simple C++ structures called :code:`BDSOutputROOTParticleData::ParticleInfo` and
+:code:`BDSOutputROOTParticleData::IonInfo` respectively. These contain the name, charge,
 mass, and in the case of ions, additionally A and Z. The both have a function called
 :code:`rigidity` that can calculate the rigidity of the particle for a given total
 energy - this is used during the execution of BDSIM when rigidities are requested to
 be stored.
 
-+---------------------+-------------------------------------------------------+-------------------+
-| **Variable Name**   | **Type**                                              | **Description**   |
-+=====================+=======================================================+===================+
-| particles           | std::map<int, BDSOutputROOTGeant4Data::ParticleInfo>  | Map of PDG ID to  |
-|                     |                                                       | particle info.    |
-+---------------------+-------------------------------------------------------+-------------------+
-| ions                | std::map<int, BDSOutputROOTGeant4Data::IonInfo>       | Map of PDG ID to  |
-|                     |                                                       | ion info.         |
-+---------------------+-------------------------------------------------------+-------------------+
++---------------------+--------------------------------------------------------------+-------------------+
+| **Variable Name**   | **Type**                                                     | **Description**   |
++=====================+==============================================================+===================+
+| particles           | std::map<int, BDSOutputROOTParticleData::ParticleInfo>       | Map of PDG ID to  |
+|                     |                                                              | particle info.    |
++---------------------+--------------------------------------------------------------+-------------------+
+| ions                | std::map<int, BDSOutputROOTParticleData::IonInfo>            | Map of PDG ID to  |
+|                     |                                                              | ion info.         |
++---------------------+--------------------------------------------------------------+-------------------+
 
 ParticleInfo Struct
 *******************
@@ -1030,61 +1030,52 @@ Extra information can be recorded but this typically dominates the output file s
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+----------------------+-----------------------+-------------------------------------------------------------------+
-|  **Variable**        | **Type**              |  **Description**                                                  |
-+======================+=======================+===================================================================+
-| n                    | int                   | The number of energy deposition hits for this event               |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| energy               | std::vector<float>    | Vector of energy of each piece of energy deposition               |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| S                    | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition     |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| weight               | std::vector<float>    | Corresponding weight                                              |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| partID               | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition  |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| trackID              | std::vector<int>      | (optional) Track ID of particle that caused energy deposition     |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| parentID             | std::vector<int>      | (optional) Track ID of the parent particle                        |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| modelID              | std::vector<int>      | (optional) Index in model tree for where deposition occurred      |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| turn                 | std::vector<int>      | (optional) Turn in circular machine on which hit occurred         |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| x                    | std::vector<float>    | (optional) Local X of energy deposition (m)                       |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| y                    | std::vector<float>    | (optional) Local Y of energy deposition (m)                       |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| z                    | std::vector<float>    | (optional) Local Z of energy deposition (m)                       |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| X                    | std::vector<float>    | (optional) Global X of energy deposition (m)                      |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| Y                    | std::vector<float>    | (optional) Global Y of energy deposition (m)                      |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| Z                    | std::vector<float>    | (optional) Global Z of energy deposition (m)                      |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| T                    | std::vector<float>    | (optional) Global time-of-flight since beginning of event (ns)    |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| stepLength           | std::vector<float>    | (optional) Length of step that the energy deposition was          |
-|                      |                       | produced in (m)                                                   |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| preStepKineticEnergy | std::vector<float>    | (optional) The kinetic energy of the particle (any species)       |
-|                      |                       | at the starting point of the step that the energy deposition      |
-|                      |                       | was produced in                                                   |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storeLinks           | bool                  | Whether extra information was stored (`partID`, `trackID`,        |
-|                      |                       | `parendID`, `modelID`, `turn`)                                    |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storeLocal           | bool                  | Whether `x`, `y`, `z` were stored                                 |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storeGlobal          | bool                  | Whether `X`, `Y`, `Z` were stored                                 |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storeTime            | bool                  | Whether `T` was stored                                            |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storeStepLength      | bool                  | Whether `stepLength` was stored                                   |
-+----------------------+-----------------------+-------------------------------------------------------------------+
-| storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
-+----------------------+-----------------------+-------------------------------------------------------------------+
++------------------------+-----------------------+-------------------------------------------------------------------+
+|  **Variable**          | **Type**              |  **Description**                                                  |
++========================+=======================+===================================================================+
+| n                      | int                   | The number of energy deposition hits for this event               |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| energy                 | std::vector<float>    | Vector of energy of each piece of energy deposition               |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| S                      | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition     |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| weight                 | std::vector<float>    | Corresponding weight                                              |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| partID                 | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition  |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| trackID                | std::vector<int>      | (optional) Track ID of particle that caused energy deposition     |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| parentID               | std::vector<int>      | (optional) Track ID of the parent particle                        |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| modelID                | std::vector<int>      | (optional) Index in model tree for where deposition occurred      |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| turn                   | std::vector<int>      | (optional) Turn in circular machine on which hit occurred         |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| x                      | std::vector<float>    | (optional) Local X of energy deposition (m)                       |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| y                      | std::vector<float>    | (optional) Local Y of energy deposition (m)                       |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| z                      | std::vector<float>    | (optional) Local Z of energy deposition (m)                       |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| X                      | std::vector<float>    | (optional) Global X of energy deposition (m)                      |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| Y                      | std::vector<float>    | (optional) Global Y of energy deposition (m)                      |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| Z                      | std::vector<float>    | (optional) Global Z of energy deposition (m)                      |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| T                      | std::vector<float>    | (optional) Global time-of-flight since beginning of event (ns)    |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| stepLength             | std::vector<float>    | (optional) Length of step that the energy deposition was          |
+|                        |                       | produced in (m)                                                   |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| preStepKineticEnergy   | std::vector<float>    | (optional) The kinetic energy of the particle (any species)       |
+|                        |                       | at the starting point of the step that the energy deposition      |
+|                        |                       | was produced in                                                   |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| postStepProcessType    | std::vector<int>      | Post step physics process ID in Geant4 notation                   |
++------------------------+-----------------------+-------------------------------------------------------------------+
+| postStepProcessSubType | std::vector<int>      | Post step physics process sub-ID in Geant4 notation               |
++------------------------+-----------------------+-------------------------------------------------------------------+
 
 BDSOutputROOTEventLossWorld
 ***************************
@@ -1162,13 +1153,13 @@ the start and end of that step.
 
 Examples: ::
 
-  energies[][0]
+  energyDeposit[][0]
 
-(above) This is the total energy of the first point of all trajectories in this event.  ::
+(above) This is the energy depostied along the first (0th) step of all trajectories in this event.  ::
 
-  energies[0][]
+  energyDeposit[0][]
 
-This is the first trajectory for each event and the total energy of all steps of that trajectory.
+This is the first (0th) trajectory for each event and the energy deposited of all steps of that trajectory.
 
 * These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
   :code:`[]` means `all`.
@@ -1212,29 +1203,30 @@ This is the first trajectory for each event and the total energy of all steps of
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point               |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
+| energyDeposit            | std::vector<std::vector<double>>    | Total energy deposit in the current step (GeV)          |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | XYZ                      | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - global Cartesian (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| S                        | std::vector<std::vector<double>>    | Curvilinear S of the trajectory point (m)               |
+| S                        | std::vector<std::vector<double>>    | Curvilinear pre-step S of the trajectory point (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the track - global Cartesian (GeV)          |
+| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the pre-step point - global Cartesian (GeV) |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| T                        | std::vector<std::vector<double>>    | Global time of the trajectory point (ns)                |
+| T                        | std::vector<std::vector<double>>    | Global pres-step time of the trajectory point (ns)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle                                      |
+| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle (GeV)                    |
+| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
+|                          |                                     | (GeV)                                                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle                                        |
+| mass (\**)               | std::vector<std::vector<double>>    | Mass of particle (GeV)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | rigidity (\**)           | std::vector<std::vector<double>>    | Rigidity of the particle (Tm)                           |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -1401,17 +1393,17 @@ BDSOutputROOTEventCoords
 +-----------------+-------------+-------------------------------------------------------+
 |  **Variable**   | **Type**    |  **Description**                                      |
 +=================+=============+=======================================================+
-| x               | double      | Global Cartesian x coordinate (m)                     |
+| X               | double      | Global Cartesian x coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| y               | double      | Global Cartesian y coordinate (m)                     |
+| Y               | double      | Global Cartesian y coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| z               | double      | Global Cartesian z coordinate (m)                     |
+| Z               | double      | Global Cartesian z coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| xp              | double      | Global Cartesian unit momentum in x                   |
+| Xp              | double      | Global Cartesian unit momentum in x                   |
 +-----------------+-------------+-------------------------------------------------------+
-| yp              | double      | Global Cartesian unit momentum in y                   |
+| Yp              | double      | Global Cartesian unit momentum in y                   |
 +-----------------+-------------+-------------------------------------------------------+
-| zp              | double      | Global Cartesian unit momentum in z                   |
+| Zp              | double      | Global Cartesian unit momentum in z                   |
 +-----------------+-------------+-------------------------------------------------------+
 | T               | double      | Time (ns)                                             |
 +-----------------+-------------+-------------------------------------------------------+

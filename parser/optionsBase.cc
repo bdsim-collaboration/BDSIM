@@ -203,6 +203,7 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
   
@@ -267,7 +268,8 @@ OptionsBase::OptionsBase()
   storeElossStepLength       = false;
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
-  storeGeant4Data            = true;
+  storeElossPhysicsProcesses = false;
+  storeParticleData          = true;
   storePrimaries             = true;
   
   storeTrajectory                = false;

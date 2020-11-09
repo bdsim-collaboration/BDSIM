@@ -66,6 +66,9 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| beamPipeIsInfiniteAbsorber         | When turned on, all particles that hit the material of the beam    |
+|                                    | pipe are killed and the energy recorded as being deposited there.  |
++------------------------------------+--------------------------------------------------------------------+
 | outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
 |                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
 |                                    | compression and 1 minimal. 5 is the default.                       |
@@ -76,6 +79,11 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
 |                                    | `PFirstAI`, on by default.                                         |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
++------------------------------------+--------------------------------------------------------------------+
+| storeParticleData                  | Control whether the basic particle data is stored in the output    |
+|                                    | for all particles used or not. Renamed from `storeGeant4Data`.     |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
@@ -103,6 +111,8 @@ General
   being immediately killed and not tracked through the model.
 * Linear and cubic interpolation implementation has be switched from hard coded types to templates. No
   difference in results, but this makes the code useable elsewhere.
+* :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
+  if a given dimension isn't specified it'll be the default.
 
 Bug Fixes
 ---------
@@ -114,12 +124,36 @@ Bug Fixes
   current working directory to the macro search path for Geant4.
 * Fixed inspection of G4CutTubs extent in BDSGeometryInspector that was used when a GDML file was loaded
   with a G4CutTubs as the container (outermost) solid.
-
+* Fixed bug in dipole fringe scaling with the `bdsimmatrixfringescaling` integrator set where the particle
+  bending radius was scaled twice and arguments were passed into the base stepper in the wrong order.
+* Dipole fringes now apply the fringe kick and dipole transport in the correct order depending on if the fringe
+  is at the entrance or exit of the dipole.
+* Fix wrong variable name print out for halo beam distribution.
+* Improve cryptic error for wrongly specified composite beam distribution.
+* Units for :code:`kineticEnergy` and :code:`rigidity` variables in the trajectory output were fixed.
+  
 Output Changes
 --------------
 
+These are important changes to take note of:
+
+* The PrimaryGlobal variables are now all capital (e.g. :code:`X` instead of :code:`x`) to be consistent
+  that they are global coordinates and not local coordinates.
+* The class :code:`BDSOutputROOTGeant4Data` has been renamed to :code:`BDSOutputROOTParticleData` to be
+  clearer. The analysis `DataLoader` class will not be able to load this branch in older data. In this case,
+  the version of BDSIM used to create the data should be used, or the data inspected directly as required -
+  the previous data will always be readable by ROOT. The members of the class and the functionailty are
+  exactly the same, but the ROOT dictionary generation feature to allow renaming of a class doesn't seem
+  to work in practicality.
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
 * Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
+* The various storage Boolean options for the BDSOutputROOTEventLoss class have been removed from
+  the output as these are only needed at run time and are not needed as a copy for each event in the output.
+  The options preserve what was stored and it is not expected that these change between events so this
+  was completely unnecessary and wasteful.
+* Units for :code:`kineticEnergy`, :code:`rigidity` and :code:`mass` variables in the trajectory output were
+  fixed. These were previously in Geant4 units but are now consistent with those in the rest of the output
+  such as samplers and are GeV and Tm.
 
 Output Class Versions
 ---------------------
@@ -133,7 +167,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventBeam            | N           | 4               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCoords          | N           | 2               | 2               |
+| BDSOutputROOTEventCoords          | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimator      | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -145,7 +179,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventInfo            | N           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventLoss            | N           | 4               | 4               |
+| BDSOutputROOTEventLoss            | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -161,8 +195,12 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventTrajectoryPoint | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
+| BDSOutputROOTGeant4Data (\*)      | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | Y           | NA              | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+* (\*) deprecated in favour of the renamed class BDSOutputROOTParticleData
 
 V1.4 - 2020 / 06 / 08
 =====================
@@ -851,9 +889,6 @@ New Features
 |                                  | default but turned on automatically when using importance        |
 |                                  | sampling. Allows the user to distinguish energy deposition in    |
 |                                  | the air as stored in ElossWorld from the contents of the world.  |
-+----------------------------------+------------------------------------------------------------------+
-| storeGeant4Data                  | Control whether the basic particle data is stored in the output  |
-|                                  | for all particles used or not.                                   |
 +----------------------------------+------------------------------------------------------------------+
 | storeSamplerAll                  | Conveniently store all optional sampler data with one option.    |
 +----------------------------------+------------------------------------------------------------------+

@@ -49,7 +49,7 @@ public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
   BDSMagnet(BDSMagnetType       type,
-	    G4String            name, 
+	    const G4String&     name, 
 	    G4double            length,
 	    BDSBeamPipeInfo2*    beamPipeInfo,
 	    BDSMagnetOuterInfo* magnetOuterInfo,

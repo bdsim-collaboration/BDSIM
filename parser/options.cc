@@ -329,6 +329,7 @@ void Options::PublishMembers()
   publish("useGammaToMuMu",              &Options::useGammaToMuMu);
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
+  publish("beamPipeIsInfiniteAbsorber",  &Options::beamPipeIsInfiniteAbsorber);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);
   
@@ -412,7 +413,10 @@ void Options::PublishMembers()
   publish("storeELossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
-  publish("storeGeant4Data",                &Options::storeGeant4Data);
+  publish("storeElossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
+  publish("storeELossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
+  publish("storeParticleData",              &Options::storeParticleData);
+  publish("storeGeant4Data",                &Options::storeParticleData); // backwards compatibility
   publish("storePrimaries",                 &Options::storePrimaries);
   publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
