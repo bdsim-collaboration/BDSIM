@@ -16,18 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#pragma link C++ class BDSOutputROOTEventParticleData+;
-#pragma link C++ class BDSOutputROOTEventParticleData::ParticleInfo+;
-#pragma link C++ class BDSOutputROOTEventParticleData::IonInfo+;
+#pragma link C++ class BDSOutputROOTParticleData+;
+#pragma link C++ class BDSOutputROOTParticleData::ParticleInfo+;
+#pragma link C++ class BDSOutputROOTParticleData::IonInfo+;
 
 #pragma read sourceClass="BDSOutputROOTGeant4Data" \
   version="[-2]" \
-  targetClass="BDSOutputROOTEventParticleData"
+  targetClass="BDSOutputROOTParticleData"
 
 #pragma read sourceClass="BDSOutputROOTGeant4Data::ParticleInfo" \
   version="[-2]" \
-  targetClass="BDSOutputROOTEventParticleData::ParticleInfo"
+  targetClass="BDSOutputROOTParticleData::ParticleInfo"
 
 #pragma read sourceClass="BDSOutputROOTGeant4Data::IonInfo" \
   version="[-2]" \
-  targetClass="BDSOutputROOTEventParticleData::IonInfo"
+  targetClass="BDSOutputROOTParticleData::IonInfo"
