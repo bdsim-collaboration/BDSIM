@@ -82,6 +82,9 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
 +------------------------------------+--------------------------------------------------------------------+
+| storeParticleData                  | Control whether the basic particle data is stored in the output    |
+|                                    | for all particles used or not. Renamed from `storeGeant4Data`.     |
++------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
 +------------------------------------+--------------------------------------------------------------------+
@@ -132,8 +135,16 @@ Bug Fixes
 Output Changes
 --------------
 
+These are important changes to take note of:
+
 * The PrimaryGlobal variables are now all capital (e.g. :code:`X` instead of :code:`x`) to be consistent
   that they are global coordinates and not local coordinates.
+* The class :code:`BDSOutputROOTGeant4Data` has been renamed to :code:`BDSOutputROOTParticleData` to be
+  clearer. The analysis `DataLoader` class will not be able to load this branch in older data. In this case,
+  the version of BDSIM used to create the data should be used, or the data inspected directly as required -
+  the previous data will always be readable by ROOT. The members of the class and the functionailty are
+  exactly the same, but the ROOT dictionary generation feature to allow renaming of a class doesn't seem
+  to work in practicality.
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
 * Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
 * The various storage Boolean options for the BDSOutputROOTEventLoss class have been removed from
@@ -184,8 +195,12 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventTrajectoryPoint | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTGeant4Data           | N           | 2               | 2               |
+| BDSOutputROOTGeant4Data (\*)      | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | Y           | NA              | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+* (\*) deprecated in favour of the renamed class BDSOutputROOTParticleData
 
 V1.4 - 2020 / 06 / 08
 =====================
@@ -874,9 +889,6 @@ New Features
 |                                  | default but turned on automatically when using importance        |
 |                                  | sampling. Allows the user to distinguish energy deposition in    |
 |                                  | the air as stored in ElossWorld from the contents of the world.  |
-+----------------------------------+------------------------------------------------------------------+
-| storeGeant4Data                  | Control whether the basic particle data is stored in the output  |
-|                                  | for all particles used or not.                                   |
 +----------------------------------+------------------------------------------------------------------+
 | storeSamplerAll                  | Conveniently store all optional sampler data with one option.    |
 +----------------------------------+------------------------------------------------------------------+

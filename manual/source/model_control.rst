@@ -2498,8 +2498,8 @@ with the following options.
 |                                    | as taken from the beginning of the step before it made it. Default |
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
-| storeGeant4Data                    | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under Geant4Data in the output. This can be      |
+| storeParticleData                  | Whether to store basic particle information for all particles used |
+|                                    | in the simulation under ParticleDAta in the output. This can be    |
 |                                    | relatively large when ions are used as there are many thousands    |
 |                                    | of ion definitions. Default on.                                    |
 +------------------------------------+--------------------------------------------------------------------+
