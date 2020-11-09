@@ -505,7 +505,7 @@ BDSOutputROOTEventHeader
 +------------------------+--------------------------+---------------------------------------+
 
 ParticleData Tree
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 .. figure:: figures/rootevent_geant4data.png
 	    :width: 40%
