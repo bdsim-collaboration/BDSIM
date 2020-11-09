@@ -111,6 +111,7 @@ include(rebdsim_test_macros)
 include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
+set(CMAKE_BUILD_RPATH   "${ROOT_LIBRARY_DIR}")
 if (USE_HEPMC3)
   #TBC - need to test if we can just use this
   #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)

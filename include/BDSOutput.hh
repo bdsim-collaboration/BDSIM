@@ -88,8 +88,8 @@ public:
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
 
-  /// Fill the local structure geant4 data with information. Also calls WriteGeant4Data().
-  void FillGeant4Data(G4bool writeIons);
+  /// Fill the local structure particle data with information. Also calls WriteParticleData().
+  void FillParticleData(G4bool writeIons);
 
   /// Fill the local structure beam with the original ones from the parser.
   /// This also calls WriteBeam().
@@ -184,7 +184,7 @@ private:
   virtual void WriteHeader() = 0;
 
   /// Write the geant4 information.
-  virtual void WriteGeant4Data() = 0;
+  virtual void WriteParticleData() = 0;
 
   /// Write the beam.
   virtual void WriteBeam() = 0;
@@ -300,7 +300,7 @@ private:
   G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
   G4bool storeELossWorld; // for both world and world exit
-  G4bool storeGeant4Data;
+  G4bool storeParticleData;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
   G4bool storeSamplerCharge;

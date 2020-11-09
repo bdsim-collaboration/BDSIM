@@ -62,3 +62,9 @@ void BDSFieldE::GetFieldValue(const G4double point[4],
   field[4] = fieldValue[1]; // E_y
   field[5] = fieldValue[2]; // E_z
 }
+
+void BDSFieldE::SetTransform(const G4Transform3D& transformIn)
+{
+  transform = transformIn;
+  inverseTransform = transformIn.inverse();
+}

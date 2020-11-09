@@ -51,7 +51,7 @@ public:
 
   /// Main interface to creating a magnet outer piece of geometry. Specified by magnet type,
   /// the recipe, the length of the magnet outer section, the length of the appropriately fitting
-  /// containter volume that's also constructed and w.r.t. an already constructed beam pipe.
+  /// container volume that's also constructed and w.r.t. an already constructed beam pipe.
   BDSMagnetOuter* CreateMagnetOuter(BDSMagnetType       magnetType,
 				    BDSMagnetOuterInfo* outerInfo,
 				    G4double            outerLength,
