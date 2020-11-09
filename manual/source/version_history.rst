@@ -132,6 +132,8 @@ Bug Fixes
 Output Changes
 --------------
 
+* The PrimaryGlobal variables are now all capital (e.g. :code:`X` instead of :code:`x`) to be consistent
+  that they are global coordinates and not local coordinates.
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
 * Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
 * The various storage Boolean options for the BDSOutputROOTEventLoss class have been removed from
@@ -154,7 +156,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventBeam            | N           | 4               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCoords          | N           | 2               | 2               |
+| BDSOutputROOTEventCoords          | Y           | 2               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimator      | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+

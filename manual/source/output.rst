@@ -1393,17 +1393,17 @@ BDSOutputROOTEventCoords
 +-----------------+-------------+-------------------------------------------------------+
 |  **Variable**   | **Type**    |  **Description**                                      |
 +=================+=============+=======================================================+
-| x               | double      | Global Cartesian x coordinate (m)                     |
+| X               | double      | Global Cartesian x coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| y               | double      | Global Cartesian y coordinate (m)                     |
+| Y               | double      | Global Cartesian y coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| z               | double      | Global Cartesian z coordinate (m)                     |
+| Z               | double      | Global Cartesian z coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| xp              | double      | Global Cartesian unit momentum in x                   |
+| Xp              | double      | Global Cartesian unit momentum in x                   |
 +-----------------+-------------+-------------------------------------------------------+
-| yp              | double      | Global Cartesian unit momentum in y                   |
+| Yp              | double      | Global Cartesian unit momentum in y                   |
 +-----------------+-------------+-------------------------------------------------------+
-| zp              | double      | Global Cartesian unit momentum in z                   |
+| Zp              | double      | Global Cartesian unit momentum in z                   |
 +-----------------+-------------+-------------------------------------------------------+
 | T               | double      | Time (ns)                                             |
 +-----------------+-------------+-------------------------------------------------------+
