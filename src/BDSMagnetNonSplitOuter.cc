@@ -143,6 +143,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
     containerLogicalVolume = container->GetContainerLogicalVolume();
     containerSolid    = container->GetContainerSolid()->Clone();
     G4ThreeVector contOffset = container->GetPlacementOffset();
+
     // set the main offset of the whole magnet which is placed w.r.t. the
     // zero coordinate of the container solid
     SetPlacementOffset(contOffset);
@@ -182,17 +183,22 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
                 G4String placementName = element->GetPlacementName() + "_pv";
                 G4Transform3D* placementTransform = element->GetPlacementTransform();
                 G4int copyNumber = i;
-                auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+                auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
                                             element->GetContainerLogicalVolume(), // volume to be placed
                                             placementName,                        // placement name
                                             containerLogicalVolume,                          // volume to place it in
                                             false,                                // no boolean operation
                                             copyNumber,                           // copy number
-                                            checkOverlaps);                       // overlap checking
+                                            false);                       // overlap checking
 
                 i++; // for incremental copy numbers
 
-                RegisterPhysicalVolume(pv);
+                if (vv->CheckOverlaps())
+                {
+                    throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");
+                }
+
+                RegisterPhysicalVolume(vv);
 
             }
 
@@ -202,6 +208,28 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 
         std::cout << "placing the content of the gdml file" << std::endl;
         auto gdml_world = outer->GetContainerLogicalVolume();
+
+        if (element->includeGdmlWorldVolume)
+        {
+            G4Transform3D* placementTransform = new G4Transform3D();
+
+            auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
+                                        gdml_world,               // volume to be placed
+                                        gdml_world->GetName() + "_pv",                        // placement name
+                                        containerLogicalVolume,                          // volume to place it in
+                                        false,                                // no boolean operation
+                                        0,                           // copy number
+                                        false);                       // overlap checking
+
+            if (vv->CheckOverlaps())
+            {
+                throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
+            }
+
+            RegisterPhysicalVolume(vv);
+
+        }
+
         for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++)
         {
             const auto& pv = gdml_world->GetDaughter(j);
@@ -209,21 +237,30 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
             std::cout << "placing " << placementName << std::endl;
             G4int copyNumber = 1;
 
+            if (!element->includeGdmlWorldVolume)
+            {
+                auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(), // placement transform
+                                            pv->GetLogicalVolume(), // volume to be placed
+                                            placementName,                        // placement name
+                                            containerLogicalVolume,                          // volume to place it in
+                                            false,                                // no boolean operation
+                                            copyNumber,                           // copy number
+                                            false);                       // overlap checking
+
+                if (vv->CheckOverlaps())
+                {
+                    throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
+                }
+
+                RegisterPhysicalVolume(vv);
+            }
+
             if (std::find(namedVacuumVolumes.begin(), namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(9).c_str()) != namedVacuumVolumes.end())
             {
-                BDSFieldBuilder::Instance()->RegisterFieldForConstruction(this->vacuumFieldInfo,
+                BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                                           pv->GetLogicalVolume(),
                                                                           true);
             }
-
-            auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),                  // placement transform
-                                        pv->GetLogicalVolume(), // volume to be placed
-                                        placementName,                        // placement name
-                                        containerLogicalVolume,                          // volume to place it in
-                                        false,                                // no boolean operation
-                                        copyNumber,                           // copy number
-                                        checkOverlaps);                       // overlap checking
-            RegisterPhysicalVolume(vv);
 
         }
     }

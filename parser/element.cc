@@ -209,6 +209,7 @@ void Element::PublishMembers()
   publish("magnetGeometryType",  &Element::magnetGeometryType);
   publish("dontSplitOuter",     &Element::dontSplitOuter);
   publish("extractOuterContainer", &Element::extractOuterContainer);
+  publish("includeGdmlWorldVolume" , &Element::includeGdmlWorldVolume);
   publish("beampipeMaterial",    &Element::beampipeMaterial);
   publish("vacuumMaterial",      &Element::vacuumMaterial);
   publish("scintmaterial",       &Element::scintmaterial);
@@ -460,6 +461,9 @@ void Element::flush()
   magnetGeometryType  = "";
   horizontalWidth = 0;
   yokeOnInside  = true;
+  dontSplitOuter = true;
+  extractOuterContainer = false;
+  includeGdmlWorldVolume = false;
   hStyle             = -1;
   vhRatio            = -1;
   coilWidthFraction  = -1;

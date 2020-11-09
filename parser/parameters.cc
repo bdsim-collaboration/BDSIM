@@ -95,6 +95,7 @@ Parameters::Parameters()
   setMap["magnetGeometryType"] = false;
   setMap["dontSplitOuter"]     = false;
   setMap["extractOuterContainer"] = false;
+  setMap["includeGdmlWorldVolume"] = false;
   setMap["horizontalWidth"]    = false;
   setMap["containerRadius"]    = false;
   setMap["yokeOnInside"]       = false;

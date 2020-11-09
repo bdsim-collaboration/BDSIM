@@ -114,6 +114,7 @@ namespace GMAD
     std::string magnetGeometryType;
     bool dontSplitOuter;
     bool extractOuterContainer;
+    bool includeGdmlWorldVolume;
     double horizontalWidth; // formerly outerDiameter
     double containerRadius;
     bool   yokeOnInside;

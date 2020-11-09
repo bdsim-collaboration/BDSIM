@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include <cmath>
+#include <vector>
 
 class G4Colour;
 class G4Material;
@@ -65,6 +66,8 @@ public:
   BDSMagnetGeometryType geometryType;
   G4double              horizontalWidth;
   G4bool                extractOuterContainer;
+  std::vector<G4String> namedVacuumVolumes;
+  G4bool                includeGdmlWorldVolume;
   G4double              containerRadius;
   G4Material*           outerMaterial;
   G4double              innerRadius;
