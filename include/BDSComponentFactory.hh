@@ -170,7 +170,7 @@ public:
 
   /// Checks if a material is named in Element::material, else uses the supplied default.
   static G4Material* PrepareMaterial(GMAD::Element const* element,
-				     G4String defaultMaterialName);
+				     const G4String& defaultMaterialName);
 
   /// Try and get a material and exit if no such material.
   static G4Material* PrepareMaterial(GMAD::Element const* element);

@@ -241,6 +241,7 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     beamPipeIsInfiniteAbsorber;
     bool     collimatorsAreInfiniteAbsorbers;
     bool     tunnelIsInfiniteAbsorber;
     ///@}
@@ -303,6 +304,7 @@ namespace GMAD
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
+    bool        storeElossPhysicsProcesses;
     bool        storeGeant4Data;
     bool        storePrimaries;
     
