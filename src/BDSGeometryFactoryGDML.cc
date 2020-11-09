@@ -75,7 +75,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
   G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
   G4VSolid*       containerSolid = containerLV->GetSolid();
-  G4ThreeVector gdmlWorldOrigin(0,0,0);
+  G4ThreeVector gdmlWorldOrigin = G4ThreeVector();
   if (containerPV->GetName() == "world_volume_lv_PV")
     {
       gdmlWorldOrigin = parser->GetPosition("PygdmlOrigin"); // TODO check if Pygdml geometry

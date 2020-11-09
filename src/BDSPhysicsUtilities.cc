@@ -137,10 +137,10 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
 	  else if (!g->G4PhysicsUseBDSIMCutsAndLimits() && g->Circular())
-      {
+	    {
 	      G4String message = "g4PhysicsUseBDSIMCutsAndLimits turned off but using a circular machine - circular mechanics will be broken";
 	      BDS::Warning(__METHOD_NAME__, message);
-      }
+	    }
 	}
     }
   else if (completePhysics)
@@ -295,6 +295,8 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
     {
       BDS::ConstructBeamParticleG4(particleName); // enforce construction of some basic particles
       G4ParticleDefinition* particleDef = nullptr;
+      if (particleName == "photon")
+	{particleName = "gamma";} // mapping to Geant4 name
       // try and see if it's an integer and therefore PDG ID, if not search by string
       try
         {

@@ -1,3 +1,9 @@
+option(USE_GEANT4_EMD_ID "Support custom build of Geant4 with EMD process sub type set discretely"  OFF )
+if(USE_GEANT4_EMD_ID)
+  add_definitions("-DG4EMDPROCESSID")
+  message(STATUS "USE_GEANT4_EMD_ID On - using custom build of Geant4 with EMD process ID customised.")
+endif()
+
 # with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})

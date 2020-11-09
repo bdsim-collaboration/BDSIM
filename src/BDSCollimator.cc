@@ -115,7 +115,7 @@ G4String BDSCollimator::Material() const
 
 void BDSCollimator::BuildContainerLogicalVolume()
 {
-  if(circularOuter)
+  if (circularOuter)
     {
       containerSolid = new G4Tubs(name + "_solid",
 				  0,
@@ -160,7 +160,7 @@ void BDSCollimator::Build()
   else
     {colRotate = nullptr;}
 
-  G4VSolid* outerSolid = nullptr;
+  G4VSolid* outerSolid;
   if (circularOuter)
     {
       outerSolid = new G4Tubs(name + "_outer_solid",

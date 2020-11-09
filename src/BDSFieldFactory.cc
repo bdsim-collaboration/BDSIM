@@ -611,14 +611,15 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
       return nullptr;
       break;
     }
-
+  
+  // Set transform for local geometry offset
+  if (field)
+    {field->SetTransform(info.TransformComplete());}
+  
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldEM* resultantField = field;
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldEMGlobal(field);}
-
-  // Set transform for local geometry offset
-  resultantField->SetTransform(info.TransformComplete());
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
@@ -648,14 +649,15 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
       return nullptr;
       break;
     }
-
+  
+  // Set transform for local geometry offset
+  if (field)
+    {field->SetTransform(info.TransformComplete());}
+  
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldE* resultantField = field;
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldEGlobal(field);}
-
-  // Set transform for local geometry offset
-  resultantField->SetTransform(info.TransformComplete());
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
