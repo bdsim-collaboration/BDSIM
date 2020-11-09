@@ -313,9 +313,9 @@ particle - including the rest mass.
 +----------------------------------+-------------------------------------------------------+----------+
 | `T0`                             | Longitudinal position [s]                             | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
-| `Xp0`                            | Horizontal canonical momentum                         | 0        |
+| `Xp0`                            | Horizontal component momentum of unit vector          | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
-| `Yp0`                            | Vertical canonical momentum                           | 0        |
+| `Yp0`                            | Vertical component momentum of unit vector            | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 | `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
@@ -432,9 +432,9 @@ and :code:`sigmaP` is subsequently calculated as above from this.
 +------------------+----------------------------------------------------+
 | `sigmaY`         | Vertical Gaussian sigma [m]                        |
 +------------------+----------------------------------------------------+
-| `sigmaXp`        | Sigma of the horizontal canonical momentum         |
+| `sigmaXp`        | Sigma of the horizontal component of unit momentum |
 +------------------+----------------------------------------------------+
-| `sigmaYp`        | Sigma of the vertical canonical momentum           |
+| `sigmaYp`        | Sigma of the vertical component of unit momentum   |
 +------------------+----------------------------------------------------+
 | `sigmaE`         | **Relative** energy spread :math:`\sigma_{E}/E`    |
 +------------------+----------------------------------------------------+
@@ -540,7 +540,7 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 +==================================+=======================================================+
 | `envelopeR`                      | Maximum radial position from central value            |
 +----------------------------------+-------------------------------------------------------+
-| `envelopeRp`                     | Maximum radial canonical momentum                     |
+| `envelopeRp`                     | Maximum radial component of unit momentum vector      |
 +----------------------------------+-------------------------------------------------------+
 | `envelopeT`                      | Maximum time offset [s]                               |
 +----------------------------------+-------------------------------------------------------+
@@ -566,11 +566,11 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 +==================================+=======================================================+
 | `envelopeX`                      | Maximum position in X [m]                             |
 +----------------------------------+-------------------------------------------------------+
-| `envelopeXp`                     | Maximum canonical momentum in X                       |
+| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
 +----------------------------------+-------------------------------------------------------+
 | `envelopeY`                      | Maximum position in Y [m]                             |
 +----------------------------------+-------------------------------------------------------+
-| `envelopeYp`                     | Maximum canonical momentum in Y                       |
+| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
 +----------------------------------+-------------------------------------------------------+
 | `envelopeT`                      | Maximum time offset [s]                               |
 +----------------------------------+-------------------------------------------------------+
@@ -613,7 +613,8 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 +==================================+====================================================================+
 | `shellX`                         | Ellipse semi-axis in phase space in horizontal position [m]        |
 +----------------------------------+--------------------------------------------------------------------+
-| `shellXp`                        | Ellipse semi-axis in phase space in horizontal canonical momentum  |
+| `shellXp`                        | Ellipse semi-axis in phase space in horizontal component of unit   |
+|                                  | momentum vector                                                    |
 +----------------------------------+--------------------------------------------------------------------+
 | `shellY`                         | Ellipse semi-axis in phase space in vertical position [m]          |
 +----------------------------------+--------------------------------------------------------------------+
@@ -621,7 +622,8 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 +----------------------------------+--------------------------------------------------------------------+
 | `shellXWidth`                    | Spread of ellipse in phase space in horizontal position [m]        |
 +----------------------------------+--------------------------------------------------------------------+
-| `shellXpWidth`                   | Spread of ellipse in phase space in horizontal canonical momentum  |
+| `shellXpWidth`                   | Spread of ellipse in phase space in horizontal component of unit   |
+|                                  | momentum vector                                                    |
 +----------------------------------+--------------------------------------------------------------------+
 | `shellYWidth`                    | Spread of ellipse in phase space in vertical position [m]          |
 +----------------------------------+--------------------------------------------------------------------+
@@ -2496,8 +2498,8 @@ with the following options.
 |                                    | as taken from the beginning of the step before it made it. Default |
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
-| storeGeant4Data                    | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under Geant4Data in the output. This can be      |
+| storeParticleData                  | Whether to store basic particle information for all particles used |
+|                                    | in the simulation under ParticleDAta in the output. This can be    |
 |                                    | relatively large when ions are used as there are many thousands    |
 |                                    | of ion definitions. Default on.                                    |
 +------------------------------------+--------------------------------------------------------------------+
