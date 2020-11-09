@@ -1005,6 +1005,16 @@ Examples: ::
    TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
    ! with kinetic energy limit
    TCP6CD: rcol, l=0.6*m, material="C", xsize=200*um, ysize=5*cm, minimumKineticEnergy=10*MeV;
+
+.. note:: The outer shape of an rcol can be made circular by defining :code:`apertureType="circular"` for
+	  that specific element. This is a temporary facility and may cause overlaps if the
+	  :code:`horizontalWidth` parameter is smaller than the radius from the `xize` and `ysize`
+	  parameters. In future this will be improved and generalised for any inner and outer shape. No
+	  other outer shapes are supported just now.
+
+Example: ::
+
+  r1: rcol, l=1*m, material="Cu", xsize=10*mm, ysize=3*mm, apertureType="circular", horizontalWidth=10*cm;
    
 
 ecol

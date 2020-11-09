@@ -269,7 +269,7 @@ OptionsBase::OptionsBase()
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
   storeElossPhysicsProcesses = false;
-  storeGeant4Data            = true;
+  storeParticleData          = true;
   storePrimaries             = true;
   
   storeTrajectory                = false;

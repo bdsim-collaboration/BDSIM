@@ -29,6 +29,7 @@ simple_testing(component-quadrupole          "--file=quadrupole.gmad"      ${OVE
 simple_testing(component-quadrupole-offset   "--file=quadOffset.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-rcol                "--file=rcol.gmad"            ${OVERLAP_CHECK})
 simple_testing(component-rcol-tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
+simple_testing(component-rcol-circular-outer "--file=rcol_circular_outer.gmad" ${OVERLAP_CHECK})
 simple_testing(component-rmatrix             "--file=rmatrix.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-rmatrix-thin        "--file=rmatrix_thin.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})

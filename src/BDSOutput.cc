@@ -47,7 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
@@ -129,7 +129,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
   storeELossWorld            = g->StoreELossWorld();
   storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
-  storeGeant4Data            = g->StoreGeant4Data();
+  storeParticleData          = g->StoreParticleData();
   storeModel                 = g->StoreModel();
   storePrimaries             = g->StorePrimaries();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
@@ -172,22 +172,22 @@ void BDSOutput::FillHeader()
   ClearStructuresHeader();
 }
 
-void BDSOutput::FillGeant4Data(G4bool writeIons)
+void BDSOutput::FillParticleData(G4bool writeIons)
 {
-  // always prepare geant4 data and link to other classes, but optionally fill it
-  geant4DataOutput->Flush();
-  geant4DataOutput->Fill(writeIons);
+  // always prepare particle data and link to other classes, but optionally fill it
+  particleDataOutput->Flush();
+  particleDataOutput->Fill(writeIons);
 
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<double>::particleTable = particleDataOutput;
 #else
-  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<float>::particleTable = particleDataOutput;
 #endif
-  BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
-  BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
+  BDSOutputROOTEventCollimator::particleTable = particleDataOutput;
+  BDSOutputROOTEventAperture::particleTable   = particleDataOutput;
   
-  if (storeGeant4Data)
-    {WriteGeant4Data();}
+  if (storeParticleData)
+    {WriteParticleData();}
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)

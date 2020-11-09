@@ -119,7 +119,7 @@ consider the following points to reduce output data size:
   turn these off with the option :code:`storeELoss`.
 * Eloss normally dominates the size of the output file as it has the largest number of hits with
   typically :math:`10^4` energy deposition hits per primary.
-* By default some basic information is store in "Geant4Data" for all particles used
+* By default some basic information is store in "ParticleData" for all particles used
   in the simulation.
   For a big study, it is worth turning this off as it's replicated in every file.
 * :code:`sample, all;` is convenient, especially at the start of a study, but you should only
@@ -431,25 +431,25 @@ of the BDSIM classes.  The trees are:
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.8\textwidth}|
 
-+-------------+---------------------------------------------------------------------+
-| Tree Name   | Description                                                         |
-+=============+=====================================================================+
-| Header      | Details about the file type and software versions                   |
-+-------------+---------------------------------------------------------------------+
-| Geant4Data  | Information about all particles and ions used in the simulation     |
-+-------------+---------------------------------------------------------------------+
-| Beam        | A record of all options associated with the beam definition         |
-+-------------+---------------------------------------------------------------------+
-| Options     | A record of all options used by BDSIM                               |
-+-------------+---------------------------------------------------------------------+
-| Model       | A record of the lengths and placement transforms of every element   |
-|             | built by BDSIM in the accelerator beam line suitable for recreating |
-|             | global coordinates or visualising trajectories                      |
-+-------------+---------------------------------------------------------------------+
-| Run         | Information collected per Run                                       |
-+-------------+---------------------------------------------------------------------+
-| Event       | Information collected per Event                                     |
-+-------------+---------------------------------------------------------------------+
++--------------+---------------------------------------------------------------------+
+| Tree Name    | Description                                                         |
++==============+=====================================================================+
+| Header       | Details about the file type and software versions                   |
++--------------+---------------------------------------------------------------------+
+| ParticleData | Information about all particles and ions used in the simulation     |
++--------------+---------------------------------------------------------------------+
+| Beam         | A record of all options associated with the beam definition         |
++--------------+---------------------------------------------------------------------+
+| Options      | A record of all options used by BDSIM                               |
++--------------+---------------------------------------------------------------------+
+| Model        | A record of the lengths and placement transforms of every element   |
+|              | built by BDSIM in the accelerator beam line suitable for recreating |
+|              | global coordinates or visualising trajectories                      |
++--------------+---------------------------------------------------------------------+
+| Run          | Information collected per Run                                       |
++--------------+---------------------------------------------------------------------+
+| Event        | Information collected per Event                                     |
++--------------+---------------------------------------------------------------------+
 
 Header Tree
 ^^^^^^^^^^^
@@ -504,34 +504,34 @@ BDSOutputROOTEventHeader
 | trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
 +------------------------+--------------------------+---------------------------------------+
 
-Geant4Data Tree
-^^^^^^^^^^^^^^^
+ParticleData Tree
+^^^^^^^^^^^^^^^^^
 
-.. figure:: figures/rootevent_geant4data.png
+.. figure:: figures/rootevent_particledata.png
 	    :width: 40%
 	    :align: center
 
-The Geant4Data tree contains a single branch called "Geant4Data." (note the "."). This
-branch represents a single instance of :code:`BDSOutputROOTGeant4Data`. This stores
+The ParticleData tree contains a single branch called "ParticleData." (note the "."). This
+branch represents a single instance of :code:`BDSOutputROOTParticleData`. This stores
 two maps (like dictionaries) of the particle and ion information for each particle / ion
 used in the simulation (only, i.e. not all that Geant4 supports). The map goes from
 an integer, the Particle Data Group ID, to the particle or ion info that are stored
-in simple C++ structures called :code:`BDSOutputROOTGeant4Data::ParticleInfo` and
-:code:`BDSOutputROOTGeant4Data::IonInfo` respectively. These contain the name, charge,
+in simple C++ structures called :code:`BDSOutputROOTParticleData::ParticleInfo` and
+:code:`BDSOutputROOTParticleData::IonInfo` respectively. These contain the name, charge,
 mass, and in the case of ions, additionally A and Z. The both have a function called
 :code:`rigidity` that can calculate the rigidity of the particle for a given total
 energy - this is used during the execution of BDSIM when rigidities are requested to
 be stored.
 
-+---------------------+-------------------------------------------------------+-------------------+
-| **Variable Name**   | **Type**                                              | **Description**   |
-+=====================+=======================================================+===================+
-| particles           | std::map<int, BDSOutputROOTGeant4Data::ParticleInfo>  | Map of PDG ID to  |
-|                     |                                                       | particle info.    |
-+---------------------+-------------------------------------------------------+-------------------+
-| ions                | std::map<int, BDSOutputROOTGeant4Data::IonInfo>       | Map of PDG ID to  |
-|                     |                                                       | ion info.         |
-+---------------------+-------------------------------------------------------+-------------------+
++---------------------+--------------------------------------------------------------+-------------------+
+| **Variable Name**   | **Type**                                                     | **Description**   |
++=====================+==============================================================+===================+
+| particles           | std::map<int, BDSOutputROOTParticleData::ParticleInfo>       | Map of PDG ID to  |
+|                     |                                                              | particle info.    |
++---------------------+--------------------------------------------------------------+-------------------+
+| ions                | std::map<int, BDSOutputROOTParticleData::IonInfo>            | Map of PDG ID to  |
+|                     |                                                              | ion info.         |
++---------------------+--------------------------------------------------------------+-------------------+
 
 ParticleInfo Struct
 *******************
@@ -1393,17 +1393,17 @@ BDSOutputROOTEventCoords
 +-----------------+-------------+-------------------------------------------------------+
 |  **Variable**   | **Type**    |  **Description**                                      |
 +=================+=============+=======================================================+
-| x               | double      | Global Cartesian x coordinate (m)                     |
+| X               | double      | Global Cartesian x coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| y               | double      | Global Cartesian y coordinate (m)                     |
+| Y               | double      | Global Cartesian y coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| z               | double      | Global Cartesian z coordinate (m)                     |
+| Z               | double      | Global Cartesian z coordinate (m)                     |
 +-----------------+-------------+-------------------------------------------------------+
-| xp              | double      | Global Cartesian unit momentum in x                   |
+| Xp              | double      | Global Cartesian unit momentum in x                   |
 +-----------------+-------------+-------------------------------------------------------+
-| yp              | double      | Global Cartesian unit momentum in y                   |
+| Yp              | double      | Global Cartesian unit momentum in y                   |
 +-----------------+-------------+-------------------------------------------------------+
-| zp              | double      | Global Cartesian unit momentum in z                   |
+| Zp              | double      | Global Cartesian unit momentum in z                   |
 +-----------------+-------------+-------------------------------------------------------+
 | T               | double      | Time (ns)                                             |
 +-----------------+-------------+-------------------------------------------------------+
