@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-class BDSOutputROOTEventParticleData;
+class BDSOutputROOTParticleData;
 class TTree;
 
 #ifndef __ROOTBUILD__ 
@@ -132,7 +132,7 @@ public:
   void SetBranchAddress(TTree *);
   virtual void Flush();  ///< Clean Sampler
 
-  static BDSOutputROOTEventParticleData* particleTable;
+  static BDSOutputROOTParticleData* particleTable;
 
   ClassDef(BDSOutputROOTEventSampler,5);
 };

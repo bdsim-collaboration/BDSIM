@@ -512,12 +512,12 @@ ParticleData Tree
 	    :align: center
 
 The ParticleData tree contains a single branch called "ParticleData." (note the "."). This
-branch represents a single instance of :code:`BDSOutputROOTEventParticleData`. This stores
+branch represents a single instance of :code:`BDSOutputROOTParticleData`. This stores
 two maps (like dictionaries) of the particle and ion information for each particle / ion
 used in the simulation (only, i.e. not all that Geant4 supports). The map goes from
 an integer, the Particle Data Group ID, to the particle or ion info that are stored
-in simple C++ structures called :code:`BDSOutputROOTEventParticleData::ParticleInfo` and
-:code:`BDSOutputROOTEventParticleData::IonInfo` respectively. These contain the name, charge,
+in simple C++ structures called :code:`BDSOutputROOTParticleData::ParticleInfo` and
+:code:`BDSOutputROOTParticleData::IonInfo` respectively. These contain the name, charge,
 mass, and in the case of ions, additionally A and Z. The both have a function called
 :code:`rigidity` that can calculate the rigidity of the particle for a given total
 energy - this is used during the execution of BDSIM when rigidities are requested to
@@ -526,10 +526,10 @@ be stored.
 +---------------------+--------------------------------------------------------------+-------------------+
 | **Variable Name**   | **Type**                                                     | **Description**   |
 +=====================+==============================================================+===================+
-| particles           | std::map<int, BDSOutputROOTEventParticleData::ParticleInfo>  | Map of PDG ID to  |
+| particles           | std::map<int, BDSOutputROOTParticleData::ParticleInfo>       | Map of PDG ID to  |
 |                     |                                                              | particle info.    |
 +---------------------+--------------------------------------------------------------+-------------------+
-| ions                | std::map<int, BDSOutputROOTEventParticleData::IonInfo>       | Map of PDG ID to  |
+| ions                | std::map<int, BDSOutputROOTParticleData::IonInfo>            | Map of PDG ID to  |
 |                     |                                                              | ion info.         |
 +---------------------+--------------------------------------------------------------+-------------------+
 

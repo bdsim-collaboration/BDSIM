@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventAperture.hh"
-#include "BDSOutputROOTEventParticleData.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventAperture)
 
-BDSOutputROOTEventParticleData* BDSOutputROOTEventAperture::particleTable = nullptr;
+BDSOutputROOTParticleData* BDSOutputROOTEventAperture::particleTable = nullptr;
 
 BDSOutputROOTEventAperture::BDSOutputROOTEventAperture()
 {

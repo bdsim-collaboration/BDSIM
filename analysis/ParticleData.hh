@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
-class BDSOutputROOTEventParticleData;
+class BDSOutputROOTParticleData;
 class TTree;
 
 /**
@@ -41,7 +41,7 @@ public:
   void SetBranchAddress(TTree* t);
 
   /// Member that ROOT can map file data to locally.
-  BDSOutputROOTEventParticleData* particleData;
+  BDSOutputROOTParticleData* particleData;
 
 private:
   bool debug;
