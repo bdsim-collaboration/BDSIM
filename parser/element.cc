@@ -462,6 +462,7 @@ void Element::flush()
   horizontalWidth = 0;
   yokeOnInside  = true;
   dontSplitOuter = false;
+  containerRadius = 0;
   extractOuterContainer = false;
   includeGdmlWorldVolume = false;
   hStyle             = -1;
