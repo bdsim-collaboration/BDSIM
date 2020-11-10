@@ -461,7 +461,7 @@ void Element::flush()
   magnetGeometryType  = "";
   horizontalWidth = 0;
   yokeOnInside  = true;
-  dontSplitOuter = true;
+  dontSplitOuter = false;
   extractOuterContainer = false;
   includeGdmlWorldVolume = false;
   hStyle             = -1;
