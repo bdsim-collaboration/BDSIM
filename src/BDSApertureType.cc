@@ -54,7 +54,6 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["octagonal"]      = BDSApertureType::octagonal;
   types["circularvacuum"] = BDSApertureType::circularvacuum;
   types["clicpcl"]        = BDSApertureType::clicpcl;
-  types["none"]           = BDSApertureType::circular; // circular aperture is still used to build a pipe but will not be placed
 
   apertureType.toLower();
 

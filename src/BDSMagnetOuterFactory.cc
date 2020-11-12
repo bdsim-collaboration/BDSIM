@@ -246,7 +246,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
   BDSExtent magInner = geom->GetInnerExtent();
 
   if (info->containerRadius*CLHEP::m > 1e-6)
-  {//containerRadius set
+  {//containerRadius option imposes the BDSGeometryExtrernal extent
       geom->SetExtent(BDSExtent(info->containerRadius*CLHEP::m,info->containerRadius*CLHEP::m, geom->GetExtent().ZPos()));
   }
 

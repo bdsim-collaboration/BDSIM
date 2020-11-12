@@ -19,13 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSMagnetGeometryType.hh"
-#include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetStrength.hh"
@@ -33,32 +30,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSUtilities.hh"
 #include "BDSMagnet.hh"
-#include "BDSLine.hh"
-#include "BDSComponentFactory.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSSimpleComponent.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSBendBuilder.hh"
 #include "G4Box.hh"
-#include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 #include "G4Types.hh"
-#include "G4VPhysicalVolume.hh"
 #include "BDSIntegratorSet.hh"
-#include "BDSPhysicalVolumeInfo.hh"
-#include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryExternal.hh"
-
-
-
-#include "CLHEP/Units/SystemOfUnits.h"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
@@ -116,6 +100,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 {
     BDSAcceleratorComponent* pipeLine;
 
+    // Creation of the beampipe by calling the BDS::BuildSBendLine with element magnetGeometryType to "none"
     if (element->apertureType != "none")
     {
         Element el = Element(*element);
@@ -125,19 +110,21 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
         pipeLine->Initialise();
     }
 
-    BDSBeamPipeInfo* beamPipeInfo1 = new BDSBeamPipeInfo(*beamPipeInfo);
+    // Create of a beampipe for BDSMagnetOuterFactory::Instance()->CreateMagnetOuter() with the correct geometry information
+    BDSBeamPipeInfo* beamPipeInfoTmp = new BDSBeamPipeInfo(*beamPipeInfo);
     std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(element->angle/2 + incomingFaceAngle, element->angle/2 + outgoingFaceAngle);
-    beamPipeInfo1->inputFaceNormal = faces.first;
-    beamPipeInfo1->outputFaceNormal = faces.second;
+    beamPipeInfoTmp->inputFaceNormal = faces.first;
+    beamPipeInfoTmp->outputFaceNormal = faces.second;
 
-    BDSBeamPipe* beamPipeTest = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
+    BDSBeamPipe* beamPipeTmp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
                                                                                arcLength,
-                                                                               beamPipeInfo1);
+                                                                               beamPipeInfoTmp);
 
-    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength, chordLength, beamPipeTest);
+    // Create the Magnet outer
+    outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength, chordLength, beamPipeTmp);
 
-    delete beamPipeTest;
-    delete beamPipeInfo1;
+    delete beamPipeTmp;
+    delete beamPipeInfoTmp;
 
     BDSGeometryComponent* container = outer->GetMagnetContainer();
     containerLogicalVolume = container->GetContainerLogicalVolume();
@@ -157,9 +144,10 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
     SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
     SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
 
-    if (!element->extractOuterContainer)
+    if (!element->extractOuterContainer) // check if the beampipe and outer geometry elements must be placed in the container logical volume
     {
 
+        // Create a beamline receiving the beampipe elements with the correct offset and angle
         G4double offsetAngle = element->angle/2;
         G4double offsetLength = chordLength/2;
 
@@ -172,7 +160,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 
         BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
 
-        if (element->apertureType != "none")
+        if (element->apertureType != "none") // check if the beampipe elements must be placed in the container logical volume
         {
             beamline->AddComponent(pipeLine);
 
@@ -186,8 +174,8 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
                 auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
                                             element->GetContainerLogicalVolume(), // volume to be placed
                                             placementName,                        // placement name
-                                            containerLogicalVolume,                          // volume to place it in
-                                            false,                                // no boolean operation
+                                            containerLogicalVolume,               // volume to place it in
+                                            false,                         // no boolean operation
                                             copyNumber,                           // copy number
                                             false);                       // overlap checking
 
@@ -209,17 +197,17 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
         std::cout << "placing the content of the gdml file" << std::endl;
         auto gdml_world = outer->GetContainerLogicalVolume();
 
-        if (element->includeGdmlWorldVolume)
+        if (element->includeGdmlWorldVolume) // Check if the outer logical volume (Gdml world volume) must be placed into the container logical volume
         {
             G4Transform3D* placementTransform = new G4Transform3D();
 
             auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                        gdml_world,               // volume to be placed
-                                        gdml_world->GetName() + "_pv",                        // placement name
-                                        containerLogicalVolume,                          // volume to place it in
-                                        false,                                // no boolean operation
+                                        gdml_world,                           // volume to be placed
+                                        gdml_world->GetName() + "_pv", // placement name
+                                        containerLogicalVolume,               // volume to place it in
+                                        false,                         // no boolean operation
                                         0,                           // copy number
-                                        false);                       // overlap checking
+                                        false);                      // overlap checking
 
             if (vv->CheckOverlaps())
             {
@@ -237,15 +225,15 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
             std::cout << "placing " << placementName << std::endl;
             G4int copyNumber = 1;
 
-            if (!element->includeGdmlWorldVolume)
+            if (!element->includeGdmlWorldVolume) // if the Gdml world volume has not been placed in the container logical volume, placed the outer geometry elements one by one instead
             {
                 auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(), // placement transform
-                                            pv->GetLogicalVolume(), // volume to be placed
-                                            placementName,                        // placement name
-                                            containerLogicalVolume,                          // volume to place it in
-                                            false,                                // no boolean operation
-                                            copyNumber,                           // copy number
-                                            false);                       // overlap checking
+                                            pv->GetLogicalVolume(),                  // volume to be placed
+                                            placementName,                           // placement name
+                                            containerLogicalVolume,                  // volume to place it in
+                                            false,                            // no boolean operation
+                                            copyNumber,                             // copy number
+                                            false);                         // overlap checking
 
                 if (vv->CheckOverlaps())
                 {
@@ -255,6 +243,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
                 RegisterPhysicalVolume(vv);
             }
 
+            // register the vacuum field to the external logical volumes registered in namedVacuumVolumes
             if (std::find(namedVacuumVolumes.begin(), namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(9).c_str()) != namedVacuumVolumes.end())
             {
                 BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
@@ -274,7 +263,7 @@ void BDSMagnetNonSplitOuter::Build()
                          incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
                          prevElement, nextElement);
 
-   if (element->fieldOuter != "" and !(element->extractOuterContainer))
+   if (element->fieldOuter != "" and !(element->extractOuterContainer)) // check when to build the outer field
    {
        BuildOuterField(); // must be done when the containerLV exists
    }
