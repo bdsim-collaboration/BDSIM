@@ -13,6 +13,7 @@ simple_testing(io-user-sampler-far       "--file=user_placed_sampler_far.gmad"  
 simple_testing(io-user-sampler-rect      "--file=user_placed_sampler_rectangular.gmad" "")
 simple_testing(io-user-sampler-ap        "--file=user_placed_sampler_ap_model.gmad"    "")
 simple_fail(io-user-sampler-bad-shape "--file=user_placed_sampler_bad_shape.gmad"   "")
+simple_fail(io-user-sampler-bad-name  "--file=user_placed_sampler_bad_namd.gmad"    "")
 
 
 # checks - tests that should fail
