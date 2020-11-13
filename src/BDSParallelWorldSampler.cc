@@ -51,7 +51,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 
-BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
+BDSParallelWorldSampler::BDSParallelWorldSampler(const G4String& name):
   G4VUserParallelWorld("SamplerWorld_" + name),
   suffix(name),
   samplerWorldVis(nullptr),
