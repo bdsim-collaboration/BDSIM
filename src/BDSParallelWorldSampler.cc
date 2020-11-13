@@ -20,10 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSException.hh"
@@ -165,7 +162,7 @@ void BDSParallelWorldSampler::Construct()
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
       
       G4String samplerName = G4String(samplerPlacement.name);
-      BDSApertureInfo* shape = nullptr;
+      BDSApertureInfo* shape;
       if (samplerPlacement.apertureModel.empty())
 	{
 	  shape = new BDSApertureInfo(samplerPlacement.shape,
