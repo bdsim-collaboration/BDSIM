@@ -26,7 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSOutput.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSampler.hh"
@@ -37,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDSampler.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/samplerplacement.h"
 
@@ -150,6 +153,14 @@ void BDSParallelWorldSampler::Construct()
   for (const auto& samplerPlacement : samplerPlacements)
     {
       G4cout << "User placed sampler: \"" << samplerPlacement.name << "\"" << G4endl;
+      
+      if (BDSOutput::InvalidSamplerName(samplerPlacement.name))
+      {
+        G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerPlacement.name << "\"" << G4endl;
+        BDSOutput::PrintProtectedNames(G4cerr);
+        throw BDSException(__METHOD_NAME__, "");
+      }
+      
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
       
@@ -171,6 +182,10 @@ void BDSParallelWorldSampler::Construct()
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);
+      
+      G4String uniqueName = BDSSamplerRegistry::Instance()->GetNameUnique(samplerID);
+      if (uniqueName != samplerName)
+	{BDS::Warning("Sampler placement with name \"" + samplerName + "\" will be named \"" + uniqueName + "\" in the output");}
 
       G4PVPlacement* pl = new G4PVPlacement(transform,
 					    sampler->GetContainerLogicalVolume(),
