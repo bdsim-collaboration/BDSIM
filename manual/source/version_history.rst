@@ -113,6 +113,7 @@ General
   difference in results, but this makes the code useable elsewhere.
 * :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
   if a given dimension isn't specified it'll be the default.
+* Warn the user if a sampler placement is renamed due to a beam line sampler already having that name.
 
 Bug Fixes
 ---------
@@ -131,6 +132,8 @@ Bug Fixes
 * Fix wrong variable name print out for halo beam distribution.
 * Improve cryptic error for wrongly specified composite beam distribution.
 * Units for :code:`kineticEnergy` and :code:`rigidity` variables in the trajectory output were fixed.
+* Throw an error if a sampler placement has a conflicting name with something already in the output rather
+  than potentially just overwrite it or it not appear properly.
   
 Output Changes
 --------------
