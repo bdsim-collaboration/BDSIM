@@ -1155,7 +1155,7 @@ Examples: ::
 
   energyDeposit[][0]
 
-(above) This is the energy depostied along the first (0th) step of all trajectories in this event.  ::
+(above) This is the energy deposited along the first (0th) step of all trajectories in this event.  ::
 
   energyDeposit[0][]
 
@@ -1163,6 +1163,13 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 
 * These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
   :code:`[]` means `all`.
+
+.. note:: Both :code:`unsigned int` and :code:`int` types are used here. The C++ standard dictates
+	  a minimum number of bits for these as 16 bits. This corresponds to a range of -32768 to
+	  32768 for a signed int and 0 to 65535 for the unsigned int. If storing track IDs beyond
+	  this, the track ID may wrap around to 0. However, this is expected to be very unlikely
+	  in practice. Also, in practice most compilers will use a larger bit depth by default as
+	  it is more optimal on most hardware.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
