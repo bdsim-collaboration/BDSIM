@@ -21,10 +21,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(BDSOutputROOTEventTrajectoryPoint)
 
 BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint():
-  partID(-1),
-  trackID(-1),
-  parentID(-1),
-  parentIndex(-1),
+  partID(0),
+  trackID(0),
+  parentID(0),
+  parentIndex(0),
   processType(-1),
   processSubType(-1),
   weight(-1.0),
@@ -47,9 +47,9 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint():
 {;}
 
 BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int      partIDIn,
-								     int      trackIDIn,
-								     int      parentIDIn,
-								     int      parentIndexIn,
+								     unsigned int trackIDIn,
+								     unsigned int parentIDIn,
+								     unsigned int parentIndexIn,
 								     int      processTypeIn,
 								     int      processSubTypeIn,
 								     double   weightIn,

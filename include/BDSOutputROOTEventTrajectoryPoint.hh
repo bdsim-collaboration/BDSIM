@@ -32,9 +32,9 @@ class BDSOutputROOTEventTrajectoryPoint: public TObject
 public:
   BDSOutputROOTEventTrajectoryPoint();
   BDSOutputROOTEventTrajectoryPoint(int      partIDIn,
-				    int      trackIDIn,
-				    int      parentIDIn,
-				    int      parentIndexIn,
+				    unsigned int trackIDIn,
+				    unsigned int parentIDIn,
+				    unsigned int parentIndexIn,
 				    int      processTypeIn,
 				    int      processSubTypeIn,
 				    double   weightIn,
@@ -56,10 +56,10 @@ public:
 				    int      nElectronsIn);
   virtual ~BDSOutputROOTEventTrajectoryPoint();
 
-  int      partID;
-  int      trackID;
-  int      parentID;
-  int      parentIndex;
+  int          partID;
+  unsigned int trackID;
+  unsigned int parentID;
+  unsigned int parentIndex;
   int      processType;
   int      processSubType;
   double   weight;
@@ -80,7 +80,7 @@ public:
   int      ionZ;
   int      nElectrons;
 
-  ClassDef(BDSOutputROOTEventTrajectoryPoint,3);
+  ClassDef(BDSOutputROOTEventTrajectoryPoint,4);
 };
 
 #endif

@@ -157,6 +157,8 @@ These are important changes to take note of:
 * Units for :code:`kineticEnergy`, :code:`rigidity` and :code:`mass` variables in the trajectory output were
   fixed. These were previously in Geant4 units but are now consistent with those in the rest of the output
   such as samplers and are GeV and Tm.
+* In :code:`BDSOutputROOTEventTrajectory` and :code:`BDSOutputROOTEventTrajectoryPoint` classes, the track ID
+  variables have been changed to be unsigned int type.
 
 Output Class Versions
 ---------------------
@@ -194,9 +196,9 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventSampler         | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectory      | N           | 3               | 3               |
+| BDSOutputROOTEventTrajectory      | Y           | 4               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectoryPoint | N           | 3               | 3               |
+| BDSOutputROOTEventTrajectoryPoint | Y           | 4               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTGeant4Data (\*)      | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
