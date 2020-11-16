@@ -644,7 +644,6 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
     {
       const BDSHitSampler* hit = (*hits)[i];
       G4int samplerID = hit->samplerID;
-      samplerID += 1; // offset index by one due to primary branch.
       samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
     }
 
