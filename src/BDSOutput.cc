@@ -101,6 +101,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   energyDepositedWorld(0),
   energyDepositedWorldContents(0),
   energyDepositedTunnel(0),
+  energyImpactingAperture(0),
   energyWorldExit(0),
   nCollimatorsInteracted(0)
 {
@@ -295,6 +296,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyDepositedWorld         = 0;
   energyDepositedWorldContents = 0;
   energyDepositedTunnel        = 0;
+  energyImpactingAperture      = 0;
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
@@ -613,6 +615,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorldContents = energyDepositedWorldContents;
   evtInfo->energyDepositedTunnel        = energyDepositedTunnel;
   evtInfo->energyWorldExit              = energyWorldExit;
+  evtInfo->energyImpactingAperture      = energyImpactingAperture;
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
   evtInfo->energyTotal =  energyDeposited
@@ -908,6 +911,8 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
   for (G4int i = 0; i < nHits; i++)
     {
       const BDSHitApertureImpact* hit = (*hits)[i];
+      G4double eW = (hit->totalEnergy / CLHEP::GeV) * hit->weight;
+      energyImpactingAperture += eW;
       if (hit->parentID == 0)
 	{
 	  nPrimaryImpacts += 1;
