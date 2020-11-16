@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSTrajectory.hh"
+
+#include <cmath>
 #endif
 
 ClassImp(BDSOutputROOTEventTrajectory)
@@ -49,10 +51,10 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 #ifndef __ROOTBUILD__
 int findPrimaryStepIndex(BDSTrajectory* traj)
 {
-  if(!traj->GetParent())
+  if (!traj->GetParent())
     {return -1;}
 
-  if(traj->GetParent()->GetTrackID() == 1)
+  if (traj->GetParent()->GetTrackID() == 1)
     {return traj->GetParentStepIndex();}
   else
     {return findPrimaryStepIndex(traj->GetParent());}
@@ -124,10 +126,10 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	{continue;}
 
       partID.push_back((int &&) traj->GetPDGEncoding());
-      trackID.push_back((unsigned int &&) traj->GetTrackID());
-      parentID.push_back((unsigned int &&) traj->GetParentID());
-      parentIndex.push_back((int &&) traj->GetParentIndex());
-      parentStepIndex.push_back((int &&) traj->GetParentStepIndex());
+      trackID.push_back((unsigned int) std::abs(traj->GetTrackID()));
+      parentID.push_back((unsigned int) std::abs(traj->GetParentID()));
+      parentIndex.push_back((unsigned int) std::abs(traj->GetParentIndex()));
+      parentStepIndex.push_back((unsigned int) std::abs(traj->GetParentStepIndex()));
 
       // now we convert the geant4 type based BDSTrajectory information into
       // basic C++ and ROOT types for the output
@@ -201,7 +203,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
   int trackIndex = 0;
   for (auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
     {
-      BDSTrajectory *traj = *iT;
+      BDSTrajectory* traj = *iT;
 
       // map of trackID to trackIndex
       trackID_trackIndex.insert(std::pair<int, int>(traj->GetTrackID(),trackIndex));
@@ -490,13 +492,13 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
 {
-  int ti = trackID_trackIndex.at(trackid);  // get track index
+  unsigned int ti = (unsigned int) std::abs(trackID_trackIndex.at(trackid));  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
   while (ti != 0)
     {
-      int pi  = parentIndex.at(ti);
-      int psi = parentStepIndex.at(ti);
+      unsigned int pi  = parentIndex.at(ti);
+      unsigned int psi = parentStepIndex.at(ti);
       
       BDSOutputROOTEventTrajectoryPoint p(partID[pi],
 					  trackID[pi],

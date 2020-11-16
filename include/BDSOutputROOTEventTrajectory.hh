@@ -163,9 +163,9 @@ public:
   std::vector<std::bitset<BDS::NTrajectoryFilters> > filters;
   std::vector<int>                   partID;
   std::vector<unsigned int>          trackID;
-  std::vector<int>                   parentID;
-  std::vector<int>                   parentIndex;
-  std::vector<int>                   parentStepIndex;
+  std::vector<unsigned int>          parentID;
+  std::vector<unsigned int>          parentIndex;
+  std::vector<unsigned int>          parentStepIndex;
   std::vector<int>                   primaryStepIndex;
 
   std::vector<std::vector<int>>      preProcessTypes;
@@ -218,7 +218,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   
-  ClassDef(BDSOutputROOTEventTrajectory,3);
+  ClassDef(BDSOutputROOTEventTrajectory,4);
 };
 
 #endif
