@@ -46,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
@@ -101,6 +101,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   energyDepositedWorld(0),
   energyDepositedWorldContents(0),
   energyDepositedTunnel(0),
+  energyImpactingAperture(0),
   energyWorldExit(0),
   nCollimatorsInteracted(0)
 {
@@ -128,7 +129,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeELossVacuumHistograms = g->StoreELossVacuumHistograms() || storeELossVacuum;
   storeELossWorld            = g->StoreELossWorld();
   storeELossWorldContents    = g->StoreELossWorldContents() || g->UseImportanceSampling();
-  storeGeant4Data            = g->StoreGeant4Data();
+  storeParticleData          = g->StoreParticleData();
   storeModel                 = g->StoreModel();
   storePrimaries             = g->StorePrimaries();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
@@ -171,22 +172,22 @@ void BDSOutput::FillHeader()
   ClearStructuresHeader();
 }
 
-void BDSOutput::FillGeant4Data(G4bool writeIons)
+void BDSOutput::FillParticleData(G4bool writeIons)
 {
-  // always prepare geant4 data and link to other classes, but optionally fill it
-  geant4DataOutput->Flush();
-  geant4DataOutput->Fill(writeIons);
+  // always prepare particle data and link to other classes, but optionally fill it
+  particleDataOutput->Flush();
+  particleDataOutput->Fill(writeIons);
 
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<double>::particleTable = particleDataOutput;
 #else
-  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+  BDSOutputROOTEventSampler<float>::particleTable = particleDataOutput;
 #endif
-  BDSOutputROOTEventCollimator::particleTable = geant4DataOutput;
-  BDSOutputROOTEventAperture::particleTable   = geant4DataOutput;
+  BDSOutputROOTEventCollimator::particleTable = particleDataOutput;
+  BDSOutputROOTEventAperture::particleTable   = particleDataOutput;
   
-  if (storeGeant4Data)
-    {WriteGeant4Data();}
+  if (storeParticleData)
+    {WriteParticleData();}
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)
@@ -295,6 +296,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyDepositedWorld         = 0;
   energyDepositedWorldContents = 0;
   energyDepositedTunnel        = 0;
+  energyImpactingAperture      = 0;
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
@@ -613,6 +615,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorldContents = energyDepositedWorldContents;
   evtInfo->energyDepositedTunnel        = energyDepositedTunnel;
   evtInfo->energyWorldExit              = energyWorldExit;
+  evtInfo->energyImpactingAperture      = energyImpactingAperture;
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
   evtInfo->energyTotal =  energyDeposited
@@ -904,14 +907,18 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
 
   G4int nPrimaryImpacts = 0;
   G4int nHits = hits->entries();
+  G4int histIndex = histIndices1D["PFirstAI"];
   for (G4int i = 0; i < nHits; i++)
     {
       const BDSHitApertureImpact* hit = (*hits)[i];
+      G4double eW = (hit->totalEnergy / CLHEP::GeV) * hit->weight;
+      energyImpactingAperture += eW;
       if (hit->parentID == 0)
 	{
 	  nPrimaryImpacts += 1;
+	  // only store one primary aperture hit in this histogram even if they were multiple
 	  if (storeApertureImpactsHistograms && nPrimaryImpacts == 1)
-	    {evtHistos->Fill1DHistogram(histIndices1D["PFirstAI"], hit->S / CLHEP::m);}
+	    {evtHistos->Fill1DHistogram(histIndex, hit->S / CLHEP::m);}
         }
       // hits are generated in order as the particle progresses
       // through the model, so the first one in the collection

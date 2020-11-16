@@ -16,37 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ANALYSISGEANT4DATA_H
-#define ANALYSISGEANT4DATA_H
+#pragma link C++ class BDSOutputROOTParticleData+;
+#pragma link C++ class BDSOutputROOTParticleData::ParticleInfo+;
+#pragma link C++ class BDSOutputROOTParticleData::IonInfo+;
 
-#include "Rtypes.h" // for classdef
+#pragma read sourceClass="BDSOutputROOTGeant4Data" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTParticleData"
 
-class BDSOutputROOTGeant4Data;
-class TTree;
+#pragma read sourceClass="BDSOutputROOTGeant4Data::ParticleInfo" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTParticleData::ParticleInfo"
 
-/**
- * @brief Geant4 Data loader.
- *
- * @author Laurie Nevay.
- */
-
-class Geant4Data
-{
-public:
-  Geant4Data();
-  Geant4Data(bool debugIn);
-  virtual ~Geant4Data();
-
-  /// Set the branch addresses to address the contents of the file.
-  void SetBranchAddress(TTree* t);
-
-  /// Member that ROOT can map file data to locally.
-  BDSOutputROOTGeant4Data* geant4Data;
-
-private:
-  bool debug;
-  
-  ClassDef(Geant4Data,1);
-};
-
-#endif
+#pragma read sourceClass="BDSOutputROOTGeant4Data::IonInfo" \
+  version="[-2]" \
+  targetClass="BDSOutputROOTParticleData::IonInfo"

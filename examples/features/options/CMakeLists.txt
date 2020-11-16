@@ -52,6 +52,7 @@ simple_fail(option-zero-beam-energy                "--file=zeroBeamEnergy.gmad" 
 # general input options
 simple_testing(option-collimator-info              "--file=collimatorinfo.gmad"           "")
 simple_testing(option-eloss-sensitive-vacuum       "--file=eloss-vacuum.gmad"             "")
+simple_testing(option-eloss-physics-processes      "--file=eloss-physics-processes.gmad"  "")
 simple_testing(option-ignore-local-aperture        "--file=overrideAperture.gmad"         "")
 simple_testing(option-ignore-local-magnet-geometry "--file=overrideMagnetGeometry.gmad"   "")
 simple_testing(option-noeloss-beampipes            "--file=noeloss-beampipes.gmad"        "")
