@@ -648,14 +648,9 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
     }
 
   // extra information
-  G4bool firstSampler = true;
+  if (storeSamplerIon)
   for (auto& sampler : samplerTrees)
-    {
-      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
-	{firstSampler = false; continue;}
-      if (storeSamplerIon)
-        {sampler->FillIon();}
-    }
+    {sampler->FillIon();}
 }
 
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,
