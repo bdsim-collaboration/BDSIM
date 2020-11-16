@@ -169,6 +169,8 @@ These are important changes to take note of:
   such as samplers and are GeV and Tm.
 * In :code:`BDSOutputROOTEventTrajectory` and :code:`BDSOutputROOTEventTrajectoryPoint` classes, the track ID
   variables have been changed to be unsigned int type.
+* New variables in header for whether the BDSIM output file is a skimmed file or not - future proofing for
+  upcoming skimming program.
 
 Output Class Versions
 ---------------------
@@ -188,17 +190,17 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 3               | 3               |
+| BDSOutputROOTEventHeader          | Y           | 3               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventInfo            | N           | 4               | 5               |
+| BDSOutputROOTEventInfo            | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLoss            | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventModel           | N           | 4               | 4               |
+| BDSOutputROOTEventModel           | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventOptions         | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -206,9 +208,9 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventSampler         | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectory      | Y           | 4               | 3               |
+| BDSOutputROOTEventTrajectory      | Y           | 3               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectoryPoint | Y           | 4               | 3               |
+| BDSOutputROOTEventTrajectoryPoint | Y           | 3               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTGeant4Data (\*)      | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
