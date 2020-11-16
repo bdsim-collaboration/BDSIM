@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <algorithm>
-#include <string>
 
 BDSScorerHistogramDef::BDSScorerHistogramDef(const BDSScorerMeshInfo&  mesh,
 					     const G4String&           uniqueNameIn,

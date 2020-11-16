@@ -56,7 +56,7 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
   G4String uniqueName = name;
   auto result = existingNames.find(name);
   if (result == existingNames.end())
-    { // wan't found - introduce it
+    {// wasn't found - introduce it
       existingNames[name] = 1;
     }
   else
@@ -80,7 +80,7 @@ G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo& info)
 std::vector<G4String> BDSSamplerRegistry::GetNames() const
 {
   std::vector<G4String> names;
-  for (auto info : infos)
+  for (const auto& info : infos)
     {names.push_back(info.Name());}
   return names;
 }
@@ -88,7 +88,7 @@ std::vector<G4String> BDSSamplerRegistry::GetNames() const
 std::vector<G4String> BDSSamplerRegistry::GetUniqueNames() const
 {
   std::vector<G4String> names;
-  for (auto info : infos)
+  for (const auto& info : infos)
     {names.push_back(info.UniqueName());}
   return names;
 }
