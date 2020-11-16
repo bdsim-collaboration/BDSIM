@@ -1171,21 +1171,26 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +==========================+=====================================+=========================================================+
 | n                        | int                                 | The number of trajectories stored for this event        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this particlar |
-|                          |                                     | trajectory matched. See header for their description.   |
+| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this           |
+|                          |                                     | particular trajectory matched. See the header for their |
+|                          |                                     | description.                                            |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | partID                   | std::vector<int>                    | The PDG ID for the particle in each trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | trackID                  | std::vector<unsigned int>           | The track ID for the particle in each trajectory step   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentID                 | std::vector<float>                  | The track ID of the parent particle for each trajectory |
+| parentID                 | std::vector<unsigned int>           | The track ID of the parent particle for each trajectory |
 |                          |                                     | step                                                    |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentIndex              | std::vector<int>                    | The index in the vectors of this class that correspond  |
+| parentIndex              | std::vector<unsigned int>           | The index in the vectors of this class that correspond  |
 |                          |                                     | to parent particle (the one that lead to the creation   |
 |                          |                                     | of the particle in the current entry)                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentStepIndex          | std::vector<int>                    | TBC                                                     |
+| parentStepIndex          | std::vector<unsigned int>           | The index of the step along a given parent trajectory   |
+|                          |                                     | that this trajectory originated from                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| primaryStepIndex         | std::vector<int>                    | The index of the step along the primary trajectory that |
+|                          |                                     | that this current trajectory ultimately traces back to  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessTypes          | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
 |                          |                                     | category                                                |
@@ -1219,7 +1224,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle (e)                                  |
+| charge (\**)             | std::vector<std::vector<int>>       | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
 |                          |                                     | (GeV)                                                   |
