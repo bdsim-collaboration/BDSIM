@@ -25,8 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PhysicsVector.hh"
 #include "G4String.hh"
 
-#include "CLHEP/Units/SystemOfUnits.h"
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
