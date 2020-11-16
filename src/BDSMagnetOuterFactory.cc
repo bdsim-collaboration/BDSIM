@@ -43,7 +43,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
-#include "G4Torus.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
 
