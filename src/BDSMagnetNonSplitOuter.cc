@@ -16,38 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSFieldBuilder.hh"
-#include "BDSFieldInfo.hh"
+#include "BDSBendBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
+#include "BDSGeometryExternal.hh"
+#include "BDSGeometryFactoryGDML.hh"
+#include "BDSIntegratorSet.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
+#include "BDSMagnetNonSplitOuter.hh"
 #include "BDSMagnetStrength.hh"
-#include "BDSAcceleratorComponent.hh"
 #include "BDSMagnetType.hh"
-#include "BDSUtilities.hh"
-#include "BDSMagnet.hh"
-#include "BDSBeamline.hh"
-#include "BDSBeamlineElement.hh"
 #include "BDSSimpleComponent.hh"
-#include "BDSBendBuilder.hh"
+#include "BDSUtilities.hh"
+
 #include "G4Box.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
-#include "BDSIntegratorSet.hh"
-#include "BDSGeometryFactoryGDML.hh"
-#include "BDSGeometryExternal.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
-
-#include "BDSMagnetNonSplitOuter.hh"
 
 using namespace GMAD;
 
@@ -218,7 +218,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 
         }
 
-        for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++)
+        for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
         {
             const auto& pv = gdml_world->GetDaughter(j);
             G4String placementName = pv->GetName() + "_pv";

@@ -324,7 +324,7 @@ void BDSMagnet::PlaceComponents()
       if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::external)
       {
           auto gdml_world = outer->GetContainerLogicalVolume();
-          for (G4int j = 0; j < gdml_world->GetNoDaughters(); j++) {
+          for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++) {
               const auto &pv = gdml_world->GetDaughter(j);
               G4String placementName = pv->GetName() + "_pv";
               std::cout << "placing " << placementName << std::endl;
