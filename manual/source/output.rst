@@ -1003,9 +1003,9 @@ BDSOutputROOTEventInfo
 |                             |                   | including their rest mass leaving the       |
 |                             |                   | world volume and therefore the simulation.  |
 +-----------------------------+-------------------+---------------------------------------------+
-| energyImpactingAperture     | double            | (GeV) Integrated energy of all prticles     |
+| energyImpactingAperture     | double            | (GeV) Integrated energy of all particles    |
 |                             |                   | including their rest mass impacting the     |
-|                             |                   | aperture.                                   |
+|                             |                   | aperture and including their weight.        |
 +-----------------------------+-------------------+---------------------------------------------+
 | energyKilled                | double            | (GeV) Integrated energy including their     |
 |                             |                   | rest mass of any particles that were        |
@@ -1460,7 +1460,7 @@ This class contains the following data:
 These are histograms stored for each event. Whilst a few important histograms are stored by
 default, the number may vary depending on the options chosen and the histogram vectors are filled
 dynamically based on these. For this reason, the name of the histogram is given an not the index.
-BDSIM produces six histograms by default during the simulation. These are:
+BDSIM produces six histograms by default during the simulation (the first six listed). These are:
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.70\textwidth}|
 
@@ -1484,35 +1484,45 @@ BDSIM produces six histograms by default during the simulation. These are:
 |                          | are not normalised to the bin width. Based on the data from the |
 |                          | `Eloss` branch.                                                 |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnel (\*\*)       | Energy deposition in the tunnel. Based on data from the         |
+| ElossVacuum (\*\*)       | Energy deposition in the beam pipe vacuum volumes.              |
++--------------------------+-----------------------------------------------------------------+
+| ElossVacuumPE (\*\*)     | Same as ElossVacuum, but binned per element in S. Note the      |
+|                          | values are not normalised to the bin width.                     |
++--------------------------+-----------------------------------------------------------------+
+| ElossTunnel (\*\*\*)     | Energy deposition in the tunnel. Based on data from the         |
 |                          | `ElossTunnel` branch.                                           |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnelPE (\*\*)     | Energy deposition in the tunnel with per element binning. Based |
+| ElossTunnelPE (\*\*\*)   | Energy deposition in the tunnel with per element binning. Based |
 |                          | on data from the `ElossTunnel` branch.                          |
 +--------------------------+-----------------------------------------------------------------+
-| CollPhitsPE (\*\*\*)     | Primary hits where each bin is 1 collimator in the order they   |
+| PFirstAI                 | Number of primary particle apertures impacting the aperture in  |
+|                          | S. Maximum 1 hit per event. Does not include weight.            |
++--------------------------+-----------------------------------------------------------------+
+| CollPhitsPE (\*\*\*\*)   | Primary hits where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PhitsPE   |
 |                          | for only the collimators.                                       |
 +--------------------------+-----------------------------------------------------------------+
-| CollPlossPE (\*\*\*)     | Primary loss where each bin is 1 collimator in the order they   |
+| CollPlossPE (\*\*\*\*)   | Primary loss where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PlossPE   |
 |                          | for only the collimators.                                       |
 +--------------------------+-----------------------------------------------------------------+
-| CollElossPE (\*\*\*)     | Energy deposition where each bin is 1 collimator in the order   |
+| CollElossPE (\*\*\*\*)   | Energy deposition where each bin is 1 collimator in the order   |
 |                          | they appear in the beam line. These are bins copied out of      |
 |                          | ElossPE for only the collimators.                               |
 +--------------------------+-----------------------------------------------------------------+
-| CollPInteracted (\*\*\*) | Each bin represents one collimator in the beam line in the      |
-|                          | order they appear and is filled with 1.0 if the primary         |
+| CollPInteracted          | Each bin represents one collimator in the beam line in the      |
+| (\*\*\*\*)               | order they appear and is filled with 1.0 if the primary         |
 |                          | particle interacted with that collimator in that event. Note,   |
 |                          | the primary may interact with multiple collimators each event.  |
 +--------------------------+-----------------------------------------------------------------+
 
 * (\*) The "Eloss" and "ElossPE" histograms are only created if :code:`storeELoss` or :code:`storeElossHistograms`
   are turned on (default is on).
-* (\*\*) The tunnel histograms are only created if :code:`storeELossTunnel` or :code:`storeELossTunnelHistograms`
+* (\*\*) The vacuum histograms are only created if :code:`storeELossVacuum` or :code:`storeELossVacuumHistograms`
+  options are on (default is off).
+* (\*\*\*) The tunnel histograms are only created if :code:`storeELossTunnel` or :code:`storeELossTunnelHistograms`
   options are on (default is :code:`storeELossTunnelHistograms` on only when tunnel is built).
-* (\*\*\*) The histograms starting with "Coll" are only created if :code:`storeCollimatorInfo` is turned on.
+* (\*\*\*\*) The histograms starting with "Coll" are only created if :code:`storeCollimatorInfo` is turned on.
 
 .. note:: The per-element histograms are integrated across the length of each element so they
 	  will have different (uneven) bin widths.
