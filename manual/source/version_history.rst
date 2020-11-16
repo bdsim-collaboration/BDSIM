@@ -134,6 +134,8 @@ Bug Fixes
 * Units for :code:`kineticEnergy` and :code:`rigidity` variables in the trajectory output were fixed.
 * Throw an error if a sampler placement has a conflicting name with something already in the output rather
   than potentially just overwrite it or it not appear properly.
+* Fixed bug when not storing primaries using the option `storePrimaries` where the primary branch was added to
+  the sampler list and therefore appeared empty in the output. This consequently caused rebdsimOptics to segfault.
   
 Output Changes
 --------------

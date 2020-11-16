@@ -104,8 +104,6 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  samplerTrees.push_back(primary);
-  samplerNames.push_back("Primary");
   primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
