@@ -2027,7 +2027,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   info->name = elementNameIn;
-
+  
   // magnet geometry type
   if (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry())
    {info->geometryType = globals->MagnetGeometryType();}

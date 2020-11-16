@@ -56,7 +56,7 @@ namespace BDS
 					  G4bool                  buildFringeFields,
 					  const GMAD::Element*    prevElement,
 					  const GMAD::Element*    nextElement);
-
+  
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.

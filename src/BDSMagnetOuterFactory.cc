@@ -225,7 +225,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 						      BDSMagnetOuterInfo* info,
 						      G4double          /*length*/,
-						      G4double            magnetContainerLength,
+                                                      G4double            magnetContainerLength,
 						      BDSBeamPipe*        beampipe)
 {
   std::map<G4String, G4Colour*> defaultMap = {
@@ -261,7 +261,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
       sss += "External geometry inner " + ss2.str();
       ss3 << bpExtent;
       sss += "Beam pipe outer " + ss3.str();
-      //throw BDSException(__METHOD_NAME__, sss);
+      throw BDSException(__METHOD_NAME__, sss);
     }
     
   BDSGeometryComponent* container = CreateContainerForExternal(name, magnetContainerLength, geom, beampipe);

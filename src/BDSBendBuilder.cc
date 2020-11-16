@@ -30,17 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetStrength.hh"
-#include "BDSMagnetOuterFactory.hh"
-#include "BDSBeamline.hh"
-#include "BDSBeamlineElement.hh"
 #include "BDSLine.hh"
-#include "BDSBeamPipe.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSUtilities.hh"
-#include "G4PVPlacement.hh"
-#include "BDSSimpleComponent.hh"
-#include "BDSMagnet.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
@@ -392,7 +385,6 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   return sbendline;
 }
 
-
 void BDS::UpdateSegmentAngles(G4int index,
 			      G4int nSBends,
 			      G4double semiAngle,
@@ -481,8 +473,6 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   
   return magnet;
 }
-
-
 
 BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const Element*          element,
