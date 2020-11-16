@@ -322,6 +322,7 @@ private:
   G4double energyDepositedWorld;
   G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
+  G4double energyImpactingAperture;
   G4double energyWorldExit;
   G4int    nCollimatorsInteracted;
   /// @}
