@@ -8,8 +8,7 @@ Supported Systems
 BDSIM is developed and used on Mac OSX and Linux.
 
 Tested systems:
-
-* Mac OSX 10.14.6 (Mojave), XCode 10.2.1 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.5.p01, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.1
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt5.14.2
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
 * SLC6, GCC 4.9.3, Geant4.10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
@@ -100,6 +99,8 @@ problems we have found:
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
 * Geant4.10.5.0  - the cashkarp integrator for fields will always crash.
+
+The authors typically use Geant4.10.4.p03 or Geant4.10.6.p02 for production.
 
 .. _mac-osx-issues:
   

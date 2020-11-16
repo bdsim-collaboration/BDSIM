@@ -503,6 +503,12 @@ BDSOutputROOTEventHeader
 +------------------------+--------------------------+---------------------------------------+
 | trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
 +------------------------+--------------------------+---------------------------------------+
+| skimmedFile            | bool                     | Whether this file's Event tree is     |
+|                        |                          | made of skimmed events.               |
++------------------------+--------------------------+---------------------------------------+
+| nOriginalEvents        | unsigned long long int   | If a skimmed file, this is the number |
+|                        |                          | of events in the original file.       |
++------------------------+--------------------------+---------------------------------------+
 
 ParticleData Tree
 ^^^^^^^^^^^^^^^^^
@@ -658,6 +664,15 @@ One entry in the model tree represents one beam line.
 | endRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements   |
 |                    |                          | along the reference trajectory and without any tilt          |
 |                    |                          | or rotation from the component                               |
++--------------------+--------------------------+--------------------------------------------------------------+
+| tilt               | std::vector<float>       | Rotation in radians of the element when placed with respect  |
+|                    |                          | to the curvilinear frame                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| offsetX            | std::vector<float>       | Offset in metres of the element when placed with respect to  |
+|                    |                          | the curvilinear frame - horizontal                           |
++--------------------+--------------------------+--------------------------------------------------------------+
+| offsetY            | std::vector<float>       | Offset in metres of the element when placed with respect to  |
+|                    |                          | the curvilinear frame - verical                              |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | staS               | std::vector<float>       | S-position of start of start of element (m)                  |
 +--------------------+--------------------------+--------------------------------------------------------------+
@@ -845,7 +860,7 @@ different value per-event run in BDSIM.
 |                           |                                  | curvilinear coordinate system present.           |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | ApertureImpacts (\*\*\*)  | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
-|                           |                                  | particles (primry only by default) exit the      |
+|                           |                                  | particles (primary only by default) exit the     |
 |                           |                                  | aperture of the machine. Note, the same particle |
 |                           |                                  | can pass through the aperture multiple times.    |
 +---------------------------+----------------------------------+--------------------------------------------------+
@@ -987,6 +1002,10 @@ BDSOutputROOTEventInfo
 | energyWorldExit             | double            | (GeV) Integrated energy of all particles    |
 |                             |                   | including their rest mass leaving the       |
 |                             |                   | world volume and therefore the simulation.  |
++-----------------------------+-------------------+---------------------------------------------+
+| energyImpactingAperture     | double            | (GeV) Integrated energy of all particles    |
+|                             |                   | including their rest mass impacting the     |
+|                             |                   | aperture and including their weight.        |
 +-----------------------------+-------------------+---------------------------------------------+
 | energyKilled                | double            | (GeV) Integrated energy including their     |
 |                             |                   | rest mass of any particles that were        |
@@ -1155,7 +1174,7 @@ Examples: ::
 
   energyDeposit[][0]
 
-(above) This is the energy depostied along the first (0th) step of all trajectories in this event.  ::
+(above) This is the energy deposited along the first (0th) step of all trajectories in this event.  ::
 
   energyDeposit[0][]
 
@@ -1164,6 +1183,13 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 * These are written in the ROOT TTree::Draw syntax that can be used with rebdsim for analysis. Here,
   :code:`[]` means `all`.
 
+.. note:: Both :code:`unsigned int` and :code:`int` types are used here. The C++ standard dictates
+	  a minimum number of bits for these as 16 bits. This corresponds to a range of -32768 to
+	  32768 for a signed int and 0 to 65535 for the unsigned int. If storing track IDs beyond
+	  this, the track ID may wrap around to 0. However, this is expected to be very unlikely
+	  in practice. Also, in practice most compilers will use a larger bit depth by default as
+	  it is more optimal on most hardware.
+
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -1171,21 +1197,26 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +==========================+=====================================+=========================================================+
 | n                        | int                                 | The number of trajectories stored for this event        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this particlar |
-|                          |                                     | trajectory matched. See header for their description.   |
+| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this           |
+|                          |                                     | particular trajectory matched. See the header for their |
+|                          |                                     | description.                                            |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | partID                   | std::vector<int>                    | The PDG ID for the particle in each trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | trackID                  | std::vector<unsigned int>           | The track ID for the particle in each trajectory step   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentID                 | std::vector<float>                  | The track ID of the parent particle for each trajectory |
+| parentID                 | std::vector<unsigned int>           | The track ID of the parent particle for each trajectory |
 |                          |                                     | step                                                    |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentIndex              | std::vector<int>                    | The index in the vectors of this class that correspond  |
+| parentIndex              | std::vector<unsigned int>           | The index in the vectors of this class that correspond  |
 |                          |                                     | to parent particle (the one that lead to the creation   |
 |                          |                                     | of the particle in the current entry)                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentStepIndex          | std::vector<int>                    | TBC                                                     |
+| parentStepIndex          | std::vector<unsigned int>           | The index of the step along a given parent trajectory   |
+|                          |                                     | that this trajectory originated from                    |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| primaryStepIndex         | std::vector<int>                    | The index of the step along the primary trajectory that |
+|                          |                                     | that this current trajectory ultimately traces back to  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessTypes          | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
 |                          |                                     | category                                                |
@@ -1219,7 +1250,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | pxpypz (\*)              | std::vector<std::vector<TVector3>>  | Local momentum of the track (GeV)                       |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| charge (\**)             | std::vector<std::vector<double>>    | Charge of particle (e)                                  |
+| charge (\**)             | std::vector<std::vector<int>>       | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
 |                          |                                     | (GeV)                                                   |
@@ -1429,7 +1460,7 @@ This class contains the following data:
 These are histograms stored for each event. Whilst a few important histograms are stored by
 default, the number may vary depending on the options chosen and the histogram vectors are filled
 dynamically based on these. For this reason, the name of the histogram is given an not the index.
-BDSIM produces six histograms by default during the simulation. These are:
+BDSIM produces six histograms by default during the simulation (the first six listed). These are:
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.70\textwidth}|
 
@@ -1453,35 +1484,45 @@ BDSIM produces six histograms by default during the simulation. These are:
 |                          | are not normalised to the bin width. Based on the data from the |
 |                          | `Eloss` branch.                                                 |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnel (\*\*)       | Energy deposition in the tunnel. Based on data from the         |
+| ElossVacuum (\*\*)       | Energy deposition in the beam pipe vacuum volumes.              |
++--------------------------+-----------------------------------------------------------------+
+| ElossVacuumPE (\*\*)     | Same as ElossVacuum, but binned per element in S. Note the      |
+|                          | values are not normalised to the bin width.                     |
++--------------------------+-----------------------------------------------------------------+
+| ElossTunnel (\*\*\*)     | Energy deposition in the tunnel. Based on data from the         |
 |                          | `ElossTunnel` branch.                                           |
 +--------------------------+-----------------------------------------------------------------+
-| ElossTunnelPE (\*\*)     | Energy deposition in the tunnel with per element binning. Based |
+| ElossTunnelPE (\*\*\*)   | Energy deposition in the tunnel with per element binning. Based |
 |                          | on data from the `ElossTunnel` branch.                          |
 +--------------------------+-----------------------------------------------------------------+
-| CollPhitsPE (\*\*\*)     | Primary hits where each bin is 1 collimator in the order they   |
+| PFirstAI                 | Number of primary particle apertures impacting the aperture in  |
+|                          | S. Maximum 1 hit per event. Does not include weight.            |
++--------------------------+-----------------------------------------------------------------+
+| CollPhitsPE (\*\*\*\*)   | Primary hits where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PhitsPE   |
 |                          | for only the collimators.                                       |
 +--------------------------+-----------------------------------------------------------------+
-| CollPlossPE (\*\*\*)     | Primary loss where each bin is 1 collimator in the order they   |
+| CollPlossPE (\*\*\*\*)   | Primary loss where each bin is 1 collimator in the order they   |
 |                          | appear in the beam line. These are bins copied out of PlossPE   |
 |                          | for only the collimators.                                       |
 +--------------------------+-----------------------------------------------------------------+
-| CollElossPE (\*\*\*)     | Energy deposition where each bin is 1 collimator in the order   |
+| CollElossPE (\*\*\*\*)   | Energy deposition where each bin is 1 collimator in the order   |
 |                          | they appear in the beam line. These are bins copied out of      |
 |                          | ElossPE for only the collimators.                               |
 +--------------------------+-----------------------------------------------------------------+
-| CollPInteracted (\*\*\*) | Each bin represents one collimator in the beam line in the      |
-|                          | order they appear and is filled with 1.0 if the primary         |
+| CollPInteracted          | Each bin represents one collimator in the beam line in the      |
+| (\*\*\*\*)               | order they appear and is filled with 1.0 if the primary         |
 |                          | particle interacted with that collimator in that event. Note,   |
 |                          | the primary may interact with multiple collimators each event.  |
 +--------------------------+-----------------------------------------------------------------+
 
 * (\*) The "Eloss" and "ElossPE" histograms are only created if :code:`storeELoss` or :code:`storeElossHistograms`
   are turned on (default is on).
-* (\*\*) The tunnel histograms are only created if :code:`storeELossTunnel` or :code:`storeELossTunnelHistograms`
+* (\*\*) The vacuum histograms are only created if :code:`storeELossVacuum` or :code:`storeELossVacuumHistograms`
+  options are on (default is off).
+* (\*\*\*) The tunnel histograms are only created if :code:`storeELossTunnel` or :code:`storeELossTunnelHistograms`
   options are on (default is :code:`storeELossTunnelHistograms` on only when tunnel is built).
-* (\*\*\*) The histograms starting with "Coll" are only created if :code:`storeCollimatorInfo` is turned on.
+* (\*\*\*\*) The histograms starting with "Coll" are only created if :code:`storeCollimatorInfo` is turned on.
 
 .. note:: The per-element histograms are integrated across the length of each element so they
 	  will have different (uneven) bin widths.

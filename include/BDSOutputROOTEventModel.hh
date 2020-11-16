@@ -161,7 +161,7 @@ public:
 		    const std::map<G4String, G4Transform3D>* scorerMeshPlacements = nullptr);
 #endif
 
-  ClassDef(BDSOutputROOTEventModel, 4);
+  ClassDef(BDSOutputROOTEventModel, 5);
 };
 
 #endif
