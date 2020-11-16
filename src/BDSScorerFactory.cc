@@ -140,7 +140,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
 }
 
 BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
-					                           const BDSScorerInfo* info,
+					                                     const BDSScorerInfo* info,
                                                G4LogicalVolume*     worldLV) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
