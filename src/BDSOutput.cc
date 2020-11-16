@@ -911,6 +911,7 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
       if (hit->parentID == 0)
 	{
 	  nPrimaryImpacts += 1;
+	  // only store one primary aperture hit in this histogram even if they were multiple
 	  if (storeApertureImpactsHistograms && nPrimaryImpacts == 1)
 	    {evtHistos->Fill1DHistogram(histIndex, hit->S / CLHEP::m);}
         }
