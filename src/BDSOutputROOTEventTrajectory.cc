@@ -51,10 +51,10 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 #ifndef __ROOTBUILD__
 int findPrimaryStepIndex(BDSTrajectory* traj)
 {
-  if(!traj->GetParent())
+  if (!traj->GetParent())
     {return -1;}
 
-  if(traj->GetParent()->GetTrackID() == 1)
+  if (traj->GetParent()->GetTrackID() == 1)
     {return traj->GetParentStepIndex();}
   else
     {return findPrimaryStepIndex(traj->GetParent());}
@@ -203,7 +203,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
   int trackIndex = 0;
   for (auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
     {
-      BDSTrajectory *traj = *iT;
+      BDSTrajectory* traj = *iT;
 
       // map of trackID to trackIndex
       trackID_trackIndex.insert(std::pair<int, int>(traj->GetTrackID(),trackIndex));
