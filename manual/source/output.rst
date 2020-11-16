@@ -503,6 +503,12 @@ BDSOutputROOTEventHeader
 +------------------------+--------------------------+---------------------------------------+
 | trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
 +------------------------+--------------------------+---------------------------------------+
+| skimmedFile            | bool                     | Whether this file's Event tree is     |
+|                        |                          | made of skimmed events.               |
++------------------------+--------------------------+---------------------------------------+
+| nOriginalEvents        | unsigned long long int   | If a skimmed file, this is the number |
+|                        |                          | of events in the original file.       |
++------------------------+--------------------------+---------------------------------------+
 
 ParticleData Tree
 ^^^^^^^^^^^^^^^^^
@@ -658,6 +664,15 @@ One entry in the model tree represents one beam line.
 | endRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements   |
 |                    |                          | along the reference trajectory and without any tilt          |
 |                    |                          | or rotation from the component                               |
++--------------------+--------------------------+--------------------------------------------------------------+
+| tilt               | std::vector<float>       | Rotation in radians of the element when placed with respect  |
+|                    |                          | to the curvilinear frame                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| offsetX            | std::vector<float>       | Offset in metres of the element when placed with respect to  |
+|                    |                          | the curvilinear frame - horizontal                           |
++--------------------+--------------------------+--------------------------------------------------------------+
+| offsetY            | std::vector<float>       | Offset in metres of the element when placed with respect to  |
+|                    |                          | the curvilinear frame - verical                              |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | staS               | std::vector<float>       | S-position of start of start of element (m)                  |
 +--------------------+--------------------------+--------------------------------------------------------------+
@@ -845,7 +860,7 @@ different value per-event run in BDSIM.
 |                           |                                  | curvilinear coordinate system present.           |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | ApertureImpacts (\*\*\*)  | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
-|                           |                                  | particles (primry only by default) exit the      |
+|                           |                                  | particles (primary only by default) exit the     |
 |                           |                                  | aperture of the machine. Note, the same particle |
 |                           |                                  | can pass through the aperture multiple times.    |
 +---------------------------+----------------------------------+--------------------------------------------------+
@@ -987,6 +1002,10 @@ BDSOutputROOTEventInfo
 | energyWorldExit             | double            | (GeV) Integrated energy of all particles    |
 |                             |                   | including their rest mass leaving the       |
 |                             |                   | world volume and therefore the simulation.  |
++-----------------------------+-------------------+---------------------------------------------+
+| energyImpactingAperture     | double            | (GeV) Integrated energy of all prticles     |
+|                             |                   | including their rest mass impacting the     |
+|                             |                   | aperture.                                   |
 +-----------------------------+-------------------+---------------------------------------------+
 | energyKilled                | double            | (GeV) Integrated energy including their     |
 |                             |                   | rest mass of any particles that were        |
