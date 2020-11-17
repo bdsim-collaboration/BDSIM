@@ -67,6 +67,25 @@ void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
     }
 }
 
+void SamplerAnalysis::UpdateMass(const std::string& particleName)
+{
+  if((particleName == "e-") || (particleName == "e+"))
+    {
+      std::cout << "Primary particle: e-" << std::endl;
+      particleMass = 0.000510999;;
+    }
+  if(particleName == "proton")
+    {
+      std::cout << "Primary particle: proton" << std::endl;
+      particleMass = 0.938272;
+    }
+  else
+    {
+      std::cout << "Primary particle: unknown -> m=0" << std::endl;
+      particleMass = 0;
+    }
+}
+
 void SamplerAnalysis::CommonCtor()
 {
   npart = 0;

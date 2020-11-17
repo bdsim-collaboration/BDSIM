@@ -25,6 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
+#include "BDSOutputROOTEventBeam.hh"
+
 class Event;
 class SamplerAnalysis;
 class TChain;
@@ -53,7 +55,8 @@ public:
 		double   printModuloFraction = 0.01,
 		bool     emittanceOnTheFlyIn = false,
 		long int eventStartIn        = 0,
-		long int eventEndIn          = -1);
+		long int eventEndIn          = -1,
+		const std::string& partName  = "");
 
   virtual ~EventAnalysis() noexcept;
 
