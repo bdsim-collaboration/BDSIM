@@ -56,14 +56,15 @@ public:
   
   struct BinWorking
   {
-    double sumWeights;
-    double sumWeightsSquared;
+    double sumWeights = 0;
+    double sumWeightsSquared = 0;
+    
   };
 
   struct Bin
   {
-    double value;
-    double error;
+    double value = 0;
+    double error = 0;
   };
 
   inline void Fill(T x, double weight=1.0)
