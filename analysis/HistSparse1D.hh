@@ -83,6 +83,15 @@ public:
     return result;
   };
   
+  /// Iterator mechanics
+  typedef typename std::map<T, BinWorking>::iterator       iterator;
+  typedef typename std::map<T, BinWorking>::const_iterator const_iterator;
+  iterator               begin()        {return data.begin();}
+  iterator               end()          {return data.end();}
+  const_iterator         begin()  const {return data.begin();}
+  const_iterator         end()    const {return data.end();}
+  bool                   empty()  const {return data.empty();}
+  
   std::string name;
   std::map<T, BinWorking> data;
   long long int entries;
