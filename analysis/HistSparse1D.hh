@@ -59,6 +59,18 @@ public:
     double sumWeights = 0;
     double sumWeightsSquared = 0;
     
+    void operator+ (const BinWorking& other)
+    {
+      auto result = BinWorking(other);
+      result.sumWeights + sumWeights;
+      result.sumWeightsSquared + sumWeightsSquared;
+      return result;
+    }
+    void operator+= (const BinWorking& other)
+    {
+      sumWeights += other.sumWeights;
+      sumWeightsSquared += other.sumWeightsSquared;
+    }
   };
 
   struct Bin
@@ -92,6 +104,11 @@ public:
   const_iterator         begin()  const {return data.begin();}
   const_iterator         end()    const {return data.end();}
   bool                   empty()  const {return data.empty();}
+  
+  BinWorking& operator[](const long long int key)             {return data[key];}
+  const BinWorking& operator[](const long long int key) const {return data.at(key);}
+
+  bool HasAbscissa(T value) const {return data.find(value) != data.end();}
   
   std::string name;
   std::map<T, BinWorking> data;
