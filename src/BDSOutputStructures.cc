@@ -104,8 +104,6 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  samplerTrees.push_back(primary);
-  samplerNames.push_back("Primary");
   primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
@@ -135,6 +133,7 @@ BDSOutputStructures::~BDSOutputStructures()
     {delete sampler;}
   for (auto collimator : collimators)
     {delete collimator;}
+  delete primary;
 }
 
 G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
@@ -255,6 +254,7 @@ void BDSOutputStructures::ClearStructuresOptions()
 
 void BDSOutputStructures::ClearStructuresEventLevel()
 {
+  primary->Flush();
   for (auto sampler : samplerTrees)
     {sampler->Flush();}
   for (auto collimator : collimators)
