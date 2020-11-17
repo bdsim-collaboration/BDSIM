@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
@@ -54,7 +55,8 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 			     double   printModuloFraction,
 			     bool     emittanceOnTheFlyIn,
 			     long int eventStartIn,
-			     long int eventEndIn):
+			     long int eventEndIn,
+			     const std::string& primaryParticleName):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   printModulo(1),
@@ -84,7 +86,10 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 	{pa = samplerAnalyses[0];}
       
       chain->GetEntry(0);
-      SamplerAnalysis::UpdateMass(pa);
+      if (!primaryParticleName.empty())
+        {SamplerAnalysis::UpdateMass(primaryParticleName);}
+      else
+        {SamplerAnalysis::UpdateMass(pa);}
     }
   
   SetPrintModuloFraction(printModuloFraction);
