@@ -56,7 +56,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 			     bool     emittanceOnTheFlyIn,
 			     long int eventStartIn,
 			     long int eventEndIn,
-			     const std::string& partName):
+			     const std::string& primaryParticleName):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   printModulo(1),
@@ -86,8 +86,8 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 	{pa = samplerAnalyses[0];}
       
       chain->GetEntry(0);
-      if (!partName.empty())
-        {SamplerAnalysis::UpdateMass(partName);}
+      if (!primaryParticleName.empty())
+        {SamplerAnalysis::UpdateMass(primaryParticleName);}
       else
         {SamplerAnalysis::UpdateMass(pa);}
     }
