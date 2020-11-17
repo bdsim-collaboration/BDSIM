@@ -27,9 +27,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventAnalysis.hh"
 #include "RBDSException.hh"
 
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventOptions.hh"
 
+#include "Beam.hh"
 #include "Options.hh"
 
 #include "TFile.h"
@@ -87,8 +89,16 @@ int main(int argc, char* argv[])
     {std::cerr << error.what(); exit(1);}
   catch (const std::exception& error)
     {std::cerr << error.what(); exit(1);}
+
+  // beam required to get the mass of the primary particle in EventAnalysis
+  Beam* beam = dl->GetBeam();
+  TChain*  beamTree = dl->GetBeamTree();
+  BDSOutputROOTEventBeam* outputBeam = beam->beam;
+  beamTree->GetEntry(0);
+  const std::string& particleName = outputBeam->particle;
+
   EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
-						 false, true, false, -1, emittanceOnFly);
+						 false, true, false, -1, emittanceOnFly, 0, -1, particleName);
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
