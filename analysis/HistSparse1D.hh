@@ -58,18 +58,18 @@ public:
   {
     double sumWeights = 0;
     double sumWeightsSquared = 0;
-    
-    void operator+ (const BinWorking& other)
+  
+    friend BinWorking operator+(BinWorking& lhs,        // passing lhs by value helps optimize chained a+b+c
+                                const BinWorking& rhs) // otherwise, both parameters may be const references
     {
-      auto result = BinWorking(other);
-      result.sumWeights + sumWeights;
-      result.sumWeightsSquared + sumWeightsSquared;
-      return result;
+      lhs += rhs; // reuse compound assignment
+      return lhs;
     }
-    void operator+= (const BinWorking& other)
+    BinWorking& operator+=(const BinWorking& rhs)
     {
-      sumWeights += other.sumWeights;
-      sumWeightsSquared += other.sumWeightsSquared;
+      sumWeights += rhs.sumWeights;
+      sumWeightsSquared += rhs.sumWeightsSquared;
+      return *this;
     }
   };
 
@@ -92,7 +92,12 @@ public:
   {
     std::map<T, Bin> result;
     for (const auto& kv : data)
-      {result[kv.first] = Bin {kv.second.sumWeights, std::sqrt(kv.second.sumWeightsSquared)};}
+    {
+      Bin v;
+      v.value = kv.second.sumWeights;
+      v.error = std::sqrt(kv.second.sumWeightsSquared);
+      result[kv.first] = v;
+    }
     return result;
   };
   

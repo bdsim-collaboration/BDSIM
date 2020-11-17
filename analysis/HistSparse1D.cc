@@ -29,3 +29,5 @@ HistSparse1D<T>::HistSparse1D():
 template<class T>
 HistSparse1D<T>::~HistSparse1D()
 {;}
+
+template class HistSparse1D<long long int>;
