@@ -153,6 +153,8 @@ Bug Fixes
 * Throw an error if a sampler placement has a conflicting name with something already in the output rather
   than potentially just overwrite it or it not appear properly.
 * Fix the field from E and EM fields when they were offset with respect to a beam line element.
+* Fixed bug when not storing primaries using the option `storePrimaries` where the primary branch was added to
+  the sampler list and therefore appeared empty in the output. This consequently caused rebdsimOptics to segfault.
   
 Output Changes
 --------------

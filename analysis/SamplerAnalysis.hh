@@ -57,7 +57,11 @@ public:
   /// Accessor for optical functions
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
+  /// Set primary particle mass for optical functions from sampler data
   static void UpdateMass(SamplerAnalysis* s);
+
+  /// Set primary particle mass for optical functions from particle name
+  static void UpdateMass(const std::string& particleName);
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
