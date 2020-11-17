@@ -23,20 +23,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TH1D.h"
 
+#include <map>
 
 class TList;
-class TGraph;
-class TMultiGraph;
 class TPad;
 
 class TH1Set: public TH1D
 {
 public:
+  typedef HistSparse1D<long long int> HistSparse;
   TH1Set();
   TH1Set(const char* name, const char* title);
   virtual ~TH1Set();
 
-  const HistSparse1D<long long int>& HistSparse1D() const {return data;}
+  const HistSparse& HistSparse1D() const {return data;}
 
   virtual Int_t Fill(Double_t x) {return Fill(x,1.0);}
   virtual Int_t Fill(Double_t x, Double_t w);
@@ -49,9 +49,8 @@ public:
   Double_t GetBinErrorByAbscissa(long long int x) const;
   void     SetBinContentByAbscissa(long long int x, Double_t newValue);
   void     SetBinErrorByAbscissa(long long int x, Double_t newError);
-
   
-  ::HistSparse1D<long long int> data;
+  HistSparse data;
   std::map<long long int, Int_t> abscissaToBinIndex;
   
   /*
@@ -76,8 +75,7 @@ virtual void SetBinContent(Int_t bin, Double_t content);
 virtual void SetBinError(Int_t bin, Double_t error);
 virtual void GetStats(Double_t *stats) const;
 */
-
-   ClassDef(TH1Set,1)
+  ClassDef(TH1Set,1)
 };
 
 #endif
