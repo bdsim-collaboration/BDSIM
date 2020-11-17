@@ -19,6 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef HISTSPARSE1D_H
 #define HISTSPARSE1D_H
 
+#include "Rtypes.h"
+#include "TObject.h"
+
 #include <cmath>
 #include <map>
 #include <string>
@@ -38,21 +41,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 template<class T>
-class HistSparse1D
+class HistSparse1D: public TObject
 {
 public:
   /// Public constructor only for compatibility with ROOT - not intended for use.
-  HistSparse1D():
-    name("sparse_hist"),
-    entries(0)
-  {;}
+  HistSparse1D();
 
   /// Use this constructor.
   explicit HistSparse1D(const std::string& nameIn):
     name(nameIn),
     entries(0)
   {;}
-  ~HistSparse1D(){;}
+  virtual ~HistSparse1D();
   
   struct BinWorking
   {
@@ -95,6 +95,8 @@ public:
   std::string name;
   std::map<T, BinWorking> data;
   long long int entries;
+
+  ClassDef(HistSparse1D,1);
 };
 
 #endif
