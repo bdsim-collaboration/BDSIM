@@ -54,6 +54,8 @@ void BDSOutputROOTEventHeader::FlushLocal()
   combinedFiles.clear();
   nTrajectoryFilters = BDS::NTrajectoryFilters;
   trajectoryFilters.clear();
+  skimmedFile   = false;
+  nOriginalEvents = 0;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;

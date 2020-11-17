@@ -101,6 +101,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   energyDepositedWorld(0),
   energyDepositedWorldContents(0),
   energyDepositedTunnel(0),
+  energyImpactingAperture(0),
   energyWorldExit(0),
   nCollimatorsInteracted(0)
 {
@@ -295,6 +296,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyDepositedWorld         = 0;
   energyDepositedWorldContents = 0;
   energyDepositedTunnel        = 0;
+  energyImpactingAperture      = 0;
   energyWorldExit              = 0;
   nCollimatorsInteracted       = 0;
   
@@ -613,6 +615,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorldContents = energyDepositedWorldContents;
   evtInfo->energyDepositedTunnel        = energyDepositedTunnel;
   evtInfo->energyWorldExit              = energyWorldExit;
+  evtInfo->energyImpactingAperture      = energyImpactingAperture;
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
   evtInfo->energyTotal =  energyDeposited
@@ -898,14 +901,18 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
 
   G4int nPrimaryImpacts = 0;
   G4int nHits = hits->entries();
+  G4int histIndex = histIndices1D["PFirstAI"];
   for (G4int i = 0; i < nHits; i++)
     {
       const BDSHitApertureImpact* hit = (*hits)[i];
+      G4double eW = (hit->totalEnergy / CLHEP::GeV) * hit->weight;
+      energyImpactingAperture += eW;
       if (hit->parentID == 0)
 	{
 	  nPrimaryImpacts += 1;
+	  // only store one primary aperture hit in this histogram even if they were multiple
 	  if (storeApertureImpactsHistograms && nPrimaryImpacts == 1)
-	    {evtHistos->Fill1DHistogram(histIndices1D["PFirstAI"], hit->S / CLHEP::m);}
+	    {evtHistos->Fill1DHistogram(histIndex, hit->S / CLHEP::m);}
         }
       // hits are generated in order as the particle progresses
       // through the model, so the first one in the collection
