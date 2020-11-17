@@ -53,7 +53,8 @@ public:
 		double   printModuloFraction = 0.01,
 		bool     emittanceOnTheFlyIn = false,
 		long int eventStartIn        = 0,
-		long int eventEndIn          = -1);
+		long int eventEndIn          = -1,
+		const std::string& primaryParticleName = "");
 
   virtual ~EventAnalysis() noexcept;
 

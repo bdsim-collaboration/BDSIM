@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 #include <string>
 #include <stdexcept>
+#include <typeinfo>
 
 void Query(BDSFieldMag* field,
 	   G4double ymin, G4double ymax, G4double xmin, G4double xmax,
