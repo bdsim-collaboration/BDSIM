@@ -14,3 +14,6 @@ target_link_libraries(BDSInterpolatorTester ${BDSIM_LIB_NAME} gmadShared)
 
 add_subdirectory(TrackingTestFiles)
 
+
+add_executable(TH1SetTest TH1SetTest.cc)
+target_link_libraries(TH1SetTest ${BDSIM_LIB_NAME} ${ROOT_LIBRARIES} rebdsim)
