@@ -75,6 +75,9 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Description**                                                    |
 +====================================+====================================================================+
+| autoColourWorldGeometryFile        | Boolean whether to automatically colour geometry loaded from the   |
+|                                    | worldGeometryFile. Default true.                                   |
++------------------------------------+--------------------------------------------------------------------+
 | beamPipeIsInfiniteAbsorber         | When turned on, all particles that hit the material of the beam    |
 |                                    | pipe are killed and the energy recorded as being deposited there.  |
 +------------------------------------+--------------------------------------------------------------------+
@@ -85,6 +88,8 @@ New Features
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
+| physicsVerbosity                   | Set the physics verbosity for Geant4 (0,1,2).                      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
 |                                    | `PFirstAI`, on by default.                                         |
@@ -104,6 +109,10 @@ New Features
 | storeTrajectoryStepPointLast       | Boolean. If true, and used in combination with the option          |
 |                                    | `storeTrajectoryStepPoints`, the end point of the trajectory is    |
 |                                    | also stored.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
+|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
+|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
 
 
