@@ -66,11 +66,21 @@ Int_t TH1Set::Fill(Double_t x, Double_t w)
   return bin;
 }
 
+void TH1Set::DoFillN(Int_t ntimes, const Double_t *x, const Double_t *w, Int_t stride)
+{
+  ntimes *= stride;
+  for (Int_t i=0;i<ntimes;i+=stride)
+  {
+    Fill(x[i], w[i]);
+  }
+}
+
 Int_t TH1Set::AddNewBin(long long int x)
 {
   Int_t nBinsNew = fXaxis.GetNbins()+1;
   fXaxis.Set(nBinsNew, fXaxis.GetXmin(), fXaxis.GetXmax()+1);
   abscissaToBinIndex[x] = nBinsNew;
+  fNcells += 1;
   return nBinsNew;
 }
 
