@@ -652,8 +652,10 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
 
   // extra information
   if (storeSamplerIon)
-  for (auto& sampler : samplerTrees)
-    {sampler->FillIon();}
+    {
+      for (auto& sampler : samplerTrees)
+	{sampler->FillIon();}
+    }
 }
 
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,
