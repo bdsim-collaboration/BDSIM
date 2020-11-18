@@ -309,6 +309,7 @@ namespace GMAD
     bool        storeElossPhysicsProcesses;
     bool        storeParticleData;
     bool        storePrimaries;
+    bool        storePrimaryHistograms;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
