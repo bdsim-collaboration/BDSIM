@@ -160,8 +160,9 @@ void Event::SetBranchAddress(TTree* t,
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
-  // turn off all branches except standard output branches.
-  t->SetBranchStatus("*", 0);
+  // turn off all branches by default and build up by turning things back on
+  // loop speed is dependent on how much we load each event -> only what we need
+  t->SetBranchStatus("*", false);
 
   int nCollimatorsToTurnOn = 0;
   int ithCollimator = 0;
@@ -310,7 +311,7 @@ void Event::SetBranchAddress(TTree* t,
 	  samplerMap[sampName] = Samplers[i];// cache the sampler in a map
 	    
 	  t->SetBranchAddress(sampName.c_str(), &Samplers[i]);
-	  t->SetBranchStatus((sampName+"*").c_str(), 1);
+	  t->SetBranchStatus((sampName+"*").c_str(), true);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNamesIn)[i] << " " << Samplers[i] << std::endl;}
 	}
