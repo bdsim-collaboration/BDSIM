@@ -110,9 +110,8 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeApertureImpacts       = g->StoreApertureImpacts();
-  storeApertureImpactsHistograms = storeApertureImpacts || g->StoreApertureImpactsHistograms() ||
-    g->StoreApertureImpactsAll() || g->StoreApertureImpactsIons();
-  storeCollimatorInfo = g->StoreCollimatorInfo();
+  storeApertureImpactsHistograms = g->StoreApertureImpactsHistograms();
+  storeCollimatorInfo        = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
   // store primary hits if ion hits or links hits are turned on
