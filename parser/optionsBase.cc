@@ -272,6 +272,7 @@ OptionsBase::OptionsBase()
   storeElossPhysicsProcesses = false;
   storeParticleData          = true;
   storePrimaries             = true;
+  storePrimaryHistograms     = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 0;
