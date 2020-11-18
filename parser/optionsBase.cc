@@ -122,7 +122,7 @@ OptionsBase::OptionsBase()
   vhRatio                    = -1;
   coilWidthFraction          = -1;
   coilHeightFraction         = -1;
-  ignoreLocalMagnetGeometry  = 0;
+  ignoreLocalMagnetGeometry  = false;
 
   preprocessGDML       = true;
   preprocessGDMLSchema = true;
