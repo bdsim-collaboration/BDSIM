@@ -14,6 +14,7 @@ combined-ana.root - from rebdsimCombine combined-ana.root ana1.root ana2.root
 output.seedstate.txt - example ascii seed state information
 
 fodo.root - generated from originalmodels/fodo.gmad with seed 456, 100 particles
+fodo-no-primaries - generated from originalmodels/fodo-no-primaries.gmad with seed 654, 100 particles
 
 optics.root - generated from fodo.root
 
