@@ -99,7 +99,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
 {
   if (override)
     {
-      for (auto const key : optionsIn.setKeys)
+      for (auto const& key : optionsIn.setKeys)
 	{
 	  try
 	    {
@@ -115,7 +115,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
     }
   else
     {// don't override - ie give preference to ones set in this instance
-      for (auto const key : optionsIn.setKeys)
+      for (auto const& key : optionsIn.setKeys)
 	{
 	  auto const& ok = setKeys; // shortcut
 	  auto result = std::find(ok.begin(), ok.end(), key);
@@ -136,7 +136,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
     }
 }
 
-bool Options::HasBeenSet(std::string name) const
+bool Options::HasBeenSet(const std::string& name) const
 {
   return std::find(setKeys.begin(), setKeys.end(), name) != setKeys.end();
 }
