@@ -318,6 +318,13 @@ void Event::SetBranchAddress(TTree* t,
     }
 }
 
+RBDS::VectorString Event::RemoveDuplicates(const RBDS::VectorString& namesIn) const
+{
+  std::set<std::string> namesSet(namesIn.begin(), namesIn.end());
+  auto namesUnique = RBDS::VectorString(namesSet.begin(), namesSet.end());
+  return namesUnique;
+}
+
 void Event::RegisterCollimator(std::string collimatorName)
 {
   // be careful of push_back to collimators vector as this might invalidate
