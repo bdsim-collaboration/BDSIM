@@ -369,6 +369,8 @@ void Options::PublishMembers()
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
 
+  publish("storeMinimalData",               &Options::storeMinimalData);
+  
   publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
