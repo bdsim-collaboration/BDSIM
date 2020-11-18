@@ -279,12 +279,16 @@ details.
 ^^^^^^^^^^^^^^^^^^^
 
 Aperture impacts are the location a particle hits the inside of the aperture (identified as a particle
-going away from the beam axis in the beam pipe). By default, this information is turned **on** but
-only for the primary particle(s) as this is a relatively small but useful piece of information. This
-information can be provided for not just the primary but for all ions with the option
+going away from the beam axis in the beam pipe). By default, this information is turned **on** and
+store in the Event tree as a branch called :code:`ApertureImpacts`. By default it only stores hits for
+the primary particle(s) as this is a relatively small but useful piece of information. A per-event
+histogram is also stored by default for the (unweighted) primary aperture impacts versus S.
+
+This information can be provided for not just the primary but for all ions with the option
 :code:`storeApertureImpactsIons=1`, or for all particles with the option :code:`storeApertureImpactsAll=1`.
 
 * The aperture impacts can be turned off with :code:`option, storeApertureImpacts=0;`.
+* The aperture impacts histogram can be turned off with :code:`option, storeApertureImpactsHistograms=0;`.
 * There are currently no walls between beam pipes with large aperture changes so particles may
   not register as impacting here (being developed).
 * Even for 1 primary particle, there may be **more** than 1 aperture impact (per event) because
