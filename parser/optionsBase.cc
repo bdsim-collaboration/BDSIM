@@ -240,6 +240,8 @@ OptionsBase::OptionsBase()
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
 
+  storeMinimalData = false;
+  
   storeApertureImpacts       = true;
   storeApertureImpactsHistograms = true;
   storeApertureImpactsIons   = false;

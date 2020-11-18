@@ -77,7 +77,7 @@ private:
   static BDSGlobalConstants* instance;
 
   /// Options instance that this is largely based on and extends
-  const GMAD::Options& options;
+  GMAD::Options options;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
@@ -199,6 +199,7 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
+  inline G4bool   StoreMinimalData()         const {return G4bool  (options.storeMinimalData);}
   inline G4bool   StorePrimaries()           const {return G4bool  (options.storePrimaries);}
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
