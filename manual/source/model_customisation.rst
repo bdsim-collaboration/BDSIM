@@ -1715,7 +1715,7 @@ and attach these to the beam line elements desired.  For example::
 The following parameters are available in the `cutsregion` object:
 
 +--------------------+----------------------------------------+
-| **Parmater**       | **Description**                        |
+| **Parameter**      | **Description**                        |
 +====================+========================================+
 | defaultRangeCut    | The default range cut for this object. |
 +--------------------+----------------------------------------+
