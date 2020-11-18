@@ -2404,7 +2404,7 @@ with the following options.
 |                                    | `PFirstAI`.  This will automatically be on if                      |
 |                                    | `storeApertureImpacts` is on, and is on by default otherwise.      |
 |                                    | If both this and `storeApertureImpacts` is off, no aperture        |
-|                                    | impact hits will be generating and will save some memory.          |
+|                                    | impact hits will be generated and will save memory during the run. |
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |

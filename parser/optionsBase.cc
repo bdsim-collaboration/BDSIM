@@ -109,7 +109,7 @@ OptionsBase::OptionsBase()
 
   eventNumberOffset       = 0;
 
-  // general geometrical prameters
+  // general geometrical parameters
   checkOverlaps           = false;
   xsize=0.0, ysize=0.0;
 
@@ -118,7 +118,7 @@ OptionsBase::OptionsBase()
   outerMaterialName          = "iron";
   horizontalWidth            = 0.6;
   thinElementLength          = 1e-7;
-  hStyle                     = false; // vhRatio < 0 as signal to use geometry factory defautl
+  hStyle                     = false; // vhRatio < 0 as signal to use geometry factory default
   vhRatio                    = -1;
   coilWidthFraction          = -1;
   coilHeightFraction         = -1;
@@ -329,12 +329,12 @@ OptionsBase::OptionsBase()
 
 void OptionsBase::print() const
 {
-  std::cout<<"Options                 " << std::endl;
-  std::cout<<"n particles           : " << nGenerate                << std::endl;
-  std::cout<<"BV sign               : " << ffact                    << std::endl;
-  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption  << std::endl;
-  std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
-  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;
-  std::cout<<"Optical surface on    : " << turnOnOpticalSurface     << std::endl;
+  std::cout<<"Options                  " << std::endl;
+  std::cout<<"n particles            : " << nGenerate                << std::endl;
+  std::cout<<"BV sign                : " << ffact                    << std::endl;
+  std::cout<<"Optical absorption on  : " << turnOnOpticalAbsorption  << std::endl;
+  std::cout<<"Mie scattering on      : " << turnOnMieScattering      << std::endl;
+  std::cout<<"Rayleigh scattering on : " << turnOnRayleighScattering << std::endl;
+  std::cout<<"Optical surface on     : " << turnOnOpticalSurface     << std::endl;
 }
 

@@ -108,7 +108,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
         }
 	  catch (const std::runtime_error&)
 	    {
-	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      std::cerr << "Error: Amalgamate unknown option \"" << key << "\"" << std::endl;
 	      exit(1);
 	    }
 	}
@@ -128,7 +128,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
         }
 	      catch (const std::runtime_error&)
 		{
-		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  std::cerr << "Error: Amalgamate unknown option \"" << key << "\"" << std::endl;
 		  exit(1);
 		}
 	    }
@@ -246,8 +246,8 @@ void Options::PublishMembers()
   publish("magnetGeometryType",   &Options::magnetGeometryType);
   publish("outerMaterial",        &Options::outerMaterialName);
   publish("horizontalWidth",      &Options::horizontalWidth);
-  publish("outerDiameter",        &Options::horizontalWidth); // for backwards compatability
-  publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
+  publish("outerDiameter",        &Options::horizontalWidth); // for backwards compatibility
+  publish("boxSize",              &Options::horizontalWidth); // for backwards compatibility
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
@@ -293,9 +293,9 @@ void Options::PublishMembers()
   publish("tunnelFloorOffset",   &Options::tunnelFloorOffset);
   publish("tunnelAper1",         &Options::tunnelAper1);
   publish("tunnelAper2",         &Options::tunnelAper2);
-  publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatability
+  publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatibility
   publish("tunnelVisible",       &Options::tunnelVisible);
-  publish("showTunnel",          &Options::tunnelVisible); // for backwards compatability
+  publish("showTunnel",          &Options::tunnelVisible); // for backwards compatibility
   publish("tunnelOffsetX",       &Options::tunnelOffsetX);
   publish("tunnelOffsetY",       &Options::tunnelOffsetY);
 
@@ -320,7 +320,7 @@ void Options::PublishMembers()
   publish("prodCutElectrons",            &Options::prodCutElectrons);
   publish("prodCutPositrons",            &Options::prodCutPositrons);
   publish("prodCutProtons",              &Options::prodCutProtons);
-  publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatability
+  publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatibility
   publish("neutronTimeLimit",            &Options::neutronTimeLimit);
   publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
   publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
