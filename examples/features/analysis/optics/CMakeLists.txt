@@ -1,4 +1,5 @@
-rebdsim_optics_test(analysis-optics ../../data/fodo.root optics.root)
+rebdsim_optics_test(analysis-optics            ../../data/fodo.root            optics.root)
+rebdsim_optics_test(analysis-optics-no-primary ../../data/fodo-no-primary.root optics-no-primary.root)
 
 # manual test for incorrect number of arguments and a fail
 add_test(NAME analysis-optics-incorrect-arguments  COMMAND rebdsimOptics)

@@ -1,0 +1,3 @@
+include fodo.gmad;
+
+option, storePrimaries=0;
