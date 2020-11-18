@@ -131,12 +131,14 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   storeParticleData          = g->StoreParticleData();
   storeModel                 = g->StoreModel();
   storePrimaries             = g->StorePrimaries();
+  storePrimaryHistograms     = g->StorePrimaryHistograms();
   storeSamplerPolarCoords    = g->StoreSamplerPolarCoords();
   storeSamplerCharge         = g->StoreSamplerCharge();
   storeSamplerKineticEnergy  = g->StoreSamplerKineticEnergy();
   storeSamplerMass           = g->StoreSamplerMass();
   storeSamplerRigidity       = g->StoreSamplerRigidity();
   storeSamplerIon            = g->StoreSamplerIon();
+  storeTrajectory            = g->StoreTrajectory();
   storeTrajectoryStepPoints  = g->StoreTrajectoryStepPoints();
   storeTrajectoryStepPointLast = g->StoreTrajectoryStepPointLast();
   
@@ -438,8 +440,11 @@ void BDSOutput::CreateHistograms()
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax);
-  histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax);
+  if (storePrimaryHistograms)
+    {
+      histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax);
+      histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax);
+    }
   if (storeELossHistograms)
     {histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",nbins,smin,smax);}
   // prepare bin edges for a by-element histogram
@@ -450,12 +455,15 @@ void BDSOutput::CreateHistograms()
   else
     {binedges = {0,1};}
   // create per element ("pe") bin width histograms
-  histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto",
-					       "Primary Hits per Element",
-					       binedges);
-  histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto",
-					       "Primary Loss per Element",
-					       binedges);
+  if (storePrimaryHistograms)
+    {
+      histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto",
+						   "Primary Hits per Element",
+						   binedges);
+      histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto",
+						   "Primary Loss per Element",
+						   binedges);
+    }
   if (storeELossHistograms)
     {
       histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto",
@@ -809,31 +817,38 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
 {
   pFirstHit->Fill(phit);
   const G4double preStepSPosition = phit->GetPreS() / CLHEP::m;
-  runHistos->Fill1DHistogram(histIndices1D["Phits"],   preStepSPosition);
-  evtHistos->Fill1DHistogram(histIndices1D["Phits"],   preStepSPosition);
-  runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
-  evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
-  
-  if (storeCollimatorInfo && nCollimators > 0)
-    {CopyFromHistToHist1D("PhitsPE", "CollPhitsPE", collimatorIndices);}
+  if (storePrimaryHistograms)
+    {
+      runHistos->Fill1DHistogram(histIndices1D["Phits"], preStepSPosition);
+      evtHistos->Fill1DHistogram(histIndices1D["Phits"], preStepSPosition);
+      runHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
+      evtHistos->Fill1DHistogram(histIndices1D["PhitsPE"], preStepSPosition);
+      
+      if (storeCollimatorInfo && nCollimators > 0)
+	{CopyFromHistToHist1D("PhitsPE", "CollPhitsPE", collimatorIndices);}
+    }
 }
 
 void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 {
   pLastHit->Fill(ploss);
   const G4double postStepSPosition = ploss->GetPostS() / CLHEP::m;
-  runHistos->Fill1DHistogram(histIndices1D["Ploss"],   postStepSPosition);
-  evtHistos->Fill1DHistogram(histIndices1D["Ploss"],   postStepSPosition);
-  runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
-  evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
-
-  if (storeCollimatorInfo && nCollimators > 0)
-    {CopyFromHistToHist1D("PlossPE", "CollPlossPE", collimatorIndices);}
+  if (storePrimaryHistograms)
+    {
+      runHistos->Fill1DHistogram(histIndices1D["Ploss"], postStepSPosition);
+      evtHistos->Fill1DHistogram(histIndices1D["Ploss"], postStepSPosition);
+      runHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
+      evtHistos->Fill1DHistogram(histIndices1D["PlossPE"], postStepSPosition);
+      
+      if (storeCollimatorInfo && nCollimators > 0)
+	{CopyFromHistToHist1D("PlossPE", "CollPlossPE", collimatorIndices);}
+    }
 }
 
 void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 {
-  traj->Fill(trajectories, storeTrajectoryStepPoints, storeTrajectoryStepPointLast);
+  if (storeTrajectory)
+    {traj->Fill(trajectories, storeTrajectoryStepPoints, storeTrajectoryStepPointLast);}
 }
 
 void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
