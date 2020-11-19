@@ -78,8 +78,9 @@ BDSSDManager::BDSSDManager()
   storeApertureImpactsAll  = g->StoreApertureImpactsAll();
   storeApertureImpactsIons = g->StoreApertureImpactsIons();
   apertureImpactsMinimumKE = g->ApertureImpactsMinimumKE();
-  generateELossHits        = g->StoreELoss() || g->StoreELossHistograms();
-  generateELossVacuumHits  = g->StoreELossVacuum() || g->StoreELossVacuumHistograms(); generateELossTunnelHits  = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
+  generateELossHits        = g->StoreELoss() || g->StoreELossHistograms() || g->StoreRunLevelHistograms();
+  generateELossVacuumHits  = g->StoreELossVacuum() || g->StoreELossVacuumHistograms();
+  generateELossTunnelHits  = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
 
   generateELossWorldContents = g->UseImportanceSampling() || g->StoreELossWorldContents();
   

@@ -281,6 +281,7 @@ private:
   G4int nbins;
 
   /// @{ Storage option.
+  G4bool storeRunLevelHistograms;
   G4bool storeCollimatorInfo;
   G4bool storeCollimatorHits;
   G4bool storeCollimatorHitsLinks;
@@ -316,14 +317,25 @@ private:
   G4int    nCollimatorsInteracted;
   /// @}
 
+  struct HistIndexUnit
+  {
+    G4int    index;
+    G4double unit;
+  };
+
+  std::map<G4String, HistIndexUnit> histIndices1DEvt;
+  std::map<G4String, HistIndexUnit> histIndices1DRun;
+  std::map<G4String, HistIndexUnit> histIndices3DEvt;
+  std::map<G4String, HistIndexUnit> histIndices3DRun;
+
   /// @{ Map of histogram name (short) to index of histogram in output.
-  std::map<G4String, G4int> histIndices1D;
-  std::map<G4String, G4int> histIndices3D;
-  std::map<G4String, BDSHistBinMapper3D> scorerCoordinateMaps;
+  //std::map<G4String, G4int> histIndices1D;
+  //std::map<G4String, G4int> histIndices3D;
   /// @}
+  std::map<G4String, BDSHistBinMapper3D> scorerCoordinateMaps;
 
   /// Map containing some histogram units. Not all will be filled, so the utility
-  /// function GetWithDef should be used.
+  /// function BDS::MapGetWithDefault() should be used.
   std::map<G4int, G4double> histIndexToUnits1D;
   std::map<G4int, G4double> histIndexToUnits3D;
 };

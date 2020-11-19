@@ -109,6 +109,8 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   numberEventPerFile = g->NumberOfEventsPerNtuple();
   useScoringMap      = g->UseScoringMap();
 
+  storeRunLevelHistograms    = g->StoreRunLevelHistograms();
+
   storeApertureImpacts       = g->StoreApertureImpacts();
   storeApertureImpactsHistograms = g->StoreApertureImpactsHistograms();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
@@ -428,64 +430,57 @@ void BDSOutput::CalculateHistogramParameters()
 
 void BDSOutput::CreateHistograms()
 {
-  // construct output histograms
-  // calculate histogram dimensions
   CalculateHistogramParameters();
   const G4double smin   = 0.0;
   const G4double smax   = sMaxHistograms / CLHEP::m;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
-  G4cout << "s minimum: " << smin     << " m" << G4endl;
-  G4cout << "s maximum: " << smax     << " m" << G4endl;
-  G4cout << "# of bins: " << nbins    << G4endl;
-#endif
-  // create the histograms
+  
   if (storePrimaryHistograms)
     {
-      histIndices1D["Phits"] = Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax);
-      histIndices1D["Ploss"] = Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax);
+      histIndices1DEvt["Phits"] = {Create1DHistogramEvent("PhitsHisto", "Primary Hits", nbins, smin, smax), 1.0};
+      histIndices1DEvt["Ploss"] = {Create1DHistogramEvent("PlossHisto", "Primary Loss", nbins, smin, smax), 1.0};
+    }
+  if (storeRunLevelHistograms)
+    {
+      histIndices1DRun["Phits"] = {Create1DHistogramRun("PhitsHisto", "Primary Hits", nbins, smin, smax), 1.0};
+      histIndices1DRun["Ploss"] = {Create1DHistogramRun("PlossHisto", "Primary Loss", nbins, smin, smax), 1.0};
     }
   if (storeELossHistograms)
-    {histIndices1D["Eloss"] = Create1DHistogram("ElossHisto","Energy Loss",nbins,smin,smax);}
-  // prepare bin edges for a by-element histogram
+    {histIndices1DEvt["Eloss"] = {Create1DHistogramEvent("ElossHisto", "Energy Loss", nbins, smin, smax), 1.0};
+  if (storeRunLevelHistograms)
+    {histIndices1DRun["Eloss"] = {Create1DHistogramRun("ElossHisto", "Energy Loss", nbins, smin, smax), 1.0};}
+
+  // prepare bin edges for a per element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (flatBeamline) // can be nullptr in case of generate primaries only
     {binedges = flatBeamline->GetEdgeSPositions();}
   else
     {binedges = {0,1};}
+  
   // create per element ("pe") bin width histograms
   if (storePrimaryHistograms)
     {
-      histIndices1D["PhitsPE"] = Create1DHistogram("PhitsPEHisto",
-						   "Primary Hits per Element",
-						   binedges);
-      histIndices1D["PlossPE"] = Create1DHistogram("PlossPEHisto",
-						   "Primary Loss per Element",
-						   binedges);
+      histIndices1DEvt["PhitsPE"] = {Create1DHistogramEvent("PhitsPEHisto", "Primary Hits per Element", binedges), 1.0};
+      histIndices1DEvt["PlossPE"] = {Create1DHistogramEvent("PlossPEHisto", "Primary Loss per Element", binedges), 1.0};
+    }
+  if (storeRunLevelHistograms)
+    {
+      histIndices1DRun["PhitsPE"] = {Create1DHistogramRun("PhitsPEHisto", "Primary Hits per Element", binedges), 1.0};
+      histIndices1DRun["PlossPE"] = {Create1DHistogramRun("PlossPEHisto", "Primary Loss per Element", binedges), 1.0};
     }
   if (storeELossHistograms)
-    {
-      histIndices1D["ElossPE"] = Create1DHistogram("ElossPEHisto",
-						   "Energy Loss per Element" ,
-						   binedges);
-    }
+    {histIndices1DEvt["ElossPE"] = {Create1DHistogramEvent("ElossPEHisto", "Energy Loss per Element", binedges), 1.0};}
+  if (storeRunLevelHistograms)
+    {histIndices1DRun["ElossPE"] = {Create1DHistogramRun("ElossPEHisto", "Energy Loss per Element", binedges), 1.0};}
   if (storeELossVacuumHistograms)
-    {
-      histIndices1D["ElossVacuum"] = Create1DHistogram("ElossVacuumHisto",
-						       "Energy Loss in Vacuum",
-						       nbins,smin,smax);
-      histIndices1D["ElossVacuumPE"] = Create1DHistogram("ElossVaccumPEHisto",
-							 "Energy Loss in Vacuum per Element" ,
-							 binedges);
-    }
+    {histIndices1DEvt["ElossVacuum"] = {Create1DHistogramEvent("ElossVacuumHisto", "Energy Loss in Vacuum", nbins, smin, smax), 1.0};}
+  if (storeRunLevelHistograms)
+    {histIndices1DRun["ElossVacuumPE"] = {Create1DHistogramRun("ElossVaccumPEHisto", "Energy Loss in Vacuum per Element" , binedges), 1.0};}
 
   if (storeApertureImpactsHistograms)
-    {
-      histIndices1D["PFirstAI"] = Create1DHistogram("PFirstAIHisto",
-						    "Primary aperture impacts",
-						    nbins, smin, smax);
-    }
+    {histIndices1DEvt["PFirstAI"] = {Create1DHistogramEvent("PFirstAIHisto", "Primary aperture impacts", nbins, smin, smax), 1.0};}
+  if (storeRunLevelHistograms)
+    {histIndices1DRun["PFirstAI"] = {Create1DHistogramRun("PFirstAIHisto", "Primary aperture impacts", nbins, smin, smax), 1.0};}
 
   // only create tunnel histograms if we build the tunnel
   const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
@@ -494,15 +489,24 @@ void BDSOutput::CreateHistograms()
       storeELossTunnel = false;
       storeELossTunnelHistograms = false;
     }
-  if (storeELossTunnelHistograms)
+  else
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
-      histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",
-						       "Energy Loss in Tunnel",
-						       nbins, smin,smax);
-      histIndices1D["ElossTunnelPE"] = Create1DHistogram("ElossTunnelPEHisto",
-							 "Energy Loss in Tunnel per Element",
-							 binedges);
+      if (storeELossTunnelHistograms)
+	{
+
+	  histIndices1DEvt["ElossTunnel"] = {Create1DHistogramEvent("ElossTunnelHisto", "Energy Loss in Tunnel",
+								    nbins, smin,smax), 1.0};
+	  histIndices1DEvt["ElossTunnelPE"] = {Create1DHistogramEvent("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element",
+								      binedges), 1.0};
+	}
+      if (storeRunLevelHistograms)
+      	{
+	  histIndices1DRun["ElossTunnel"] = {Create1DHistogramRun("ElossTunnelHisto", "Energy Loss in Tunnel",
+								  nbins, smin,smax), 1.0};
+	  histIndices1DRun["ElossTunnelPE"] = {Create1DHistogramRun("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element",
+								    binedges), 1.0};
+	}
     }
 
   if (storeCollimatorInfo && nCollimators > 0)
@@ -516,10 +520,11 @@ void BDSOutput::CreateHistograms()
 						   "Energy Loss per Collimator",
 						   "Primary Interacted per Collimator"};
       for (G4int i = 0; i < (G4int)collHistNames.size(); i++)
-	{
-	  histIndices1D[collHistNames[i]] = Create1DHistogram(collHistNames[i],
-							      collHistDesciptions[i],
-							      nCollimators, 0, nCollimators);
+	{// always store event and run level histograms in this case
+	  histIndices1DEvt[collHistNames[i]] = {Create1DHistogramEvent(collHistNames[i], collHistDesciptions[i],
+								       nCollimators, 0, nCollimators), 1.0};
+	  histIndices1DRun[collHistNames[i]] = {Create1DHistogramRun(collHistNames[i], collHistDesciptions[i],
+								     nCollimators, 0, nCollimators), 1.0};
 	}
     }
 
@@ -540,11 +545,17 @@ void BDSOutput::CreateHistograms()
       if (g->NBinsZ() <= 0)
 	{throw BDSException(__METHOD_NAME__, "invalid number of bins in z dimension of 3D scoring histogram - check option, nbinsx");}
 
-      G4int scInd = Create3DHistogram("ScoringMap", "Energy Deposition",
-						 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
-						 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
-						 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
-      histIndices3D["ScoringMap"] = scInd;
+      histIndices3DEvt["ScoringMap"] = {Create3DHistogramEvent("ScoringMap", "Energy Deposition",
+							       g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+							       g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+							       g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m), 1.0};
+      if (storeRunLevelHistograms)
+	{
+	  histIndices3DRun["ScoringMap"] = {Create3DHistogramRun("ScoringMap", "Energy Deposition",
+								 g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+								 g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+								 g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m), 1.0};
+	}
     }
 
   // scoring maps
@@ -555,12 +566,16 @@ void BDSOutput::CreateHistograms()
 	{
 	  const auto def = nameDef.second;
 	  // use safe output name without any slashes in the name
-	  G4int histID = Create3DHistogram(def.outputName, def.outputName,
-					   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-					   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-					   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
-	  histIndices3D[def.uniqueName] = histID;
-	  histIndexToUnits3D[histID] = def.primitiveScorerUnitValue;
+	  histIndices3DEvt[def.uniqueName] = {Create3DHistogramEvent(def.outputName, def.outputName,
+								     def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+								     def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+								     def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m),
+					      def.primitiveScorerUnitValue};
+	  histIndices3DRun[def.uniqueName] = {Create3DHistogramRun(def.outputName, def.outputName,
+								   def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+								   def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+								   def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m),
+					      def.primitiveScorerUnitValue};
 	  // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
 	  scorerCoordinateMaps.insert(std::make_pair(def.uniqueName, def.coordinateMapper));
 	}
@@ -597,16 +612,15 @@ void BDSOutput::CreateHistograms()
       
       // make BLM histograms and map the full collection name to that histogram ID for easy filling
       // at the end of event. Note, multiple collections may feed into the same histogram.
-      for (const auto &hn : blmHistoNames)
+      for (const auto& hn : blmHistoNames)
         {
           G4String blmHistName = "BLM_" + hn;
-          G4int hind = Create1DHistogram(blmHistName, blmHistName, nBLMs, 0, nBLMs);
-          histIndices1D[blmHistName] = hind;
-	      histIndexToUnits1D[hind]   = scorerUnits[hn];
+	  histIndices1DEvt[blmHistName] = {Create1DHistogramEvent(blmHistName, blmHistName, nBLMs, 0, nBLMs), scorerUnits[hn]};
+	  histIndices1DRun[blmHistName] = {Create1DHistogramRun(blmHistName, blmHistName, nBLMs, 0, nBLMs), scorerUnits[hn]};
           for (const auto& kv : psFullNameToPS)
             {
               if (hn == kv.second)
-                {blmCollectionNameToHistogramID[kv.first] = hind;}
+                {blmCollectionNameToHistogramID[kv.first] = histIndices1DEvt[blmHistName].index;}
             }
         }
     }
@@ -727,8 +741,15 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
   G4int nHits            = hits->entries();
   if (nHits == 0)
     {return;}
-  G4int indELoss         = histIndices1D["Eloss"];
-  G4int indELossPE       = histIndices1D["ElossPE"];
+  
+  // ascertain histogram indices outside for loop
+  G4int indELoss         = -1;
+  G4int indELossPE       = -1;
+  if (storeELossHistograms || storeRunLevelHistograms)
+    {
+      indELoss =   histIndices1D["Eloss"];
+      indELossPE = histIndices1D["ElossPE"];
+    }
   G4int indELossTunnel   = -1;
   G4int indELossTunnelPE = -1;
   if (storeELossTunnelHistograms)
