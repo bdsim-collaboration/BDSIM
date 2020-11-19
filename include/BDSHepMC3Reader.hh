@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSBunchEventGenerator;
 class G4Event;
+class G4VSolid;
 
 namespace HepMC3
 {
@@ -108,6 +109,7 @@ private:
   G4bool                    warnAboutSkippedParticles;
   BDSEventGeneratorFileType fileType;
   G4RotationMatrix          referenceBeamMomentumOffset;
+  mutable G4VSolid*         worldSolid;
 };
 
 #endif
