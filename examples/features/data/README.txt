@@ -3,6 +3,7 @@ Based on originalmodels/sc.gmad
 2 files of 10 events with seeds 123 and 321
 sample1.root - seed=123
 sample2.root - seed=321
+minimal-data.root - seed=123 - similar to sample1 but name different to avoid clashing with globbing in analysis files (sample*)
 
 analysisConfig.txt was used with rebdsim to generate the analysis output files
 
