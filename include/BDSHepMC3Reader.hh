@@ -63,7 +63,8 @@ public:
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
 		  BDSBunchEventGenerator* bunchIn,
-		  G4bool removeUnstableWithoutDecayIn = true);
+		  G4bool removeUnstableWithoutDecayIn = true,
+		  G4bool warnAboutSkippedParticlesIn  = true);
   virtual ~BDSHepMC3Reader();
 
   /// Accessor.
@@ -104,6 +105,7 @@ private:
   G4String                  fileName;
   BDSBunchEventGenerator*   bunch;
   G4bool                    removeUnstableWithoutDecay;
+  G4bool                    warnAboutSkippedParticles;
   BDSEventGeneratorFileType fileType;
   G4RotationMatrix          referenceBeamMomentumOffset;
 };

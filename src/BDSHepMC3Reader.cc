@@ -63,12 +63,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 				 const G4String& fileNameIn,
 				 BDSBunchEventGenerator* bunchIn,
-				 G4bool removeUnstableWithoutDecayIn):
+				 G4bool removeUnstableWithoutDecayIn,
+				 G4bool warnAboutSkippedParticlesIn):
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),
   bunch(bunchIn),
-  removeUnstableWithoutDecay(removeUnstableWithoutDecayIn)
+  removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
+  warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
@@ -255,8 +257,8 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       g4vtx->SetPrimary(g4prim);
     }
 
-  if (nParticlesSkipped > 0)
-    {G4cerr << __METHOD_NAME__ << nParticlesSkipped << " skipped." << G4endl;}
+  if (nParticlesSkipped > 0 && warnAboutSkippedParticles)
+    {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles skipped" << G4endl;}
   g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
   
   g4event->AddPrimaryVertex(g4vtx);

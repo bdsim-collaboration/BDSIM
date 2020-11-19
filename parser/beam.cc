@@ -305,4 +305,5 @@ void Beam::PublishMembers()
   publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK);
   publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK);
   publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
+  publish("eventGeneratorWarnSkippedParticles", &Beam::eventGeneratorWarnSkippedParticles);
 }
