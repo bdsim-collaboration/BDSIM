@@ -138,6 +138,7 @@ namespace GMAD
       double eventGeneratorMinEK;
       double eventGeneratorMaxEK;
       std::string eventGeneratorParticles;
+      bool   eventGeneratorWarnSkippedParticles;
       /// @}
     };
 }
