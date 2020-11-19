@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventAnalysis.hh"
 #include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogramSet.hh"
+#include "RBDSException.hh"
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
 
@@ -97,7 +98,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
       else if (pa)
         {SamplerAnalysis::UpdateMass(pa);}
       else
-	{throw std::string("No samplers and no particle name - unable to calculate optics without mass of particle");}
+	{throw RBDSException("No samplers and no particle name - unable to calculate optics without mass of particle");}
     }
   
   SetPrintModuloFraction(printModuloFraction);
