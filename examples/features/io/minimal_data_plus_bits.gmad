@@ -1,0 +1,11 @@
+include user_placed_sampler.gmad;
+
+sample, all;
+
+! turn most output off
+option, storeMinimalData=1;
+
+! turn on select things again
+option, storeModel=1,
+	storeELossHistograms=1,
+	storePrimaryHistograms=1;

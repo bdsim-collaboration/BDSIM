@@ -1,20 +1,9 @@
-d1: drift, l=20*cm;
-c1: rcol, l=1*cm, material="Al";
+! used for sample1.root
+include sc.gmad;
 
-l1: line=(d1,d1,c1,d1,d1);
-use, l1;
-
-beam, particle="e-",
-      kineticEnergy=1*GeV,
-      distrType="gauss",
-      sigmaX=1*cm,
-      sigmaXp=1e-4,
-      sigmaY=1*cm,
-      sigmaYp=1e-4;
-
-option, physicsList="em",
-	minimumKineticEnergy=10*MeV;
-
-sample, all;
+! counter options set in sc.gmad
+option, storeTrajectories=0,
+	storeElossTunnel=0,
+	storeElossWorld=0;
 
 option, storeMinimalData=1;
