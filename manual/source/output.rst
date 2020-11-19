@@ -1341,6 +1341,8 @@ T = float, i.e. float precision number is stored. BDSIM can be compiled with an 
 double precision output (useful typically only for development or precision testing) but this
 doubles the output file size.
 
+* :code:`T` is :code:`float` by default - optionally (at compile time) :code:``double`.
+
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +--------------------+-------------------+--------------------------------------------------------------------------+
