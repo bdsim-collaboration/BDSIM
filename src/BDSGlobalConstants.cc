@@ -153,7 +153,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
         {"storeELossHistograms",               &o.storeElossHistograms},
         {"storeParticleData",                  &o.storeParticleData},
         {"storePrimaries",                     &o.storePrimaries},
-        {"storePrimaryHistorams",              &o.storePrimaryHistograms},
+        {"storePrimaryHistograms",             &o.storePrimaryHistograms},
         {"storeTrajectory",                    &o.storeTrajectory},
         {"storeTrajectoryTransportationSteps", &o.storeTrajectoryTransportationSteps},
         {"storeModel",                         &o.storeModel}
