@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <string>
 #include <vector>
 
 ClassImp(EventAnalysis)
@@ -83,13 +84,18 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
 	  samplerAnalyses.push_back(sa);
 	}
       if (!event->UsePrimaries())
-	{pa = samplerAnalyses[0];}
+	{
+	  if (!samplerAnalyses.empty())
+	    {pa = samplerAnalyses[0];}
+	}
       
       chain->GetEntry(0);
       if (!primaryParticleName.empty())
         {SamplerAnalysis::UpdateMass(primaryParticleName);}
-      else
+      else if (pa)
         {SamplerAnalysis::UpdateMass(pa);}
+      else
+	{throw std::string("No samplers and no particle name - unable to calculate optics without mass of particle");}
     }
   
   SetPrintModuloFraction(printModuloFraction);
