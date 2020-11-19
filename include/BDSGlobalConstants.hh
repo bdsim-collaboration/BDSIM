@@ -93,6 +93,7 @@ public:
   // Executable options
   inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
   inline G4String Geant4MacroFileName()    const {return G4String(options.geant4MacroFileName);}
+  inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
