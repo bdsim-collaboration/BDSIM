@@ -227,7 +227,7 @@ void Event::SetBranchAddress(TTree* t,
 
       bool condition1 = ((*t).GetListOfBranches()->FindObject(name.c_str()))    != nullptr;
       bool condition2 = ((*t).GetListOfBranches()->FindObject(nameDot.c_str())) != nullptr;
-      // if we don't find the branch name (tolerate "." suffix) pass by (some branches are optional)
+      // if we don't find the branch name (tolerating "." suffix), so pass by (some branches are optional)
       if (! (condition1 || condition2) )
 	{
 	  if (debug)
