@@ -54,9 +54,11 @@ namespace HepMC3
 class BDSHepMC3Reader: public G4VPrimaryGenerator
 {
 public:
+  /// Do not require default constructor.
+  BDSHepMC3Reader() = delete;
   /// Constructor takes full distrType string including semicolon and
   /// eventgeneratorfile prefix. The filename is assumed to be correctly
-  /// prefixed if a relatie path already. The bunch definition is used
+  /// prefixed if a relative path already. The bunch definition is used
   /// for the reference coordinates and offset of the beam point.
   BDSHepMC3Reader(const G4String& distrType,
 		  const G4String& fileNameIn,
@@ -89,9 +91,7 @@ protected:
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
   
   // We  have to take care for the position of primaries because
-  // primary vertices outside the world voulme give rise to G4Execption.
-  // If the default implementation is not adequate, an alternative
-  // can be implemented in your own class.
+  // primary vertices outside the world volume would give rise to a G4Exception.
   virtual G4bool CheckVertexInsideWorld(const G4ThreeVector& pos) const;
   
   // Note that the life of HepMC event object must be handled by users.
@@ -100,9 +100,6 @@ protected:
   HepMC3::GenEvent* hepmcEvent; // (care for single event case only)
 
 private:
-  /// Do not require default constructor.
-  BDSHepMC3Reader() = delete;
-
   HepMC3::Reader*           reader;
   G4String                  fileName;
   BDSBunchEventGenerator*   bunch;
