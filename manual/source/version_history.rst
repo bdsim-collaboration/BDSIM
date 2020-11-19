@@ -28,7 +28,7 @@ New Features
 * Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
-
+* More granular control over output and a minimal output option.
 * Both the design and beam particle may now be specified by either :code:`energy` (total),
   :code:`kineticEnergy`, :code:`momentum` in the case of the design particle, or :code:`E0`,
   :code:`Ek0` and :code:`P0` in the case of the optional beam particle if different from
