@@ -136,7 +136,7 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 	      int particleID = std::stoi(particleIDStr);
 	      // we don't use the G4ParticleTable->FindParticle(int) because it unnecessarily
 	      // checks for physics readiness and throws an exception. here we just inspect
-	      // the encoding dictionary ourselve. it's all typedeffed but it's
+	      // the encoding dictionary ourselves. it's all typedeffed but it's
 	      // std::map<G4int, G4ParticleDefinition*>
 	      G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
 	      auto search = encoding->find(particleID);
