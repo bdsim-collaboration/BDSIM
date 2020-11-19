@@ -175,7 +175,7 @@ void BDSOutputStructures::InitialiseSamplers()
   if (!localSamplersInitialised)
     {
       localSamplersInitialised = true;
-      for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+      for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
 #ifndef __ROOTDOUBLE__
 	  BDSOutputROOTEventSampler<float>*  res = new BDSOutputROOTEventSampler<float>(samplerName);

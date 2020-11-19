@@ -277,6 +277,8 @@ namespace GMAD
     // output related options
     int         numberOfEventsPerNtuple;
 
+    bool        storeMinimalData;
+
     bool        storeApertureImpacts;
     bool        storeApertureImpactsIons;
     bool        storeApertureImpactsAll;
@@ -307,6 +309,7 @@ namespace GMAD
     bool        storeElossPhysicsProcesses;
     bool        storeParticleData;
     bool        storePrimaries;
+    bool        storePrimaryHistograms;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;

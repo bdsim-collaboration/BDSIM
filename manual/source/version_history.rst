@@ -28,7 +28,7 @@ New Features
 * Scoring meshes and scorers have been introduced that allow 3D scoring meshes to be used and
   created per event 3D histograms for various quantities. Ability to score multiple quantities,
   per particle, with material exclusion are included. See :ref:`scoring` for details on usage.
-
+* More granular control over output and a minimal output option.
 * Both the design and beam particle may now be specified by either :code:`energy` (total),
   :code:`kineticEnergy`, :code:`momentum` in the case of the design particle, or :code:`E0`,
   :code:`Ek0` and :code:`P0` in the case of the optional beam particle if different from
@@ -96,11 +96,17 @@ New Features
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossPhysicsProcesses         | Store the post step process ID and sub-ID for the step.            |
 +------------------------------------+--------------------------------------------------------------------+
+| storeMinimalData                   | When used, all optional parts of the data are turned off. Any bits |
+|                                    | specifically turned on with other options will be respected.       |
++------------------------------------+--------------------------------------------------------------------+
 | storeParticleData                  | Control whether the basic particle data is stored in the output    |
 |                                    | for all particles used or not. Renamed from `storeGeant4Data`.     |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
+| storePrimaryHistograms             | Whether to generate summary histograms of the primary first hit    |
+|                                    | and loss point versus S coordinate per event. On by default.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints          | Integer number of step points to store for each trajectory that is |
 |                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
@@ -159,8 +165,12 @@ Bug Fixes
 Output Changes
 --------------
 
-These are important changes to take note of:
+These are very important changes to take note of:
 
+* A new option :code:`storeMinimalData` has been introduced that turns off all optional parts of the data
+  reducing the file size. Options that explicitly turn on parts of the data will be respected.
+* If optional information is **not** stored, the branches in the Event Tree will **not** be written to
+  keep the data structure as simple as possible. The analysis and DataLoader classes are tolerant of this.
 * The PrimaryGlobal variables are now all capital (e.g. :code:`X` instead of :code:`x`) to be consistent
   that they are global coordinates and not local coordinates.
 * The class :code:`BDSOutputROOTGeant4Data` has been renamed to :code:`BDSOutputROOTParticleData` to be
