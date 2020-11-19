@@ -224,7 +224,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 			    const G4int            turnsTaken)
 {
   const G4VUserPrimaryVertexInformation* vertexInfo = vertex->GetUserInformation();
-  if (const BDSPrimaryVertexInformation* vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo))
+  if (const auto vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo))
     {
       primary->Fill(vertexInfoBDS->primaryVertex.local,
 		    vertexInfoBDS->momentum,
@@ -237,7 +237,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    vertexInfoBDS->rigidity);
       primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
     }
-  else if (const BDSPrimaryVertexInformationV* vertexInfoBDSV = dynamic_cast<const BDSPrimaryVertexInformationV*>(vertexInfo))
+  else if (const auto vertexInfoBDSV = dynamic_cast<const BDSPrimaryVertexInformationV*>(vertexInfo))
     {// vector version - multiple primaries at primary vertex
       primary->Fill(vertexInfoBDSV,
 		    turnsTaken);
@@ -365,7 +365,7 @@ G4bool BDSOutput::InvalidSamplerName(const G4String& samplerName)
 void BDSOutput::PrintProtectedNames(std::ostream& out)
 {
   out << "Protected names for output " << G4endl;
-  for (auto key : protectedNames)
+  for (const auto& key : protectedNames)
     {out << "\"" << key << "\"" << G4endl;}
 }
  
