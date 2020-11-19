@@ -81,13 +81,13 @@ New Features
 | beamPipeIsInfiniteAbsorber         | When turned on, all particles that hit the material of the beam    |
 |                                    | pipe are killed and the energy recorded as being deposited there.  |
 +------------------------------------+--------------------------------------------------------------------+
+| geant4PhysicsMacroFileName         | The name of a text macro file with commands that are suitable for  |
+|                                    | the Geant4 interpreter that will be executed after the physics     |
+|                                    | list is constructed but before a run.                              |
++------------------------------------+--------------------------------------------------------------------+
 | outputCompressionLevel             | Number that is 0-9. Compression level that is passed to ROOT's     |
 |                                    | TFile. Higher equals more compression but slower writing. 0 is no  |
 |                                    | compression and 1 minimal. 5 is the default.                       |
-+------------------------------------+--------------------------------------------------------------------+
-| yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
-|                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
-|                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
 | physicsVerbosity                   | Set the physics verbosity for Geant4 (0,1,2).                      |
 +------------------------------------+--------------------------------------------------------------------+
