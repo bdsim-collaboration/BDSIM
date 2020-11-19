@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beam.h"
 
@@ -241,6 +242,8 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
+  if (beam.matchDistrFileLength)
+    {BDS::Warning("The option matchDistrFileLength doesn't work with the userfile distribution");}
   ParseFileFormat();
 }
 

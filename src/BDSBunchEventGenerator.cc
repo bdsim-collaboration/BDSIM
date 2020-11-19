@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleCoordsFull.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beam.h"
 
@@ -95,6 +96,9 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
   eventGeneratorMaxEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
   acceptedParticlesString = beam.eventGeneratorParticles;
   Rp0 = std::hypot(Xp0,Yp0);
+  
+  if (beam.matchDistrFileLength)
+    {BDS::Warning("The option matchDistrFileLength doesn't work with the userfile distribution");}
 }
 
 void BDSBunchEventGenerator::CheckParameters()
