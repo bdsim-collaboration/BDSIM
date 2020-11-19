@@ -61,7 +61,7 @@ to create the files (BDSIM) is unavailble.
 .. note:: **ASCII Data** - In the past BDSIM had ASCII output as well as some functionality in
 	  the pybdsim Python utility to deal with this. This has been deprecated and removed
 	  because it is just not suitable for particle physics-style data and analysis. It
-	  is cumbersome, inefficient and vastly inferior in the possible structuring of the data.
+	  is cumbersome, inefficient and vastly inferior in the data structure.
 	  We highly encourage use of the ROOT output (`rootevent` format.). It is easy to
 	  explore the data files (see :ref:`basic-data-inspection`) and the included analysis
 	  tools (see ref:`rebdsim-analysis-tool`) and the supplied Python utilities
@@ -97,10 +97,13 @@ Coll       Collimator
 Output Data Selection \& Reduction
 ----------------------------------
 
-Not all the variables in the output are filled by default, but are kept (empty) to maintain
-a consistent structure (as much as possible). The default level of output is judged to be
+Not all the variables in the output are filled by default. The default level of output is judged to be
 the most commonly useful for the purpose of BDSIM but there are many extra options to control
-the detail of the output as well as the ability to turn bits off.
+the detail of the output as well as the ability to turn bits off. If certain optional data
+is turned off, the branches may be remove from the output Trees for efficiency.
+
+* :code:`option, storeMinimalData=1` will reduce the data to an absolute minimum and other
+  options can be used to restore data in an additive way. See below for more details.
 
 This granularity is very useful when you have made small studies with the options you
 desire and now want to scale up the simulation to large statistics and the size of the data
@@ -114,7 +117,6 @@ the simulation. This is handled automatically in BDSIM.
 It is thoroughly recommend to consult all the options at :ref:`bdsim-options-output`. However,
 consider the following points to reduce output data size:
 
-
 * If energy loss hits are not required (e.g. maybe only the pre-made histograms will suffice),
   turn these off with the option :code:`storeELoss`.
 * Eloss normally dominates the size of the output file as it has the largest number of hits with
@@ -124,6 +126,38 @@ consider the following points to reduce output data size:
   For a big study, it is worth turning this off as it's replicated in every file.
 * :code:`sample, all;` is convenient, especially at the start of a study, but you should only
   attach a sampler to specific places for a study with :code:`sample, range=NAMEOFELEMENT`.
+
+Minimal Data
+^^^^^^^^^^^^
+
+When using the option :code:`storeMinimalData=1`, the following options are turned off:
+
+* storeApertureImpacts
+* storeApertureImpactsHistograms
+* storeCollimatorInfo
+* storeCollimatorHits
+* storeELoss
+* storeELossHistograms
+* storeParticleData
+* storePrimaries
+* storePrimaryHistograms
+* storeTrajectory
+* storeModel
+
+Therefore, there is no model (required for optics comparisons and loading samplers in analysis),
+no particle data, no energy deposition hits and 0 per-event histograms (primary hit, loss and
+energy deposition).
+
+If used in combination with other output options, the other options are respected. This is irrespective
+of the order the options are set in the input gmad files. For example:
+
+::
+
+   option, storeMinimalData=1,
+           storePrimaries=1;
+
+Will turn off all the data, but restore the storage of the primary coordinates.
+
   
 Output Information
 ------------------
@@ -824,12 +858,12 @@ different value per-event run in BDSIM.
 +===========================+==================================+==================================================+
 | Summary (\+)              | BDSOutputROOTEventInfo           | Per-event summary information.                   |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| Primary                   | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
+| Primary (\*)              | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
 |                           |                                  | simulation (before tracking). This includes all  |
 |                           |                                  | extra sampler variables irrespective of the      |
 |                           |                                  | options that control the optional variables.     |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| PrimaryGlobal             | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
+| PrimaryGlobal (\*)        | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
 |                           |                                  | particle. These are the same as those in         |
 |                           |                                  | "Primary" unless `S0` is specified in the beam   |
 |                           |                                  | distribution.                                    |
@@ -846,7 +880,7 @@ different value per-event run in BDSIM.
 | ElossWorld (\*)           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the world    |
 |                           |                                  | volume - by default the air.                     |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| ElossWorldContents (\+\+) | BDSOutputROOTEventLossWorld      | Global coordinates of energy deposition in any   |
+| ElossWorldContents (\*)   | BDSOutputROOTEventLossWorld      | Global coordinates of energy deposition in any   |
 |                           |                                  | volume supplied inside an externally supplied    |
 |                           |                                  | world volume.                                    |
 +---------------------------+----------------------------------+--------------------------------------------------+
@@ -863,12 +897,12 @@ different value per-event run in BDSIM.
 |                           |                                  | from the beam line where there was no            |
 |                           |                                  | curvilinear coordinate system present.           |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| ApertureImpacts (\*\*\*)  | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
+| ApertureImpacts (\*)      | BDSOutputROOTEventAperture       | The point in curvilinear coordinates where       |
 |                           |                                  | particles (primary only by default) exit the     |
 |                           |                                  | aperture of the machine. Note, the same particle |
 |                           |                                  | can pass through the aperture multiple times.    |
 +---------------------------+----------------------------------+--------------------------------------------------+
-| Trajectory                | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
+| Trajectory (\*)           | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
 |                           |                                  | took and the associated physics processes        |
 +---------------------------+----------------------------------+--------------------------------------------------+
 | Histos                    | BDSOutputROOTEventHistograms     | Per-event histograms in vectors.                 |
@@ -886,14 +920,12 @@ different value per-event run in BDSIM.
 +---------------------------+----------------------------------+--------------------------------------------------+
 
 * (\+) This was called "Info" in BDSIM before V1.3.
-* (\+\+) ElossWorldContents is only included if the option :code:`storeElossWorldContents` is turned on
+* (\*) This is an optional branch that may not be present if its storage is turned off. See the option that
+  matches the name of the branch.
+* ElossWorldContents is only included if the option :code:`storeElossWorldContents` is turned on
   or importance sampling is used.
-* (\*) ElossVacuum, ElossTunnel, ElossWorld and ElossWorldExit are empty by default and controlled by the
-  option :code:`storeElossWorld`.
 * (\*\*) COLL_xxxx is only added per collimator when one of the options :code:`storeCollimatorInfo`,
   :code:`storeCollimatorHits`, :code:`storeCollimatorHitsIons`, :code:`storeCollimatorHitsAll` is used.
-* (\*\*\*) ApertureImpacts is an optional branch that only exists in the output when the `storeApertureImpacts`
-  option is turned on.
 
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
@@ -1341,7 +1373,7 @@ T = float, i.e. float precision number is stored. BDSIM can be compiled with an 
 double precision output (useful typically only for development or precision testing) but this
 doubles the output file size.
 
-* :code:`T` is :code:`float` by default - optionally (at compile time) :code:``double`.
+* :code:`T` is :code:`float` by default - optionally (at compile time) :code:`double`.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 

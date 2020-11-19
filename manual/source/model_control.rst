@@ -2499,14 +2499,20 @@ with the following options.
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeParticleData                  | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under ParticleDAta in the output. This can be    |
+|                                    | in the simulation under ParticleData in the output. This can be    |
 |                                    | relatively large when ions are used as there are many thousands    |
 |                                    | of ion definitions. Default on.                                    |
++------------------------------------+--------------------------------------------------------------------+
+| storeMinimalData                   | When used, all optional parts of the data are turned off. Any bits |
+|                                    | specifically turned on with other options will be respected.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
+| storePrimaryHistograms             | Whether to generate summary histograms of the primary first hit    |
+|                                    | and loss point versus S coordinate per event. On by default.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
 |                                    | Equivalent to turning on `storeSamplerCharge`,                     |
