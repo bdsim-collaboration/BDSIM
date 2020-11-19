@@ -156,7 +156,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
         {"storePrimaryHistorams",              &o.storePrimaryHistograms},
         {"storeTrajectory",                    &o.storeTrajectory},
         {"storeTrajectoryTransportationSteps", &o.storeTrajectoryTransportationSteps},
-        {"storeModel",                         &o.storeModel}
+        {"storeModel",                         &o.storeModel},
+        {"storeRunLevelHistograms",            &o.storeRunLevelHistograms}
       };
       for (auto& no : otc)
       {

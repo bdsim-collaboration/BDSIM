@@ -310,6 +310,8 @@ namespace GMAD
     bool        storeParticleData;
     bool        storePrimaries;
     bool        storePrimaryHistograms;
+
+    bool        storeRunLevelHistograms;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;

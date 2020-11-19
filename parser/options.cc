@@ -422,6 +422,7 @@ void Options::PublishMembers()
   publish("storePrimaries",                 &Options::storePrimaries);
   publish("storePrimaryHistograms",         &Options::storePrimaryHistograms);
   publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
+  publish("storeRunLevelHistograms",        &Options::storeRunLevelHistograms);
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);

@@ -273,6 +273,8 @@ OptionsBase::OptionsBase()
   storeParticleData          = true;
   storePrimaries             = true;
   storePrimaryHistograms     = true;
+
+  storeRunLevelHistograms    = true;
   
   storeTrajectory                = false;
   storeTrajectoryDepth           = 0;
