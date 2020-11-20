@@ -1,0 +1,10 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder Machine 
+! number of elements = 1
+! total length       = 1.5 m
+
+set, format="22.16e";
+call, file='0002_DRIFT_0_beam.madx';
+call, file='0002_DRIFT_0_components.madx';
+call, file='0002_DRIFT_0_sequence.madx';
+call, file='0002_DRIFT_0_ptcjob.madx';

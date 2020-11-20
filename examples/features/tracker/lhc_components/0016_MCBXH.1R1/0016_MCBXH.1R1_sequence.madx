@@ -1,0 +1,7 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder Machine 
+! LATTICE SEQUENCE DEFINITION
+
+l0: line = (MCBXH1R1, DRIFT_0);
+lattice: line = (l0);
+use, period=lattice;

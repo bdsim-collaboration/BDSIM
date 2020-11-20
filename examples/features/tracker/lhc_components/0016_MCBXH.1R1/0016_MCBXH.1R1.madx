@@ -1,0 +1,10 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder Machine 
+! number of elements = 2
+! total length       = 1e-06 m
+
+set, format="22.16e";
+call, file='0016_MCBXH.1R1_beam.madx';
+call, file='0016_MCBXH.1R1_components.madx';
+call, file='0016_MCBXH.1R1_sequence.madx';
+call, file='0016_MCBXH.1R1_ptcjob.madx';

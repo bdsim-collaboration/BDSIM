@@ -1,0 +1,7 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pybdsim.Builder Lattice, using pybdsim version 2.2.0 
+! LATTICE SEQUENCE DEFINITION
+
+l0: line = (MQXA1R1);
+lattice: line = (l0);
+use, period=lattice;

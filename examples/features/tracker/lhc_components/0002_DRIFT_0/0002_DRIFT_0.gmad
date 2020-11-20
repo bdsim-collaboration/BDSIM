@@ -1,0 +1,12 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pybdsim.Builder Lattice, using pybdsim version 2.2.0 
+! Number of Elements:	1
+! Total length:		1.5m
+
+include 0002_DRIFT_0_components.gmad;
+include 0002_DRIFT_0_sequence.gmad;
+include 0002_DRIFT_0_beam.gmad;
+include 0002_DRIFT_0_options.gmad;
+
+
+sample, all;

@@ -1,0 +1,6 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder Machine 
+! COMPONENT DEFINITION
+
+MCBXH1R1: hkicker, l=0.0, hkick=0.0000044;
+DRIFT_0: drift, l=0.000001;

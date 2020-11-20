@@ -1,0 +1,5 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder 
+! BEAM DEFINITION 
+
+beam, particle = proton, energy = 6500.0, ex=5.05223428392e-10, ey=5.05223428392e-10, sige = 0.000118402832606;

@@ -1,0 +1,14 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pymadx.Builder Machine 
+! PTC JOB SPECIFICATION
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10,time=false,exact=true;
+call, file ="inrays.madx";
+ptc_align;
+! SAMPLER DEFINITION
+
+PTC_OBSERVE, place=MQXA1R1;
+ptc_track, element_by_element, dump, turns=1, icase=5, onetable, maxaper={1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+PTC_TRACK_END;
+ptc_end;

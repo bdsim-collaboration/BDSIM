@@ -1,0 +1,12 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pybdsim.Builder Lattice, using pybdsim version 2.2.0 
+! Number of Elements:	2
+! Total length:		1e-06m
+
+include 0016_MCBXH.1R1_components.gmad;
+include 0016_MCBXH.1R1_sequence.gmad;
+include 0016_MCBXH.1R1_beam.gmad;
+include 0016_MCBXH.1R1_options.gmad;
+
+
+sample, all;

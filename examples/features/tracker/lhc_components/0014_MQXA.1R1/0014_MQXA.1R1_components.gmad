@@ -1,0 +1,5 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pybdsim.Builder Lattice, using pybdsim version 2.2.0 
+! COMPONENT DEFINITION
+
+MQXA1R1: quadrupole, k1=0.00869926987988, l=6.37;

@@ -1,0 +1,6 @@
+! Thu, 19 Nov 2020 21:58:08 +0000
+! pybdsim.Builder Lattice, using pybdsim version 2.2.0 
+! COMPONENT DEFINITION
+
+MCBXH1R1: hkicker, hkick=4.4e-06;
+DRIFT_0: drift, l=1e-06;
