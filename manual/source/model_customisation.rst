@@ -245,7 +245,7 @@ Integrators
 
 The following integrators are provided.  The majority are interfaces to Geant4 integrators.
 *g4classicalrk4* is typically the recommended default and is very robust.
-*g4cakskarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
+*g4cashkarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
 onwards, *g4dormandprince745* is the default recommended by Geant4 (although not the
 BDSIM default currently). Note: any integrator capable of operating on EM fields
 will work on solely B- or E-fields.
