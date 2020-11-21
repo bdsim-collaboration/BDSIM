@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSWarning.hh"
 #include "BDSEmStandardPhysicsOp4Channelling.hh" // included with bdsim
 
+#include "FTFP_BERT.hh"
 #include "globals.hh"
 #include "G4AntiNeutrinoE.hh"
 #include "G4AntiNeutron.hh"
@@ -66,15 +67,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4Proton.hh"
+#include "G4UImanager.hh"
 #if G4VERSION_NUMBER > 1049
 #include "G4ParticleDefinition.hh"
 #include "G4CoupledTransportation.hh"
 #include "G4Transportation.hh"
 #include <utility>
 #endif
-
-#include "FTFP_BERT.hh"
-#include "G4UIManager.hh"
 
 #include "parser/beam.h"
 #include "parser/fastlist.h"
