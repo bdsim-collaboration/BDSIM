@@ -129,17 +129,17 @@ private:
   /// Default constructor is private as singleton
   BDSAcceleratorComponentRegistry();
   
-  /// The singleton instane
+  /// The singleton instance
   static BDSAcceleratorComponentRegistry* instance;
 
   /// assignment and copy constructor not implemented nor used
   BDSAcceleratorComponentRegistry& operator=(const BDSAcceleratorComponentRegistry&);
   BDSAcceleratorComponentRegistry(BDSAcceleratorComponentRegistry&);
 
-  /// Vector of created components not in registry, for memory management
+  /// Set of created components not in registry, for memory management
   std::set<BDSAcceleratorComponent*> allocatedComponents;
   
-  /// Vector curvilinear components - purely for memory management.
+  /// Set of curvilinear components - purely for memory management.
   std::set<BDSAcceleratorComponent*> curvilinearComponents;
 
   std::set<BDSAcceleratorComponent*> tunnelComponents;
