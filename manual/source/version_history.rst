@@ -68,6 +68,8 @@ New Features
   is controlled with the new option `storeApertureImpactsHistograms`.
 * Ability to store only detailed production point of certain kinds of particles through new options
   for the trajectory storage.
+* New ability to run a Geant4 macro before a run. Useful to adjust physcis list parameters in Geant4
+  reference physics lists such as extra muon processes in the EM extra physics list.
 * New options:
 
 .. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
@@ -128,13 +130,13 @@ General
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
 * rebdsimCombine will exit if the first argument, which is meant to be the single output file, contains
-  an asterix (*), as it is likely the arguments are in the wrong order.
+  an asterisk (*), as it is likely the arguments are in the wrong order.
 * BDSIM will exit if the option :code:`minimumKineticEnergy` is set to a value higher than the kinetic
   energy of the beam particle. This takes into account the possibly different kinetic energy of the beam
   particle versus the design particle. Such a combination of options would result in all primary particles
   being immediately killed and not tracked through the model.
 * Linear and cubic interpolation implementation has be switched from hard coded types to templates. No
-  difference in results, but this makes the code useable elsewhere.
+  difference in results, but this makes the code usable elsewhere.
 * :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
   if a given dimension isn't specified it'll be the default.
 * Warn the user if a sampler placement is renamed due to a beam line sampler already having that name.
@@ -176,11 +178,11 @@ These are very important changes to take note of:
 * The class :code:`BDSOutputROOTGeant4Data` has been renamed to :code:`BDSOutputROOTParticleData` to be
   clearer. The analysis `DataLoader` class will not be able to load this branch in older data. In this case,
   the version of BDSIM used to create the data should be used, or the data inspected directly as required -
-  the previous data will always be readable by ROOT. The members of the class and the functionailty are
+  the previous data will always be readable by ROOT. The members of the class and the functionality are
   exactly the same, but the ROOT dictionary generation feature to allow renaming of a class doesn't seem
   to work in practicality.
 * Samplers now have a variable `p` which is the momentum of the particle in GeV.
-* Model tree now has scoring mesh global placment transforms and names stored to aid visualisation later on.
+* Model tree now has scoring mesh global placement transforms and names stored to aid visualisation later on.
 * The various storage Boolean options for the BDSOutputROOTEventLoss class have been removed from
   the output as these are only needed at run time and are not needed as a copy for each event in the output.
   The options preserve what was stored and it is not expected that these change between events so this
