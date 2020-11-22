@@ -83,7 +83,7 @@ public:
   G4bool IsRegistered(BDSAcceleratorComponent* component);
 
   /// Check whether an accelerator component is already registered by name.
-  G4bool IsRegistered(G4String componentName);
+  G4bool IsRegistered(const G4String& componentName);
 
   /// Check if a unique component is registered in the allocatedComponents.
   G4bool IsRegisteredAllocated(const BDSAcceleratorComponent* componentName) const;
@@ -91,7 +91,7 @@ public:
   /// Access an already constructed component - will return null if no such component found.
   /// This is safe as this registry is primarily used by BDSComponentFactory which can return
   /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
-  BDSAcceleratorComponent* GetComponent(G4String name);
+  BDSAcceleratorComponent* GetComponent(const G4String& name);
 
   /// Register a curvilinear component - purely to keep track of and delete at the
   /// end of the program.
