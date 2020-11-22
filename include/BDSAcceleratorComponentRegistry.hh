@@ -26,7 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 class BDSAcceleratorComponent;
 
