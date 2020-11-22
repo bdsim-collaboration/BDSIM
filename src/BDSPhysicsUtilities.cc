@@ -429,7 +429,7 @@ G4GenericBiasingPhysics* BDS::BuildAndAttachBiasWrapper(const GMAD::FastList<GMA
   G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
   for (auto part : particlesToBias)
     {
-      G4String particleName = part->GetParticleName();
+      const G4String& particleName = part->GetParticleName();
       G4cout << __METHOD_NAME__ << "wrapping \"" << particleName << "\" for biasing" << G4endl;
       physBias->Bias(particleName);
     }

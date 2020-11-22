@@ -108,7 +108,7 @@ G4bool BDSAcceleratorComponentRegistry::IsRegisteredAllocated(const BDSAccelerat
   return std::find(allocatedComponents.begin(), allocatedComponents.end(), component) != allocatedComponents.end();
 }
 
-G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)
+G4bool BDSAcceleratorComponentRegistry::IsRegistered(const G4String& name)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(G4String) named \"" << name << "\" -> ";
@@ -120,7 +120,7 @@ G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)
   return !(search == registry.end());
 }
 
-BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String name)
+BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(const G4String& name)
 {
   try
     {return registry.at(name);}
