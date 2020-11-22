@@ -22,10 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 #include <iomanip>
+#include <ios>
 #include <map>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::instance = nullptr;
 
