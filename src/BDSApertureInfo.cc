@@ -65,7 +65,7 @@ BDSApertureInfo::BDSApertureInfo(BDSApertureInfo* defaultInfo,
 				 G4double         aper4In,
 				 G4String         nameForError)
 {
-  if (apertureTypeIn == "")
+  if (apertureTypeIn.empty())
     {apertureType = defaultInfo->apertureType;}
   else 
     {apertureType = BDS::DetermineApertureType(apertureTypeIn);}
