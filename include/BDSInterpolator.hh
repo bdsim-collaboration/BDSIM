@@ -18,6 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSINTERPOLATOR_H
 #define BDSINTERPOLATOR_H
+#include "BDSArray4DCoords.hh"
+
+#include <limits>
 
 /**
  * @brief Interface for all interpolators containing basic extent of validity.
@@ -28,11 +31,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSInterpolator
 {
 public:
-  BDSInterpolator(){;}
+  explicit BDSInterpolator(BDSArray4DCoords* arrayIn = nullptr):
+    smallestSpatialStep(std::numeric_limits<double>::max())
+  {
+    if (arrayIn)
+      {smallestSpatialStep = arrayIn->SmallestSpatialStep();}
+  }
   virtual ~BDSInterpolator(){;}
 
   /// Interface each derived class must provide.
   virtual BDSExtent Extent() const = 0;
+  
+  /// The minimum *spatial* length between any two points being interpolated in any dimension.
+  /// For example, the minimum of the step size in x,y,z in a 3D interpolated grid.
+  inline G4double SmallestSpatialStep() const {return smallestSpatialStep;}
+  
+protected:
+  G4double smallestSpatialStep;
 };
 
 #endif

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 BDSInterpolator3D::BDSInterpolator3D(BDSArray3DCoords* arrayIn):
+  BDSInterpolator(arrayIn),
   array(arrayIn)
 {
   if (!array)
