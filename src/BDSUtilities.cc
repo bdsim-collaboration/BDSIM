@@ -483,7 +483,7 @@ G4bool BDS::WillIntersect(const G4double& angleIn,
     {return false;}
 }
 
-G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
+G4double BDS::GetZOfPointOnPlane(const G4ThreeVector& normal, G4double x, G4double y)
 {
   // equation of a plane with offset v_0, normal unit n and any point on plane v
   // n.(v-v_0) = 0
@@ -534,8 +534,8 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 }
 
 G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
-				    const G4double length,
-				    const G4double fraction)
+				    G4double length,
+				    G4double fraction)
 {
   G4UserLimits* result = nullptr;
   // construct a dummy G4Track that typically isn't used for the check
