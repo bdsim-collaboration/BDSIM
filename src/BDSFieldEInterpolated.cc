@@ -20,8 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-BDSFieldEInterpolated::BDSFieldEInterpolated(G4Transform3D offset,
-					     G4double      eScalingIn):
+BDSFieldEInterpolated::BDSFieldEInterpolated(const G4Transform3D& offset,
+					     G4double             eScalingIn):
   BDSFieldE(offset),
   eScaling(eScalingIn)
 {;}
