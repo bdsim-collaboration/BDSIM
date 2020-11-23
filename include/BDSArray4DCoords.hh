@@ -46,6 +46,10 @@ class BDSExtent;
 class BDSArray4DCoords: public BDSArray4D
 {
 public:
+  /// No default constructor as the array is not adjustable after construction and
+  /// therefore the size must be known at construction time.
+  BDSArray4DCoords() = delete;
+  
   /// Constructor similar to BDSArray4D but with spatial limits in each dimension.
   /// The distance between the UNIFORMLY spaced data in spatial coordinates is
   /// calculated using the extents and the number of entries.
@@ -173,10 +177,6 @@ protected:
   /// @}
   
 private:
-  /// No default constructor as the array is not adjustable after construction and
-  /// therefore the size must be known at construction time.
-  BDSArray4DCoords() = delete;
-
   void CheckStep(G4double step, const G4String& name) const;
 };
 
