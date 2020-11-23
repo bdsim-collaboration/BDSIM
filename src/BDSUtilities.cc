@@ -537,7 +537,7 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
 				    G4double length,
 				    G4double fraction)
 {
-  G4UserLimits* result = nullptr;
+  G4UserLimits* result = defaultUL;
   // construct a dummy G4Track that typically isn't used for the check
   G4Track t = G4Track();
   if (defaultUL->GetMaxAllowedStep(t) > length)
@@ -547,8 +547,6 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
       lengthScale = std::max(lengthScale, 1.0); // no smaller than 1mm limit
       result->SetMaxAllowedStep(lengthScale);
     }
-  else
-    {result = defaultUL;} // stick with length in defaultUL
   return result;
 }
 
