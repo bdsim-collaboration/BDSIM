@@ -20,7 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSInterpolator2D.hh"
 
-#include "globals.hh"
+#include "G4ThreeVector.hh"
+#include "G4Types.hh"
 
 BDSInterpolator2D::BDSInterpolator2D(BDSArray2DCoords* arrayIn):
   BDSInterpolator(arrayIn),
