@@ -127,6 +127,12 @@ New Features
 General
 -------
 
+* The maximum step length in a field map is by default now the minimum spatial distance in the field
+  map loaded. Previously, it was the full length of the element the field map was attached to. The user
+  can still set the :code:`maximumStepLength` parameter in the field definition to reduce this further,
+  but the minimum of the numbers supplied will be used.
+* Previously, the absolute minimum "maximum step length" in a field map was 1mm. This has been reduced
+  to 1 micron. This is irrespective of what the user specifies in the field description.
 * Shared library now the default for BDSIM. The CMake option :code:`BDSIM_BUILD_STATIC_LIBS`
   allows the static library to be compiled too (in addition to the shared one).
 * rebdsimCombine will exit if the first argument, which is meant to be the single output file, contains
@@ -140,8 +146,6 @@ General
 * :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
   if a given dimension isn't specified it'll be the default.
 * Warn the user if a sampler placement is renamed due to a beam line sampler already having that name.
-* Previously, the absolute minimum "maximum step length" in a field map was 1mm. This has been reduced
-  to 1 micron. This is irrespective of what the user specifies in the field description.
 
 Bug Fixes
 ---------

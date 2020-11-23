@@ -66,6 +66,20 @@ ascending or descending order.
 	  recommended the user re-sample any existing field map into a regular grid. A regular
 	  grid is also much faster for tracking purposes.
 
+.. warning:: The maximum step length of a particle through an element is by default 10km in Geant4.
+	     BDSIM reduces this to 110% the length of an element. In the case of a field map, the
+	     step limit is not dynamically derived (in Geant4) from the variation in the field.
+	     Too large a step may mean that the numerical integration along the step may not
+	     'see' the variations in the field and therefore calculate the wrong motion. For
+	     example, imagine a wiggler or undulator field map and only a few select points
+	     along it's length being queried - it may appear as a dipole field!
+	     Therefore, when we use a field map in BDSIM, the step length is limited to the
+	     minimum distance between points in any dimension of the field map. Depending on
+	     how much the field map varies from point to point (density of samples) then the
+	     user may wish to reduce this further with the parameter :code:`maximumStepLength`
+	     below in the field definition. You may also wish to visualise the individual points
+	     as described in :ref:`visualisation-step-points`.
+	  
 Here is a minimal example of a magnetic field in BDSIM format::
 
   detfield: field, type="bmap3d",
@@ -157,7 +171,10 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 
 The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
-110% of the element length that the field is attached to, or the global maximum step length.
+110% of the element length that the field is attached to, or the global maximum step length,
+or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
+velocity is assume to be :code:`c`, the speed of light, for the spatial distance calcualted
+from this.
 
 .. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
 
