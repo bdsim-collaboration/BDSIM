@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4RotationMatrix.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 #include "G4UserLimits.hh"
 
+#include <algorithm>
 #include <ostream>
 
 G4UserLimits* BDSFieldInfo::defaultUL = nullptr;
@@ -179,6 +181,26 @@ void BDSFieldInfo::SetUserLimits(G4UserLimits* userLimitsIn)
   if (stepLimit != defaultUL)
     {delete stepLimit;} // shouldn't delete global default step limit!
   stepLimit = userLimitsIn;
+}
+
+void BDSFieldInfo::UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSize,
+                                                         G4bool   warn) const
+{
+  if (stepLimit && (stepLimit != defaultUL))
+    {
+      G4UserLimits* old = stepLimit;
+      stepLimit = BDS::CreateUserLimits(stepLimit, maximumStepSize, 1.0);
+      if ((stepLimit != old) && (old != defaultUL))
+	{delete old;}
+    }
+  else
+    {stepLimit = new G4UserLimits(maximumStepSize);}
+  
+  if (warn)
+    {
+      G4cout << "Reducing maximum step size of field definition \"" << nameOfParserDefinition
+	     << "\" to " << maximumStepSize << " mm " << G4endl;
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)

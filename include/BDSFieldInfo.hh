@@ -147,6 +147,10 @@ public:
   
   void SetNameOfParserDefinition(const G4String& nameIn) {nameOfParserDefinition = nameIn;}
   
+  /// Update the user limits object (stepLimit) to the minimum of the current and supplied maximum
+  /// step size. Mutable, so can be called on const object.
+  void UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSize,
+                                             G4bool   warn = false) const;
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -178,7 +182,7 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
-  G4UserLimits*            stepLimit;
+  mutable G4UserLimits*    stepLimit;
   G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
   G4double                 chordStepMinimum;
