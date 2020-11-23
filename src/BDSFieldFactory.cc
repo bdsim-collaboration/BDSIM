@@ -297,6 +297,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       
       info->SetMagneticSubField(G4String(definition.magneticSubField));
       info->SetElectricSubField(G4String(definition.electricSubField));
+      info->SetNameOfParserDefinition(G4String(definition.name));
       if (BDSGlobalConstants::Instance()->Verbose())
         {
           G4cout << "Definition: \"" << definition.name << "\"" << G4endl;
