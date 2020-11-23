@@ -1323,11 +1323,12 @@ Examples: ::
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
 +------------------------------+------------------------------------------------------------------------+
-| muon                         | Provides muon production and scattering processes. Gamma to muons,     |
-|                              | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                              | multiple scattering for muons, muon Bremsstrahlung, pair production    |
-|                              | and Cherenkov light are all provided. Given by BDSIM physics           |
-|                              | builder (a la Geant4) `BDSPhysicsMuon`.                                |
+| muon                         | Provides muon production and scattering processes. Be careful if using |
+|                              | with `em_extra` as processes may be double registered. Includes Gamma  |
+|                              | to muons, annihilation to muon pair, 'ee' to hadrons, pion decay to    |
+|                              | muons, multiple scattering for muons, muon Bremsstrahlung, pair        |
+|                              | production and Cherenkov light are all provided. Given by BDSIM        |
+|                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
@@ -1445,6 +1446,10 @@ these will have no effect.
 is not used in BDSIM, as it does not propagate the associated weights correctly. Biasing should be done through
 the generic biasing interface with the name of the process (described in the following section), as this will
 propagate the weights correctly.
+
+.. warning:: If you used :code:`em_extra` and :code:`muon` modular physics list, extreme care should be
+	     taken in combination with the above options that certain processes are not doubly registered,
+	     which would result in double the rates of those processes.
 
 .. note:: If you use the reference physics list :code:`g4FTFP_BERT`, this will contain the EM extra physics
 	  but this interface to turn on the extra parts is not applicable. In this case, a physics macro
