@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTERPOLATOR_H
 #define BDSINTERPOLATOR_H
 #include "BDSArray4DCoords.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include <limits>
 
@@ -36,6 +38,8 @@ public:
   {
     if (arrayIn)
       {smallestSpatialStep = arrayIn->SmallestSpatialStep();}
+    else
+      {throw BDSException(__METHOD_NAME__, "Invalid array to construct interpolator on.");}
   }
   virtual ~BDSInterpolator(){;}
 
