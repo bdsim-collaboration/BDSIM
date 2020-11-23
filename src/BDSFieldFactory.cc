@@ -420,7 +420,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
 	BDSFieldMagInterpolated* ff = BDSFieldLoader::Instance()->LoadMagField(info,
 							 scalingStrength,
 							 scalingKey);
-	info.UpdateUserLimitsLengthMaximumStepSize(2 * ff->SmallestSpatialStep(), true);
+	info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);
 	field = ff;
 	break;
       }
@@ -609,7 +609,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
     case BDSFieldType::ebmap4d:
       {
 	BDSFieldEMInterpolated* ff = BDSFieldLoader::Instance()->LoadEMField(info);
-	info.UpdateUserLimitsLengthMaximumStepSize(2 * ff->SmallestSpatialStep(), true);
+	info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);
 	field = ff;
 	break;
       }
@@ -652,7 +652,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
     case BDSFieldType::emap4d:
       {
 	BDSFieldEInterpolated* ff = BDSFieldLoader::Instance()->LoadEField(info);
-	info.UpdateUserLimitsLengthMaximumStepSize(2 * ff->SmallestSpatialStep(), true);
+	info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);
 	field = ff;
 	break;
       }
