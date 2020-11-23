@@ -22,10 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4ThreeVector.hh"
 
-BDSFieldEInterpolated2D::BDSFieldEInterpolated2D(BDSInterpolator2D* interpolatorIn,
-						 G4Transform3D      offset,
-						 G4double           eScalingIn):
-  BDSFieldEInterpolated(offset, eScalingIn),
+BDSFieldEInterpolated2D::BDSFieldEInterpolated2D(BDSInterpolator2D*   interpolatorIn,
+						 const G4Transform3D& offset,
+						 G4double             eScalingIn):
+  BDSFieldEInterpolated(interpolatorIn, offset, eScalingIn),
   interpolator(interpolatorIn),
   firstDimensionIndex((interpolatorIn->FirstDimension()).underlying()),
   firstTime((interpolatorIn->FirstDimension()).underlying() > 2),
