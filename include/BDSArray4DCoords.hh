@@ -67,6 +67,8 @@ public:
   inline G4double ZStep() const {return zStep;}
   inline G4double TStep() const {return tStep;}
   /// @}
+  
+  inline G4double SmallestSpatialStep() const {return smallestSpatialStep;}
 
   /// Whether the spatial coordinates lie outside the range of the array or not.
   virtual G4bool OutsideCoords(const G4double x,
@@ -175,6 +177,8 @@ protected:
   G4double zStep;
   G4double tStep;
   /// @}
+  
+  G4double smallestSpatialStep;
   
 private:
   void CheckStep(G4double step, const G4String& name) const;
