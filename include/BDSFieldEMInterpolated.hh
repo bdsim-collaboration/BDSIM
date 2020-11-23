@@ -33,9 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldEMInterpolated: public BDSFieldEM
 {
 public:
-  explicit BDSFieldEMInterpolated(G4Transform3D offset,
-				  G4double      eScalingIn = 1.0,
-				  G4double      bScalingIn = 1.0);
+  explicit BDSFieldEMInterpolated(const G4Transform3D& offset,
+				  G4double             eScalingIn = 1.0,
+				  G4double             bScalingIn = 1.0);
 
   virtual ~BDSFieldEMInterpolated(){;}
 

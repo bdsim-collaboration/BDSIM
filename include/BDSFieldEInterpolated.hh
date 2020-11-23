@@ -33,8 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldEInterpolated: public BDSFieldE
 {
 public:
-  explicit BDSFieldEInterpolated(G4Transform3D offset,
-				 G4double      eScalingIn = 1.0);
+  explicit BDSFieldEInterpolated(const G4Transform3D& offset,
+				 G4double             eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated(){;}
 
