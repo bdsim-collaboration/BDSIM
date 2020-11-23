@@ -59,7 +59,8 @@ BDSFieldInfo::BDSFieldInfo():
   left(false),
   magneticSubFieldName(""),
   electricSubFieldName(""),
-  transformBeamline(nullptr)
+  transformBeamline(nullptr),
+  nameOfParserDefinition("")
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -109,7 +110,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   left(leftIn),
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
-  transformBeamline(nullptr)
+  transformBeamline(nullptr),
+  nameOfParserDefinition("")
 {
   if (transformIn != G4Transform3D::Identity)
     {transform = new G4Transform3D(transformIn);}
@@ -152,7 +154,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   left(other.left),
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
-  transformBeamline(nullptr)
+  transformBeamline(nullptr),
+  nameOfParserDefinition(other.nameOfParserDefinition)
 {
   if (other.transform)
     {transform = new G4Transform3D(*other.transform);}
@@ -180,6 +183,7 @@ void BDSFieldInfo::SetUserLimits(G4UserLimits* userLimitsIn)
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
 {
+  out << "Parser definition name: \"" << info.nameOfParserDefinition << "\"" << G4endl;
   out << "Field type:        " << info.fieldType                << G4endl;
   out << "Rigidity:          " << info.brho                     << G4endl;
   out << "Integrator:        " << info.integratorType           << G4endl;
