@@ -87,16 +87,7 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
 }
 
 
-void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elementName,
-                                                 const Element*          element,
-                                                 BDSMagnetStrength*      st,
-                                                 G4double                brho,
-                                                 const BDSIntegratorSet* integratorSet,
-                                                 G4double                incomingFaceAngle,
-                                                 G4double                outgoingFaceAngle,
-                                                 G4bool                  buildFringeFields,
-                                                 const GMAD::Element*    prevElement,
-                                                 const GMAD::Element*    nextElement)
+void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 {
     BDSAcceleratorComponent* pipeLine;
 
@@ -165,14 +156,14 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
             beamline->AddComponent(pipeLine);
 
             G4int i = 0;
-            for (auto element : *beamline)
+            for (auto el : *beamline)
             {
 
-                G4String placementName = element->GetPlacementName() + "_pv";
-                G4Transform3D* placementTransform = element->GetPlacementTransform();
+                G4String placementName = el->GetPlacementName() + "_pv";
+                G4Transform3D* placementTransform = el->GetPlacementTransform();
                 G4int copyNumber = i;
                 auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
-                                            element->GetContainerLogicalVolume(), // volume to be placed
+                                            el->GetContainerLogicalVolume(), // volume to be placed
                                             placementName,                        // placement name
                                             containerLogicalVolume,               // volume to place it in
                                             false,                         // no boolean operation
@@ -259,9 +250,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String&         elemen
 
 void BDSMagnetNonSplitOuter::Build()
 {
-   SBendWithSingleOuter(element->name, element, st, brho, integratorSet,
-                         incomingFaceAngle, outgoingFaceAngle, buildFringeFields,
-                         prevElement, nextElement);
+   SBendWithSingleOuter(element->name);
 
    if (element->fieldOuter != "" and !(element->extractOuterContainer)) // check when to build the outer field
    {

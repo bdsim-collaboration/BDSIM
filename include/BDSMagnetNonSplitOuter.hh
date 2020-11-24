@@ -70,16 +70,7 @@ public:
                           const GMAD::Element*    nextElementIn);
 
 
-  void SBendWithSingleOuter(const G4String&         elementName,
-                        const GMAD::Element*          element,
-                        BDSMagnetStrength*      st,
-                        G4double                brho,
-                        const BDSIntegratorSet* integratorSet,
-                        G4double                incomingFaceAngle,
-                        G4double                outgoingFaceAngle,
-                        G4bool                  buildFringeFields,
-                        const GMAD::Element*    prevElement,
-                        const GMAD::Element*    nextElement);
+  void SBendWithSingleOuter(const G4String& elementName);
 
 
 protected:
