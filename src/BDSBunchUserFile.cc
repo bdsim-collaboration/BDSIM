@@ -178,12 +178,12 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	  throw BDSException(__METHOD_NAME__, message);
 	}
     }
-  return;
 }
 
 template <typename T>
 template <typename U>
-void BDSBunchUserFile<T>::CheckAndParseUnits(G4String name, G4String rest,
+void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& name,
+                                             const G4String& rest,
                                              U unitParser)
 {
   struct BDSBunchUserFile::Doublet sd;
