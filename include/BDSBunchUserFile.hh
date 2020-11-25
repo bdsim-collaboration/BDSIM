@@ -105,7 +105,7 @@ private:
   std::list<Doublet> fields;
 
   template <typename U>
-  void CheckAndParseUnits(G4String name, G4String rest, U unitParser);
+  void CheckAndParseUnits(const G4String& name, const G4String& rest, U unitParser);
 
   /// Open the file and skip lines.
   virtual void Initialise();
