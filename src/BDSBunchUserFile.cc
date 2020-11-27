@@ -152,10 +152,10 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
 	  useCurvilinear = true;
 	}
-      else if(token.substr(0,2)=="pt")
+      else if(token.substr(0,5)=="pdgid")
 	{
 	  changingParticleType = true;
-	  sd.name="pt";
+	  sd.name="pdgid";
 	  sd.unit=1;
 	  fields.push_back(sd);
 	}
@@ -372,7 +372,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       else if(it->name=="xp") {ReadValue(ss, xp); xp *= ( CLHEP::radian * it->unit );}
       else if(it->name=="yp") {ReadValue(ss, yp); yp *= ( CLHEP::radian * it->unit );}
       else if(it->name=="zp") {ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
-      else if(it->name=="pt")
+      else if(it->name=="pdgid")
 	{// particle type
 	  ReadValue(ss, type);
 	  updateParticleDefinition = true; // update particle definition after finished reading line
