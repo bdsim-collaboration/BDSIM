@@ -894,7 +894,7 @@ Acceptable tokens for the columns are:
 | "S"        | Global path length displacement,       |
 |            | not to be used in conjunction with "z".|
 +------------+----------------------------------------+
-| "pt"       | PDG particle ID                        |
+| "pdgid"    | PDG particle ID                        |
 +------------+----------------------------------------+
 | "w"        | Weight                                 |
 +------------+----------------------------------------+

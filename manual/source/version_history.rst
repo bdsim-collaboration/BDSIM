@@ -146,6 +146,8 @@ General
 * :code:`composite` distribution now defaults to :code:`reference` distribution for each dimension, so
   if a given dimension isn't specified it'll be the default.
 * Warn the user if a sampler placement is renamed due to a beam line sampler already having that name.
+* PDG Particle ID token when defining the columns in a :code:`userfile` distribution has been changed from "pt" to
+  "pdgid". "pt" is no longer a valid token.
 
 Bug Fixes
 ---------
