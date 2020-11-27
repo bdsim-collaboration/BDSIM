@@ -48,7 +48,7 @@ To download the source from the git repository, use the command::
   git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. Also, the python utilities that come with BDSIM will be present
+and documentation is provided. Also, the Python utilities that come with BDSIM will be present
 when the :code:`--recursive` option is used.
 
 Download
@@ -86,8 +86,9 @@ Requirements \& Environment
 
 .. note:: These are listed in the correct order of installation / requirement.
 
-For nice analysis and use of `pybdsim` for model conversion, we recommend Python2.7 with
-matplotlib and numpy. ROOT should be installed with Python support in this case.
+For nice analysis and use of `pybdsim` for model conversion, we recommend Python 3 series with
+matplotlib and numpy. ROOT should be installed with Python support in this case and with the
+**same** Python installation as will be used with the Python utilities.
 
 Geant4 and ROOT Versions
 ------------------------
@@ -155,9 +156,9 @@ manually downloading, compiling and installing the source for each.
 
 For MacPorts you can do: ::
 
-  sudo port install root6 +python27
+  sudo port install root6 +python37
   sudo port install xercesc3 flex bison clhep qt5
-  sudo port install py27-matplotlib py27-numpy
+  sudo port install py37-matplotlib py37-numpy
 
 * It is best to install Geant4 manually to ensure you use the system CLHEP option (required
   by BDSIM for strong reproducibility) as well as visualiser choices and GDML geometry
@@ -209,34 +210,33 @@ installation::
 
 This typically produces the following output, which is slightly different on each computer::
 
-  -- The C compiler identification is AppleClang 8.0.0.8000042
-  -- The CXX compiler identification is AppleClang 8.0.0.8000042
-  -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
-  -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -- works
+  -- The C compiler identification is AppleClang 10.0.1.10010046
+  -- The CXX compiler identification is AppleClang 10.0.1.10010046
   -- Detecting C compiler ABI info
   -- Detecting C compiler ABI info - done
+  -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
   -- Detecting C compile features
   -- Detecting C compile features - done
-  -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
-  -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -- works
   -- Detecting CXX compiler ABI info
   -- Detecting CXX compiler ABI info - done
+  -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped
   -- Detecting CXX compile features
   -- Detecting CXX compile features - done
-  -- Configuring BDSIM 1.2.develop
+  -- Configuring BDSIM 1.5.0
+  -- Installation prefix: /usr/local
   -- Build Type RelWithDebInfo
-  -- Compiler supports C++14
+  -- Compiler fully supports C++17 and prior versions
   -- Looking for CLHEP... - found
   -- Found CLHEP 2.4.1.0 in /opt/local/lib/CLHEP-2.4.1.0/../../include
-  -- Use ROOTSYS from environment: /Users/nevay/physics/packages/root-6.10.08-install
+  -- Use ROOTSYS from environment: /Users/nevay/physics/packages/root-6.18.04-install
   -- Looking for ROOT...
-  -- Found ROOT 6.10/08 in /Users/nevay/physics/packages/root-6.10.08-install
+  -- Found ROOT 6.18/04 in /Users/nevay/physics/packages/root-6.18.04-install
   -- GDML support ON
-  -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.04.p02-install/lib/Geant4-10.4.2/UseGeant4.cmake
-  -- Geant4 Definitions: -DG4_STORE_TRAJECTORY;-DG4VERBOSE;-DG4UI_USE;-DG4VIS_USE;-DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4UI_USE_XM;-DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
-  -- G4_VERSION: 10.4.2
-  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.14") found components:  doxygen dot 
-  -- Found BISON: /opt/local/bin/bison (found suitable version "3.2.2", minimum required is "2.4") 
+  -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.06.p01-install/lib/Geant4-10.6.1/UseGeant4.cmake
+  -- Geant4 Definitions: -DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4UI_USE_XM;-DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
+  -- G4_VERSION: 10.6.1
+  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.20") found components: doxygen dot 
+  -- Found BISON: /opt/local/bin/bison (found suitable version "3.7.3", minimum required is "2.4") 
   -- Found FLEX: /opt/local/bin/flex (found version "2.6.4") 
   -- Looking for zlib
   -- Using Geant4 built in zlib
@@ -249,7 +249,7 @@ This typically produces the following output, which is slightly different on eac
   -- Tests will use G4PARTICLEHPDATA
   -- Copying example directory
   -- Found Sphinx: /opt/local/bin/sphinx-build  
-  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx_rtd_theme  
+  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/sphinx_rtd_theme  
   -- Configuring done
   -- Generating done
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test-build
