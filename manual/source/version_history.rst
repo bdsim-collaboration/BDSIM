@@ -171,6 +171,7 @@ Bug Fixes
 * Fix the field from E and EM fields when they were offset with respect to a beam line element.
 * Fixed bug when not storing primaries using the option `storePrimaries` where the primary branch was added to
   the sampler list and therefore appeared empty in the output. This consequently caused rebdsimOptics to segfault.
+* Fix tapering in an :code:`ecol`, which wouldn't be tapered in v1.4.
   
 Output Changes
 --------------
