@@ -148,7 +148,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <vector>
 
-BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
+BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   temporaryName(""),
   opticalPhysics(nullptr),
   emWillBeUsed(false),

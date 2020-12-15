@@ -54,7 +54,8 @@ namespace GMAD {
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  explicit BDSModularPhysicsList(G4String physicsList);
+  BDSModularPhysicsList() = delete;
+  explicit BDSModularPhysicsList(const G4String& physicsList);
   virtual ~BDSModularPhysicsList();
 
   /// Call base class method to construct all particles from constructors,
@@ -71,9 +72,6 @@ public:
   inline G4bool UsingIons() const {return usingIons;}
 
 private:
-  /// Private default constructor to force use of supplied one.
-  BDSModularPhysicsList();
-
   /// Neutrinos are not constructed by default in many (most) physics lists
   /// yet this results in crashes when they're produced but not defined by
   /// physics processes, so purposively define for ones where it's a problem.
