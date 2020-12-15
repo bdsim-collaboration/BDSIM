@@ -2306,7 +2306,7 @@ Physics Processes
 |                                  | be used only if the user understands how this will    |
 |                                  | affect the running of Geant4. [GeV]                   |
 +----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitHigh           | Optional upper energy level for all physics models.   |
+| physicsEnergyLimitHigh (\*)      | Optional upper energy level for all physics models.   |
 |                                  | This is usually 100 TeV by default in Geant4. The     |
 |                                  | user may change this if required. Warning, this must  |
 |                                  | be used only if the user understands how this will    |
@@ -2365,6 +2365,11 @@ Physics Processes
 |                                  | annihilation process when using `em_extra` physics    |
 |                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +----------------------------------+-------------------------------------------------------+
+
+* (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
+  hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
+  source code (G4HadronicParameters.cc).
+
 
 
 Visualisation

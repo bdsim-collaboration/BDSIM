@@ -548,12 +548,6 @@ void BDS::CheckAndSetEnergyValidityRange()
   G4double energyLimitHigh    = globals->PhysicsEnergyLimitHigh();
   G4bool   setEnergyLimitLow  = BDS::IsFinite(energyLimitLow);
   G4bool   setEnergyLimitHigh = BDS::IsFinite(energyLimitHigh);
-
-#if G4VERSION_NUMBER > 1069
-  // this was in a patch of our own before 10.7 and compensates for ion physics
-  G4double pv = setEnergyLimitHigh ? energyLimitHigh : 5000*CLHEP::TeV;
-  G4HadronicParameters::Instance()->SetMaxEnergy(pv);
-#endif
   
   if (setEnergyLimitLow || setEnergyLimitHigh)
     {
@@ -577,6 +571,14 @@ void BDS::CheckAndSetEnergyValidityRange()
           G4cout << "Upping EM Ek limit to " << elHigh/CLHEP::TeV << " TeV" << G4endl;
           G4EmParameters::Instance()->SetMaxEnergy(elHigh);
         }
+#if G4VERSION_NUMBER > 1069
+      // this was in a patch of our own before 10.7 and compensates for ion physics
+      if (elHigh > G4HadronicParameters::Instance()->GetMaxEnergy())
+        {
+          G4cout << __METHOD_NAME__ << "set hadronic physics Ek limit to " << elHigh/CLHEP::TeV << " TeV" << G4endl;
+          G4HadronicParameters::Instance()->SetMaxEnergy(elHigh);
+        }
+#endif
 	}
     }
 }
