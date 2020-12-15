@@ -1478,7 +1478,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
       allSolids.insert(coilSolid);
     }
 
-  // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
+  // Intersect and replace solids. Do it via replacement of the base class member G4VSolid*
   // as the intersection is only done if one of the angles is finite.
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     { 
