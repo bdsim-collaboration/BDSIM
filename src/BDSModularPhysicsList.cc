@@ -327,7 +327,7 @@ void BDSModularPhysicsList::Print()
     }
 }
 
-void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
+void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;
@@ -341,7 +341,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 
   // convert to G4String for lower case convenience
   std::vector<G4String> physicsListNames;
-  for (auto physicsListName : physicsListNamesS)
+  for (const auto& physicsListName : physicsListNamesS)
     {
       G4String name = G4String(physicsListName); // convert string to G4String.
       name.toLower(); // change to lower case - physics lists are case insensitive
@@ -363,7 +363,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
   if (std::find(physicsListNames.begin(), physicsListNames.end(), "em") != physicsListNames.end())
     {emWillBeUsed = true;}
 
-  for (const auto name : physicsListNames)
+  for (const auto& name : physicsListNames)
     {
       auto result = physicsConstructors.find(name);
       if (result != physicsConstructors.end())
@@ -376,7 +376,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       else
 	{
 	  G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
-	  for (auto listName : physicsLists)
+	  for (const auto& listName : physicsLists)
 	    {G4cout << "\"" << listName << "\"" << G4endl;}
 	  throw BDSException(__METHOD_NAME__, "Invalid physics list.");
 	}
@@ -440,7 +440,7 @@ void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysi
   // no need to check if key is present as we control both maps in the constructor
   const std::vector<G4String>& forbidden = incompatible.at(singlePhysicsIn);
   
-  for (const auto key : forbidden)
+  for (const auto& key : forbidden)
     {// for each forbidden physics list, check if it's activated
       if (physicsActivated.at(key))
 	{
