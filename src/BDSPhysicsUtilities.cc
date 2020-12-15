@@ -75,6 +75,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #endif
 
+#if G4VERSION_NUMBER > 1069
+#include "G4HadronicParameters.hh"
+#endif
+
 #include "parser/beam.h"
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
@@ -544,6 +548,13 @@ void BDS::CheckAndSetEnergyValidityRange()
   G4double energyLimitHigh    = globals->PhysicsEnergyLimitHigh();
   G4bool   setEnergyLimitLow  = BDS::IsFinite(energyLimitLow);
   G4bool   setEnergyLimitHigh = BDS::IsFinite(energyLimitHigh);
+
+#if G4VERSION_NUMBER > 1069
+  // this was in a patch of our own before 10.7 and compensates for ion physics
+  G4double pv = setEnergyLimitHigh ? energyLimitHigh : 5000*CLHEP::GeV;
+  G4HadronicParameters::Instance()->SetMaxEnergy(pv);
+#endif
+  
   if (setEnergyLimitLow || setEnergyLimitHigh)
     {
       auto table = G4ProductionCutsTable::GetProductionCutsTable();
