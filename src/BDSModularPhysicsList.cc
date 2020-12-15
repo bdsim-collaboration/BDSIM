@@ -78,7 +78,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonQMDPhysics.hh"
 #include "G4NeutronTrackingCut.hh"
 #include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 #include "G4StoppingPhysics.hh"
 #include "G4SynchrotronRadiation.hh"
@@ -115,6 +114,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EmDNAPhysics_option6.hh"
 #include "G4EmDNAPhysics_option7.hh"
 #include "G4HadronPhysicsShieldingLEND.hh"
+#endif
+
+#if G4VERSION_NUMBER < 1070
+#include "G4OpticalProcessIndex.hh"
+#else
+#include "G4OpticalParameters.hh"
 #endif
 
 // particles
