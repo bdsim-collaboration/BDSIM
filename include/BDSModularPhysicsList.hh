@@ -90,7 +90,7 @@ private:
   void ConstructAllIons();
 
   /// Interpret the string of physics lists given from the user through the parser.
-  void ParsePhysicsList(G4String physListName);
+  void ParsePhysicsList(const G4String& physListName);
 
   /// Set particular options for various physics lists from the parser. This is
   /// currently only done for the optical physics list.
