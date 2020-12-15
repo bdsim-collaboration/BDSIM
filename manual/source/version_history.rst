@@ -172,6 +172,11 @@ Bug Fixes
 * Fixed bug when not storing primaries using the option `storePrimaries` where the primary branch was added to
   the sampler list and therefore appeared empty in the output. This consequently caused rebdsimOptics to segfault.
 * Fix tapering in an :code:`ecol`, which wouldn't be tapered in v1.4.
+* Fix calculation of minimum geometry radius in magnets for G4CutTubs used for intersection
+  (to give the angled faces), which was dominated by the horizontal size. In cases with magnets
+  that were taller than they were wide and with extremely strong bending angles or pole faces
+  this could have produced geometry Geant4 would complain about. Fixed in
+  :code:`BDSMagnetOuter::MinimumIntersectionRadius()`.
   
 Output Changes
 --------------
