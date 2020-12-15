@@ -74,12 +74,7 @@ G4String BDS::PrepareSafeName(G4String name)
 
 G4int BDS::CalculateOrientation(G4double angle)
 {
-  G4int orientation;
-  if (angle < 0)
-    {orientation = 1;}
-  else
-    {orientation = -1;}
-  return orientation;
+  return angle < 0 ? 1 : -1;
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
