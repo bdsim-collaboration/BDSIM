@@ -201,6 +201,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // we must check that the faces of each segment (varying from e1 to e2) will
   // not overlap given the outer diameter.
   // calculate extent along z due poleface rotation at half the horizontal width.
+  // note this is only w.r.t. pole face rotation and not the general bending angle
   G4double horizontalWidth = BDSComponentFactory::PrepareHorizontalWidth(element);
   if (incomingFaceAngle > 0)
     {zExtentIn = 0.5*horizontalWidth*std::tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
@@ -211,7 +212,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   else if (outgoingFaceAngle < 0)
     {zExtentOut = 0.5*horizontalWidth*std::tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
   
-  //decide if segment angles fade or not depending on the extents
+  // decide if segment angles fade or not depending on the extents
   if (std::abs(zExtentIn) < semiArcLength/4.0)
     {fadeIn = false;}
   if (std::abs(zExtentOut) < semiArcLength/4.0)
