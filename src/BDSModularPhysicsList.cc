@@ -388,34 +388,29 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 
 void BDSModularPhysicsList::ConstructAllLeptons()
 {
-  G4LeptonConstructor leptons;
-  leptons.ConstructParticle();
+  G4LeptonConstructor::ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConstructAllShortLived()
 {
-  G4ShortLivedConstructor pShortLivedConstructor;
-  pShortLivedConstructor.ConstructParticle();
+  G4ShortLivedConstructor::ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConstructAllMesons()
 {
-  G4MesonConstructor mConstructor;
-  mConstructor.ConstructParticle();
+  G4MesonConstructor::ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConstructAllBaryons()
 {
-  G4BaryonConstructor bConstructor;
-  bConstructor.ConstructParticle();
+  G4BaryonConstructor::ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConstructAllIons()
 {
   usingIons = true; // all physics lists that use ions call this function so put this here
   G4GenericIon::GenericIonDefinition();
-  G4IonConstructor iConstructor;
-  iConstructor.ConstructParticle();
+  G4IonConstructor::ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
