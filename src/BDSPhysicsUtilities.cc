@@ -551,7 +551,7 @@ void BDS::CheckAndSetEnergyValidityRange()
 
 #if G4VERSION_NUMBER > 1069
   // this was in a patch of our own before 10.7 and compensates for ion physics
-  G4double pv = setEnergyLimitHigh ? energyLimitHigh : 5000*CLHEP::GeV;
+  G4double pv = setEnergyLimitHigh ? energyLimitHigh : 5000*CLHEP::TeV;
   G4HadronicParameters::Instance()->SetMaxEnergy(pv);
 #endif
   
