@@ -9,6 +9,7 @@ BDSIM is developed and used on Mac OSX and Linux.
 
 Tested systems:
 
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt5.14.2
 * Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt5.14.2
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
@@ -73,11 +74,11 @@ Requirements \& Environment
 
 1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher,
    or clang 6 or higher.
-2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
+2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher, and typically 3.8 for later versions).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended but must be compatible with Geant4 version.
 4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled with Python support (default is 3 series).
-6) *Optional* - Qt5 libraries for best Geant4 visualiser.
+6) *Optional* - Qt5 libraries for the best Geant4 visualiser.
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
 8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.4.p03**. Avoid 10.5.p0-1. See `Geant4 Installation Guide`_
 9) Flex 2.5.37 or higher.
@@ -100,7 +101,8 @@ problems we have found:
 * Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
 * Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
-* Geant4.10.5.0  - the cashkarp integrator for fields will always crash.
+* Geant4.10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
+* Geant4.10.5.pX - bug in G4Extruded solid may occasionally lead to crashes depending on the geometry involved.
 
 The authors typically use Geant4.10.4.p03 or Geant4.10.6.p02 for production.
 
@@ -146,7 +148,7 @@ Mac OSX
 -------
 
 * XCode should be installed.
-* XCode command lines should be installed (xcode-select --install).
+* XCode command line tools should be installed (xcode-select --install).
 * XQuartz should be installed - see `<https://www.xquartz.org>`_.
 * The `make` command is available in the terminal.
 
@@ -156,7 +158,7 @@ manually downloading, compiling and installing the source for each.
 
 For MacPorts you can do: ::
 
-  sudo port install root6 +python37
+  sudo port install root6
   sudo port install xercesc3 flex bison clhep qt5
   sudo port install py37-matplotlib py37-numpy
 
@@ -359,18 +361,10 @@ Examples: ::
 Environmental Variables
 ***********************
 
-These variables are required by ROOT to access the BDSIM classes and not by BDSIM itself.
-These variables are set in the :code:`<bdsim-install-dir>/bin/bdsim.sh` provided shell script,
-but are also described here manually. ::
+Some variables are required by ROOT to access the BDSIM classes but not by BDSIM itself.
+These variables are set in the :code:`<bdsim-install-dir>/bin/bdsim.sh` provided shell script.
 
-   export BDSIM=<bdsim-install-dir>
-   export PATH=$PATH:$BDSIM/bin
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
-   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
-   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/:$BDSIM/include/bdsim/parser 
-
-These can of course be manually added to your :code:`.profile` or :code:`.bashrc` file.
-   
+* We recommond addding this to your terminal profile: :code:`source <bdsim-install-dir>/bin/bdsim.sh`
 
 .. _setup-python-utilities:
   
@@ -497,7 +491,7 @@ to make the Doxygen documentation in a folder called ``Doxygen``.::
 CLHEP Installation Guide
 ------------------------
 
-If not installed with a package manager, download `CLHEP-2.3.1.1`_ or a newer version from the `CLHEP`_ website.
+If not installed with a package manager (MacPorts, HomeBrew, yum), download CLHEP from the `CLHEP`_ website.
 
 Move and unpack to a suitable place::
 
@@ -524,28 +518,28 @@ Make and install::
 Geant4 Installation Guide
 -------------------------
 
-* **Recommend** using Geant4.10.4.p03
+* **Recommend** using Geant4.10.4.p03, or 10.6.p03, or 10.7
 * Do not recommend using Geant4.10.5 and Geant4.10.5.p01
 
 BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
-get Geant4 through a package manager such as MacPorts or Brew, but often a manual installation
+get Geant4 through a package manager such as MacPorts or HomeBrew, but often a manual installation
 is more flexible to allow choice of visualiser and use of GDML (necessary for external
 geometry). For manual installation, download the latest patch version 4.10.2 from the
 Geant website. Move and unpack to a suitable place ::
 
-  > tar -xzf geant4.10.4.p03.tar.gz
+  > tar -xzf geant4.10.6.p03.tar.gz
   > ls
-  geant4.10.4.p03
+  geant4.10.6.p03
 
 Make a build and installation directory **outside** that directory ::
 
-  > mkdir geant4.10.4.p03-build
-  > mkdir geant4.10.4.p03-install
+  > mkdir geant4.10.6.p03-build
+  > mkdir geant4.10.6.p03-install
 
 Configure Geant4 using CMake ::
 
-  > cd geant4.10.4.p03-build
-  > cmake ../geant4.10.4.p03
+  > cd geant4.10.6.p03-build
+  > cmake ../geant4.10.6.p03
 
 At this point it's useful to define the installation directory for Geant4 by
 modifying the CMake configuration as generally described in
@@ -566,16 +560,11 @@ It is useful to change a few options with Geant4 for practical purposes.
 +---------------------------------+-------------------------------------------------------------+
 | **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.             |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
-+---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically, |
 |                                 | as it's required during the simulation and it may not be    |
 |                                 | possible to run offline.                                    |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_INSTALL_DATADIR**      | Useful to specify to a known folder you make. Typically     |
-|                                 | any  **CMAKE_INSTALL_PREFIX** / data.                       |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
 +---------------------------------+-------------------------------------------------------------+
@@ -599,7 +588,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 
 .. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
 
-.. note:: The CLHEP option is required.  The GDML and QT options are strongly recommended. Others
+.. note:: The CLHEP option is required. The GDML and QT options are strongly recommended. Others
 	  are to the user's preference.
 
 Once the installation directory is set, press ``c`` to run the configuration
@@ -629,7 +618,7 @@ in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
 
-  > source path/to/geant4.10.4.p03-install/bin/geant4.sh
+  > source path/to/geant4.10.6.p03-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
