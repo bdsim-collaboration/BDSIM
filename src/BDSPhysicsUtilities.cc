@@ -559,7 +559,7 @@ void BDS::CheckAndSetEnergyValidityRange()
       table->SetEnergyRange(elLow, elHigh);
       if (setEnergyLimitLow)
 	{
-	  G4cout << __METHOD_NAME__ << "set low energy limit:  "
+	  G4cout << __METHOD_NAME__ << "set EM physics low energy limit:  "
 		 << elLow/CLHEP::MeV  << " MeV" << G4endl;
 	}
       if (setEnergyLimitHigh)
@@ -568,7 +568,7 @@ void BDS::CheckAndSetEnergyValidityRange()
 		 << elHigh/CLHEP::TeV << " TeV" << G4endl;
       if (elHigh > G4EmParameters::Instance()->MaxKinEnergy())
         {
-          G4cout << "Upping EM Ek limit to " << elHigh/CLHEP::TeV << " TeV" << G4endl;
+          G4cout << __METHOD_NAME__ << "set EM physics Ek limit to " << elHigh/CLHEP::TeV << " TeV" << G4endl;
           G4EmParameters::Instance()->SetMaxEnergy(elHigh);
         }
 #if G4VERSION_NUMBER > 1069
