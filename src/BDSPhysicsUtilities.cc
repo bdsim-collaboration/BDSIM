@@ -97,6 +97,10 @@ G4bool BDS::IsIon(const G4DynamicParticle* particle)
 
 G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verbosity)
 {
+  // this must be done BEFORE any physics processes are constructed
+  // set the upper and lower energy levels applicable for all physics processes
+  BDS::CheckAndSetEnergyValidityRange();
+  
   G4VModularPhysicsList* result = nullptr;
 
   BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -170,9 +174,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
       result = new BDSModularPhysicsList(physicsList);
       BDS::SetRangeCuts(result, verbosity); // always set our range cuts for our physics list
     }
-  // set the upper and lower energy levels applicable for all physics processes
-  // this happens only if the user has specified the input variables
-  BDS::CheckAndSetEnergyValidityRange();
+  
   // force construction of the particles - does no harm and helps with
   // usage of exotic particle beams
   result->ConstructParticle();
@@ -186,7 +188,6 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
       G4cout << "Applying geant4 physics macro file: " << physicsMacro << G4endl;
       UIManager->ApplyCommand("/control/execute " + physicsMacro);
     }
-  
   
   G4VUserPhysicsList* resultAsUserPhysicsList = dynamic_cast<G4VUserPhysicsList*>(result);
   if (resultAsUserPhysicsList)
