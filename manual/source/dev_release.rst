@@ -23,8 +23,7 @@ For each submodule:
 
 3. Tag submodule repository versions.
 4. Update submodules in bdsim repository.
-5. If the data format has changed increment the data version in output
-   header structure.
+5. If the data format has changed increment the data version in each output class header in the ClassDef() at the bottom.
    
    * Check data version in :code:`configuration/BDSVersionData.hh`.
    * Regenerate data samples in :code:`examples/features/data/` using regenerateSamples.sh
