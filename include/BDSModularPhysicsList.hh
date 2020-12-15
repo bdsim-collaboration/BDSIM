@@ -105,7 +105,7 @@ private:
   void CheckIncompatiblePhysics(const G4String& singlePhysicsIn) const;
   
   /// Typedef for function pointers to simplify syntax.
-  typedef void(BDSModularPhysicsList::*Constructor)(void);
+  typedef void(BDSModularPhysicsList::*Constructor)();
 
   /// Temporary string used to pass name to constructor functions.
   G4String temporaryName;
