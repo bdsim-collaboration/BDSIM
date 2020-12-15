@@ -41,7 +41,7 @@ For each submodule:
 7. If BDSColours has changed, run BDSIM with DEBUGOUTPUT build and copy print out of
    colours to manual (already in correct format).
 8. Check that the build (in ccmake) has USE_SPHINX_GOOGLE set to on. 
-9. Regenerate BDSIM manual and commit new version. Upload to website.
+9. Regenerate BDSIM manual (pdf and html) and commit the new pdf version. Upload html version to website.
 10. Merge release candidate branch back into develop.
 11. In develop, put back README, CMakeLists.txt to new version.develop.
 12. Merge release candidate branch into master then delete.
