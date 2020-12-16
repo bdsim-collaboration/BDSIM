@@ -39,6 +39,7 @@ namespace GMAD
     std::string inputFileName;       ///< Input filename.
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
+    std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format

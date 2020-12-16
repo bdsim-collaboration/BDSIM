@@ -30,6 +30,7 @@ OptionsBase::OptionsBase()
   inputFileName         = "optics.mad";
   visMacroFileName      = "";
   geant4MacroFileName   = "";
+  geant4PhysicsMacroFileName = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";

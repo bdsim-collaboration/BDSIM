@@ -31,8 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSSteppingAction::BDSSteppingAction():
   verboseStep(false),
-  verboseEventStart(0),
-  verboseEventStop(0)
+  verboseEventStart(false),
+  verboseEventStop(false)
 {;}
 
 BDSSteppingAction::BDSSteppingAction(G4bool verboseStepIn,
