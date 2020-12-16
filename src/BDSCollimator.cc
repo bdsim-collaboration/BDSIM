@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
@@ -48,7 +49,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
 			     G4double    yApertureIn,
 			     G4double    xApertureOutIn,
 			     G4double    yApertureOutIn,
-			     G4Colour*   colourIn):
+			     G4Colour*   colourIn,
+			     G4bool      circularOuterIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   collimatorSolid(nullptr),
   innerSolid(nullptr),
@@ -62,7 +64,8 @@ BDSCollimator::BDSCollimator(G4String    nameIn,
   yApertureOut(yApertureOutIn),
   tapered(false),
   colour(colourIn),
-  minKineticEnergy(0)
+  minKineticEnergy(0),
+  circularOuter(circularOuterIn)
 {;}
 
 BDSCollimator::~BDSCollimator()
@@ -73,19 +76,19 @@ void BDSCollimator::CheckParameters()
   if ((xAperture > 0.5 * horizontalWidth) || (yAperture > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
-      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
+      G4cerr << "Full horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
-      G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
+      G4cerr << "x (half) aperture " << xAperture << " mm, y (half) aperture " << yAperture << " mm" << G4endl;
       throw BDSException(__METHOD_NAME__, "Error in collimator");
     }
 
   if ((xApertureOut > 0.5 * horizontalWidth) || (yApertureOut > 0.5 * horizontalWidth))
     {
       G4cerr << __METHOD_NAME__ << "half aperture exit bigger than width!" << G4endl;
-      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
+      G4cerr << "Full horizontal width is " << horizontalWidth << " mm for component named: \""
              << name << "\"" << G4endl;
-      G4cerr << "x aperture " << xApertureOut << " mm, y aperture " << yApertureOut << " mm" << G4endl;
-      throw BDSException(__METHOD_NAME__, "Error in collimator.");
+      G4cerr << "x (half) aperture " << xApertureOut << " mm, y (half) aperture " << yApertureOut << " mm" << G4endl;
+      throw BDSException(__METHOD_NAME__, "Error in collimator");
     }
 
   if (BDS::IsFinite(xApertureOut) && (xAperture <= 0))
@@ -112,10 +115,22 @@ G4String BDSCollimator::Material() const
 
 void BDSCollimator::BuildContainerLogicalVolume()
 {
-  containerSolid = new G4Box(name + "_container_solid",
-			     horizontalWidth*0.5,
-			     horizontalWidth*0.5,
-			     chordLength*0.5);
+  if (circularOuter)
+    {
+      containerSolid = new G4Tubs(name + "_solid",
+				  0,
+				  0.5*horizontalWidth,
+				  0.5*chordLength,
+				  0,
+				  CLHEP::twopi);
+    }
+  else
+    {
+      containerSolid = new G4Box(name + "_container_solid",
+				 horizontalWidth*0.5,
+				 horizontalWidth*0.5,
+				 chordLength*0.5);
+    }
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
@@ -145,12 +160,25 @@ void BDSCollimator::Build()
   else
     {colRotate = nullptr;}
 
-  G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
-                                   horizontalWidth * 0.5 - lengthSafety,
-                                   horizontalWidth * 0.5 - lengthSafety,
-                                   chordLength * 0.5   - lengthSafety);
+  G4VSolid* outerSolid;
+  if (circularOuter)
+    {
+      outerSolid = new G4Tubs(name + "_outer_solid",
+			      0,
+			      horizontalWidth * 0.5 - lengthSafety,
+			      chordLength * 0.5 - lengthSafety,
+			      0,
+			      CLHEP::twopi);
+    }
+  else
+    {
+      outerSolid = new G4Box(name + "_outer_solid",
+                             horizontalWidth * 0.5 - lengthSafety,
+                             horizontalWidth * 0.5 - lengthSafety,
+                             chordLength * 0.5 - lengthSafety);
+    }
   RegisterSolid(outerSolid);
-
+  
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set

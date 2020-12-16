@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDFACTORY_H
 
 #include "BDSFieldType.hh"
+#include "BDSInterpolatorType.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh"
@@ -34,6 +35,7 @@ namespace GMAD
 
 class BDSField;
 class BDSFieldInfo;
+class BDSFieldMag;
 class BDSFieldObjects;
 class BDSMagnetStrength;
 class BDSParticleDefinition;
@@ -87,6 +89,9 @@ public:
   /// exit if no matching field definition found.
   BDSFieldInfo* GetDefinition(const G4String& name) const;
 
+  /// Suggest a default interpolator.
+  static BDSInterpolatorType DefaultInterpolatorType(G4int numberOfDimensions);
+
 private:
   /// Create a purely magnetic field.
   BDSFieldObjects* CreateFieldMag(const BDSFieldInfo&      info,
@@ -101,6 +106,10 @@ private:
 
   /// Create an irregular (special) field.
   BDSFieldObjects* CreateFieldIrregular(const BDSFieldInfo& info);
+  
+  BDSFieldMag* CreateFieldMagRaw(const BDSFieldInfo&      info,
+				 const BDSMagnetStrength* scalingStrength = nullptr,
+				 const G4String&          scalingKey      = "none");
 
   /// Create a purely magnetic integrator. As it's purely magnetic, this
   /// requires a G4Mag_EqRhs* equation of motion instance.

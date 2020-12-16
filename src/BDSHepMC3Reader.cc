@@ -33,12 +33,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Event.hh"
 #include "G4LorentzVector.hh"
-#include "G4PhysicalConstants.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
 #include "G4TransportationManager.hh"
+#include "G4VSolid.hh"
 
 #include "HepMC3/Attribute.h"
 #include "HepMC3/GenParticle.h"
@@ -62,15 +61,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 				 const G4String& fileNameIn,
-				 BDSBunchEventGenerator* bunchIn):
+				 BDSBunchEventGenerator* bunchIn,
+				 G4bool removeUnstableWithoutDecayIn,
+				 G4bool warnAboutSkippedParticlesIn):
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),
-  bunch(bunchIn)
+  bunch(bunchIn),
+  removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
+  warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
-
+  referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   OpenFile();
 }
 
@@ -164,7 +167,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 					       centralCoordsGlobal.global.y,
 					       centralCoordsGlobal.global.z,
 					       centralCoordsGlobal.global.T);
-
+  
   double overallWeight = 1.0;
   if (hepmcevt->weights().size() > 0)
     {overallWeight = hepmcevt->weight();}
@@ -182,23 +185,34 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4double px = p.x() * CLHEP::GeV;
       G4double py = p.y() * CLHEP::GeV;
       G4double pz = p.z() * CLHEP::GeV;
-      G4ThreeVector unitMomentum(px,py,pz);
-      unitMomentum = unitMomentum.unit();
-
+      G4ThreeVector originalUnitMomentum(px,py,pz);
+      originalUnitMomentum = originalUnitMomentum.unit();
+      G4double rp = std::hypot(originalUnitMomentum.x(), originalUnitMomentum.y());
+      
+      // apply any reference coordinate offsets. Copy the vector first.
+      G4ThreeVector unitMomentum = originalUnitMomentum;
+      unitMomentum.transform(referenceBeamMomentumOffset);
+      // it's ok that this G4PrimaryParticle doesn't have the correct momentum direction as we only use it for
+      // total energy and checking - it's direction is updated later based on unitMomentum with a beam line transform.
       G4PrimaryParticle* g4prim = new G4PrimaryParticle(pdgcode, px, py, pz);
 
       // if the particle definition isn't found from the pdgcode in the construction
       // of G4PrimaryParticle, it means the mass, charge, etc will be wrong - don't
       // stack this particle into the vertex.
-      if (!g4prim->GetParticleDefinition())
-	{
+      const G4ParticleDefinition* pd = g4prim->GetParticleDefinition();
+      G4bool deleteIt = !pd;
+      if (pd && removeUnstableWithoutDecay)
+        {deleteIt = !(pd->GetPDGStable()) && !pd->GetDecayTable();}
+
+      if (deleteIt)
+        {
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
+          G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pdgcode << G4endl;
 #endif
-	  delete g4prim;
-	  nParticlesSkipped++;
-	  continue;
-	}
+          delete g4prim;
+          nParticlesSkipped++;
+          continue;
+        }
 
       BDSParticleCoordsFull local(centralCoords.x,
 				  centralCoords.y,
@@ -211,7 +225,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 				  g4prim->GetTotalEnergy(),
 				  overallWeight);
 
-      if (!bunch->AcceptParticle(local, g4prim->GetKineticEnergy(), pdgcode))
+      if (!bunch->AcceptParticle(local, rp, g4prim->GetKineticEnergy(), pdgcode))
 	{
 	  delete g4prim;
 	  nParticlesSkipped++;
@@ -228,6 +242,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 	  brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
 	}
       BDSPrimaryVertexInformation vertexInfo(fullCoords,
+					     g4prim->GetTotalMomentum(),
 					     g4prim->GetCharge(),
 					     brho,
 					     g4prim->GetMass(),
@@ -241,8 +256,8 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       g4vtx->SetPrimary(g4prim);
     }
 
-  if (nParticlesSkipped > 0)
-    {G4cerr << __METHOD_NAME__ << nParticlesSkipped << " skipped." << G4endl;}
+  if (nParticlesSkipped > 0 && warnAboutSkippedParticles)
+    {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles skipped" << G4endl;}
   g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
   
   g4event->AddPrimaryVertex(g4vtx);
@@ -250,15 +265,14 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 
 G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
 {
-  G4Navigator* navigator= G4TransportationManager::GetTransportationManager()
-                                                 -> GetNavigatorForTracking();
-
-  G4VPhysicalVolume* world= navigator-> GetWorldVolume();
-  G4VSolid* solid = world->GetLogicalVolume()->GetSolid();
-  EInside qinside = solid->Inside(pos);
-
-  if( qinside != kInside) return false;
-  else return true;
+  if (!worldSolid)
+    {// cache the world solid
+      G4Navigator* navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+      G4VPhysicalVolume* world = navigator->GetWorldVolume();
+      worldSolid = world->GetLogicalVolume()->GetSolid();
+    }
+  EInside qinside = worldSolid->Inside(pos);
+  return qinside == kInside;
 }
 
 #else

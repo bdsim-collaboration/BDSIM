@@ -39,6 +39,8 @@ namespace GMAD
       std::string particle;
       std::string beamParticleName;
       double      beamEnergy;
+      double      beamKineticEnergy;
+      double      beamMomentum;
       std::string distrType;
       std::string xDistrType;
       std::string yDistrType;
@@ -46,6 +48,7 @@ namespace GMAD
       std::string distrFile;
       std::string distrFileFormat;
       bool        matchDistrFileLength;
+      bool        removeUnstableWithoutDecay;
       ///@}
       int         nlinesIgnore; ///< Ignore first lines in the input bunch file.
       int         nlinesSkip;   ///< Number of event lines to skip after the ignore lines.
@@ -55,6 +58,8 @@ namespace GMAD
       double Xp0, Yp0, Zp0;
       double T0;
       double E0;
+      double Ek0;
+      double P0;
       ///@}
 
       /// tilt of beam applied as rotation about unit local z
@@ -65,9 +70,12 @@ namespace GMAD
 
       /// for the gaussian, elliptic shell, ring distributions
       double sigmaE;
+      double sigmaEk;
+      double sigmaP;
       
       ///@{ initial twiss parameters
       double betx, bety, alfx, alfy, emitx, emity, dispx, dispy, dispxp, dispyp;
+      double emitNX, emitNY;
       ///@}
       
       ///@{ for the gaussian beam distribution
@@ -123,11 +131,14 @@ namespace GMAD
       double eventGeneratorMaxYp;
       double eventGeneratorMinZp;
       double eventGeneratorMaxZp;
+      double eventGeneratorMinRp;
+      double eventGeneratorMaxRp;
       double eventGeneratorMinT;
       double eventGeneratorMaxT;
       double eventGeneratorMinEK;
       double eventGeneratorMaxEK;
       std::string eventGeneratorParticles;
+      bool   eventGeneratorWarnSkippedParticles;
       /// @}
     };
 }

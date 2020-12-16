@@ -45,14 +45,14 @@ G4bool      BDSAcceleratorComponent::sensitiveVacuum = false;
 G4VisAttributes* BDSAcceleratorComponent::containerVisAttr = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafetyLarge = 0;
 
-BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
-						 G4double         arcLengthIn,
-						 G4double         angleIn,
-						 G4String         typeIn,
-						 BDSBeamPipeInfo* beamPipeInfoIn,
-						 G4ThreeVector    inputFaceNormalIn,
-						 G4ThreeVector    outputFaceNormalIn,
-						 BDSFieldInfo*    fieldInfoIn):
+BDSAcceleratorComponent::BDSAcceleratorComponent(const G4String&      nameIn,
+						 G4double             arcLengthIn,
+						 G4double             angleIn,
+						 const G4String&      typeIn,
+						 BDSBeamPipeInfo*     beamPipeInfoIn,
+						 const G4ThreeVector& inputFaceNormalIn,
+						 const G4ThreeVector& outputFaceNormalIn,
+						 BDSFieldInfo*        fieldInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
@@ -148,6 +148,15 @@ void BDSAcceleratorComponent::Build()
 void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
 {
   fieldInfo = fieldInfoIn;
+}
+
+G4double BDSAcceleratorComponent::Sagitta() const
+{
+  if (!BDS::IsFinite(angle))
+    {return 0;}
+  G4double bendingRadius = arcLength / angle;
+  G4double sagitta = bendingRadius - std::sqrt(std::pow(bendingRadius,2) - std::pow(chordLength, 2));
+  return sagitta;
 }
 
 G4bool BDSAcceleratorComponent::AngledInputFace() const

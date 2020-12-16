@@ -153,6 +153,10 @@ public:
 
   /// Return a copy expanded in x and y by the given margin.
   BDSExtent ExpandTransverselyBy(G4double margin) const;
+
+  /// Expand this extent to encompass the other one. Takes the max of each extent
+  /// in this and the other.
+  void ExpandToEncompass(const BDSExtent& other);
   
 private:
   /// @{ Extent.
@@ -186,6 +190,12 @@ inline G4bool BDSExtent::TransverselyLessThan(const BDSExtent& r) const
   G4bool xOK = (extXNeg > r.extXNeg) && (extXPos < r.extXPos);
   G4bool yOK = (extYNeg > r.extYNeg) && (extYPos < r.extYPos);
   return xOK && yOK;
+}
+
+namespace BDS
+{
+  /// Returns the extent which is the greatest extent in all six directions.
+  BDSExtent MaximumCombinedExtent(const BDSExtent& first, const BDSExtent& second);
 }
 
 #endif

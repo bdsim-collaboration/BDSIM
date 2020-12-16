@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTParticleData;
 class TTree;
 
 #ifndef __ROOTBUILD__ 
@@ -54,6 +54,7 @@ public:
   std::vector<U>     xp;
   std::vector<U>     yp;
   std::vector<U>     zp;
+  std::vector<U>     p;
   std::vector<U>     T;
 
   std::vector<U>     weight;
@@ -106,13 +107,14 @@ public:
   /// to fill ion information when a particle table is not available. All must
   /// be defined to use them.
   void Fill(const BDSParticleCoordsFull& coords,
-	    const G4double charge,
-	    const G4int    pdgID,
-	    const G4int    turnsTaken,
-	    const G4int    beamlineIndex,
-	    const G4int    nElectronsIn,
-	    const G4double massIn,
-	    const G4double rigidityIn,
+	    G4double       momentumIn,
+	    G4double charge,
+	    G4int    pdgID,
+	    G4int    turnsTaken,
+	    G4int    beamlineIndex,
+	    G4int    nElectronsIn,
+	    G4double massIn,
+	    G4double rigidityIn,
 	    G4bool fillIon = true,
 	    G4bool* isIon  = nullptr,
 	    G4int*  ionA   = nullptr,
@@ -130,9 +132,9 @@ public:
   void SetBranchAddress(TTree *);
   virtual void Flush();  ///< Clean Sampler
 
-  static BDSOutputROOTGeant4Data* particleTable;
+  static BDSOutputROOTParticleData* particleTable;
 
-  ClassDef(BDSOutputROOTEventSampler,4);
+  ClassDef(BDSOutputROOTEventSampler,5);
 };
 
 #endif

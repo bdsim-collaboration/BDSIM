@@ -76,6 +76,10 @@ BDSCollimatorJaw::~BDSCollimatorJaw()
 
 void BDSCollimatorJaw::CheckParameters()
 {
+  // BDSCollimator::CheckParameters() <- we replace this and don't call it - 'tapered' is never set
+  if (!colour)
+    {colour = BDSColours::Instance()->GetColour("collimator");}
+  
   if (jawHalfWidth < 1e-3) // 1um minimum, could also be negative
     {throw BDSException(__METHOD_NAME__, "horizontalWidth insufficient given xsize of jcol \"" + name + "\"");}
 
@@ -141,10 +145,10 @@ void BDSCollimatorJaw::Build()
 
   // update jaw half gap with offsets
   if (BDS::IsFinite(xSizeLeft))
-	{leftJawHalfGap = xSizeLeft;}
+    {leftJawHalfGap = xSizeLeft;}
   if (BDS::IsFinite(xSizeRight))
-	{rightJawHalfGap = xSizeRight;}
-
+    {rightJawHalfGap = xSizeRight;}
+  
   // jaws have to fit inside containerLogicalVolume so calculate full jaw widths given offsets
   G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
   G4double rightJawWidth = 0.5 * horizontalWidth - rightJawHalfGap;

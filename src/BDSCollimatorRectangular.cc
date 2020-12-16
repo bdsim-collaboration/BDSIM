@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4Trd.hh"
 
-BDSCollimatorRectangular::BDSCollimatorRectangular(G4String    nameIn,
+BDSCollimatorRectangular::BDSCollimatorRectangular(const G4String& nameIn,
                                                    G4double    lengthIn,
                                                    G4double    horizontalWidthIn,
                                                    G4Material* collimatorMaterialIn,
@@ -31,10 +31,11 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String    nameIn,
                                                    G4double    yApertureIn,
                                                    G4double    xApertureOutIn,
                                                    G4double    yApertureOutIn,
-                                                   G4Colour*   colourIn):
+                                                   G4Colour*   colourIn,
+                                                   G4bool      circularOuterIn):
   BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "rcol",
                 collimatorMaterialIn, vacuumMaterialIn, xApertureIn,
-                yApertureIn, xApertureOutIn, yApertureOutIn, colourIn)
+                yApertureIn, xApertureOutIn, yApertureOutIn, colourIn, circularOuterIn)
 {;}
 
 void BDSCollimatorRectangular::BuildInnerCollimator()

@@ -44,7 +44,7 @@ public:
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(const G4String&         nameIn,
+  BDSMagnetOuterInfo(const G4String&       nameIn,
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              horizontalWidthIn,
 		     G4Material*           outerMaterialIn,
@@ -58,7 +58,8 @@ public:
 		     G4double              coilWidthFractionIn   = 0.65,
 		     G4double              coilHeightFractionIn  = 0.8,
 		     const G4String&       geometryTypeAndPathIn = "",
-		     G4Colour*             colourIn              = nullptr);
+		     G4Colour*             colourIn              = nullptr,
+		     G4bool                autoColour            = true);
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
@@ -75,8 +76,9 @@ public:
   G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
   G4Colour*             colour;
+  G4bool                autoColour;
 
-  inline G4double MinimumIntersectionRadiusRequired() const {return std::hypot(0.5*horizontalWidth, 0.05*horizontalWidth*vhRatio);}
+  inline G4double MinimumIntersectionRadiusRequired() const {return std::hypot(0.5*horizontalWidth, 0.5*horizontalWidth*vhRatio);}
 };
 
 #endif

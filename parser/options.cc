@@ -99,7 +99,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
 {
   if (override)
     {
-      for (auto const key : optionsIn.setKeys)
+      for (auto const& key : optionsIn.setKeys)
 	{
 	  try
 	    {
@@ -108,14 +108,14 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
         }
 	  catch (const std::runtime_error&)
 	    {
-	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      std::cerr << "Error: Amalgamate unknown option \"" << key << "\"" << std::endl;
 	      exit(1);
 	    }
 	}
     }
   else
     {// don't override - ie give preference to ones set in this instance
-      for (auto const key : optionsIn.setKeys)
+      for (auto const& key : optionsIn.setKeys)
 	{
 	  auto const& ok = setKeys; // shortcut
 	  auto result = std::find(ok.begin(), ok.end(), key);
@@ -128,7 +128,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
         }
 	      catch (const std::runtime_error&)
 		{
-		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  std::cerr << "Error: Amalgamate unknown option \"" << key << "\"" << std::endl;
 		  exit(1);
 		}
 	    }
@@ -136,7 +136,7 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
     }
 }
 
-bool Options::HasBeenSet(std::string name) const
+bool Options::HasBeenSet(const std::string& name) const
 {
   return std::find(setKeys.begin(), setKeys.end(), name) != setKeys.end();
 }
@@ -147,10 +147,12 @@ void Options::PublishMembers()
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("geant4MacroFileName",   &Options::geant4MacroFileName);
+  publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
+  publish("outputCompressionLevel",&Options::outputCompressionLevel);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
   
@@ -207,6 +209,7 @@ void Options::PublishMembers()
   // physics
   publish("physicsList",       &Options::physicsList);
   publish("physicsVerbose",    &Options::physicsVerbose);
+  publish("physicsVerbosity",  &Options::physicsVerbosity);
   publish("physicsEnergyLimitLow",          &Options::physicsEnergyLimitLow);
   publish("physicsEnergyLimitHigh",         &Options::physicsEnergyLimitHigh);
   publish("g4PhysicsUseBDSIMRangeCuts",     &Options::g4PhysicsUseBDSIMRangeCuts);
@@ -244,10 +247,11 @@ void Options::PublishMembers()
   publish("magnetGeometryType",   &Options::magnetGeometryType);
   publish("outerMaterial",        &Options::outerMaterialName);
   publish("horizontalWidth",      &Options::horizontalWidth);
-  publish("outerDiameter",        &Options::horizontalWidth); // for backwards compatability
-  publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
+  publish("outerDiameter",        &Options::horizontalWidth); // for backwards compatibility
+  publish("boxSize",              &Options::horizontalWidth); // for backwards compatibility
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
+  publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);
@@ -263,6 +267,7 @@ void Options::PublishMembers()
   publish("emptyMaterial",        &Options::emptyMaterial);
   publish("worldMaterial",        &Options::worldMaterial);
   publish("worldGeometryFile",    &Options::worldGeometryFile);
+  publish("autoColourWorldGeometryFile",    &Options::autoColourWorldGeometryFile);
   publish("importanceWorldGeometryFile",    &Options::importanceWorldGeometryFile);
   publish("importanceVolumeMap",  &Options::importanceVolumeMap);
   publish("worldVolumeMargin",    &Options::worldVolumeMargin);
@@ -289,9 +294,9 @@ void Options::PublishMembers()
   publish("tunnelFloorOffset",   &Options::tunnelFloorOffset);
   publish("tunnelAper1",         &Options::tunnelAper1);
   publish("tunnelAper2",         &Options::tunnelAper2);
-  publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatability
+  publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatibility
   publish("tunnelVisible",       &Options::tunnelVisible);
-  publish("showTunnel",          &Options::tunnelVisible); // for backwards compatability
+  publish("showTunnel",          &Options::tunnelVisible); // for backwards compatibility
   publish("tunnelOffsetX",       &Options::tunnelOffsetX);
   publish("tunnelOffsetY",       &Options::tunnelOffsetY);
 
@@ -316,7 +321,7 @@ void Options::PublishMembers()
   publish("prodCutElectrons",            &Options::prodCutElectrons);
   publish("prodCutPositrons",            &Options::prodCutPositrons);
   publish("prodCutProtons",              &Options::prodCutProtons);
-  publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatability
+  publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatibility
   publish("neutronTimeLimit",            &Options::neutronTimeLimit);
   publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
   publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
@@ -325,6 +330,7 @@ void Options::PublishMembers()
   publish("useGammaToMuMu",              &Options::useGammaToMuMu);
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
+  publish("beamPipeIsInfiniteAbsorber",  &Options::beamPipeIsInfiniteAbsorber);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);
   
@@ -364,9 +370,12 @@ void Options::PublishMembers()
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
 
+  publish("storeMinimalData",               &Options::storeMinimalData);
+  
   publish("storeApertureImpacts",           &Options::storeApertureImpacts);
   publish("storeApertureImpactsIons",       &Options::storeApertureImpactsIons);
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
+  publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
@@ -407,11 +416,18 @@ void Options::PublishMembers()
   publish("storeELossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
   publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeELossModelID",              &Options::storeElossModelID);
-  publish("storeGeant4Data",                &Options::storeGeant4Data);
-  
+  publish("storeElossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
+  publish("storeELossPhysicsProcesses",     &Options::storeElossPhysicsProcesses);
+  publish("storeParticleData",              &Options::storeParticleData);
+  publish("storeGeant4Data",                &Options::storeParticleData); // backwards compatibility
+  publish("storePrimaries",                 &Options::storePrimaries);
+  publish("storePrimaryHistograms",         &Options::storePrimaryHistograms);
+  publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryStepPoints",          &Options::storeTrajectoryStepPoints);
+  publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
@@ -427,6 +443,7 @@ void Options::PublishMembers()
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
   publish("storeSamplerPolarCoords",        &Options::storeSamplerPolarCoords);
+  publish("storeSamplerPolarCoordinates",   &Options::storeSamplerPolarCoords); ///< alternative
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
   publish("storeSamplerKineticEnergy",      &Options::storeSamplerKineticEnergy);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
@@ -437,8 +454,7 @@ void Options::PublishMembers()
   publish("trajectoryConnect",              &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
-
-  publish("writePrimaries",                 &Options::writePrimaries);
+  
   publish("storeModel",                     &Options::storeModel);
 
   // circular options

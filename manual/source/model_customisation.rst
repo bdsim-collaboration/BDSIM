@@ -50,6 +50,8 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * Fields may have up to four dimensions.
 * The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
   :math:`x,y,z` and a 2D field :math:`x,y`.
+* Cubic interpolation is used by default unless otherwise specified.
+* Geant4's classical 4th order Runge Kutta is used as the default numerical integrator.
 
 For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
 :ref:`fields-different-dimensions`),
@@ -64,6 +66,28 @@ ascending or descending order.
 	  recommended the user re-sample any existing field map into a regular grid. A regular
 	  grid is also much faster for tracking purposes.
 
+.. warning:: The maximum step length of a particle through an element is by default 10km in Geant4.
+	     BDSIM reduces this to 110% the length of an element. In the case of a field map, the
+	     step limit is not dynamically derived (in Geant4) from the variation in the field.
+	     Too large a step may mean that the numerical integration along the step may not
+	     'see' the variations in the field and therefore calculate the wrong motion. For
+	     example, imagine a wiggler or undulator field map and only a few select points
+	     along it's length being queried - it may appear as a dipole field!
+	     Therefore, when we use a field map in BDSIM, the step length is limited to the
+	     minimum distance between points in any dimension of the field map. Depending on
+	     how much the field map varies from point to point (density of samples) then the
+	     user may wish to reduce this further with the parameter :code:`maximumStepLength`
+	     below in the field definition. You may also wish to visualise the individual points
+	     as described in :ref:`visualisation-step-points`.
+	  
+Here is a minimal example of a magnetic field in BDSIM format::
+
+  detfield: field, type="bmap3d",
+                   magneticFile="bdsim3d:fieldmap.dat.gz";
+
+This will use the "g4classicalrk4" integrator for the particle motion and the "cubic" (in 3D) interpolation
+by default.
+	  
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
 
@@ -72,9 +96,9 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 		    bScaling = 0.4,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
+		    magneticInterpolator = "nearest",
 		    electricFile = "poisson2d:/Another/File.TXT",
-		    electricInterpolator = "linear2D";
+		    electricInterpolator = "linear";
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
@@ -139,8 +163,20 @@ When defining a field, the following parameters can be specified.
 |                      | for the magnet it's attached to. Only applicable for when       |
 |                      | attached to magnets.                                            |
 +----------------------+-----------------------------------------------------------------+
-| maximumStepLength    | The maximum permitted step length through the field. (m)        |
+| maximumStepLength    | The maximum permitted step length through the field. (m) No     |
+|                      | length smaller than 1 micron is permitted currently.            |
 +----------------------+-----------------------------------------------------------------+
+| magneticSubField     | Name of another field object like this one that will be used as |
+|                      | a magnetic 'sub' field that overlays this one.                  |
++----------------------+-----------------------------------------------------------------+
+
+The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
+110% of the element length that the field is attached to, or the global maximum step length,
+or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
+velocity is assume to be :code:`c`, the speed of light, for the spatial distance calcualted
+from this.
+
+.. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps are attached to and the coordinates
@@ -230,7 +266,7 @@ Integrators
 
 The following integrators are provided.  The majority are interfaces to Geant4 integrators.
 *g4classicalrk4* is typically the recommended default and is very robust.
-*g4cakskarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
+*g4cashkarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
 onwards, *g4dormandprince745* is the default recommended by Geant4 (although not the
 BDSIM default currently). Note: any integrator capable of operating on EM fields
 will work on solely B- or E-fields.
@@ -305,33 +341,74 @@ is shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 
-+------------+-------------------------------+
-| **String** | **Description**               |
-+============+===============================+
-| nearest1d  | Nearest neighbour in 1D       |
-+------------+-------------------------------+
-| nearest2d  | Nearest neighbour in 2D       |
-+------------+-------------------------------+
-| nearest3d  | Nearest neighbour in 3D       |
-+------------+-------------------------------+
-| nearest4d  | Nearest neighbour in 4D       |
-+------------+-------------------------------+
-| linear1d   | Linear interpolation in 1D    |
-+------------+-------------------------------+
-| linear2d   | Linear interpolation in 2D    |
-+------------+-------------------------------+
-| linear3d   | Linear interpolation in 3D    |
-+------------+-------------------------------+
-| linear4d   | Linear interpolation in 4D    |
-+------------+-------------------------------+
-| cubic1d    | Cubic interpolation in 1D     |
-+------------+-------------------------------+
-| cubic2d    | Cubic interpolation in 2D     |
-+------------+-------------------------------+
-| cubic3d    | Cubic interpolation in 3D     |
-+------------+-------------------------------+
-| cubic4d    | Cubic interpolation in 4D     |
-+------------+-------------------------------+
++------------+---------------------------------+
+| **String** | **Description**                 |
++============+=================================+
+| nearest    | Nearest neighbour interpolation |
++------------+---------------------------------+
+| linear     | Linear interpolation            |
++------------+---------------------------------+
+| cubic      | Cubic interpolation             |
++------------+---------------------------------+
+
+Internally there is a different implementation for different numbers of dimensions and this
+is automatically chosen based on the number of dimensions in the field map type.
+
+.. _fields-sub-fields:
+
+Sub-Fields
+^^^^^^^^^^
+
+A 'sub-field' is where one field map can be overlaid on top of another. The sub-field should be smaller
+and will simply take precedence on the main field within its range. This is useful if for example a
+precise field detailed field map is required for a smaller region but a coarser field map is suitable
+for the majority of the component. Remember, field maps must contain regularly spaced data so if a high
+density of points is required in one point, this would lead to an excessively large field map for the rest
+of the element which may not be necessary and slow the loading and running of the simulation.
+
+Inside the domain of the sub-field, only its interpolated value is used. The transition between the sub
+and main field is hard and it is left to the user to ensure that the field values are continuous to
+make physical sense.
+
+* Currently only sub-magnetic fields are supported.
+* The tilt or rotation of the field map (with respect to the element it is attached to) does not
+  apply to the region of applicability for the subfield. However, the field is tilted appropriately.
+* The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
+  main outer field.
+* If a 2D field is used both fields apply infinitely in z in a 3D model, therefore the sub-field
+  will always take precedence for any z value as long as x and y are inside its limits.
+
+Below is an example of a sub-field that can be found in :code:`bdsim/examples/features/fields/subfield`: ::
+
+  fpipe: field, type="bmap2d",
+       	        magneticFile="bdsim2d:inner.dat",
+	        magneticInterpolator="nearest",
+	        x=-10*cm;
+
+  fyoke: field, type="bmap2d",
+       	        magneticFile="bdsim2d:outer.dat",
+	        magneticInterpolator="cubic",
+	        magneticSubField="fpipe";
+
+  d1: drift, l=0.5*m, aper1=0.5*m, fieldAll="fyoke";
+
+First a smaller field map is defined called "fpipe". Secondly, a larger coarser field map is created
+called "fyoke" that crucially refers to the :code:`magneticSubField="fpipe"`. The sub-field applies
+only in the range of the field map taken from the maximum and minimum coordinates in each dimension
+when loading the field map. In the provided example, the "inner.dat" field map defines 4 points in a
+2D square at +- 20 cm in both x and y with the same B field vector. Nearest neighbour interpolation
+is used to ensure a perfect uniform field inside these points.
+
+The second field definition using "outer.dat" ranges from +- 50 cm with a similar box of 4 points in 2D.
+Each point has the same field value but with an opposing x component. The Python script used to create
+these simple field maps is included alongside the example. The example combined field map is shown
+in the visualiser below. The magnetic field lines were visualised using the Geant4 visualiser command
+:code:`/vis/scene/add/magneticField 10 lightArrow`.
+
+.. image:: figures/fields-sub-field.png
+	   :width: 60%
+	   :align: center
+
 
 .. _materials-and-atoms:
 	  
@@ -680,9 +757,14 @@ The magnet geometry is controlled by the following parameters.
 	  basis, but in this case they act as a default that will be used if none are
 	  specified by the element.
 
-.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), any
+.. note:: The option :code:`ignoreLocalMagnetGeometry` exists and if it is true (1), **all**
 	  per-element magnet geometry definitions will be ignored and the ones specified
 	  in Options will be used.
+
+.. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
+	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
+	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  this. These are described in :ref:`fields-multipole-outer-lhc`.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
@@ -1058,6 +1140,8 @@ file. See :ref:`externally-provided-geometry` for more details.
 * The world **material** will be taken from the GDML file and the option :code:`worldMaterial`
   will be ignored. If the option :code:`worldMaterial` is specified as well as
   :code:`worldGeometryFile`, BDSIM will exit.
+* The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
+  the supplied geometry by density. See :ref:`automatic-colours` for details.
 
 .. _placements:
 
@@ -1097,7 +1181,7 @@ There are 3 possible ways to place a piece of geometry.
 
 3) In curvilinear coordinates with respect to a beam line element by name.
 
-   - The name of an element is used to look up its `s` coordinate. `s`, `x`, `y` and the rotation
+   - The name of an element is used to look up its (mid-point) `s` coordinate. `s`, `x`, `y` and the rotation
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
@@ -1145,6 +1229,9 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
++-------------------------+--------------------------------------------------------------------+
+| autoColour              | Boolean whether the geometry should be automatically coloured by   |
+|                         | density if no colour information is supplied. (default true)       |
 +-------------------------+--------------------------------------------------------------------+
 
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
@@ -1213,9 +1300,16 @@ The beam pipe is not placed 'inside' the yoke.
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
 `decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
-Example::
+Example: ::
 
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
+density if desired. This is on by default.  Example to turn it off: ::
+    
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
+
 
 .. _element-external-geometry:
 
@@ -1610,6 +1704,18 @@ For convenience the predefined colours in BDSIM are:
 +---------------------+-----+-----+-----+-----+
 
 
+.. _automatic-colours:
+
+Automatic Colours
+-----------------
+
+In the case where an automatic colouring option is used, BDSIM can automatically assign a colour
+to volumes based on their material for visualisation purposes. This is done with a set of predefined
+ones for common elements and materials, and then the fall back is to use the state and the density. The
+materials state sets the opacity and the density is used to scale a grey colour. In all cases, the geometry
+will be visible.
+
+
 .. _regions:
 			
 Regions
@@ -1630,7 +1736,7 @@ and attach these to the beam line elements desired.  For example::
 The following parameters are available in the `cutsregion` object:
 
 +--------------------+----------------------------------------+
-| **Parmater**       | **Description**                        |
+| **Parameter**      | **Description**                        |
 +====================+========================================+
 | defaultRangeCut    | The default range cut for this object. |
 +--------------------+----------------------------------------+
@@ -1669,13 +1775,11 @@ density.
   will be the default for `prodCutProtons` in a `cutsregion` object if `defaultRangeCut`
   is not specified in the object.
 * See :code:`bdsim/examples/features/processes/regions` for documented examples.
-  
-.. rubric:: Footnotes
 
 .. _one-turn-map:
 
 One Turn Map
-^^^^^^^^^^^^
+------------
 
 Geant4 mandates that there are no overlaps between solids, which in
 BDSIM means that a thin 1 |nbsp| nm gap is placed between each lattice

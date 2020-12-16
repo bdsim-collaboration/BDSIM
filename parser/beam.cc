@@ -155,6 +155,8 @@ void Beam::PublishMembers()
   publish("beamParticle",         &Beam::beamParticleName);
   publish("beamParticleName",     &Beam::beamParticleName);
   publish("energy",               &Beam::beamEnergy);
+  publish("kineticEnergy",        &Beam::beamKineticEnergy);
+  publish("momentum",             &Beam::beamMomentum);
   publish("distrType",            &Beam::distrType);
   publish("xDistrType",           &Beam::xDistrType);
   publish("yDistrType",           &Beam::yDistrType);
@@ -162,6 +164,7 @@ void Beam::PublishMembers()
   publish("distrFile",            &Beam::distrFile);
   publish("distrFileFormat",      &Beam::distrFileFormat);
   publish("matchDistrFileLength", &Beam::matchDistrFileLength);
+  publish("removeUnstableWithoutDecay", &Beam::removeUnstableWithoutDecay);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
   publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency
   publish("nlinesSkip",           &Beam::nlinesSkip);
@@ -184,9 +187,13 @@ void Beam::PublishMembers()
   publish("tilt",  &Beam::tilt);
   publish("T0",    &Beam::T0);
   publish("E0",    &Beam::E0);
+  publish("Ek0",   &Beam::Ek0);
+  publish("P0",    &Beam::P0);
 
-  publish("sigmaT", &Beam::sigmaT);
-  publish("sigmaE", &Beam::sigmaE);
+  publish("sigmaT",  &Beam::sigmaT);
+  publish("sigmaE",  &Beam::sigmaE);
+  publish("sigmaEk", &Beam::sigmaEk);
+  publish("sigmaP",  &Beam::sigmaP);
 
   // for gausstwiss
   publish("betx",  &Beam::betx);
@@ -195,6 +202,8 @@ void Beam::PublishMembers()
   publish("alfy",  &Beam::alfy);
   publish("emitx", &Beam::emitx);
   publish("emity", &Beam::emity);
+  publish("emitnx",&Beam::emitNX);
+  publish("emitny",&Beam::emitNY);
   publish("dispx", &Beam::dispx);
   publish("dispy", &Beam::dispy);
   publish("dispxp",&Beam::dispxp);
@@ -289,9 +298,12 @@ void Beam::PublishMembers()
   publish("eventGeneratorMaxYp",     &Beam::eventGeneratorMaxYp);
   publish("eventGeneratorMinZp",     &Beam::eventGeneratorMinZp);
   publish("eventGeneratorMaxZp",     &Beam::eventGeneratorMaxZp);
+  publish("eventGeneratorMinRp",     &Beam::eventGeneratorMinRp);
+  publish("eventGeneratorMaxRp",     &Beam::eventGeneratorMaxRp);
   publish("eventGeneratorMinT",      &Beam::eventGeneratorMinT);
   publish("eventGeneratorMaxT",      &Beam::eventGeneratorMinT);
   publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK);
   publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK);
   publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
+  publish("eventGeneratorWarnSkippedParticles", &Beam::eventGeneratorWarnSkippedParticles);
 }

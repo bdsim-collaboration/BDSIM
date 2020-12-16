@@ -2,4 +2,5 @@ include sbend_fringe.gmad;
 
 option, integratorSet="bdsimtwo";
 
+! speed up test - purpose here is to test integrator set
 option, checkOverlaps=0;

@@ -756,14 +756,14 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
 				    endPieceLength,
 				    0,
 				    endPieceContainerSolid,
-				    endPieceContainerLV);
+				    endPieceContainerLV,
+                    BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
 
   endPiece->RegisterSolid(endPieceCoilSolid);
   endPiece->RegisterLogicalVolume(endPieceCoilLV);
   endPiece->RegisterVisAttributes(endPieceCoilVis);
   if (sensitiveOuter)
     {endPiece->RegisterSensitiveVolume(endPieceCoilLV, BDSSDType::energydep);}
-  endPiece->SetExtent(BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
   endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
 
@@ -1478,7 +1478,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
       allSolids.insert(coilSolid);
     }
 
-  // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
+  // Intersect and replace solids. Do it via replacement of the base class member G4VSolid*
   // as the intersection is only done if one of the angles is finite.
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     { 
@@ -1938,6 +1938,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
 							    0/*angle*/,
 							    ePContSolidIn,
 							    ePContInLV,
+							    ePExtOuter,
 							    inputFaceNormal,
 							    inputFaceNormalR);
   
@@ -1949,7 +1950,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
   endPieceInSC->RegisterSolid(endPieceSolidIn);
   if (sensitiveOuter)
     {endPieceInSC->RegisterSensitiveVolume(ePInLV, BDSSDType::energydep);}
-  endPieceInSC->SetExtent(ePExtOuter);
   endPieceInSC->SetInnerExtent(ePExtInner);
   
   G4ThreeVector outputFaceNormalR = outputFaceNormal * -1; // just -1 as parallel but opposite
@@ -1958,6 +1958,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
 							     0/*angle*/,
 							     ePContSolidOut,
 							     ePContOutLV,
+                                 ePExtInner,
 							     outputFaceNormalR,
 							     outputFaceNormal);
   

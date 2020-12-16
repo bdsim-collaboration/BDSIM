@@ -25,6 +25,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class BDSParticleDefinition;
 class G4DynamicParticle;
 class G4GenericBiasingPhysics;
@@ -40,7 +44,7 @@ class G4Transportation;
 
 namespace GMAD
 {
-  class BeamBase;
+  class Beam;
 }
 
 namespace BDS
@@ -53,14 +57,24 @@ namespace BDS
   
   /// Detect whether we're using a Geant4 provided physics list or whether we'll use the
   /// BDSIM modular physics and construct it.
-  G4VModularPhysicsList* BuildPhysics(const G4String& physicsList);
+  G4VModularPhysicsList* BuildPhysics(const G4String& physicsList, G4int verbosity = 1);
+
+  /// Count how many out of the set of keys in a beam instance are set.
+  G4int NBeamParametersSet(const GMAD::Beam&            beamDefinition,
+                           const std::set<std::string>& keys);
+
+  /// Throw an exception if too few or too many parameters are set for the supplied keys.
+  void ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
+                                const std::set<std::string>& keys,
+                                G4int                        nSet,
+                                G4bool                       warnZeroParamsSet = true);
 
   /// Construct the design and beam particle definitions. Even if these are the same, unique
   /// objects are created for and must be deleted elsewhere. Two pointers are passed by
   /// reference that will be updated with the allocated objects. The Boolean by reference
   /// argument is to tell whether they definitions (although unique objects) define the same
   /// particle.
-  void ConstructDesignAndBeamParticle(const GMAD::BeamBase& beamDefinition,
+  void ConstructDesignAndBeamParticle(const GMAD::Beam& beamDefinition,
 				      G4double ffact,
 				      BDSParticleDefinition*& designParticle,
 				      BDSParticleDefinition*& beamParticle,
@@ -69,12 +83,15 @@ namespace BDS
   /// Construct particle definition. Ensure that particle is instantiated
   /// from a Geant4 point of view.  'ffact' is typically 1 or -1 used to flip
   /// the sign of the rigidity for difference between convention and what's required.
-  BDSParticleDefinition* ConstructParticleDefinition(G4String particleNameIn,
-						     G4double totalEnergy,
+  /// Only one of totalEnergy, kineticEnergy and momentum should be non-zero.
+  BDSParticleDefinition* ConstructParticleDefinition(const G4String& particleNameIn,
+                                                     G4double totalEnergyIn,
+                                                     G4double kineticEnergyIn,
+                                                     G4double momentumIn,
 						     G4double ffact = 1);
 
   /// Ensure required beam particle has been constructed for Geant4 purposes.
-  void ConstructBeamParticleG4(G4String name);
+  void ConstructBeamParticleG4(const G4String& name);
   
   /// Construct the minimum particle set required (gamma, electron, positron,
   /// proton and anti-proton.
@@ -92,13 +109,16 @@ namespace BDS
 
 #if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.
-  G4VModularPhysicsList* ChannellingPhysicsComplete(const G4bool useEMD = false);
+  G4VModularPhysicsList* ChannellingPhysicsComplete(G4bool useEMD  = false,
+						    G4bool regular = false,
+						    G4bool em4     = false,
+						    G4bool emss    = false);
 #endif
 
   /// Set the range cuts on a physics list. This is split into a separate function to allow it
-  /// to be applied to physics lists both from BDSIM's modular phyiscs list and other sources
+  /// to be applied to physics lists both from BDSIM's modular physics list and other sources
   /// with the same mechanism.
-  void SetRangeCuts(G4VModularPhysicsList* physicsList);
+  void SetRangeCuts(G4VModularPhysicsList* physicsList, G4int verbosity = 1);
 
   /// Check if the user has requested a changed energy validity range and set the appropriate
   /// variables in the G4ProductionCutsTable.
