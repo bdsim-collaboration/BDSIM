@@ -76,6 +76,10 @@ BDSCollimatorJaw::~BDSCollimatorJaw()
 
 void BDSCollimatorJaw::CheckParameters()
 {
+  // BDSCollimator::CheckParameters() <- we replace this and don't call it - 'tapered' is never set
+  if (!colour)
+    {colour = BDSColours::Instance()->GetColour("collimator");}
+  
   if (jawHalfWidth < 1e-3) // 1um minimum, could also be negative
     {throw BDSException(__METHOD_NAME__, "horizontalWidth insufficient given xsize of jcol \"" + name + "\"");}
 

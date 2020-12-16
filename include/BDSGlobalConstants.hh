@@ -77,7 +77,7 @@ private:
   static BDSGlobalConstants* instance;
 
   /// Options instance that this is largely based on and extends
-  const GMAD::Options& options;
+  GMAD::Options options;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
@@ -93,6 +93,7 @@ public:
   // Executable options
   inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
   inline G4String Geant4MacroFileName()    const {return G4String(options.geant4MacroFileName);}
+  inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
@@ -199,7 +200,9 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
+  inline G4bool   StoreMinimalData()         const {return G4bool  (options.storeMinimalData);}
   inline G4bool   StorePrimaries()           const {return G4bool  (options.storePrimaries);}
+  inline G4bool   StorePrimaryHistograms()   const {return G4bool  (options.storePrimaryHistograms);}
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
   inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}

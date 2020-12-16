@@ -95,7 +95,7 @@ public:
 		      G4bool penetrateToDaughterVolumes = true);
 
   /// Interface to easily attach to logical volumes.
-  void AttachToVolume(std::vector<G4LogicalVolume*> volumes,
+  void AttachToVolume(const std::vector<G4LogicalVolume*>& volumes,
 		      G4bool penetrateToDaughterVolumes = true);
   
 private:
