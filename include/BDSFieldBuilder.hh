@@ -60,21 +60,21 @@ public:
 				    G4LogicalVolume*         logicalVolume,
 				    const G4bool             propagateToDaughters     = false,
 				    const BDSMagnetStrength* magnetStrengthForScaling = nullptr,
-				    const G4String           scalingKey = "none");
+				    const G4String&          scalingKey               = "none");
 
   /// Similar version but vectorised.
   void RegisterFieldForConstruction(const BDSFieldInfo*      info,
 				    const std::vector<G4LogicalVolume*>& logicalVolumes,
 				    const G4bool             propagateToDaughters     = false,
                                     const BDSMagnetStrength* magnetStrengthForScaling = nullptr,
-				    const G4String           scalingKey               = "none");
+				    const G4String&          scalingKey               = "none");
 
   /// Similar version but for a set.
   void RegisterFieldForConstruction(const BDSFieldInfo*      info,
 				    const std::set<G4LogicalVolume*>& logicalVolumes,
 				    const G4bool             propagateToDaughters     = false,
                                     const BDSMagnetStrength* magnetStrengthForScaling = nullptr,
-				    const G4String           scalingKey               = "none");
+				    const G4String&          scalingKey               = "none");
 
   std::vector<BDSFieldObjects*> CreateAndAttachAll();
 

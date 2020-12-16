@@ -147,6 +147,7 @@ void Options::PublishMembers()
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("geant4MacroFileName",   &Options::geant4MacroFileName);
+  publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);

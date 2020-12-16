@@ -359,7 +359,7 @@ A few points about rbends:
    :math:`e2 = 0.1` can be followed by an rbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
-4) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+4) Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the beginning
    or at the end of the rbend. The length of the fringe field element can be
    set by the option `thinElementLength` (see :ref:`bdsim-options`) but is an advanced option.
 5) In the case of finite `fint` or `fintx` and `hgap`, a fringe field is used even
@@ -495,7 +495,7 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+3) Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the beginning
    or at the end of the sbend. The length of the fringe field magnet can be
    set by the option `thinElementLength` (see :ref:`bdsim-options`).
 4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
@@ -698,7 +698,7 @@ Examples: ::
 thinmultipole
 ^^^^^^^^^^^^^
 
-`thinmultipole` is the same as multipole, but is set to have a default length of 1 micron.
+`thinmultipole` is the same as multipole, but is set to have a default length of 0.1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
 
@@ -716,7 +716,7 @@ vkicker
 `vkicker` can either be a thin or thick vertical dipole magnet. If specified
 with a finite length :code:`l`, it will be constructed as a thick dipole. However, if no length (or
 a length of exactly 0 is specified), a thin kicker will be built. In practice, the thin version is
-constructed as a 1um slice with only the aperture geometry and no surrounding geometry and is not
+constructed as a 0.1um slice with only the aperture geometry and no surrounding geometry and is not
 visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
@@ -753,7 +753,7 @@ For thin kickers, the magnetic field :code:`B` is ignored and the element is tre
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+* Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the
   beginning or at the end of the vkicker. The length of the fringe field element can be set by the
   option `thinElementLength` (see :ref:`bdsim-options`).
 * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
@@ -779,7 +779,7 @@ hkicker
 
 `hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
 specified with a finite length :code:`l`, it will be constructed as a dipole. However, if no length (or
-a length of exactly 0) is specified, a thin kicker will be built. This is typically a 1um slice
+a length of exactly 0) is specified, a thin kicker will be built. This is typically a 0.1um slice
 with only the shape of the aperture and no surrounding geometry. It is also typically not
 visible with the default visualisation settings.
 
@@ -809,7 +809,7 @@ For thin kickers, the magnetic field :code:`B` is ignored and the element is tre
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+* Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the
   beginning or at the end of the hkicker. The length of the fringe field element can be set by the
   option `thinElementLength` (see :ref:`bdsim-options`).
 * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element

@@ -894,7 +894,7 @@ Acceptable tokens for the columns are:
 | "S"        | Global path length displacement,       |
 |            | not to be used in conjunction with "z".|
 +------------+----------------------------------------+
-| "pt"       | PDG particle ID                        |
+| "pdgid"    | PDG particle ID                        |
 +------------+----------------------------------------+
 | "w"        | Weight                                 |
 +------------+----------------------------------------+
@@ -1159,6 +1159,29 @@ See the Geant4 documentation for a more complete explanation of the physics list
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
+.. _physics-macro-file:
+  
+Physics Macro File
+^^^^^^^^^^^^^^^^^^
+
+Using the option :code:`geant4PhysicsMacroFileName` a macro file can be specified that will be executed
+and interpreted by Geant4 **after** the construction of the physics list but before the start of the run
+(in the INIT state). From :code:`examples/features/processes/macros/physics-em-geant4-macro.gmad`: ::
+
+  option, geant4PhysicsMacroFileName="emextraphysics.mac";
+
+Inside this file, the following commands were used: ::
+
+  /physics_lists/em/GammaToMuons true
+  /physics_lists/em/PositronToMuons true
+  /physics_lists/em/PositronToHadrons true
+  /physics_lists/em/NeutrinoActivation true
+  /physics_lists/em/MuonNuclear true
+  /physics_lists/em/GammaNuclear true
+
+We recommend using the visualiser and interactively exploring the commands there to find suitable ones.
+
+
 .. _physics-modular-physics-lists:
   
 Modular Physics Lists
@@ -1300,11 +1323,12 @@ Examples: ::
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
 +------------------------------+------------------------------------------------------------------------+
-| muon                         | Provides muon production and scattering processes. Gamma to muons,     |
-|                              | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                              | multiple scattering for muons, muon Bremsstrahlung, pair production    |
-|                              | and Cherenkov light are all provided. Given by BDSIM physics           |
-|                              | builder (a la Geant4) `BDSPhysicsMuon`.                                |
+| muon                         | Provides muon production and scattering processes. Be careful if using |
+|                              | with `em_extra` as processes may be double registered. Includes Gamma  |
+|                              | to muons, annihilation to muon pair, 'ee' to hadrons, pion decay to    |
+|                              | muons, multiple scattering for muons, muon Bremsstrahlung, pair        |
+|                              | production and Cherenkov light are all provided. Given by BDSIM        |
+|                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
@@ -1422,6 +1446,14 @@ these will have no effect.
 is not used in BDSIM, as it does not propagate the associated weights correctly. Biasing should be done through
 the generic biasing interface with the name of the process (described in the following section), as this will
 propagate the weights correctly.
+
+.. warning:: If you used :code:`em_extra` and :code:`muon` modular physics list, extreme care should be
+	     taken in combination with the above options that certain processes are not doubly registered,
+	     which would result in double the rates of those processes.
+
+.. note:: If you use the reference physics list :code:`g4FTFP_BERT`, this will contain the EM extra physics
+	  but this interface to turn on the extra parts is not applicable. In this case, a physics macro
+	  file should be used (see :ref:`physics-macro-file`).
 
 .. _physics-geant4-lists:
 
@@ -2237,6 +2269,11 @@ Physics Processes
 |                                  | cut. Overwrites other production cuts unless these    |
 |                                  | are explicitly set (default 1e-3) [m].                |
 +----------------------------------+-------------------------------------------------------+
+| geant4PhysicsMacroFileName       | The name of a text macro file with commands that are  |
+|                                  | suitable for the Geant4 interpreter that will be      |
+|                                  | exectued after the physics list is constructed but    |
+|                                  | before a run.                                         |
++----------------------------------+-------------------------------------------------------+
 | g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
 |                                  | 110% of the component length - this makes the         |
 |                                  | tracking more robust and is the default with a        |
@@ -2269,7 +2306,7 @@ Physics Processes
 |                                  | be used only if the user understands how this will    |
 |                                  | affect the running of Geant4. [GeV]                   |
 +----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitHigh           | Optional upper energy level for all physics models.   |
+| physicsEnergyLimitHigh (\*)      | Optional upper energy level for all physics models.   |
 |                                  | This is usually 100 TeV by default in Geant4. The     |
 |                                  | user may change this if required. Warning, this must  |
 |                                  | be used only if the user understands how this will    |
@@ -2328,6 +2365,11 @@ Physics Processes
 |                                  | annihilation process when using `em_extra` physics    |
 |                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +----------------------------------+-------------------------------------------------------+
+
+* (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
+  hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
+  source code (G4HadronicParameters.cc).
+
 
 
 Visualisation
