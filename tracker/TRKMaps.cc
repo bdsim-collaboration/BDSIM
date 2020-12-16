@@ -148,22 +148,28 @@ void trk::maps::quadrupole(TRKParticle &particle, double length, double k1) noex
 
     bool xdefocusing = k1 < 0;
 
-    k1 = std::abs(k1);
+    double beta = particle.Momentum()/particle.Energy();
+    double delta = particle.Momentum()/particle.ReferenceMomentum() - 1;
+    double oneplusdelta = 1 + delta;
 
-    auto rootk = std::sqrt(k1);
-    auto rootkl = rootk * length;
+
+    // k1 = std::abs(k1) * particle.Charge()/oneplusdelta; // particle.Charge() not working currently
+    k1 = std::abs(k1) * 1./oneplusdelta;
+
+    double rootk = std::sqrt(k1);
+    double rootkl = rootk * length;
 
     // Focusing 2x2 matrix terms
-    auto f11 = std::cos(rootkl);
-    auto f12 = std::sin(rootkl) / rootk;
-    auto f21 = std::sin(rootkl) * -rootk;
-    auto f22 = f11;
+    double f11 = std::cos(rootkl);
+    double f12 = std::sin(rootkl) / rootk;
+    double f21 = std::sin(rootkl) * -rootk;
+    double f22 = f11;
 
     // Defocusing 2x2 matrix terms
-    auto df11 = std::cosh(rootkl);
-    auto df12 = std::sinh(rootkl) / rootk;
-    auto df21 = std::sinh(rootkl) * rootk;
-    auto df22 = df11;
+    double df11 = std::cosh(rootkl);
+    double df12 = std::sinh(rootkl) / rootk;
+    double df21 = std::sinh(rootkl) * rootk;
+    double df22 = df11;
 
     if (xdefocusing) {
         std::swap(f11, df11);
@@ -172,67 +178,87 @@ void trk::maps::quadrupole(TRKParticle &particle, double length, double k1) noex
         std::swap(f22, df22);
     }
 
-    auto x = particle.x;
-    auto px = particle.px;
-    auto y = particle.y;
-    auto py = particle.py;
+    double x = particle.x;
+    double px = particle.px;
+    double y = particle.y;
+    double py = particle.py;
+    double beta0 = particle.beta0;
 
-    particle.x = x * f11 + px * f12;
-    particle.px = x * f21 + px * f22;
+    particle.x = x*f11 + px*f12/oneplusdelta;
+    particle.px = x*f21*oneplusdelta + px*f22;
 
-    particle.y = y * df11 + py * df12;
-    particle.py = y * df21 + py * df22;
+    particle.y = y*df11 + py*df12/oneplusdelta;
+    particle.py = y*df21*oneplusdelta + py*df22;
 
-    particle.z = particle.z + particle.pz * length / std::pow(particle.beta0 * particle.gamma0, 2);
+    particle.z = particle.z + length*(1 - beta/beta0) - k1 *
+            beta0/(4*beta) *
+            ((length - f11 * f12)*std::pow(x, 2) - (length - df11*df12)*std::pow(y ,2)) -
+            beta0/(4*beta) *
+            ( (length + f11*f12) * std::pow(px/oneplusdelta, 2) + (length + df11*df12)*std::pow(py/oneplusdelta, 2)) -
+            beta0/(2*beta) *
+            (-x*px*std::pow(f12*rootk, 2)/oneplusdelta + y*py*std::pow(df12*rootk,2)/oneplusdelta);
 }
 
 void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {
-  // Calculate matrix terms
-  if (k1 == 0) {
-    trk::maps::drift(bunch, length);
-    return;
-  }
+    // Calculate matrix terms
+    if (k1 == 0) {
+        trk::maps::drift(bunch, length);
+        return;
+    }
 
-  bool xdefocusing = k1 < 0;
+    bool xdefocusing = k1 < 0;
 
-  k1 = std::abs(k1);
+    for (auto &p : bunch) {
+        double delta = p.Momentum()/p.ReferenceMomentum() - 1;
+        double oneplusdelta = 1 + delta;
 
-  auto rootk = std::sqrt(k1);
-  auto rootkl = rootk * length;
+        //k1 = std::abs(k1) * p.Charge()/oneplusdelta; // p.Charge() not working currently
+        k1 = std::abs(k1) * 1./oneplusdelta;
 
-  // Focusing 2x2 matrix terms
-  auto f11 = std::cos(rootkl);
-  auto f12 = std::sin(rootkl) / rootk;
-  auto f21 = std::sin(rootkl) * -rootk;
-  auto f22 = f11;
+        double rootk = std::sqrt(k1);
+        double rootkl = rootk * length;
 
-  // Defocusing 2x2 matrix terms
-  auto df11 = std::cosh(rootkl);
-  auto df12 = std::sinh(rootkl) / rootk;
-  auto df21 = std::sinh(rootkl) * rootk;
-  auto df22 = df11;
+        // Focusing 2x2 matrix terms
+        double f11 = std::cos(rootkl);
+        double f12 = std::sin(rootkl) / rootk;
+        double f21 = std::sin(rootkl) * -rootk;
+        double f22 = f11;
 
-  if (xdefocusing) {
-    std::swap(f11, df11);
-    std::swap(f12, df12);
-    std::swap(f21, df21);
-    std::swap(f22, df22);
-  }
+        // Defocusing 2x2 matrix terms
+        double df11 = std::cosh(rootkl);
+        double df12 = std::sinh(rootkl) / rootk;
+        double df21 = std::sinh(rootkl) * rootk;
+        double df22 = df11;
 
-  for (auto &p : bunch) {
-    auto x = p.x;
-    auto px = p.px;
-    auto y = p.y;
-    auto py = p.py;
+        if (xdefocusing) {
+            std::swap(f11, df11);
+            std::swap(f12, df12);
+            std::swap(f21, df21);
+            std::swap(f22, df22);
+        }
 
-    p.x = x * f11 + px * f12;
-    p.px = x * f21 + px * f22;
+        double x = p.x;
+        double px = p.px;
+        double y = p.y;
+        double py = p.py;
+        double beta0 = p.beta0;
 
-    p.y = y * df11 + py * df12;
-    p.py = y * df21 + py * df22;
+        double beta = p.Momentum()/p.Energy();
 
-    p.z = p.z + p.pz * length / std::pow(p.beta0 * p.gamma0, 2);
-  }
+        p.x = x*f11 + px*f12/oneplusdelta;
+        p.px = x*f21*oneplusdelta + px*f22;
+
+        p.y = y*df11 + py*df12/oneplusdelta;
+        p.py = y*df21*oneplusdelta + py*df22;
+
+        p.z = p.z + length*(1 - beta/beta0) - k1 *
+                beta0/(4*beta) *
+                ((length - f11 * f12)*std::pow(x, 2) - (length - df11*df12)*std::pow(y ,2)) -
+                beta0/(4*beta) *
+                ( (length + f11*f12) * std::pow(px/oneplusdelta, 2) + (length + df11*df12)*std::pow(py/oneplusdelta, 2)) -
+                beta0/(2*beta) *
+                (-x*px*std::pow(f12*rootk, 2)/oneplusdelta + y*py*std::pow(df12*rootk,2)/oneplusdelta);
+    }
 }
 
 void trk::maps::sextupole(TRKParticle &p, double length, double k2) noexcept {
