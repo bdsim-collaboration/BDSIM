@@ -132,4 +132,5 @@ BeamBase::BeamBase()
   eventGeneratorMinEK = -1;
   eventGeneratorMaxEK = 1e50;
   eventGeneratorParticles = "";
+  eventGeneratorWarnSkippedParticles = true;
 }

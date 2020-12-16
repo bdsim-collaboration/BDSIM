@@ -2221,7 +2221,7 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 
 void BDSComponentFactory::PrepareCavityModels()
 {  
-  for (auto model : BDSParser::Instance()->GetCavityModels())
+  for (const auto& model : BDSParser::Instance()->GetCavityModels())
     {
       // material can either be specified in 
       G4Material* material = nullptr;
@@ -2249,7 +2249,7 @@ void BDSComponentFactory::PrepareCavityModels()
 void BDSComponentFactory::PrepareColours()
 {
   BDSColours* allColours = BDSColours::Instance();
-  for (auto colour : BDSParser::Instance()->GetColours())
+  for (const auto& colour : BDSParser::Instance()->GetColours())
     {
       allColours->DefineColour(G4String(colour.name),
 			       (G4double)colour.red,
