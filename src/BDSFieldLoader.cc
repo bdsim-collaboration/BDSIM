@@ -95,13 +95,13 @@ BDSFieldLoader::~BDSFieldLoader()
 
 void BDSFieldLoader::DeleteArrays()
 {
-  for (auto a : arrays1d)
+  for (auto& a : arrays1d)
     {delete a.second;}
-  for (auto a : arrays2d)
+  for (auto& a : arrays2d)
     {delete a.second;}
-  for (auto a : arrays3d)
+  for (auto& a : arrays3d)
     {delete a.second;}
-  for (auto a : arrays4d)
+  for (auto& a : arrays4d)
     {delete a.second;}
 }
 
@@ -133,7 +133,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
     case BDSFieldFormat::poisson2ddipole:
       {result = LoadPoissonSuperFishBDipole(filePath, interpolatorType, transform, bScaling); break;}
     default:
-      break;
+      {break;}
     }
 
   if (result && info.AutoScale())
@@ -145,20 +145,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       temporaryRecipe.SetBScaling(1);      // don't affect result with inadvertent scaling
 
       // enforce cubic interpolation for continuous higher differentials
-      switch (format.underlying())
-	{
-	case BDSFieldFormat::bdsim1d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic1d); break;}
-	case BDSFieldFormat::bdsim2d:
-	case BDSFieldFormat::poisson2d:
-	case BDSFieldFormat::poisson2dquad:
-	case BDSFieldFormat::poisson2ddipole:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic2d); break;}
-	case BDSFieldFormat::bdsim3d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic3d); break;}
-	case BDSFieldFormat::bdsim4d:
-	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic4d); break;}
-	}
+      G4int nDimFF = BDS::NDimensionsOfFieldFormat(format);
+      auto magIntType = BDS::InterpolatorTypeSpecificFromAuto(nDimFF, BDSInterpolatorType::cubicauto);
+      temporaryRecipe.SetMagneticInterpolatorType(magIntType);
 
       // build temporary field object
       BDSFieldMagInterpolated* tempField = LoadMagField(temporaryRecipe);
@@ -168,10 +157,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
 									      5,/*up to 5th order*/
 									      info.BRho());
-
+      
       delete tempField; // clear up
       
-      G4double ratio  = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+      G4double ratio = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
       if (!std::isnormal(ratio))
         {
           G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
@@ -485,10 +474,10 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
   return result;	
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&     filePath,
-						      BDSInterpolatorType interpolatorType,
-						      G4Transform3D       transform,
-						      G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      filePath,
+						      BDSInterpolatorType  interpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             bScaling)
 
 {
   G4double  bScalingUnits = bScaling * CLHEP::tesla;
@@ -498,10 +487,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&     filePa
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&     filePath,
-						      BDSInterpolatorType interpolatorType,
-						      G4Transform3D       transform,
-						      G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&      filePath,
+						      BDSInterpolatorType  interpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::tesla;
   BDSArray2DCoords* array = LoadBDSIM2D(filePath);
@@ -510,10 +499,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&     filePa
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&     filePath,
-						      BDSInterpolatorType interpolatorType,
-						      G4Transform3D       transform,
-						      G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&      filePath,
+						      BDSInterpolatorType  interpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::tesla;
   BDSArray3DCoords* array = LoadBDSIM3D(filePath);
@@ -522,10 +511,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&     filePa
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM4DB(const G4String&     filePath,
-						      BDSInterpolatorType interpolatorType,
-						      G4Transform3D       transform,
-						      G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM4DB(const G4String&      filePath,
+						      BDSInterpolatorType  interpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::tesla;
   BDSArray4DCoords* array = LoadBDSIM4D(filePath);
@@ -534,10 +523,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM4DB(const G4String&     filePa
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishB(const G4String&     filePath,
-							       BDSInterpolatorType interpolatorType,
-							       G4Transform3D       transform,
-							       G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishB(const G4String&      filePath,
+							       BDSInterpolatorType  interpolatorType,
+							       const G4Transform3D& transform,
+							       G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
@@ -546,10 +535,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishB(const G4String&  
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(const G4String&     filePath,
-								   BDSInterpolatorType interpolatorType,
-								   G4Transform3D       transform,
-								   G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(const G4String&      filePath,
+								   BDSInterpolatorType  interpolatorType,
+								   const G4Transform3D& transform,
+								   G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
@@ -561,10 +550,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(const G4Strin
   return result;
 }
 
-BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBDipole(const G4String&     filePath,
-								     BDSInterpolatorType interpolatorType,
-								     G4Transform3D       transform,
-								     G4double            bScaling)
+BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBDipole(const G4String&      filePath,
+								     BDSInterpolatorType  interpolatorType,
+								     const G4Transform3D& transform,
+								     G4double             bScaling)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
@@ -575,10 +564,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBDipole(const G4Str
   return result;
 }
 
-BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&     filePath,
-						    BDSInterpolatorType interpolatorType,
-						    G4Transform3D       transform,
-						    G4double            eScaling)
+BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&      filePath,
+						    BDSInterpolatorType  interpolatorType,
+						    const G4Transform3D& transform,
+						    G4double             eScaling)
 {
   G4double  eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
   BDSArray1DCoords* array = LoadBDSIM1D(filePath);
@@ -587,10 +576,10 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&     filePath
   return result;
 }
 
-BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&     filePath,
-						    BDSInterpolatorType interpolatorType,
-						    G4Transform3D       transform,
-						    G4double            eScaling)
+BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&      filePath,
+						    BDSInterpolatorType  interpolatorType,
+						    const G4Transform3D& transform,
+						    G4double             eScaling)
 {
   G4double  eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
   BDSArray2DCoords* array = LoadBDSIM2D(filePath);
@@ -599,10 +588,10 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&     filePath
   return result;
 }
 
-BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&     filePath,
-						    BDSInterpolatorType interpolatorType,
-						    G4Transform3D       transform,
-						    G4double            eScaling)
+BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&      filePath,
+						    BDSInterpolatorType  interpolatorType,
+						    const G4Transform3D& transform,
+						    G4double             eScaling)
 {
   G4double  eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
   BDSArray3DCoords* array = LoadBDSIM3D(filePath);
@@ -611,10 +600,10 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&     filePath
   return result;
 }
 
-BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM4DE(const G4String&     filePath,
-						    BDSInterpolatorType interpolatorType,
-						    G4Transform3D       transform,
-						    G4double            eScaling)
+BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM4DE(const G4String&      filePath,
+						    BDSInterpolatorType  interpolatorType,
+						    const G4Transform3D& transform,
+						    G4double             eScaling)
 {
   G4double  eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
   BDSArray4DCoords* array = LoadBDSIM4D(filePath);
@@ -623,13 +612,13 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM4DE(const G4String&     filePath
   return result;
 }
 
-BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&     eFilePath,
-						      G4String            bFilePath,
-						      BDSInterpolatorType eInterpolatorType,
-						      BDSInterpolatorType bInterpolatorType,
-						      G4Transform3D       transform,
-						      G4double            eScaling,
-						      G4double            bScaling)
+BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFilePath,
+						      const G4String&      bFilePath,
+						      BDSInterpolatorType  eInterpolatorType,
+						      BDSInterpolatorType  bInterpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             eScaling,
+						      G4double             bScaling)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt / CLHEP::m;
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -642,13 +631,13 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&     eFileP
   return result;
 }
 
-BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&     eFilePath,
-						      G4String            bFilePath,
-						      BDSInterpolatorType eInterpolatorType,
-						      BDSInterpolatorType bInterpolatorType,
-						      G4Transform3D       transform,
-						      G4double            eScaling,
-						      G4double            bScaling)
+BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&      eFilePath,
+						      const G4String&      bFilePath,
+						      BDSInterpolatorType  eInterpolatorType,
+						      BDSInterpolatorType  bInterpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             eScaling,
+						      G4double             bScaling)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt / CLHEP::m;
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -661,13 +650,13 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&     eFileP
   return result;
 }
 
-BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&     eFilePath,
-						      G4String            bFilePath,
-						      BDSInterpolatorType eInterpolatorType,
-						      BDSInterpolatorType bInterpolatorType,
-						      G4Transform3D       transform,
-						      G4double            eScaling,
-						      G4double            bScaling)
+BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&      eFilePath,
+						      const G4String&      bFilePath,
+						      BDSInterpolatorType  eInterpolatorType,
+						      BDSInterpolatorType  bInterpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             eScaling,
+						      G4double             bScaling)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt / CLHEP::m;
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -680,13 +669,13 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&     eFileP
   return result;
 }
 
-BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM4DEM(const G4String&     eFilePath,
-						      G4String            bFilePath,
-						      BDSInterpolatorType eInterpolatorType,
-						      BDSInterpolatorType bInterpolatorType,
-						      G4Transform3D       transform,
-						      G4double            eScaling,
-						      G4double            bScaling)
+BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM4DEM(const G4String&      eFilePath,
+						      const G4String&      bFilePath,
+						      BDSInterpolatorType  eInterpolatorType,
+						      BDSInterpolatorType  bInterpolatorType,
+						      const G4Transform3D& transform,
+						      G4double             eScaling,
+						      G4double             bScaling)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt / CLHEP::m;
   G4double   bScalingUnits = bScaling * CLHEP::tesla;

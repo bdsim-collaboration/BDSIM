@@ -20,8 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSACCELERATORMODEL_H
 
 #include "BDSBeamlineSet.hh"
+#include "BDSScorerHistogramDef.hh"
 
 #include "globals.hh"         // geant4 globals / types
+#include "G4Transform3D.hh"
 
 #include <map>
 #include <set>
@@ -65,9 +67,9 @@ public:
   inline void RegisterWorldLV(G4LogicalVolume*   worldIn) {worldLV = worldIn;}
   inline void RegisterWorldSolid(G4VSolid*       worldIn) {worldSolid = worldIn;}
   /// @}
-  
-  /// Access the physical volume of the world
-  inline G4VPhysicalVolume* WorldPV() const {return worldPV;}
+
+  inline G4VPhysicalVolume* WorldPV() const {return worldPV;} ///< Access the physical volume of the world.
+  inline G4LogicalVolume*   WorldLV() const {return worldLV;} ///< Access the logical volume of the world.
 
   /// Register the main beam line set.
   void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn);
@@ -120,15 +122,15 @@ public:
   BDSApertureInfo*  Aperture(G4String name) const;
 
   /// Access region information. Will exit if not found.
-  G4Region*         Region(G4String name) const;
+  G4Region*         Region(const G4String& name) const;
 
   /// Returns pointer to a set of logical volumes. If no set by that name exits, create it.
-  std::set<G4LogicalVolume*>* VolumeSet(G4String name);
+  std::set<G4LogicalVolume*>* VolumeSet(const G4String& name);
 
   /// Check whether a volume is in a registry of volumes (a set). If no such registry exists
   /// then return false.
   G4bool VolumeInSet(G4LogicalVolume* volume,
-		     G4String registryName);
+		     const G4String& registryName);
 
   /// Find a corresponding mass world beam line for a curvilinear (or bridge) beam
   /// line from the registered beam line sets.
@@ -143,6 +145,22 @@ public:
   void MassWorldBeamlineAndIndex(BDSBeamline*& bl,
 				 G4int&        index) const;
 
+  /// Register a scorer histogram definition so it can be used in the output. The definition
+  /// is stored both in a vector and a map. Note, repeated entries will exist in the vector
+  /// but be overwritten in the map.
+  void RegisterScorerHistogramDefinition(const BDSScorerHistogramDef& def);
+  
+  /// Register a copy of the scorer placement so it can be used in the output.
+  void RegisterScorerPlacement(const G4String& meshName,
+                          const G4Transform3D& placement);
+
+  /// @{ Access all scorer histogram definitions.
+  const std::vector<BDSScorerHistogramDef>& ScorerHistogramDefinitions() const {return scorerHistogramDefs;}
+  const std::map<G4String, BDSScorerHistogramDef>& ScorerHistogramDefinitionsMap() const {return scorerHistogramDefsMap;}
+  const BDSScorerHistogramDef* ScorerHistogramDef(const G4String& name);
+  const std::map<G4String, G4Transform3D>& ScorerMeshPlacementsMap() const {return scorerMeshPlacements;}
+  /// @}
+  
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -177,6 +195,12 @@ private:
   std::map<G4String, BDSApertureInfo*>  apertures; ///< All apertures.
 
   std::map<G4String, std::set<G4LogicalVolume*>* > volumeRegistries; ///< All volume registries.
+
+  /// @{ Scorer histogram definitions cached from construction here to be used in output creation.
+  std::vector<BDSScorerHistogramDef> scorerHistogramDefs;
+  std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefsMap;
+  /// @}
+  std::map<G4String, G4Transform3D> scorerMeshPlacements;
 };
 
 #endif

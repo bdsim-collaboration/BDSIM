@@ -40,7 +40,7 @@ RunAnalysis::RunAnalysis(Run*    runIn,
   run(runIn)
 {;}
 
-RunAnalysis::~RunAnalysis()
+RunAnalysis::~RunAnalysis() noexcept
 {;}
 
 void RunAnalysis::Process()

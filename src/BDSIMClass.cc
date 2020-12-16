@@ -21,7 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
-#include <cstdlib>      // standard headers 
+#include <algorithm>
+#include <cstdlib>
 #include <cstdio>
 #include <signal.h>
 
@@ -183,7 +184,7 @@ int BDSIM::Initialise()
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
-  /// BUT for samplers we use a parallel world and this HAS to be before the physcis
+  /// BUT for samplers we use a parallel world and this HAS to be before the physics
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> Constructing physics processes" << G4endl;
 #endif
@@ -203,7 +204,8 @@ int BDSIM::Initialise()
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
+  G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
+  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
@@ -222,6 +224,9 @@ int BDSIM::Initialise()
 				      designParticle,
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
+  G4double minEK = BDSGlobalConstants::Instance()->MinimumKineticEnergy();
+  if (beamParticle->KineticEnergy() < minEK && BDS::IsFinite(minEK))
+    {throw BDSException("option, minimumKineticEnergy is higher than kinetic energy of the beam - all primary particles wil be killed!");}
   if (usualPrintOut)
     {
       G4cout << "Design particle properties: " << G4endl << *designParticle;
@@ -367,7 +372,7 @@ int BDSIM::Initialise()
   /// Set verbosity levels at run and G4 event level. Per event and stepping are controlled
   /// in event, tracking and stepping action. These have to be done here due to the order
   /// of construction in Geant4.
-  runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
+  runManager->SetVerboseLevel(std::min(globalConstants->VerboseRunLevel(), globalConstants->PhysicsVerbosity()));
   G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
   

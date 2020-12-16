@@ -39,12 +39,14 @@ namespace GMAD
     std::string inputFileName;       ///< Input filename.
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
+    std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format
     std::string outputFileName;
     std::string outputFormat;
     bool        outputDoublePrecision;
+    int         outputCompressionLevel;
     ///@}
   
     ///@{ Parameter for survey
@@ -107,6 +109,7 @@ namespace GMAD
     /// list of physics processes
     std::string physicsList;
     bool        physicsVerbose;
+    int         physicsVerbosity;
     double      physicsEnergyLimitLow;
     double      physicsEnergyLimitHigh;
     bool        g4PhysicsUseBDSIMRangeCuts;
@@ -161,6 +164,7 @@ namespace GMAD
     bool      dontSplitSBends;
 
     bool      yokeFields;
+    bool      yokeFieldsMatchLHCGeometry;
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
 
@@ -179,6 +183,7 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
     std::string worldGeometryFile;
+    bool        autoColourWorldGeometryFile;
     std::string importanceWorldGeometryFile;
     std::string importanceVolumeMap;
     // see verboseImportance
@@ -237,6 +242,7 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     beamPipeIsInfiniteAbsorber;
     bool     collimatorsAreInfiniteAbsorbers;
     bool     tunnelIsInfiniteAbsorber;
     ///@}
@@ -272,9 +278,12 @@ namespace GMAD
     // output related options
     int         numberOfEventsPerNtuple;
 
+    bool        storeMinimalData;
+
     bool        storeApertureImpacts;
     bool        storeApertureImpactsIons;
     bool        storeApertureImpactsAll;
+    bool        storeApertureImpactsHistograms;
     double      apertureImpactsMinimumKE;
     bool        storeCollimatorInfo;
     bool        storeCollimatorHits;
@@ -298,10 +307,15 @@ namespace GMAD
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
     bool        storeElossModelID;
-    bool        storeGeant4Data;
+    bool        storeElossPhysicsProcesses;
+    bool        storeParticleData;
+    bool        storePrimaries;
+    bool        storePrimaryHistograms;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
+    int         storeTrajectoryStepPoints;
+    bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
@@ -325,8 +339,7 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
-
-    bool        writePrimaries;
+    
     bool        storeModel;
 
     // circular options

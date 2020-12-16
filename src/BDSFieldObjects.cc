@@ -137,7 +137,7 @@ void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
     }
 }
 
-void BDSFieldObjects::AttachToVolume(std::vector<G4LogicalVolume*> volumes,
+void BDSFieldObjects::AttachToVolume(const std::vector<G4LogicalVolume*>& volumes,
 				     G4bool penetrateToDaughterVolumes)
 {
   for (auto volume : volumes)

@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventSampler.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "TTree.h"
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTParticleData;
 
 #ifndef __ROOTBUILD__
 #include "BDSHitSampler.hh"
@@ -37,7 +37,7 @@ class BDSOutputROOTGeant4Data;
 templateClassImp(BDSOutputROOTEventSampler)
 
 template <class U>
-BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
+BDSOutputROOTParticleData* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
 template <class U>
 BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():
@@ -76,9 +76,10 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   x.push_back((U &&) (hit->coords.x / CLHEP::m));
   y.push_back((U &&) (hit->coords.y / CLHEP::m));
 
-  xp.push_back((U &&) (hit->coords.xp / CLHEP::radian));
-  yp.push_back((U &&) (hit->coords.yp / CLHEP::radian));
-  zp.push_back((U &&) (hit->coords.zp / CLHEP::radian));
+  xp.push_back((U &&) (hit->coords.xp));
+  yp.push_back((U &&) (hit->coords.yp));
+  zp.push_back((U &&) (hit->coords.zp));
+  p.push_back((U &&) (hit->momentum / CLHEP::GeV));
   T.push_back((U &&) (hit->coords.T / CLHEP::ns));
   
   modelID = hit->beamlineIndex;
@@ -89,7 +90,6 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   trackID.push_back(hit->trackID);
   turnNumber.push_back(hit->turnsTaken);
 
-  // require mass to calculate kinetic energ
   if (storeMass)
     {mass.push_back((double)(hit->mass / CLHEP::GeV));}
 
@@ -111,13 +111,14 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
 
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
-					const G4double chargeIn,
-					const G4int    pdgID,
-					const G4int    turnsTaken,
-					const G4int    beamlineIndex,
-					const G4int    nElectronsIn,
-					const G4double massIn,
-					const G4double rigidityIn,
+					G4double       momentumIn,
+					G4double chargeIn,
+					G4int    pdgID,
+					G4int    turnsTaken,
+					G4int    beamlineIndex,
+					G4int    nElectronsIn,
+					G4double massIn,
+					G4double rigidityIn,
 					G4bool  fillIon,
 					G4bool* isIonIn,
 					G4int*  ionAIn,
@@ -129,9 +130,10 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   x.push_back((U &&)  (coords.x  / CLHEP::m));
   y.push_back((U &&)  (coords.y  / CLHEP::m));
   z = (U) (coords.z / CLHEP::m);
-  xp.push_back((U &&) (coords.xp / CLHEP::radian));
-  yp.push_back((U &&) (coords.yp / CLHEP::radian));
-  zp.push_back((U &&) (coords.zp / CLHEP::radian));
+  xp.push_back((U &&) (coords.xp));
+  yp.push_back((U &&) (coords.yp));
+  zp.push_back((U &&) (coords.zp));
+  p.push_back((U &&) (momentumIn / CLHEP::GeV));
   T.push_back((U &&) (coords.T / CLHEP::ns));
   weight.push_back((const U &) coords.weight);
   partID.push_back(pdgID);
@@ -202,6 +204,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSPrimaryVertexInformationV* vert
   for (const auto& vertexInfo : vertexInfos->vertices)
     {
       Fill(vertexInfo.primaryVertex.local,
+	   vertexInfo.momentum,
 	   vertexInfo.charge,
 	   vertexInfo.pdgID,
 	   turnsTaken,
@@ -213,10 +216,6 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSPrimaryVertexInformationV* vert
     }
   FillIon();
 }
-
-//#else
-//void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
-//{}
 #endif
 
 template <class U>
@@ -232,6 +231,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSOutputROOTEventSampler<U>* othe
   xp     = other->xp;
   yp     = other->yp;
   zp     = other->zp;
+  p      = other->p;
   T      = other->T;
 
   weight     = other->weight;
@@ -272,6 +272,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   xp.clear();
   yp.clear();
   zp.clear();
+  p.clear();
   T.clear();
   weight.clear();
   partID.clear();

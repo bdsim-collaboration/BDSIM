@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorMag.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
@@ -64,6 +65,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
   G4int  eventIndex = eventAction->CurrentEventIndex();
   G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);
   G4bool primaryParticle  = track->GetParentID() == 0;
+  BDSIntegratorMag::currentTrackIsPrimary = primaryParticle;
 
   if (primaryParticle && verboseSteppingThisEvent)
     {fpTrackingManager->GetSteppingManager()->SetVerboseLevel(verboseSteppingLevel);}

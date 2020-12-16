@@ -135,7 +135,9 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
 					 crystalMat,
-					 nameIn + "_crystal_lv");
+					 nameIn + "_crystal_lv",
+					 nullptr, nullptr, nullptr,
+					 true, 0, 0, 0, recipe->miscutAngleY);
 
   BDSAcceleratorModel::Instance()->VolumeSet("crystals")->insert(crystalLV);
 #else

@@ -93,14 +93,14 @@ public:
   /// and NOT the local geometry of the component.
   /// The BDSBeamPipeInfo instance is associated with this class so that the survey
   /// output of BDSIM can query the aperture of any element.
-  BDSAcceleratorComponent(G4String         name,
-			  G4double         arcLength,
-			  G4double         angle,
-			  G4String         type,
-			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
-			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1),
-			  BDSFieldInfo* fieldInfoIn        = nullptr);
+  BDSAcceleratorComponent(const G4String&      name,
+			  G4double             arcLength,
+			  G4double             angle,
+			  const G4String&      type,
+			  BDSBeamPipeInfo*     beamPipeInfo       = nullptr,
+			  const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+			  const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0, 1),
+			  BDSFieldInfo*        fieldInfoIn        = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 
@@ -143,6 +143,9 @@ public:
   /// Get the angle the component induces in the reference trajectory (rad). 
   /// Note, this is 0 for h and v kickers.
   inline G4double GetAngle() const {return angle;}
+
+  /// Calculate the sagitta - ie the distance between the chord and the arc at the centre.
+  G4double Sagitta() const;
 
   /// Get a string describing the type of the component
   inline G4String GetType() const {return type;}
@@ -287,7 +290,7 @@ private:
   /// Record of how many times this component has been copied.
   G4int copyNumber;
 
-  /// @{ Copy of bias list from parser for this particlar element
+  /// @{ Copy of bias list from parser for this particular component.
   std::list<std::string> biasVacuumList;
   std::list<std::string> biasMaterialList;
   /// @}

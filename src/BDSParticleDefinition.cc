@@ -36,58 +36,106 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 					     G4double              totalEnergyIn,
-					     G4double              ffact,
+					     G4double              kineticEnergyIn,
+					     G4double              momentumIn,
+					     G4double              ffactIn,
 					     BDSIonDefinition*     ionDefinitionIn,
                          G4int                 ionPDGIDIn):
   particle(particleIn),
-  ionDefinition(ionDefinitionIn),
+  ionDefinition(nullptr),
   ionPDGID(ionPDGIDIn),
   name(particleIn->GetParticleName()),
   mass(particleIn->GetPDGMass()),
-  totalEnergy(totalEnergyIn),
-  brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
+  charge(0),
+  totalEnergy(0),
+  kineticEnergy(0),
+  momentum(0),
+  gamma(1.0),
+  beta(1.0),
+  brho(std::numeric_limits<double>::max()),// if zero charge infinite magnetic rigidity
+  ffact(ffactIn)
 {
   charge = particle->GetPDGCharge();
   if (ionDefinition) // may be nullptr
     {
+      ionDefinition = new BDSIonDefinition(*ionDefinitionIn);
       if (ionDefinition->OverrideCharge()) // if override for ions
 	{charge = ionDefinition->Charge();}
     }
-  
-  kineticEnergy = totalEnergy - mass;
 
-  CalculateMomentum();
-  CalculateRigidity(ffact);
-  CalculateLorentzFactors();
+  SetEnergies(totalEnergyIn, kineticEnergyIn, momentumIn);
 }
 
 BDSParticleDefinition::BDSParticleDefinition(const G4String&    nameIn,
 					     G4double          massIn,
 					     G4double          chargeIn,
 					     G4double          totalEnergyIn,
-					     G4double          ffact,
+					     G4double          kineticEnergyIn,
+					     G4double          momentumIn,
+					     G4double          ffactIn,
 					     BDSIonDefinition* ionDefinitionIn,
-                         G4int             ionPDGIDIn):
+                         G4int                 ionPDGIDIn):
   particle(nullptr),
-  ionDefinition(ionDefinitionIn),
+  ionDefinition(nullptr),
   ionPDGID(ionPDGIDIn),
   name(nameIn),
   mass(massIn),
   charge(chargeIn),
-  totalEnergy(totalEnergyIn),
+  totalEnergy(0),
+  kineticEnergy(0),
+  momentum(0),
   gamma(1.0),
   beta(1.0),
-  brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
+  brho(std::numeric_limits<double>::max()),// if zero charge infinite magnetic rigidity
+  ffact(ffactIn)
 {
-  if (totalEnergy < mass)
-    {
-      throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergy/CLHEP::GeV)
-			 +" GeV) is less than the mass (" + std::to_string(mass/CLHEP::GeV)
-			 +" GeV) of particle");
-    }
-  kineticEnergy = totalEnergy - mass;
+  if (ionDefinitionIn)
+    {ionDefinition = new BDSIonDefinition(*ionDefinitionIn);}
+  SetEnergies(totalEnergyIn, kineticEnergyIn, momentumIn);
+}
 
-  CalculateMomentum();
+void BDSParticleDefinition::SetEnergies(G4double totalEnergyIn,
+					G4double kineticEnergyIn,
+					G4double momentumIn)
+{
+  if (BDS::IsFinite(totalEnergyIn))
+    {
+      if (totalEnergyIn <= mass)
+        {
+          throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergyIn / CLHEP::GeV)
+                                              + " GeV) is less than or equal to the mass (" + std::to_string(mass / CLHEP::GeV)
+                                              + " GeV) of the particle \"" + name + "\"");
+        }
+      totalEnergy   = totalEnergyIn;
+      kineticEnergy = totalEnergy - mass;
+      CalculateMomentum();
+    }
+  else if (BDS::IsFinite(kineticEnergyIn))
+    {
+      if (kineticEnergyIn <= 0)
+        {
+          throw BDSException(__METHOD_NAME__, "kinetic energy (" + std::to_string(kineticEnergyIn/CLHEP::GeV)
+                                              + " GeV) must be > 0");
+        }
+      kineticEnergy = kineticEnergyIn;
+      totalEnergy   = mass + kineticEnergyIn;
+      CalculateMomentum();
+    }
+  else if (BDS::IsFinite(momentumIn))
+    {
+      if (momentumIn <= 0)
+        {
+          throw BDSException(__METHOD_NAME__, "momentum (" + std::to_string(momentumIn/CLHEP::GeV)
+                                              + " GeV) must be > 0");
+        }
+      momentum    = momentumIn;
+      totalEnergy = std::hypot(momentumIn, mass);
+      if (std::isnan(totalEnergy))
+        {throw BDSException(__METHOD_NAME__, "sqrt(-ve) encountered in calculating total energy");}
+      kineticEnergy = totalEnergy - mass;
+    }
+  else
+    {throw BDSException(__METHOD_NAME__, "total energy, kinetic energy and momentum 0 - one must be non-zero.");}
   CalculateRigidity(ffact);
   CalculateLorentzFactors();
 }
@@ -103,7 +151,8 @@ BDSParticleDefinition::BDSParticleDefinition(const BDSParticleDefinition& other)
   momentum(other.momentum),
   gamma(other.gamma),
   beta(other.beta),
-  brho(other.brho)
+  brho(other.brho),
+  ffact(other.ffact)
 {
   if (other.ionDefinition)
     {ionDefinition = new BDSIonDefinition(*other.ionDefinition);}
@@ -131,7 +180,7 @@ std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
   G4int pre = 12;
   out << "Particle:       \""<< def.name << "\"" << G4endl;
   out << "Mass:            " << std::setprecision(pre) << def.mass/CLHEP::GeV              << " GeV" << G4endl;
-  out << "Charge:          " << def.charge                       << " e"   << G4endl;
+  out << "Charge:          " << def.charge             << " e" << G4endl;
   out << "Total Energy:    " << std::setprecision(pre) << def.totalEnergy/CLHEP::GeV       << " GeV" << G4endl;
   out << "Kinetic Energy:  " << std::setprecision(pre) << def.kineticEnergy/CLHEP::GeV     << " GeV" << G4endl;
   out << "Momentum:        " << std::setprecision(pre) << def.momentum/CLHEP::GeV          << " GeV" << G4endl;
@@ -149,14 +198,14 @@ void BDSParticleDefinition::CalculateMomentum()
     {throw BDSException(__METHOD_NAME__, "Total energy insufficient to include mass or particle.");}
 }
 
-void BDSParticleDefinition::CalculateRigidity(const G4double& ffact)
+void BDSParticleDefinition::CalculateRigidity(const G4double& ffactIn)
 {
   // magnetic rigidity (brho)
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
   // charge (in e units); rigidity (in T*m)
   if (BDS::IsFinite(charge))
     {
-      brho = ffact * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
+      brho = ffactIn * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
       brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
     }
 }

@@ -38,7 +38,8 @@ BDSCrystalInfo::BDSCrystalInfo(G4Material*     materialIn,
 			       G4double        gammaIn,
 			       G4int           spaceGroupIn,
 			       G4double        bendingAngleYAxisIn,
-			       G4double        bendingAngleZAxisIn):
+			       G4double        bendingAngleZAxisIn,
+                   G4double        miscutAngleYIn):
   material(materialIn),
   data(dataIn),
   shape(crystalTypeIn),
@@ -53,7 +54,8 @@ BDSCrystalInfo::BDSCrystalInfo(G4Material*     materialIn,
   gamma(gammaIn),
   spaceGroup(spaceGroupIn),
   bendingAngleYAxis(bendingAngleYAxisIn),
-  bendingAngleZAxis(bendingAngleZAxisIn)
+  bendingAngleZAxis(bendingAngleZAxisIn),
+  miscutAngleY(miscutAngleYIn)
 {;}
 
 G4double BDSCrystalInfo::BendingRadius(G4double length,

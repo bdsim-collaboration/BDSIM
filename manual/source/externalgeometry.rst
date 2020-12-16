@@ -58,6 +58,8 @@ GDML geometry. Please see :ref:`python-utilities` for `pyg4ometry`.
 ggmad
 -----
 
+.. warning:: The ggmad format is not currently developed or maintained in BDSIM.
+
 ggmad is a simple format used as wrapper to (some) Geant4 geometry classes. It can
 be used for specifying more or fewer simple geometries, such as collimators. Example::
 
@@ -159,6 +161,8 @@ material   Material name
 
 Mokka
 -----
+
+.. warning:: The Mokka format is not currently developed or maintained in BDSIM.
 
 This format is currently in the form of a dumped MySQL database format. Note that throughout
 any of the Mokka files, a `#` may be used to represent a commented line. There are three key

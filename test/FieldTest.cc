@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#include "BDSException.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
@@ -30,10 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagDecapole.hh"
-#include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
+#include "BDSFieldMagMultipoleOuterDual.hh"
+#include "BDSFieldMagSkewOwn.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -50,6 +51,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int /*argc*/, char** /*argv*/)
 {
+  try
+    {
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = 1.3*CLHEP::tesla;   // T
   (*st)["angle"] = 0.014; // mrad
@@ -112,6 +115,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDipole(st);
   positiveField = (*st)["field"] > 0;
   field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterdipole");
 
@@ -124,6 +128,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st, brho);
   positiveField = (*st)["k1"] > 0;
   field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterquadrupole");
   
@@ -131,6 +136,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagSextupole(st, brho);
   positiveField = (*st)["k2"] > 0;
   field = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleoutersextupole");
   
@@ -138,6 +144,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagOctupole(st, brho);
   positiveField = (*st)["k3"] > 0;
   field = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouteroctupole");
   
@@ -145,6 +152,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDecapole(st, brho);
   positiveField = (*st)["k4"] > 0;
   field = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterdecapole");
   
@@ -152,6 +160,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st3, brho); // -ve k1
   positiveField = (*st3)["k1"] > 0;
   field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   fields.push_back(field);
   names.push_back("multipoleouterquadrupole-ve");
   
@@ -160,6 +169,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagQuadrupole(st, brho);
   positiveField = (*st)["k1"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterquadrupole");
@@ -168,6 +178,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagSextupole(st, brho);
   positiveField = (*st)["k2"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterssextupole");
@@ -176,6 +187,7 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagOctupole(st, brho);
   positiveField = (*st)["k3"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
   fields.push_back(field);
   names.push_back("skewmultipoleouteroctupole");
@@ -184,9 +196,34 @@ int main(int /*argc*/, char** /*argv*/)
   innerField = new BDSFieldMagDecapole(st, brho);
   positiveField = (*st)["k4"] > 0;
   normalField = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField);
+  delete innerField;
   field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
   fields.push_back(field);
   names.push_back("skewmultipoleouterdecapole");
+
+  // outer lhc dipole
+  innerField = new BDSFieldMagDipole(st);
+  positiveField = (*st)["field"] < 0; // note convention for dipoles here
+  field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleouterdipolelhc");
+
+  // outer lhc quadrupole
+  innerField = new BDSFieldMagQuadrupole(st, brho);
+  positiveField = (*st)["k1"] > 0;
+  field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleouterquadrupolelhc");
+
+  // outer lhc sextupole
+  innerField = new BDSFieldMagSextupole(st, brho);
+  positiveField = (*st)["k2"] > 0;
+  field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0, true);
+  delete innerField;
+  fields.push_back(field);
+  names.push_back("multipoleoutersextupolelhc");
   
   // Angular data
   const G4int    nR    = 20;
@@ -197,9 +234,23 @@ int main(int /*argc*/, char** /*argv*/)
 
   // Regular carteasian grid - symmetric for x,y just now
   const G4int    nX    = 100;
-  const G4double xMin  = -100; // mm 
-  const G4double xMax  = 100;  // mm
+  const G4double xMin  = -200; // mm 
+  const G4double xMax  = 200;  // mm
+  const G4int    nY    = 100;
+  const G4double yMin  = -200; // mm
+  const G4double yMax  = 200;  // mm
+  
+  /*
+  // for lhc style magnets
+  const G4int    nX    = 200;
+  const G4double xMin  = -200; // mm 
+  const G4double xMax  = 400;  // mm
+  const G4int    nY    = 200;
+  const G4double yMin  = -250; // mm
+  const G4double yMax  = 250;  // mm
+  */
   const G4double xStep = (xMax - xMin) / (G4double) (nX-1);
+  const G4double yStep = (yMax - yMin) / (G4double) (nY-1);
    
   for (int f = 0; f < (int)fields.size(); ++f)
     {
@@ -229,11 +280,11 @@ int main(int /*argc*/, char** /*argv*/)
       std::ofstream cfile;
       cfile.open(std::string(nm+"_carteasian.dat").c_str());
       cfile << "> nX = "   << nX   << "\n";
-      cfile << "> nY = "   << nX   << "\n";
+      cfile << "> nY = "   << nY   << "\n";
       cfile << "> brho = " << brho << "\n";
       cfile << "# (x,y,z)\t\tField\n";
       G4double x,y;
-      for (y=xMin, i=0; i < nX; y+=xStep, ++i)
+      for (y=yMin, i=0; i < nY; y+=yStep, ++i)
 	{
 	  for (x=xMin, j=0; j < nX; x+=xStep, ++j)
 	    {
@@ -256,5 +307,8 @@ int main(int /*argc*/, char** /*argv*/)
       G4cout << field->GetField(pos)/CLHEP::tesla << G4endl;
     }
   */
+    }
+  catch (const BDSException& e)
+    {std::cout << e.what() << std::endl;}
   return 0;
 }

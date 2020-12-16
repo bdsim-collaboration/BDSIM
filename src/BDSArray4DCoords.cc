@@ -19,12 +19,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray4DCoords.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldValue.hh"
 #include "BDSUtilities.hh"
 
-#include <cmath>
-#include <string>
+#include "CLHEP/Units/PhysicalConstants.h"
+
+#include <algorithm>
+#include <limits>
 #include <ostream>
+#include <string>
 
 #include "globals.hh"
 
@@ -37,13 +41,15 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
   xMin(xMinIn), xMax(xMaxIn),
   yMin(yMinIn), yMax(yMaxIn),
   zMin(zMinIn), zMax(zMaxIn),
-  tMin(tMinIn), tMax(tMaxIn)
+  tMin(tMinIn), tMax(tMaxIn),
+  smallestSpatialStep(std::numeric_limits<double>::max())
 {
   // There are 1 fewer differences than the points.
   if (nX > 1)
     {
       xStep = (xMax - xMin) / ((G4double)nX - 1);
       CheckStep(xStep, "x");
+      smallestSpatialStep = std::min(smallestSpatialStep, xStep);
     }
   else
     {xStep = 1;}
@@ -51,6 +57,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
     {
       yStep = (yMax - yMin) / ((G4double)nY - 1);
       CheckStep(yStep, "y");
+      smallestSpatialStep = std::min(smallestSpatialStep, yStep);
     }
   else
     {yStep = 1;}
@@ -58,6 +65,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
     {
       zStep = (zMax - zMin) / ((G4double)nZ - 1);
       CheckStep(zStep, "z");
+      smallestSpatialStep = std::min(smallestSpatialStep, zStep);
     }
   else
     {zStep = 1;}
@@ -65,12 +73,14 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
     {
       tStep = (tMax - tMin) / ((G4double)nT - 1);
       CheckStep(tStep, "t");
+      G4double lengthScale = CLHEP::c_light * tStep;
+      smallestSpatialStep = std::min(smallestSpatialStep, lengthScale);
     }
   else
     {tStep = 1;}
 }
 
-void BDSArray4DCoords::CheckStep(G4double step, const G4String name) const
+void BDSArray4DCoords::CheckStep(G4double step, const G4String& name) const
 {
   if (!BDS::IsFinite(step))
     {
@@ -118,4 +128,9 @@ std::ostream& BDSArray4DCoords::Print(std::ostream& out) const
 std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a)
 {
   return a.Print(out);
+}
+
+BDSExtent BDSArray4DCoords::Extent() const
+{
+  return BDSExtent(xMin, xMax, yMin, yMax, zMin, zMax);
 }

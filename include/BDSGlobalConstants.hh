@@ -77,7 +77,7 @@ private:
   static BDSGlobalConstants* instance;
 
   /// Options instance that this is largely based on and extends
-  const GMAD::Options& options;
+  GMAD::Options options;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
@@ -93,10 +93,12 @@ public:
   // Executable options
   inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
   inline G4String Geant4MacroFileName()    const {return G4String(options.geant4MacroFileName);}
+  inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
   inline BDSOutputType OutputFormat()      const {return outputType;}
+  inline G4int    OutputCompressionLevel() const {return G4int   (options.outputCompressionLevel);}
   inline G4bool   Survey()                 const {return G4bool  (options.survey);}
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
@@ -133,6 +135,7 @@ public:
   G4int PrintModuloEvents()                  const;
   G4int PrintModuloTurns()                   const;
   inline G4bool   PhysicsVerbose()           const {return G4bool  (options.physicsVerbose);}
+  inline G4int    PhysicsVerbosity()         const {return G4int   (options.physicsVerbosity);}
   inline G4double PhysicsEnergyLimitLow()    const {return G4double(options.physicsEnergyLimitLow)*CLHEP::GeV;}
   inline G4double PhysicsEnergyLimitHigh()   const {return G4double(options.physicsEnergyLimitHigh)*CLHEP::GeV;}
   
@@ -172,6 +175,7 @@ public:
   inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
   inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
   inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
+  inline G4bool   BeamPipeIsInfiniteAbsorber() const {return G4bool(options.beamPipeIsInfiniteAbsorber);}
   inline G4bool   CollimatorsAreInfiniteAbsorbers() const {return G4bool(options.collimatorsAreInfiniteAbsorbers);}
   inline G4bool   TunnelIsInfiniteAbsorber() const {return G4bool  (options.tunnelIsInfiniteAbsorber);}
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
@@ -196,10 +200,13 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreMinimalData()         const {return G4bool  (options.storeMinimalData);}
+  inline G4bool   StorePrimaries()           const {return G4bool  (options.storePrimaries);}
+  inline G4bool   StorePrimaryHistograms()   const {return G4bool  (options.storePrimaryHistograms);}
   inline G4bool   StoreApertureImpacts()     const {return G4bool  (options.storeApertureImpacts);}
   inline G4bool   StoreApertureImpactsIons() const {return G4bool  (options.storeApertureImpactsIons);}
   inline G4bool   StoreApertureImpactsAll()  const {return G4bool  (options.storeApertureImpactsAll);}
+  inline G4bool   StoreApertureImpactsHistograms()  const {return G4bool  (options.storeApertureImpactsHistograms);}
   inline G4double ApertureImpactsMinimumKE() const {return G4double(options.apertureImpactsMinimumKE*CLHEP::GeV);}
   inline G4bool   StoreCollimatorInfo()      const {return G4bool  (options.storeCollimatorInfo);}
   inline G4bool   StoreCollimatorHits()      const {return G4bool  (options.storeCollimatorHits);}
@@ -223,10 +230,13 @@ public:
   inline G4bool   StoreELossStepLength()     const {return G4bool  (options.storeElossStepLength);}
   inline G4bool   StoreELossPreStepKineticEnergy() const {return G4bool (options.storeElossPreStepKineticEnergy);}
   inline G4bool   StoreELossModelID()        const {return G4bool  (options.storeElossModelID);}
-  inline G4bool   StoreGeant4Data()          const {return G4bool  (options.storeGeant4Data);}
+  inline G4bool   StoreELossPhysicsProcesses()const{return G4bool  (options.storeElossPhysicsProcesses);}
+  inline G4bool   StoreParticleData()        const {return G4bool  (options.storeParticleData);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4bool   StoreTrajectoryAll()       const {return          options.storeTrajectoryDepth == -1;}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
+  inline G4int    StoreTrajectoryStepPoints()const {return G4int   (options.storeTrajectoryStepPoints);}
+  inline G4bool   StoreTrajectoryStepPointLast()const{return G4bool(options.storeTrajectoryStepPointLast);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
@@ -263,10 +273,12 @@ public:
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   inline G4bool   WorldMaterialSet()         const {return G4bool   (options.HasBeenSet("worldMaterial"));}
   inline G4String WorldGeometryFile()        const {return G4String(options.worldGeometryFile);}
+  inline G4bool   AutoColourWorldGeometryFile()  const {return G4bool  (options.autoColourWorldGeometryFile);}
   inline G4String ImportanceWorldGeometryFile()  const {return G4String(options.importanceWorldGeometryFile);}
   inline G4String ImportanceVolumeMapFile()      const {return G4String(options.importanceVolumeMap);}
   inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
   inline G4bool   YokeFields()               const {return G4bool  (options.yokeFields);}
+  inline G4bool   YokeFieldsMatchLHCGeometry()const{return G4bool  (options.yokeFieldsMatchLHCGeometry);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}

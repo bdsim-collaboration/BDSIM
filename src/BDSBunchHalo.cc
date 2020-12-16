@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSParticleCoordsFull.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
 
@@ -70,12 +69,8 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   alphaY                = G4double(beam.alfy);
   betaX                 = G4double(beam.betx);
   betaY                 = G4double(beam.bety);
-  emitX                 = G4double(beam.emitx);
-  emitY                 = G4double(beam.emity);
   gammaX                = (1.0+alphaX*alphaX)/betaX;
   gammaY                = (1.0+alphaY*alphaY)/betaY;
-  sigmaX                = std::sqrt(emitX * betaX);
-  sigmaY                = std::sqrt(emitY * betaY);
   haloNSigmaXInner      = G4double(beam.haloNSigmaXInner);
   haloNSigmaXOuter      = G4double(beam.haloNSigmaXOuter);
   haloNSigmaYInner      = G4double(beam.haloNSigmaYInner);
@@ -83,8 +78,13 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   haloXCutInner         = G4double(beam.haloXCutInner);
   haloYCutInner         = G4double(beam.haloYCutInner);  
   haloPSWeightParameter = G4double(beam.haloPSWeightParameter);
-  weightFunction = G4String(beam.haloPSWeightFunction);  
+  weightFunction = G4String(beam.haloPSWeightFunction);
 
+  G4double ex,ey; // dummy variables we don't need
+  SetEmittances(beamParticle, beam, emitX, emitY, ex, ey);
+
+  sigmaX                = std::sqrt(emitX * betaX);
+  sigmaY                = std::sqrt(emitY * betaY);
   haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
   haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   
 
@@ -123,14 +123,6 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
     // compute single particle emittance 
     double emitXSp = gammaX * std::pow(std::abs(dx), 2) + (2. * alphaX * dx * dxp) + betaX * std::pow(std::abs(dxp), 2);
     double emitYSp = gammaY * std::pow(std::abs(dy), 2) + (2. * alphaY * dy * dyp) + betaY * std::pow(std::abs(dyp), 2);
-
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
-    G4cout << __METHOD_NAME__ << "Xcollimators> "  << haloXCutInner << G4endl;
-    G4cout << __METHOD_NAME__ << "Ycollimators> "  << haloYCutInner << G4endl;
-    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << emitInnerX << " " << emitOuterX << " "
-	   << emitY << " " << emitYSp << " " << emitInnerY << " " << emitOuterY << G4endl;
-#endif
 
     // check if particle is within normal beam core, if so continue generation
     // also check if particle is within the desired cut.
@@ -223,7 +215,7 @@ void BDSBunchHalo::CheckParameters()
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
   
   if (haloNSigmaYInner <= 0)
-    {throw BDSException(__METHOD_NAME__, "haloYSigmaXInner <= 0");}
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner <= 0");}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner cannot be less than haloNSigmaXOuter");}

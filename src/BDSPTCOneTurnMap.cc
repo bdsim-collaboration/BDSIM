@@ -55,7 +55,7 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(const G4String& maptableFile,
   if (!infile)
     {throw BDSException(__METHOD_NAME__, "Failed to read maptable: \"" + maptableFile + "\"");}
 
-  // The columns of the maptable TFS (read into below with the stringsteam).
+  // The columns of the maptable TFS (read into below with the stringstream).
   G4String name = "";
   G4double coefficient = 0;
   G4int nVector = 0;
@@ -127,7 +127,7 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
 void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
 				   G4double& px,
 				   G4double& y,
-                                   G4double& py,
+                   G4double& py,
 				   G4double& pz,
 				   G4int turnsTaken)
 {
@@ -180,8 +180,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double& x,
 			   xLastTurn, pxLastTurn,
 			   yLastTurn, pyLastTurn,
 			   deltaPLastTurn);
-      // Cache results for next turn.  Do it here, before we convert
-      // to BDSIM coordinates.
+      // Cache results for next turn.  Do it here, before we convert to BDSIM coordinates.
       xLastTurn      = xOut;
       pxLastTurn     = pxOut;
       yLastTurn      = yOut;

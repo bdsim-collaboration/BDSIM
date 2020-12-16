@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beam.h"
 
@@ -48,7 +49,9 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   nlinesSkip(0),
   particleMass(0),
   lineCounter(0),
-  printedOutFirstTime(false)
+  printedOutFirstTime(false),
+  anEnergyCoordinateInUse(false),
+  changingParticleType(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -93,9 +96,9 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 {
   struct BDSBunchUserFile::Doublet sd;
 
-  std::regex wspace(":"); // any whitepsace
+  std::regex colons(":");
   std::vector<std::string> results;
-  std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), wspace, -1);
+  std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), colons, -1);
   std::sregex_token_iterator end;
   for (; iter != end; ++iter)
     {
@@ -106,6 +109,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
     {
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
 	{
+	  anEnergyCoordinateInUse = true;
 	  G4String name,rest;
 	  if(token.substr(0,2)=="Ek")
 	    {//Kinetic energy (longer name).
@@ -148,9 +152,10 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
 	  useCurvilinear = true;
 	}
-      else if(token.substr(0,2)=="pt")
+      else if(token.substr(0,5)=="pdgid")
 	{
-	  sd.name="pt";
+	  changingParticleType = true;
+	  sd.name="pdgid";
 	  sd.unit=1;
 	  fields.push_back(sd);
 	}
@@ -173,12 +178,12 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	  throw BDSException(__METHOD_NAME__, message);
 	}
     }
-  return;
 }
 
 template <typename T>
 template <typename U>
-void BDSBunchUserFile<T>::CheckAndParseUnits(G4String name, G4String rest,
+void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& name,
+                                             const G4String& rest,
                                              U unitParser)
 {
   struct BDSBunchUserFile::Doublet sd;
@@ -237,6 +242,8 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
+  if (beam.matchDistrFileLength)
+    {BDS::Warning("The option matchDistrFileLength doesn't work with the userfile distribution");}
   ParseFileFormat();
 }
 
@@ -287,17 +294,17 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (InputBunchFile.eof())
     {EndOfFileAction();}
 
-  G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
+  G4double E = 0, Ek = 0, P = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
   G4double weight = 1;
   G4int type = 0;
   
   G4bool zpdef = false; //keeps record whether zp has been read from file
   G4bool tdef  = false; //keeps record whether t has been read from file
 
-  // we only update the particle definition at the end so we continue to read
-  // the rest of the line bit by bit - could be improved and read the whole line
-  // at once for safety and robustness of moving on to the next event.
+  // flag whether we're going to update the particle definition
   G4bool updateParticleDefinition = false;
+
+  // read a whole line at a time for safety - no partially read lines
   std::string line;
   std::getline(InputBunchFile, line);
   lineCounter++;
@@ -349,25 +356,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
-	{
-	  G4double kineticEnergy = 0;
-	  ReadValue(ss, kineticEnergy);
-	  kineticEnergy *= (CLHEP::GeV * it->unit);
-	  E = kineticEnergy + particleMass;
-	}
+	{ReadValue(ss, Ek); Ek *= (CLHEP::GeV * it->unit);}
       else if(it->name=="E")
-	{
-	  ReadValue(ss, E);
-	  E *= (CLHEP::GeV * it->unit);
-	}
+	{ReadValue(ss, E); E *= (CLHEP::GeV * it->unit);}
       else if(it->name=="P")
-	{ 
-	  G4double P = 0;
-	  ReadValue(ss, P);
-	  P *= (CLHEP::GeV * it->unit);
-	  G4double totalEnergy = std::hypot(P,particleMass);
-	  E = totalEnergy;
-	}
+	{ReadValue(ss, P); P *= (CLHEP::GeV * it->unit);}
       else if(it->name=="t")
 	{ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
@@ -376,10 +369,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	{ReadValue(ss, y); y *= (CLHEP::m * it->unit);}
       else if(it->name=="z")
 	{ReadValue(ss, z); z *= (CLHEP::m * it->unit);}
-      else if(it->name=="xp") { ReadValue(ss, xp); xp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="yp") { ReadValue(ss, yp); yp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="zp") { ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
-      else if(it->name=="pt")
+      else if(it->name=="xp") {ReadValue(ss, xp); xp *= ( CLHEP::radian * it->unit );}
+      else if(it->name=="yp") {ReadValue(ss, yp); yp *= ( CLHEP::radian * it->unit );}
+      else if(it->name=="zp") {ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
+      else if(it->name=="pdgid")
 	{// particle type
 	  ReadValue(ss, type);
 	  updateParticleDefinition = true; // update particle definition after finished reading line
@@ -397,8 +390,17 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
     }
 
   // coordinate checks
-  // If energy isn't specified, use the central beam energy (kinetic for Geant4)
-  if (!BDS::IsFinite(E))
+  if (anEnergyCoordinateInUse)
+    {
+      if (particleDefinition)
+        {
+          particleDefinition->SetEnergies(E, Ek, P);
+          E = particleDefinition->TotalEnergy();
+        }
+      else // we must update this call of this function to ensure valid particle definition
+        {updateParticleDefinition = true;}
+    }
+  else // If energy isn't specified, use the central beam energy
     {E = E0;}
   
   // compute zp from xp and yp if it hasn't been read from file
@@ -410,20 +412,28 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (!tdef)
     {t=0;}
   
-  if (updateParticleDefinition)
+  if (updateParticleDefinition || changingParticleType)
     {
       // type is an int so FindParticle(int) is used here
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       G4ParticleDefinition* particleDef = particleTable->FindParticle(type);
       if (!particleDef)
-	{throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
+	    {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
 	      
       // Wrap in our class that calculates momentum and kinetic energy.
-      // Requires that total energy 'E' already be set.
+      // Requires that one of E, Ek, P be non-zero (only one).
       delete particleDefinition;
-      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
-      updateParticleDefinition = false; // reset flag back to false
-      particleDefinitionHasBeenUpdated = true;
+      try
+        {
+          particleDefinition = new BDSParticleDefinition(particleDef, E, Ek, P, ffact);
+          E = particleDefinition->TotalEnergy();
+          particleDefinitionHasBeenUpdated = true;
+        }
+      catch (const BDSException& e)
+	    {// if we throw an exception the object is invalid for the delete on the next loop
+	      particleDefinition = nullptr; // reset back to nullptr for safe delete
+	      throw e;                      // rethrow
+        }
     }
 
   return BDSParticleCoordsFull(X0+x,Y0+y,Z0+z,xp,yp,zp,t,z,E,weight);

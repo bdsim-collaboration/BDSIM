@@ -55,6 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Run.hh"
 #include "G4SDManager.hh"
 #include "G4StackManager.hh"
+#include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
 #include "G4TransportationManager.hh"
@@ -193,6 +194,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       collimatorCollID         = g4SDMan->GetCollectionID(bdsSDMan->Collimator()->GetName());
       apertureCollID           = g4SDMan->GetCollectionID(bdsSDMan->ApertureImpacts()->GetName());
       thinThingCollID          = g4SDMan->GetCollectionID(bdsSDMan->ThinThing()->GetName());
+      std::vector<G4String> scorerNames = bdsSDMan->PrimitiveScorerNamesComplete();
+      for (const auto& name : scorerNames)
+        {scorerCollectionIDs[name] = g4SDMan->GetCollectionID(name);}
     }
   FireLaserCompton=true;
 
@@ -250,7 +254,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-
+  
   // samplers
   typedef BDSHitsCollectionSampler shc;
   shc* SampHC       = HCE ? dynamic_cast<shc*>(HCE->GetHC(samplerCollID_plane)) : nullptr;
@@ -277,6 +281,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   typedef BDSHitsCollectionThinThing tthc;
   tthc* thinThingHits = HCE ? dynamic_cast<tthc*>(HCE->GetHC(thinThingCollID)) : nullptr;
   
+  std::map<G4String, G4THitsMap<G4double>*> scorerHits;
+  if (HCE)
+    {
+      for (const auto& nameIndex : scorerCollectionIDs)
+	{scorerHits[nameIndex.first] = dynamic_cast<G4THitsMap<G4double>*>(HCE->GetHC(nameIndex.second));}
+    }
   // primary hit something? we infer this by seeing if there are any energy
   // deposition hits at all - if there are, the primary must have 'hit' something.
   // we don't check the world energy hits here because the hits could be from
@@ -383,6 +393,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    interestingTrajectories,
 		    collimatorHits,
 		    apertureImpactHits,
+                    scorerHits,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end
@@ -441,7 +452,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	  
 	  // fill track ID map
-	  trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+	  trackIDMap.insert(std::pair<int, BDSTrajectory*>(traj->GetTrackID(), traj));
 	  
 	  // fill depth map
 	  if (traj->GetParentID() == 0) 

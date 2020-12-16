@@ -49,6 +49,7 @@ public:
   virtual BDSGeometryExternal* Build(G4String componentName,
 				     G4String fileName,
 				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+				     G4bool                 autoColour               = true,
 				     G4double               suggestedLength          = 0,
 				     G4double               suggestedHorizontalWidth = 0,
 				     std::vector<G4String>* vacuumBiasVolumeNames    = nullptr);
@@ -61,16 +62,16 @@ private:
   G4String GetWord(std::ifstream& infputf) const;
 
   /// Get a numerical parameter from the ifstream.
-  void GetParameter(std::ifstream& inputf,
-		    G4double&      x,
-		    G4String       name,
-		    G4String       lastToken) const;
+  void GetParameter(std::ifstream&  inputf,
+		            G4double&       x,
+		            const G4String& name,
+		            const G4String& lastToken) const;
 
   /// Get a string parameter from the ifstream.
-  void GetParameter(std::ifstream& inputf,
-		    G4String&      lval,
-		    G4String       name,
-		    G4String lastToken) const;
+  void GetParameter(std::ifstream&  inputf,
+		            G4String&       lval,
+		            const G4String& name,
+		            const G4String& lastToken) const;
 
   /// Construct logical volume, rotation and placement.
   void Finish(G4String         name,

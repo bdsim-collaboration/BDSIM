@@ -26,14 +26,17 @@ BeamBase::BeamBase()
 {
   particle             = "";
   beamParticleName     = "";
-  beamEnergy           = 0.0;
+  beamEnergy           = 0;
+  beamKineticEnergy    = 0;
+  beamMomentum         = 0;
   distrType            = "reference";
-  xDistrType           = "";
-  yDistrType           = "";
-  zDistrType           = "";
+  xDistrType           = "reference";
+  yDistrType           = "reference";
+  zDistrType           = "reference";
   distrFile            = "";
   distrFileFormat      = "";
-  matchDistrFileLength = true;  
+  matchDistrFileLength = true;
+  removeUnstableWithoutDecay = true;
   nlinesIgnore         = 0;
   nlinesSkip           = 0;
   
@@ -46,9 +49,13 @@ BeamBase::BeamBase()
   Zp0 = 0.0;
   T0  = 0.0;
   E0  = 0.0;
-  tilt   = 0.0;
-  sigmaT = 0.0;
-  sigmaE = 0.0;
+  Ek0 = 0.0;
+  P0  = 0.0;
+  tilt    = 0.0;
+  sigmaT  = 0.0;
+  sigmaE  = 0.0;
+  sigmaEk = 0.0;
+  sigmaP  = 0.0;
 
   betx    = 0.0;
   bety    = 0.0;
@@ -56,6 +63,8 @@ BeamBase::BeamBase()
   alfy    = 0.0;
   emitx   = 0.0;
   emity   = 0.0;
+  emitNX  = 0.0;
+  emitNY  = 0.0;
   dispx   = 0.0;
   dispy   = 0.0;
   dispxp  = 0.0;
@@ -116,9 +125,12 @@ BeamBase::BeamBase()
   eventGeneratorMaxYp = 1.1;
   eventGeneratorMinZp = -1;
   eventGeneratorMaxZp = 1.1;
+  eventGeneratorMinRp = -1;
+  eventGeneratorMaxRp = 1.1;
   eventGeneratorMinT  = -1;
   eventGeneratorMaxT  = 1e50;
   eventGeneratorMinEK = -1;
   eventGeneratorMaxEK = 1e50;
   eventGeneratorParticles = "";
+  eventGeneratorWarnSkippedParticles = true;
 }

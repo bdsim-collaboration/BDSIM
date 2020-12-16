@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-BDSSDSampler::BDSSDSampler(G4String name):
+BDSSDSampler::BDSSDSampler(const G4String& name):
   BDSSensitiveDetector("sampler/" + name),
   SamplerCollection(nullptr),
   itsCollectionName(name),
@@ -88,14 +88,15 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4double charge   = dp->GetCharge(); // dynamic effective charge
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
-  G4ThreeVector pos = track->GetPosition();          // current particle position (global)
-  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
+  const G4ThreeVector& pos = track->GetPosition();          // current particle position (global)
+  const G4ThreeVector& mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   G4int nElectrons  = dp->GetTotalOccupancy();
   G4double mass     = dp->GetMass();
   G4double rigidity = 0;
   if (BDS::IsFinite(charge))
     {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
+  G4double p = dp->GetTotalMomentum();
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
@@ -154,6 +155,7 @@ G4bool BDSSDSampler::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 
   BDSHitSampler* smpHit = new BDSHitSampler(samplerID,
 					    coords,
+					    p,
 					    mass,
 					    charge,
 					    rigidity,

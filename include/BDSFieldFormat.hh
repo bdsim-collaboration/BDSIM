@@ -44,8 +44,9 @@ namespace BDS
 {
   /// Function that gives corresponding enum value for string (case-insensitive)
   BDSFieldFormat DetermineFieldFormat(G4String fieldformat);
+
+  /// Report the number of dimensions for that format.
+  G4int NDimensionsOfFieldFormat(const BDSFieldFormat& ff);
 }
 
 #endif
-
-

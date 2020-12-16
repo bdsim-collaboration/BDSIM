@@ -51,6 +51,7 @@ public:
   virtual BDSGeometryExternal* Build(G4String componentName,
 				     G4String fileName,
 				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+				     G4bool                 autoColour               = true,
 				     G4double               suggestedLength          = 0,
 				     G4double               suggestedHorizontalWidth = 0,
 				     std::vector<G4String>* namedVacuumVolumes       = nullptr);
@@ -72,9 +73,10 @@ private:
 
   /// Recursively append pvs and lvs from a given mother volume.  Pass by reference
   /// the output vectors
-  void GetAllLogicalAndPhysical(const G4VPhysicalVolume*      volume,
-				std::set<G4VPhysicalVolume*>& pvs,
-				std::set<G4LogicalVolume*>&   lvs);
+  void GetAllLogicalPhysicalAndMaterials(const G4VPhysicalVolume*         volume,
+					 std::set<G4VPhysicalVolume*>&    pvs,
+					 std::set<G4LogicalVolume*>&      lvs,
+                                         std::map<G4String, G4Material*>& materialsGDML);
 };
 
 #endif
