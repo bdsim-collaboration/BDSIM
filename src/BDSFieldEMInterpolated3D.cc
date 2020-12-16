@@ -20,15 +20,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSInterpolator3D.hh"
 
 #include "G4ThreeVector.hh"
+#include "G4Types.hh"
 
 #include <utility>
 
-BDSFieldEMInterpolated3D::BDSFieldEMInterpolated3D(BDSInterpolator3D* eInterpolatorIn,
-						   BDSInterpolator3D* bInterpolatorIn,
-						   G4Transform3D      offset,
-						   G4double           eScalingIn,
-						   G4double           bScalingIn):
-  BDSFieldEMInterpolated(offset, eScalingIn, bScalingIn),
+BDSFieldEMInterpolated3D::BDSFieldEMInterpolated3D(BDSInterpolator3D*   eInterpolatorIn,
+						   BDSInterpolator3D*   bInterpolatorIn,
+						   const G4Transform3D& offset,
+						   G4double             eScalingIn,
+						   G4double             bScalingIn):
+  BDSFieldEMInterpolated(eInterpolatorIn, bInterpolatorIn, offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
   bInterpolator(bInterpolatorIn),
   eFirstDimensionIndex((eInterpolatorIn->FirstDimension()).underlying()),

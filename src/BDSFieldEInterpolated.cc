@@ -17,11 +17,16 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSFieldEInterpolated.hh"
+#include "BDSInterpolator.hh"
 
-#include "globals.hh"
+#include <limits>
 
-BDSFieldEInterpolated::BDSFieldEInterpolated(G4Transform3D offset,
-					     G4double      eScalingIn):
+BDSFieldEInterpolated::BDSFieldEInterpolated(const BDSInterpolator* interpolator,
+					     const G4Transform3D&   offset,
+					     G4double               eScalingIn):
   BDSFieldE(offset),
   eScaling(eScalingIn)
-{;}
+{
+  if (interpolator)
+    {smallestSpatialStep = interpolator->SmallestSpatialStep();}
+}
