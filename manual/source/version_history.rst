@@ -148,6 +148,11 @@ General
 * Warn the user if a sampler placement is renamed due to a beam line sampler already having that name.
 * PDG Particle ID token when defining the columns in a :code:`userfile` distribution has been changed from "pt" to
   "pdgid". "pt" is no longer a valid token.
+* When loading multiple GDML files, a material specified may have the same name in different files butt
+  be different. This could result in the incorrect material being used in the second file. We have this
+  issue with geometry (solids and logical volumes) also, hence our GDML pre-processing. We now cache the
+  names of the materials and warn if a duplicate is defined. Normally, this would pass through without
+  error and result in possibly the other material being found by Geant4.
 
 Bug Fixes
 ---------
