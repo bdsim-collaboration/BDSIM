@@ -241,8 +241,9 @@ void trk::maps::sextupole(TRKParticle &p, double length, double k2) noexcept {
 }
 
 void trk::maps::kicker(TRKParticle &p, double hkick, double vkick) noexcept {
-  p.px += hkick;
-  p.py += vkick;
+    double scaling = p.ReferenceMomentum() / p.Momentum();
+  p.px += scaling * hkick;
+  p.py += scaling * vkick;
 }
 
 // c.f. BDSIntegratorDipoleFringe
