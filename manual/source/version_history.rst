@@ -68,7 +68,7 @@ New Features
   is controlled with the new option `storeApertureImpactsHistograms`.
 * Ability to store only detailed production point of certain kinds of particles through new options
   for the trajectory storage.
-* New ability to run a Geant4 macro before a run. Useful to adjust physcis list parameters in Geant4
+* New ability to run a Geant4 macro before a run. Useful to adjust physics list parameters in Geant4
   reference physics lists such as extra muon processes in the EM extra physics list.
 * New options:
 
