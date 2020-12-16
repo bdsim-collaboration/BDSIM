@@ -106,21 +106,27 @@ void BDSOutputROOT::NewFile()
     }
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",      eLoss,          4000, 1);
-  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",      eLossVacuum,    4000, 1);
-  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 1);
-  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+  if (storeELoss)
+    {theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",   eLoss,          4000, 1);}
+  if (storeELossVacuum)
+    {theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",   eLossVacuum,    4000, 1);}
+  if (storeELossTunnel)
+    {theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",   eLossTunnel,    4000, 1);}
+  if (storeELossWorld)
+    {
+      theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+      theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
+    }
   if (storeELossWorldContents)
     {theEventOutputTree->Branch("ElossWorldContents.", "BDSOutputROOTEventLossWorld", eLossWorldContents, 4000, 1);}
-  
-  theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
   if (storeApertureImpacts)
     {theEventOutputTree->Branch("ApertureImpacts.", "BDSOutputROOTEventAperture", apertureImpacts, 4000, 1);}
 
   // Build trajectory structures
-  theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);
+  if (storeTrajectory)
+    {theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj, 4000,  2);}
 
   // Build event histograms
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
