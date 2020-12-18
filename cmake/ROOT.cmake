@@ -21,14 +21,7 @@ removeDuplicateSubstring("${CMAKE_CXX_FLAGS}" $CMAKE_CXX_FLAGS)
 # at leat that standard, so we pick apart ROOT stuff to find out and update the standard
 execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} --features OUTPUT_VARIABLE ROOT_FEATURES)
 list(REMOVE_DUPLICATES ROOT_FEATURES)
-string(FIND ${ROOT_FEATURES} "cxx17" _CXX17FOUND)
-if (_CXX17FOUND STRGREATER -1)
-  message(STATUS "ROOT compiled with cxx17 feature -> changing to C++17 for BDSIM")
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
 
- 
 # ROOT doesn't implement the version and subversion number in CMAKE as it should, so
 # the above find package doesn't match the version required. Need to decode version ourselves
 if (ROOT_VERSION VERSION_LESS "6.00")

@@ -5,7 +5,7 @@ if (CMAKE_VERSION VERSION_LESS 3.9.0)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GenerateExportHeader)
@@ -75,7 +75,7 @@ include(cmake/Boost.cmake)
 # CLHEP
 include(cmake/CLHEP.cmake)
 
-# ROOT
+# ROOT must be compiled in c++14 to be compatible with Boost
 include(cmake/ROOT.cmake)
 
 # GDML (on by default)
