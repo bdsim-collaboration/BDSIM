@@ -33,7 +33,7 @@ class G4Material;
 class BDSCollimatorElliptical: public BDSCollimator
 {
 public:
-  BDSCollimatorElliptical(G4String    name,
+  BDSCollimatorElliptical(const G4String& name,
 			  G4double    length,
 			  G4double    horizontalWidth,
 			  G4Material* collimatorMaterial,
