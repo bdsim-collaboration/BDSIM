@@ -41,7 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VTouchable.hh"
 #include "Randomize.hh"
 
-BDSSDApertureImpacts::BDSSDApertureImpacts(G4String name):
+BDSSDApertureImpacts::BDSSDApertureImpacts(const G4String& name):
   G4VSensitiveDetector("aperture_impacts/"+name),
   colName(name),
   hits(nullptr),

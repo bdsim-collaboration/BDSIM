@@ -43,7 +43,7 @@ class G4Track;
 class BDSSDApertureImpacts: public G4VSensitiveDetector
 {
 public:
-  BDSSDApertureImpacts(G4String name);
+  BDSSDApertureImpacts(const G4String& name);
   virtual ~BDSSDApertureImpacts();
 
   virtual void Initialize(G4HCofThisEvent* HCE);
