@@ -98,7 +98,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
 {
   if (override)
     {
-      for (auto const key : beamIn.setKeys)
+      for (auto const& key : beamIn.setKeys)
 	{
 	  try
 	    {
@@ -117,7 +117,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
     }
   else
     {// don't override - ie give preference to ones set in this instance
-      for (auto const key : beamIn.setKeys)
+      for (auto const& key : beamIn.setKeys)
 	{
 	  auto const& ok = setKeys; // shortcut
 	  auto result = std::find(ok.begin(), ok.end(), key);
