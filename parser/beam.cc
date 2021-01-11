@@ -107,7 +107,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
         }
 	  catch (const std::runtime_error&)
 	    {
-	      std::cerr << "Error: Amalgate unknown beam option \"" << key << "\"" << std::endl;
+	      std::cerr << "Error: Amalgamate unknown beam parameter \"" << key << "\"" << std::endl;
 	      exit(1);
 	    }
 	}
@@ -130,7 +130,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
 		}
 	      catch (const std::runtime_error&)
 		{
-		  std::cerr << "Error: Amalgate unknown beam option \"" << key << "\""
+		  std::cerr << "Error: Amalgamate unknown beam parameter \"" << key << "\""
 			    << std::endl;
 		  exit(1);
 		}
