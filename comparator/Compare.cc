@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -182,7 +182,7 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
 void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
-  std::vector<std::string> treesToIgnore = {"Header", "Model", "Options", "Run", "Beam", "Geant4Data"};
+  std::vector<std::string> treesToIgnore = {"Header", "Model", "Options", "Run", "Beam", "ParticleData"};
 
   // skip some trees
   std::string treeName = t1->GetName();
