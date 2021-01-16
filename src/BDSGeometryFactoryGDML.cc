@@ -124,7 +124,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
     }
   
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
-  
+
   /// Now overwrite container lv vis attributes
   if (containerLV->GetNoDaughters() > 0)
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
@@ -147,7 +147,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
   result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
-
+  
   delete parser;
   return result;
 }
@@ -157,8 +157,8 @@ G4String BDSGeometryFactoryGDML::PreprocessedName(const G4String& objectName,
 {return BDSGDMLPreprocessor::ProcessedNodeName(objectName, acceleratorComponentName);}
 
 void BDSGeometryFactoryGDML::GetAllLogicalPhysicalAndMaterials(const G4VPhysicalVolume*         volume,
-							       std::set<G4VPhysicalVolume*>&    pvsIn,
-							       std::set<G4LogicalVolume*>&      lvsIn,
+						                                       std::set<G4VPhysicalVolume*>&    pvsIn,
+						                                       std::set<G4LogicalVolume*>&      lvsIn,
                                                                std::map<G4String, G4Material*>& materialsGDML)
 {
   const auto& lv = volume->GetLogicalVolume();

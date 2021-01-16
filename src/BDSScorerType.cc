@@ -63,7 +63,7 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["cellfluxscaled3d"]  = BDSScorerType::cellfluxscaled3d;
   types["cellfluxscaledperparticle"]   = BDSScorerType::cellfluxscaledperparticle;
   types["cellfluxscaledperparticle3d"] = BDSScorerType::cellfluxscaledperparticle3d;
-
+  
   scorerType.toLower();
   
   auto result = types.find(scorerType);
