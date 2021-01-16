@@ -91,7 +91,7 @@ void ScorerMesh::PublishMembers()
   publish("axisAngle",     &ScorerMesh::axisAngle);
 }
 
-void ScorerMesh::print() const
+void ScorerMesh::print()const
 {
   std::cout << "ScorerMesh: "
 	    << "name "          << name          << std::endl
