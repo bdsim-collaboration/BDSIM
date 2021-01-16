@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -30,6 +30,7 @@ OptionsBase::OptionsBase()
   inputFileName         = "optics.mad";
   visMacroFileName      = "";
   geant4MacroFileName   = "";
+  geant4PhysicsMacroFileName = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";

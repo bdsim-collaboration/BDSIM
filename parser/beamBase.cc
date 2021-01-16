@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -132,4 +132,5 @@ BeamBase::BeamBase()
   eventGeneratorMinEK = -1;
   eventGeneratorMaxEK = 1e50;
   eventGeneratorParticles = "";
+  eventGeneratorWarnSkippedParticles = true;
 }

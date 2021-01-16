@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -39,6 +39,7 @@ namespace GMAD
     std::string inputFileName;       ///< Input filename.
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
+    std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format

@@ -894,7 +894,7 @@ Acceptable tokens for the columns are:
 | "S"        | Global path length displacement,       |
 |            | not to be used in conjunction with "z".|
 +------------+----------------------------------------+
-| "pt"       | PDG particle ID                        |
+| "pdgid"    | PDG particle ID                        |
 +------------+----------------------------------------+
 | "w"        | Weight                                 |
 +------------+----------------------------------------+
@@ -1159,6 +1159,29 @@ See the Geant4 documentation for a more complete explanation of the physics list
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
 
+.. _physics-macro-file:
+  
+Physics Macro File
+^^^^^^^^^^^^^^^^^^
+
+Using the option :code:`geant4PhysicsMacroFileName` a macro file can be specified that will be executed
+and interpreted by Geant4 **after** the construction of the physics list but before the start of the run
+(in the INIT state). From :code:`examples/features/processes/macros/physics-em-geant4-macro.gmad`: ::
+
+  option, geant4PhysicsMacroFileName="emextraphysics.mac";
+
+Inside this file, the following commands were used: ::
+
+  /physics_lists/em/GammaToMuons true
+  /physics_lists/em/PositronToMuons true
+  /physics_lists/em/PositronToHadrons true
+  /physics_lists/em/NeutrinoActivation true
+  /physics_lists/em/MuonNuclear true
+  /physics_lists/em/GammaNuclear true
+
+We recommend using the visualiser and interactively exploring the commands there to find suitable ones.
+
+
 .. _physics-modular-physics-lists:
   
 Modular Physics Lists
@@ -1300,11 +1323,12 @@ Examples: ::
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
 +------------------------------+------------------------------------------------------------------------+
-| muon                         | Provides muon production and scattering processes. Gamma to muons,     |
-|                              | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                              | multiple scattering for muons, muon Bremsstrahlung, pair production    |
-|                              | and Cherenkov light are all provided. Given by BDSIM physics           |
-|                              | builder (a la Geant4) `BDSPhysicsMuon`.                                |
+| muon                         | Provides muon production and scattering processes. Be careful if using |
+|                              | with `em_extra` as processes may be double registered. Includes Gamma  |
+|                              | to muons, annihilation to muon pair, 'ee' to hadrons, pion decay to    |
+|                              | muons, multiple scattering for muons, muon Bremsstrahlung, pair        |
+|                              | production and Cherenkov light are all provided. Given by BDSIM        |
+|                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
@@ -1422,6 +1446,14 @@ these will have no effect.
 is not used in BDSIM, as it does not propagate the associated weights correctly. Biasing should be done through
 the generic biasing interface with the name of the process (described in the following section), as this will
 propagate the weights correctly.
+
+.. warning:: If you used :code:`em_extra` and :code:`muon` modular physics list, extreme care should be
+	     taken in combination with the above options that certain processes are not doubly registered,
+	     which would result in double the rates of those processes.
+
+.. note:: If you use the reference physics list :code:`g4FTFP_BERT`, this will contain the EM extra physics
+	  but this interface to turn on the extra parts is not applicable. In this case, a physics macro
+	  file should be used (see :ref:`physics-macro-file`).
 
 .. _physics-geant4-lists:
 
@@ -1709,110 +1741,6 @@ the energy deposition in the world volume itself (i.e. the air).
 * If a importance cell volume exists in the importance world geometry and is not listed
   in the ASCII map file with a importance value, BDSIM will exit.
 * The importance sampling world volume has an importance value of 1.
-
-Shape
-*****
-
-The sampler will be 1 nm thick in reality but may be treated by the user an
-infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
-physics of the simulation. The user may select the shape of the sampler from either
-circular or rectangular (including square). The parameter :code:`apertureType` should
-be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
-typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
-The meaning of these parameters is described in :ref:`aperture-parameters`.
-
-
-Parameters
-**********
-			
-The `samplerplacement` object accepts a number of parameters similar to other parts of BDSIM.
-These include a subset of the aperture parameters (see :ref:`aperture-parameters`) and the position
-information from the `placements`. The full list of accepted parameters is given below.
-
-+-------------------------+--------------------------------------------------------------------+
-| **Parameter**           |  **Description**                                                   |
-+-------------------------+--------------------------------------------------------------------+
-| x                       | Offset in global x                                                 |
-+-------------------------+--------------------------------------------------------------------+
-| y                       | Offset in global y                                                 |
-+-------------------------+--------------------------------------------------------------------+
-| z                       | Offset in global z                                                 |
-+-------------------------+--------------------------------------------------------------------+
-| s                       | Curvilinear s coordinate (global | local depending on parameters)  |
-+-------------------------+--------------------------------------------------------------------+
-| phi                     | Euler angle phi for rotation                                       |
-+-------------------------+--------------------------------------------------------------------+
-| theta                   | Euler angle theta for rotation                                     |
-+-------------------------+--------------------------------------------------------------------+
-| psi                     | Euler angle psi for rotation                                       |
-+-------------------------+--------------------------------------------------------------------+
-| axisX                   | Axis angle rotation x-component of unit vector                     |
-+-------------------------+--------------------------------------------------------------------+
-| axisY                   | Axis angle rotation y-component of unit vector                     |
-+-------------------------+--------------------------------------------------------------------+
-| axisZ                   | Axis angle rotation z-component of unit vector                     |
-+-------------------------+--------------------------------------------------------------------+
-| angle                   | Axis angle, angle to rotate about unit vector                      |
-+-------------------------+--------------------------------------------------------------------+
-| axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
-+-------------------------+--------------------------------------------------------------------+
-| sensitive               | Whether the geometry records energy deposition (default true)      |
-+-------------------------+--------------------------------------------------------------------+
-| referenceElement        | Name of element to place geometry with respect to (string)         |
-+-------------------------+--------------------------------------------------------------------+
-| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
-|                         | is used more than once in the sequence. Zero counting.             |
-+-------------------------+--------------------------------------------------------------------+
-| apertureType            | The shape of the sampler desired as described using the aperture   |
-|                         | syntax of BDSIM. Currently, only `circular` and `rectangular` are  |
-|                         | supported.                                                         |
-+-------------------------+--------------------------------------------------------------------+
-| shape                   | An intuitive alias to `apertureType`.                              |
-+-------------------------+--------------------------------------------------------------------+
-| aper1                   | Aperture parameter #1.                                             |
-+-------------------------+--------------------------------------------------------------------+
-| aper2                   | Aperture parameter #2.                                             |
-+-------------------------+--------------------------------------------------------------------+
-| aper3                   | Aperture parameter #3.                                             |
-+-------------------------+--------------------------------------------------------------------+
-| aper4                   | Aperture parameter #4.                                             |
-+-------------------------+--------------------------------------------------------------------+
-
-Examples
-********
-
-The following are examples of `samplerplacement`::
-
-   s1: samplerplacement, referenceElement="d1",
-                         referenceElementNumber=1,
-			 x=20*cm, y=-1*cm, s=30*cm,
-    			 axisAngle=1, axisY=1, angle=pi/4,
-			 aper1=10*cm;
-
-
-This places a circular sampler called "s1" with respect to the 2nd instance of the beam line
-element "d1". The x,y,s are offsets from the centre of this element along the direction of
-travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
-centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
-be circular (by default) with a radius of 10 cm. ::
-
-   s2: samplerplacement, x=0.2*m, y=-1*cm, z=30.123*m,
-    			 axisAngle=1, axisY=1, angle=-pi/6,
-			 aper1=10*cm, aper2=5*cm, shape="rectangular";
-
-
-This will place a sampler called "s2" in global Cartesian coordinates approximately 30 m
-forward from the centre of model. The placement rotation is done in the global coordinate
-system. The sampler shape is rectangular and is 20 cm wide and 10 cm tall.
-
-User Sampler Visualisation
-**************************
-
-Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
-visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
-in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and untick the desired element to see
-it appear and disappear repeatedly.
   
 .. _bdsim-options:
 
@@ -2237,6 +2165,11 @@ Physics Processes
 |                                  | cut. Overwrites other production cuts unless these    |
 |                                  | are explicitly set (default 1e-3) [m].                |
 +----------------------------------+-------------------------------------------------------+
+| geant4PhysicsMacroFileName       | The name of a text macro file with commands that are  |
+|                                  | suitable for the Geant4 interpreter that will be      |
+|                                  | exectued after the physics list is constructed but    |
+|                                  | before a run.                                         |
++----------------------------------+-------------------------------------------------------+
 | g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
 |                                  | 110% of the component length - this makes the         |
 |                                  | tracking more robust and is the default with a        |
@@ -2269,7 +2202,7 @@ Physics Processes
 |                                  | be used only if the user understands how this will    |
 |                                  | affect the running of Geant4. [GeV]                   |
 +----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitHigh           | Optional upper energy level for all physics models.   |
+| physicsEnergyLimitHigh (\*)      | Optional upper energy level for all physics models.   |
 |                                  | This is usually 100 TeV by default in Geant4. The     |
 |                                  | user may change this if required. Warning, this must  |
 |                                  | be used only if the user understands how this will    |
@@ -2328,6 +2261,11 @@ Physics Processes
 |                                  | annihilation process when using `em_extra` physics    |
 |                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +----------------------------------+-------------------------------------------------------+
+
+* (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
+  hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
+  source code (G4HadronicParameters.cc).
+
 
 
 Visualisation
@@ -2499,14 +2437,20 @@ with the following options.
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
 | storeParticleData                  | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under ParticleDAta in the output. This can be    |
+|                                    | in the simulation under ParticleData in the output. This can be    |
 |                                    | relatively large when ions are used as there are many thousands    |
 |                                    | of ion definitions. Default on.                                    |
++------------------------------------+--------------------------------------------------------------------+
+| storeMinimalData                   | When used, all optional parts of the data are turned off. Any bits |
+|                                    | specifically turned on with other options will be respected.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
++------------------------------------+--------------------------------------------------------------------+
+| storePrimaryHistograms             | Whether to generate summary histograms of the primary first hit    |
+|                                    | and loss point versus S coordinate per event. On by default.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeSamplerAll                    | Convenience option to turn on all optional sampler output.         |
 |                                    | Equivalent to turning on `storeSamplerCharge`,                     |
@@ -2800,9 +2744,9 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 	  deposition data.
 
 
-+----------------------------------+-------------------------------------------------------+
++----------------+-----------------+-------------------------------------------------------+
 | **Option**     | **Default**     | **Function**                                          |
-+==================================+=======================================================+
++================+=================+=======================================================+
 | useScoringMap  | 0               | Whether to create a scoring map                       |
 +----------------+-----------------+-------------------------------------------------------+
 | nbinsx         | 1               | Number of bins in global X                            |
@@ -3029,6 +2973,111 @@ parameters is described below, but the required ones for each scenario are descr
 	     object. This will cause bad tracking and overlaps. This is a limitation of
 	     Geant4. The user placed samplers are slightly thicker than normal ones
 	     to help avoid this problem.
+
+
+Shape
+*****
+
+The sampler will be 1 nm thick in reality but may be treated by the user an
+infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
+physics of the simulation. The user may select the shape of the sampler from either
+circular or rectangular (including square). The parameter :code:`apertureType` should
+be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
+typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
+The meaning of these parameters is described in :ref:`aperture-parameters`.
+
+
+Parameters
+**********
+			
+The `samplerplacement` object accepts a number of parameters similar to other parts of BDSIM.
+These include a subset of the aperture parameters (see :ref:`aperture-parameters`) and the position
+information from the `placements`. The full list of accepted parameters is given below.
+
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x                                                 |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y                                                 |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z                                                 |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters)  |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation                                     |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation                                       |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z-component of unit vector                     |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle, angle to rotate about unit vector                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false)  |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true)      |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string)         |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
+|                         | is used more than once in the sequence. Zero counting.             |
++-------------------------+--------------------------------------------------------------------+
+| apertureType            | The shape of the sampler desired as described using the aperture   |
+|                         | syntax of BDSIM. Currently, only `circular` and `rectangular` are  |
+|                         | supported. `circular` is the default.                              |
++-------------------------+--------------------------------------------------------------------+
+| shape                   | An intuitive alias to `apertureType`.                              |
++-------------------------+--------------------------------------------------------------------+
+| aper1                   | Aperture parameter #1.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper2                   | Aperture parameter #2.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper3                   | Aperture parameter #3.                                             |
++-------------------------+--------------------------------------------------------------------+
+| aper4                   | Aperture parameter #4.                                             |
++-------------------------+--------------------------------------------------------------------+
+
+Examples
+********
+
+The following are examples of `samplerplacement`::
+
+   s1: samplerplacement, referenceElement="d1",
+                         referenceElementNumber=1,
+			 x=20*cm, y=-1*cm, s=30*cm,
+    			 axisAngle=1, axisY=1, angle=pi/4,
+			 aper1=10*cm;
+
+
+This places a circular sampler called "s1" with respect to the 2nd instance of the beam line
+element "d1". The x,y,s are offsets from the centre of this element along the direction of
+travel of the beam. The sampler is rotated about the unit Y axis (again with respect to the
+centre of the beam line element rotation) by an angle of :math:`\pi / 4`. The sampler will
+be circular (by default) with a radius of 10 cm. ::
+
+   s2: samplerplacement, x=0.2*m, y=-1*cm, z=30.123*m,
+    			 axisAngle=1, axisY=1, angle=-pi/6,
+			 aper1=10*cm, aper2=5*cm, shape="rectangular";
+
+
+This will place a sampler called "s2" in global Cartesian coordinates approximately 30 m
+forward from the centre of model. The placement rotation is done in the global coordinate
+system. The sampler shape is rectangular and is 20 cm wide and 10 cm tall.
+
+User Sampler Visualisation
+**************************
+
+Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
+visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
+in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
+worlds) and other samplers. It is recommended to tick and untick the desired element to see
+it appear and disappear repeatedly.
 
 .. _scoring:
 

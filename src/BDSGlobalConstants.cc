@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -153,7 +153,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
         {"storeELossHistograms",               &o.storeElossHistograms},
         {"storeParticleData",                  &o.storeParticleData},
         {"storePrimaries",                     &o.storePrimaries},
-        {"storePrimaryHistorams",              &o.storePrimaryHistograms},
+        {"storePrimaryHistograms",             &o.storePrimaryHistograms},
         {"storeTrajectory",                    &o.storeTrajectory},
         {"storeTrajectoryTransportationSteps", &o.storeTrajectoryTransportationSteps},
         {"storeModel",                         &o.storeModel},

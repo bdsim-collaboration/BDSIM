@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -147,6 +147,7 @@ void Options::PublishMembers()
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("geant4MacroFileName",   &Options::geant4MacroFileName);
+  publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
