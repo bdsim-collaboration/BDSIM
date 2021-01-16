@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -161,10 +161,15 @@ protected:
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
 
   /// @{ Options for dynamic bits of output.
+  G4bool storeELoss;
+  G4bool storeELossTunnel;
+  G4bool storeELossVacuum;
+  G4bool storeELossWorld; // for both world and world exit
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
   G4bool storeApertureImpactsHistograms;
   G4bool storePrimaries;
+  G4bool storeTrajectory;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
@@ -293,14 +298,11 @@ private:
   G4bool storeCollimatorHits;
   G4bool storeCollimatorHitsLinks;
   G4bool storeCollimatorHitsIons;
-  G4bool storeELoss;
   G4bool storeELossHistograms;
-  G4bool storeELossTunnel;
   G4bool storeELossTunnelHistograms;
-  G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
-  G4bool storeELossWorld; // for both world and world exit
   G4bool storeParticleData;
+  G4bool storePrimaryHistograms;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
   G4bool storeSamplerCharge;

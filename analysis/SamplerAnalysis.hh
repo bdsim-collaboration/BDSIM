@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -64,8 +64,12 @@ public:
   /// Accessor for optical functions
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
+  /// Set primary particle mass for optical functions from sampler data
   static void UpdateMass(SamplerAnalysis* s);
   static void UpdateMass(double mass) { particleMass = mass; }
+
+  /// Set primary particle mass for optical functions from particle name
+  static void UpdateMass(const std::string& particleName);
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
