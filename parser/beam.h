@@ -89,7 +89,7 @@ namespace GMAD
       }
     catch (const std::runtime_error&)
       {
-        std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
+        std::cerr << "Error: beam> unknown beam parameter \"" << name << "\" with value " << value << std::endl;
         exit(1);
       }
   }
