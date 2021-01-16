@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -86,8 +86,8 @@ public:
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
 
-  /// Fill the local structure geant4 data with information. Also calls WriteGeant4Data().
-  void FillGeant4Data(G4bool writeIons);
+  /// Fill the local structure particle data with information. Also calls WriteParticleData().
+  void FillParticleData(G4bool writeIons);
 
   /// Fill the local structure beam with the original ones from the parser.
   /// This also calls WriteBeam().
@@ -148,10 +148,15 @@ protected:
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
 
   /// @{ Options for dynamic bits of output.
+  G4bool storeELoss;
+  G4bool storeELossTunnel;
+  G4bool storeELossVacuum;
+  G4bool storeELossWorld; // for both world and world exit
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
   G4bool storeApertureImpactsHistograms;
   G4bool storePrimaries;
+  G4bool storeTrajectory;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
@@ -171,7 +176,7 @@ private:
   virtual void WriteHeader() = 0;
 
   /// Write the geant4 information.
-  virtual void WriteGeant4Data() = 0;
+  virtual void WriteParticleData() = 0;
 
   /// Write the beam.
   virtual void WriteBeam() = 0;
@@ -280,14 +285,11 @@ private:
   G4bool storeCollimatorHits;
   G4bool storeCollimatorHitsLinks;
   G4bool storeCollimatorHitsIons;
-  G4bool storeELoss;
   G4bool storeELossHistograms;
-  G4bool storeELossTunnel;
   G4bool storeELossTunnelHistograms;
-  G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
-  G4bool storeELossWorld; // for both world and world exit
-  G4bool storeGeant4Data;
+  G4bool storeParticleData;
+  G4bool storePrimaryHistograms;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
   G4bool storeSamplerCharge;
@@ -309,6 +311,7 @@ private:
   G4double energyDepositedWorld;
   G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
+  G4double energyImpactingAperture;
   G4double energyWorldExit;
   G4int    nCollimatorsInteracted;
   /// @}

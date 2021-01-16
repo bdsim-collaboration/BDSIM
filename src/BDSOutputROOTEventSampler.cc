@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventSampler.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "TTree.h"
 
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTParticleData;
 
 #ifndef __ROOTBUILD__
 #include "BDSHitSampler.hh"
@@ -37,7 +37,7 @@ class BDSOutputROOTGeant4Data;
 templateClassImp(BDSOutputROOTEventSampler)
 
 template <class U>
-BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
+BDSOutputROOTParticleData* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
 template <class U>
 BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():

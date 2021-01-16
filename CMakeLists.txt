@@ -14,7 +14,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 4 )
+set( BDSIM_MINOR_VERSION 5 )
 set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -111,6 +111,7 @@ include(rebdsim_test_macros)
 include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
+set(CMAKE_BUILD_RPATH   "${ROOT_LIBRARY_DIR}")
 if (USE_HEPMC3)
   #TBC - need to test if we can just use this
   #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
