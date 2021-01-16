@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -452,7 +452,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	  
 	  // fill track ID map
-	  trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+	  trackIDMap.insert(std::pair<int, BDSTrajectory*>(traj->GetTrackID(), traj));
 	  
 	  // fill depth map
 	  if (traj->GetParentID() == 0) 
