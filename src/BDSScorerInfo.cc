@@ -24,11 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "parser/scorer.h"
-#include "parser/scorermesh.h"
 
 #include "G4ParticleTable.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
+
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
-			     G4bool              upgradeTo3D):
+			     G4bool upgradeTo3D):
   particle(nullptr)
 {
   const std::map<std::string, std::string> replacements = {
@@ -46,8 +46,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 							   {"depositedenergy", "depositedenergy3d"},
 							   {"population",      "population3d"},
 							   {"cellflux",        "cellflux3d"},
-							   {"cellfluxscaled",  "cellfluxscaled3d"},
-							   {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
+                               {"cellfluxscaled",  "cellfluxscaled3d"},
+                               {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;
