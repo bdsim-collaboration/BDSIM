@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSOutputROOT.hh"
 #include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
@@ -33,8 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSOutputROOTParticleData.hh"
 
 #include "parser/options.h"
 
@@ -49,7 +49,7 @@ BDSOutputROOT::BDSOutputROOT(const G4String& fileName,
   compressionLevel(compressionLevelIn),
   theRootOutputFile(nullptr),
   theHeaderOutputTree(nullptr),
-  theGeant4DataTree(nullptr),
+  theParticleDataTree(nullptr),
   theBeamOutputTree(nullptr),
   theOptionsOutputTree(nullptr),
   theModelOutputTree(nullptr),
@@ -79,7 +79,7 @@ void BDSOutputROOT::NewFile()
   theRootOutputFile->cd();
   
   theHeaderOutputTree  = new TTree("Header", "BDSIM Header");           // header
-  theGeant4DataTree    = new TTree("Geant4Data", "BDSIM Geant4 Data");  // geant4 data
+  theParticleDataTree  = new TTree("ParticleData", "Particle Data");    // particle data
   theBeamOutputTree    = new TTree("Beam", "BDSIM beam");               // beam data tree
   theOptionsOutputTree = new TTree("Options","BDSIM options");          // options data tree
   theModelOutputTree   = new TTree("Model","BDSIM model");              // model data tree
@@ -87,41 +87,47 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree   = new TTree("Event","BDSIM event");              // event data tree
 
   // Build branches for each object
-  theHeaderOutputTree->Branch("Header.",   "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
-  theGeant4DataTree->Branch("Geant4Data.", "BDSOutputROOTGeant4Data",     geant4DataOutput, 32000, 1);
-  theBeamOutputTree->Branch("Beam.",       "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
-  theOptionsOutputTree->Branch("Options.", "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
-  theModelOutputTree->Branch("Model.",     "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
-  theRunOutputTree->Branch("Histos.",      "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
-  theRunOutputTree->Branch("Summary.",     "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
+  theHeaderOutputTree->Branch("Header.",       "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
+  theParticleDataTree->Branch("ParticleData.", "BDSOutputROOTParticleData",   particleDataOutput,32000, 1);
+  theBeamOutputTree->Branch("Beam.",           "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
+  theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
+  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
+  theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
+  theRunOutputTree->Branch("Summary.",         "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
   // Branches for event...
   // Event info output
   theEventOutputTree->Branch("Summary.",   "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  if (WritePrimaries())
+  if (storePrimaries)
     {
       theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,       32000, 1);
       theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,  1);
     }
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",      eLoss,          4000, 1);
-  theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",      eLossVacuum,    4000, 1);
-  theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",      eLossTunnel,    4000, 1);
-  theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+  if (storeELoss)
+    {theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",   eLoss,          4000, 1);}
+  if (storeELossVacuum)
+    {theEventOutputTree->Branch("ElossVacuum.",    "BDSOutputROOTEventLoss",   eLossVacuum,    4000, 1);}
+  if (storeELossTunnel)
+    {theEventOutputTree->Branch("ElossTunnel.",    "BDSOutputROOTEventLoss",   eLossTunnel,    4000, 1);}
+  if (storeELossWorld)
+    {
+      theEventOutputTree->Branch("ElossWorld.",     "BDSOutputROOTEventLossWorld", eLossWorld,     4000, 1);
+      theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
+    }
   if (storeELossWorldContents)
     {theEventOutputTree->Branch("ElossWorldContents.", "BDSOutputROOTEventLossWorld", eLossWorldContents, 4000, 1);}
-  
-  theEventOutputTree->Branch("ElossWorldExit.", "BDSOutputROOTEventLossWorld", eLossWorldExit, 4000, 1);
   theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      pFirstHit,      4000, 2);
   theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      pLastHit,       4000, 2);
   if (storeApertureImpacts)
     {theEventOutputTree->Branch("ApertureImpacts.", "BDSOutputROOTEventAperture", apertureImpacts, 4000, 1);}
 
   // Build trajectory structures
-  theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj,      4000,  2);
+  if (storeTrajectory)
+    {theEventOutputTree->Branch("Trajectory.", "BDSOutputROOTEventTrajectory", traj, 4000,  2);}
 
   // Build event histograms
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
@@ -160,9 +166,9 @@ void BDSOutputROOT::WriteHeader()
   theHeaderOutputTree->Fill();
 }
 
-void BDSOutputROOT::WriteGeant4Data()
+void BDSOutputROOT::WriteParticleData()
 {
-  theGeant4DataTree->Fill();
+  theParticleDataTree->Fill();
 }
 
 void BDSOutputROOT::WriteBeam()
