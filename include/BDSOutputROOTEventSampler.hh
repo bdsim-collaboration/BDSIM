@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTParticleData;
 class TTree;
 
-#ifndef __ROOTBUILD__
+#ifndef __ROOTBUILD__ 
 #include "globals.hh"
 #include "tracker/TRKBunch.hh"
 class BDSParticleCoordsFull;

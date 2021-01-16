@@ -73,7 +73,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   n++;
   z = (U) (hit->coords.z / CLHEP::m);
   S = (U) (hit->coords.s / CLHEP::m);
-
+  
   energy.push_back((U &&) (hit->coords.totalEnergy / CLHEP::GeV));
   x.push_back((U &&) (hit->coords.x / CLHEP::m));
   y.push_back((U &&) (hit->coords.y / CLHEP::m));
@@ -83,9 +83,9 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   zp.push_back((U &&) (hit->coords.zp));
   p.push_back((U &&) (hit->momentum / CLHEP::GeV));
   T.push_back((U &&) (hit->coords.T / CLHEP::ns));
-
+  
   modelID = hit->beamlineIndex;
-
+  
   weight.push_back((U) (hit->coords.weight));
   partID.push_back(hit->pdgID);
   parentID.push_back(hit->parentID);
@@ -218,7 +218,7 @@ void BDSOutputROOTEventSampler<U>::FillPolarCoords(const BDSParticleCoordsFull& 
   if (isntSafe(rValue))
     {rValue = 0;}
   r.push_back(static_cast<U>(rValue));
-
+  
   double rpValue = std::hypot(xpCoord, ypCoord);
   if (isntSafe(rpValue))
     {rpValue = 0;}

@@ -256,7 +256,7 @@ option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
 mark_as_advanced(BUILD_MACOSX_APP)
 
 if (BUILD_MACOSX_APP AND APPLE)
-    # building a macos executablemaking a bundle of
+    # building a macos executablemaking a bundle of 
     add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
     target_link_libraries(bdsimapp ${BDSIM_LIB_NAME} gmad)
@@ -287,7 +287,7 @@ if (GIT_FOUND)
 else()
   copy_examples_no_git()
 endif()
-
+  
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)

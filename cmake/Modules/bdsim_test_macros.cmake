@@ -1,5 +1,5 @@
 # Note:
-# For all tests, you can add additional arguments to the command using the
+# For all tests, you can add additional arguments to the command using the 
 # variable TESTING_ARGS. This variable will be unset after each test is ran.
 
 # simple_testing:
@@ -13,10 +13,10 @@
 #  BDSIM test that expects bdsim to exit with a non-zero return value. Success of the
 #  test is bdsim failing.
 #
-# compare_test:
+# compare_test: 
 #  Run a script and afterwards require that file1 and file2 have equal output.
 #  The file comparison is done using the python script cmake/compare_files.py
-#
+#  
 # unit_test:
 #  Run a binary which does unit testing. Only require that the binary returns 0
 #  to define success or failure.
