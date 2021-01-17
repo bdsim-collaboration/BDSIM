@@ -19,12 +19,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file bdskim.cc
  */
+#include "FileMapper.hh"
+#include "Header.hh"
 #include "SelectionLoader.hh"
+
+#include "BDSOutputROOTEventHeader.hh"
 
 #include "TFile.h"
 #include "TTree.h"
 
-#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,46 +36,70 @@ int main(int argc, char* argv[])
 {
   if (argc != 4)
     {
-      std::cout << "usage: bdskim skimfile.txt input_bdsim_raw.root output_bdsim_raw.root" << std::endl;
-      exit(1);
+      std::cout << "usage: bdskim skimselection.txt input_bdsim_raw.root output_bdsim_raw.root" << std::endl;
+      return 1;
     }
 
-  std::string skimFile   = std::string(argv[2]);
-  std::string inputFile  = std::string(argv[3]);
-  std::string outputFile = std::string(argv[4]);
+  std::string selectionFile = std::string(argv[1]);
+  std::string inputFile     = std::string(argv[2]);
+  std::string outputFile    = std::string(argv[3]);
 
   // load selection
-  std::string selection = RBDS::LoadSelection(skimFile);
+  std::string selection = RBDS::LoadSelection(selectionFile);
 
-  TFile* input  = new TFile(inputFile.c_str(),  "READ");
+  // open and check input file
+  TFile* input = new TFile(inputFile.c_str(),  "READ");
+  if (!RBDS::IsBDSIMOutputFile(input))
+    {
+      std::cerr << inputFile << " is not a BDSIM output file" << std::endl;
+      delete input;
+      return 1;
+    }
   
-  // output file must be opened before histograms are created because root does
-  // everything statically behind the scenes
+  // note we create trees in the new output file in order the same as the original to preserve the 'look' of the file
+ 
+  TTree* headerTree = dynamic_cast<TTree*>(input->Get("Header")); // should be safe given check we've just done
+  Header* headerLocal = new Header();
+  headerLocal->SetBranchAddress(headerTree);
+  headerTree->GetEntry(0);
+  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader(*(headerLocal->header));
+  headerOut->skimmedFile = true;
+  
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");
+  output->cd();
+  TTree* outputHeaderTree = new TTree("Header", "BDSIM Header");
+  outputHeaderTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
 
-  std::vector<std::string> treeNames = {"Header", "Options", "Model", "Run", "Beam"};
+  std::vector<std::string> treeNames = {"ParticleData", "Beam", "Options", "Model", "Run"};
   for (const auto& tn : treeNames)
     {
-      TTree* original = (TTree*)input->Get(tn.c_str());
+      TTree* original = dynamic_cast<TTree*>(input->Get(tn.c_str()));
+      if (!original)
+	{
+	  std::cerr << "Failed to load Tree named " << tn << std::endl;
+	  delete output;
+	  delete input;
+	  return 1;
+	}
       auto clone = original->CloneTree();
       clone->AutoSave();
     }
-
-  TTree* allEvents = (TTree*)input->Get("Event");
+  
+  TTree* allEvents = dynamic_cast<TTree*>(input->Get("Event"));
+  if (!allEvents)
+    {
+      std::cerr << "No Event tree in file" << std::endl;
+      delete input;
+      return 1;
+    }
   TTree* selectEvents = allEvents->CopyTree(selection.c_str());
   selectEvents->Write();
-  delete output;
   
-  /*
-  // add header for file type and version details
-  output->cd();
-  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(std::vector<std::string>(), inputFiles); // updates time stamp
-  headerOut->SetFileType("REBDSIMCOMBINE");
-  TTree* headerTree = new TTree("Header", "REBDSIM Header");
-  headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
-  headerTree->Fill();
+  headerOut->nOriginalEvents = allEvents->GetEntries(); // update original number of entries
+  outputHeaderTree->Fill();
   output->Write(nullptr,TObject::kOverwrite);
-  */
+  delete output;
+  delete input;
+  
   return 0;
 }
