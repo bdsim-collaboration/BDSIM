@@ -32,7 +32,7 @@ std::string RBDS::LoadSelection(const std::string& selectionFile)
 {
   std::ifstream f(selectionFile.c_str());
   if(!f)
-    {throw std::string("LoadSelection> could not open file " + selectionFile);}
+    {throw std::invalid_argument("LoadSelection> could not open file " + selectionFile);}
 
   int lineCounter = 0;
   std::string line;
@@ -62,7 +62,10 @@ std::string RBDS::LoadSelection(const std::string& selectionFile)
 	      results.push_back(res);
 	    }
 	  if (results.size() != 1)
-	    {throw std::string("More than one word on line -> no white space allowed");}
+	    {
+	      std::cerr << "Error on line " << lineCounter << "\"" << line << "\"" << std::endl;
+	      throw std::invalid_argument("More than one word on line -> no white space allowed");
+	    }
 	  else
 	    {selection = results[0];}
 	}
