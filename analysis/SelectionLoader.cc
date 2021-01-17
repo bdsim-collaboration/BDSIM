@@ -18,14 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SelectionLoader.hh"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <iterator>
-#include <limits>
-#include <map>
 #include <regex>
-#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 std::string RBDS::LoadSelection(const std::string& selectionFile)
@@ -50,15 +48,20 @@ std::string RBDS::LoadSelection(const std::string& selectionFile)
       else if (std::regex_search(line, comment))
 	{continue;} // skip lines starting with '#'
       else
-	{
+	
+      {
+        if (!selection.empty())
+	  {throw std::invalid_argument("Multiple selections (non-empty lines) found in file - only one should be specified.");}
 	  std::vector<std::string> results;
-	  std::regex wspace("\\s+"); // any whitepsace
+	  std::regex wspace("\\s+"); // any whitespace
 	  // -1 here makes it point to the suffix, ie the word rather than the wspace
 	  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
 	  std::sregex_token_iterator end;
 	  for (; iter != end; ++iter)
 	    {
 	      std::string res = (*iter).str();
+	      if (res.empty())
+		{continue;}
 	      results.push_back(res);
 	    }
 	  if (results.size() != 1)
