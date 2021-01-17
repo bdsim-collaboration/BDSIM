@@ -13,15 +13,40 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
+
 V1.6.0 - 2021 / XX / XX
 =======================
 
+New Features
+------------
+
+* New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
+* New options:
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
 | storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
 |                                    | `PFirstAI`, on by default.                                         |
 +------------------------------------+--------------------------------------------------------------------+
 | samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
 |                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+
+Output Class Versions
+---------------------
 
 V1.5.1 - 2020 / 12 / 21
 =======================

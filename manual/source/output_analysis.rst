@@ -110,6 +110,39 @@ Load Raw Data
    >>> for event in d.GetEventTree():
    ...:    print(event.Summary.duration)
 
+.. _bdskim-tool:
+
+bdskim - Skimming Tool
+======================
+
+A tool called "bdskim" is included that allows us to "skim" or reduce the raw BDSIM data according
+to an event selection. This tool creates a new file but containing only select events. The other trees
+(Header, Options, etc) are copied.
+
+This may be used to vastly reduce the size of an output file to included only the events of interest
+if they are rare.
+
+* This program takes a BDSIM output format file and produces one of the same format.
+* The selection is a text string without spaces that could normally be used with :code:`TTree::Draw` in ROOT.
+* The selection is supplied in a text file, the name of which is given as an argument (e.g. `skimselection.txt`)
+
+Usage: ::
+
+  bdskim skimselection.txt input_bdsim_raw.root output_bdsim_raw.root
+
+As an example, if we use the data sample included in :code:`bdsim/examples/features/data`: ::
+  
+  bdskim skimselection.txt sample1.root sample1-skimmed.root
+
+This reduces the sample1.root data file from containing 10 events to 4 events of interest. The contents
+of `skimselection.txt` are: ::
+
+  dq1_1.n>30
+
+* Any line starting with :code:`#` will be treated as a comment and ignored
+* Any empty line will be ignored
+* Only one selection should be specified in the file
+* The selection must not contain any white space between characters, i.e. there is only 1 'word' on the line
 
 .. _rebdsim-analysis-tool:
 
@@ -253,7 +286,7 @@ Examples can be found in:
 * If a Boolean and a weight is desired, multiply both with the Boolean in brackets, e.g.
   :code:`Eloss.energy*(Eloss.S>145.3)`.
 * True or False, as well as 1 or 0, may be used for Boolean options at the top.
-* ROOT special variables can be used as well, such as :code:`Entry$` amd :code:`Entries$`. See
+* ROOT special variables can be used as well, such as :code:`Entry$` and :code:`Entries$`. See
   the documentation link immediately below.
 
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
