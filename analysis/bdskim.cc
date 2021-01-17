@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TTree.h"
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,11 @@ int main(int argc, char* argv[])
   std::string outputFile    = std::string(argv[3]);
 
   // load selection
-  std::string selection = RBDS::LoadSelection(selectionFile);
+  std::string selection;
+  try
+    {selection = RBDS::LoadSelection(selectionFile);}
+  catch (std::exception& e)
+    {std::cerr << e.what() << std::endl; return 1;}
 
   // open and check input file
   TFile* input = new TFile(inputFile.c_str(),  "READ");
