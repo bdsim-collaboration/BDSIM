@@ -128,7 +128,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 {
   trackID.push_back(n); // we assume multiple primaries are linearly increasing in track number
   n++;
-  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));
+  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
   x.push_back((U &&)  (coords.x  / CLHEP::m));
   y.push_back((U &&)  (coords.y  / CLHEP::m));
   z = (U) (coords.z / CLHEP::m);
