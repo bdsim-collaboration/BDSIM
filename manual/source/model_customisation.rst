@@ -1332,14 +1332,10 @@ BDSIM can build a tunnel around the beam line. Currently, there are two main way
    may also cause geometry overlaps (the user is responsible for checking this!)
 
 .. warning:: With option 2, the user is entirely responsible to ensure no overlaps occur
-	     (through good design). Also note that the samplers may overlap the tunnel
-	     depending on the tunnel geometry (samplers are square with half-width of
-	     `samplerRadius`). In practice, however, we haven't observed many ill effects
-	     because of this. Problems would take the form of 'stuck particles' and
-	     Geant4 would terminate that event.
+	     (through good design).
 
-Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
-and are described in :ref:`tunnel-examples`.
+Examples of tunnel geometry can be found with the BDSIM source code in
+:code:`bdsim/examples/features/geometry/tunnel*` and are described in :ref:`tunnel-examples`.
 
 The automatic tunnel building is controlled through the following options used with the
 :code:`option` command.
