@@ -158,6 +158,8 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
   // wrap in vectors for easy assignment
   G4String nominalOrder = "xyzt";
   
+  std::vector<G4String> mustBePositiveKeys = {"nx", "ny", "nz", "nt"};
+  
   while (std::getline(file, line))
     {// read a line only if it's not a blank one
       
@@ -235,6 +237,12 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               catch (const std::out_of_range&)
 		{Terminate("Number out of range " + std::string(matchHeaderNumber[2]));}
 	      
+              if (std::find(mustBePositiveKeys.begin(), mustBePositiveKeys.end(), key) != mustBePositiveKeys.end())
+		{
+		  if (value < 1)
+		    {Terminate("Number of points in dimension must be greater than 0 -> see \"" + key + "\"");}
+		}
+              
               header[key] = value;
               continue;
 	    }
@@ -304,6 +312,12 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
+          
+          for (const auto& key : mustBePositiveKeys)
+	    {
+	      if (header[key] < 1)
+		{Terminate("Number of points in dimension must be greater than 0 -> see \"" + key + "\"");}
+	    }
 	  
           if (nColumns < (nDim + 3)) // 3 for field components
 	    {Terminate("Too few columns for " + std::to_string(nDim) + "D field loading");}
