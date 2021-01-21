@@ -67,7 +67,12 @@ int main (int argc, char** argv)
 
   auto eventOutput =
       std::make_shared<trk::EventOutput>(globalConstants->OutputFileName());
-  auto opticsAccumulator = std::make_shared<trk::OpticsAccumulator>();
+
+  std::shared_ptr<trk::OpticsAccumulator> opticsAccumulator;
+  if (options.trackerOptics)
+  {
+      opticsAccumulator = std::make_shared<trk::OpticsAccumulator>();
+  }
 
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
@@ -113,7 +118,10 @@ int main (int argc, char** argv)
   eventOutput->WriteEvents();
   eventOutput->CloseFile();
 
-  opticsAccumulator->Write(globalConstants->OutputFileName());
+  if(opticsAccumulator)
+  {
+      opticsAccumulator->Write(globalConstants->OutputFileName());
+  }
 
   // // free memory (good code test)
   delete designParticle;
