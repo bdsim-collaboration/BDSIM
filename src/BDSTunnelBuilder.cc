@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTunnelFactory.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSTunnelSection.hh"
-#include "BDSUtilities.hh"  // for isfinite function
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 
@@ -35,7 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 BDSTunnelBuilder::BDSTunnelBuilder():
-  displacementTolerance(50*CLHEP::cm), // maximum displacemenet of beamline before split
+  displacementTolerance(50*CLHEP::cm), // maximum displacement of beamline before split
   maxItems(50),                        // maximum number of items before split
   maxLength(50*CLHEP::m),              // maximum length of tunnel segment
   maxAngle(100*CLHEP::mrad),           // maximum angle before split
