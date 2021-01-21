@@ -30,6 +30,10 @@ General
 Bug Fixes
 ---------
 
+* Clarify message when loading a field map and header variables such as "nx" and "ny" were not
+  specified and therefore defaulted to 0, which is invalid. Also, complain if these are purposively
+  assigned to values less than 1.
+
 Output Changes
 --------------
 
