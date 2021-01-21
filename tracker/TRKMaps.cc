@@ -281,7 +281,7 @@ void trk::maps::quadrupole(TRKBunch &bunch, double length, double k1) noexcept {
 
 void trk::maps::sextupole(TRKParticle &p, double length, double k2) noexcept {
   p.px -= 0.5 * length * k2 * (std::pow(p.x, 2) - std::pow(p.y, 2));
-  p.py += 0.5 * length * k2 * p.x * p.y;
+  p.py += length * k2 * p.x * p.y;
 }
 
 void trk::maps::kicker(TRKParticle &p, double hkick, double vkick) noexcept {
