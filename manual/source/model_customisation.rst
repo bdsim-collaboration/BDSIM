@@ -1393,7 +1393,7 @@ Example: ::
 	  tunnelOffsetY = 30*cm,
 	  tunnelAper1 = 220*cm,
 	  tunnelThickness = 30*cm,
-	  tunnelSoildThicknes = 23*m;
+	  tunnelSoilThickness = 23*m;
 
 
 These parameters are shown schematically in the figure below (gaps not to scale, elliptical
