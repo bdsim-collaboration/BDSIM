@@ -1340,48 +1340,61 @@ Examples of tunnel geometry can be found with the BDSIM source code in
 The automatic tunnel building is controlled through the following options used with the
 :code:`option` command.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{5cm}|p{4cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| **Tunnel Parameters**            | **Description**                                       |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | Whether to build a tunnel (default = 0)               |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
-|                                  | just in a straight line (default = 0)                 |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
-+----------------------------------+-------------------------------------------------------+
-| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
-|                                  | should be killed or not (default = false)             |
-+----------------------------------+-------------------------------------------------------+
-| tunnelType                       | Which style of tunnel to use - one of:                |
-|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
-|                                  | (more to come in v0.9)                                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
-|                                  | horizontal (m)                                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelAper2                      | Tunnel aperture parameter #2 - typically              |
-|                                  | vertical (m)                                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelThickness                  | Thickness of tunnel wall (m)                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelSoilThickness              | Soil thickness outside tunnel wall (m)                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelMaterial                   | Material for tunnel wall                              |
-+----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | Material for soil outside tunnel wall                 |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetX                    | Horizontal offset of the tunnel with respect to the   |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetY                    | Vertical offset of the tunnel with respect to the     |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelFloorOffset                | The offset of the tunnel floor from the centre of the |
-|                                  | tunnel (**not** the beam line)                        |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------+-----------------------------------------+
+| **Tunnel Parameters**            | **Default** | **Description**                         |
++==================================+=============+=========================================+
+| buildTunnel                      | 0 (false)   | Whether to build a tunnel               |
++----------------------------------+-------------+-----------------------------------------+
+| buildTunnelStraight              | 0 (false)   | Whether to build a tunnel, ignoring the |
+|                                  |             | beamline ane just in a straight line    |
++----------------------------------+-------------+-----------------------------------------+
+| buildTunnelFloor                 | 1 (true)    | Whether to add a floor to the tunnel    |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelIsInfiniteAbsorber         | 0 (false)   | Whether all particles entering the      |
+|                                  |             | tunnel material should be killed or not |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelType                       | "circular"  | Which style of tunnel to use - one of:  |
+|                                  |             | "circular`, "elliptical", "square",     |
+|                                  |             | "rectangular"                           |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelAper1                      | 2           | Tunnel aperture parameter #1, typically |
+|                                  |             | horizontal (m)                          |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelAper2                      | 2           | Tunnel aperture parameter #2, typically |
+|                                  |             | vertical (m)                            |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelThickness                  | 0.1         | Thickness of tunnel wall (m)            |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelSoilThickness              | 1.0         | Soil thickness outside tunnel wall (m)  |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelMaterial                   | "concrete"  | Material for tunnel wall                |
++----------------------------------+-------------+-----------------------------------------+
+| soilMaterial                     | "soil"      | Material for soil outside tunnel wall   |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelOffsetX                    | 0           | Horizontal offset of the tunnel with    |
+|                                  |             | respect to the beam line reference      |
+|                                  |             | trajectory                              |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelOffsetY                    | 0           | Vertical offset of the tunnel with      | 
+|                                  |             | respect to the beam line reference      |
+|                                  |             | trajectory                              |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelFloorOffset                | 1.0         | The offset of the tunnel floor from the |
+|                                  |             | centre of the tunnel (**not** the beam  |
+|                                  |             | line)                                   |
++----------------------------------+-------------+-----------------------------------------+
+
+Example: ::
+
+  option, buildTunnel = 1,
+	  tunnelOffsetX = -35*cm,
+	  tunnelOffsetY = 30*cm,
+	  tunnelAper1 = 220*cm,
+	  tunnelThickness = 30*cm,
+	  tunnelSoildThicknes = 23*m;
+
 
 These parameters are shown schematically in the figure below (gaps not to scale, elliptical
 shown as an example).
