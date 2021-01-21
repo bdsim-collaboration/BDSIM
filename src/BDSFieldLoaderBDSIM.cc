@@ -81,7 +81,7 @@ template <class T>
 void BDSFieldLoaderBDSIM<T>::Terminate(const G4String& message)
 {
   file.close();
-  throw BDSException(__METHOD_NAME__, message);
+  throw BDSException("BDSFieldLoaderBDSIM", message);
 } 
 
 template <class T>
