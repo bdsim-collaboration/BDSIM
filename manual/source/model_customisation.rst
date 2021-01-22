@@ -1383,7 +1383,7 @@ The automatic tunnel building is controlled through the following options used w
 +----------------------------------+-------------+-----------------------------------------+
 | tunnelFloorOffset                | 1.0         | The offset of the tunnel floor from the |
 |                                  |             | centre of the tunnel (**not** the beam  |
-|                                  |             | line)                                   |
+|                                  |             | line). Must be positive.                |
 +----------------------------------+-------------+-----------------------------------------+
 
 Example: ::
