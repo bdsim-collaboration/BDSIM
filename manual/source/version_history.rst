@@ -23,6 +23,14 @@ New Features
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
+* New options:
+  
++----------------------------------+-------------------------------------------------------+
+| **Option**                       | **Function**                                          |
++==================================+=======================================================+
+| tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
+|                                  | segment to be built (m). Default 50 m. Min 1 m.       |
++----------------------------------+-------------------------------------------------------+
 
 General
 -------

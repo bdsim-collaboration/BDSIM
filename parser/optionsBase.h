@@ -207,6 +207,7 @@ namespace GMAD
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
+    double      tunnelMaxSegmentLength;
     ///@}
 
     bool removeTemporaryFiles;

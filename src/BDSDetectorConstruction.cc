@@ -477,7 +477,7 @@ void BDSDetectorConstruction::BuildTunnel()
 {
   const BDSBeamline* mainBeamLine = acceleratorModel->BeamlineMain();
   BDSBeamline* tunnelBeamline;
-  BDSTunnelBuilder* tb = new BDSTunnelBuilder();
+  BDSTunnelBuilder* tb = new BDSTunnelBuilder(BDSGlobalConstants::Instance()->TunnelMaxSegmentLength());
   tunnelBeamline = tb->BuildTunnelSections(mainBeamLine);
   delete tb;
   

@@ -2026,6 +2026,9 @@ described in :ref:`tunnel-geometry`.
 +----------------------------------+-------------------------------------------------------+
 | tunnelMaterial                   | Material for tunnel wall                              |
 +----------------------------------+-------------------------------------------------------+
+| tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
+|                                  | segment to be built (m). Default 50 m. Min 1 m.       |
++----------------------------------+-------------------------------------------------------+
 | tunnelOffsetX                    | Horizontal offset of the tunnel with respect to the   |
 |                                  | beam line reference trajectory                        |
 +----------------------------------+-------------------------------------------------------+
