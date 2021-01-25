@@ -299,6 +299,7 @@ void Options::PublishMembers()
   publish("showTunnel",          &Options::tunnelVisible); // for backwards compatibility
   publish("tunnelOffsetX",       &Options::tunnelOffsetX);
   publish("tunnelOffsetY",       &Options::tunnelOffsetY);
+  publish("tunnelMaxSegmentLength", &Options::tunnelMaxSegmentLength);
 
   publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
 

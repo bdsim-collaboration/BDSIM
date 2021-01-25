@@ -173,6 +173,7 @@ OptionsBase::OptionsBase()
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
+  tunnelMaxSegmentLength = 50.0; // m
 
   removeTemporaryFiles = true;
   
