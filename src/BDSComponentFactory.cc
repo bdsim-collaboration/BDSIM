@@ -1358,25 +1358,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
-  G4Transform3D fieldTrans = CreateFieldTransform(element);
-  BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
-					      brho,
-					      intType,
-					      st,
-					      true,
-					      fieldTrans);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo();
-
+  BDSFieldInfo* vacuumField = nullptr;
+  BDSFieldInfo* outerField  = nullptr;
+  if (BDS::IsFinite(element->B))
+    {
+      BDSMagnetStrength* st = new BDSMagnetStrength();
+      (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+      BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
+      G4Transform3D fieldTrans = CreateFieldTransform(element);
+      outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
+				    brho,
+				    intType,
+				    st,
+				    true,
+				    fieldTrans);
+      // if we have an outerField object in a BDSMagnet, we must have a vacuum field object too
+      vacuumField = new BDSFieldInfo();
+    }
   auto bpInfo = PrepareBeamPipeInfo(element);
   
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       elementName,
 		       element->l*CLHEP::m,
 		       bpInfo,
-		       PrepareMagnetOuterInfo(elementName, element, st, bpInfo),
+		       PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInfo), // 0 angled face in and out
 		       vacuumField,
 		       0,
 		       outerField);

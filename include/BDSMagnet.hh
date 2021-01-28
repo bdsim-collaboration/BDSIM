@@ -55,7 +55,7 @@ public:
 	    BDSFieldInfo*       vacuumFieldInfoIn,
 	    G4double            angle            = 0,
 	    BDSFieldInfo*       outerFieldInfoIn = nullptr,
-        G4bool              isThin           = false);
+	    G4bool              isThin           = false);
   
   virtual ~BDSMagnet();
   
