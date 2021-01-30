@@ -495,7 +495,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 	  coolingPipeBottomPosition = G4ThreeVector(-coolingPipeOffset,0,0);
 	}
   
-      coolingPipeTopPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+      coolingPipeTopPV = new G4PVPlacement(nullptr,   // no rotation
 					   coolingPipeTopPosition,       // position
 					   coolingPipeLV,                // lv to be placed
 					   name + "_cooling_pipe_top_pv",// name
@@ -504,7 +504,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 					   0,                            // copy number
 					   checkOverlaps);               // whether to check overlaps
 
-      coolingPipeBottomPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+      coolingPipeBottomPV = new G4PVPlacement(nullptr,   // no rotation
 					      coolingPipeBottomPosition,    // position
 					      coolingPipeLV,                // lv to be placed
 					      name + "_cooling_pipe_bottom_pv", // name
