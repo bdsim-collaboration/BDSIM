@@ -942,11 +942,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String     nam
 								G4double     containerLength,
 								const BDSMagnetOuterInfo* recipe)
 {
-  return cylindrical->CreateRectangularBend(name,
-					    length,
-					    beamPipe,
-					    containerLength,
-					    recipe);
+  return CreateSectorBend(name, length, beamPipe, containerLength, recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
