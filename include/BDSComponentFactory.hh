@@ -245,7 +245,7 @@ private:
   BDSAcceleratorComponent* CreateThinRMatrix(G4double        angleIn,
 					     const G4String& name);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
-					     const BDSMagnetStrength* stIn,
+					     BDSMagnetStrength*       stIn,
 					     const G4String&          name,
 					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
 					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
@@ -253,7 +253,7 @@ private:
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
   BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
-					      const BDSMagnetStrength* stIn,
+					      BDSMagnetStrength*       stIn,
 					      const G4String&          name,
 					      G4double                 irisRadius);
 
