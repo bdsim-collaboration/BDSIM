@@ -30,7 +30,7 @@ BDSFieldMagMultipoleOuterDual::BDSFieldMagMultipoleOuterDual(G4int              
   fieldBase(nullptr)
 {
   fieldBase = new BDSFieldMagMultipoleOuter(orderIn, poleTipRadiusIn, innerFieldIn, kPositive);
-  G4double offsetX = left ? -separation : separation;
+  G4double offsetX = secondFieldOnLeft ? -separation : separation;
   offset = G4ThreeVector(offsetX,0,0);
 }
 
