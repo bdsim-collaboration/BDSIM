@@ -48,6 +48,11 @@ Bug Fixes
   materials now at 2K. If using this geometry style, the :code:`outerMaterial` global option as well
   as the per-element parameter will be ignored and the correct LHC materials used as per the LHC
   arc magnets.
+* Fix LHC dipole fields which were on the wrong side for positive bend angles. This occurred due to
+  a conflict with the logic of by default setting the yoke on the inner side of a bend for C-shaped
+  dipole yokes.
+* Fixed field in LHC magnet geometry second beam pipe. Now a duplicate of the vacuum field but with
+  the opposite sign (for dipoles and quadrupoles).
 
 Output Changes
 --------------

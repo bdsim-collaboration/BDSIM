@@ -1892,6 +1892,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
+  // for lhcleft and lhcright - purposively override this behaviour
+  auto mgt = MagnetGeometryType(element);
+  if (mgt == BDSMagnetGeometryType::lhcleft)
+    {return true;} // active beam pipe is right and yoke is on the left
+  if (mgt == BDSMagnetGeometryType::lhcright)
+    {return false;}
+  
   G4double angle    = (*st)["angle"];
   G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
   G4double vkickAng = -(*st)["vkick"];
