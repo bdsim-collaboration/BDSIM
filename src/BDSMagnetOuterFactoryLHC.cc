@@ -856,7 +856,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   allLogicalVolumes.insert(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+  yokePV = new G4PVPlacement(nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -884,7 +884,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
                                                                          stainlesssteel_316LN_2K);
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
-  secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+  secondBPPV = new G4PVPlacement(nullptr,   // no rotation
 				 dipolePosition,               // position
 				 secondBPLV,                   // lv to be placed
 				 name + "_second_beampipe_pv", // name
@@ -1451,7 +1451,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.insert(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+  yokePV = new G4PVPlacement(nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -1477,7 +1477,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 									 stainlesssteel_316LN_2K); // beampipe material
   
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
-  G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+  G4PVPlacement* secondBPPV = new G4PVPlacement(nullptr,   // no rotation
 						dipolePosition,               // position
 						secondBPLV,                   // lv to be placed
 						name + "_second_beampipe_pv", // name
