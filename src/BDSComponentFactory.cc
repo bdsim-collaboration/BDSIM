@@ -1767,7 +1767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double                 angleIn,
-								const BDSMagnetStrength* st,
+								BDSMagnetStrength*       st,
 								const G4String&          name,
 								BDSIntegratorType        intType,
 								BDSFieldType             fieldType,
@@ -1810,7 +1810,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double                 angleIn,
-								 const BDSMagnetStrength* st,
+								 BDSMagnetStrength*       st,
 								 const G4String&          name,
 								 G4double                 irisRadius)
 {

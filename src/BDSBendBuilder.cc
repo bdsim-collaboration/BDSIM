@@ -692,7 +692,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  G4double                 angleIn,
 				  G4double                 angleOut,
 				  const G4String&          name,
-				  const BDSMagnetStrength* st,
+				  BDSMagnetStrength*       st,
 				  G4double                 brho,
 				  const BDSIntegratorSet*  integratorSet,
 				  BDSFieldType             dipoleFieldType)

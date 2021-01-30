@@ -68,7 +68,7 @@ BDSFieldInfo::BDSFieldInfo():
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 brhoIn,
 			   BDSIntegratorType        integratorTypeIn,
-			   const BDSMagnetStrength* magnetStrengthIn,
+			   BDSMagnetStrength*       magnetStrengthIn,
 			   G4bool                   provideGlobalTransformIn,
 			   const G4Transform3D&     transformIn,
 			   const G4String&          magneticFieldFilePathIn,
