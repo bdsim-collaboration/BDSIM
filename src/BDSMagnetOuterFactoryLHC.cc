@@ -35,9 +35,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types
-#include "G4Box.hh"
+//#include "G4Box.hh"
 #include "G4CutTubs.hh"
-#include "G4IntersectionSolid.hh"
+//#include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4UnionSolid.hh"
 #include "G4Material.hh"
@@ -48,10 +48,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-#include <algorithm>                       // for std::max
+#include <algorithm>
 #include <cmath>
 #include <set>
-#include <utility>                         // for std::pair
+#include <utility>
 #include <vector>
 
 
