@@ -82,6 +82,8 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(const G4String& name,
 			       outerMaterial,
 			       name + "_yoke_lv");
 
+  // the container is filled with the world material as it may not tightly fit the yoke - e.g. square container
+  // for a C-shaped yoke -> there's a gap that should be filled with (e.g.) air
   G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    worldMaterial,
