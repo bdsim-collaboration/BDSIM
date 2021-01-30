@@ -178,6 +178,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
   // clean up after last usage
   CleanUp();
 
+  // we override the material of the beam pipe
+  beamPipeMaterial = BDSMaterials::Instance()->GetMaterial("stainless_steel_316LN_2K");
+  
   // calculate geometrical parameters
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
 
@@ -396,11 +399,10 @@ void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    name,
   BDSBeamPipeFactoryBase::BuildLogicalVolumes(name,vacuumMaterialIn,beamPipeMaterialIn);
 
   // get materials
-  G4Material* copper = BDSMaterials::Instance()->GetMaterial("Copper");
-
-
+  G4Material* copper2k = BDSMaterials::Instance()->GetMaterial("cu_2k");
+  
   copperSkinLV  = new G4LogicalVolume(copperSkinSolid,
-				      copper,
+                                      copper2k,
 				      name + "_copper_lv");
   
   screenLV      = new G4LogicalVolume(screenSolid,
