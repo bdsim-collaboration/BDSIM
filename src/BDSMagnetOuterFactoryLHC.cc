@@ -212,7 +212,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
       containerSolid = new G4SubtractionSolid(name + "_outer_container_solid",// name
 					      containerSolidOuter,            // outer bit
 					      containerSolidInner,            // subtract this from it
-					      0,                              // rotation
+					      nullptr,                        // rotation
 					      -dipolePosition);               // translation
     }
   else
@@ -230,7 +230,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
       containerSolid = new G4SubtractionSolid(name + "_outer_container_solid",
 					      containerSolidOuter,
 					      beamPipe->GetContainerSubtractionSolid(),
-					      0,                // rotation
+					      nullptr,          // rotation
 					      -dipolePosition); // translation
     }
 
@@ -756,7 +756,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
       collars = new G4UnionSolid(name + "_collars_solid", // name
 				 collarAnnulus2,          // solid1
 				 collarAnnulus1,          // solid2
-				 0,                       // rotation
+				 nullptr,                 // rotation
 				 -2*dipolePosition);      // translation
       allSolids.insert(collarAnnulus1);
       allSolids.insert(collars);
@@ -832,13 +832,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4VSolid* yokeSubtractionSolid = new G4UnionSolid(name + "_yoke_subtraction_solid",  // name
 						    yokeSubtractionCylinder,           // solid 1
 						    yokeSubtractionCylinder,           // solid 2
-						    0,                                 // rotation
+						    nullptr,                           // rotation
 						    2*dipolePosition);                 // translation
   
   yokeSolid = new G4SubtractionSolid(name+"_yoke_solid",   // name
 				     yokeCylinder,         // from this
 				     yokeSubtractionSolid, // subtract this
-				     0,                    // rotation
+				     nullptr,              // rotation
 				     -dipolePosition);     // translation
   allSolids.insert(yokeSubtractionCylinder);
   allSolids.insert(yokeSubtractionSolid);
@@ -1370,7 +1370,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 	  collars = new G4UnionSolid(name + "_collars_solid",  // name
 				     collar,                   // solid 1
 				     collar,                   // solid 2
-				     0,                        // rotation
+				     nullptr,                  // rotation
 				     -2*dipolePosition);       // translation
 	}
       else
@@ -1378,14 +1378,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 	  G4VSolid* collar2 = new G4Tubs(name+"_collar2_solid",      // name
 					 collarInnerRadius,          // inner radius
 					 collarOuterRadius,          // outer radius
-					 length*0.5-lengthSafety,  // length
+					 length*0.5-lengthSafety,    // length
 					 0,                          // starting angle
 					 CLHEP::twopi);              // angle of sweep
 	  allSolids.insert(collar2);
 	  collars = new G4UnionSolid(name + "_collars_solid", // name
 				     collar,                  // solid 1
 				     collar2,                 // solid 2
-				     0,                       // rotation
+				     nullptr,                 // rotation
 				     -2*dipolePosition);      // translation
 	}
       allSolids.insert(collars);
@@ -1419,7 +1419,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4VSolid* collarSubtractionCylinders = new G4UnionSolid(name + "_collar_subtraction_cylinders", // name
 							  collarSubtractionCylinder,              // solid1
 							  collarSubtractionCylinder,              // solid2 (here = solid1)
-							  0,                                      // rotation
+							  nullptr,                                // rotation
 							  2*dipolePosition);                      // translation
  
   // outer iron yoke
@@ -1433,7 +1433,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   yokeSolid = new G4SubtractionSolid(name+"_yoke_solid",             // name
 				     yokeCylinder,                   // from this
 				     collarSubtractionCylinders,     // subtract this
-				     0,
+				     nullptr,
 				     -dipolePosition);               
   allSolids.insert(collarSubtractionCylinder);
   allSolids.insert(collarSubtractionCylinders);
