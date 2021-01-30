@@ -92,11 +92,19 @@ public:
 
   /// Interface to easily attach to logical volume.
   void AttachToVolume(G4LogicalVolume* volume,
-		      G4bool penetrateToDaughterVolumes = true);
+		      G4bool penetrateToDaughterVolumes = true) const;
 
   /// Interface to easily attach to logical volumes.
   void AttachToVolume(const std::vector<G4LogicalVolume*>& volumes,
-		      G4bool penetrateToDaughterVolumes = true);
+		      G4bool penetrateToDaughterVolumes = true) const;
+
+  /// Attach user limits to a volume and optionally recurse to daughters.
+  /// Note this will override any existing G4UserLimits on the volume or
+  /// daughters. We rely on BDSFieldInfo::defaultUL coming from BDSGlobalConstants
+  /// which will pick up kinetic energy limits.
+  void AttachUserLimitsToVolume(G4LogicalVolume* volume,
+				G4UserLimits*    userLimits,
+				G4bool           penetrateToDaughterVolumes = true) const;
   
 private:
   /// Private default constructor to force use of non-default constructor
