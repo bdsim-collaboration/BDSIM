@@ -718,7 +718,7 @@ The required parameters and their meaning are given in the following table.
 | `lhc`             | 3            | x half-width of   | y half-width of | radius of      | NA               |
 |                   |              | rectangle         | rectangle       | circle         |                  |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of      | NA               |
+| `lhcdetailed` (\*)| 3            | x half-width of   | y half-width of | radius of      | NA               |
 |                   |              | rectangle         | rectangle       | circle         |                  |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
@@ -735,6 +735,9 @@ The required parameters and their meaning are given in the following table.
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
+
+.. note:: (\*) :code:`lhcdetailed` aperture type will result in the :code:`beampipeMaterial` being ignored
+	  and LHC-specific materials at 2K being used.
 
 These parameters can be set with the *option* command, as the default parameters
 and also on a per element basis that overrides the defaults for that specific element.
