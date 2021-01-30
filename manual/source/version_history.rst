@@ -36,6 +36,8 @@ New Features
 General
 -------
 
+* LHC dipole geometry now applies also to rbends as well as sbends.
+
 Bug Fixes
 ---------
 
