@@ -1994,6 +1994,18 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 				defaultCoilHeightFraction);
 }
 
+BDSMagnetGeometryType BDSComponentFactory::MagnetGeometryType(const Element* el)
+{
+  BDSMagnetGeometryType result;
+  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  // magnet geometry type
+  if (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry())
+    {result = globals->MagnetGeometryType();}
+  else
+    {result = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);}
+  return result;
+}
+
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
 								const Element*  el,
 								const G4double  angleIn,
@@ -2011,13 +2023,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry())
-   {info->geometryType = globals->MagnetGeometryType();}
-  else
-    {
-      info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
-      info->geometryTypeAndPath = el->magnetGeometryType;
-    }
+  info->geometryType = MagnetGeometryType(el);
+  if (! (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry()) )
+    {info->geometryTypeAndPath = el->magnetGeometryType;}
 
   // set face angles w.r.t. chord
   info->angleIn  = angleIn;
