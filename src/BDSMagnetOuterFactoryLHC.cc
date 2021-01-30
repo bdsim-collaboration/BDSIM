@@ -825,7 +825,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4VSolid* yokeSubtractionCylinder = new G4Tubs(name + "_yoke_subtraction_cyl_solid", // name
 						 0,                                    // inner radius
 						 collarOuterRadius + lengthSafety,     // outer radius
-						 length,                               // z half length - long for unamibiuous subtraction
+						 length,                               // z half length - long for unambiguous subtraction
 						 0,                                    // start angle
 						 CLHEP::twopi);                        // sweep angle
 
@@ -1058,7 +1058,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       containerSolid = new G4SubtractionSolid(name + "_container_solid",   // name
 					      containerSolidOuter,         // outer bit
 					      containerSolidInner,         // subtract this from it
-					      0,                           // rotation
+					      nullptr,                     // rotation
 					      -dipolePosition);            // translation
     }
   else
@@ -1074,7 +1074,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
 					      containerSolidOuter,
 					      beamPipe->GetContainerSubtractionSolid(),
-					      0,                // rotation
+					      nullptr,          // rotation
 					      -dipolePosition); // translation
     }
 
