@@ -117,7 +117,7 @@ public:
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   inline G4double            Tilt()                     const {return tilt;}
-  inline G4bool              Left()                     const {return left;}
+  inline G4bool              SecondFieldonLeft()        const {return secondFieldOnLeft;}
   inline G4String            MagneticSubFieldName()     const {return magneticSubFieldName;}
   inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
   inline G4String            NameOfParserDefinition()   const {return nameOfParserDefinition;}
@@ -135,7 +135,7 @@ public:
   inline void SetScalingRadius(G4double poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
   inline void SetBeamPipeRadius(G4double beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
   inline void SetChordStepMinimum(G4double chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
-  inline void SetLeft(G4bool leftIn) {left = leftIn;}
+  inline void SetSecondFieldOnLeft(G4bool leftIn) {secondFieldOnLeft = leftIn;}
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
 
@@ -187,7 +187,7 @@ private:
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
   G4double                 chordStepMinimum;
   G4double                 tilt;           ///< Cache of tilt of field.
-  G4bool                   left; ///< Flag for case of two-beam field - if not left, it's right.
+  G4bool                   secondFieldOnLeft; ///< Flag for case of two-beam field - if not left, it's right.
   G4String                 magneticSubFieldName;
   G4String                 electricSubFieldName;
   /// Transform from curvilinear frame to this field - ie beam line bit only.
