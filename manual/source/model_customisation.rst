@@ -560,7 +560,7 @@ The following materials are also defined in BDSIM. The user should consult
 elements, mass fractions, temperature and state.
 
 * air (G4_AIR)
-* airbdsim
+* airbdsim  (previously defined air in bdsim)
 * aralditef
 * awakeplasma
 * berylliumcopper
@@ -574,7 +574,8 @@ elements, mass fractions, temperature and state.
 * clay
 * clayousMarl
 * concrete
-* cu_4k
+* cu_2k (G4_Cu at 2K)
+* cu_4k (G4_Cu at 4K)
 * dy061
 * epoxyresin3
 * fusedsilica
@@ -597,30 +598,34 @@ elements, mass fractions, temperature and state.
 * marl
 * medex
 * mild_steel
-* niobium_2k
+* n-bk7
+* nb_87k
 * nbti.1
 * nbti_4k
 * nbti_87k
+* niobium_2k
 * nb_2k (niobium_2k)
-* nb_87k
-* n-bk7
 * perspex
 * pet
 * pet_lanex
 * pet_opaque
 * polyurethane
 * quartz
+* rch1000_4k (ultra high molecular weight ethylene)
 * smco
 * soil
 * solidhydrogen
 * solidnitrogen
 * solidoxygen
-* stainlesssteel
 * stainless_steel_304L
+* stainless_steel_304L_2K
 * stainless_steel_304L_87K
-* stainless_steel_304LN
-* stainless_steel_304LN_87K
+* stainless_steel_316LN
+* stainless_steel_316LN_2K
+* stainless_steel_316LN_87K
+* stainlesssteel
 * ti_87k
+* titaniumalloy
 * tungsten_heavy_alloy
 * ups923a
 * vacuum

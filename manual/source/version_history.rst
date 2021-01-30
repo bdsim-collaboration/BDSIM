@@ -23,6 +23,7 @@ New Features
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
+* Few new variants of stainless steel at different temperatures as materials as well as RHC1000 plastic.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
