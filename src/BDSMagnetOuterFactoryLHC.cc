@@ -77,9 +77,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4double horizontalWidth  = recipe->horizontalWidth;
   G4double angleIn          = recipe->angleIn;
   G4double angleOut         = recipe->angleOut;
-  G4Material* outerMaterial = recipe->outerMaterial;
-  if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");}
   
   // note this geometry does not respond to horizontalWidth - it's hard coded to the
   // design of a sector bend for the lhc.  TestInputParameters requires it though
