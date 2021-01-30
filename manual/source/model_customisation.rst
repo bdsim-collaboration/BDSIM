@@ -829,6 +829,10 @@ Examples: ::
 	     simulation, as particles and radiation may propagate much further along the beam line when
 	     a magnet geometry with poles is used.
 
+.. warning:: Use of "lhcleft" or "lhcright" will result in the :code:`outerMaterial` parameter being
+	     ignored and the correct LHC materials being used. The secondary beam pipe included with this
+	     will always be the correct LHC arc aperture and all materials are at 2K.
+
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request`) and this can be added - it is a relatively simple process.
 
@@ -962,6 +966,8 @@ defaults to the cylindrical set.
 This geometry is parameterised to a degree regarding the beam pipe chosen.  Of course, parameters similar
 to the LHC make most sense, as does use of the `lhcdetailed` aperture type. Examples are shown with various
 beam pipes and both `sbend` and `quadrupole` geometries.
+
+* :code:`outerMaterial` is ignored with this choice of geometry.
 
 
 .. |lhcleft_sbend| image:: figures/lhcleft_sbend.png

@@ -273,8 +273,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4PVPlacement*   coil3OuterPV = nullptr;
   G4PVPlacement*   coil4InnerPV = nullptr;
   G4PVPlacement*   coil4OuterPV = nullptr;
-  G4Material*      nbti         = BDSMaterials::Instance()->GetMaterial("NbTi.1");
-  G4Material* stainlesssteel    = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
+  
+  G4Material*      nbti                    = BDSMaterials::Instance()->GetMaterial("NbTi.1");
+  G4Material*      stainlesssteel_316LN_2K = BDSMaterials::Instance()->GetMaterial("stainless_steel_316LN_2K");
+  G4Material*      stainlesssteel_304L_2K  = BDSMaterials::Instance()->GetMaterial("stainless_steel_304L_2K");
+  
   G4VisAttributes* coilVisAtt   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcoil"));
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(coilVisAtt);
@@ -382,10 +385,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 						  inputFaceNormal,                          // input face normal
 						  outputFaceNormal);                        // output face normal
       collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
-						     stainlesssteel,
+                                                     stainlesssteel_316LN_2K,
 						     name+"_collar1_pole_top_inner_lv");
       collar1PoleBottomInnerLV = new G4LogicalVolume(collar1PoleBottomInnerSolid,
-						     stainlesssteel,
+                                                     stainlesssteel_316LN_2K,
 						     name+"_collar1_pole_bottom_inner_lv");
 
       collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
@@ -486,10 +489,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 						  outputFaceNormal);                   // output face normal
 
       collar1PoleTopOuterLV    = new G4LogicalVolume(collar1PoleTopOuterSolid,
-						     stainlesssteel,
+                                                     stainlesssteel_316LN_2K,
 						     name+"_collar1_pole_top_outer_lv");
       collar1PoleBottomOuterLV = new G4LogicalVolume(collar1PoleBottomOuterSolid,
-						     stainlesssteel,
+                                                     stainlesssteel_316LN_2K,
 						     name+"_collar1_pole_bottom_outer_lv");
       
       collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
@@ -657,16 +660,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   
   // collar pole logical volumes
   collar2PoleTopInnerLV    = new G4LogicalVolume(collar2PoleTopInnerSolid,
-						 stainlesssteel,
+                                                 stainlesssteel_316LN_2K,
 						 name+"_collar2_pole_top_inner_lv");
   collar2PoleTopOuterLV    = new G4LogicalVolume(collar2PoleTopOuterSolid,
-						 stainlesssteel,
+                                                 stainlesssteel_316LN_2K,
 						 name+"_collar2_pole_top_outer_lv");
   collar2PoleBottomInnerLV = new G4LogicalVolume(collar2PoleBottomInnerSolid,
-						 stainlesssteel,
+                                                 stainlesssteel_316LN_2K,
 						 name+"_collar2_pole_bottom_inner_lv");
   collar2PoleBottomOuterLV = new G4LogicalVolume(collar2PoleBottomOuterSolid,
-						 stainlesssteel,
+                                                 stainlesssteel_316LN_2K,
 						 name+"_collar2_pole_bottom_outer_lv");
   
   // collar pole visualisation
@@ -790,7 +793,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4VSolid* collarTotal = collars;
   
   collarsLV =  new G4LogicalVolume(collarTotal,
-				   stainlesssteel,
+                                   stainlesssteel_316LN_2K,
 				   name+"_collars_lv");
   
   // collar annulus visualisation attributes
@@ -841,7 +844,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   allSolids.insert(yokeSubtractionSolid);
   allSolids.insert(yokeSolid);
   yokeLV = new G4LogicalVolume(yokeSolid,
-			       BDSMaterials::Instance()->GetMaterial("Iron"),
+                               stainlesssteel_304L_2K,
 			       name+"_yoke_lv");
   
   // yoke visualisation
@@ -864,7 +867,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   allPhysicalVolumes.insert(yokePV);
 
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
-  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)  
@@ -879,7 +881,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 									 0,
 									 vacuumMaterial,
 									 1*CLHEP::mm,
-									 beamPipeMaterial);
+                                                                         stainlesssteel_316LN_2K);
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
   secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
@@ -1126,9 +1128,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4LogicalVolume* collarsLV = nullptr;
 
   // materials and visual attributes
-  G4Material* nbti              = BDSMaterials::Instance()->GetMaterial("NbTi.1");
-  G4Material* iron              = BDSMaterials::Instance()->GetMaterial("iron");
-  G4Material* stainlesssteel    = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
+  G4Material*      nbti                    = BDSMaterials::Instance()->GetMaterial("NbTi.1");
+  G4Material*      stainlesssteel_316LN_2K = BDSMaterials::Instance()->GetMaterial("stainless_steel_316LN_2K");
+  G4Material*      stainlesssteel_304L_2K  = BDSMaterials::Instance()->GetMaterial("stainless_steel_304L_2K");
+  
   G4VisAttributes* coilVisAtt   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcoil"));
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   G4VisAttributes* collarVisAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcollar"));
@@ -1161,7 +1164,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			 poleStartAngle,               // start angle
 			 poleFullAngle);               // sweep angle
       pole1LV = new G4LogicalVolume(pole1,             // solid
-				    stainlesssteel,    // material
+                                    stainlesssteel_316LN_2K,    // material
 				    name+"_pole1_lv"); // name
       pole1LV->SetVisAttributes(collarVisAtt);
       allSolids.insert(pole1);
@@ -1266,7 +1269,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 		       poleStartAngle,               // start angle
 		       poleFullAngle);               // sweep angle
   pole2LV = new G4LogicalVolume(pole2,               // solid
-				stainlesssteel,      // material
+                                stainlesssteel_316LN_2K,      // material
 				name+"_pole2_lv");   // name
   pole2LV->SetVisAttributes(collarVisAtt);
   allSolids.insert(pole2);
@@ -1389,7 +1392,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
     }
   
   collarsLV = new G4LogicalVolume(collars,
-				  stainlesssteel,
+				  stainlesssteel_316LN_2K,
 				  name+"_collars_lv");
   collarsLV->SetVisAttributes(collarVisAtt);
   allLogicalVolumes.insert(collarsLV); 
@@ -1436,7 +1439,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allSolids.insert(collarSubtractionCylinders);
   allSolids.insert(yokeCylinder);
   yokeLV = new G4LogicalVolume(yokeSolid,
-			       iron,
+			       stainlesssteel_304L_2K,
 			       name+"_yoke_lv");
   
   // yoke visualisation
@@ -1459,7 +1462,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.insert(yokePV);
 
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
-  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
@@ -1472,7 +1474,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 									 0,                 // aper4
 									 vacuumMaterial,    // vacuum material
 									 1*CLHEP::mm,       // beampipeThickness
-									 beamPipeMaterial); // beampipe material
+									 stainlesssteel_316LN_2K); // beampipe material
   
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation

@@ -44,6 +44,10 @@ Bug Fixes
   assigned to values less than 1.
 * :code:`lhcdetailed` beam pipe now **ignores** :code:`beampipeMaterial` and uses the LHC specific
   materials as 2K.
+* LHC magnet geometry provided with :code:`magnetGeometryType="lhcleft"` or "lhcright" has corrected
+  materials now at 2K. If using this geometry style, the :code:`outerMaterial` global option as well
+  as the per-element parameter will be ignored and the correct LHC materials used as per the LHC
+  arc magnets.
 
 Output Changes
 --------------
@@ -56,8 +60,8 @@ Output Class Versions
 V1.5.1 - 2020 / 12 / 21
 =======================
 
-Hotfix for tapered elliptical collimtors (`ecol`). The apertures would differ at the few percent
-level due to the calculation of the obscure parametersation of the solid used in Geant4.
+Hotfix for tapered elliptical collimators (`ecol`). The apertures would differ at the few percent
+level due to the calculation of the obscure parameterisation of the solid used in Geant4.
 
 V1.5 - 2020 / 12 / 16
 =====================
