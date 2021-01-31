@@ -59,7 +59,7 @@ public:
   
   virtual ~BDSMagnet();
   
-  inline const BDSMagnetStrength* MagnetStrength() const {return vacuumFieldInfo->MagnetStrength();}
+  inline const BDSMagnetStrength* MagnetStrength() const {return vacuumFieldInfo ? vacuumFieldInfo->MagnetStrength() : nullptr;}
 
   /// @ { Delete existing field info and replace.
   void SetOuterField(BDSFieldInfo* outerFieldInfoIn);
