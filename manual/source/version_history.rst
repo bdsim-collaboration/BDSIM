@@ -37,6 +37,8 @@ General
 -------
 
 * LHC dipole geometry now applies also to rbends as well as sbends.
+* LHC dipole geometry now applies to hkickers and vkickers. In both cases the poles are like
+  a normal LHC dipole (e.g. no "vertical" kicker geometry)
 
 Bug Fixes
 ---------
@@ -55,6 +57,10 @@ Bug Fixes
   dipole yokes.
 * Fixed field in LHC magnet geometry second beam pipe. Now a duplicate of the vacuum field but with
   the opposite sign (for dipoles and quadrupoles).
+* Warnings fixed if using LHC style geometry with a 0 angle bend from more recent versions of Geant4
+  that complain about using a G4CutTubs when a G4Tubs is sufficient. The geometry was still valid, but
+  is now marginally more efficient and the warnings are no longer present.
+
 
 Output Changes
 --------------
