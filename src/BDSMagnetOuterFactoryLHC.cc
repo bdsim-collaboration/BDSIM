@@ -66,11 +66,21 @@ BDSMagnetOuterFactoryLHC::~BDSMagnetOuterFactoryLHC()
   delete cylindrical;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
-							   G4double     length,
-							   const BDSBeamPipe* beamPipe,
-							   G4double     containerLength,
-							   const BDSMagnetOuterInfo* recipe)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String           name,
+                                                           G4double           length,
+                                                           const BDSBeamPipe* beamPipe,
+                                                           G4double           containerLength,
+                                                           const BDSMagnetOuterInfo* recipe)
+{
+  return CreateLHCDipole(name, length, beamPipe, containerLength, recipe, YokeColour::diople);
+}
+
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    name,
+                                                          G4double           length,
+                                                          const BDSBeamPipe* beamPipe,
+                                                          G4double           containerLength,
+                                                          const BDSMagnetOuterInfo* recipe,
+                                                          YokeColour         colourIn)
 {
   CleanUp();
 
@@ -848,10 +858,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
 			       name+"_yoke_lv");
   
   // yoke visualisation
-  G4VisAttributes* LHCblue = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCyoke"));
-  LHCblue->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.insert(LHCblue);
-  yokeLV->SetVisAttributes(LHCblue);
+  G4Colour* yokeColour;
+  switch (colourIn)
+    {
+    case YokeColour::diople:
+      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke");}
+    case YokeColour::kicker:
+      {yokeColour = recipe->colour;}
+    }
+  G4VisAttributes* yokeVis = new G4VisAttributes(*yokeColour);
+  yokeVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  allVisAttributes.insert(yokeVis);
+  yokeLV->SetVisAttributes(yokeVis);
   
   allLogicalVolumes.insert(yokeLV); // register locally
 
@@ -1591,9 +1609,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String                 
 						       const BDSBeamPipe*        beamPipe,
 						       G4double                  containerLength,
 						       const BDSMagnetOuterInfo* recipe,
-						       G4bool                    vertical)
+						       G4bool                    /*vertical*/)
 {
-  return cylindrical->CreateKicker(name,length,beamPipe,containerLength,recipe,vertical);
+  return CreateLHCDipole(name, length, beamPipe, containerLength, recipe, YokeColour::kicker);
 }
 
 /// functions below here are private to this particular factory
