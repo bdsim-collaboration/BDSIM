@@ -38,7 +38,13 @@ General
 
 * LHC dipole geometry now applies also to rbends as well as sbends.
 * LHC dipole geometry now applies to hkickers and vkickers. In both cases the poles are like
-  a normal LHC dipole (e.g. no "vertical" kicker geometry)
+  a normal LHC dipole (e.g. no "vertical" kicker geometry).
+* In the case a rectellipse aperture is used but the parameters are such that the resultant
+  shape would be an ellipse only, then elliptical solids are used to avoid overly complex
+  Boolean solids and produce more efficient geometry. Such use of rectellipse as a default
+  is common for the LHC. In the case where the result would be a circle, again, specific
+  solids are used for optimisation of geometry. Applies to both straight and angled beam pipes.
+  All done completely automatically internally.
 
 Bug Fixes
 ---------
