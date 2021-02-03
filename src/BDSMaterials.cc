@@ -1144,7 +1144,7 @@ void BDSMaterials::ListMaterials() const
   PrintBasicMaterialMassFraction(vacuum);
   G4cout<< "pressure    = " << vacuum->GetPressure()/CLHEP::bar          << " bar"   << G4endl;
   G4cout<< "temperature = " << vacuum->GetTemperature()/CLHEP::kelvin    << " K"     << G4endl;
-  G4cout<< "density     = " << vacuum->GetDensity()/(CLHEP::g/CLHEP::m3) << " g/m^3" << G4endl << G4endl;
+  G4cout<< "density     = " << vacuum->GetDensity()/(CLHEP::g/CLHEP::cm3)<< " g/cm^3" << G4endl << G4endl;
   
   G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl << G4endl;
 
