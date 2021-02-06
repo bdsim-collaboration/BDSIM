@@ -61,6 +61,7 @@ BDSFieldInfo::BDSFieldInfo():
   secondFieldOnLeft(false),
   magneticSubFieldName(""),
   electricSubFieldName(""),
+  usePlacementWorldTransform(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {;}
@@ -112,6 +113,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   secondFieldOnLeft(leftIn),
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
+  usePlacementWorldTransform(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {
@@ -156,6 +158,7 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   secondFieldOnLeft(other.secondFieldOnLeft),
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
+  usePlacementWorldTransform(other.usePlacementWorldTransform),
   transformBeamline(nullptr),
   nameOfParserDefinition(other.nameOfParserDefinition)
 {
@@ -230,6 +233,7 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
   out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
   out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
+  out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:     " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)
