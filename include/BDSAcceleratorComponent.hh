@@ -132,7 +132,7 @@ public:
   // Accessors
   
   /// The name of the component without modification
-  inline G4String GetName() const {return name;}
+  virtual inline G4String GetName() const {return name;}
 
   /// @{ Access the length of the component. Note there is no z length - this is chord length.
   /// Only chord OR arc makes it explicit.
