@@ -134,7 +134,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String& na
   // always debug visualisation for read out geometry - only viewed via explicit commands
   lv->SetVisAttributes(BDSGlobalConstants::Instance()->VisibleDebugVisAttr());
 
-  // we don't specify the face normals as they are w.r.t the incoming or outoing
+  // we don't specify the face normals as they are w.r.t the incoming or outgoing
   // reference trajectory - to which the curvilinear faces will be perpendicular
   BDSSimpleComponent* result = new BDSSimpleComponent(name,
 						      arcLength,

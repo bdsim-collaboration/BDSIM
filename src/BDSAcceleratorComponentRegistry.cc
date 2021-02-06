@@ -24,8 +24,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include <ios>
 #include <map>
-#include <string>
-#include <unordered_map>
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::instance = nullptr;
 
@@ -97,9 +95,6 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
 
 G4bool BDSAcceleratorComponentRegistry::IsRegistered(BDSAcceleratorComponent* component)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "(BDSAcceleratorComponent*)" << G4endl;
-#endif
   return IsRegistered(component->GetName());
 }
 
@@ -110,13 +105,7 @@ G4bool BDSAcceleratorComponentRegistry::IsRegisteredAllocated(const BDSAccelerat
 
 G4bool BDSAcceleratorComponentRegistry::IsRegistered(const G4String& name)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "(G4String) named \"" << name << "\" -> ";
-#endif
-  iterator search = registry.find(name);
-#ifdef BDSDEBUG
-  G4cout << (search == registry.end() ? "registered" : "not registered") << G4endl;
-#endif
+  auto search = registry.find(name);
   return !(search == registry.end());
 }
 
