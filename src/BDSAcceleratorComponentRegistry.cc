@@ -44,7 +44,7 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of registry " << registry.size() << G4endl;
 #endif
-  for (auto i : registry)
+  for (auto& i : registry)
     {delete i.second;}
   for (auto ac : allocatedComponents)
     {delete ac;}
@@ -154,17 +154,15 @@ std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry con
   // save flags since std::left changes the stream
   std::ios_base::fmtflags ff = out.flags();
   out << "Accelerator Component Registry:" << G4endl;
-  BDSAcceleratorComponentRegistry::const_iterator it = r.registry.begin();
-  for (; it != r.registry.end(); ++it)
-    {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;}
-  // reset flags
-  out.flags(ff);
+  for (const auto& it : r.registry)
+    {out << std::left << std::setw(15) << it.second->GetType() << " \"" << it.first << "\"" << G4endl;}
+  out.flags(ff); // reset flags
   return out;
 }
 
 void BDSAcceleratorComponentRegistry::PrintNumberOfEachType() const
 {
   G4cout << __METHOD_NAME__ << G4endl;
-  for (const auto kv : typeCounter)
+  for (const auto& kv : typeCounter)
     {G4cout << std::setw(20) << kv.first << " : " << kv.second << G4endl;}
 }
