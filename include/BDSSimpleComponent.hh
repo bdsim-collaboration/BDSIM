@@ -77,6 +77,11 @@ public:
   BDSSimpleComponent& operator=(const BDSSimpleComponent&) = delete;
   BDSSimpleComponent(BDSSimpleComponent&) = delete;
 
+protected:
+  /// Replace the one in the base class to ensure we don't fiddle the container visualisation
+  /// attributes and keep it visible.
+  virtual void Build();
+  
   /// Required implementation from base class.
   virtual void BuildContainerLogicalVolume(){;}
 };

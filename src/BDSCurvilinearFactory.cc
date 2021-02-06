@@ -142,5 +142,6 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String& na
 						      solid,
 						      lv,
                               BDSExtent(radius, radius, chordLength*0.5));
+  // we don't bother calling Initialise() as we don't need to set the vis attributes (waste of memory)
   return result;
 }
