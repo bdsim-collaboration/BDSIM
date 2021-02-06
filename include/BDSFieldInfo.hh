@@ -121,6 +121,7 @@ public:
   inline G4String            MagneticSubFieldName()     const {return magneticSubFieldName;}
   inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
   inline G4String            NameOfParserDefinition()   const {return nameOfParserDefinition;}
+  inline G4bool              UsePlacementWorldTransform() const {return usePlacementWorldTransform;}
   /// @}
   
   G4Transform3D Transform() const;         ///< Transform for the field definition only.
@@ -139,6 +140,7 @@ public:
   inline void SetSecondFieldOnLeft(G4bool leftIn) {secondFieldOnLeft = leftIn;}
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
+  inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
 
   void SetTransform(const G4Transform3D& transformIn); ///< Set the field definition transform.
   void SetTransformBeamline(const G4Transform3D& transformIn); ///< Set the beam line transform.
@@ -191,6 +193,7 @@ private:
   G4bool                   secondFieldOnLeft; ///< Flag for case of two-beam field - if not left, it's right.
   G4String                 magneticSubFieldName;
   G4String                 electricSubFieldName;
+  G4bool                   usePlacementWorldTransform;
   /// Transform from curvilinear frame to this field - ie beam line bit only.
   G4Transform3D*           transformBeamline;
 
