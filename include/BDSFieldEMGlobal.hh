@@ -44,6 +44,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldEMGlobal: public BDSFieldEM, public BDSAuxiliaryNavigator
 {
 public:
+  BDSFieldEMGlobal() = delete;
   explicit BDSFieldEMGlobal(BDSFieldEM* fieldIn);
   virtual ~BDSFieldEMGlobal();
 
@@ -57,9 +58,6 @@ public:
   virtual G4bool DoesFieldChangeEnergy() const {return true;}
   
 private:
-  /// Private default constructor to force use of supplied constructor
-  BDSFieldEMGlobal();
-
   /// The field on which this is based.
   BDSFieldEM* field;
 };
