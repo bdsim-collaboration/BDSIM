@@ -542,7 +542,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
         BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
         G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
         field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0,
-                                                  info.SecondFieldonLeft());
+                                                  info.SecondFieldOnLeft());
         delete innerField; // no longer required
         break;
       }
@@ -551,7 +551,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
         G4bool positiveField = (*strength)["k1"] > 0;
         field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0,
-                                                  info.SecondFieldonLeft());
+                                                  info.SecondFieldOnLeft());
         delete innerField; // no longer required
         break;
       }
@@ -560,7 +560,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
 	G4bool positiveField = (*strength)["k2"] > 0;
 	field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0,
-						  info.SecondFieldonLeft());
+                                            info.SecondFieldOnLeft());
 	delete innerField; // no longer required
 	break;
       }
