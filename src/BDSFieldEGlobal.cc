@@ -33,6 +33,15 @@ BDSFieldEGlobal::~BDSFieldEGlobal()
   delete field;
 }
 
+G4ThreeVector BDSFieldEGlobal::GetFieldTransformed(const G4ThreeVector& position,
+						     const G4double       t) const
+{
+  if (!finiteStrength)
+    {return G4ThreeVector();} // quicker than query
+  else
+    {return GetField(position, t);}
+}
+
 G4ThreeVector BDSFieldEGlobal::GetField(const G4ThreeVector& position,
 					const G4double       t) const
 {

@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldEInterpolated.hh"
+#include "BDSFieldEInterpolated2Layer.hh"
 #include "BDSFieldESinusoid.hh"
 #include "BDSFieldEZero.hh"
 #include "BDSFieldEM.hh"
@@ -629,6 +630,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   if (field)
     {field->SetTransform(info.TransformComplete());}
   
+  if (!field)
+    {return nullptr;}
+  
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldEM* resultantField = field;
   if (info.ProvideGlobal())
@@ -645,6 +649,27 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
+{
+  BDSFieldE* field = CreateFieldERaw(info);
+  if (!field)
+    {return nullptr;}
+  
+  // Optionally provide local to global transform using curvilinear coordinate system.
+  BDSFieldE* resultantField = field;
+  if (info.ProvideGlobal())
+    {resultantField = new BDSFieldEGlobal(field);}
+
+  // Equation of motion for em fields
+  G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
+
+  // Create appropriate integrator
+  G4MagIntegratorStepper* integrator = CreateIntegratorE(info, eqOfM);
+
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
+  return completeField;
+}
+
+BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
 {
   BDSFieldE* field = nullptr;
   switch (info.FieldType().underlying())
@@ -673,19 +698,27 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   if (field)
     {field->SetTransform(info.TransformComplete());}
   
-  // Optionally provide local to global transform using curvilinear coordinate system.
-  BDSFieldE* resultantField = field;
-  if (info.ProvideGlobal())
-    {resultantField = new BDSFieldEGlobal(field);}
-
-  // Equation of motion for em fields
-  G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
-
-  // Create appropriate integrator
-  G4MagIntegratorStepper* integrator = CreateIntegratorE(info, eqOfM);
-
-  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
-  return completeField;
+  if (!info.ElectricSubFieldName().empty() && field)
+    {
+      // set the transform of the 'main' field to only the transform defined in that field definition
+      field->SetTransform(info.Transform());
+      
+      auto mainField = dynamic_cast<BDSFieldEInterpolated*>(field);
+      if (!mainField)
+	{throw BDSException(__METHOD_NAME__, "subfield specified for non-field map type field - not supported");}
+      
+      BDSFieldInfo* subFieldRecipe = new BDSFieldInfo(*(GetDefinition(info.ElectricSubFieldName())));
+      BDSFieldE* subFieldRaw = CreateFieldERaw(*subFieldRecipe);
+      auto subField = dynamic_cast<BDSFieldEInterpolated*>(subFieldRaw);
+      if (!subField)
+	{throw BDSException(__METHOD_NAME__, "subfield type is not a field map type field - not supported");}
+      field = new BDSFieldEInterpolated2Layer(mainField, subField);
+      // the transform goes beamline transform to the 2Layer class, then inside that the individual field transforms
+      field->SetTransform(info.TransformBeamline());
+      delete subFieldRecipe;
+    }
+  
+  return field;
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
