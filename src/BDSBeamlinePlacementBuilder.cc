@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldFactory.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSSimpleComponent.hh"
@@ -65,7 +67,15 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
 							geom,
 							length);
-
+      if (!placement.fieldAll.empty())
+	{
+	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
+	  info->SetUsePlacementWorldTransform(true);
+	  comp->SetField(info);
+	}
+      
+      comp->Initialise();
+      
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(placement, parentBeamLine);
       
       /// Here we're assuming the length is along z which may not be true, but
