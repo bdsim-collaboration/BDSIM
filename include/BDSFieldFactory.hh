@@ -61,7 +61,7 @@ class G4Mag_EqRhs;
  * 6 package it up
  *
  * This also makes use of BDSParser singleton class to create a series of BDSFieldInfo 
- * field specfications as defined by the parser.
+ * field specifications as defined by the parser.
  * 
  * @author Laurie Nevay
  */

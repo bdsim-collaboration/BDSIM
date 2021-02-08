@@ -44,14 +44,15 @@ public:
   explicit BDSFieldE(G4Transform3D transformIn);
   virtual ~BDSFieldE(){;}
 
-  /// Get the field - local coordinates.
+  /// Get the electric field vector in local coordinates. The derived class does
+  /// not need to apply the transform.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
 				 const G4double       t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4ElectricField
   /// inheritance and allow a BDSFieldE instance to be passed around in the field
   /// factory even if it's not wrapped in a BDSFieldGlobal instance and is in fact
-  /// in local coordinates.
+  /// in local coordinates. This uses GetFieldTransformed.
   virtual void GetFieldValue(const G4double point[4],
 			     G4double* field) const;
 
