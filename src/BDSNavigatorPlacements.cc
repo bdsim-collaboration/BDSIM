@@ -23,18 +23,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
 
-G4Navigator*       BDSNavigatorPlacement::navigator         = new G4Navigator();
-G4int              BDSNavigatorPlacement::numberOfInstances = 0;
-G4VPhysicalVolume* BDSNavigatorPlacement::worldPV           = nullptr;
+#include <utility>
 
-BDSNavigatorPlacement::BDSNavigatorPlacement():
+G4Navigator*       BDSNavigatorPlacements::navigator         = new G4Navigator();
+G4int              BDSNavigatorPlacements::numberOfInstances = 0;
+G4VPhysicalVolume* BDSNavigatorPlacements::worldPV           = nullptr;
+
+BDSNavigatorPlacements::BDSNavigatorPlacements():
   globalToLocal(G4AffineTransform()),
   localToGlobal(G4AffineTransform())
 {
   numberOfInstances++;
 }
 
-BDSNavigatorPlacement::~BDSNavigatorPlacement()
+BDSNavigatorPlacements::~BDSNavigatorPlacements()
 {
   // Only delete static navigator objects when last instance is deleted
   if (numberOfInstances == 1)
@@ -44,13 +46,13 @@ BDSNavigatorPlacement::~BDSNavigatorPlacement()
   numberOfInstances--;
 }
 
-void BDSNavigatorPlacement::ResetNavigatorStates()
+void BDSNavigatorPlacements::ResetNavigatorStates()
 {
   navigator->ResetStackAndState();
 }
 
-G4ThreeVector BDSNavigatorPlacement::ConvertToLocal(const G4ThreeVector& globalPosition,
-                                                    G4bool& foundAPlacementVolume) const
+G4ThreeVector BDSNavigatorPlacements::ConvertToLocal(const G4ThreeVector& globalPosition,
+						     G4bool& foundAPlacementVolume) const
 {
   foundAPlacementVolume = InitialiseTransform(globalPosition);
   if (!foundAPlacementVolume)
@@ -58,17 +60,24 @@ G4ThreeVector BDSNavigatorPlacement::ConvertToLocal(const G4ThreeVector& globalP
   return globalToLocal.TransformPoint(globalPosition);
 }
 
-G4ThreeVector BDSNavigatorPlacement::ConvertToLocalNoSetup(const G4ThreeVector& globalPosition) const
+G4ThreeVector BDSNavigatorPlacements::ConvertToLocalNoSetup(const G4ThreeVector& globalPosition) const
 {
   return globalToLocal.TransformPoint(globalPosition);
 }
 
-G4ThreeVector BDSNavigatorPlacement::ConvertAxisToGlobal(const G4ThreeVector& localAxis) const
+G4ThreeVector BDSNavigatorPlacements::ConvertAxisToGlobal(const G4ThreeVector& localAxis) const
 {
   return localToGlobal.TransformAxis(localAxis);
 }
 
-G4bool BDSNavigatorPlacement::InitialiseTransform(const G4ThreeVector& globalPosition) const
+std::pair<G4ThreeVector, G4ThreeVector> BDSNavigatorPlacements::ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis) const
+{
+  G4ThreeVector globalB = localToGlobal.TransformAxis(localAxis.first);
+  G4ThreeVector globalE = localToGlobal.TransformAxis(localAxis.second);
+  return std::make_pair(globalB, globalE);
+}
+
+G4bool BDSNavigatorPlacements::InitialiseTransform(const G4ThreeVector& globalPosition) const
 {
   G4VPhysicalVolume* foundPVVolume = navigator->LocateGlobalPointAndSetup(globalPosition);
   if (foundPVVolume == worldPV)
