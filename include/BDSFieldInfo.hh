@@ -117,7 +117,7 @@ public:
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   inline G4double            Tilt()                     const {return tilt;}
-  inline G4bool              SecondFieldonLeft()        const {return secondFieldOnLeft;}
+  inline G4bool              SecondFieldOnLeft()        const {return secondFieldOnLeft;}
   inline G4String            MagneticSubFieldName()     const {return magneticSubFieldName;}
   inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
   inline G4String            NameOfParserDefinition()   const {return nameOfParserDefinition;}
