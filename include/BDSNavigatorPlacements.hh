@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
 
+#include <utility>
+
 class G4VPhysicalVolume;
 
 /**
@@ -44,11 +46,11 @@ class G4VPhysicalVolume;
  * @author Laurie Nevay
  */
 
-class BDSNavigatorPlacement
+class BDSNavigatorPlacements
 {
 public:
-  BDSNavigatorPlacement();
-  ~BDSNavigatorPlacement();
+  BDSNavigatorPlacements();
+  ~BDSNavigatorPlacements();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
   static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn)
@@ -70,6 +72,12 @@ public:
   /// setting up the transforms.  It is up to the developer to ensure this,
   /// otherwise you'll find a bad access.
   G4ThreeVector ConvertAxisToGlobal(const G4ThreeVector& localAxis) const;
+  
+  /// Convert a vector (axis) from local to global coordinates. Note this function
+  /// must only be used once the instance of this class has been initialised, setting
+  /// up the transforms. It is up to the developer to ensure this. This utility function
+  /// operates on two threevectors in a pair.
+  std::pair<G4ThreeVector, G4ThreeVector> ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis) const;
 
 protected:
   mutable G4AffineTransform globalToLocal;
