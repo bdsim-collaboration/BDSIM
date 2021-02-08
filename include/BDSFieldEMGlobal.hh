@@ -48,6 +48,11 @@ public:
   explicit BDSFieldEMGlobal(BDSFieldEM* fieldIn);
   virtual ~BDSFieldEMGlobal();
 
+  /// As we use a discrete member field object, we do not need to apply the
+  /// transform. Override default method and just directly call GetField().
+  virtual std::pair<G4ThreeVector,G4ThreeVector> GetFieldTransformed(const G4ThreeVector& position,
+								     const G4double       t) const;
+
   /// Get the field - local coordinates. First G4ThreeVector is B field, second is E Field
   /// x,y,z respectively. Apply the global to local transform, query the wrapped field object
   /// and transform this field to global coordinates before returning.
