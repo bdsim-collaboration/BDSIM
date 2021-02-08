@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldMagGlobal: public BDSFieldMag, public BDSAuxiliaryNavigator
 {
 public:
+  BDSFieldMagGlobal() = delete;
   explicit BDSFieldMagGlobal(BDSFieldMag* fieldIn);
   virtual ~BDSFieldMagGlobal();
 
@@ -56,9 +57,6 @@ public:
 				 const G4double       t = 0) const;
   
 private:
-  /// Private default constructor to force use of supplied constructor
-  BDSFieldMagGlobal();
-
   /// The field on which this is based.
   BDSFieldMag* field;
 };
