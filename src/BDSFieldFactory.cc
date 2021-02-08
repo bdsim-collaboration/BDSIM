@@ -23,12 +23,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
+#include "BDSFieldEGlobalPlacement.hh"
 #include "BDSFieldEInterpolated.hh"
 #include "BDSFieldEInterpolated2Layer.hh"
 #include "BDSFieldESinusoid.hh"
 #include "BDSFieldEZero.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldEMGlobal.hh"
+#include "BDSFieldEMGlobalPlacement.hh"
 #include "BDSFieldEMInterpolated.hh"
 #include "BDSFieldEMRFCavity.hh"
 #include "BDSFieldEMZero.hh"
@@ -41,6 +43,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagDipoleOuter.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
+#include "BDSFieldMagGlobalPlacement.hh"
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagInterpolated2Layer.hh"
 #include "BDSFieldMagMultipole.hh"
@@ -388,7 +391,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 
   BDSFieldMag* resultantField = field;
   // Optionally provide local to global transform using curvilinear coordinate system.
-  if (info.ProvideGlobal())
+  if (info.UsePlacementWorldTransform())
+    {resultantField = new BDSFieldMagGlobalPlacement(field);}
+  else if (info.ProvideGlobal())
     {resultantField = new BDSFieldMagGlobal(field);}
 
   // Always this equation of motion for magnetic (only) fields
@@ -635,7 +640,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldEM* resultantField = field;
-  if (info.ProvideGlobal())
+  if (info.UsePlacementWorldTransform())
+    {resultantField = new BDSFieldEMGlobalPlacement(field);}
+  else if (info.ProvideGlobal())
     {resultantField = new BDSFieldEMGlobal(field);}
 
   // Equation of motion for em fields
@@ -656,7 +663,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldE* resultantField = field;
-  if (info.ProvideGlobal())
+  if (info.UsePlacementWorldTransform())
+    {resultantField = new BDSFieldEGlobalPlacement(field);}
+  else if (info.ProvideGlobal())
     {resultantField = new BDSFieldEGlobal(field);}
 
   // Equation of motion for em fields
