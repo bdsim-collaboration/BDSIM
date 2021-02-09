@@ -150,9 +150,8 @@ public:
   
 private:
   /// assignment and copy constructor not implemented nor used
-  BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
-  BDSDetectorConstruction(BDSDetectorConstruction&);
-
+  BDSDetectorConstruction& operator=(const BDSDetectorConstruction&) = delete;
+  BDSDetectorConstruction(BDSDetectorConstruction&) = delete;
   
   /// Count number of fields required for placements.
   void CountPlacementFields();
