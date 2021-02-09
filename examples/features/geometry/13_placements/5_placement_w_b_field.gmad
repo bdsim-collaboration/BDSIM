@@ -2,7 +2,7 @@ f1: field, type="bmap2d",
                  magneticFile = "bdsim2d:muon-field.dat.gz",
 		 magneticInterpolator="linear";
 
-! global placement w.r.t world frame
+! global placement w.r.t. world frame
 dx = (2.5 * 0.5) + 0.2;
 p1: placement, geometryFile="gdml:muon-wall.gdml",
     	       x = dx,
@@ -14,7 +14,7 @@ l1: line=(d1);
 use, l1;
 
 beam, particle="mu-",
-      energy=10*GeV;
-
-
-beam, X0=1*m;
+      energy=10*GeV,
+      distrType="square",
+      envelopeX=2*m,
+      envelopeY=1*m;
