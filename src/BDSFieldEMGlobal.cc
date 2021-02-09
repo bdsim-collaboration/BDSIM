@@ -37,12 +37,12 @@ BDSFieldEMGlobal::~BDSFieldEMGlobal()
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMGlobal::GetFieldTransformed(const G4ThreeVector& position,
-                                                   const G4double       t) const
+									     const G4double       t) const
 {
   if (!finiteStrength)
-  {return std::make_pair(G4ThreeVector(),G4ThreeVector());} // quicker than query
+    {return std::make_pair(G4ThreeVector(),G4ThreeVector());} // quicker than query
   else
-  {return GetField(position, t);}
+    {return GetField(position, t);}
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMGlobal::GetField(const G4ThreeVector& position,
