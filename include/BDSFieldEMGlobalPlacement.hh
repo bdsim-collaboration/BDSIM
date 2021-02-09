@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @brief A base class for electro-magnetic fields in local to be used in global coordinates.
+ *
+ * This is done using a navigator for the placement world not the curvilinear one.
  * 
  * This base class provides the aggregate inheritance and utility functions
  * for magnetic fields in local coordinates to be used in global coordinates.

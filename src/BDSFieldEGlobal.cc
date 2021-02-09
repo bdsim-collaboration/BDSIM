@@ -34,7 +34,7 @@ BDSFieldEGlobal::~BDSFieldEGlobal()
 }
 
 G4ThreeVector BDSFieldEGlobal::GetFieldTransformed(const G4ThreeVector& position,
-						     const G4double       t) const
+						   const G4double       t) const
 {
   if (!finiteStrength)
     {return G4ThreeVector();} // quicker than query
