@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
@@ -25,17 +26,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
+#include "BDSPlacementToMake.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/placement.h"
 
-#include "CLHEP/Units/SystemOfUnits.h"
-
-#include "globals.hh"
+#include "G4LogicalVolume.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4Types.hh"
+#include "G4VSolid.hh"
 
 #include <vector>
 
@@ -47,6 +51,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
     {return nullptr;} // don't do anything - no placements
   
   BDSBeamline* placementBL = new BDSBeamline();
+  std::vector<BDSPlacementToMake> fieldPlacements;
 
   for (const auto& placement : placements)
     {
@@ -67,11 +72,14 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       BDSSimpleComponent* comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(),
 							geom,
 							length);
-      if (!placement.fieldAll.empty())
+      
+      G4bool hasAField = !placement.fieldAll.empty();
+      BDSFieldInfo* fieldRecipe = nullptr;
+      if (hasAField)
 	{
-	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
-	  info->SetUsePlacementWorldTransform(true);
-	  comp->SetField(info);
+    fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
+    fieldRecipe->SetUsePlacementWorldTransform(true);
+	  comp->SetField(fieldRecipe);
 	}
       
       comp->Initialise();
@@ -103,7 +111,18 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 						      -1,-1,-1);
 
       placementBL->AddBeamlineElement(el);
+  
+      if (hasAField)
+      {
+        G4String fieldName = comp->GetName() + "_" + fieldRecipe->NameOfParserDefinition();
+        G4VSolid* containerSolidClone = comp->GetContainerSolid()->Clone();
+        G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+        G4LogicalVolume* lv = new G4LogicalVolume(containerSolidClone, emptyMaterial, fieldName);
+        fieldPlacements.emplace_back(BDSPlacementToMake(transform, lv, fieldName+"_pv"));
+      }
     }
 
+  BDSAcceleratorModel::Instance()->RegisterPlacementFieldPlacements(fieldPlacements);
+  
   return placementBL;
 }
