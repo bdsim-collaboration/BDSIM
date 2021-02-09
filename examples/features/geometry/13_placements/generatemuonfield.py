@@ -29,7 +29,10 @@ def MuonField(x,y,z,B):
     
 
 def main():
-    B = 0.1 # T
+    # in a quick literature search, I found 16kG as an expected figure
+    # for magnetised iron (maybe with some windings). This is around 1.6T
+    # so, saturated iron. A little more modest value chosen.
+    B = 0.8 # T
     
     # generate x and y points along their own axes
     x = _np.linspace(-250, 250, 10)
@@ -70,7 +73,7 @@ def Plot(array):
     _plt.colorbar(label='Tesla')
     _plt.tight_layout()
     _plt.axes().set_aspect('equal', 'datalim')
-    _plt.savefig('muon-field.png',dpi=400)
+    _plt.savefig('muon-field.pdf',dpi=400)
     
 if __name__ == "__main__":
     main()
