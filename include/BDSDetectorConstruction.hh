@@ -146,11 +146,17 @@ public:
   /// should build the world in the end.
   G4bool BuildSamplerWorld() const {return nSamplers > 0;}
   
+  G4bool BuildPlacementFieldsWorld() const {return buildPlacementFieldsWorld;}
+  
 private:
   /// assignment and copy constructor not implemented nor used
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
   BDSDetectorConstruction(BDSDetectorConstruction&);
 
+  
+  /// Count number of fields required for placements.
+  void CountPlacementFields();
+  
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
 
@@ -238,6 +244,7 @@ private:
   BDSComponentFactoryUser* userComponentFactory;
 
   G4int nSamplers; ///< Count of number of samplers to be built.
+  G4bool buildPlacementFieldsWorld;
 };
 
 #endif

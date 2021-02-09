@@ -109,7 +109,8 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
   placementBL(nullptr),
   designParticle(nullptr),
   userComponentFactory(userComponentFactoryIn),
-  nSamplers(0)
+  nSamplers(0),
+  buildPlacementFieldsWorld(false)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   verbose       = globals->Verbose();
@@ -131,6 +132,7 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
     }
 
   UpdateSamplerDiameterAndCountSamplers();
+  CountPlacementFields();
 }
 
 void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
@@ -138,15 +140,15 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
   nSamplers = 0;
   auto beamline = BDSParser::Instance()->GetBeamline(); // main beam line
   G4double maxBendingRatio = 1e-9;
-  for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
+  for (const auto& blElement : beamline)
     {
       // count number of samplers
-      auto st = BDS::DetermineSamplerType((*elementIt).samplerType);
+      auto st = BDS::DetermineSamplerType(blElement.samplerType);
       if (st != BDSSamplerType::none)
         {nSamplers++;}
-
-      G4double length = elementIt->l;
-      G4double angle  = elementIt->angle;
+      
+      G4double length = blElement.l;
+      G4double angle  = blElement.angle;
       if (!BDS::IsFinite(length))
 	    {continue;} // avoid divide by 0
       G4double ratio  = angle / length;
@@ -174,8 +176,20 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
         }
     }
 
-    // add number of sampler placements to count of samplers
-    nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
+  // add number of sampler placements to count of samplers
+  nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
+}
+
+void BDSDetectorConstruction::CountPlacementFields()
+{
+  G4int nFields = 0;
+  const auto& placements = BDSParser::Instance()->GetPlacements();
+  for (const auto& placement : placements)
+  {
+    if (!placement.fieldAll.empty())
+    {nFields++;}
+  }
+  buildPlacementFieldsWorld = nFields > 0;
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()

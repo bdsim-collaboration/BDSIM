@@ -17,21 +17,18 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorModel.hh"
-
 #include "BDSDetectorConstruction.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
-
+#include "BDSNavigatorPlacements.hh"
 #include "BDSParallelWorldPlacementFields.hh"
-
 
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4Transform3D.hh"
+#include "G4String.hh"
 #include "G4Types.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VUserParallelWorld.hh"
 
 #include <vector>
 
