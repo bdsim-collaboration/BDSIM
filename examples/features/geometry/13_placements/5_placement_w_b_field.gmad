@@ -1,11 +1,11 @@
 f1: field, type="bmap2d",
                  magneticFile = "bdsim2d:muon-field.dat.gz",
-		 magneticInterpolator="nearest";
+		 magneticInterpolator="linear";
 
 ! global placement w.r.t world frame
+dx = (2.5 * 0.5) + 0.2;
 p1: placement, geometryFile="gdml:muon-wall.gdml",
-    	       x = 2.5*m,
-	       y = -2*m,
+    	       x = dx,
 	       z = 3.2*m,
 	       fieldAll="f1";
 
