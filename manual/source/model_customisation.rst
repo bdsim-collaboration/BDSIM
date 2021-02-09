@@ -1168,6 +1168,8 @@ or as part of it. The user is responsible for ensuring that the geometry does no
 overlap with any other geometry including the beam line. Only in special cases, such as
 for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
 
+The geometry may also have a field map overlaid on it.
+
 For geometry to be placed in the beam line, use the :ref:`element`.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
@@ -1246,6 +1248,9 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | autoColour              | Boolean whether the geometry should be automatically coloured by   |
 |                         | density if no colour information is supplied. (default true)       |
++-------------------------+--------------------------------------------------------------------+
+| fieldAll                | Name of field object definition to be used as the field for the    |
+|                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
 
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence

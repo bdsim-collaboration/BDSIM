@@ -24,6 +24,9 @@ New Features
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
 * Few new variants of stainless steel at different temperatures as materials as well as RHC1000 plastic.
+* :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
+  in that placement of geometry.
+* Sub-fields can now be used with E field maps.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -67,6 +70,12 @@ Bug Fixes
 * Warnings fixed if using LHC style geometry with a 0 angle bend from more recent versions of Geant4
   that complain about using a G4CutTubs when a G4Tubs is sufficient. The geometry was still valid, but
   is now marginally more efficient and the warnings are no longer present.
+* Loaded GDML is now always visible. Geant4 would make the loaded GDML outermost volume invisible
+  because GDML is designed for only one file as the world.
+* BDSIM will correctly complain when no file is given for a field map. This is a common mistake
+  when using both E and B fields. Previously, the code could segfault.
+* Fix transforms for when an E or EM field was used in a component that was offset or tilted with
+  respect to the beam line. The field would not correctly be aligned to the component. B fields were fine.
 
 
 Output Changes
