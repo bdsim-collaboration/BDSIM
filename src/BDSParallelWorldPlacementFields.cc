@@ -53,6 +53,9 @@ void BDSParallelWorldPlacementFields::Construct()
   /// "placement fields" -> pf
   G4VPhysicalVolume* pfWorld   = GetWorld();
   G4LogicalVolume*   pfWorldLV = pfWorld->GetLogicalVolume();
+  
+  /// Register it (statically) to all navigators for fields in the placement world.
+  BDSNavigatorPlacements::AttachWorldVolumeToNavigator(pfWorld);
 
   pfWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   pfWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
