@@ -11,9 +11,9 @@ def MuonField(x,y,z,B):
     # no variation in z
 
     field = {0 : [0,B,0],
-             1 : [B,0,0],
+             1 : [-B,0,0],
              2 : [0,-B,0],
-             3 : [-B,0,0]}
+             3 : [B,0,0]}
 
     if x == 0 and y == 0:
         return [0,0,0]
