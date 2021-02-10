@@ -27,6 +27,7 @@ New Features
 * :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
   in that placement of geometry.
 * Sub-fields can now be used with E field maps.
+* The :code:`transform3d` beam line element now accepts axis angle parameters.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
