@@ -420,9 +420,9 @@ void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    name,
   allLogicalVolumes.insert(screenLV);
 }
 
-void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
+void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes(G4Material* beamPipeMaterialIn)
 {
-  BDSBeamPipeFactoryBase::SetVisAttributes();
+  BDSBeamPipeFactoryBase::SetVisAttributes(beamPipeMaterialIn);
 
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcopperskin"));
