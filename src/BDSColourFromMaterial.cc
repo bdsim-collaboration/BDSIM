@@ -56,6 +56,7 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["sulphur"]  = c->GetColour("yellow");
   defines["chlorine"] = c->GetColour("yellow");
   defines["water"]    = c->GetColour("water:0 102 204 0.5");
+  defines["marble"]   = c->GetColour("marble:228 228 228 1.0");
   std::vector<G4double> densities = {1e2,  1,   0.1,  0.01, 1e-4}; // high to low
   for (auto& v : densities)
     {v *= CLHEP::g / CLHEP::cm3;}
