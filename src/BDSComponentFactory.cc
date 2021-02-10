@@ -168,7 +168,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   if (element->type == ElementType::_DRIFT)
     {
-      // minuses are to go from 'strength convention' to 3d cartesian.
       if (prevElement)
         {angleIn  = OutgoingFaceAngle(prevElement);}
       if (nextElement)
