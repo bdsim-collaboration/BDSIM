@@ -872,6 +872,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    nam
       {yokeColour = BDSColours::Instance()->GetColour("LHCyoke");}
     case YokeColour::kicker:
       {yokeColour = recipe->colour;}
+    default:
+      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke");}
     }
   G4VisAttributes* yokeVis = new G4VisAttributes(*yokeColour);
   yokeVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
