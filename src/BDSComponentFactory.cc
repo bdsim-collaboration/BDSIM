@@ -1711,14 +1711,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
-  return (new BDSTransform3D( elementName,
-			      element->xdir *CLHEP::m,
-			      element->ydir *CLHEP::m,
-			      element->zdir *CLHEP::m,
-			      element->phi *CLHEP::rad,
-			      element->theta *CLHEP::rad,
-			      element->psi *CLHEP::rad ) );
-	
+  if (element->axisAngle)
+  {
+    return new BDSTransform3D(elementName,
+                              element->xdir * CLHEP::m,
+                              element->ydir * CLHEP::m,
+                              element->zdir * CLHEP::m,
+                              element->axisX,
+                              element->axisY,
+                              element->axisZ,
+                              element->angle * CLHEP::rad);
+  }
+  else
+  {
+    return new BDSTransform3D(elementName,
+                              element->xdir * CLHEP::m,
+                              element->ydir * CLHEP::m,
+                              element->zdir * CLHEP::m,
+                              element->phi * CLHEP::rad,
+                              element->theta * CLHEP::rad,
+                              element->psi * CLHEP::rad);
+  }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator(const G4double width)
