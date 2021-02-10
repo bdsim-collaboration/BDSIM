@@ -321,7 +321,7 @@ void BDSDetectorConstruction::BuildBeamlines()
       // TODO - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
       // but this could be any beam line in future if we find the right beam line to pass in.
       G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
-      G4double      startS         = mbl->back()->GetSPositionEnd(); 
+      G4double      startS         = mbl ? mbl->back()->GetSPositionEnd() : 0;
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       // TODO - the naming convention here is repeated in BDSParallelWorldInfo which is registered
