@@ -76,6 +76,7 @@ Bug Fixes
   when using both E and B fields. Previously, the code could segfault.
 * Fix transforms for when an E or EM field was used in a component that was offset or tilted with
   respect to the beam line. The field would not correctly be aligned to the component. B fields were fine.
+* User limits (minimum kinetic energy for example) weren't attached to placement geometry.
 
 
 Output Changes
