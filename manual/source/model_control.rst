@@ -1201,7 +1201,7 @@ Examples: ::
 
 .. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
 	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
-	     not be used along with the unsuffixed ones (e.g. "qgsp_bert" and "qgsp_bert_hp" should
+	     not be used along with the un-suffixed ones (e.g. "qgsp_bert" and "qgsp_bert_hp" should
 	     not be used together). Similarly, the standard electromagnetic variants should not
 	     be used with the regular "em".
 
@@ -2191,7 +2191,7 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | geant4PhysicsMacroFileName       | The name of a text macro file with commands that are  |
 |                                  | suitable for the Geant4 interpreter that will be      |
-|                                  | exectued after the physics list is constructed but    |
+|                                  | executed after the physics list is constructed but    |
 |                                  | before a run.                                         |
 +----------------------------------+-------------------------------------------------------+
 | g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
@@ -2274,7 +2274,7 @@ Physics Processes
 |                                  | Geant4.10.4 onwards.                                  |
 +----------------------------------+-------------------------------------------------------+
 | useMuonNuclear                   | Uses muon-nuclear interaction processes when using    |
-|                                  | `em_extra` phyiscs list. Default On. Requires         |
+|                                  | `em_extra` physics list. Default On. Requires         |
 |                                  | Geant4.10.2 onwards.                                  |
 +----------------------------------+-------------------------------------------------------+
 | usePositronToMuMu                | Uses muon pair production from positron annihilation  |
