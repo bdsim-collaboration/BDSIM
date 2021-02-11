@@ -144,6 +144,8 @@ When using the option :code:`storeMinimalData=1`, the following options are turn
 * storeTrajectory
 * storeModel
 
+.. warning:: Note, this won't respect alternative versions of these options such as "storeTrajectories".
+
 Therefore, there is no model (required for optics comparisons and loading samplers in analysis),
 no particle data, no energy deposition hits and 0 per-event histograms (primary hit, loss and
 energy deposition).
