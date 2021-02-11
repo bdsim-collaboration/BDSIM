@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -244,6 +245,10 @@ private:
 
   G4int nSamplers; ///< Count of number of samplers to be built.
   G4bool buildPlacementFieldsWorld;
+  
+  /// Cache of possibly loaded logical volumes from a world geometry file - used for biasing.
+  std::set<G4LogicalVolume*> worldContentsLogicalVolumes;
+  G4LogicalVolume* worldLogicalVolume;
 };
 
 #endif

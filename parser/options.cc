@@ -338,6 +338,8 @@ void Options::PublishMembers()
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
+  publish("biasForWorldVolume",  &Options::biasForWorldVolume);
+  publish("biasForWorldContents",&Options::biasForWorldContents);
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);

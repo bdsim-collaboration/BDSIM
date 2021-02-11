@@ -1156,6 +1156,16 @@ file. See :ref:`externally-provided-geometry` for more details.
   :code:`worldGeometryFile`, BDSIM will exit.
 * The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
   the supplied geometry by density. See :ref:`automatic-colours` for details.
+* The option :code:`biasForWorldContents` may be used to attach a bias object to the
+  daughter volumes (i.e. excluding the world volume itself) of the loaded world geometry.
+  This is useful for shielding.
+* The option :code:`biasForWorldVolume` may be used to attacha a bias object to the world
+  volume itself (only). See :ref:`physics-biasing` for details.
+
+.. warning:: Be careful to avoid name clashing if loading multiple GDML files including the world.
+	     The usual preprocessGDML option is on to protect against this, but should the user wish,
+	     this can be turned off for quicker loading times. The user must therefore ensure no
+	     name clashing (i.e. degenerate names for anything between GDML files).
 
 .. _placements:
 

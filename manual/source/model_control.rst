@@ -1682,7 +1682,17 @@ vacuum respectively::
   but :code:`biasVaccum` would apply to this volume.
 * If externally provided geometry is used with an `element` beam line element, the 'vacuum'
   **logical** volumes can be labelled as such with :code:`namedVacuumVolumes` in the individual beam
-  line element definition. See :ref:`element` for more details.
+  line element definition. See :ref:`element` for more detail.
+
+Defaults can be set with the options :code:`defaultBiasVacuum` and :code:`defaultBiasMaterial`. Only
+in the case where a beam line element has no biasing specified will these bias objects be applied.
+They will not be mixed with per-element definitions.
+
+* The world logical volume (only, i.e. excluding any daughters) can be biased with the option
+  :code:`biasForWorldVolume`.
+* The world daughter volumes that are not beam line components in the case of an externally provided
+  world geometry file can be biased with the option :code:`biasForWorldContents`.
+
 
 .. _physics-bias-importance-sampling:
   
@@ -2158,8 +2168,19 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| defaultBiasVacuum                | Name of bias object to be attached to vacuum volumes  |
-|                                  | by default                                            |
+| biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
+|                                  | logical volume only (i.e. not the daughters). White   |
+|                                  | space separate list in a string.                      |
++----------------------------------+-------------------------------------------------------+
+| biasForWorldContents             | Exclusively in the case of externally provided world  |
+|                                  | geometry, the daughter volumes in the loaded world    |
+|                                  | volume can be biased with this option. White space    |
+|                                  | separated list in a string. Does not apply to world   |
+|                                  | volume itself.                                        |
++----------------------------------+-------------------------------------------------------+
+| defaultBiasVacuum                | Name of bias object(s) to be attached to vacuum       |
+|                                  | volumes by default. White space separate list in a    |
+|                                  | string, such as "bias1 bias2".                        |
 +----------------------------------+-------------------------------------------------------+
 | defaultBiasMaterial              | Name of bias object to be attached to general         |
 |                                  | material of components outside the vacuum by default  |

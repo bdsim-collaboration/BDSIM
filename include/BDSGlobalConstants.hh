@@ -179,6 +179,8 @@ public:
   inline G4bool   BeamPipeIsInfiniteAbsorber() const {return G4bool(options.beamPipeIsInfiniteAbsorber);}
   inline G4bool   CollimatorsAreInfiniteAbsorbers() const {return G4bool(options.collimatorsAreInfiniteAbsorbers);}
   inline G4bool   TunnelIsInfiniteAbsorber() const {return G4bool  (options.tunnelIsInfiniteAbsorber);}
+  inline G4String BiasForWorldVolume()       const {return G4String(options.biasForWorldVolume);}
+  inline G4String BiasForWorldContents()     const {return G4String(options.biasForWorldContents);}
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
   inline G4double ChordStepMinimumYoke()     const {return G4double(options.chordStepMinimumYoke)*CLHEP::m;}
