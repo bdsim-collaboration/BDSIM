@@ -212,6 +212,8 @@ OptionsBase::OptionsBase()
   // biasing options
   defaultBiasVacuum        = "";
   defaultBiasMaterial      = "";
+  biasForWorldVolume       = "";
+  biasForWorldContents     = "";
 
   // tracking options
   integratorSet            = "bdsimmatrix";

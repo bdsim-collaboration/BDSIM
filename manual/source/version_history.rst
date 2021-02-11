@@ -28,6 +28,9 @@ New Features
   in that placement of geometry.
 * Sub-fields can now be used with E field maps.
 * The :code:`transform3d` beam line element now accepts axis angle parameters.
+* Bias objects can now be attached to the world volume (e.g. the air) specifically.
+* Bias objects can now be attached to the daughter volumes of the world when you load
+  an external GDML world.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -35,6 +38,16 @@ New Features
 +==================================+=======================================================+
 | tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
 |                                  | segment to be built (m). Default 50 m. Min 1 m.       |
++----------------------------------+-------------------------------------------------------+
+| biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
+|                                  | logical volume only (i.e. not the daughters). White   |
+|                                  | space separate list in a string.                      |
++----------------------------------+-------------------------------------------------------+
+| biasForWorldContents             | Exclusively in the case of externally provided world  |
+|                                  | geometry, the daughter volumes in the loaded world    |
+|                                  | volume can be biased with this option. White space    |
+|                                  | separated list in a string. Does not apply to world   |
+|                                  | volume itself.                                        |
 +----------------------------------+-------------------------------------------------------+
 
 General

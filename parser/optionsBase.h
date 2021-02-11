@@ -251,6 +251,8 @@ namespace GMAD
     // biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
+    std::string biasForWorldVolume;
+    std::string biasForWorldContents;
 
     // tracking related parameters
     std::string integratorSet;
