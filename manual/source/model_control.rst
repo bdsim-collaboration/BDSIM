@@ -2957,6 +2957,22 @@ This defines a circular (by default) sampler with radius 10 cm positioned with r
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
+Shape
+*****
+
+To control the sampler shape, the variable :code:`shape` should be specified. Currently,
+either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
+be used to control the shape with the same meaning as beam pipe apertures.
+
+Example: ::
+
+  s2: samplerplacement, z=40*m,
+                        shape="rectangular",
+			aper1=40*m, aper2=40*m;
+
+.. warning:: In the case of `rectangular` **both** `aper1` and `aper2` must be specified.
+
+
 Placement
 *********
 
