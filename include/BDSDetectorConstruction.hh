@@ -248,6 +248,7 @@ private:
   
   /// Cache of possibly loaded logical volumes from a world geometry file - used for biasing.
   std::set<G4LogicalVolume*> worldContentsLogicalVolumes;
+  std::set<G4LogicalVolume*> worldVacuumLogicalVolumes;
   G4LogicalVolume* worldLogicalVolume;
 };
 
