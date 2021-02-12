@@ -39,6 +39,11 @@ New Features
 | tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
 |                                  | segment to be built (m). Default 50 m. Min 1 m.       |
 +----------------------------------+-------------------------------------------------------+
+| biasForWorldVacuum               | In the case of externally provided world geometry and |
+|                                  | 'vacuum' volumes are named using the option           |
+|                                  | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
+|                                  | can be given for these volumes.                       |
++----------------------------------+-------------------------------------------------------+
 | biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
 |                                  | logical volume only (i.e. not the daughters). White   |
 |                                  | space separate list in a string.                      |
@@ -48,6 +53,10 @@ New Features
 |                                  | volume can be biased with this option. White space    |
 |                                  | separated list in a string. Does not apply to world   |
 |                                  | volume itself.                                        |
++----------------------------------+-------------------------------------------------------+
+| worldVacuumVolumeNames           | White space separated list of names as a string of    |
+|                                  | logical volume names for volumes to be labelled as    |
+|                                  | `vacuum` for the purpose of biasing.                  |
 +----------------------------------+-------------------------------------------------------+
 
 General
