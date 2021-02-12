@@ -2066,6 +2066,10 @@ described in :ref:`tunnel-geometry`.
 |                                  | :ref:`external-world-geometry` for more details.      |
 |                                  | Default = "".                                         |
 +----------------------------------+-------------------------------------------------------+
+| worldVacuumVolumeNames           | White space separated list of names as a string of    |
+|                                  | logical volume names for volumes to be labelled as    |
+|                                  | `vacuum` for the purpose of biasing.                  |
++----------------------------------+-------------------------------------------------------+
 | autoColourWorldGeometryFile      | Boolean whether to automatically colour geometry      |
 |                                  | loaded from the worldGeometryFile. Default true.      |
 +----------------------------------+-------------------------------------------------------+
@@ -2168,6 +2172,11 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
+| biasForWorldVacuum               | In the case of externally provided world geometry and |
+|                                  | 'vacuum' volumes are named using the option           |
+|                                  | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
+|                                  | can be given for these volumes.                       |
++----------------------------------+-------------------------------------------------------+
 | biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
 |                                  | logical volume only (i.e. not the daughters). White   |
 |                                  | space separate list in a string.                      |
