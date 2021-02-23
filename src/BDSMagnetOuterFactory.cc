@@ -249,20 +249,22 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
       geom->SetExtent(BDSExtent(info->containerRadius*CLHEP::m,info->containerRadius*CLHEP::m, geom->GetExtent().ZPos()));
   }
 
-  if (magInner.TransverselyLessThan(bpExtent))
-    {
-      std::stringstream ss, ss2, ss3;
-      ss << info->geometryTypeAndPath;
-      std::string sss = ss.str();
-      sss += " will not fit around beam pipe in element \"" + name + "\"\n";
-      sss += "Determined extents to be:\n";
-      ss2 << magInner;
-      sss += "External geometry inner " + ss2.str();
-      ss3 << bpExtent;
-      sss += "Beam pipe outer " + ss3.str();
-      throw BDSException(__METHOD_NAME__, sss);
-    }
-    
+//Test unnecessary now as the method to include the beampipe in the outer logical volume has been modified to work even if (magInner.TransverselyLessThan(bpExtent)). ( see BDSMagnet::PlaceComponents())
+
+//  if (magInner.TransverselyLessThan(bpExtent))
+//    {
+//      std::stringstream ss, ss2, ss3;
+//      ss << info->geometryTypeAndPath;
+//      std::string sss = ss.str();
+//      sss += " will not fit around beam pipe in element \"" + name + "\"\n";
+//      sss += "Determined extents to be:\n";
+//      ss2 << magInner;
+//      sss += "External geometry inner " + ss2.str();
+//      ss3 << bpExtent;
+//      sss += "Beam pipe outer " + ss3.str();
+//      throw BDSException(__METHOD_NAME__, sss);
+//    }
+
   BDSGeometryComponent* container = CreateContainerForExternal(name, magnetContainerLength, geom, beampipe);
   
   BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
