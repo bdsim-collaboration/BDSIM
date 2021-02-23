@@ -102,6 +102,8 @@ Bug Fixes
 * Fix transforms for when an E or EM field was used in a component that was offset or tilted with
   respect to the beam line. The field would not correctly be aligned to the component. B fields were fine.
 * User limits (minimum kinetic energy for example) weren't attached to placement geometry.
+* Fix S coordinate for energy deposition hit of a secondary particle that is killed. In the case where
+  secondaries were killed, the S coordinate of that energy deposition hit would have been wrong.
 
 
 Output Changes

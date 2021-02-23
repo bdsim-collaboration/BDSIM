@@ -258,8 +258,8 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   auto UpdateParams = [&](BDSPhysicalVolumeInfo* info)
     {
       G4double sCentre = info->GetSPos();
-      sAfter           = sCentre;
-      sBefore          = sCentre;
+      sAfter           = sCentre + posLocal.z();
+      sBefore          = sCentre + posLocal.z();
       beamlineIndex    = info->GetBeamlineIndex();
     };
   
