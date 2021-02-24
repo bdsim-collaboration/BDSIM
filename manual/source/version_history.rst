@@ -72,6 +72,7 @@ General
   solids are used for optimisation of geometry. Applies to both straight and angled beam pipes.
   All done completely automatically internally.
 * The print out of materials now lists the vacuum density in g/cm3 rather than g/m3, as is more common.
+* The name of the bunch distribution is always print out in the terminal print out now.
 
 Bug Fixes
 ---------

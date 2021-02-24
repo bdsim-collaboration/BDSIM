@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 BDSBunchPtc::BDSBunchPtc():
+  BDSBunch("ptc"),
   matchDistrFileLength(false),
   nRays(0),
   fileName("./inrays.madx"),
