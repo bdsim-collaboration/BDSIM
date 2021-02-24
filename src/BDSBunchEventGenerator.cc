@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
-  BDSBunch(),
+  BDSBunch("event generator"),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
   eventGeneratorMinY(0),
