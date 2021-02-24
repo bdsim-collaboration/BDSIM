@@ -113,6 +113,8 @@ Bug Fixes
 * User limits (minimum kinetic energy for example) weren't attached to placement geometry.
 * Fix S coordinate for energy deposition hit of a secondary particle that is killed. In the case where
   secondaries were killed, the S coordinate of that energy deposition hit would have been wrong.
+* The curvilinear world and bridge world volumes and extra start and finish volumes are now
+  consistent in their diameter.
 
 
 Output Changes
