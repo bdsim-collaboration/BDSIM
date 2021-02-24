@@ -31,6 +31,9 @@ New Features
 * Bias objects can now be attached to the world volume (e.g. the air) specifically.
 * Bias objects can now be attached to the daughter volumes of the world when you load
   an external GDML world.
+* By default now, the rest mass of an artificially killed particle is **not** included in the
+  Eloss.energy hit recorded. If this is desired, as was the old behaviour in previous versions,
+  then the option :code:`killedParticlesMassAddedToEloss=1` can be used.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -53,6 +56,11 @@ New Features
 |                                  | volume can be biased with this option. White space    |
 |                                  | separated list in a string. Does not apply to world   |
 |                                  | volume itself.                                        |
++----------------------------------+-------------------------------------------------------+
+| killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
+|                                  | mass will be included in the energy deposiiton hit.   |
+|                                  | Relevant when minimumKineticEnergy option or          |
+|                                  | stopSecondaries is used.                              |
 +----------------------------------+-------------------------------------------------------+
 | worldVacuumVolumeNames           | White space separated list of names as a string of    |
 |                                  | logical volume names for volumes to be labelled as    |

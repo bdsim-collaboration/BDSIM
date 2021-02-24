@@ -2127,6 +2127,12 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | killNeutrinos                    | Whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
 +----------------------------------+-------------------------------------------------------+
+| killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
+|                                  | mass will be included in the energy deposiiton hit.   |
+|                                  | Relevant when minimumKineticEnergy option or          |
+|                                  | stopSecondaries is used. This option applies to all   |
+|                                  | Eloss hits including world, vacuum, global, tunnel.   |
++----------------------------------+-------------------------------------------------------+
 | maximumStepLength                | Maximum step length [m] (default = 20 m)              |
 +----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | The maximum time of flight allowed for any particle   |
