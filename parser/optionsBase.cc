@@ -237,6 +237,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
   killNeutrinos            = false;
+  killedParticlesMassAddedToEloss = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
