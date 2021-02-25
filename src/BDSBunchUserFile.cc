@@ -357,7 +357,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   std::stringstream ss(line);
   for (auto it=fields.begin();it!=fields.end();it++)
     {
-      if(it->name=="Ek")
+      if(it->name=="skip")
+	{double dummy; ReadValue(ss, dummy);}
+      else if(it->name=="Ek")
 	{ReadValue(ss, Ek); Ek *= (CLHEP::GeV * it->unit);}
       else if(it->name=="E")
 	{ReadValue(ss, E); E *= (CLHEP::GeV * it->unit);}
@@ -386,9 +388,6 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	}
       else if(it->name=="weight")
 	{ReadValue(ss, weight);}
-
-      else if(it->name=="skip")
-	{double dummy; ReadValue(ss, dummy);}
     }
 
   // coordinate checks
