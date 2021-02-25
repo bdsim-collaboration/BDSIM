@@ -111,6 +111,9 @@ private:
   template <typename U>
   void CheckAndParseUnits(const G4String& name, const G4String& rest, U unitParser);
 
+  /// Open the file, skip lines, then count number of lines, then close file again.
+  G4int CountLinesInFile();
+  
   /// Open the file and skip lines.
   virtual void Initialise();
 
@@ -119,6 +122,7 @@ private:
   void EndOfFileAction();
 
   G4double ffact; ///< Cache of flip factor from global constants.
+  G4bool   matchDistrFileLength;
 };
 
 namespace BDS

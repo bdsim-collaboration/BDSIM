@@ -54,7 +54,8 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   lineCounter(0),
   printedOutFirstTime(false),
   anEnergyCoordinateInUse(false),
-  changingParticleType(false)
+  changingParticleType(false),
+  matchDistrFileLength(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -283,14 +284,38 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
-  if (beam.matchDistrFileLength)
-    {BDS::Warning("The option matchDistrFileLength doesn't work with the userfile distribution");}
+  matchDistrFileLength = beam.matchDistrFileLength;
   ParseFileFormat();
+}
+
+template<class T>
+G4int BDSBunchUserFile<T>::CountLinesInFile()
+{
+  OpenBunchFile();
+  SkipLines();
+  
+  G4int numLines = 0;
+  std::string line;
+  std::regex comment("^\\#.*");
+  while ( std::getline(InputBunchFile, line) )
+  {
+    if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+      {continue;}
+    ++numLines;
+  }
+  CloseBunchFile();
+  return numLines;
 }
 
 template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
+  G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
+  if (matchDistrFileLength && !nGenerateHasBeenSet)
+  {
+    G4int nGenerate = CountLinesInFile();
+    BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
+  }
   OpenBunchFile();
   SkipLines();
 }
