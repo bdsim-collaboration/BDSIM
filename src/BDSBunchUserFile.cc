@@ -176,7 +176,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	}
       else
 	{
-	  G4String message = "Cannot determine bunch data format.  Failed at token: " + token;
+	  G4String message = "Cannot determine bunch data format. Failed at token: " + token;
 	  throw BDSException(__METHOD_NAME__, message);
 	}
     }
@@ -394,7 +394,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (anEnergyCoordinateInUse)
     {
       if (particleDefinition)
-        {
+        {// no checking here that only one variable is set - must ensure in this class
           particleDefinition->SetEnergies(E, Ek, P);
           E = particleDefinition->TotalEnergy();
         }
