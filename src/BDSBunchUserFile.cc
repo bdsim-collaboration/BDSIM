@@ -108,49 +108,50 @@ void BDSBunchUserFile<T>::ParseFileFormat()
     }
   for (auto const& token : results)
     {
+      G4String vari = "";
+      G4String rest = "";
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
 	{
 	  anEnergyCoordinateInUse = true;
-	  G4String name,rest;
 	  if(token.substr(0,2)=="Ek")
 	    {//Kinetic energy (longer name).
-	      name = token.substr(0,2);
+	      vari = token.substr(0,2);
 	      rest = token.substr(2);
 	    }
 	  else
 	    {
-	      name = token.substr(0,1);
+	      vari = token.substr(0,1);
 	      rest = token.substr(1);
 	    }
-	  CheckAndParseUnits(name, rest, BDS::ParseEnergyUnit);
+	  CheckAndParseUnits(vari, rest, BDS::ParseEnergyUnit);
 	}
       else if(token.substr(0,1)=="t")
 	{
-	  G4String name = token.substr(0, 1);
-	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, BDS::ParseTimeUnit);
+	  vari = token.substr(0, 1);
+	  rest = token.substr(1);
+	  CheckAndParseUnits(vari, rest, BDS::ParseTimeUnit);
 	}
       else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
 	       ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
 	       ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
 	{
-	  G4String name = token.substr(0,1);
-	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
+	  vari = token.substr(0,1);
+	  rest = token.substr(1);
+	  CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
 	}
       else if ( (token.substr(0,2)=="xp") ||
 		(token.substr(0,2)=="yp") ||
 		(token.substr(0,2)=="zp") )
 	{
-	  G4String name = token.substr(0,2);
-	  G4String rest = token.substr(2);
-	  CheckAndParseUnits(name, rest, BDS::ParseAngleUnit);
+	  vari = token.substr(0,2);
+	  rest = token.substr(2);
+	  CheckAndParseUnits(vari, rest, BDS::ParseAngleUnit);
 	}
       else if (token.substr(0, 1) == "S")
 	{
-	  G4String name = token.substr(0, 1);
-	  G4String rest = token.substr(1);
-	  CheckAndParseUnits(name, rest, BDS::ParseLengthUnit);
+	  vari = token.substr(0, 1);
+	  rest = token.substr(1);
+	  CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
 	  useCurvilinear = true;
 	}
       else if(token.substr(0,5)=="pdgid")
@@ -183,7 +184,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 
 template <typename T>
 template <typename U>
-void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& name,
+void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& uName,
                                              const G4String& rest,
                                              U unitParser)
 {
@@ -196,10 +197,10 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& name,
     {
       G4String fmt = rest.substr(pos1 + 1, pos2 - 1);
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "name = " << name << "\n";
+      G4cout << __METHOD_NAME__ << "name = " << uName << "\n";
       G4cout << __METHOD_NAME__ << "rest = " << rest << "\n";
 #endif
-      sd.name = name;
+      sd.name = uName;
       sd.unit = unitParser(fmt);
       fields.push_back(sd);
     }
