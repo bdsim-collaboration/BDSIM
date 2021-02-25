@@ -809,10 +809,6 @@ If the number of particles to be generated with ngenerate is greater than the nu
 particles defined in the file, the bunch generation will reload the file and read the
 particle coordinates from the beginning. A warning will be printed out in this case.
 
-This distribution reads one line at a time at the start of each event to be memory efficient.
-However, this prevents knowing the number of lines in the file (unlike the :code:`ptc`
-distribution that loads all lines and can use the beam option :code:`matchDistrFileLength`).
-
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
@@ -847,8 +843,8 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 |                                  | comment lines.                                        |
 +----------------------------------+-------------------------------------------------------+
 | `matchDistrFileLength`           | Option for certain distributions to simulate the same |
-|                                  | number of events as are in the file. Currently only   |
-|                                  | for the `ptc` distribution.                           |
+|                                  | number of events as are in the file. Currently works  |
+|                                  | for the `userfile` and `ptc` distribution.            |
 +----------------------------------+-------------------------------------------------------+
 
 Skipping and Ignoring Lines:
