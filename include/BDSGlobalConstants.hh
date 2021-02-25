@@ -126,6 +126,7 @@ public:
   inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
   inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
   inline G4int    NGenerate()              const {return numberToGenerate;}
+  inline G4bool   NGenerateSet()           const {return G4bool  (options.HasBeenSet("ngenerate"));}
   inline G4bool   GeneratePrimariesOnly()  const {return G4bool  (options.generatePrimariesOnly);}
   inline G4bool   ExportGeometry()         const {return G4bool  (options.exportGeometry);}
   inline G4String ExportType()             const {return G4String(options.exportType);}
