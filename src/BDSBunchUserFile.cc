@@ -198,16 +198,16 @@ void BDSBunchUserFile<T>::CheckConflictingParameters(const std::set<G4String>& s
   auto inSetD = [=](const BDSBunchUserFile::Doublet& v){return inSet(v.name);};
   int  count  = std::count_if(fields.begin(), fields.end(), inSetD);
   if (count > 1)
-  {
-    G4String message = "More than one of the following set in user file columns (\"distrFileFormat\") ";
-    for (const auto& st : s)
     {
-      message += st;
-      message += ", ";
+      G4String message = "More than one of the following set in user file columns (\"distrFileFormat\") ";
+      for (const auto& st : s)
+	{
+	  message += st;
+	  message += ", ";
+	}
+      message += "\nPossibly conflicting information. Ensure only one by skipping others with \"-\" symbol";
+      throw BDSException("BDSBunchUserFile::CheckConflictingParameters>", message);
     }
-    message += "\nPossibly conflicting information. Ensure only one by skipping others with \"-\" symbol";
-    throw BDSException("BDSBunchUserFile::CheckConflictingParameters>", message);
-  }
 }
 
 template <typename T>
@@ -229,17 +229,13 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& uName,
   G4int pos2 = rest.find("]");
   if (pos1 < 0 || pos2 < 0)
     {
-      G4String message = "Missing bracket [] in units of user file format\n";
+      G4String message = "Missing bracket [] in units of \"distrFileFormat\"\n";
       message += "variable : \"" + uName + "\" and unit \"" + rest + "\"";
-      throw BDSException(__METHOD_NAME__, message);
+      throw BDSException("BDSBunchUserFile::CheckAndParseUnits>", message);
     }
   else
     {
       G4String fmt = rest.substr(pos1 + 1, pos2 - 1);
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "name = " << uName << "\n";
-      G4cout << __METHOD_NAME__ << "rest = " << rest << "\n";
-#endif
       sd.name = uName;
       sd.unit = unitParser(fmt);
       fields.push_back(sd);
@@ -298,11 +294,11 @@ G4int BDSBunchUserFile<T>::CountLinesInFile()
   std::string line;
   std::regex comment("^\\#.*");
   while ( std::getline(InputBunchFile, line) )
-  {
-    if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
-      {continue;}
-    ++numLines;
-  }
+    {
+      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+	{continue;}
+      ++numLines;
+    }
   CloseBunchFile();
   return numLines;
 }
@@ -312,10 +308,11 @@ void BDSBunchUserFile<T>::Initialise()
 {
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
-  {
-    G4int nGenerate = CountLinesInFile();
-    BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-  }
+    {
+      G4int nGenerate = CountLinesInFile();
+      BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
+      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulation " << nGenerate << " events" << G4endl;
+    }
   OpenBunchFile();
   SkipLines();
 }
