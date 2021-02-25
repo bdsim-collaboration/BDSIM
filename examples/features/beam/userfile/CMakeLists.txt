@@ -17,6 +17,8 @@ simple_testing(bunch-userfile-p                "--file=userfile-p.gmad"         
 simple_testing(bunch-userfile-all-columns      "--file=userfile-all-columns.gmad"      "")
 simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
 
+simple_fail(bunch-userfile-bad-units   "--file=userfile-bad-units.gmad")
+
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
 else()
