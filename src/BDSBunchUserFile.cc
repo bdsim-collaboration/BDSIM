@@ -189,10 +189,22 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& uName,
                                              U unitParser)
 {
   struct BDSBunchUserFile::Doublet sd;
+  if (rest.empty())
+    {
+      sd.name = uName;
+      sd.unit = 1.0;
+      fields.push_back(sd);
+      return;
+    }
+  
   G4int pos1 = rest.find("[");
   G4int pos2 = rest.find("]");
   if (pos1 < 0 || pos2 < 0)
-    {G4cerr << "Incorrect unit format." << G4endl;}
+    {
+      G4String message = "Missing bracket [] in units of user file format\n";
+      message += "variable : \"" + uName + "\" and unit \"" + rest + "\"";
+      throw BDSException(__METHOD_NAME__, message);
+    }
   else
     {
       G4String fmt = rest.substr(pos1 + 1, pos2 - 1);
