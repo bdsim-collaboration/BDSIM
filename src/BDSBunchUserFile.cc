@@ -34,8 +34,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+#include <algorithm>
 #include <fstream>
 #include <regex>
+#include <set>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -180,6 +182,31 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	  throw BDSException(__METHOD_NAME__, message);
 	}
     }
+  
+  std::set<G4String> energyKeys = {"E", "Ek", "P"};
+  CheckConflictingParameters(energyKeys);
+  
+  std::set<G4String> zKeys = {"z", "S"};
+  CheckConflictingParameters(zKeys);
+}
+
+template <typename T>
+void BDSBunchUserFile<T>::CheckConflictingParameters(const std::set<G4String>& s) const
+{
+  auto inSet  = [=](const G4String& v){return s.find(v) != s.end();};
+  auto inSetD = [=](const BDSBunchUserFile::Doublet& v){return inSet(v.name);};
+  int  count  = std::count_if(fields.begin(), fields.end(), inSetD);
+  if (count > 1)
+  {
+    G4String message = "More than one of the following set in user file columns (\"distrFileFormat\") ";
+    for (const auto& st : s)
+    {
+      message += st;
+      message += ", ";
+    }
+    message += "\nPossibly conflicting information. Ensure only one by skipping others with \"-\" symbol";
+    throw BDSException("BDSBunchUserFile::CheckConflictingParameters>", message);
+  }
 }
 
 template <typename T>
