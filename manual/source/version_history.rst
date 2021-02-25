@@ -115,6 +115,9 @@ Bug Fixes
   secondaries were killed, the S coordinate of that energy deposition hit would have been wrong.
 * The curvilinear world and bridge world volumes and extra start and finish volumes are now
   consistent in their diameter.
+* The `userfile` distribution would accept possibly conflicting information in coordinates such as
+  E and Ek and P. It will now prevent this as it was ambiguous. In practice the order was just how
+  it was read in the code, which was E, Ek, then P. Similarly for `S` and `z`.
 
 
 Output Changes

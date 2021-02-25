@@ -817,7 +817,7 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 	  from Geant4 and is on by default.
 
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
-* Coordinates no specified are taken from the default `reference`_ distribution parameters.
+* Coordinates not specified are taken from the default `reference`_ distribution parameters.
 * Lines starting with `#` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
@@ -825,6 +825,8 @@ distribution that loads all lines and can use the beam option :code:`matchDistrF
 * In the beam command, `X0`, `Y0`, `Z0`, `Xp0`, `Yp0`, `S0` may be used for offsets.
   In the case of `Xp0` and `Yp0`, these must be relatively small such that
   :math:`((Xp0 + xp)^2 + (Yp0 + yp)^2) < 1)`.
+* **Conflicting** parameters cannot be set. Exclusive column sets are `E`, `Ek`, `P`, and also
+  `z` and `S`. The skip column symbol `-` can be used in `distrFileFormat` to skip the others.
   
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
