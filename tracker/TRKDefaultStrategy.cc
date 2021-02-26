@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 void TRKDefaultStrategy::Track(TRKDrift* el, TRKParticle& particle, double step) {
-  trk::maps::nldrift(particle, step);
+  trk::maps::drift(particle, step);
 }
 
 void TRKDefaultStrategy::Track(TRKSBend* el, TRKParticle& particle, double step) {
@@ -61,13 +61,13 @@ void TRKDefaultStrategy::Track(TRKQuadrupole* el, TRKParticle& particle, double 
 }
 
 void TRKDefaultStrategy::Track(TRKSextupole* el, TRKParticle& particle, double step) {
-    trk::maps::nldrift(particle, step / 2);
+    trk::maps::drift(particle, step / 2);
     trk::maps::sextupole(particle, step, el->GetK2());
-    trk::maps::nldrift(particle, step / 2);
+    trk::maps::drift(particle, step / 2);
 }
 
 void TRKDefaultStrategy::Track(TRKOctupole *el, TRKParticle& particle, double step) {
-  trk::maps::nldrift(particle, step);
+  trk::maps::drift(particle, step);
 }
 
 void TRKDefaultStrategy::Track(TRKKicker *el, TRKParticle& particle, double step) {
@@ -85,7 +85,7 @@ void TRKDefaultStrategy::Track(TRKKicker *el, TRKParticle& particle, double step
       hkick *= step / length;
       vkick *= step / length;
       trk::maps::kicker(particle, hkick/2., vkick/2.);
-      trk::maps::nldrift(particle, step);
+      trk::maps::drift(particle, step);
       trk::maps::kicker(particle, hkick/2., vkick/2.);
     }
 }

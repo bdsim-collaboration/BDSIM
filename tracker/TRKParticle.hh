@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define TRKParticle_h
 
 #include <ostream>
+#include <BDSParticleDefinition.hh>
+#include "TRKReferenceParticle.hh"
 #include "vector3.hh"
 #include "vector6.hh"
 
@@ -39,25 +41,49 @@ public:
   //constructors
   TRKParticle() = delete;
   TRKParticle(double xIn, double pxIn, double yIn, double pyIn, double zIn,
-              double pzIn, double beta0In, double gamma0In, double SIn,
-              int eventidIn)
-      : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), beta0(beta0In),
-        gamma0(gamma0In), S(SIn), eventid(eventidIn), mass(938.27231) {}
+              double pzIn, double massIn, int chargeIn, double SIn,
+              int eventidIn, BDSParticleDefinition* referenceParticleIn)
+      : x(xIn), px(pxIn), y(yIn), py(pyIn), z(zIn), pz(pzIn), S(SIn),
+       referenceParticle(referenceParticleIn), mass(massIn), charge(chargeIn), eventid(eventidIn) {}
 
   //accessors
  double getS() const { return S; }
 
-  double Energy() const { return ReferenceMomentum() * (pz + 1/beta0); }
-  double KineticEnergy() const { return Energy() - mass; }
-  double Momentum() const { return std::sqrt(Energy()*Energy() - M() * M()); }
-  double ReferenceMomentum() const
+  double Energy() const
   {
-    return mass * std::sqrt(gamma0*gamma0 - 1);
+      double beta0 = referenceParticle->Beta();
+      double p0 = referenceParticle->Momentum();
+      double E0 = referenceParticle->TotalEnergy();
+      return pz * beta0 * p0 + E0;    /// TODO check this expression
   }
-  double Xp() const { return px * ReferenceMomentum() / Momentum(); }
-  double Yp() const { return py * ReferenceMomentum() / Momentum(); }
 
-  int EventID() const { return eventid; }
+  double KineticEnergy() const
+  { return Energy() - mass; }
+
+  double Momentum() const
+  { return std::sqrt(std::pow(Energy(), 2) - std::pow(M(), 2)); }
+
+
+  double Delta() const
+    { return (Momentum() - referenceParticle->Momentum())/ referenceParticle->Momentum(); }
+
+
+    double Chi() const
+    { return (Charge() * referenceParticle->Mass()) / (referenceParticle->Charge() * M()); }
+
+  double Xp() const
+  {
+      double m0 = referenceParticle->Mass();
+      return px * referenceParticle->Momentum() * (mass / m0) / Momentum();
+  }
+
+  double Yp() const
+  {
+      double m0 = referenceParticle->Mass();
+      return py * referenceParticle->Momentum() * (mass / m0) / Momentum();
+  }
+
+    int EventID() const { return eventid; }
 
   /// return mass in MeV / c^2
   double M() const { return mass; }
@@ -74,19 +100,24 @@ public:
   double z;
   double pz;
 
-  double beta0;
-  double gamma0;
-
 
   // s-position of the particle, needed for arbitrary step-length tracking
   double S;
 
+
+  /// Keep a pointer to the reference particle definition in order to convert the normalised coordinates
+  /// used for tracking to absolute quantities such as energy, momentum etc.
+  BDSParticleDefinition* referenceParticle;
+
 private:
-  int eventid;
-  /// mass in MeV / c^2
-  double mass;
-  /// charge in units of elementary charge
-  int    charge;
+    /// mass in MeV / c^2
+    double mass;
+    /// charge in units of elementary charge
+    int    charge;
+
+    int    eventid;
+
+
 };
 
 #endif
