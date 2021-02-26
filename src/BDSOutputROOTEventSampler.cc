@@ -167,25 +167,25 @@ void BDSOutputROOTEventSampler<U>::Fill(const TRKParticle& particle, double sIn)
     S = sIn / CLHEP::m;
 
     // dummy values for mass and e0 for now as they depend on the bunch
-    auto mass_ = 938.272013; //bunch.mass;
-    auto e0 = 1; //bunch.totalEnergy;
-    auto zp_ = particle.pz / CLHEP::rad;
+    double mass_ = particle.M(); //bunch.mass;
+//    auto e0 = 1; //bunch.totalEnergy;
+    double zp_ = particle.pz / CLHEP::rad;
 
 
-    auto gamma0 = particle.gamma0;
-    auto beta0 = particle.beta0;
-    auto p0 = mass_ * std::sqrt(gamma0*gamma0 - 1);
-    auto energy_ = p0 * (zp_ + 1./beta0);
+//    auto gamma0 = particle.gamma0;
+//    auto beta0 = particle.beta0;
+//    auto p0 = mass_ * std::sqrt(gamma0*gamma0 - 1);
+    auto energy_ = particle.Energy();
 
-    auto momentum = std::sqrt(energy_*energy_ - mass_*mass_);
+    double momentum = particle.Momentum();
     // convert back to bdsim standard momenta coordinates:  p/|p|
 
     n++;
     x.push_back(particle.x / CLHEP::m);
     y.push_back(particle.y / CLHEP::m);
     z = 0.0;
-    auto xp_ = (p0 / momentum) * particle.px / CLHEP::rad;
-    auto yp_ = (p0 / momentum) * particle.py / CLHEP::rad;
+    auto xp_ = particle.Xp() / CLHEP::rad; //(p0 / momentum) * particle.px / CLHEP::rad;
+    auto yp_ = particle.Yp() / CLHEP::rad; //(p0 / momentum) * particle.py / CLHEP::rad;
     xp.push_back(xp_);
     yp.push_back(yp_);
     zp.push_back(std::sqrt(1 - xp_*xp_ - yp_*yp_) / CLHEP::rad);
