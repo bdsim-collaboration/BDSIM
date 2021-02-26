@@ -43,7 +43,8 @@ class TRKBunch
 public:
   TRKBunch();
   TRKBunch(const GMAD::Beam& beam,
-	   BDSParticleDefinition* particle,
+	   BDSParticleDefinition* designParticle,
+	   BDSParticleDefinition* beamParticle,
 	   long int nGenerate = 1);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   TRKBunch(std::vector<TRKParticle>&& particleVectorIn);
@@ -78,7 +79,8 @@ private:
 
   /// populate particles using options and random number generator
   void Populate(const GMAD::Beam& beam,
-		BDSParticleDefinition* particle);
+		BDSParticleDefinition* designParticle,
+		BDSParticleDefinition* beamParticle);
   
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 

@@ -39,20 +39,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 TRKBunch::TRKBunch() : population(0) {}
 
 TRKBunch::TRKBunch(const GMAD::Beam& beam,
-		   BDSParticleDefinition* particle,
-		   long int nGenerate):
+                   BDSParticleDefinition* designParticle,
+                   BDSParticleDefinition* beamParticle,
+                   long int nGenerate):
   population(nGenerate)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
-  mass   = particle->Mass();
-  charge = particle->Charge();
-  totalEnergy   = particle->TotalEnergy();
-  kineticEnergy = particle->KineticEnergy();
-
   //populate particles using options & random number generator
-  Populate(beam, particle);
+  Populate(beam, beamParticle, designParticle);
 }
 
 TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
@@ -67,7 +63,7 @@ TRKBunch::~TRKBunch()
 {;}
 
 void TRKBunch::Populate(const GMAD::Beam& beam,
-			BDSParticleDefinition* particle)
+			BDSParticleDefinition* designParticle, BDSParticleDefinition* beamParticle)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Generating particles" << std::endl;
@@ -79,7 +75,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
   //basis, which would save around 20% memory on each particle...
 
   // Initialise bunch
-  BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(particle, beam);
+  BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(beamParticle, beam);
 
   //must have positive number of particles
   if (population < 0)
@@ -92,33 +88,44 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
 
   bdsbunch->BeginOfRunAction(population); // offsetSampleMean
 
-  BDSParticleDefinition const *referenceParticle =
-      bdsbunch->ParticleDefinition();
 
-  auto p0 = referenceParticle->Momentum();
-  auto gamma0 = referenceParticle->Gamma();
-  auto beta0 = referenceParticle->Beta();
+
+  double p0 = designParticle->Momentum();
+  double mass0 = designParticle->Mass();
+  double charge0 = designParticle->Charge();
+  double beta0 = designParticle->Beta();
+  double E0 = designParticle->TotalEnergy();
+  double S0 = 0.0;
 
   for (int i = 0; i < population; i++)
     {
       // bdsbunch generates values in CLHEP mm standard.
       BDSParticleCoordsFullGlobal c = bdsbunch->GetNextParticle();
-      double energy = c.local.totalEnergy;
+
+      // Get the updated particle definition if that has changed
+        BDSParticleDefinition const *beamParticle =
+                bdsbunch->ParticleDefinition();
+
+        mass   = beamParticle->Mass();
+        charge = beamParticle->Charge();
+        totalEnergy   = beamParticle->TotalEnergy();
+        kineticEnergy = beamParticle->KineticEnergy();
+
+      double energy = c.local.totalEnergy * (mass0 / mass); // This is also normalised
       double p = std::sqrt(energy*energy - mass*mass);
 
       // Momenta from BDSBunch are px/|p|, but we want px/p0
       // (i.e. normalised w.r.t reference momentum, not particle momentum).
-      auto px = c.local.xp * p / p0;
-      auto py = c.local.yp * p / p0;
+      auto px = c.local.xp * (p / p0) * (mass0 / mass);
+      auto py = c.local.yp * (p / p0) * (mass0 / mass);
 
-      auto z = 0; // ???  Not sure what to do with this one yet.
-      auto pz = energy / p0 - 1/beta0;
+      auto z = S0 - beta0 * c.local.T; // z = S0 - beta0 * c * t (the c is omitted for now).
+      auto pz = ((mass / mass0) * energy - E0) / (beta0 * p0); // pz = (E*m0/m - E0)/(beta0*c*P) (the c is omitted)
 
       bunch.emplace_back(c.local.x, px, c.local.y, py,
 			 z, pz,  // longitudinal coordinates
-			 beta0, gamma0, // reference relativistic
-			 0.0,
-			 i);
+			 mass0, charge0,
+			 S0, i, designParticle);
 
       //weight not required - maybe should be kept though to pass on to bdsim
     }
@@ -126,8 +133,8 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
 
 std::ostream& operator<< (std::ostream &out, const TRKBunch &beam)
 {
-  std::vector<TRKParticle>::const_iterator iter = beam.bunch.begin();
-  std::vector<TRKParticle>::const_iterator end  = beam.bunch.end();
+  auto iter = beam.bunch.begin();
+  auto end  = beam.bunch.end();
 
   for (;iter!=end;++iter)
     {out << *iter << std::endl;}
