@@ -89,14 +89,12 @@ int main (int argc, char** argv)
 				      beamParticle,
 				      beamDifferentFromDesignParticle);
 
-  if (beamDifferentFromDesignParticle) {
-    throw std::runtime_error(
-        "Tracker beam particle must match design particle.");
-  }
+//  if (beamDifferentFromDesignParticle) {
+//    throw std::runtime_error(
+//        "Tracker beam particle must match design particle.");
+//  }
 
-  TRKBunch* bunch = new TRKBunch(beam, beamParticle, nGenerate);
-
-
+  TRKBunch* bunch = new TRKBunch(beam, designParticle, beamParticle, nGenerate);
 
   /// Build beamline
   TRKFactory *factory =
