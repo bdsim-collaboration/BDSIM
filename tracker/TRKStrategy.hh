@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define TRKStrategy_h 1
 
 #include "TRKElement.hh"
+#include "TRKParticle.hh"
 
 class TRKBunch;
 //class TRKDrift;
@@ -41,14 +42,12 @@ class TRKStrategy
 public:
   TRKStrategy(int trackingStepsIn) : trackingSteps(trackingStepsIn) {}
 
-  void SetMomentumAndEnergy(double nominalMomentumIn,
-			    double nominalEnergyIn);
-
   virtual ~TRKStrategy() {}
 
   /// returns tracking type
   //  TRKType trackingType()const {return type;}
 
+  void SetReferenceParticle(BDSParticleDefinition* particle) { referenceParticle = particle;}
   /**
    * Tracks a particle for a given step length in an element
    * @param[in]  el    The TRKElement.
@@ -72,8 +71,7 @@ protected:
   /// number of tracking steps
   int trackingSteps;
 
-  double nominalMomentum;
-  double nominalEnergy;
+  BDSParticleDefinition* referenceParticle = nullptr;
 
 private:
   TRKStrategy() = delete; ///< not implemented

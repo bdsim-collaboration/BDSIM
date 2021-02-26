@@ -26,12 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "vector6.hh"
 #include "TRKParticle.hh"
 
-void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
-				       double nominalEnergyIn)
-{
-  nominalMomentum = nominalMomentumIn;
-  nominalEnergy   = nominalEnergyIn;
-}
 
 void TRKStrategy::Track(TRKTiltOffset* el, TRKParticle& particle)
 {

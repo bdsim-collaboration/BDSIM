@@ -123,10 +123,10 @@ TRKStrategy* TRKFactory::CreateStrategy()
 //      {result = new TRKHybrid(trackingsteps); break;}
     default:
       {break;}
+
+      if (result)
+      {result->SetReferenceParticle(particle);}
     }
-  if (result)
-    {result->SetMomentumAndEnergy(particle->Momentum(),
-				  particle->TotalEnergy());}
   return result;
 }
 
