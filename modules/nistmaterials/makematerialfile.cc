@@ -54,7 +54,7 @@ int main(int, char**)
 
   //int nElements = (int)nm->GetNistElementNames().size(); // nope
   int nElements = 99;
-  efile << "# maxZ " << nElements << "\n";
+  efile << "# numberOfZ " << nElements << "\n";
   // the hard-coded number in G4NistMaterialBuilder (needed for density)
   // this number is not accessible in the code, so hard coded here
   for (G4int Z = 1; Z < nElements; Z++)
@@ -94,7 +94,7 @@ int main(int, char**)
   
   mfile << "# V1.0\n";
   mfile << "# NIST Materials from BDSIM for pyg4ometry\n";
-  efile << "# Geant4 version: " << G4Version << "\n";
+  mfile << "# Geant4 version: " << G4Version << "\n";
   mfile << "# compmass\tZ\tName\tdensity(g/cm^3)\tI(eV)\n";
   mfile << "# for each element\n";
   mfile << "# \tName\tZ\tA\tfraction of mass\n";
