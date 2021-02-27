@@ -64,9 +64,6 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
                                         int  storeStepPointsN,
                                         bool storeStepPointLast)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories->trajectories.size() << G4endl;
-#endif
   if(!auxNavigator)
     {// navigator for converting coordinates to curvilinear coordinate system
       auxNavigator = new BDSAuxiliaryNavigator();
@@ -420,6 +417,10 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
 {
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+  
   int ti = trackID_trackIndex.at(trackid);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
@@ -461,6 +462,10 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 
 BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+    {return BDSOutputROOTEventTrajectoryPoint();}
+  
   int ti = trackID_trackIndex.at(trackid);  // get track index
   int si = parentStepIndex.at(ti);          // get primary index
 
@@ -492,7 +497,11 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
 {
-  unsigned int ti = (unsigned int) std::abs(trackID_trackIndex.at(trackid));  // get track index
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+  
+  int ti = trackID_trackIndex.at(trackid);
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
   while (ti != 0)
@@ -524,7 +533,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 					  ionZ[ti][psi],
 					  nElectrons[ti][psi]);
       tpv.push_back(p);
-      ti = pi;
+      ti = (int)pi;
     }
   std::reverse(tpv.begin(),tpv.end());
   return tpv;
