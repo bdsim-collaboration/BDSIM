@@ -1102,9 +1102,6 @@ void BDSMaterials::DensityCheck(const G4double  density,
 
 G4Element* BDSMaterials::CheckElement(G4String symbol) const
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Checking element " << symbol << G4endl;
-#endif
   // first look in defined element list
   auto iter = elements.find(symbol);
   if(iter != elements.end())
@@ -1151,13 +1148,13 @@ void BDSMaterials::ListMaterials() const
   if (!elements.empty())
     {
       G4cout << "Extra defined elements are:" << G4endl;
-      for (auto element : elements)
+      for (const auto& element : elements)
 	{G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
       G4cout << G4endl;
     }
   
   G4cout << "Defined materials are:" << G4endl;
-  for (auto material : materials)
+  for (const auto& material : materials)
     {
       G4cout << material.first;
       G4String realName = material.second->GetName();
@@ -1201,14 +1198,8 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
   // convert the parsed atom list to list of Geant4 G4Elements  
   if (verbose || debug)
     {G4cout << __METHOD_NAME__ << "parsing the atom list..." << G4endl;}
-  for (auto it : BDSParser::Instance()->GetAtoms())
-    {
-#ifdef BDSDEBUG
-      G4cout << "---->adding Atom, ";
-      it.print();
-#endif
-      AddElement(it.name,it.symbol,it.Z,it.A);
-    }
+  for (const auto& it : BDSParser::Instance()->GetAtoms())
+    {AddElement(it.name,it.symbol,it.Z,it.A);}
   if (verbose || debug)
     {G4cout << "size of atom list: "<< BDSParser::Instance()->GetAtoms().size() << G4endl;}
 
