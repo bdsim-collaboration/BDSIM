@@ -73,6 +73,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
+  G4cout << __METHOD_NAME__ << "event generator file format to be " << fileType.ToString() << G4endl;
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   OpenFile();
 }
@@ -101,6 +102,7 @@ void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 
 void BDSHepMC3Reader::OpenFile()
 {
+  G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;
   switch (fileType.underlying())
     {
     case BDSEventGeneratorFileType::hepmc2:
