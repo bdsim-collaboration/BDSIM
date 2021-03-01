@@ -69,7 +69,8 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   fileName(fileNameIn),
   bunch(bunchIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
-  warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
+  warnAboutSkippedParticles(warnAboutSkippedParticlesIn),
+  worldSolid(nullptr)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
@@ -235,14 +236,13 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 	}
       
       BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
-      /*
+      // ensure it's in the world - not done in primary generator action for event generators
       if (!VertexInsideWorld(fullCoords.global.Position()))
 	{
 	  delete g4prim;
 	  nParticlesSkipped++;
 	  continue;
-	}
-       */
+	}  
       
       G4double brho     = 0;
       G4double charge   = g4prim->GetCharge();
