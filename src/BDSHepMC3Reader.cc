@@ -233,6 +233,14 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 	}
       
       BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
+      
+      if (!VertexInsideWorld(fullCoords.global.Position()))
+	{
+	  delete g4prim;
+	  nParticlesSkipped++;
+	  continue;
+	}
+      
       G4double brho     = 0;
       G4double charge   = g4prim->GetCharge();
       G4double momentum = g4prim->GetTotalMomentum();
@@ -263,7 +271,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   g4event->AddPrimaryVertex(g4vtx);
 }
 
-G4bool BDSHepMC3Reader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
+G4bool BDSHepMC3Reader::VertexInsideWorld(const G4ThreeVector& pos) const
 {
   if (!worldSolid)
     {// cache the world solid
