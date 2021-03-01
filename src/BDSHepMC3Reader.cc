@@ -235,13 +235,14 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 	}
       
       BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
-      
+      /*
       if (!VertexInsideWorld(fullCoords.global.Position()))
 	{
 	  delete g4prim;
 	  nParticlesSkipped++;
 	  continue;
 	}
+       */
       
       G4double brho     = 0;
       G4double charge   = g4prim->GetCharge();
