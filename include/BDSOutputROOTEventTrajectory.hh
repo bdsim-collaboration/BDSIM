@@ -215,6 +215,7 @@ public:
   BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
   void                                           printTrajectoryInfo(int trackID);
+  bool parentIsPrimary(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   

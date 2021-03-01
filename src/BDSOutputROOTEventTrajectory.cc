@@ -576,6 +576,17 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
     }
 }
 
+bool BDSOutputROOTEventTrajectory::parentIsPrimary(int trackIDIn)
+{
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {return false;}
+  
+  unsigned int storageIndex = (unsigned int)trackID_trackIndex.at(trackIDIn);
+  unsigned int parentStorageIndex = parentIndex[storageIndex];
+  return parentID[parentStorageIndex] == 0;
+}
+
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
 {
   for (int i=0; i< (int)t.preProcessTypes.size();++i)
