@@ -144,7 +144,7 @@ void BDSHepMC3Reader::ReadSingleEvent()
   bool readEventOK = reader->read_event(*hepmcEvent);
   if (!readEventOK)
     {throw BDSException(__METHOD_NAME__, "problem with event generator file \"" + fileName + "\"");}
-  if (reader->failed()) // code for finished hte file
+  if (reader->failed()) // code for end of the file
     {
       G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
       CloseFile();
@@ -169,7 +169,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 					       centralCoordsGlobal.global.T);
   
   double overallWeight = 1.0;
-  if (hepmcevt->weights().size() > 0)
+  if (!(hepmcevt->weights().empty()))
     {overallWeight = hepmcevt->weight();}
   std::vector<BDSPrimaryVertexInformation> vertexInfos;
   G4int nParticlesSkipped = 0;
@@ -180,7 +180,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
 	{continue;} // this particle is not at the end of the tree - ignore
       
       int pdgcode = particle->pdg_id();
-      HepMC3::FourVector fv = particle->momentum();
+      const HepMC3::FourVector& fv = particle->momentum();
       G4LorentzVector p(fv.px(), fv.py(), fv.pz(), fv.e());
       G4double px = p.x() * CLHEP::GeV;
       G4double py = p.y() * CLHEP::GeV;
