@@ -2126,7 +2126,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | increased efficiency (default = true)                 |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
-|                                  | mass will be included in the energy deposiiton hit.   |
+|                                  | mass will be included in the energy deposition hit.   |
 |                                  | Relevant when minimumKineticEnergy option or          |
 |                                  | stopSecondaries is used. This option applies to all   |
 |                                  | Eloss hits including world, vacuum, global, tunnel.   |
@@ -2518,27 +2518,18 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryLocal               | For the trajectories that are stored (according to the filters),   |
-|                                    | store `xyz` and `pxpypz` local coordinate variables.               |
+
+Trajectory Filtering Options
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These options control, if :code:`storeTrajectory=1;`, which tracks trajectories should be prepared for.
+
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryLinks               | For the trajectories that are stored (according to the filters),   |
-|                                    | store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
-|                                    | `rigidity` variables for each step.                                |
-+------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryIon                 | For the trajectories that are stored (according to the filters),   |
-|                                    | store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
-+------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Function**                                                       |
++====================================+====================================================================+
 | storeTrajectoryDepth               | The depth of the particle tree to store the trajectories to. 0 is  |
 |                                    | the primary, 1 is the first generation of secondaries, etc. -1     |
 |                                    | can be used to store all (i.e. to infinite depth).                 |
-+------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
-|                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
-|                                    | only the first creation point is stored.                           |
-+------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryStepPointLast (\*)  | Boolean. If true, and used in combination with the option          |
-|                                    | `storeTrajectoryStepPoints`, the end point of the trajectory is    |
-|                                    | also stored.                                                       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryELossSRange         | Ranges in curvilinear S coordinate that if a particular track      |
 |                                    | causes energy deposition in this range, its trajectory will be     |
@@ -2578,16 +2569,53 @@ with the following options.
 |                                    | the trajectories of any particles (irrespective of filters) that   |
 |                                    | lead to the muon in question.                                      |
 +------------------------------------+--------------------------------------------------------------------+
+| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
+|                                    | all of the specified filters will be stored. This is opposite to   |
+|                                    | the more inclusive OR logic used where a trajectory will be stored |
+|                                    | if matches any of the specified filters.                           |
++------------------------------------+--------------------------------------------------------------------+
 | trajCutGTZ                         | Only stores trajectories whose *global* z-coordinate is greater    |
 |                                    | than this value in metres [m].                                     |
 +------------------------------------+--------------------------------------------------------------------+
 | trajCutLTR                         | Only stores trajectories whose *global* radius is from the start   |
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
-| trajectoryFilterLogicAND           | False by default. If set to true (=1) only particles that match    |
-|                                    | all of the specified filters will be stored. This is opposite to   |
-|                                    | the more inclusive OR logic used where a trajectory will be stored |
-|                                    | if matches any of the specified filters.                           |
+
+
+Trajectory Storage Options
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These options control what information or variables are written to file **for** a given trajectory
+that has passed the filters above.
+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Function**                                                       |
++====================================+====================================================================+
+| storeTrajectoryIon                 | Store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryKineticEnergy       | Store `kineticEnergy` for each step. Default True.                 |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLocal               | Store `xyz` and `pxpypz` local coordinate variables.               |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryLinks               | Store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
+|                                    | `rigidity` variables for each step.                                |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryMomentumVector      | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV for each step. |
+|                                    | Default False.                                                     |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryProcesses           | Store `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,  |
+|                                    | `postProcessSubTypes`, the Geant4 integer process IDs for pre and  |
+|                                    | post step points. Default False.                                   |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
+|                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
+|                                    | only the first creation point is stored.                           |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryStepPointLast (\*)  | Boolean. If true, and used in combination with the option          |
+|                                    | `storeTrajectoryStepPoints`, the end point of the trajectory is    |
+|                                    | also stored.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryTime                | Store `T`, time in ns for each step. Default False.                |
 +------------------------------------+--------------------------------------------------------------------+
 
 .. note:: (\*) If the option :code:`storeTrajectoryStepPoints` (as well as possibly
