@@ -429,6 +429,7 @@ void Options::PublishMembers()
   publish("storePrimaries",                 &Options::storePrimaries);
   publish("storePrimaryHistograms",         &Options::storePrimaryHistograms);
   publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
+  
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
@@ -439,8 +440,13 @@ void Options::PublishMembers()
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
+  
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
   publish("trajNoTransportation",               &Options::trajNoTransportation); ///< kept only for backwards compatibility.
+  publish("storeTrajectoryKineticEnergy",       &Options::storeTrajectoryKineticEnergy);
+  publish("storeTrajectoryMomentumVector",      &Options::storeTrajectoryMomentumVector);
+  publish("storeTrajectoryProcesses",           &Options::storeTrajectoryProcesses);
+  publish("storeTrajectoryTime",                &Options::storeTrajectoryTime);
   publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
   publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);

@@ -319,6 +319,7 @@ namespace GMAD
     bool        storePrimaryHistograms;
     
     bool        storeTrajectory;
+    // filters
     int         storeTrajectoryDepth;
     int         storeTrajectoryStepPoints;
     bool        storeTrajectoryStepPointLast;
@@ -327,11 +328,19 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
+
+    // for trajectories stored, what data is stored
     bool        storeTrajectoryTransportationSteps;
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
+    bool        storeTrajectoryKineticEnergy;
+    bool        storeTrajectoryMomentumVector;
+    bool        storeTrajectoryProcesses;
+    bool        storeTrajectoryTime;
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+
+    // filter logic
     bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;

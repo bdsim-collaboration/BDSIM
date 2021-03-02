@@ -33,6 +33,8 @@ namespace BDS
 {
   /// Search the trajectory container for the primary trajectory.
   BDSTrajectoryPrimary* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
+  
+  struct TrajectoryOptions;
 }
 
 /**
@@ -50,10 +52,7 @@ class BDSTrajectoryPrimary: public BDSTrajectory
 public:
   BDSTrajectoryPrimary(const G4Track* aTrack,
 		       G4bool         interactive,
-		       G4bool         suppressTransportationSteps,
-		       G4bool         storeTrajectoryLocal,
-		       G4bool         storeTrajectoryLinks,
-		       G4bool         storeTrajectoryIon,
+		       const BDS::TrajectoryOptions storageOptionsIn,
 		       G4bool         storeTrajectoryPointsIn);
   
   /// copy constructor is not needed
