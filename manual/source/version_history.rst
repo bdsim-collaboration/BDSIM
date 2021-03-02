@@ -34,14 +34,14 @@ New Features
 * By default now, the rest mass of an artificially killed particle is **not** included in the
   Eloss.energy hit recorded. If this is desired, as was the old behaviour in previous versions,
   then the option :code:`killedParticlesMassAddedToEloss=1` can be used.
+* More granular control over information stored in trajectories. Trajectories can use a lot of disk
+  space so it's important to allow this control so we store only what we need for every step of every
+  trajectory chosen for storage.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
-| tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
-|                                  | segment to be built (m). Default 50 m. Min 1 m.       |
-+----------------------------------+-------------------------------------------------------+
 | biasForWorldVacuum               | In the case of externally provided world geometry and |
 |                                  | 'vacuum' volumes are named using the option           |
 |                                  | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
@@ -58,9 +58,26 @@ New Features
 |                                  | volume itself.                                        |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
-|                                  | mass will be included in the energy deposiiton hit.   |
+|                                  | mass will be included in the energy deposition hit.   |
 |                                  | Relevant when minimumKineticEnergy option or          |
 |                                  | stopSecondaries is used.                              |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryMomentumVector    | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV   |
+|                                  | for each step. Default False                          |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryKineticEnergy     | For the trajectories that are stored (according to    |
+|                                  | the filters), store `kineticEnergy` for each step.    |
+|                                  | Default True.                                         |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryProcesses         | Store `preProcessTyps`, `preProcessSubTypes`,         |
+|                                  | `postProcessTypes`, `postProcessSubTypes`, the Geant4 |
+|                                  | integer process IDs for pre and post step points.     |
+|                                  | Default False.                                        |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryTime              | Store `T`, time in ns for each step. Default False.   |
++----------------------------------+-------------------------------------------------------+
+| tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
+|                                  | segment to be built (m). Default 50 m. Min 1 m.       |
 +----------------------------------+-------------------------------------------------------+
 | worldVacuumVolumeNames           | White space separated list of names as a string of    |
 |                                  | logical volume names for volumes to be labelled as    |
@@ -81,6 +98,7 @@ General
   All done completely automatically internally.
 * The print out of materials now lists the vacuum density in g/cm3 rather than g/m3, as is more common.
 * The name of the bunch distribution is always print out in the terminal print out now.
+* Clarified trajectory options in manual a bit - two tables, one for filtering, one for storage.
 
 Bug Fixes
 ---------
@@ -125,6 +143,11 @@ Output Changes
 --------------
 
 * :code:`Event.Trajectory.energyDeposit` now in GeV - was previously actually MeV, so 1000x bigger value.
+* Trajectory variables `PXPYPZ`, `T`, `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,
+  `postProcessSubTypes` are no **off** by default. These can be turned on in the output via new options
+  listed above and in the options section. Expect a slight reduction in data file size when storing
+  trajectories with default options.
+* Trajectory variable `kineticEnergy` is now **on** by default.
 
 
 Output Class Versions
