@@ -118,10 +118,13 @@ Bug Fixes
 * The `userfile` distribution would accept possibly conflicting information in coordinates such as
   E and Ek and P. It will now prevent this as it was ambiguous. In practice the order was just how
   it was read in the code, which was E, Ek, then P. Similarly for `S` and `z`.
+* Fixed units on :code:`Event.Trajectory.energyDeposit`, which was in MeV and should be in GeV. Now in GeV.
 
 
 Output Changes
 --------------
+
+* :code:`Event.Trajectory.energyDeposit` now in GeV - was previously actually MeV, so 1000x bigger value.
 
 
 Output Class Versions
