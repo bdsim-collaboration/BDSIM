@@ -282,6 +282,7 @@ OptionsBase::OptionsBase()
   storePrimaryHistograms     = true;
   
   storeTrajectory                = false;
+  
   storeTrajectoryDepth           = 0;
   storeTrajectoryStepPoints      = 0;
   storeTrajectoryStepPointLast   = false;
@@ -290,12 +291,18 @@ OptionsBase::OptionsBase()
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false; ///< kept only for backwards compatibility.
-  storeTrajectoryLocal           = false;
-  storeTrajectoryLinks           = false;
-  storeTrajectoryIon             = false;
-  trajectoryFilterLogicAND       = false;
+  storeTrajectoryKineticEnergy       = true;
+  storeTrajectoryMomentumVector      = false;
+  storeTrajectoryProcesses           = false;
+  storeTrajectoryTime                = false;
+  storeTrajectoryLocal               = false;
+  storeTrajectoryLinks               = false;
+  storeTrajectoryIon                 = false;
+
+  trajectoryFilterLogicAND = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;

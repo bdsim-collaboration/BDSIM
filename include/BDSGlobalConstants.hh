@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
 #include "BDSTrajectoryFilter.hh"
+#include "BDSTrajectoryOptions.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -246,6 +247,10 @@ public:
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  inline G4bool   StoreTrajectoryKineticEnergy()  const {return G4bool(options.storeTrajectoryKineticEnergy);}
+  inline G4bool   StoreTrajectoryMomentumVector() const {return G4bool(options.storeTrajectoryMomentumVector);}
+  inline G4bool   StoreTrajectoryProcesses()      const {return G4bool(options.storeTrajectoryProcesses);}
+  inline G4bool   StoreTrajectoryTime()           const {return G4bool(options.storeTrajectoryTime);}
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
   inline G4bool   StoreTrajectoryIon()       const {return G4bool  (options.storeTrajectoryIon);}
@@ -319,6 +324,7 @@ public:
 
   /// @{ options that require some implementation.
   G4bool StoreTrajectoryTransportationSteps() const;
+  BDS::TrajectoryOptions StoreTrajectoryOptions() const;
   /// @}
 
   // options that require members in this class (for value checking or because they're from another class)

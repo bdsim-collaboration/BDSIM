@@ -334,10 +334,7 @@ int BDSIM::Initialise()
 #endif
   runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
 						  globalConstants->StoreTrajectory(),
-						  globalConstants->StoreTrajectoryLocal(),
-						  globalConstants->StoreTrajectoryLinks(),
-						  globalConstants->StoreTrajectoryIon(),
-						  !globalConstants->StoreTrajectoryTransportationSteps(),
+						  globalConstants->StoreTrajectoryOptions(),
 						  eventAction,
 						  verboseSteppingEventStart,
 						  verboseSteppingEventStop,
