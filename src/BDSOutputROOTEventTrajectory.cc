@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryOptions.hh"
 
 #include <cmath>
 #endif
@@ -62,13 +63,19 @@ int findPrimaryStepIndex(BDSTrajectory* traj)
 
 void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectories,
                                         int  storeStepPointsN,
-                                        bool storeStepPointLast)
+                                        bool storeStepPointLast,
+                                        const BDS::TrajectoryOptions& storageOptions)
 {
   if(!auxNavigator)
     {// navigator for converting coordinates to curvilinear coordinate system
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
+  G4bool stEK = storageOptions.storeLinks || storageOptions.storeKineticEnergy;
+  G4bool stMo = storageOptions.storeMomentumVector;
+  G4bool stPr = storageOptions.storeProcesses;
+  G4bool stTi = storageOptions.storeTime;
+  
   // assign trajectory indices
   int idx = 0;
   for (auto trajFlag : trajectories->trajectories)
@@ -152,16 +159,29 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       
       XYZ.push_back(itj.XYZ);
       modelIndicies.push_back(itj.modelIndex);
-      PXPYPZ.push_back(itj.PXPYPZ);
+      
+      if (stMo)
+	{PXPYPZ.push_back(itj.PXPYPZ);}
+      
       S.push_back(itj.S);
-      preProcessTypes.push_back(itj.preProcessType);
-      preProcessSubTypes.push_back(itj.preProcessSubType);
-      postProcessTypes.push_back(itj.postProcessType);
-      postProcessSubTypes.push_back(itj.postProcessSubType);
+      
+      if (stPr)
+	{
+	  preProcessTypes.push_back(itj.preProcessType);
+	  preProcessSubTypes.push_back(itj.preProcessSubType);
+	  postProcessTypes.push_back(itj.postProcessType);
+	  postProcessSubTypes.push_back(itj.postProcessSubType);
+	}
+      
       preWeights.push_back(itj.preWeight);
       postWeights.push_back(itj.postWeight);
       energyDeposit.push_back(itj.energyDeposit);
-      T.push_back(itj.T);
+      
+      if (stTi)
+	{T.push_back(itj.T);}
+      
+      if (stEK)
+        {kineticEnergy.push_back(itj.kineticEnergy);}
 
       if (!itj.xyz.empty())
 	{
@@ -172,7 +192,6 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       if (!itj.charge.empty())
 	{
           charge.push_back(itj.charge);
-          kineticEnergy.push_back(itj.kineticEnergy);
           turnsTaken.push_back(itj.turn);
           mass.push_back(itj.mass);
           rigidity.push_back(itj.rigidity);
@@ -265,6 +284,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
 				mom.getZ()));
   itj.S.push_back(point->GetPreS() / CLHEP::m);
   itj.T.push_back(point->GetPreGlobalTime() / CLHEP::ns);
+  itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
   
   if (point->extraLocal)
     {
@@ -281,7 +301,6 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   if (point->extraLink)
     {
       itj.charge.push_back(point->GetCharge() / (G4double)CLHEP::eplus);
-      itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
       itj.turn.push_back(point->GetTurnsTaken());
       itj.mass.push_back(point->GetMass() / CLHEP::GeV);
       itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));
