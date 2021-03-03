@@ -314,7 +314,7 @@ G4bool BDSGlobalConstants::StoreTrajectoryTransportationSteps() const
 
 BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
 {
-  return BDS::TrajectoryOptions {!StoreTrajectoryTransportationSteps(),
+  BDS::TrajectoryOptions result = {!StoreTrajectoryTransportationSteps(),
 				   StoreTrajectoryKineticEnergy(),
 				   StoreTrajectoryMomentumVector(),
 				   StoreTrajectoryProcesses(),
@@ -322,4 +322,5 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
 				   StoreTrajectoryLocal(),
 				   StoreTrajectoryLinks(),
 				   StoreTrajectoryIon()};
+  return result;
 }
