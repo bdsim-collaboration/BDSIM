@@ -32,7 +32,8 @@ class BDSTrajectoryPrimary; // forward declaration so namespaced method can be a
 namespace BDS
 {
   /// Search the trajectory container for the primary trajectory.
-  BDSTrajectoryPrimary* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
+  std::vector<BDSTrajectoryPrimary*> GetPrimaryTrajectory(G4TrajectoryContainer* trajCon,
+                                                          G4int nPrimaries = 1);
   
   struct TrajectoryOptions;
 }

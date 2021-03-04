@@ -29,21 +29,31 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 #include <set>
+#include <vector>
 
 G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
 G4bool BDSTrajectoryPrimary::hasScatteredThisTurn = false;
 
-BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
+std::vector<BDSTrajectoryPrimary*> BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont,
+                                                G4int nPrimaries)
 {
-  TrajectoryVector*     trajVec = trajCont->GetVector();
-  BDSTrajectoryPrimary* primary = nullptr;
+  TrajectoryVector* trajVec = trajCont->GetVector();
+  std::vector<BDSTrajectoryPrimary*> primaries;
+  G4int nPrimariesFound = 0;
   for (const auto trajIt : *trajVec)
     {
-      BDSTrajectory* traj = static_cast<BDSTrajectory*>(trajIt);
-      if (traj->IsPrimary())
-	{primary = static_cast<BDSTrajectoryPrimary*>(trajIt); break;}
+      if (BDSTrajectory* traj = dynamic_cast<BDSTrajectory*>(trajIt))
+	{
+	  if (traj->IsPrimary())
+	    {
+	      primaries.push_back(dynamic_cast<BDSTrajectoryPrimary*>(trajIt));
+	      nPrimariesFound++;
+	      if (nPrimariesFound >= nPrimaries)
+		{break;} // avoid continuing to search all the trajectories
+	    }
+	}
     }
-  return primary;
+  return primaries;
 }
 
 BDSTrajectoryPrimary::BDSTrajectoryPrimary(const G4Track* aTrack,
