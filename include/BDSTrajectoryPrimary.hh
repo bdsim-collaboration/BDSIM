@@ -71,6 +71,11 @@ public:
   /// points to show up in the visualisation correctly.
   virtual void AppendStep(const G4Step* aStep);
   
+  /// Merge another trajectory into this one. The first hit will always be lower
+  /// in this one but the lastpoint could be later, so copy that. Must implment
+  /// this function to avoid double deletion if trajectory is merged.
+  virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
+  
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPrimary const &t);
 

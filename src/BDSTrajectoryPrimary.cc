@@ -95,6 +95,23 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
     }
 }
 
+void BDSTrajectoryPrimary::MergeTrajectory(G4VTrajectory* secondTrajectory)
+{
+  BDSTrajectory::MergeTrajectory(secondTrajectory);
+  if (secondTrajectory)
+    {
+      auto prim = dynamic_cast<BDSTrajectoryPrimary*>(secondTrajectory);
+      if (prim)
+	{
+	  if (prim->LastPoint())
+	    {
+	      delete lastPoint;
+	      lastPoint = new BDSTrajectoryPoint(*prim->LastPoint());
+	    }
+	}
+    }
+}
+
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPrimary const& t)
 {
   if (t.firstHit)
