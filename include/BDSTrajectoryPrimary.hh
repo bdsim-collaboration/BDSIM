@@ -21,20 +21,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSTrajectory.hh"
 
+#include "G4Allocator.hh"
+#include "G4Types.hh"
+
 #include <ostream>
 
 class BDSTrajectoryPoint;
-
 class G4Step;
 class G4Track;
 
-class BDSTrajectoryPrimary; // forward declaration so namespaced method can be at top
 namespace BDS
 {
-  /// Search the trajectory container for the primary trajectory.
-  std::vector<BDSTrajectoryPrimary*> GetPrimaryTrajectory(G4TrajectoryContainer* trajCon,
-                                                          G4int nPrimaries = 1);
-  
   struct TrajectoryOptions;
 }
 
@@ -73,7 +70,7 @@ public:
   virtual void AppendStep(const G4Step* aStep);
   
   /// Merge another trajectory into this one. The first hit will always be lower
-  /// in this one but the lastpoint could be later, so copy that. Must implment
+  /// in this one but the lastpoint could be later, so copy that. Must implement
   /// this function to avoid double deletion if trajectory is merged.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
   
