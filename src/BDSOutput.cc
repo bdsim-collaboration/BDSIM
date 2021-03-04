@@ -55,6 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStackingAction.hh"
 #include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSTrajectoryPointHit.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -283,8 +284,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
 			  const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 			  const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
-			  const std::vector<const BDSTrajectoryPoint*>&  primaryHits,
-			  const std::vector<const BDSTrajectoryPoint*>&  primaryLosses,
+			  const std::vector<const BDSTrajectoryPointHit*>& primaryHits,
+			  const std::vector<const BDSTrajectoryPointHit*>& primaryLosses,
 			  const BDSTrajectoriesToStore*                  trajectories,
 			  const BDSHitsCollectionCollimator*             collimatorHits,
 			  const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
@@ -812,14 +813,14 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
     {CopyFromHistToHist1D("ElossPE", "CollElossPE", collimatorIndices);}
 }
 
-void BDSOutput::FillPrimaryHit(const std::vector<const BDSTrajectoryPoint*>& primaryHits)
+void BDSOutput::FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits)
 {
   for (auto phit : primaryHits)
     {
       if (!phit)
 	{continue;}
       pFirstHit->Fill(phit);
-      const G4double preStepSPosition = phit->GetPreS() / CLHEP::m;
+      const G4double preStepSPosition = phit->point->GetPreS() / CLHEP::m;
       if (storePrimaryHistograms)
 	{
 	  runHistos->Fill1DHistogram(histIndices1D["Phits"], preStepSPosition);
@@ -833,12 +834,12 @@ void BDSOutput::FillPrimaryHit(const std::vector<const BDSTrajectoryPoint*>& pri
     }
 }
 
-void BDSOutput::FillPrimaryLoss(const std::vector<const BDSTrajectoryPoint*>& primaryLosses)
+void BDSOutput::FillPrimaryLoss(const std::vector<const BDSTrajectoryPointHit*>& primaryLosses)
 {
   for (auto ploss : primaryLosses)
     {
       pLastHit->Fill(ploss);
-      const G4double postStepSPosition = ploss->GetPostS() / CLHEP::m;
+      const G4double postStepSPosition = ploss->point->GetPostS() / CLHEP::m;
       if (storePrimaryHistograms)
 	{
 	  runHistos->Fill1DHistogram(histIndices1D["Ploss"], postStepSPosition);
@@ -859,7 +860,7 @@ void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 }
 
 void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
-				   const std::vector<const BDSTrajectoryPoint*>& primaryLossPoints)
+				   const std::vector<const BDSTrajectoryPointHit*>& primaryLossPoints)
 {
   G4int nHits = hits->entries();
   for (G4int i = 0; i < nHits; i++)
@@ -878,9 +879,9 @@ void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
     {
       for (auto primaryLossPoint : primaryLossPoints)
 	{
-	  if (primaryLossPoint->GetBeamLine() && nCollimators > 0)
+	  if (primaryLossPoint->point->GetBeamLine() && nCollimators > 0)
 	    {
-	      G4int lossPointBLInd = primaryLossPoint->GetBeamLineIndex(); // always the mass world index
+	      G4int lossPointBLInd = primaryLossPoint->point->GetBeamLineIndex(); // always the mass world index
 	      auto result = std::find(collimatorIndices.begin(), collimatorIndices.end(), lossPointBLInd);
 	      if (result != collimatorIndices.end())
 		{

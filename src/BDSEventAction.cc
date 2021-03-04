@@ -59,6 +59,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
+#include "BDSTrajectoryPointHit.hh"
 #include "G4TransportationManager.hh"
 
 #include <algorithm>
@@ -337,15 +338,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // primary hits and losses
-  std::vector<const BDSTrajectoryPoint*> primaryHits;
-  std::vector<const BDSTrajectoryPoint*> primaryLosses;
+  std::vector<const BDSTrajectoryPointHit*> primaryHits;
+  std::vector<const BDSTrajectoryPointHit*> primaryLosses;
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   if (trajCont)
     {
       if (verboseThisEvent)
 	{G4cout << std::left << std::setw(nChar) << "Trajectories: " << trajCont->size() << G4endl;}
       for (auto p : primaryTrajectoriesCache)
-        {primaryLosses.push_back(p.second->LastPoint());}
+        {primaryLosses.push_back(new BDSTrajectoryPointHit(p.second, p.second->LastPoint()));}
     }
   std::vector<const BDSTrajectoryPrimary*> primaryTrajectories;
   for (auto kv : primaryTrajectoriesCache)
