@@ -48,7 +48,7 @@ BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 
 BDSTrajectoryPrimary::BDSTrajectoryPrimary(const G4Track* aTrack,
 					   G4bool         interactiveIn,
-                                           const BDS::TrajectoryOptions storageOptionsIn,
+                                           const BDS::TrajectoryOptions& storageOptionsIn,
 					   G4bool         storeTrajectoryPointsIn):
   BDSTrajectory(aTrack,
 		interactiveIn,
