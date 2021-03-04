@@ -90,6 +90,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 					   interactive,
 					   storeTrajectoryOptions,
 					   storePoints);
+      eventAction->RegisterPrimaryTrajectory(traj);
       fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);
     }

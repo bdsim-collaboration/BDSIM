@@ -132,6 +132,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
   nTracks = 0;
+  primaryTrajectoriesCache.clear();
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
   currentEventIndex = evt->GetEventID();
@@ -652,4 +653,11 @@ void BDSEventAction::ConnectTrajectory(std::map<BDSTrajectory*, bool>& interesti
     }
   else
     {return;}
+}
+
+void BDSEventAction::RegisterPrimaryTrajectory(const BDSTrajectoryPrimary* trajectoryIn)
+{
+  G4int trackID = trajectoryIn->GetTrackID();
+  if (primaryTrajectoriesCache.find(trackID) == primaryTrajectoriesCache.end())
+  {primaryTrajectoriesCache[trackID] = trajectoryIn;}
 }
