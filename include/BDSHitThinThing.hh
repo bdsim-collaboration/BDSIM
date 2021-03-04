@@ -44,7 +44,8 @@ extern G4Allocator<BDSHitThinThing> BDSAllocatorThinThing;
 class BDSHitThinThing: public G4VHit
 {
 public:
-  BDSHitThinThing(G4int trackIDIn,
+  BDSHitThinThing(G4int pdgIDIn,
+		  G4int trackIDIn,
 		  G4int parentIDIn,
 		  G4int turnsTakenIn,
 		  BDSTrajectoryPoint* hitIn);
@@ -54,7 +55,11 @@ public:
   
   inline void* operator new(size_t);
   inline void operator delete(void* aHit);
+  
+  /// Allocate and return a new hit object.
+  BDSTrajectoryPointHit* GetNewTrajectoryPointHit() const;
 
+  G4int pdgID;
   G4int trackID;
   G4int parentID;
   G4int turnsTaken;
