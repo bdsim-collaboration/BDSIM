@@ -27,6 +27,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
+namespace BDS
+{
+  struct TrajectoryOptions;
+}
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -53,9 +57,7 @@ class BDSSDThinThing: public BDSSensitiveDetector
 public:
   /// Include unique name for each instance.
   BDSSDThinThing(const G4String& name,
-		 G4bool storeTrajectoryLocalIn,
-		 G4bool storeTrajectoryLinksIn,
-		 G4bool storeTrajectoryIonIn);
+		             const BDS::TrajectoryOptions& trajectoryOptionsIn);
 
   /// @{ Assignment and copy constructor not implemented nor used
   BDSSDThinThing& operator=(const BDSSDThinThing&) = delete;
