@@ -225,7 +225,7 @@ private:
   void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
-  /// Fill a collection volume exit hits into the approprate output structure.
+  /// Fill a collection volume exit hits into the appropriate output structure.
   //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
