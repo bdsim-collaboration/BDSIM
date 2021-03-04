@@ -466,7 +466,9 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
       // fill parent pointer - this can only be done once the map in the previous loop has been made
       for (auto iT1 : *trajVec) 
 	{
-	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);	
+	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
+	  // the parent ID may be 0 and therefore it may not be in the map but the [] operator
+	  // will default-construct it giving therefore a nullptr
 	  traj->SetParent(trackIDMap[iT1->GetParentID()]);
 	}
       
