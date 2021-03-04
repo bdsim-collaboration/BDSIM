@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSTrajectoryPoint;
+class BDSTrajectoryPointHit;
 class BDSTrajectoryPrimary;
 
 class BDSHitThinThing; // forward declaration to allow typedef required for static function
@@ -68,14 +69,13 @@ public:
   /// Utility function to get a vector of trajectory points from the hits collection
   static std::vector<const BDSTrajectoryPoint*> TrajectoryPointsFromHC(BDSHitsCollectionThinThing* hits);
   
-  static std::vector<const BDSTrajectoryPoint*> ResolvePossibleEarlierThinHits(const std::vector<const BDSTrajectoryPrimary*>& primaryTrajectoryHits,
-                                                                               const BDSHitsCollectionThinThing* thinThingHits);
+  static std::vector<const BDSTrajectoryPointHit*>
+  ResolvePossibleEarlierThinHits(const std::vector<const BDSTrajectoryPrimary*>& primaryTrajectoryHits,
+				 const BDSHitsCollectionThinThing* thinThingHits);
   
 private:
   BDSHitThinThing() = delete; ///< No default constructor.
 };
-
-
 
 inline void* BDSHitThinThing::operator new(size_t)
 {
@@ -88,5 +88,4 @@ inline void BDSHitThinThing::operator delete(void* aHit)
 {
   BDSAllocatorThinThing.FreeSingle((BDSHitThinThing*) aHit);
 }
-
 #endif

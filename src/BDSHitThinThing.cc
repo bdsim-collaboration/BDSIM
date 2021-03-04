@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSHitThinThing.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSTrajectoryPointHit.hh"
 #include "BDSTrajectoryPrimary.hh"
 
 #include "G4Allocator.hh"
@@ -58,18 +59,23 @@ std::vector<const BDSTrajectoryPoint*> BDSHitThinThing::TrajectoryPointsFromHC(B
     }
 }
 
-std::vector<const BDSTrajectoryPoint*>
+BDSTrajectoryPointHit* BDSHitThinThing::GetNewTrajectoryPointHit() const
+{
+  return new BDSTrajectoryPointHit(pdgID,trackID, parentID, hit);
+}
+
+std::vector<const BDSTrajectoryPointHit*>
 BDSHitThinThing::ResolvePossibleEarlierThinHits(const std::vector<const BDSTrajectoryPrimary*>& primaryTrajectoryHits,
                                                 const BDSHitsCollectionThinThing* thinThingHits)
 {
   auto basicResult = [&]() // lambda to avoid code duplication
   {
-    std::vector<const BDSTrajectoryPoint*> result;
+    std::vector<const BDSTrajectoryPointHit*> result;
     for (auto p : primaryTrajectoryHits)
       {
 	auto fh = p->FirstHit();
 	if (fh) // may not have hit anything, ie nullptr
-	  {result.push_back(fh);}
+	  {result.push_back(new BDSTrajectoryPointHit(p, fh));}
       }
     return result;
   };
@@ -77,24 +83,24 @@ BDSHitThinThing::ResolvePossibleEarlierThinHits(const std::vector<const BDSTraje
   // thinThingHits is optional
   // the vector might be empty
   if (!thinThingHits)
-    {return primaryTrajectoryHits.empty() ? std::vector<const BDSTrajectoryPoint*>() : basicResult();}
+    {return primaryTrajectoryHits.empty() ? std::vector<const BDSTrajectoryPointHit*>() : basicResult();}
   else if (thinThingHits->entries() == 0)
     {return basicResult();}
   else
     {
       // note there could be more than one thin hit per primary particle (e.g. multiple wire scanners)
       // build map of hits from the two sources per primary track ID
-      std::map<G4int, std::vector<const BDSTrajectoryPoint*>> hitsPerPrimary;
+      std::map<G4int, std::vector<const BDSTrajectoryPointHit*>> hitsPerPrimary;
       for (G4int i = 0; i < (G4int)thinThingHits->entries(); i++)
 	{
 	  auto hit = (*thinThingHits)[i];
-	  hitsPerPrimary[hit->trackID].push_back(hit->hit);
+	  hitsPerPrimary[hit->trackID].push_back(hit->GetNewTrajectoryPointHit());
 	}
       for (auto p : primaryTrajectoryHits)
-	{hitsPerPrimary[p->GetTrackID()].push_back(p->LastPoint());}
+	{hitsPerPrimary[p->GetTrackID()].push_back(new BDSTrajectoryPointHit(p, p->LastPoint()));}
       
       // use a lambda function to compare contents of pointers and not pointers themselves
-      auto TrajPointComp = [](const BDSTrajectoryPoint* a, const BDSTrajectoryPoint* b)
+      auto TrajPointComp = [](const BDSTrajectoryPointHit* a, const BDSTrajectoryPointHit* b)
 			   {
 			     if (!a || !b)
 			       {return false;}
@@ -103,7 +109,7 @@ BDSHitThinThing::ResolvePossibleEarlierThinHits(const std::vector<const BDSTraje
 			   };
       
       // reduce multiple hits to the earliest one in the beam line for the 'first' hit
-      std::vector<const BDSTrajectoryPoint*> result;
+      std::vector<const BDSTrajectoryPointHit*> result;
       for (auto& primaryPoints : hitsPerPrimary)
 	{
 	  auto& points = primaryPoints.second;

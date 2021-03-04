@@ -45,7 +45,7 @@ class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
-class BDSTrajectoryPoint;
+class BDSTrajectoryPointHit;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 class BDSTrajectoriesToStore;
@@ -121,8 +121,8 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
-		 const std::vector<const BDSTrajectoryPoint*>&  primaryHits,
-		 const std::vector<const BDSTrajectoryPoint*>&  primaryLosses,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryHits,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryLosses,
 		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
 		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
@@ -215,7 +215,7 @@ private:
 		       const HitsType hType);
 
   /// Fill the hit where the primary particle impact.
-  void FillPrimaryHit(const std::vector<const BDSTrajectoryPoint*>& primaryHits);
+  void FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
   void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
@@ -229,14 +229,14 @@ private:
   //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
-  void FillPrimaryLoss(const std::vector<const BDSTrajectoryPoint*>& primaryLosses);
+  void FillPrimaryLoss(const std::vector<const BDSTrajectoryPointHit*>& primaryLosses);
 
   /// Copy a set of trajectories to the output structure.
   void FillTrajectories(const BDSTrajectoriesToStore* trajectories);
 
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
-			  const std::vector<const BDSTrajectoryPoint*>& primaryLossPoints);
+			  const std::vector<const BDSTrajectoryPointHit*>& primaryLossPoints);
 
   /// Fill aperture impact hits.
   void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
