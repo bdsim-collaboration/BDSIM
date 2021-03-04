@@ -52,7 +52,7 @@ class BDSTrajectoryPrimary: public BDSTrajectory
 public:
   BDSTrajectoryPrimary(const G4Track* aTrack,
 		       G4bool         interactive,
-		       const BDS::TrajectoryOptions storageOptionsIn,
+		       const BDS::TrajectoryOptions& storageOptionsIn,
 		       G4bool         storeTrajectoryPointsIn);
   
   /// copy constructor is not needed
