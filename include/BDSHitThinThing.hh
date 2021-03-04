@@ -19,12 +19,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSHITTHINTHING_H
 #define BDSHITTHINTHING_H
 
-#include "globals.hh"
+#include "G4Allocator.hh"
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
-#include "G4Allocator.hh"
+#include "G4Types.hh"
+
+#include <vector>
 
 class BDSTrajectoryPoint;
+class BDSTrajectoryPrimary;
 
 class BDSHitThinThing; // forward declaration to allow typedef required for static function
 typedef G4THitsCollection<BDSHitThinThing> BDSHitsCollectionThinThing;
@@ -59,6 +62,9 @@ public:
 
   /// Utility function to get a vector of trajectory points from the hits collection
   static std::vector<const BDSTrajectoryPoint*> TrajectoryPointsFromHC(BDSHitsCollectionThinThing* hits);
+  
+  static std::vector<const BDSTrajectoryPoint*> ResolvePossibleEarlierThinHits(const std::vector<const BDSTrajectoryPrimary*>& primaryTrajectoryHits,
+                                                                               const BDSHitsCollectionThinThing* thinThingHits);
   
 private:
   BDSHitThinThing() = delete; ///< No default constructor.
