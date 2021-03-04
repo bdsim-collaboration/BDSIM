@@ -139,6 +139,8 @@ Bug Fixes
 * Fixed units on :code:`Event.Trajectory.energyDeposit`, which was in MeV and should be in GeV. Now in GeV.
 * Fix possibly wrong overlap warning in a crystal collimator when using a cylinder or torus
   geometry. The overlap was calculated using the possibly large offset of the particular solid.
+* `PrimaryFirstHit` and `PrimaryLastHit` are now filled for all primary particles when there are
+  multiple removing the ambiguity of which one was recorded (no trackID etc was filled).
 
 
 Output Changes
@@ -150,6 +152,10 @@ Output Changes
   listed above and in the options section. Expect a slight reduction in data file size when storing
   trajectories with default options.
 * Trajectory variable `kineticEnergy` is now **on** by default.
+* `PrimaryFirstHit` and `PrimaryLastHit` now have all primaries filled in, in the case there are multiple
+  such as when using an event generator file.
+* `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
+  now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
 
 
 Output Class Versions
