@@ -31,14 +31,15 @@ namespace BDS
 {
   struct TrajectoryOptions
   {
-    G4bool suppressTransportationSteps = false;
-    G4bool storeKineticEnergy   = false;
-    G4bool storeMomentumVector  = false;
-    G4bool storeProcesses       = false;
-    G4bool storeTime            = false;
-    G4bool storeLocal           = false;
-    G4bool storeLinks           = false;
-    G4bool storeIon             = false;
+    // no default values so we can do aggregate initialisation in C++11 and GCC4.9
+    G4bool suppressTransportationSteps;
+    G4bool storeKineticEnergy;
+    G4bool storeMomentumVector;
+    G4bool storeProcesses;
+    G4bool storeTime;
+    G4bool storeLocal;
+    G4bool storeLinks;
+    G4bool storeIon;
   };
 }
   
