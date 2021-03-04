@@ -28,10 +28,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4Allocator<BDSHitThinThing> BDSAllocatorThinThing;
 
-BDSHitThinThing::BDSHitThinThing(G4int trackIDIn,
+BDSHitThinThing::BDSHitThinThing(G4int pdgIDIn,
+				 G4int trackIDIn,
 				 G4int parentIDIn,
 				 G4int turnsTakenIn,
 				 BDSTrajectoryPoint* hitIn):
+  pdgID(pdgIDIn),
   trackID(trackIDIn),
   parentID(parentIDIn),
   turnsTaken(turnsTakenIn),
