@@ -336,42 +336,21 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	{G4cout << std::left << std::setw(nChar) << "Collimator hits: " << collimatorHits->entries()  << G4endl;}
     }
   
-  // primary hits and losses from
-  const BDSTrajectoryPoint* primaryHit  = nullptr;
-  const BDSTrajectoryPoint* primaryLoss = nullptr;
+  // primary hits and losses
+  std::vector<const BDSTrajectoryPoint*> primaryHits;
+  std::vector<const BDSTrajectoryPoint*> primaryLosses;
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   if (trajCont)
     {
       if (verboseThisEvent)
 	{G4cout << std::left << std::setw(nChar) << "Trajectories: " << trajCont->size() << G4endl;}
-      BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
-      primaryHit  = primary->FirstHit();
-      primaryLoss = primary->LastPoint();
+      for (auto p : primaryTrajectoriesCache)
+        {primaryLosses.push_back(p.second->LastPoint());}
     }
-
-  if (thinThingHits)
-    {// thinThingHits might be nullptr
-      if (thinThingHits->entries() > 0)
-	{// if no thin hits, no more information we can add so continue
-	  // get all thin hits (may be multiple), include the existing primary hit, and sort them
-	  std::vector<const BDSTrajectoryPoint*> points = BDSHitThinThing::TrajectoryPointsFromHC(thinThingHits);
-	  if (primaryHit) // if there is a primary hit, add it to the vector for sorting
-	    {points.push_back(primaryHit);}
-
-	  // use a lambda function to compare contents of pointers and not pointers themselves
-	  auto TrajPointComp = [](const BDSTrajectoryPoint* a, const BDSTrajectoryPoint* b)
-			       {
-				 if (!a || !b)
-				   {return false;}
-				 else
-				   {return *a < *b;}
-			       };
-	  // find the earliest on hit
-	  std::sort(points.begin(), points.end(), TrajPointComp);
-	  primaryHit = points[0]; // use this as the primary hit
-	  // note geant4 cleans up hits
-	}
-    }
+  std::vector<const BDSTrajectoryPrimary*> primaryTrajectories;
+  for (auto kv : primaryTrajectoriesCache)
+    {primaryTrajectories.push_back(kv.second);}
+  primaryHits = BDSHitThinThing::ResolvePossibleEarlierThinHits(primaryTrajectories, thinThingHits);
 
   BDSTrajectoriesToStore* interestingTrajectories = IdentifyTrajectoriesForStorage(evt,
 										   verboseEventBDSIM || verboseThisEvent,
@@ -391,8 +370,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    eCounterWorldHits,
 		    eCounterWorldContentsHits,
 		    worldExitHits,
-		    primaryHit,
-		    primaryLoss,
+		    primaryHits,
+		    primaryLosses,
 		    interestingTrajectories,
 		    collimatorHits,
 		    apertureImpactHits,
