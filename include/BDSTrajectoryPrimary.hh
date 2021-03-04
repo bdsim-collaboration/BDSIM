@@ -79,7 +79,7 @@ public:
   const BDSTrajectoryPoint* LastPoint() const {return lastPoint;}
   /// @}
 
-  /// Wether this primary trajectory has hit an object (ie physics process invoked).
+  /// Whether this primary trajectory has hit an object (ie physics process invoked).
   /// Judged by casting first hit pointer to Boolean.
   G4bool HasHitSomething() const {return firstHit;}
 

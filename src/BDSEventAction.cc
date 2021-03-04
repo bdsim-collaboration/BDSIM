@@ -224,7 +224,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   eventInfo->SetIndex(event_number);
 
-  // Record if event was aborted - ie whether it's useable for analyses.
+  // Record if event was aborted - ie whether it's usable for analyses.
   eventInfo->SetAborted(evt->IsAborted());
   eventInfo->SetNTracks(nTracks);
 
