@@ -223,10 +223,7 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(collimatorCompleteSD);
 
   // thin things
-  thinThingSD = new BDSSDThinThing("thinthing_general",
-				   g->StoreTrajectoryLocal(),
-				   g->StoreTrajectoryLinks(),
-				   g->StoreTrajectoryIon());
+  thinThingSD = new BDSSDThinThing("thinthing_general", g->StoreTrajectoryOptions());
   thinThingSD->SetFilter(filters["primary"]);
   SDMan->AddNewDetector(thinThingSD);
 
