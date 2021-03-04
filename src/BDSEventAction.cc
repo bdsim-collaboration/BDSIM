@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSampler.hh"
 #include "BDSHitThinThing.hh"
 #include "BDSOutput.hh"
+#include "BDSNavigatorPlacements.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
 #include "BDSSDApertureImpacts.hh"
@@ -137,6 +138,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
+  BDSNavigatorPlacements::ResetNavigatorStates();
   // make further attempts to clear Geant4's tracking history between events to make them
   // truly independent.
   G4Navigator* trackingNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
