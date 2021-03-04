@@ -137,6 +137,8 @@ Bug Fixes
   E and Ek and P. It will now prevent this as it was ambiguous. In practice the order was just how
   it was read in the code, which was E, Ek, then P. Similarly for `S` and `z`.
 * Fixed units on :code:`Event.Trajectory.energyDeposit`, which was in MeV and should be in GeV. Now in GeV.
+* Fix possibly wrong overlap warning in a crystal collimator when using a cylinder or torus
+  geometry. The overlap was calculated using the possibly large offset of the particular solid.
 
 
 Output Changes
