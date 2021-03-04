@@ -495,7 +495,7 @@ void BDSOutput::CreateHistograms()
       storeELossTunnel = false;
       storeELossTunnelHistograms = false;
     }
-  if (storeELossTunnelHistograms)
+  if (storeELossTunnelHistograms && tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
       histIndices1D["ElossTunnel"] = Create1DHistogram("ElossTunnelHisto",
