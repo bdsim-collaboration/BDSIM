@@ -493,7 +493,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  // check on coordinates (and TODO momentum)
 	  // clear out trajectories that don't reach point TrajCutGTZ or greater than TrajCutLTR
 	  BDSTrajectoryPoint* trajEndPoint = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(traj->GetPointEntries() - 1));
-
+	  
 	  // end point greater than some Z
 	  if (trajEndPoint->GetPosition().z() > trajectoryCutZ)
 	    {filters[BDSTrajectoryFilter::minimumZ] = true;}
@@ -583,27 +583,26 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 		}
 	    }
 	}
-
-	// If we're using AND logic (default OR) with the filters, loop over and update whether
-	// we should really store the trajectory or not. Importantly, we do this before the connect
-	// trajectory step as that flags yet more trajectories (that connect each one) back to the
-	// primary
-	if (trajectoryFilterLogicAND)
-      {
-        for (auto& trajFlag : interestingTraj)
-          {
-            if (trajFlag.second) // if we're going to store it check the logic
-              {
-                // use bit-wise AND filters matched for this trajectory with filters set
-                // if count of 1s the same, then trajectory should be stored, therefore if
-                // not the same, it should be set to false.
-                auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
-                if (filterMatch.count() != trajFiltersSet.count())
-                  {trajFlag.second = false;}
-              }
-          }
-
-      }
+      
+      // If we're using AND logic (default OR) with the filters, loop over and update whether
+      // we should really store the trajectory or not. Importantly, we do this before the connect
+      // trajectory step as that flags yet more trajectories (that connect each one) back to the
+      // primary
+      if (trajectoryFilterLogicAND)
+	{
+	  for (auto& trajFlag : interestingTraj)
+	    {
+	      if (trajFlag.second) // if we're going to store it check the logic
+		{
+		  // use bit-wise AND filters matched for this trajectory with filters set
+		  // if count of 1s the same, then trajectory should be stored, therefore if
+		  // not the same, it should be set to false.
+		  auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
+		  if (filterMatch.count() != trajFiltersSet.count())
+		    {trajFlag.second = false;}
+		}
+	    }	  
+	}
       
       // Connect trajectory graphs
       if (trajConnect && trackIDMap.size() > 1)
@@ -614,7 +613,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
         }
       // Output interesting trajectories
       if (verbose)
-	    {G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
+	{G4cout << std::left << std::setw(nChar) << "Trajectories for storage: " << nYes << " out of " << nYes + nNo << G4endl;}
     }
   
   return new BDSTrajectoriesToStore(interestingTraj, trajectoryFilters);
