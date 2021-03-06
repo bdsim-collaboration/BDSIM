@@ -16,33 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBUNCHSPHERE_H
-#define BDSBUNCHSPHERE_H 
-
+#ifndef BDSBUNCHCOMPOSITESDE_H
+#define BDSBUNCHCOMPOSITESDE_H 
 #include "BDSBunch.hh"
 
 /**
- * @brief A bunch distribution that produces an uncorrelated uniform
- * random direction distribution over a sphere. The position, energy
- * and time are all reference.
+ * @brief A distribution that allows mixing of three different 
+ * distributions in each primary dimension.
+ * 
+ * Mixed by space, direction and energy ("SDE")
  * 
  * @author Laurie Nevay
  */
 
-class BDSBunchSphere: public BDSBunch
-{ 
-public: 
-  BDSBunchSphere(); 
-  virtual ~BDSBunchSphere(){;}
-  
-  /// @{ Assignment and copy constructor not implemented nor used
-  BDSBunchSphere& operator=(const BDSBunchSphere&) = delete;
-  BDSBunchSphere(BDSBunchSphere&) = delete;
-  /// @}
+class BDSBunchCompositeSDE: public BDSBunch
+{
+public:
+  BDSBunchCompositeSDE(); 
+  virtual ~BDSBunchCompositeSDE();
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  const G4double beamlineS = 0);
+  virtual void CheckParameters();
+  virtual void SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn);
 
-  /// Generate a random unit vector for direction and use reference spatial
-  /// coordinates. No energy spread.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
+
+protected:
+  BDSBunch* sBunch;
+  BDSBunch* dBunch;
+  BDSBunch* eBunch;
 };
 
 #endif

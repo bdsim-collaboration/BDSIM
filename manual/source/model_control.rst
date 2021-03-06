@@ -272,10 +272,12 @@ The following beam distributions are available in BDSIM
 - `eshell`_
 - `halo`_
 - `composite`_
+- `compositespacedirectionenergy`_
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
 - `sphere`_
+- `box`_
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -790,6 +792,46 @@ Examples: ::
         shellYpWidth = 1d-9;
 
 
+compositespacedirectionenergy
+*****************************
+
+* Also accepted :code:`compositesde`.
+
+The distribution allows 3 different distributions to be mixed together. One for spatial coordinates,
+one for directional, and one for energy & time.
+
+* All parameters from `reference`_ distribution are used as centroids.
+* The default for `spaceDistrType`, `directionDistrType` and `energyDistrType` are `reference`.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
+
++----------------------+--------------------------------+------------------------+
+| **Variable**         | **Description**                | **Coordinates Used**   |
++======================+================================+========================+
+| `spaceDistrType`     | Sptial distribution type       | x,y,z                  |
++----------------------+--------------------------------+------------------------+
+| `directionDistrType` | Directional distribution type  | xp,yp,zp               |
++----------------------+--------------------------------+------------------------+
+| `energyDistrType`    | Energy distribution type       | T,totalEnergy          |
++----------------------+--------------------------------+------------------------+
+
+.. note:: It is currently not possible to use two differently specified versions of the same
+ 	  distribution within the composite distribution, i.e. box (parameter set 1) for x
+	  and box (parameter set 2) for y. They will have the same settings as (for example)
+	  only one betx can be specified.
+
+Examples: ::
+
+  beam, particle = "e-",
+        kineticEnergy = 30*MeV,
+	distrType = "compositespacedirectionenergy",
+	spaceDistrType = "box",
+	directionDistrType = "sphere",
+	envelopeX = 2*cm,
+	envelopeY = 3*cm,
+	envelopeZ = 4*cm;
+
+	
 userfile
 ********
 
@@ -1091,7 +1133,38 @@ An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is 
         energy = 1.2*GeV,
 	distrType = "sphere",
 	X0 = 9*cm,
-	Z0 = 0.5*m;	     
+	Z0 = 0.5*m;
+
+
+box
+***
+
+The `box` distribution generates a uniform random uncorrelated distribution in each variable.
+Ultimatley, the 3-vector making the direction `xp`, `yp`, and `zp` is normalised (i.e. unit 1).
+This results in an uneven distribution in these variables over the range (cube projected onto sphere).
+
+* The values will vary from -envelope to +envelope.
+* `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeX`                      | Maximum position in X [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeY`                      | Maximum position in Y [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZ`                      | Maximum position in Z [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZp`                     | Maximum component in Z of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
 
 
 .. _physics-processes:
