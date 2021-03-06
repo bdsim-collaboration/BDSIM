@@ -102,7 +102,9 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   energyDepositedWorldContents(0),
   energyDepositedTunnel(0),
   energyImpactingAperture(0),
+  energyImpactingApertureKinetic(0),
   energyWorldExit(0),
+  energyWorldExitKinetic(0),
   nCollimatorsInteracted(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -299,7 +301,9 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   energyDepositedWorldContents = 0;
   energyDepositedTunnel        = 0;
   energyImpactingAperture      = 0;
+  energyImpactingApertureKinetic = 0;
   energyWorldExit              = 0;
+  energyWorldExitKinetic       = 0;
   nCollimatorsInteracted       = 0;
   
   if (vertex && storePrimaries)
@@ -623,7 +627,9 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorldContents = energyDepositedWorldContents;
   evtInfo->energyDepositedTunnel        = energyDepositedTunnel;
   evtInfo->energyWorldExit              = energyWorldExit;
+  evtInfo->energyWorldExitKinetic       = energyWorldExitKinetic;
   evtInfo->energyImpactingAperture      = energyImpactingAperture;
+  evtInfo->energyImpactingApertureKinetic = energyImpactingApertureKinetic;
   G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
   evtInfo->energyKilled = ek;
   evtInfo->energyTotal =  energyDeposited
@@ -701,6 +707,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 	  {
 	    BDSHitEnergyDepositionGlobal* hit = (*hits)[i];
 	    energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
+	    energyWorldExitKinetic += hit->KineticEnergyWeighted()/CLHEP::GeV;
 	    if (storeELossWorld)
 	      {eLossWorldExit->Fill(hit);}
 	  }
@@ -924,6 +931,7 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
       const BDSHitApertureImpact* hit = (*hits)[i];
       G4double eW = (hit->totalEnergy / CLHEP::GeV) * hit->weight;
       energyImpactingAperture += eW;
+      energyImpactingApertureKinetic += (hit->preStepKineticEnergy * hit->weight ) / CLHEP::GeV;
       if (hit->parentID == 0)
 	{
 	  nPrimaryImpacts += 1;
