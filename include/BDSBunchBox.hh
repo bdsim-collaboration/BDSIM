@@ -16,33 +16,50 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBUNCHSPHERE_H
-#define BDSBUNCHSPHERE_H 
+#ifndef BDSBUNCHBOX_H
+#define BDSBUNCHBOX_H 
 
 #include "BDSBunch.hh"
 
+namespace CLHEP {
+  class RandFlat;
+}
+
 /**
  * @brief A bunch distribution that produces an uncorrelated uniform
- * random direction distribution over a sphere. The position, energy
- * and time are all reference.
+ * random distribution within a 6D box.
  * 
  * @author Laurie Nevay
  */
 
-class BDSBunchSphere: public BDSBunch
+class BDSBunchBox: public BDSBunch
 { 
 public: 
-  BDSBunchSphere(); 
-  virtual ~BDSBunchSphere(){;}
-  
+  BDSBunchBox(); 
+  virtual ~BDSBunchBox();
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSBunchSphere& operator=(const BDSBunchSphere&) = delete;
-  BDSBunchSphere(BDSBunchSphere&) = delete;
+  BDSBunchBox& operator=(const BDSBunchBox&) = delete;
+  BDSBunchBox(BDSBunchBox&) = delete;
   /// @}
-
-  /// Generate a random unit vector for direction and use reference spatial
-  /// coordinates. No energy spread.
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  const G4double beamlineS = 0);
+  virtual void CheckParameters();
   virtual BDSParticleCoordsFull GetNextParticleLocal();
+  
+protected:
+  G4double envelopeX;
+  G4double envelopeY;
+  G4double envelopeZ;
+  G4double envelopeXp;
+  G4double envelopeYp;
+  G4double envelopeZp;
+  G4double envelopeT;
+  G4double envelopeE;
+  
+  CLHEP::RandFlat* flatGen;
 };
 
 #endif

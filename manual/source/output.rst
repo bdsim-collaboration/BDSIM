@@ -995,68 +995,75 @@ BDSOutputROOTEventInfo
 
 .. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+-----------------------------+-------------------+---------------------------------------------+
-|  **Variable**               | **Type**          |  **Description**                            |
-+=============================+===================+=============================================+
-| startTime                   | time_t            | Time stamp at start of event                |
-+-----------------------------+-------------------+---------------------------------------------+
-| stopTime                    | time_t            | Time stamp at end of event                  |
-+-----------------------------+-------------------+---------------------------------------------+
-| durationWall                | float             | Duration (wall time) of event in seconds    |
-+-----------------------------+-------------------+---------------------------------------------+
-| durationCPU                 | float             | Duration (CPU time) of event in seconds     |
-+-----------------------------+-------------------+---------------------------------------------+
-| seedStateAtStart            | std::string       | State of random number generator at the     |
-|                             |                   | start of the event as provided by CLHEP     |
-+-----------------------------+-------------------+---------------------------------------------+
-| index                       | int               | Index of the event (0 counting)             |
-+-----------------------------+-------------------+---------------------------------------------+
-| aborted                     | bool              | Whether event was aborted or not            |
-+-----------------------------+-------------------+---------------------------------------------+
-| primaryHitMachine           | bool              | Whether the primary particle hit the        |
-|                             |                   | machine. This is judged by whether there    |
-|                             |                   | are any energy deposition hits or not. If   |
-|                             |                   | no physics processes are registered this    |
-|                             |                   | won't work correctly.                       |
-+-----------------------------+-------------------+---------------------------------------------+
-| primaryAbsorbedInCollimator | bool              | Whether the primary particle stopped in a   |
-|                             |                   | collimator or not.                          |
-+-----------------------------+-------------------+---------------------------------------------+
-| memoryUsageMb               | double            | Memory usage of the whole program at the    |
-|                             |                   | the current event including the geometry.   |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDeposited             | double            | (GeV) Integrated energy in Eloss including  |
-|                             |                   | the statistical weights.                    |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedVacuum       | double            | (GeV) Integrated energy in ElossVacuum      |
-|                             |                   | the statistical weights.                    |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedWorld        | double            | (GeV) Integrated energy in the ElossWorld   |
-|                             |                   | structure including the statistical weight. |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedTunnel       | double            | (GeV) Integrated energy in the ElossTunnel  |
-|                             |                   | including the statistical weight.           |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyWorldExit             | double            | (GeV) Integrated energy of all particles    |
-|                             |                   | including their rest mass leaving the       |
-|                             |                   | world volume and therefore the simulation.  |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyImpactingAperture     | double            | (GeV) Integrated energy of all particles    |
-|                             |                   | including their rest mass impacting the     |
-|                             |                   | aperture and including their weight.        |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyKilled                | double            | (GeV) Integrated energy including their     |
-|                             |                   | rest mass of any particles that were        |
-|                             |                   | artificially killed in the stacking action. |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyTotal                 | double            | The sum of the above energies for the       |
-|                             |                   | current event.                              |
-+-----------------------------+-------------------+---------------------------------------------+
-| nCollimatorsInteracted      | int               | The number of collimators the primary       |
-|                             |                   | particle interacted with.                   |
-+-----------------------------+-------------------+---------------------------------------------+
-| nTracks                     | long long int     | Number of tracks created in the event.      |
-+-----------------------------+-------------------+---------------------------------------------+
++--------------------------------+-------------------+---------------------------------------------+
+|  **Variable**                  | **Type**          |  **Description**                            |
++================================+===================+=============================================+
+| startTime                      | time_t            | Time stamp at start of event                |
++--------------------------------+-------------------+---------------------------------------------+
+| stopTime                       | time_t            | Time stamp at end of event                  |
++--------------------------------+-------------------+---------------------------------------------+
+| durationWall                   | float             | Duration (wall time) of event in seconds    |
++--------------------------------+-------------------+---------------------------------------------+
+| durationCPU                    | float             | Duration (CPU time) of event in seconds     |
++--------------------------------+-------------------+---------------------------------------------+
+| seedStateAtStart               | std::string       | State of random number generator at the     |
+|                                |                   | start of the event as provided by CLHEP     |
++--------------------------------+-------------------+---------------------------------------------+
+| index                          | int               | Index of the event (0 counting)             |
++--------------------------------+-------------------+---------------------------------------------+
+| aborted                        | bool              | Whether event was aborted or not            |
++--------------------------------+-------------------+---------------------------------------------+
+| primaryHitMachine              | bool              | Whether the primary particle hit the        |
+|                                |                   | machine. This is judged by whether there    |
+|                                |                   | are any energy deposition hits or not. If   |
+|                                |                   | no physics processes are registered this    |
+|                                |                   | won't work correctly.                       |
++--------------------------------+-------------------+---------------------------------------------+
+| primaryAbsorbedInCollimator    | bool              | Whether the primary particle stopped in a   |
+|                                |                   | collimator or not.                          |
++--------------------------------+-------------------+---------------------------------------------+
+| memoryUsageMb                  | double            | Memory usage of the whole program at the    |
+|                                |                   | the current event including the geometry.   |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDeposited                | double            | (GeV) Integrated energy in Eloss including  |
+|                                |                   | the statistical weights.                    |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedVacuum          | double            | (GeV) Integrated energy in ElossVacuum      |
+|                                |                   | the statistical weights.                    |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedWorld           | double            | (GeV) Integrated energy in the ElossWorld   |
+|                                |                   | structure including the statistical weight. |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedTunnel          | double            | (GeV) Integrated energy in the ElossTunnel  |
+|                                |                   | including the statistical weight.           |
++--------------------------------+-------------------+---------------------------------------------+
+| energyWorldExit                | double            | (GeV) Integrated energy of all particles    |
+|                                |                   | including their rest mass leaving the       |
+|                                |                   | world volume and therefore the simulation.  |
++--------------------------------+-------------------+---------------------------------------------+
+| energyWorldExitKinetic         | double            | (GeV) Integrated kinetic energy of all      |
+|                                |                   | particles leaving the world volume.         |
++--------------------------------+-------------------+---------------------------------------------+
+| energyImpactingAperture        | double            | (GeV) Integrated energy of all particles    |
+|                                |                   | including their rest mass impacting the     |
+|                                |                   | aperture and including their weight.        |
++--------------------------------+-------------------+---------------------------------------------+
+| energyImpactingApertureKinetic | double            | (GeV) Integrated kinetic energy of all      |
+|                                |                   | particles impacting the aperture and        |
+|                                |                   | including their weight.                     |
++--------------------------------+-------------------+---------------------------------------------+
+| energyKilled                   | double            | (GeV) Integrated energy including their     |
+|                                |                   | rest mass of any particles that were        |
+|                                |                   | artificially killed in the stacking action. |
++--------------------------------+-------------------+---------------------------------------------+
+| energyTotal                    | double            | The sum of the above energies for the       |
+|                                |                   | current event.                              |
++--------------------------------+-------------------+---------------------------------------------+
+| nCollimatorsInteracted         | int               | The number of collimators the primary       |
+|                                |                   | particle interacted with.                   |
++--------------------------------+-------------------+---------------------------------------------+
+| nTracks                        | long long int     | Number of tracks created in the event.      |
++--------------------------------+-------------------+---------------------------------------------+
 
 .. note:: :code:`energyDepositedVacuum` will only be non-zero if the option :code:`storeElossVacuum`
 	  is on which is off by default.

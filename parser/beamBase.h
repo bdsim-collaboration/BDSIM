@@ -45,6 +45,9 @@ namespace GMAD
       std::string xDistrType;
       std::string yDistrType;
       std::string zDistrType;
+      std::string spaceDistrType;
+      std::string directionDistrType;
+      std::string energyDistrType;
       std::string distrFile;
       std::string distrFileFormat;
       bool        matchDistrFileLength;
@@ -82,8 +85,9 @@ namespace GMAD
       double sigmaX, sigmaXp, sigmaY, sigmaYp;
       ///@}
       
-      ///@{ for the circle/square beam distribution
-      double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
+      ///@{ for the circle/square/box beam distribution
+      double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeZ, envelopeZp;
+      double envelopeT, envelopeE;
       double envelopeR, envelopeRp;
       ///@}
       

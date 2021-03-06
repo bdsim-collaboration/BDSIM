@@ -37,6 +37,10 @@ New Features
 * More granular control over information stored in trajectories. Trajectories can use a lot of disk
   space so it's important to allow this control so we store only what we need for every step of every
   trajectory chosen for storage.
+* New beam / bunch distributions :code:`compositespacedirectionenergy` and :code:`box`. The first
+  allows mixing of distributions for spatial, directional and energy / time rather than the usual
+  coupled phase space of the `composite` distribution (e.g. x,xp and y,yp). `box` is uniform in
+  all dimensions.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -156,10 +160,51 @@ Output Changes
   such as when using an event generator file.
 * `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
   now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
+* New event summary variables `energyWorldExitKinet` and `energyImpactingApertureKinetic`.
 
 
 Output Class Versions
 ---------------------
+
+* Data Version 7.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | Y           | 5               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 5               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | N           | 3               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
 
 
 V1.5.1 - 2020 / 12 / 21
