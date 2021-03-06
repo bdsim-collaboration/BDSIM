@@ -37,6 +37,10 @@ New Features
 * More granular control over information stored in trajectories. Trajectories can use a lot of disk
   space so it's important to allow this control so we store only what we need for every step of every
   trajectory chosen for storage.
+* New beam / bunch distributions :code:`compositespacedirectionenergy` and :code:`box`. The first
+  allows mixing of distributions for spatial, directional and energy / time rather than the usual
+  coupled phase space of the `composite` distribution (e.g. x,xp and y,yp). `box` is uniform in
+  all dimensions.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -183,7 +187,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventModel           | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventOptions         | N           | 5               | 5               |
+| BDSOutputROOTEventOptions         | Y           | 5               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
