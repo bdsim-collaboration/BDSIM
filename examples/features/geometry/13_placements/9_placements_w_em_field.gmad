@@ -1,7 +1,10 @@
-f1: field, type="emap2d",
+f1: field, type="ebmap2d",
                  electricFile = "bdsim2d:muon-field.dat.gz",
 		 electricInterpolator="linear",
-		 eScaling=1e9;
+		 eScaling=1e9,
+		 bScaling=0.1,
+		 magneticFile = "bdsim2d:muon-field.dat.gz",
+		 magneticInterpolator="linear";
 
 ! global placement w.r.t world frame
 dx = (2.5 * 0.5) + 0.2;
