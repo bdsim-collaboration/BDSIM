@@ -93,6 +93,7 @@ int main(int argc, char* argv[])
 	  delete f;
 	  continue;
 	}
+      std::cout << "Accumulating> " << filename << std::endl;
       TTree* headerTree = dynamic_cast<TTree*>(f->Get("Header")); // should be safe given check we've just done
       Header* headerLocal = new Header();
       headerLocal->SetBranchAddress(headerTree);
