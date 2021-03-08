@@ -89,6 +89,8 @@ int main(int argc, char* argv[])
       if (!RBDS::IsBDSIMOutputFile(f))
 	{
 	  std::cout << "File \"" << filename << "\" skipped as not a valid BDSIM file" << std::endl;
+	  f->Close();
+	  delete f;
 	  continue;
 	}
       TTree* headerTree = dynamic_cast<TTree*>(f->Get("Header")); // should be safe given check we've just done
