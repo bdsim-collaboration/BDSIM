@@ -88,7 +88,7 @@ A few minimal examples of beam definition are::
 
 Other parameters, such as the beam distribution type, :code:`distrType`, are optional and can
 be specified as described in the following sections. The beam particle may be specified by name
-as it is in Geant4 (exactly) or by it's PDG ID. The follow are available by default:
+as it is in Geant4 (exactly) or by its PDG ID. The follow are available by default:
 
 * `e-` or `e+`
 * `proton` or `antiproton`
@@ -181,7 +181,7 @@ from this value given the proton's mass).
 * If no :code:`E0` variable is specified, it's assumed to be the same as :code:`energy`.
 * If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
   the same particle is assumed as :code:`particle` but with a different energy.
-	
+
 
 Generate Only the Input Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3680,10 +3680,10 @@ like the LHC, where speed matters and the pole faces are not a strong feature.
 	  integrators.
 
 .. note:: The dipole fringe matrix used for poleface rotations and fringe field tracking
-      (see :ref:`dipole-fringe-integrator`) has no terms that are momentum dependant, therefore to match
+      (see :ref:`dipole-fringe-integrator`) has no terms that are momentum dependent, therefore to match
       MAD-X, the dipole fringe integrator in the `bdsimmatrix` set does not normalise the fringe kick to
       the particle's momentum. This of course means that the fringe's effect on the beam optics is independent
-      of energy spread. As a particle's bending radius should depend on it's momentum, the user can instead
+      of energy spread. As a particle's bending radius should depend on its momentum, the user can instead
       use the `bdsimmatrixfringescaling` integrator set which is identical to the `bdsimmatrix` set except
       for the dipole fringe integrator which does normalises to momentum on a per-particle basis. This integrator
       set would therefore produce a slightly different optic performance if the beam has an energy spread and may
@@ -3711,12 +3711,12 @@ Dipole Scaling
 ^^^^^^^^^^^^^^
 When scaling a dipole, BDSIM internally scales the dipole field and therefore scales the bending radius as the
 machine's nominal rigidity remains unchanged. This same field is also used in the dipole fringes for particle
-transport through the element, therefore the magnitude of the fringe kick should also scale due to it's dependence
+transport through the element, therefore the magnitude of the fringe kick should also scale due to its dependence
 on the bending radius.
 
 The default integrator set, `bdsimmatrix`, however, is designed to match the behaviour of MAD-X and MAD-8 where
-the standard fringe matrix has no energy dependant terms (see :ref:`dipole-fringe-integrator`). The same kick is
-therefore applied to every charged particle irrespective of it's momentum.
+the standard fringe matrix has no energy dependent terms (see :ref:`dipole-fringe-integrator`). The same kick is
+therefore applied to every charged particle irrespective of its momentum.
 
 As the kick would be calculated from the scaled bending radius, whilst it would be physically accurate for the
 particle, it would not match MAD which would apply the kick as if the particle were nominal. In the `bdsimmatrix`
