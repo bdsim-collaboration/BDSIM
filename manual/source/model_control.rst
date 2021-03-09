@@ -478,7 +478,7 @@ which the beam :math:`\sigma` -matrix is calculated, using the following equatio
    \sigma_{36} & = \eta_{y}\sigma_{P}^{2}\\
    \sigma_{63} & = \eta_{y}\sigma_{P}^{2}\\
    \sigma_{46} & = \eta_{yp}\sigma_{P}^{2}\\
-   \sigma_{64} & = \eta_{x}\sigma_{P}^{2}\\
+   \sigma_{64} & = \eta_{yp}\sigma_{P}^{2}\\
    \sigma_{55} & = \sigma_{T}^2 \\
    \sigma_{66} & = \sigma_{P}^2
 
