@@ -103,6 +103,7 @@ General
 * The print out of materials now lists the vacuum density in g/cm3 rather than g/m3, as is more common.
 * The name of the bunch distribution is always print out in the terminal print out now.
 * Clarified trajectory options in manual a bit - two tables, one for filtering, one for storage.
+* Document option :code:`maximumTracksPerEvent`.
 
 Bug Fixes
 ---------

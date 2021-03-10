@@ -2213,6 +2213,11 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | through any geometry in the model (not including the  |
 |                                  | world volume)                                         |
 +----------------------------------+-------------------------------------------------------+
+| maximumTracksPerEvent            | Any tracks beyond this number will be killed without  |
+|                                  | regard to their species or kinematics. Ultimately,    |
+|                                  | this can be used to limit the size of an event. Very  |
+|                                  | artificial, and should only be used with care.        |
++----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
 |                                  | energy deposition recorded at that location [GeV]     |
 +----------------------------------+-------------------------------------------------------+
