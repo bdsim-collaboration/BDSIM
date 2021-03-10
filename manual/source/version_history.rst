@@ -146,6 +146,9 @@ Bug Fixes
   geometry. The overlap was calculated using the possibly large offset of the particular solid.
 * `PrimaryFirstHit` and `PrimaryLastHit` are now filled for all primary particles when there are
   multiple removing the ambiguity of which one was recorded (no trackID etc was filled).
+* If particles were killed in the world volume and :code:`storeElossWorld` was on, the kinetic energy
+  of the tracks killed would not previously be added to the output. This has been fixed.
+* Fix processing of a track in BDSSDEnergyDepositionGlobal that would have segfaulted if used.
 
 
 Output Changes
