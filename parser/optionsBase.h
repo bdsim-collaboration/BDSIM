@@ -339,6 +339,7 @@ namespace GMAD
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+    bool        storeTrajectoryAllVariables;
 
     // filter logic
     bool        trajectoryFilterLogicAND;

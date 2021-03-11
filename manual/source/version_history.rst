@@ -66,6 +66,13 @@ New Features
 |                                  | Relevant when minimumKineticEnergy option or          |
 |                                  | stopSecondaries is used.                              |
 +----------------------------------+-------------------------------------------------------+
+| storeTrajectoryAllVariables      | Override and turn on `storeTrajectoryIon`,            |
+|                                  | `storeTrajectoryLocal`,                               |
+|                                  | `storeTrajectoryKineticEnergy`,                       |
+|                                  | `storeTrajectoryMomentumVector`,                      |
+|                                  | `storeTrajectoryProcesses`, `storeTrajectoryTime`,    |
+|                                  | and `storeTrajectoryLinks`.                           |
++----------------------------------+-------------------------------------------------------+
 | storeTrajectoryMomentumVector    | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV   |
 |                                  | for each step. Default False                          |
 +----------------------------------+-------------------------------------------------------+

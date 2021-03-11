@@ -322,5 +322,16 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
 				   StoreTrajectoryLocal(),
 				   StoreTrajectoryLinks(),
 				   StoreTrajectoryIon()};
+  
+  if (StoreTrajectoryAllVariables())
+  {
+    result.storeKineticEnergy  = true;
+    result.storeMomentumVector = true;
+    result.storeProcesses      = true;
+    result.storeTime           = true;
+    result.storeLocal          = true;
+    result.storeLinks          = true;
+    result.storeIon            = true;
+  }
   return result;
 }

@@ -2669,6 +2669,11 @@ that has passed the filters above.
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Function**                                                       |
 +====================================+====================================================================+
+| storeTrajectoryAllVariables        | Override and turn on `storeTrajectoryIon`, `storeTrajectoryLocal`, |
+|                                    | `storeTrajectoryKineticEnergy`, `storeTrajectoryMomentumVector`,   |
+|                                    | `storeTrajectoryProcesses`, `storeTrajectoryTime`, and             |
+|                                    | `storeTrajectoryLinks`.                                            |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryIon                 | Store `isIon`, `ionA`, `ionZ` and `nElectrons` variables.          |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryKineticEnergy       | Store `kineticEnergy` for each step. Default True.                 |
