@@ -259,8 +259,8 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   // Position
   G4ThreeVector pos = point->GetPosition();
   itj.XYZ.emplace_back(TVector3(pos.getX() / CLHEP::m,
-			     pos.getY() / CLHEP::m,
-			     pos.getZ() / CLHEP::m));
+				pos.getY() / CLHEP::m,
+				pos.getZ() / CLHEP::m));
   
   G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
@@ -280,8 +280,8 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   itj.energyDeposit.push_back(point->GetEnergyDeposit() / CLHEP::GeV);
   G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
   itj.PXPYPZ.emplace_back(TVector3(mom.getX(),
-				mom.getY(),
-				mom.getZ()));
+				   mom.getY(),
+				   mom.getZ()));
   itj.S.push_back(point->GetPreS() / CLHEP::m);
   itj.T.push_back(point->GetPreGlobalTime() / CLHEP::ns);
   itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
