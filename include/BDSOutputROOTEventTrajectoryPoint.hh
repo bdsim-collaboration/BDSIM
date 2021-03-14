@@ -53,7 +53,8 @@ public:
 				    bool   isIonIn,
 				    int    ionAIn,
 				    int    ionZIn,
-				    int    nElectronsIn);
+				    int    nElectronsIn,
+				    int    stepIndexIn = -1);
   virtual ~BDSOutputROOTEventTrajectoryPoint();
 
   int          partID;
@@ -79,6 +80,7 @@ public:
   int      ionA;
   int      ionZ;
   int      nElectrons;
+  int      stepIndex;  ///< Index along trajectory this point is.
 
   ClassDef(BDSOutputROOTEventTrajectoryPoint,4);
 };
