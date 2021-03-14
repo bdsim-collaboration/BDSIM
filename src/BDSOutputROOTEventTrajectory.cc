@@ -466,8 +466,16 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   
   for (int i = 0; i < nstep; ++i)
     {
-      int ppt = postProcessTypes[ti][i];
-      if (ppt != -1 && ppt != 1 && ppt != 10)
+      int ppt  = postProcessTypes[ti][i];
+      int ppst = postProcessSubTypes[ti][i];
+      // this is a hard coded version of BDSTrajectoryPoint::IsScatteringPoint which is
+      // only available if we link to Geant4 for the enums (we don't here).
+      // -1 = undefined, 1 = G4ProcessType::fTransportation, 10 = G4ProcessTypes::fParallel
+      // 0 = G4ProcessType::fNotDefined for crystal channeling (exclude the thousands of points)
+      // 401 = G4TransportationProcessSubType::STEP_LIMITER which is categorised under G4ProcessType::fGeneral
+      bool notGeneral = ppt != 7 && ppst != 401;
+      bool changeInEnergy = energyDeposit[ti][i] > 1e-9;
+      if ( (ppt != -1 && ppt != 1 && ppt != 10 && ppt != 0 && notGeneral) || changeInEnergy)
 	{
 	  BDSOutputROOTEventTrajectoryPoint p(partID[ti],
 					      trackID[ti],
