@@ -43,7 +43,8 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint():
   isIon(0),
   ionA(0),
   ionZ(0),
-  nElectrons(0)
+  nElectrons(0),
+  stepIndex(-1)
 {;}
 
 BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int             partIDIn,
@@ -68,7 +69,8 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int        
 								     bool   isIonIn,
 								     int    ionAIn,
 								     int    ionZIn,
-								     int    nElectronsIn):
+								     int    nElectronsIn,
+								     int    stepIndexIn):
   partID(partIDIn),
   trackID(trackIDIn),
   parentID(parentIDIn),
@@ -91,7 +93,8 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int        
   isIon(isIonIn),
   ionA(ionAIn),
   ionZ(ionZIn),
-  nElectrons(nElectronsIn)
+  nElectrons(nElectronsIn),
+  stepIndex(stepIndexIn)
 {;}
 
 BDSOutputROOTEventTrajectoryPoint::~BDSOutputROOTEventTrajectoryPoint()
