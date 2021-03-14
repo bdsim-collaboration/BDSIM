@@ -438,7 +438,10 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
-    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+    {
+      std::cout << "No such track ID" << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
   
   int ti = trackID_trackIndex.at(trackid);  // get track index
 
@@ -483,7 +486,10 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
-    {return BDSOutputROOTEventTrajectoryPoint();}
+    {
+      std::cout << "No such track ID" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
   
   int ti = trackID_trackIndex.at(trackid);  // get track index
   int si = parentStepIndex.at(ti);          // get primary index
@@ -518,7 +524,10 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
-    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+    {
+      std::cout << "No such track ID" << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
   
   int ti = trackID_trackIndex.at(trackid);
 
@@ -558,9 +567,13 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
   return tpv;
 }
 
-void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
+void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex)
 {
+  int i = storageIndex; // shortcut
   int wdt = 11; // width of columns for print out
+
+  if (i > (int)partID.size() || i < 0)
+    {std::cout << "Invalid index" << std::endl; return;}
   
   if (i+1 > n) // safety
     {std::cout << "Index chosen is greater than maximum index of: " << n-1 << std::endl; return;}
