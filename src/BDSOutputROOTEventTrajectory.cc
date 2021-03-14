@@ -448,6 +448,22 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
   int nstep = XYZ[ti].size();
+  if (nstep == 0) // no points or it wasn't stored
+    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+
+  if (postProcessTypes[ti].empty()) // and implicitly nstep>0
+    {// we require processes for this function
+      std::cout << "Processes not stored for this file - not possible." << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
+
+  bool usePXPYPZ = !PXPYPZ[ti].empty();
+  bool useT      = !T.empty();
+  bool useIon    = isIon.empty();
+  bool useLocal  = xyz.empty();
+  bool useLinks  = charge.empty();
+  bool useEK     = kineticEnergy.empty();
+  
   for (int i = 0; i < nstep; ++i)
     {
       int ppt = postProcessTypes[ti][i];
@@ -462,20 +478,21 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 					      postWeights[ti][i],
 					      energyDeposit[ti][i],
 					      XYZ[ti][i],
-					      PXPYPZ[ti][i],
+					      usePXPYPZ ? PXPYPZ[ti][i] : TVector3(),
 					      modelIndicies[ti][i],
-					      T[ti][i],
-					      xyz[ti][i],
-					      pxpypz[ti][i],
-					      charge[ti][i],
-					      kineticEnergy[ti][i],
-					      turnsTaken[ti][i],
-					      rigidity[ti][i],
-					      mass[ti][i],
-					      isIon[ti][i],
-					      ionA[ti][i],
-					      ionZ[ti][i],
-					      nElectrons[ti][i]);
+					      useT ? T[ti][i]      : 0,
+					      useLocal ? xyz[ti][i] : TVector3(),
+					      useLocal ? pxpypz[ti][i] : TVector3(),
+					      useLinks ? charge[ti][i] : 0,
+					      useEK ? kineticEnergy[ti][i] : 0,
+					      useLinks ? turnsTaken[ti][i] : 0,
+					      useLinks ? rigidity[ti][i] : 0,
+					      useLinks ? mass[ti][i] : 0,
+					      useIon ? isIon[ti][i] : false,
+					      useIon ? ionA[ti][i] : 0,
+					      useIon ? ionZ[ti][i] : 0,
+					      useIon ? nElectrons[ti][i] : 0,
+					      i);
 	  tpv.push_back(p);
 	}
     }
@@ -494,6 +511,19 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
   int ti = trackID_trackIndex.at(trackid);  // get track index
   int si = parentStepIndex.at(ti);          // get primary index
 
+  if (si > (int)XYZ[ti].size())
+    {// evidently not all step points are stored
+      std::cout << "Not all step points are stored. Parent step index is outside points stored." << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+
+  bool usePXPYPZ = !PXPYPZ[ti].empty();
+  bool useT      = !T.empty();
+  bool useIon    = isIon.empty();
+  bool useLocal  = xyz.empty();
+  bool useLinks  = charge.empty();
+  bool useEK     = kineticEnergy.empty();
+
   BDSOutputROOTEventTrajectoryPoint p(partID[ti],
 				      trackID[ti],
                                       parentID[ti],
@@ -503,20 +533,21 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
                                       postWeights[ti][si],
 				      energyDeposit[ti][si],
                                       XYZ[ti][si],
-				      PXPYPZ[ti][si],
-                                      modelIndicies[ti][si],
-				      T[ti][si],
-				      xyz[ti][si],
-				      pxpypz[ti][si],
-				      charge[ti][si],
-				      kineticEnergy[ti][si],
-				      turnsTaken[ti][si],
-				      rigidity[ti][si],
-				      mass[ti][si],
-				      isIon[ti][si],
-				      ionA[ti][si],
-				      ionZ[ti][si],
-				      nElectrons[ti][si]);
+				      usePXPYPZ ? PXPYPZ[ti][si] : TVector3(),
+				      modelIndicies[ti][si],
+				      useT ? T[ti][si]      : 0,
+				      useLocal ? xyz[ti][si] : TVector3(),
+				      useLocal ? pxpypz[ti][si] : TVector3(),
+				      useLinks ? charge[ti][si] : 0,
+				      useEK ? kineticEnergy[ti][si] : 0,
+				      useLinks ? turnsTaken[ti][si] : 0,
+				      useLinks ? rigidity[ti][si] : 0,
+				      useLinks ? mass[ti][si] : 0,
+				      useIon ? isIon[ti][si] : false,
+				      useIon ? ionA[ti][si] : 0,
+				      useIon ? ionZ[ti][si] : 0,
+				      useIon ? nElectrons[ti][si] : 0,
+				      si);
   return p;
 }
 
@@ -528,14 +559,32 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
       std::cout << "No such track ID" << std::endl;
       return std::vector<BDSOutputROOTEventTrajectoryPoint>();
     }
+
+  if (postProcessTypes.empty())
+    {
+      std::cout << "Processes not stored for this file - not possible." << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
   
   int ti = trackID_trackIndex.at(trackid);
+
+  bool usePXPYPZ = !PXPYPZ.empty();
+  bool useT      = !T.empty();
+  bool useIon    = isIon.empty();
+  bool useLocal  = xyz.empty();
+  bool useLinks  = charge.empty();
+  bool useEK     = kineticEnergy.empty();
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
   while (ti != 0)
     {
       unsigned int pi  = parentIndex.at(ti);
       unsigned int psi = parentStepIndex.at(ti);
+      if (psi > (unsigned int)XYZ[pi].size())
+	{
+	  std::cout << "Not all points stored - defaulting to creation point." << std::endl;
+	  psi = 0;
+	}
       
       BDSOutputROOTEventTrajectoryPoint p(partID[pi],
 					  trackID[pi],
@@ -546,20 +595,21 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 					  postWeights[pi][psi],
 					  energyDeposit[pi][psi],
 					  XYZ[pi][psi],
-					  PXPYPZ[pi][psi],
-					  modelIndicies[pi][psi],
-					  T[pi][psi],
-					  xyz[ti][psi],
-					  pxpypz[ti][psi],
-					  charge[ti][psi],
-					  kineticEnergy[ti][psi],
-					  turnsTaken[ti][psi],
-					  rigidity[ti][psi],
-					  mass[ti][psi],
-					  isIon[ti][psi],
-					  ionA[ti][psi],
-					  ionZ[ti][psi],
-					  nElectrons[ti][psi]);
+					  usePXPYPZ ? PXPYPZ[ti][psi] : TVector3(),
+					  modelIndicies[ti][psi],
+					  useT ? T[ti][psi]      : 0,
+					  useLocal ? xyz[ti][psi] : TVector3(),
+					  useLocal ? pxpypz[ti][psi] : TVector3(),
+					  useLinks ? charge[ti][psi] : 0,
+					  useEK ? kineticEnergy[ti][psi] : 0,
+					  useLinks ? turnsTaken[ti][psi] : 0,
+					  useLinks ? rigidity[ti][psi] : 0,
+					  useLinks ? mass[ti][psi] : 0,
+					  useIon ? isIon[ti][psi] : false,
+					  useIon ? ionA[ti][psi] : 0,
+					  useIon ? ionZ[ti][psi] : 0,
+					  useIon ? nElectrons[ti][psi] : 0),
+					  i;
       tpv.push_back(p);
       ti = (int)pi;
     }
