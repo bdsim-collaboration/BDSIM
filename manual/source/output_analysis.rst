@@ -254,7 +254,7 @@ number of entries in that bin. This, however, doesn't correctly represent the va
 from event to event. Using the per-event histograms, a single simple 1D histogram of energy
 deposition is created and these are averaged. The resultant histogram has the mean per-event
 (note the normalisation here versus the simple histograms) and the error on the bin is the
-standard error on the beam, i.e.
+standard error on the meam, i.e.
 
 .. math::
   \mathrm{bin~error} = \frac{\sigma}{\sqrt{n_{events}}}
