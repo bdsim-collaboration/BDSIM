@@ -511,15 +511,39 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+  {
+    std::cout << "No such track ID" << std::endl;
+    return BDSOutputROOTEventTrajectoryPoint();
+  }
+  int ti = trackID_trackIndex.at(trackid);  // get track index
+  int pid = parentID[ti];                   // parent trackID
+  int chosenTrackID = trackid;
+  while (pid != 0)
+  {
+    if (parentID[trackID_trackIndex.at(pid)] > 0)
+    {chosenTrackID = pid;}
+    ti = trackID_trackIndex.at(pid);
+    pid = parentID[ti];
+
+  }
+  return parentProcessPoint(chosenTrackID);
+}
+
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoint(int trackid)
+{
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
     {
       std::cout << "No such track ID" << std::endl;
       return BDSOutputROOTEventTrajectoryPoint();
     }
   
-  int ti = trackID_trackIndex.at(trackid);  // get track index
-  int si = parentStepIndex.at(ti);          // get primary index
+  int ti  = trackID_trackIndex.at(trackid);  // get track index
+  int pti = parentID[ti];                    // parent trackID
+  int si  = parentStepIndex.at(ti);          // get primary index
+  int pi  = trackID_trackIndex.at(pti);      // parent track storage index
 
-  if (si > (int)XYZ[ti].size())
+  if (si > (int)XYZ[pi].size())
     {// evidently not all step points are stored
       std::cout << "Not all step points are stored. Parent step index is outside points stored." << std::endl;
       return BDSOutputROOTEventTrajectoryPoint();
