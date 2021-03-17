@@ -51,15 +51,15 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
     {
       polefaceAngle = (*strengthIn)["e1"];
       polefaceCurvature = (*strengthIn)["h1"];
-      fringeCorr = BDS::FringeFieldCorrection(strengthIn, 1);
-      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 1);
+      fringeCorr = BDS::FringeFieldCorrection(strengthIn, true);
+      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, true);
     }
   else  // must be exit face
     {
       polefaceAngle = (*strengthIn)["e2"];
       polefaceCurvature = (*strengthIn)["h2"];
-      fringeCorr = BDS::FringeFieldCorrection(strengthIn, 0);
-      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 0);
+      fringeCorr = BDS::FringeFieldCorrection(strengthIn, false);
+      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, false);
     }
 
   // store if instance is for entrance or exit fringe - determines which element parameters are used in kick
