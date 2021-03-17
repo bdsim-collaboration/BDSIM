@@ -218,6 +218,7 @@ public:
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
   BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
+  BDSOutputROOTEventTrajectoryPoint              parentProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
   void                                           printTrajectoryInfo(int trackID);
   bool                                           parentIsPrimary(int trackID);
