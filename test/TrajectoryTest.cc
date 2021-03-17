@@ -22,6 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "Event.hh"
 
+#include "TROOT.h"
+#include "TSystem.h"
+
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -50,8 +54,15 @@ int main(int argc, char** argv)
       int lastTrackID = (int)event->Trajectory->trackID.back();
 
       pointV trackInteractions = event->Trajectory->trackInteractions(lastTrackID);
-
-      point  primProcessPoint  = event->Trajectory->primaryProcessPoint(lastTrackID);
+      
+      point parentProcessPoint = event->Trajectory->parentProcessPoint(lastTrackID);
+      
+      //int nTrajectories = event->Trajectory->n;
+      std::vector<unsigned int> trackIDsSorted = event->Trajectory->trackID;
+      std::sort(trackIDsSorted.begin(), trackIDsSorted.end());
+      int highTrackID = trackIDsSorted.back();
+      
+      point  primProcessPoint  = event->Trajectory->primaryProcessPoint(highTrackID);
 
       pointV processHistory    = event->Trajectory->processHistory(lastTrackID);
 
