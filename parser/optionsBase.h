@@ -207,6 +207,7 @@ namespace GMAD
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
+    double      tunnelMaxSegmentLength;
     ///@}
 
     bool removeTemporaryFiles;
@@ -250,6 +251,10 @@ namespace GMAD
     // biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
+    std::string biasForWorldVolume;
+    std::string biasForWorldContents;
+    std::string biasForWorldVacuum;
+    std::string worldVacuumVolumeNames;
 
     // tracking related parameters
     std::string integratorSet;
@@ -266,6 +271,7 @@ namespace GMAD
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;
+    bool     killedParticlesMassAddedToEloss;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature.
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
@@ -313,6 +319,7 @@ namespace GMAD
     bool        storePrimaryHistograms;
     
     bool        storeTrajectory;
+    // filters
     int         storeTrajectoryDepth;
     int         storeTrajectoryStepPoints;
     bool        storeTrajectoryStepPointLast;
@@ -321,11 +328,20 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
+
+    // for trajectories stored, what data is stored
     bool        storeTrajectoryTransportationSteps;
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
+    bool        storeTrajectoryKineticEnergy;
+    bool        storeTrajectoryMomentumVector;
+    bool        storeTrajectoryProcesses;
+    bool        storeTrajectoryTime;
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+    bool        storeTrajectoryAllVariables;
+
+    // filter logic
     bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
