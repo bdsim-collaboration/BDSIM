@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -28,7 +28,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <fstream>
 
-BDSBunchSixTrack::BDSBunchSixTrack()
+BDSBunchSixTrack::BDSBunchSixTrack():
+  BDSBunch("sixtrack")
 {
   useCurvilinear = true; // need to always convert from curvilinear
   iPart = 0;

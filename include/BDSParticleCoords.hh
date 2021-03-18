@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -56,6 +56,9 @@ public:
   
   /// Actual print out method so it can be called from a derived class.
   virtual void Print(std::ostream& out) const;
+  
+  inline G4ThreeVector Position() const {return G4ThreeVector(x,y,z);}
+  inline G4ThreeVector Momentum() const {return G4ThreeVector(xp,yp,zp);}
   
   G4double x;
   G4double y;

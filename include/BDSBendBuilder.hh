@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -85,7 +85,7 @@ namespace BDS
 			       G4double                 angleIn,
 			       G4double                 angleOut,
 			       const G4String&          name,
-			       const BDSMagnetStrength* st,
+			       BDSMagnetStrength*       st,
 			       G4double                 brho,
 			       const BDSIntegratorSet*  integratorSet,
 			       BDSFieldType             dipoleFieldType);

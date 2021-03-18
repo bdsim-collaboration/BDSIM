@@ -14,7 +14,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 4 )
+set( BDSIM_MINOR_VERSION 5 )
 set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -234,6 +234,9 @@ target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
 add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
+
+# material builder
+add_subdirectory(modules/nistmaterials)
 
 # Install the targets:
 set(executables bdsimexec)

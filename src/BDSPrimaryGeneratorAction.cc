@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -90,7 +90,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
       BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
       if (!beg)
 	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
-      hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, beg, beam.removeUnstableWithoutDecay);
+      hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, beg, beam.removeUnstableWithoutDecay,
+                                         beam.eventGeneratorWarnSkippedParticles);
       if (recreate)
         {hepMC3Reader->RecreateAdvanceToEvent(eventOffset);}
 #else

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -18,11 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSFIELDEINTERPOLATED_H
 #define BDSFIELDEINTERPOLATED_H
-
+#include "BDSExtent.hh"
 #include "BDSFieldE.hh"
 
-#include "globals.hh"
 #include "G4Transform3D.hh"
+#include "G4Types.hh"
+
+class BDSInterpolator;
 
 /**
  * @brief Class to provide scaling and a base class pointer for interpolator fields.
@@ -33,19 +35,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldEInterpolated: public BDSFieldE
 {
 public:
-  explicit BDSFieldEInterpolated(G4Transform3D offset,
-				 G4double      eScalingIn = 1.0);
+  BDSFieldEInterpolated() = delete;
+  BDSFieldEInterpolated(const BDSInterpolator* interpolator,
+			const G4Transform3D&   offset,
+			G4double               eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated(){;}
-
-  /// Accessor.
+  
   inline G4double EScaling() const {return eScaling;}
-
-  /// Setter.
   inline void     SetEScaling(G4double eScalingIn) {eScaling = eScalingIn;}
+
+  /// Extent of field without any offset (ie in its own coordinate frame).
+  inline BDSExtent ExtentNoOffset() const {return extentNoOffset;}
+  
+  /// For now, we will ignore any rotation of the transform. TODO.
+  inline BDSExtent Extent() const {return extentNoOffset.Translate(transform.getTranslation());} ///< With offset.
+
+  inline G4double SmallestSpatialStep() const {return smallestSpatialStep;}
   
 private:
   G4double eScaling; ///< E field scaling value.
+  BDSExtent extentNoOffset; ///< Extent without offset.
+  G4double smallestSpatialStep;
 };
 
 #endif

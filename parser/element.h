@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -157,6 +157,8 @@ namespace GMAD
     double waveLength; ///< for laser wire and 3d transforms
     
     double phi, theta, psi; ///< for 3d transforms
+    double axisX, axisY, axisZ;
+    bool   axisAngle;
 
     ///@{ for degrader
     int numberWedges;

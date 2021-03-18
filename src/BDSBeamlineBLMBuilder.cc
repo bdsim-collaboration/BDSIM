@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -166,7 +166,8 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       BDSSimpleComponent* comp = new BDSSimpleComponent(blm->GetName(),
 							blm,
 							length);
-
+      comp->Initialise();
+      
       G4double S = -1000;
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(bp, parentBeamLine,
 										  &S, &blmExtent);

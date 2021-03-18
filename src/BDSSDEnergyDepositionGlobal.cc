@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -32,8 +32,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "Randomize.hh"
 
-BDSSDEnergyDepositionGlobal::BDSSDEnergyDepositionGlobal(G4String name):
+BDSSDEnergyDepositionGlobal::BDSSDEnergyDepositionGlobal(const G4String& name,
+							 G4bool killedParticleMassAddedToElossIn):
   BDSSensitiveDetector("energy_deposiiton_global/"+name),
+  killedParticleMassAddedToEloss(killedParticleMassAddedToElossIn),
   colName(name),
   hits(nullptr),
   HCIDe(-1),
@@ -138,17 +140,16 @@ G4bool BDSSDEnergyDepositionGlobal::ProcessHits(G4Step* aStep,
 G4bool BDSSDEnergyDepositionGlobal::ProcessHitsTrack(const G4Track* track,
 						     G4TouchableHistory* /*th*/)
 {
-  energy = track->GetTotalEnergy();
+  energy = killedParticleMassAddedToEloss ? track->GetTotalEnergy() : track->GetKineticEnergy();
   // if the energy is 0, don't do anything
   if (!BDS::IsFinite(energy))
     {return false;}
-
-  const G4Step* step = track->GetStep();
-  preStepKineticEnergy  = step->GetPreStepPoint()->GetKineticEnergy();
-  postStepKineticEnergy = step->GetPostStepPoint()->GetKineticEnergy();
+  
+  preStepKineticEnergy  = track->GetKineticEnergy();
+  postStepKineticEnergy = preStepKineticEnergy;
   stepLength            = 0;
   
-  G4ThreeVector posGlobal = track->GetPosition();
+  const G4ThreeVector& posGlobal = track->GetPosition();
   X = posGlobal.x();
   Y = posGlobal.y();
   Z = posGlobal.z();
@@ -160,7 +161,6 @@ G4bool BDSSDEnergyDepositionGlobal::ProcessHitsTrack(const G4Track* track,
   weight     = track->GetWeight();
   turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
-  //create hitt and put in hits collection of the event
   BDSHitEnergyDepositionGlobal* hit = new BDSHitEnergyDepositionGlobal(energy,
 								       preStepKineticEnergy,
 								       postStepKineticEnergy,

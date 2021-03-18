@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -88,8 +88,8 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   eLossWorldExit     = new BDSOutputROOTEventLossWorld();
   eLossWorldContents = new BDSOutputROOTEventLossWorld();
 
-  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
-  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
 
   apertureImpacts = new BDSOutputROOTEventAperture();
   
@@ -104,8 +104,6 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  samplerTrees.push_back(primary);
-  samplerNames.push_back("Primary");
   primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
@@ -135,6 +133,7 @@ BDSOutputStructures::~BDSOutputStructures()
     {delete sampler;}
   for (auto collimator : collimators)
     {delete collimator;}
+  delete primary;
 }
 
 G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
@@ -176,7 +175,7 @@ void BDSOutputStructures::InitialiseSamplers()
   if (!localSamplersInitialised)
     {
       localSamplersInitialised = true;
-      for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+      for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
 #ifndef __ROOTDOUBLE__
 	  BDSOutputROOTEventSampler<float>*  res = new BDSOutputROOTEventSampler<float>(samplerName);
@@ -255,6 +254,7 @@ void BDSOutputStructures::ClearStructuresOptions()
 
 void BDSOutputStructures::ClearStructuresEventLevel()
 {
+  primary->Flush();
   for (auto sampler : samplerTrees)
     {sampler->Flush();}
   for (auto collimator : collimators)

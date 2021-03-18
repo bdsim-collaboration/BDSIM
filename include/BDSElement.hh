@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -38,13 +38,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSElement: public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String name,
-	     G4double arcLength,
-	     G4double horizontalWidthIn,
-	     G4String geometry,
-	     G4double angle                              = 0,
+  BDSElement(const G4String& name,
+	     G4double        arcLength,
+	     G4double        horizontalWidthIn,
+	     const G4String& geometry,
+	     G4double        angle                       = 0,
 	     std::vector<G4String>* namedVacuumVolumesIn = nullptr,
-	     G4bool   autoColourGeometryIn               = true);
+	     G4bool          autoColourGeometryIn        = true);
   virtual ~BDSElement(){;}
 
   // This is a little convoluted because ultimately we can't change the

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -64,6 +64,8 @@ namespace GMAD
     std::string side;     ///< which side to attach to: top, bottom, left, right.
     double sideOffset;    ///< Gap between side and component.
     bool   autoColour;    ///< Whether to auto colour the geometry.
+    
+    std::string fieldAll; ///< Name of field object to apply to all of placement.
     
     /// constructor
     Placement();

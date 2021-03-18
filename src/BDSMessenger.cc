@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -128,6 +128,11 @@ void BDSMessenger::GoToElement(const std::string& name)
 {
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
 
+  if (!beamline)
+    {
+      G4cout << "No beam line in this model so not possible to search it.";
+      return;
+    }
   // search for the name exactly
   const BDSBeamlineElement* e = beamline->GetElement(name);
  

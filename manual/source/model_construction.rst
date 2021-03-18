@@ -338,8 +338,8 @@ Notes:
 
 .. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
 	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
-	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
-	  this.
+	  separation. The option :code:`yokeFieldsMatchLHCGeometry` can be used to control
+	  this. On by default.
 
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
@@ -359,7 +359,7 @@ A few points about rbends:
    :math:`e2 = 0.1` can be followed by an rbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
-4) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+4) Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the beginning
    or at the end of the rbend. The length of the fringe field element can be
    set by the option `thinElementLength` (see :ref:`bdsim-options`) but is an advanced option.
 5) In the case of finite `fint` or `fintx` and `hgap`, a fringe field is used even
@@ -478,8 +478,8 @@ Notes:
 
 .. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
 	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
-	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
-	  this.
+	  separation. The option :code:`yokeFieldsMatchLHCGeometry` can be used to control
+	  this. On by default.
 
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
@@ -495,7 +495,7 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+3) Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the beginning
    or at the end of the sbend. The length of the fringe field magnet can be
    set by the option `thinElementLength` (see :ref:`bdsim-options`).
 4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
@@ -698,7 +698,7 @@ Examples: ::
 thinmultipole
 ^^^^^^^^^^^^^
 
-`thinmultipole` is the same as multipole, but is set to have a default length of 1 micron.
+`thinmultipole` is the same as multipole, but is set to have a default length of 0.1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
 
@@ -716,7 +716,7 @@ vkicker
 `vkicker` can either be a thin or thick vertical dipole magnet. If specified
 with a finite length :code:`l`, it will be constructed as a thick dipole. However, if no length (or
 a length of exactly 0 is specified), a thin kicker will be built. In practice, the thin version is
-constructed as a 1um slice with only the aperture geometry and no surrounding geometry and is not
+constructed as a 0.1um slice with only the aperture geometry and no surrounding geometry and is not
 visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
@@ -753,7 +753,7 @@ For thin kickers, the magnetic field :code:`B` is ignored and the element is tre
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+* Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the
   beginning or at the end of the vkicker. The length of the fringe field element can be set by the
   option `thinElementLength` (see :ref:`bdsim-options`).
 * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
@@ -779,7 +779,7 @@ hkicker
 
 `hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
 specified with a finite length :code:`l`, it will be constructed as a dipole. However, if no length (or
-a length of exactly 0) is specified, a thin kicker will be built. This is typically a 1um slice
+a length of exactly 0) is specified, a thin kicker will be built. This is typically a 0.1um slice
 with only the shape of the aperture and no surrounding geometry. It is also typically not
 visible with the default visualisation settings.
 
@@ -809,7 +809,7 @@ For thin kickers, the magnetic field :code:`B` is ignored and the element is tre
       the B field value must be supplied in order to calculate the bending radius which required
       to apply the effects correctly.
 
-* Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+* Fringe field kicks are applied in a thin fringe field magnet (0.1 micron thick by default) at the
   beginning or at the end of the hkicker. The length of the fringe field element can be set by the
   option `thinElementLength` (see :ref:`bdsim-options`).
 * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
@@ -1494,8 +1494,12 @@ transform3d
 ^^^^^^^^^^^
 
 `transform3d` defines an arbitrary three-dimensional transformation of the curvilinear coordinate
-system at that point in the beam line sequence.  This is often used to rotate components by a large
-angle.
+system at that point in the beam line sequence. The user is responsible for ensuring no overlaps
+in geometry are introduced. The drifts on either side currently will not have matching angular faces.
+
+Two representations of rotation can be used. Either Euler angles or Axis Angle where unit vector
+components are supplied to create an axis to rotate around by an angle. Euler is the default.
+To select the axis angle representation, set :code:`axisAngle=1`.
 
 
 ================  ============================  ==========  ===========
@@ -1506,6 +1510,11 @@ Parameter         Description                   Default     Required
 `phi`             phi Euler angle               0           No
 `theta`           theta Euler angle             0           No
 `psi`             psi Euler angle               0           No
+`axisAngle`       whether to use axis angle     0           No
+`axisX`           x component of axis vector    0           No
+`axisX`           x component of axis vector    0           No
+`axisX`           x component of axis vector    0           No
+`angle`           angle to rotate about axis    0           No
 ================  ============================  ==========  ===========
 
 .. note:: this permanently changes the coordinate frame, so care must be taken to undo any rotation
@@ -1514,6 +1523,9 @@ Parameter         Description                   Default     Required
 Examples: ::
 
    rcolrot: transform3d, psi=pi/2;
+
+   tr1: transform3d, x=2*mm, axisAngle=1, axisY=1, angle=pi/10;
+
 
 .. _element-rmatrix:
 

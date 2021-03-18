@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -30,7 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <string>
 
-BDSBunchRing::BDSBunchRing(): 
+BDSBunchRing::BDSBunchRing():
+  BDSBunch("ring"),
   rMin(0),
   rMax(0),
   rDif(0)

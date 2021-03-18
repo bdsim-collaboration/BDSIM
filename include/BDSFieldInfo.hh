@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -68,7 +68,7 @@ public:
   BDSFieldInfo(BDSFieldType             fieldTypeIn,
 	       G4double                 brhoIn,
 	       BDSIntegratorType        integratorTypeIn,
-	       const BDSMagnetStrength* magnetStrengthIn           = nullptr,
+	       BDSMagnetStrength*       magnetStrengthIn           = nullptr,
 	       G4bool                   provideGlobalTransformIn   = true,
 	       const G4Transform3D&     transformIn                = G4Transform3D(),
 	       const G4String&          magneticFieldFilePathIn    = "",
@@ -99,7 +99,7 @@ public:
   inline BDSFieldType        FieldType()                const {return fieldType;}
   inline G4double            BRho()                     const {return brho;}
   inline BDSIntegratorType   IntegratorType()           const {return integratorType;}
-  inline const BDSMagnetStrength*  MagnetStrength()     const {return magnetStrength;}
+  inline BDSMagnetStrength*  MagnetStrength()           const {return magnetStrength;}
   inline G4bool              ProvideGlobal()            const {return provideGlobalTransform;}
   inline G4String            MagneticFile()             const {return magneticFieldFilePath;}
   inline BDSFieldFormat      MagneticFormat()           const {return magneticFieldFormat;}
@@ -117,9 +117,11 @@ public:
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   inline G4double            Tilt()                     const {return tilt;}
-  inline G4bool              Left()                     const {return left;}
+  inline G4bool              SecondFieldOnLeft()        const {return secondFieldOnLeft;}
   inline G4String            MagneticSubFieldName()     const {return magneticSubFieldName;}
   inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
+  inline G4String            NameOfParserDefinition()   const {return nameOfParserDefinition;}
+  inline G4bool              UsePlacementWorldTransform() const {return usePlacementWorldTransform;}
   /// @}
   
   G4Transform3D Transform() const;         ///< Transform for the field definition only.
@@ -128,21 +130,30 @@ public:
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetFieldType(BDSFieldType fieldTypeIn) {fieldType = fieldTypeIn;}
+  inline void SetIntegratorType(BDSIntegratorType typeIn) {integratorType = typeIn;}
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
   inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
   inline void SetScalingRadius(G4double poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
   inline void SetBeamPipeRadius(G4double beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
   inline void SetChordStepMinimum(G4double chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
-  inline void SetLeft(G4bool leftIn) {left = leftIn;}
+  inline void SetSecondFieldOnLeft(G4bool leftIn) {secondFieldOnLeft = leftIn;}
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
+  inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
 
   void SetTransform(const G4Transform3D& transformIn); ///< Set the field definition transform.
   void SetTransformBeamline(const G4Transform3D& transformIn); ///< Set the beam line transform.
 
   /// Delete and replace the user limits which this class owns (only if not default ul).
   void SetUserLimits(G4UserLimits* userLimitsIn);
+  
+  void SetNameOfParserDefinition(const G4String& nameIn) {nameOfParserDefinition = nameIn;}
+  
+  /// Update the user limits object (stepLimit) to the minimum of the current and supplied maximum
+  /// step size. Mutable, so can be called on const object.
+  void UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSize,
+                                             G4bool   warn = false) const;
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -160,7 +171,7 @@ private:
   BDSFieldType             fieldType;
   G4double                 brho;
   BDSIntegratorType        integratorType;
-  const BDSMagnetStrength* magnetStrength;
+  BDSMagnetStrength*       magnetStrength;
   G4bool                   provideGlobalTransform;
   G4Transform3D*           transform;  ///< Transform w.r.t. solid field will be attached to
   G4String                 magneticFieldFilePath;
@@ -174,17 +185,20 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
-  G4UserLimits*            stepLimit;
+  mutable G4UserLimits*    stepLimit;
   G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
   G4double                 chordStepMinimum;
   G4double                 tilt;           ///< Cache of tilt of field.
-  G4bool                   left; ///< Flag for case of two-beam field - if not left, it's right.
+  G4bool                   secondFieldOnLeft; ///< Flag for case of two-beam field - if not left, it's right.
   G4String                 magneticSubFieldName;
   G4String                 electricSubFieldName;
+  G4bool                   usePlacementWorldTransform;
   /// Transform from curvilinear frame to this field - ie beam line bit only.
   G4Transform3D*           transformBeamline;
 
+  G4String nameOfParserDefinition;
+  
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;
 };

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -40,7 +40,7 @@ public:
 			       const BDSFieldMag* innerFieldIn,
 			       G4bool             kPositive,
 			       G4double           separation,
-			       G4bool             left = true);
+			       G4bool             secondFieldOnLeft = true);
 
   virtual ~BDSFieldMagMultipoleOuterDual();
 
