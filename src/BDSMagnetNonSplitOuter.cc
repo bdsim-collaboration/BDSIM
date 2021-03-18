@@ -172,7 +172,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 
                 i++; // for incremental copy numbers
 
-                if (vv->CheckOverlaps())
+                if (vv->CheckOverlaps() and checkOverlaps)
                 {
                     throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");
                 }
@@ -200,7 +200,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
                                         0,                           // copy number
                                         false);                      // overlap checking
 
-            if (vv->CheckOverlaps())
+            if (vv->CheckOverlaps() and checkOverlaps)
             {
                 throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
             }
@@ -226,7 +226,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
                                             copyNumber,                             // copy number
                                             false);                         // overlap checking
 
-                if (vv->CheckOverlaps())
+                if (vv->CheckOverlaps() and checkOverlaps)
                 {
                     throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
                 }

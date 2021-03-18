@@ -285,9 +285,9 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-                                                    checkOverlaps);
+                                                    false);
 
-        if (beamPipePV->CheckOverlaps())
+        if (beamPipePV->CheckOverlaps() and checkOverlaps)
         {
             throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");
         }
@@ -310,9 +310,9 @@ void BDSMagnet::PlaceComponents()
                                                            containerLogicalVolume,                          // its mother  volume
                                                            false,                                    // no boolean operation
                                                            0,                                       // copy number
-                                                           checkOverlaps);
+                                                           false);
 
-          if (magnetOuterPV->CheckOverlaps())
+          if (magnetOuterPV->CheckOverlaps() and checkOverlaps)
           {
               throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
           }
@@ -338,9 +338,9 @@ void BDSMagnet::PlaceComponents()
                                               containerLogicalVolume,                   // volume to place it in
                                               false,                             // no boolean operation
                                               copyNumber,                               // copy number
-                                              checkOverlaps);                           // overlap checking
+                                              false);                           // overlap checking
 
-                  if (vv->CheckOverlaps())
+                  if (vv->CheckOverlaps() and checkOverlaps)
                   {
                       throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
                   }
