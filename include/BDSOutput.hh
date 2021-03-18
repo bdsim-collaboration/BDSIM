@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSHistBinMapper.hh"
 #include "BDSOutputStructures.hh"
+#include "BDSTrajectoryOptions.hh"
 
 #include "globals.hh"
 
@@ -44,7 +45,7 @@ class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
 class BDSTrajectory;
-class BDSTrajectoryPoint;
+class BDSTrajectoryPointHit;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 class BDSTrajectoriesToStore;
@@ -120,8 +121,8 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
-		 const BDSTrajectoryPoint*                      primaryHit,
-		 const BDSTrajectoryPoint*                      primaryLoss,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryHits,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryLosses,
 		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
 		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
@@ -214,7 +215,7 @@ private:
 		       const HitsType hType);
 
   /// Fill the hit where the primary particle impact.
-  void FillPrimaryHit(const BDSTrajectoryPoint* phits);
+  void FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
   void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
@@ -224,18 +225,18 @@ private:
   void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
-  /// Fill a collection volume exit hits into the approprate output structure.
+  /// Fill a collection volume exit hits into the appropriate output structure.
   //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
-  void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
+  void FillPrimaryLoss(const std::vector<const BDSTrajectoryPointHit*>& primaryLosses);
 
   /// Copy a set of trajectories to the output structure.
   void FillTrajectories(const BDSTrajectoriesToStore* trajectories);
 
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
-			  const BDSTrajectoryPoint* primaryLossPoint);
+			  const std::vector<const BDSTrajectoryPointHit*>& primaryLossPoints);
 
   /// Fill aperture impact hits.
   void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
@@ -299,6 +300,7 @@ private:
   G4bool storeSamplerIon;
   G4int  storeTrajectoryStepPoints;
   G4bool storeTrajectoryStepPointLast;
+  BDS::TrajectoryOptions storeTrajectoryOptions;
   /// @}
 
   /// Whether to create collimator output structures or not - based on
@@ -312,7 +314,9 @@ private:
   G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
   G4double energyImpactingAperture;
+  G4double energyImpactingApertureKinetic;
   G4double energyWorldExit;
+  G4double energyWorldExitKinetic;
   G4int    nCollimatorsInteracted;
   /// @}
 
