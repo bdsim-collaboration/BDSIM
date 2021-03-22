@@ -27,6 +27,8 @@ be used literally.  The following command may be used to display all options::
 .. tabularcolumns:: |p{6cm}|p{9cm}|
 
 +-------------------------------------+------------------------------------------------+
+|  -\-help                            | Lists all executable commands                  |
++-------------------------------------+------------------------------------------------+
 |  -\-file=<file>                     | Specifies the input gmad file                  |
 +-------------------------------------+------------------------------------------------+
 |  -\-batch                           | Batch mode - no graphics                       |
@@ -54,8 +56,6 @@ be used literally.  The following command may be used to display all options::
 +-------------------------------------+------------------------------------------------+
 |  -\-generatePrimariesOnly           | Generates primary particle coordinates only    |
 |                                     | then exits without simulating anything         |
-+-------------------------------------+------------------------------------------------+
-|  -\-help                            | Lists all executable commands                  |
 +-------------------------------------+------------------------------------------------+
 |  -\-materials                       | Lists materials included in BDSIM by default   |
 +-------------------------------------+------------------------------------------------+
@@ -123,6 +123,8 @@ be used literally.  The following command may be used to display all options::
 |  -\-verboseSteppingEventContinueFor | Number of events for stepping print out        |
 +-------------------------------------+------------------------------------------------+
 |  -\-verboseSteppingPrimaryOnly      | Print stepping info for primary only           |
++-------------------------------------+------------------------------------------------+
+|  -\-version                         | Displays the version number of bdsim           |
 +-------------------------------------+------------------------------------------------+
 |  -\-vis_debug                       | Displays all volumes in the visualiser         |
 +-------------------------------------+------------------------------------------------+
