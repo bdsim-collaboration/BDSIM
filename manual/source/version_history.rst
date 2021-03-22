@@ -20,6 +20,7 @@ V1.6.0 - 2021 / XX / XX
 New Features
 ------------
 
+* New executable option :code:`--version` for the bdsim executable that returns the version number.
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.

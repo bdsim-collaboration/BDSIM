@@ -117,6 +117,12 @@ int BDSIM::Initialise(int argc, char** argv, bool usualPrintOutIn)
 
 int BDSIM::Initialise()
 {
+  /// Initialize executable command line options reader object
+  const BDSExecOptions* execOptions = new BDSExecOptions(argcCache,argvCache);
+  if (usualPrintOut)
+    {execOptions->Print();}
+  ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
+  
   /// Print header & program information
   G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
   G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"  << G4endl;
@@ -126,12 +132,6 @@ int BDSIM::Initialise()
   G4cout<<"                   https://arxiv.org/abs/1808.10745"               << G4endl;
   G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
-
-  /// Initialize executable command line options reader object
-  const BDSExecOptions* execOptions = new BDSExecOptions(argcCache,argvCache);
-  if (usualPrintOut)
-    {execOptions->Print();}
-  ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
