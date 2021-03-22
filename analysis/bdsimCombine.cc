@@ -78,9 +78,15 @@ int main(int argc, char* argv[])
   for (const auto& filename : inputFiles)
     {eventsMerged->Add(filename.c_str());}
   std::cout << "Beginning merge of Event Tree" << std::endl;
-  eventsMerged->Merge(outputFile.c_str());
-  std::cout << "Finished merge of Event Tree" << std::endl;
-
+  Long64_t operationCode = eventsMerged->Merge(outputFile.c_str());
+  if (operationCode == 0)
+    {// from inspection of ROOT TChain.cxx ~line 1866, it returns 0 if there's a problem
+      std::cerr << "Problem in TTree::Merge opening output file \"" << outputFile << "\"" << std::endl;
+      return 1;
+    }
+  else
+    {std::cout << "Finished merge of Event Tree" << std::endl;}
+  
   // loop over input files loading headers to accumulate number of original events
   unsigned long long int nOriginalEvents = 0;
   bool skimmedFile = false;
@@ -135,6 +141,8 @@ int main(int argc, char* argv[])
     }
   
   TFile* output = new TFile(outputFile.c_str(), "UPDATE");
+  if (output->IsZombie())
+    {std::cerr << "Could not reopen output file to add other trees"; return 1;}
   output->cd();
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
   headerOut->Fill(std::vector<std::string>(), inputFiles); // updates time stamp
