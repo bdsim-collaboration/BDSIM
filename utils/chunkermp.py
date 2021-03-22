@@ -18,6 +18,8 @@ def ReduceRun(globcommand, nPerChunk, outputprefix, nCPUs=4):
     """
     In parallel, apply bdsimCombine to the globcommand set of files combining
     nPerChunk into an output file.
+
+    chunkermp.ReduceRun("testfiles/*.root", 14, "testfiles-merge/", nCPUs=7)
     """
     files = glob.glob(globcommand)
     print(len(files), "files to be combined in chunks of ",nPerChunk)
