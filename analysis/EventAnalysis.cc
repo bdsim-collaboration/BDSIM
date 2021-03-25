@@ -288,7 +288,7 @@ void EventAnalysis::Write(TFile *outputFile)
 
   opticsTree->Branch("xyCorrelationCoefficent", &(xOpticsPoint[24]), "xyCorrelationCoefficent/D");
 
-  for(const auto entry : opticalFunctions)
+  for(const auto& entry : opticalFunctions)
     {
       xOpticsPoint = entry[0];
       yOpticsPoint = entry[1];
