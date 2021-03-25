@@ -927,7 +927,7 @@ a particular entry in the tree, which for the Event tree is an individual event:
 
 The event object now contains the data loaded from the file. ::
 
-  root> evt->Eloss.n
+  root> evt->Eloss->n
   (int_t) 430
 
 For our example, the file has 430 entries of energy loss for event \#10. The analysis loading
@@ -946,7 +946,7 @@ One may manually loop over the events in a macro::
     for (int i = 0; i < nentries; ++i)
       {
         evtTree->GetEntry(i);
-        std::cout << evt->Eloss.n << std::endl;
+        std::cout << evt->Eloss->n << std::endl;
       }
   }
 
