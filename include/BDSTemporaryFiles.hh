@@ -47,12 +47,12 @@ public:
   static BDSTemporaryFiles* Instance();
 
   /// Create a temporary file for use in BDSIM. A unique file name will be returned.
-  /// It's the caller's resopnsibility to open this file.
-  G4String CreateTemporaryFileUnamed(G4String extension);
+  /// It's the caller's responsibility to open this file.
+  G4String CreateTemporaryFileUnnamed(const G4String& extension);
 
   /// Create a temporary file for use in BDSIM based on a currently existing one. A file
   /// with the same name but with the file name prefix and suffix in the temporary
-  /// directory will be returned. It's the caller's resopnsibility to open this file.
+  /// directory will be returned. It's the caller's responsibility to open this file.
   G4String CreateTemporaryFile(const G4String& originalFilePath,
 			       G4String        fileNamePrefix = "",
 			       G4String        fileNameSuffix = "");
