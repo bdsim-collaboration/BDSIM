@@ -160,6 +160,10 @@ Bug Fixes
 * Fix recreation beam parameters which weren't loaded correctly. Provided the same input file was use, this
   wasn't a problem or noticeable. However, if a beam specific executable option such as
   :code:`--distrFile` was used, it would not be recreated properly. This has been fixed.
+* Fix recreation when using trajectory storage options and AND logic.
+* Fix possible scenario where range cuts weren't set in a recreation.
+* Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
+  together, which would result in no trajectories being stored.
   
 
 
@@ -177,6 +181,10 @@ Output Changes
 * `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
   now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
 * New event summary variables `energyWorldExitKinet` and `energyImpactingApertureKinetic`.
+* A new vector of set variable names is stored in the options and beam trees in the output
+  to ensure we recreate a simulation correctly.
+* The trajectory filter bitset has been shortened by 1 to remove "transportation" as a filter.
+  This was incorrectly used to filter the storage of complete trajectories.
 
 
 Output Class Versions
