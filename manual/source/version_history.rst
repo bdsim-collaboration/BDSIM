@@ -157,6 +157,10 @@ Bug Fixes
 * If particles were killed in the world volume and :code:`storeElossWorld` was on, the kinetic energy
   of the tracks killed would not previously be added to the output. This has been fixed.
 * Fix processing of a track in BDSSDEnergyDepositionGlobal that would have segfaulted if used.
+* Fix recreation beam parameters which weren't loaded correctly. Provided the same input file was use, this
+  wasn't a problem or noticeable. However, if a beam specific executable option such as
+  :code:`--distrFile` was used, it would not be recreated properly. This has been fixed.
+  
 
 
 Output Changes
