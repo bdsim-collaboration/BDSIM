@@ -38,7 +38,7 @@ public:
   /// No default constructor.
   BDSParser() = delete;
   /// Constructor method.
-  static BDSParser* Instance(std::string filename);
+  static BDSParser* Instance(const std::string& filename);
   /// Access method.
   static BDSParser* Instance();
   /// Returns if parser is initialised.
@@ -121,7 +121,7 @@ public:
   
 protected:
   /// Constructor from filename.
-  explicit BDSParser(std::string filename);
+  explicit BDSParser(const std::string& filename);
 
 private:
   /// Instance.
