@@ -63,7 +63,7 @@ namespace GMAD
     void Amalgamate(const Beam& optionsIn, bool override, int startFromEvent = 0);
 
     /// Whether a parameter has been set using the set_value method or not.
-    bool HasBeenSet(std::string name) const;
+    bool HasBeenSet(const std::string& name) const;
 
     inline const std::vector<std::string>& KeysOfSetValues() const {return setKeys;}
     
