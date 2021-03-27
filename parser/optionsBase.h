@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define OPTIONSBASE_H
 
 #include <string>
+#include <vector>
 
 namespace GMAD
 {
@@ -383,8 +384,10 @@ namespace GMAD
 
     /// print some properties
     void print() const;
+  
+    /// A list of all the keys that have been set in this instance.
+    std::vector<std::string> setKeys;
   };
 }
 
-
-#endif //__OPTIONSBASE_H
+#endif

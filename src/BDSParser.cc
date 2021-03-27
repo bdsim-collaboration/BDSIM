@@ -67,7 +67,9 @@ void BDSParser::AmalgamateBeam(const GMAD::Beam& execBeamIn,
 {
   // We only amalgamate when we're running normally. If we're recreating
   // all beam parameters will be in the output file.
-  if (!recreate)
+  if (recreate)
+    {beam = execBeamIn;} // execBeamIn already has loaded recreation beam parameters
+  else
     {beam.Amalgamate(execBeamIn, true);}
 }
 
