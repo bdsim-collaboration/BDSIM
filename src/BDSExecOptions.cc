@@ -428,6 +428,7 @@ void BDSExecOptions::Usage() const
 	<<"--verboseSteppingPrimaryOnly : only print out verbose stepping for primary particle" << G4endl
 	<<"--verboseEventBDSIM          : display BDSIM information for every event "        << G4endl
 	<<"--verboseSteppingBDSIM       : display BDSIM tracking information after each step"<< G4endl
+	<<"--version                    : display version number"                            << G4endl
 	<<"--vis_debug                  : display all volumes in visualiser"                 << G4endl
 	<<"--vis_mac=<file>             : file with the visualisation macro script, default" << G4endl
 	<<"                               provided by BDSIM openGL (OGLSQt))"                << G4endl
