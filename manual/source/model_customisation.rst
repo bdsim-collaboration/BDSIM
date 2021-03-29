@@ -1115,20 +1115,36 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 * With the `option, checkOverlaps=1;` turned on, each externally loaded piece of geometry will
   also be checked for overlaps.
 
-.. note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
 
-.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
-	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
-	  not handle unique file names. However, in the case of very large files with many
-	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
-	  should be turned off. The loading will only work with one file in this case.
+GDML Geometry Specifics
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
-	     GMAD file is included in a parent file in a different location, the file will not be
-	     correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
-	     geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
-	     GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
-	     overall to use multiple GMAD input files and include them.
+* BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+* For GDML geometry, we preprocess the input file prepending all names with the name
+  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+  not handle unique file names. However, in the case of very large files with many
+  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+  should be turned off. The loading will only work with one file in this case.
+* BDSIM will put the preprocessed GDML files in a temporary directory and remove
+  them once finished. The temporary files can be retained by using the option
+  :code:`option, removeTemporaryFiles=0;`.
+* BDSIM will create a temporary directory based on the template name "bdsim_XXXXXX" where the
+  X characters will be replaced by a randomly generated alpha-numeric sequence from the system
+  using `mkdtemp`.
+* BDSIM will try :code:`/tmp/`, then :code:`/temp/`, then the current working directory in that
+  order to create the temporary directory. This behaviour can be overridden by specifying the option
+  :code:`option, temporaryDirectory="/path/to/desired/directory"`. :code:`"./"` could be used
+  for example for the current working directory.
+
+GMAD Geometry Specifics
+^^^^^^^^^^^^^^^^^^^^^^^
+
+If a geometry file path is defined relative to the location of the GMAD file and that
+GMAD file is included in a parent file in a different location, the file will not be
+correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
+geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
+GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
+overall to use multiple GMAD input files and include them.
 
 .. _external-world-geometry:
 
