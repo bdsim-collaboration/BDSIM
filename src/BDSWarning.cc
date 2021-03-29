@@ -30,8 +30,10 @@ void BDS::Warning(const G4String& message)
 }
 
 void BDS::Warning(const G4String& methodName,
-		  const G4String& message)
+		  const G4String& message, bool active_thread)
 {
   G4cout << G4endl << G4endl << "WARNING from: " << methodName << "> " << message << G4endl << G4endl;
-  std::this_thread::sleep_for(std::chrono::seconds(2));
+  if (active_thread){
+      std::this_thread::sleep_for(std::chrono::seconds(2));
+  }
 }

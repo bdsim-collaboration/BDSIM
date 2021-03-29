@@ -31,7 +31,7 @@ namespace BDS
 {
   void Warning(const G4String& message);
   void Warning(const G4String& methodName,
-	       const G4String& message);
+	       const G4String& message, bool active_thread=true);
 }
 
 #endif
