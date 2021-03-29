@@ -88,6 +88,12 @@ New Features
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectoryTime              | Store `T`, time in ns for each step. Default False.   |
 +----------------------------------+-------------------------------------------------------+
+| temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
+|                                  | and the current working directory in that order to    |
+|                                  | create a new temporary directory in. Specify this     |
+|                                  | option with a path (e.g. "./" for cwd) to override    |
+|                                  | this behaviour.                                       |
++----------------------------------+-------------------------------------------------------+
 | tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
 |                                  | segment to be built (m). Default 50 m. Min 1 m.       |
 +----------------------------------+-------------------------------------------------------+
