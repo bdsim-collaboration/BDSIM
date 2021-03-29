@@ -35,7 +35,7 @@ BDSTemporaryFiles* BDSTemporaryFiles::instance = nullptr;
 BDSTemporaryFiles::BDSTemporaryFiles():
   temporaryDirectory(""),
   temporaryDirectorySet(false),
-  unamedFileCount(0)
+  unNamedFileCount(0)
 {
   removeTemporaryFiles = BDSGlobalConstants::Instance()->RemoveTemporaryFiles();
 }
@@ -129,8 +129,8 @@ G4String BDSTemporaryFiles::CreateTemporaryFileUnnamed(const G4String& extension
   if (!temporaryDirectorySet)
     {InitialiseTempDir();}
 
-  G4String newFileName = temporaryDirectory + "bdsTemp_" + std::to_string(unamedFileCount) + "." + extension;
-  unamedFileCount += 1;
+  G4String newFileName = temporaryDirectory + "bdsTemp_" + std::to_string(unNamedFileCount) + "." + extension;
+  unNamedFileCount += 1;
 
   allocatedFiles.push_back(newFileName);
   WarnOfNewFile(newFileName);
