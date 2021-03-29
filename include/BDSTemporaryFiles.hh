@@ -73,6 +73,7 @@ private:
   /// Singleton instance.
   static BDSTemporaryFiles* instance;
 
+  G4String              userSpecifiedTemporaryDirectory; ///< Optional user-specified path to try.
   G4String              temporaryDirectory;    ///< Directory all files will be placed in.
   G4bool                temporaryDirectorySet; ///< Whether directory has been set and made.
   std::vector<G4String> allocatedFiles;        ///< Record of of all files allocated.
