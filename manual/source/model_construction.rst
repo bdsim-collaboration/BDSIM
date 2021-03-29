@@ -338,8 +338,8 @@ Notes:
 
 .. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
 	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
-	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
-	  this.
+	  separation. The option :code:`yokeFieldsMatchLHCGeometry` can be used to control
+	  this. On by default.
 
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
@@ -478,8 +478,8 @@ Notes:
 
 .. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
 	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
-	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
-	  this.
+	  separation. The option :code:`yokeFieldsMatchLHCGeometry` can be used to control
+	  this. On by default.
 
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%

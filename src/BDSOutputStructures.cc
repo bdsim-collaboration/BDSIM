@@ -199,7 +199,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
     {
       // prepare output structure name
       const BDSBeamlineElement* el = flatBeamline->at(index);
-      // use the 'placement' name for a unique name (with copynumer included)
+      // use the 'placement' name for a unique name (with copy number included)
       G4String collimatorName = collimatorPrefix + el->GetPlacementName();
       collimatorNames.push_back(collimatorName);
       collimatorIndicesByName[el->GetName()]          = index;
