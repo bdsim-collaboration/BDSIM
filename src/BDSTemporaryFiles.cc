@@ -33,10 +33,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSTemporaryFiles* BDSTemporaryFiles::instance = nullptr;
 
 BDSTemporaryFiles::BDSTemporaryFiles():
+  userSpecifiedTemporaryDirectory(""),
   temporaryDirectory(""),
   temporaryDirectorySet(false),
   unNamedFileCount(0)
 {
+  userSpecifiedTemporaryDirectory = BDSGlobalConstants::Instance()->TemporaryDirectory();
   removeTemporaryFiles = BDSGlobalConstants::Instance()->RemoveTemporaryFiles();
 }
 
@@ -46,6 +48,14 @@ void BDSTemporaryFiles::InitialiseTempDir()
   std::string bdsimExecDir   = BDS::GetBDSIMExecPath();
   std::string workingDirTemp = bdsimExecDir + "temp/";
   std::vector<G4String> dirsToTry = {"/tmp/", "/temp/", workingDirTemp};
+
+  // replace set of trial paths if one is specified explicitly in the options
+  if (!userSpecifiedTemporaryDirectory.empty())
+    {
+      if (userSpecifiedTemporaryDirectory.back() != '/')
+	{userSpecifiedTemporaryDirectory += "/";}
+      dirsToTry = {userSpecifiedTemporaryDirectory};
+    }
   
   for (const auto& dir : dirsToTry)
     {
