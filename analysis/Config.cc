@@ -518,6 +518,14 @@ void Config::ParseBinning(const std::string& binning,
 	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw std::string(errString);
     }
+  else if (counter > nDim)
+    {
+      std::string errString = "Too many binning dimension (i.e. commas) on line #"
+	+ std::to_string(lineCounter) + "\n"
+	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
+	+ binning + "\nDimension defined by \"low:high\" and comma separated";
+      throw std::string(errString);
+    }
 }
 
 std::string Config::LowerCase(const std::string& st) const
