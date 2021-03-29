@@ -110,6 +110,8 @@ std::string GMAD::typestr(ElementType type)
       {return "usercomponent";       break;}
     case ElementType::_DUMP:
       {return "dump";                break;}
+    case ElementType::_CT:
+      {return "ct";                  break;}
     default:
       {return "none"; break;}
     }

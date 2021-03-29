@@ -1,0 +1,9 @@
+set(DCMTK_DIRECTORY "/home/strangesyd/Documents/MFE/packages/dcmtk-3.6.5-install" CACHE PATH "Directory where DCMTK library is installed.")
+
+FIND_PACKAGE(DCMTK REQUIRED CONFIG PATHS ${DCMTK_DIRECTORY} NO_DEFAULT_PATH)
+
+INCLUDE_DIRECTORIES(${DCMTK_INCLUDE_DIRS})
+
+add_library(DCMTK::DCMTK INTERFACE IMPORTED)
+target_link_libraries(DCMTK::DCMTK INTERFACE ${DCMTK_LIBRARIES})
+target_include_directories(DCMTK::DCMTK INTERFACE ${DCMTK_INCLUDE_DIRS})
