@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
+#include "BDSCT.hh"
 #include "BDSElement.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
@@ -47,6 +48,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSWireScanner.hh"
 #include "BDSUndulator.hh"
 #include "BDSWarning.hh"
+#include "BDSDicomIntersectVolume.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -371,6 +373,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       }
     case ElementType::_DUMP:
       {component = CreateDump(); break;}
+    case ElementType::_CT:
+      {component = CreateCT(); break;}
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
@@ -1551,6 +1555,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 				PrepareHorizontalWidth(element),
 				circular);
   return result;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateCT()
+{
+    if (!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+    BDSCT* result = new BDSCT(elementName,
+                              element->dicomDataPath);
+
+    /*
+    BDSCT* result = new BDSCT(elementName,
+                                  element->l*CLHEP::m,
+                                  PrepareHorizontalWidth(element),
+                                  circular);
+    */
+    new BDSDicomIntersectVolume();
+
+    return result;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
