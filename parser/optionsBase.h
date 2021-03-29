@@ -210,8 +210,9 @@ namespace GMAD
     double      tunnelOffsetY;
     double      tunnelMaxSegmentLength;
     ///@}
-
+    
     bool removeTemporaryFiles;
+    std::string temporaryDirectory;
     
     // sampler options
     double   samplerDiameter;
