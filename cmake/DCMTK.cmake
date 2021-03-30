@@ -1,9 +1,15 @@
-set(DCMTK_DIRECTORY "/home/strangesyd/Documents/MFE/packages/dcmtk-3.6.5-install" CACHE PATH "Directory where DCMTK library is installed.")
 
-FIND_PACKAGE(DCMTK REQUIRED CONFIG PATHS ${DCMTK_DIRECTORY} NO_DEFAULT_PATH)
+option(USE_DICOM "Use DCMTK C++ library." OFF)
+if(USE_DICOM)
+    message(STATUS "Using DCMTK")
+    FIND_PACKAGE(DCMTK REQUIRED CONFIG)
 
-INCLUDE_DIRECTORIES(${DCMTK_INCLUDE_DIRS})
+    if(DCMTK_FOUND)
+        message(STATUS "Found DCMTK ${DCMTK_VERSION} ${DCMKTK_INCLUDE_DIRS}")
+        include_directories(SYSTEM ${DCMKTK_INCLUDE_DIRS})
+        add_definitions("-DUSE_DICOM")
+    else()
+        message(FATAL_ERROR "USE_DICOM turned on, but no DCMTK library found.")
+    endif()
+endif()
 
-add_library(DCMTK::DCMTK INTERFACE IMPORTED)
-target_link_libraries(DCMTK::DCMTK INTERFACE ${DCMTK_LIBRARIES})
-target_include_directories(DCMTK::DCMTK INTERFACE ${DCMTK_INCLUDE_DIRS})
