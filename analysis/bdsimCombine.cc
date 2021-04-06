@@ -98,12 +98,22 @@ int main(int argc, char* argv[])
       if (!RBDS::IsBDSIMOutputFile(f))
 	{
 	  std::cout << "File \"" << filename << "\" skipped as not a valid BDSIM file" << std::endl;
-	  f->Close();
-	  delete f;
+	  if (f)
+	    {
+	      f->Close();
+	      delete f;
+	    }
 	  continue;
 	}
       std::cout << "Accumulating> " << filename << std::endl;
       TTree* headerTree = dynamic_cast<TTree*>(f->Get("Header")); // should be safe given check we've just done
+      if (!headerTree)
+	{
+	  std::cerr << "Problem getting header from file " << filename << std::endl;
+	  f->Close();
+	  delete f;
+	  continue;
+	}
       Header* headerLocal = new Header();
       headerLocal->SetBranchAddress(headerTree);
       headerTree->GetEntry(0);
@@ -113,8 +123,13 @@ int main(int argc, char* argv[])
       else
 	{// unskimmed file which won't record the number of events in the header, so we inspect the Event Tree
 	  TTree* eventTree = dynamic_cast<TTree*>(f->Get("Event"));
-	  Long64_t nEntries = eventTree->GetEntries();
-	  nOriginalEvents += (unsigned long long int)nEntries;
+	  if (eventTree)
+	    {
+	      Long64_t nEntries = eventTree->GetEntries();
+	      nOriginalEvents += (unsigned long long int)nEntries;
+	    }
+	  else
+	    {std::cerr << "Problem getting Event tree in file " << filename << std::endl;}
 	}
       delete headerLocal;
       f->Close();

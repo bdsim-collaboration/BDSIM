@@ -170,7 +170,15 @@ Bug Fixes
 * Fix possible scenario where range cuts weren't set in a recreation.
 * Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
   together, which would result in no trajectories being stored.
-  
+* Fix uninitialised variable in BDSBunch.
+* Fix float / double casts in sampler output.
+* Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
+* The maximum step length in a muon spoiler is now 1/20th of the length whereas before it was the full length.
+  This step limit applies only in the 'yoke' (i.e. the outer part) of the spoiler and not in the pipe part.
+* The trajectory function :code:`BDSOutputROOTEventTrajectory::primaryProcessPoint` only returned the process
+  point the track was created by on the parent trajectory, not the primary. It is now fixed.
+* The various trajectory functions now have been made tolerant of bad indices (e.g. negative numbers or parent
+  used in a non-parent sense) and also of the now optional parts of the trajectory data.
 
 
 Output Changes
@@ -191,6 +199,8 @@ Output Changes
   to ensure we recreate a simulation correctly.
 * The trajectory filter bitset has been shortened by 1 to remove "transportation" as a filter.
   This was incorrectly used to filter the storage of complete trajectories.
+* The class BDSOutputROOTEventTrajectoryPoint now has the member `stepIndex` to indicate the index
+  of the step represented on the trajectory.
 
 
 Output Class Versions
@@ -231,7 +241,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventTrajectory      | N           | 4               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectoryPoint | N           | 4               | 4               |
+| BDSOutputROOTEventTrajectoryPoint | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTParticleData         | N           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+

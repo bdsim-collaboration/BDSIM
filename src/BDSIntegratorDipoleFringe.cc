@@ -131,7 +131,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     }
 
   // container for multipole kick output, used as dipole step input
-  G4double yMultipoleOut[7];
+  G4double yMultipoleOut[6];
   // copy input coords as initials as multipole kick method not called
   for (G4int i = 0; i < 3; i++)
     {
@@ -143,7 +143,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     {MultipoleStep(yIn, yMultipoleOut, h);}
 
   // container for copying multipole kick output (entrance fringe) or dipole step output (exit fringe)
-  G4double yTemp[7];
+  G4double yTemp[6];
 
   // only do the dipole transport before the fringe kick if it's an exit fringe, otherwise copy the
   // coords and continue
@@ -154,7 +154,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     }
   else
     {
-      for (G4int i = 0; i < 7; i++)
+      for (G4int i = 0; i < 6; i++)
         {yTemp[i] = yMultipoleOut[i];}
     }
   
@@ -255,7 +255,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   globalMomU *= 1e-8;
 
   // container if dipole step still needs to be taken if fringe is an entrance fringe
-  G4double yTempOut[7];
+  G4double yTempOut[6];
 
   // copy out values and errors
   for (G4int i = 0; i < 3; i++)
@@ -275,7 +275,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     }
   else
     {
-      for (G4int i = 0; i < 7; i++)
+      for (G4int i = 0; i < 6; i++)
         {yOut[i] = yTempOut[i];}
     }
 }
@@ -330,7 +330,7 @@ void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
 }
 
 void BDSIntegratorDipoleFringe::MultipoleStep(const G4double  yIn[6],
-                                              G4double        yMultipoleOut[7],
+                                              G4double        yMultipoleOut[6],
                                               const G4double& h)
 {
   // convert to local curvilinear co-ordinates
