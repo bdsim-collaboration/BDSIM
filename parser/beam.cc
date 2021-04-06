@@ -139,7 +139,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
     }
 }
 
-bool Beam::HasBeenSet(std::string name) const
+bool Beam::HasBeenSet(const std::string& name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
   if (result == setKeys.end())

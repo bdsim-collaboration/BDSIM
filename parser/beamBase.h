@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BEAMBASE_H
 
 #include <string>
+#include <vector>
 
 namespace GMAD
 {
@@ -144,6 +145,9 @@ namespace GMAD
       std::string eventGeneratorParticles;
       bool   eventGeneratorWarnSkippedParticles;
       /// @}
+  
+      /// A list of all the keys that have been set in this instance.
+      std::vector<std::string> setKeys;
     };
 }
 
