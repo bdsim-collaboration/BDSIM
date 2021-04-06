@@ -1357,6 +1357,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
   
+  G4double elLength = element->l*CLHEP::m;
   BDSFieldInfo* outerField  = nullptr;
   if (BDS::IsFinite(element->B))
     {
@@ -1370,12 +1371,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 				    st,
 				    true,
 				    fieldTrans);
+  
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      G4double limit = elLength / 20.0;
+      auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+      if (ul != defaultUL)
+        {outerField->SetUserLimits(ul);}
     }
   auto bpInfo = PrepareBeamPipeInfo(element);
   
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       elementName,
-		       element->l*CLHEP::m,
+                       elLength,
 		       bpInfo,
 		       PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInfo), // 0 angled face in and out
 		       nullptr,
