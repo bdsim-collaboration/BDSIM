@@ -170,7 +170,11 @@ Bug Fixes
 * Fix possible scenario where range cuts weren't set in a recreation.
 * Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
   together, which would result in no trajectories being stored.
-  
+* Fix uninitialised variable in BDSBunch.
+* Fix float / double casts in sampler output.
+* Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
+* The maximum step length in a muon spoiler is now 1/20th of the length whereas before it was the full length.
+  This step limit applies only in the 'yoke' (i.e. the outer part) of the spoiler and not in the pipe part.
 
 
 Output Changes
