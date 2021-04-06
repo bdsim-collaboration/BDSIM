@@ -19,31 +19,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDThinThing.hh"
+#include "BDSTrajectoryOptions.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
+#include "G4Types.hh"
 #include "G4VHit.hh"
 
-#include <map>
 #include <vector>
 
 BDSSDThinThing::BDSSDThinThing(const G4String& name,
-			       G4bool storeTrajectoryLocalIn,
-			       G4bool storeTrajectoryLinksIn,
-			       G4bool storeTrajectoryIonIn):
+			       const BDS::TrajectoryOptions& trajectoryOptionsIn):
   BDSSensitiveDetector("thinthing/" + name),
   thinThingCollection(nullptr),
   itsCollectionName(name),
   itsHCID(-1),
-  storeTrajectoryLocal(storeTrajectoryLocalIn),
-  storeTrajectoryLinks(storeTrajectoryLinksIn),
-  storeTrajectoryIon(storeTrajectoryIonIn)
+  storeTrajectoryLocal(trajectoryOptionsIn.storeLocal),
+  storeTrajectoryLinks(trajectoryOptionsIn.storeLinks),
+  storeTrajectoryIon(trajectoryOptionsIn.storeIon)
 {
   collectionName.insert(name);
 }
@@ -89,7 +88,8 @@ G4bool BDSSDThinThing::ProcessHitsOrdered(G4Step* step,
     {
       G4Track* track = step->GetTrack();
       G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
-      BDSHitThinThing* hit = new BDSHitThinThing(track->GetTrackID(),
+      BDSHitThinThing* hit = new BDSHitThinThing(track->GetParticleDefinition()->GetPDGEncoding(),
+						 track->GetTrackID(),
 						 track->GetParentID(),
 						 turnsTaken,
 						 new BDSTrajectoryPoint(step,

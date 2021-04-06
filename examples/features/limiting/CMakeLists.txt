@@ -9,4 +9,6 @@ simple_testing(limit-minke-tunnel     "--file=minimumKineticEnergyTunnel.gmad"  
 simple_testing(limit-inf-abs-tunnel   "--file=tunnelIsInfiniteAbs.gmad"            ${OVERLAP_CHECK})
 simple_testing(limit-inf-abs-beampipe "--file=beamPipeIsInfiniteAbs.gmad"          ${OVERLAP_CHECK})
 
+simple_testing(limit-eloss-for-world  "--file=killedInWorldForEnergyDeposition.gmad" "")
+
 simple_fail(limit-minke-bad   "--file=minimumKineticEnergy-bad.gmad")

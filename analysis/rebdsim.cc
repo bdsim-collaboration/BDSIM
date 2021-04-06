@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Config.hh"
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
+#include "HeaderAnalysis.hh"
 #include "ModelAnalysis.hh"
 #include "OptionsAnalysis.hh"
 #include "RBDSException.hh"
@@ -105,6 +106,13 @@ int main(int argc, char *argv[])
   catch (const std::exception& error)
     {std::cerr << error.what(); exit(1);}
 
+  auto filenames = dl->GetFileNames();
+  HeaderAnalysis* ha = new HeaderAnalysis(filenames,
+                                          dl->GetHeader(),
+  dl->GetHeaderTree());
+  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents();
+  delete ha;
+  
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
 						  dl->GetBeamTree(),
 						  config->PerEntryBeam(),
@@ -150,6 +158,7 @@ int main(int argc, char *argv[])
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
       headerOut->Fill(dl->GetFileNames()); // updates time stamp
       headerOut->SetFileType("REBDSIM");
+      headerOut->nOriginalEvents = nOriginalEvents;
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
       headerTree->Fill();

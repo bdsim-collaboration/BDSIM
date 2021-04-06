@@ -88,8 +88,8 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   eLossWorldExit     = new BDSOutputROOTEventLossWorld();
   eLossWorldContents = new BDSOutputROOTEventLossWorld();
 
-  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
-  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false, true);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
 
   apertureImpacts = new BDSOutputROOTEventAperture();
   
@@ -199,7 +199,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
     {
       // prepare output structure name
       const BDSBeamlineElement* el = flatBeamline->at(index);
-      // use the 'placement' name for a unique name (with copynumer included)
+      // use the 'placement' name for a unique name (with copy number included)
       G4String collimatorName = collimatorPrefix + el->GetPlacementName();
       collimatorNames.push_back(collimatorName);
       collimatorIndicesByName[el->GetName()]          = index;
