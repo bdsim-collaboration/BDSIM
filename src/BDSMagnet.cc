@@ -234,20 +234,21 @@ void BDSMagnet::BuildOuterField()
       // determine key for this specific magnet instance
       G4String scalingKey = DetermineScalingKey(magnetType);
       
+      BDSMagnetStrength* scalingStrength = vacuumFieldInfo ? vacuumFieldInfo->MagnetStrength() : nullptr;
       G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								vol,
 								true,
-								vacuumFieldInfo->MagnetStrength(),
+                                                                scalingStrength,
 								scalingKey);
       // Attach to the container but don't propagate to daughter volumes. This ensures
       // any gap between the beam pipe and the outer also has a field.
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								containerLogicalVolume,
 								false,
-								vacuumFieldInfo->MagnetStrength(),
+                                                                scalingStrength,
 								scalingKey);
-
+      
       // in the case of LHC-style geometry, override the second beam pipe (which is a daughter of the outer)
       // field to be the opposite sign of the main vacuum field (same strength)
       auto mgt = magnetOuterInfo->geometryType;
