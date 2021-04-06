@@ -434,16 +434,16 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
 }
 #endif
 
-std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackIDIn) const
 {
   // prevent a bad access
-  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
     {
       std::cout << "No such track ID" << std::endl;
       return std::vector<BDSOutputROOTEventTrajectoryPoint>();
     }
   
-  int ti = trackID_trackIndex.at(trackid);  // get track index
+  int ti = trackID_trackIndex.at(trackIDIn);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
@@ -507,32 +507,31 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   return tpv;
 }
 
-BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackIDIn) const
 {
   // prevent a bad access
-  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
   {
     std::cout << "No such track ID" << std::endl;
     return BDSOutputROOTEventTrajectoryPoint();
   }
-  int ti = trackID_trackIndex.at(trackid);  // get track index
+  int ti = trackID_trackIndex.at(trackIDIn);  // get track index
   int pid = parentID[ti];                   // parent trackID
-  int chosenTrackID = trackid;
+  int chosenTrackID = trackIDIn;
   while (pid != 0)
   {
     if (parentID[trackID_trackIndex.at(pid)] > 0)
     {chosenTrackID = pid;}
     ti = trackID_trackIndex.at(pid);
     pid = parentID[ti];
-
   }
   return parentProcessPoint(chosenTrackID);
 }
 
-BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoint(int trackid)
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoint(int trackIDIn) const
 {
   // prevent a bad access
-  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
     {
       std::cout << "No such track ID" << std::endl;
       return BDSOutputROOTEventTrajectoryPoint();
@@ -583,10 +582,10 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
   return p;
 }
 
-std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackIDIn) const
 {
   // prevent a bad access
-  if (trackID_trackIndex.find(trackid) == trackID_trackIndex.end())
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
     {
       std::cout << "No such track ID" << std::endl;
       return std::vector<BDSOutputROOTEventTrajectoryPoint>();
@@ -598,7 +597,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
       return std::vector<BDSOutputROOTEventTrajectoryPoint>();
     }
   
-  int ti = trackID_trackIndex.at(trackid);
+  int ti = trackID_trackIndex.at(trackIDIn);
 
   bool usePXPYPZ = !PXPYPZ.empty();
   bool useT      = !T.empty();
