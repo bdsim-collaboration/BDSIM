@@ -72,15 +72,15 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSHitSampler* hit,
   z = (U) (hit->coords.z / CLHEP::m);
   S = (U) (hit->coords.s / CLHEP::m);
   
-  energy.push_back((U &&) (hit->coords.totalEnergy / CLHEP::GeV));
-  x.push_back((U &&) (hit->coords.x / CLHEP::m));
-  y.push_back((U &&) (hit->coords.y / CLHEP::m));
+  energy.push_back((U) (hit->coords.totalEnergy / CLHEP::GeV));
+  x.push_back((U) (hit->coords.x / CLHEP::m));
+  y.push_back((U) (hit->coords.y / CLHEP::m));
 
-  xp.push_back((U &&) (hit->coords.xp));
-  yp.push_back((U &&) (hit->coords.yp));
-  zp.push_back((U &&) (hit->coords.zp));
-  p.push_back((U &&) (hit->momentum / CLHEP::GeV));
-  T.push_back((U &&) (hit->coords.T / CLHEP::ns));
+  xp.push_back((U) (hit->coords.xp));
+  yp.push_back((U) (hit->coords.yp));
+  zp.push_back((U) (hit->coords.zp));
+  p.push_back((U) (hit->momentum / CLHEP::GeV));
+  T.push_back((U) (hit->coords.T / CLHEP::ns));
   
   modelID = hit->beamlineIndex;
   
