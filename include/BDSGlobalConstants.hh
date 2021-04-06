@@ -319,6 +319,7 @@ public:
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
+  inline G4String TemporaryDirectory()       const {return G4String(options.temporaryDirectory);}
   inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}

@@ -20,6 +20,7 @@ V1.6.0 - 2021 / XX / XX
 New Features
 ------------
 
+* New executable option :code:`--version` for the bdsim executable that returns the version number.
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
@@ -86,6 +87,12 @@ New Features
 |                                  | Default False.                                        |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectoryTime              | Store `T`, time in ns for each step. Default False.   |
++----------------------------------+-------------------------------------------------------+
+| temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
+|                                  | and the current working directory in that order to    |
+|                                  | create a new temporary directory in. Specify this     |
+|                                  | option with a path (e.g. "./" for cwd) to override    |
+|                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
 | tunnelMaxSegmentLength           | Maximum permitted length of an automatic tunnel       |
 |                                  | segment to be built (m). Default 50 m. Min 1 m.       |
@@ -168,6 +175,18 @@ Bug Fixes
 * If particles were killed in the world volume and :code:`storeElossWorld` was on, the kinetic energy
   of the tracks killed would not previously be added to the output. This has been fixed.
 * Fix processing of a track in BDSSDEnergyDepositionGlobal that would have segfaulted if used.
+* Fix recreation beam parameters which weren't loaded correctly. Provided the same input file was use, this
+  wasn't a problem or noticeable. However, if a beam specific executable option such as
+  :code:`--distrFile` was used, it would not be recreated properly. This has been fixed.
+* Fix recreation when using trajectory storage options and AND logic.
+* Fix possible scenario where range cuts weren't set in a recreation.
+* Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
+  together, which would result in no trajectories being stored.
+* Fix uninitialised variable in BDSBunch.
+* Fix float / double casts in sampler output.
+* Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
+* The maximum step length in a muon spoiler is now 1/20th of the length whereas before it was the full length.
+  This step limit applies only in the 'yoke' (i.e. the outer part) of the spoiler and not in the pipe part.
 
 
 Output Changes
@@ -184,6 +203,10 @@ Output Changes
 * `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
   now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
 * New event summary variables `energyWorldExitKinet` and `energyImpactingApertureKinetic`.
+* A new vector of set variable names is stored in the options and beam trees in the output
+  to ensure we recreate a simulation correctly.
+* The trajectory filter bitset has been shortened by 1 to remove "transportation" as a filter.
+  This was incorrectly used to filter the storage of complete trajectories.
 
 
 Output Class Versions

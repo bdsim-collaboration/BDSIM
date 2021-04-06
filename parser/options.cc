@@ -302,6 +302,7 @@ void Options::PublishMembers()
   publish("tunnelMaxSegmentLength", &Options::tunnelMaxSegmentLength);
 
   publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
+  publish("temporaryDirectory",   &Options::temporaryDirectory);
 
   publish("samplerDiameter",&Options::samplerDiameter);
   

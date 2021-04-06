@@ -424,7 +424,7 @@ The utilities should now be available through Python::
 In each utility we use PIP to get any dependencies required. Using our MakeFile
 (:code:`make develop`)just does it in such a way
 (:code:`pip install --editable . --user`) that this copy is used and not copied
-somewhere else into the Pytho installation, so if you edit or git pull next time
+somewhere else into the Python installation, so if you edit or git pull next time
 you import the utility in Python it will be automatically up to date.
 
 .. _configuring-bdsim:
@@ -527,7 +527,7 @@ Geant4 Installation Guide
 BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
 get Geant4 through a package manager such as MacPorts or HomeBrew, but often a manual installation
 is more flexible to allow choice of visualiser and use of GDML (necessary for external
-geometry). For manual installation, download the latest patch version 4.10.2 from the
+geometry). For manual installation, download the latest patch version from the
 Geant website. Move and unpack to a suitable place ::
 
   > tar -xzf geant4.10.6.p03.tar.gz

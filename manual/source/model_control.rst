@@ -1982,6 +1982,12 @@ For a description of recreating events, see :ref:`running-recreation`.
 | startFromEvent                   | Number of event to start from when recreating. 0      |
 |                                  | counting.                                             |
 +----------------------------------+-------------------------------------------------------+
+| temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
+|                                  | and the current working directory in that order to    |
+|                                  | create a new temporary directory in. Specify this     |
+|                                  | option with a path (e.g. "./" for cwd) to override    |
+|                                  | this behaviour.                                       |
++----------------------------------+-------------------------------------------------------+
 | writeSeedState                   | Writes the seed state of the last event start in      |
 |                                  | ASCII                                                 |
 +----------------------------------+-------------------------------------------------------+
@@ -2066,7 +2072,7 @@ described in :ref:`tunnel-geometry`.
 |                                  | every tag in a temporary copy of the GDML file.       |
 |                                  | loaded. This is to compensate for the Geant4 GDML     |
 |                                  | loader that cannot load multiple files correctly. On  |
-|                                  | by default.                                           |
+|                                  | by default. See `temporaryDirectory` option also.     |
 +----------------------------------+-------------------------------------------------------+
 | preprocessGDMLSchema             | Whether to preprocess a copy of the GDML file where   |
 |                                  | the URL of the GDML schema is changed to a local copy |
@@ -2085,6 +2091,12 @@ described in :ref:`tunnel-geometry`.
 |                                  | the beam pipe records energy loss                     |
 +----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
++----------------------------------+-------------------------------------------------------+
+| temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
+|                                  | and the current working directory in that order to    |
+|                                  | create a new temporary directory in. Specify this     |
+|                                  | option with a path (e.g. "./" for cwd) to override    |
+|                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
 |                                  | fringefields in a lattice (default 1e-6) [m]          |
