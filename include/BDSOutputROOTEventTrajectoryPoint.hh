@@ -85,7 +85,7 @@ public:
   int      nElectrons;
   int      stepIndex;  ///< Index along trajectory this point is.
 
-  ClassDef(BDSOutputROOTEventTrajectoryPoint,4);
+  ClassDef(BDSOutputROOTEventTrajectoryPoint,5);
 };
 
 #endif
