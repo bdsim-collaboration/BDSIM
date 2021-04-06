@@ -176,6 +176,7 @@ OptionsBase::OptionsBase()
   tunnelMaxSegmentLength = 50.0; // m
 
   removeTemporaryFiles = true;
+  temporaryDirectory = "";
   
   // samplers
   samplerDiameter     = 5; // m

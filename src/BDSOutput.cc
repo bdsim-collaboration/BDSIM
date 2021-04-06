@@ -845,6 +845,8 @@ void BDSOutput::FillPrimaryLoss(const std::vector<const BDSTrajectoryPointHit*>&
 {
   for (auto ploss : primaryLosses)
     {
+      if (!ploss)
+	{continue;}
       pLastHit->Fill(ploss);
       const G4double postStepSPosition = ploss->point->GetPostS() / CLHEP::m;
       if (storePrimaryHistograms)
