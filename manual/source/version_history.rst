@@ -170,7 +170,9 @@ Bug Fixes
 * Fix possible scenario where range cuts weren't set in a recreation.
 * Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
   together, which would result in no trajectories being stored.
-  
+* Fix uninitialised variable in BDSBunch.
+* Fix float / double casts in sampler output.
+* Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
 
 
 Output Changes
