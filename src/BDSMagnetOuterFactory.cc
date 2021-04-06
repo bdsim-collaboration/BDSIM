@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
-#include "BDSWarning.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
@@ -40,6 +39,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"         // geant4 globals / types
 #include "G4Box.hh"
@@ -133,13 +134,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       outer = CreateExternal(name, outerInfo, outerLength, containerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
       if (loadedLength > outerLength)
-      {
-          BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
-                                        + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m) + "m. This may be induced by an external geometry with pole face angles. You should use the option checkOverlaps=1.", false);
-      }
+	{
+	  BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
+		       + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
+		       + "m. This may be induced by an external geometry with pole face angles. "
+		       + "You should use the option checkOverlaps=1.", false);
+	}
       return outer;
     }
-
+  
   // Check dimensions
   CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);
 
@@ -244,13 +247,13 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
-
-  if (info->containerRadius*CLHEP::m > 1e-6)
-  {//containerRadius option imposes the BDSGeometryExtrernal extent
+  
+  if (BDS::IsFinite(info->containerRadius))
+    {//containerRadius option imposes the BDSGeometryExternal extent
       geom->SetExtent(BDSExtent(info->containerRadius*CLHEP::m,info->containerRadius*CLHEP::m, geom->GetExtent().ZPos()));
-  }
-
-//Test unnecessary now as the method to include the beampipe in the outer logical volume has been modified to work even if (magInner.TransverselyLessThan(bpExtent)). ( see BDSMagnet::PlaceComponents())
+    }
+  
+  //Test unnecessary now as the method to include the beampipe in the outer logical volume has been modified to work even if (magInner.TransverselyLessThan(bpExtent)). ( see BDSMagnet::PlaceComponents())
 
 //  if (magInner.TransverselyLessThan(bpExtent))
 //    {
