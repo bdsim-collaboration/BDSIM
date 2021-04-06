@@ -209,7 +209,7 @@ public:
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;// trackID to trackIndex
+  std::map<int, int>                 trackID_trackIndex;// trackID to storage index
   
   //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
