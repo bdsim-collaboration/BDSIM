@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventTrajectoryPoint.hh"
+#include "BDSProcessMap.hh"
 #include "DataLoader.hh"
 #include "Event.hh"
 
@@ -48,7 +49,21 @@ int main(int argc, char** argv)
       Event* event     = dl->GetEvent();
       
       eventTree->GetEntry(0);
-
+      
+      // test the process map class by looping over all trajectories in the first event and all steps
+      // don't do anything with the value - just check it returns ok
+      auto processMap = BDSProcessMap::Instance();
+      auto traj = event->Trajectory;
+      for (int i = 0; i < traj->n; i++)
+	{
+	  for (int j = 0; j < (int)traj->postProcessTypes[i].size(); j++)
+	    {
+	      int ty = traj->postProcessTypes[i][j];
+	      int st = traj->postProcessSubTypes[i][j];
+	      (*processMap)(ty, st);
+	    }
+	}
+      
       // test each function in the trajectory class
       // use the last trackID as our random starting particle to inspect
       int lastTrackID = (int)event->Trajectory->trackID.back();

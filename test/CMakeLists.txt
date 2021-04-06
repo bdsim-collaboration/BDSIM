@@ -16,6 +16,6 @@ add_subdirectory(TrackingTestFiles)
 
 add_executable(BDSTrajectoryTest TrajectoryTest.cc)
 set_target_properties(BDSTrajectoryTest PROPERTIES OUTPUT_NAME "BDSTrajectoryTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSTrajectoryTest rebdsim bdsimRootEvent)
+target_link_libraries(BDSTrajectoryTest rebdsim bdsimRootEvent bdsim)
 
 add_test(NAME "trajectory-functions" COMMAND BDSTrajectoryTest "../examples/features/data/trajectory-sample.root")
