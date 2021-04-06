@@ -65,12 +65,10 @@ int main(int argc, char** argv)
 	}
       
       // test each function in the trajectory class
-      // use the last trackID as our random starting particle to inspect
-      int lastTrackID = (int)event->Trajectory->trackID.back();
-
-      pointV trackInteractions = event->Trajectory->trackInteractions(lastTrackID);
+      // trackID 1 is the first track, so the primary
+      pointV trackInteractions = event->Trajectory->trackInteractions(1);
       
-      point parentProcessPoint = event->Trajectory->parentProcessPoint(lastTrackID);
+      point parentProcessPoint = event->Trajectory->parentProcessPoint(1);
       
       //int nTrajectories = event->Trajectory->n;
       std::vector<unsigned int> trackIDsSorted = event->Trajectory->trackID;
@@ -79,14 +77,16 @@ int main(int argc, char** argv)
       
       point  primProcessPoint  = event->Trajectory->primaryProcessPoint(highTrackID);
 
-      pointV processHistory    = event->Trajectory->processHistory(lastTrackID);
+      pointV processHistory    = event->Trajectory->processHistory(highTrackID);
 
-      event->Trajectory->printTrajectoryInfo(lastTrackID);
-      bool parentIsPrimary = event->Trajectory->parentIsPrimary(lastTrackID);
+      event->Trajectory->printTrajectoryInfoByTrackID(highTrackID);
+      
+      event->Trajectory->printTrajectoryInfo(/*storageIndex=*/0);
+      
+      bool parentIsPrimary = event->Trajectory->parentIsPrimary(highTrackID);
       std::string answer = parentIsPrimary ? "True" : "False";
-      std::cout << "Parent of trackID " << lastTrackID << " is a primary? : " << answer << std::endl;
-
-
+      std::cout << "Parent of trackID " << highTrackID << " is a primary? : " << answer << std::endl;
+      
       // now test them with an invalid trackID to ensure no bad exception thrown
       // trackID should be >= 1
       event->Trajectory->trackInteractions(0);
