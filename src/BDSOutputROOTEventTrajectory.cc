@@ -660,11 +660,11 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex)
     {std::cout << "Index chosen is greater than maximum index of: " << n-1 << std::endl; return;}
   
   // print out regarding the trajectory generally
-  std::cout << "Trajectory index " << std::setw(wdt) << i
+  std::cout << "Storage index "    << std::setw(wdt) << i
             << ", PDG ID "         << std::setw(wdt) << partID[i]
             << ", Track ID "       << std::setw(wdt) << trackID[i]
             << ", Parent ID "      << std::setw(wdt) << parentID[i] << std::endl;
-  std::cout << "Created by Track ID " << parentID[i] << ", with index " << parentIndex[i] << ", and at step index " << parentStepIndex[i] << std::endl;
+  std::cout << "Created by Track ID " << parentID[i] << ", with storage index " << parentIndex[i] << ", and at step index " << parentStepIndex[i] << std::endl;
   
   // print out regarding each step of the trajectory
   std::cout << std::setw(wdt) << "step ind"  << " "
@@ -689,11 +689,14 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex)
     }
 }
 
-bool BDSOutputROOTEventTrajectory::parentIsPrimary(int trackIDIn)
+bool BDSOutputROOTEventTrajectory::parentIsPrimary(int trackIDIn) const
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
-    {return false;}
+    {
+      std::cout << "No such track ID" << std::endl;
+      return false;
+    }
   
   unsigned int storageIndex = (unsigned int)trackID_trackIndex.at(trackIDIn);
   unsigned int parentStorageIndex = parentIndex[storageIndex];
