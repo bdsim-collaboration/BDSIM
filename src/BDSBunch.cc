@@ -55,7 +55,7 @@ BDSBunch::BDSBunch(const G4String& nameIn):
   X0(0.0), Y0(0.0), Z0(0.0), S0(0.0), T0(0.0), 
   Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), P0(0.0),
   tilt(0.0),
-  sigmaT(0.0), sigmaP(0.0), sigmaE(0.0),
+  sigmaT(0.0), sigmaP(0.0), sigmaE(0.0), sigmaEk(0.0),
   useCurvilinear(false),
   particleDefinition(nullptr),
   particleDefinitionHasBeenUpdated(false),
