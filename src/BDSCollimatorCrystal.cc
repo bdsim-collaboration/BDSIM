@@ -134,7 +134,8 @@ void BDSCollimatorCrystal::Build()
 	}
 
       // check if it'll fit..
-      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffsetL);
+      // use the collOffsetL as the specific solid might require a large offset (e.g. cylinder or torus)
+      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(colOffsetL);
       BDSExtent thisExtent = GetExtent(); // actually outer extent of beam pipe
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future
@@ -187,7 +188,7 @@ void BDSCollimatorCrystal::Build()
 	}
       
       // check if it'll fit..
-      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffsetL);
+      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(colOffsetR);
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future

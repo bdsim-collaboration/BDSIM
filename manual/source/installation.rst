@@ -19,8 +19,11 @@ Tested systems:
 BDSIM on Windows
 ----------------
 
-BDSIM is available on Windows 10 through installation on a Windows Subsystem for Linux which are downloadable from
-the Windows store. A number of Linux distributions are available, however BDSIM installation has only been tested
+BDSIM is available on Windows 10 through installation on the Windows Subsystem for Linux (WSL) which is downloadable
+from the Windows store. We currently advise that you should only install BDSIM on WSL 1 as difficulties have been
+encountered in installing BDSIM's dependencies and visualising GUIs with X servers on WSL 2.
+
+A number of Linux distributions are available, however BDSIM installation has only been tested
 on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
 Follow the guide on the Microsoft website for installing the subsystem.
 
@@ -421,7 +424,7 @@ The utilities should now be available through Python::
 In each utility we use PIP to get any dependencies required. Using our MakeFile
 (:code:`make develop`)just does it in such a way
 (:code:`pip install --editable . --user`) that this copy is used and not copied
-somewhere else into the Pytho installation, so if you edit or git pull next time
+somewhere else into the Python installation, so if you edit or git pull next time
 you import the utility in Python it will be automatically up to date.
 
 .. _configuring-bdsim:
@@ -524,7 +527,7 @@ Geant4 Installation Guide
 BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
 get Geant4 through a package manager such as MacPorts or HomeBrew, but often a manual installation
 is more flexible to allow choice of visualiser and use of GDML (necessary for external
-geometry). For manual installation, download the latest patch version 4.10.2 from the
+geometry). For manual installation, download the latest patch version from the
 Geant website. Move and unpack to a suitable place ::
 
   > tar -xzf geant4.10.6.p03.tar.gz
