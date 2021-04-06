@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -19,17 +19,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSMAGNETNONSPLITOUTER_H
 #define BDSMAGNETNONSPLITOUTER_H
 
-#include "globals.hh"
-#include "BDSMagnet.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSFieldInfo.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
+
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
 
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
+class BDSFieldInfo;
 class BDSMagnetOuter;
 class BDSMagnetOuterInfo;
 class BDSMagnetStrength;
@@ -37,14 +39,13 @@ class BDSIntegratorSet;
 
 namespace GMAD
 {
-    struct Element;
+  struct Element;
 }
 
-
 /**
- * @brief
+ * @brief Magnet with a one piece outer and split beam pipe.
  *
- * @author
+ * @author Eliott Ramoisiaux.
  */
 
 class BDSMagnetNonSplitOuter: public BDSMagnet
@@ -52,44 +53,38 @@ class BDSMagnetNonSplitOuter: public BDSMagnet
 public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
-
-  BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
-                          BDSBeamPipeInfo *beamPipeInfoIn,
-                          BDSMagnetOuterInfo *magnetOuterInfoIn,
-                          BDSFieldInfo *vacuumFieldInfoIn,
-                          BDSFieldInfo *outerFieldInfoIn,
-                          G4bool isThinIn,
-                          const GMAD::Element*          elementIn,
-                          BDSMagnetStrength*      stIn,
-                          G4double                brhoIn,
-                          const BDSIntegratorSet* integratorSetIn,
-                          G4double                incomingFaceAngleIn,
-                          G4double                outgoingFaceAngleIn,
-                          G4bool                  buildFringeFieldsIn,
-                          const GMAD::Element*    prevElementIn,
-                          const GMAD::Element*    nextElementIn);
-
+  BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
+			 BDSBeamPipeInfo*        beamPipeInfoIn,
+			 BDSMagnetOuterInfo*     magnetOuterInfoIn,
+			 BDSFieldInfo*           vacuumFieldInfoIn,
+			 BDSFieldInfo*           outerFieldInfoIn,
+			 G4bool                  isThinIn,
+			 const GMAD::Element*    elementIn,
+			 BDSMagnetStrength*      stIn,
+			 G4double                brhoIn,
+			 const BDSIntegratorSet* integratorSetIn,
+			 G4double                incomingFaceAngleIn,
+			 G4double                outgoingFaceAngleIn,
+			 G4bool                  buildFringeFieldsIn,
+			 const GMAD::Element*    prevElementIn,
+			 const GMAD::Element*    nextElementIn);
 
   void SBendWithSingleOuter(const G4String& elementName);
 
-
 protected:
-
-    void Build();
-
+  virtual void Build();
+  
 private:
-
-    const GMAD::Element*        element;
-    BDSMagnetStrength*          st;
-    G4double                    brho;
-    const BDSIntegratorSet*     integratorSet;
-    G4double                    incomingFaceAngle;
-    G4double                    outgoingFaceAngle;
-    G4bool                      buildFringeFields;
-    const GMAD::Element*        prevElement;
-    const GMAD::Element*        nextElement;
-    std::vector<G4String>       namedVacuumVolumes;
-
+  const GMAD::Element*    element;
+  BDSMagnetStrength*      st;
+  G4double                brho;
+  const BDSIntegratorSet* integratorSet;
+  G4double                incomingFaceAngle;
+  G4double                outgoingFaceAngle;
+  G4bool                  buildFringeFields;
+  const GMAD::Element*    prevElement;
+  const GMAD::Element*    nextElement;
+  std::vector<G4String>   namedVacuumVolumes;
 };
 
 #endif

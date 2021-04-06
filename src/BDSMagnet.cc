@@ -309,51 +309,46 @@ void BDSMagnet::PlaceComponents()
 						    0,                       // copy number
                                                     false);
 
-        if (beamPipePV->CheckOverlaps() and checkOverlaps)
-        {
-            throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");
-        }
+      if (beamPipePV->CheckOverlaps() and checkOverlaps)
+        {throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");}
       
       RegisterPhysicalVolume(beamPipePV);
     }
 
-  if (outer and !(magnetOuterInfo->extractOuterContainer)) {
-
+  if (outer and !(magnetOuterInfo->extractOuterContainer))
+    {
       // place the outer logical volume into the container logical volume
-      if (magnetOuterInfo->geometryType != BDSMagnetGeometryType::external or magnetOuterInfo->includeGdmlWorldVolume){
-
-          G4ThreeVector outerOffset = outer->GetPlacementOffset();
-
-          // place outer volume
-          G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                                    // rotation
-                                                           outerOffset,                                      // at normally (0,0,0)
-                                                           outer->GetContainerLogicalVolume(), // its logical volume
-                                                           name+"_outer_pv",                         // its name
-                                                           containerLogicalVolume,                          // its mother  volume
-                                                           false,                                    // no boolean operation
-                                                           0,                                       // copy number
-                                                           false);
-
-          if (magnetOuterPV->CheckOverlaps() and checkOverlaps)
-          {
-              throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
-          }
-
-          RegisterPhysicalVolume(magnetOuterPV);
-      }
-
+      if (magnetOuterInfo->geometryType != BDSMagnetGeometryType::external or magnetOuterInfo->includeGdmlWorldVolume)
+	{
+	  G4ThreeVector outerOffset = outer->GetPlacementOffset();
+	  // place outer volume
+	  G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                                    // rotation
+							   outerOffset,                                      // at normally (0,0,0)
+							   outer->GetContainerLogicalVolume(), // its logical volume
+							   name+"_outer_pv",                         // its name
+							   containerLogicalVolume,                          // its mother  volume
+							   false,                                    // no boolean operation
+							   0,                                       // copy number
+							   false);
+	  
+	  if (magnetOuterPV->CheckOverlaps() and checkOverlaps)
+	    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
+	  RegisterPhysicalVolume(magnetOuterPV);
+	}
+      
       // place the elements inside the external outer logical volume (world volume) inside the container logical volume
       if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::external)
-      {
+	{
           auto gdml_world = outer->GetContainerLogicalVolume();
-          for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++) {
+          for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
+	    {
               const auto &pv = gdml_world->GetDaughter(j);
               G4String placementName = pv->GetName() + "_pv";
               std::cout << "placing " << placementName << std::endl;
               G4int copyNumber = 1;
-
+	      
               if (!magnetOuterInfo->includeGdmlWorldVolume)
-              {
+		{
                   auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),  // placement transform
                                               pv->GetLogicalVolume(),                   // volume to be placed
                                               placementName,                            // placement name
@@ -361,27 +356,23 @@ void BDSMagnet::PlaceComponents()
                                               false,                             // no boolean operation
                                               copyNumber,                               // copy number
                                               false);                           // overlap checking
-
+		  
                   if (vv->CheckOverlaps() and checkOverlaps)
-                  {
-                      throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");
-                  }
-
+		    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
+		  
                   RegisterPhysicalVolume(vv);
-              }
-
+		}
+	      
               // register the vacuum field to the external logical volumes registered in namedVacuumVolumes
               if (std::find(magnetOuterInfo->namedVacuumVolumes.begin(), magnetOuterInfo->namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(name.length()+7).c_str()) != magnetOuterInfo->namedVacuumVolumes.end())
-              {
+		{
                   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                                             pv->GetLogicalVolume(),
                                                                             true);
-              }
-
-          }
-
-      }
-  }
+		}
+	    }
+	}
+    }
 }
 
 void BDSMagnet::SetOuterField(BDSFieldInfo* outerFieldInfoIn)
