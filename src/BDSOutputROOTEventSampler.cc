@@ -335,7 +335,7 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 template <class U>
 std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
 {
-  bool useNElectrons = nElectrons.size() > 0;
+  bool useNElectrons = !nElectrons.empty();
   std::vector<bool> result((unsigned long)n);
   if (!particleTable)
     {return result;}
