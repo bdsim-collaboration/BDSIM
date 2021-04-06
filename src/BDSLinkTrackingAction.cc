@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkTrackingAction.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryOptions.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
 
@@ -45,7 +46,9 @@ BDSLinkTrackingAction::BDSLinkTrackingAction(G4bool batchMode,
   verboseSteppingEventStop(verboseSteppingEventStopIn),
   verboseSteppingPrimaryOnly(verboseSteppingPrimaryOnlyIn),
   verboseSteppingLevel(verboseSteppingLevelIn)
-{;}
+{
+  trajectoryStorageOptions = {false, true, true, false, false, false, false, false};
+}
 
 void BDSLinkTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
@@ -63,9 +66,10 @@ void BDSLinkTrackingAction::PreUserTrackingAction(const G4Track* track)
       // only store if we want to or interactive
       if (interactive)
 	{
+   
 	  auto traj = new BDSTrajectory(track,
 					interactive,
-					true, false, false, false);
+					trajectoryStorageOptions);
 	  fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
@@ -78,7 +82,7 @@ void BDSLinkTrackingAction::PreUserTrackingAction(const G4Track* track)
       // but only store the actual trajectory points if we explicitly want
       // trajectory points or we're using the visualiser.
       auto traj = new BDSTrajectoryPrimary(track,
-					   interactive, true, false, false, false, interactive);
+					   interactive, trajectoryStorageOptions, interactive);
       fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);
     }
