@@ -1356,8 +1356,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  BDSFieldInfo* vacuumField = nullptr;
+  
   BDSFieldInfo* outerField  = nullptr;
   if (BDS::IsFinite(element->B))
     {
@@ -1371,8 +1370,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 				    st,
 				    true,
 				    fieldTrans);
-      // if we have an outerField object in a BDSMagnet, we must have a vacuum field object too
-      vacuumField = new BDSFieldInfo();
     }
   auto bpInfo = PrepareBeamPipeInfo(element);
   
@@ -1381,7 +1378,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 		       element->l*CLHEP::m,
 		       bpInfo,
 		       PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInfo), // 0 angled face in and out
-		       vacuumField,
+		       nullptr,
 		       0,
 		       outerField);
 }
