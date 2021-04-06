@@ -107,6 +107,8 @@ int main(int /*argc*/, char** /*argv*/)
     {biNearest = BDSFieldLoader::Instance()->LoadMagField(*infoBiNearest);}
   catch (const BDSException& e)
     {std::cerr << e.what() << std::endl; exit(1);}
+  catch (const std::exception& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
 
   // 2D Linear
   BDSFieldInfo* infoBiLinear = new BDSFieldInfo(BDSFieldType::bmap2d,
@@ -118,8 +120,14 @@ int main(int /*argc*/, char** /*argv*/)
 						"square120x120_2mm.TXT",
 						BDSFieldFormat::poisson2dquad,
 						BDSInterpolatorType::linear2d);
-  
-  BDSFieldMag* biLinear = BDSFieldLoader::Instance()->LoadMagField(*infoBiLinear);
+
+  BDSFieldMag* biLinear = nullptr;
+  try
+    {biLinear = BDSFieldLoader::Instance()->LoadMagField(*infoBiLinear);}
+  catch (const BDSException& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
+  catch (const std::exception& e)
+    {std::cerr << e.what() << std::endl; exit(1);}
 
   // 2D Cubic
   BDSFieldInfo* infoBiCubic = new BDSFieldInfo(BDSFieldType::bmap2d,
@@ -137,7 +145,7 @@ int main(int /*argc*/, char** /*argv*/)
     {biCubic = BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);}
   catch (const BDSException& e)
     {std::cout << e.what() << std::endl; return 1;}
-  catch (const std::bad_cast& e)
+  catch (const std::exception& e)
     {std::cout << e.what() << std::endl; return 1;}
 
   // Get the raw data
@@ -157,18 +165,27 @@ int main(int /*argc*/, char** /*argv*/)
     }
 
   // Query across full range of magnet including just outside range too.
-  Query(biNearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");
-  Query(biLinear, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "linear");
-  Query(biCubic, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "cubic");
+  if (biNearest)
+    {Query(biNearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");}
+  if (biLinear)
+    {Query(biLinear, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "linear");}
+  if (biCubic)
+    {Query(biCubic, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "cubic");}
 
   // Now query in small region where there's large variation.
-  Query(biNearest, 50, 110, 110, 170, nX, nY, "nearest_zoom");
-  Query(biLinear, 50, 110, 110, 170, nX, nY, "linear_zoom");
-  Query(biCubic, 50, 110, 110, 170, nX, nY, "cubic_zoom");
+  if (biNearest)
+    {Query(biNearest, 50, 110, 110, 170, nX, nY, "nearest_zoom");}
+  if (biLinear)
+    {Query(biLinear, 50, 110, 110, 170, nX, nY, "linear_zoom");}
+  if (biCubic)
+    {Query(biCubic, 50, 110, 110, 170, nX, nY, "cubic_zoom");}
 
-  G4cout << biNearest->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
-  G4cout << biLinear->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
-  G4cout << biCubic->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
+  if (biNearest)
+    {G4cout << biNearest->GetField(G4ThreeVector(130, 74, 0)) << G4endl;}
+  if (biLinear)
+    {G4cout << biLinear->GetField(G4ThreeVector(130, 74, 0)) << G4endl;}
+  if (biCubic)
+    {G4cout << biCubic->GetField(G4ThreeVector(130, 74, 0)) << G4endl;}
 
   return 0;
 }

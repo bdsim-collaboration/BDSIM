@@ -79,7 +79,7 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName)
+void DataLoader::CommonCtor(const std::string& fileName)
 {
   BuildInputFileList(fileName); // updates dataVersion
 

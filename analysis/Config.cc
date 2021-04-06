@@ -623,6 +623,14 @@ void Config::ParseBinning(const std::string& binning,
 	+ binning + "\nDimension defined by \"low:high\" and comma separated";
       throw RBDSException(errString);
     }
+  else if (counter > nDim)
+    {
+      std::string errString = "Too many binning dimension (i.e. commas) on line #"
+      + std::to_string(lineCounter) + "\n"
+      + std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
+      + binning + "\nDimension defined by \"low:high\" and comma separated";
+      throw RBDSException(errString);
+    }
 }
 
 std::vector<std::string> Config::SplitOnWhiteSpace(const std::string& line) const
