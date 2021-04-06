@@ -511,20 +511,20 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
 {
   // prevent a bad access
   if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
-  {
-    std::cout << "No such track ID" << std::endl;
-    return BDSOutputROOTEventTrajectoryPoint();
-  }
+    {
+      std::cout << "No such track ID" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
   int ti = trackID_trackIndex.at(trackIDIn);  // get track index
   int pid = parentID[ti];                   // parent trackID
   int chosenTrackID = trackIDIn;
   while (pid != 0)
-  {
-    if (parentID[trackID_trackIndex.at(pid)] > 0)
-    {chosenTrackID = pid;}
-    ti = trackID_trackIndex.at(pid);
-    pid = parentID[ti];
-  }
+    {
+      if (parentID[trackID_trackIndex.at(pid)] > 0)
+	{chosenTrackID = pid;}
+      ti = trackID_trackIndex.at(pid);
+      pid = parentID[ti];
+    }
   return parentProcessPoint(chosenTrackID);
 }
 
@@ -537,11 +537,22 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
       return BDSOutputROOTEventTrajectoryPoint();
     }
   
-  int ti  = trackID_trackIndex.at(trackid);  // get track index
-  int pti = parentID[ti];                    // parent trackID
+  int ti  = trackID_trackIndex.at(trackIDIn);  // get track index
+  int pti = parentID[ti]; // parent trackID
+  
+  if (pti == 0)
+    {
+      std::cout << "Track is a parent" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+  
   int si  = parentStepIndex.at(ti);          // get primary index
-  int pi  = trackID_trackIndex.at(pti);      // parent track storage index
-
+  int pi = 0;
+  if (pti > 0)
+    {pi  = trackID_trackIndex.at(pti);}      // parent track storage index
+  else
+    {pi = ti;}
+  
   if (si > (int)XYZ[pi].size())
     {// evidently not all step points are stored
       std::cout << "Not all step points are stored. Parent step index is outside points stored." << std::endl;
@@ -648,7 +659,22 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
   return tpv;
 }
 
-void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex)
+void BDSOutputROOTEventTrajectory::printTrajectoryInfoByTrackID(int trackIDIn) const
+{
+  // prevent a bad access
+  int storageIndex = 0;
+  auto search = trackID_trackIndex.find(trackIDIn);
+  if (search == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return;
+    }
+  else
+    {storageIndex = search->second;}
+  printTrajectoryInfo(storageIndex);
+}
+
+void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex) const
 {
   int i = storageIndex; // shortcut
   int wdt = 11; // width of columns for print out
