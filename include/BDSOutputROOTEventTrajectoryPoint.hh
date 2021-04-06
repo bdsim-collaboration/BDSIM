@@ -56,13 +56,16 @@ public:
 				    int    nElectronsIn,
 				    int    stepIndexIn = -1);
   virtual ~BDSOutputROOTEventTrajectoryPoint();
-
+  
+  void ClearContents();
+  virtual void Clear(Option_t*) {ClearContents();}
+  
   int          partID;
   unsigned int trackID;
   unsigned int parentID;
   unsigned int parentIndex;
-  int      processType;
-  int      processSubType;
+  int      postProcessType;
+  int      postProcessSubType;
   double   weight;
   double   energyDeposited;
   TVector3 position;
