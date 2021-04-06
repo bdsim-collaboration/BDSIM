@@ -53,37 +53,38 @@ using namespace GMAD;
 
 class G4Userlimits;
 
-BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType typeIn,
-                                                 BDSBeamPipeInfo *beamPipeInfoIn,
-                                                 BDSMagnetOuterInfo *magnetOuterInfoIn,
-                                                 BDSFieldInfo *vacuumFieldInfoIn,
-                                                 BDSFieldInfo *outerFieldInfoIn,
-                                                 G4bool isThinIn,
-                                                 const Element*          elementIn,
-                                                 BDSMagnetStrength*      stIn,
-                                                 G4double                brhoIn,
-                                                 const BDSIntegratorSet* integratorSetIn,
-                                                 G4double                incomingFaceAngleIn,
-                                                 G4double                outgoingFaceAngleIn,
-                                                 G4bool                  buildFringeFieldsIn,
-                                                 const GMAD::Element*    prevElementIn,
-                                                 const GMAD::Element*    nextElementIn)
-                                                 :BDSMagnet(typeIn, elementIn->name, elementIn->l* CLHEP::m, beamPipeInfoIn, magnetOuterInfoIn, vacuumFieldInfoIn, -elementIn->angle, outerFieldInfoIn, isThinIn)
+BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
+					       BDSBeamPipeInfo*        beamPipeInfoIn,
+					       BDSMagnetOuterInfo*     magnetOuterInfoIn,
+					       BDSFieldInfo*           vacuumFieldInfoIn,
+					       BDSFieldInfo*           outerFieldInfoIn,
+					       G4bool                  isThinIn,
+					       const Element*          elementIn,
+					       BDSMagnetStrength*      stIn,
+					       G4double                brhoIn,
+					       const BDSIntegratorSet* integratorSetIn,
+					       G4double                incomingFaceAngleIn,
+					       G4double                outgoingFaceAngleIn,
+					       G4bool                  buildFringeFieldsIn,
+					       const GMAD::Element*    prevElementIn,
+					       const GMAD::Element*    nextElementIn):
+  BDSMagnet(typeIn, elementIn->name, elementIn->l* CLHEP::m, beamPipeInfoIn,
+	    magnetOuterInfoIn, vacuumFieldInfoIn, -elementIn->angle, outerFieldInfoIn, isThinIn),
+  element(elementIn),
+  st(stIn),
+  brho(brhoIn),
+  integratorSet(integratorSetIn),
+  incomingFaceAngle(incomingFaceAngleIn),
+  outgoingFaceAngle(outgoingFaceAngleIn),
+  buildFringeFields(buildFringeFieldsIn),
+  prevElement(prevElementIn),
+  nextElement(nextElementIn)
 {
-    element           = elementIn;
-    st                = stIn;
-    brho              = brhoIn;
-    integratorSet     = integratorSetIn;
-    incomingFaceAngle = incomingFaceAngleIn;
-    outgoingFaceAngle = outgoingFaceAngleIn;
-    buildFringeFields = buildFringeFieldsIn;
-    prevElement       = prevElementIn;
-    nextElement       = nextElementIn;
-    beamPipeInfo      = beamPipeInfoIn;
-    magnetOuterInfo   = magnetOuterInfoIn;
-    vacuumFieldInfo   = vacuumFieldInfoIn;
-    outerFieldInfo    = outerFieldInfoIn;
-    namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
+  beamPipeInfo    = beamPipeInfoIn;
+  magnetOuterInfo = magnetOuterInfoIn;
+  vacuumFieldInfo = vacuumFieldInfoIn;
+  outerFieldInfo  = outerFieldInfoIn;
+  namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
 }
 
 
