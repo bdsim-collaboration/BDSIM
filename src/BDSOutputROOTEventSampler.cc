@@ -126,16 +126,16 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
 {
   trackID.push_back(n); // we assume multiple primaries are linearly increasing in track number
   n++;
-  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
-  x.push_back((U &&)  (coords.x  / CLHEP::m));
-  y.push_back((U &&)  (coords.y  / CLHEP::m));
+  energy.push_back((U) (coords.totalEnergy / CLHEP::GeV));
+  x.push_back((U)  (coords.x  / CLHEP::m));
+  y.push_back((U)  (coords.y  / CLHEP::m));
   z = (U) (coords.z / CLHEP::m);
-  xp.push_back((U &&) (coords.xp));
-  yp.push_back((U &&) (coords.yp));
-  zp.push_back((U &&) (coords.zp));
-  p.push_back((U &&) (momentumIn / CLHEP::GeV));
-  T.push_back((U &&) (coords.T / CLHEP::ns));
-  weight.push_back((const U &) coords.weight);
+  xp.push_back((U) (coords.xp));
+  yp.push_back((U) (coords.yp));
+  zp.push_back((U) (coords.zp));
+  p.push_back((U) (momentumIn / CLHEP::GeV));
+  T.push_back((U) (coords.T / CLHEP::ns));
+  weight.push_back((U) coords.weight);
   partID.push_back(pdgID);
   parentID.push_back(0);
   modelID = beamlineIndex;
