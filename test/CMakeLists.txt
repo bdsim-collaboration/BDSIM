@@ -14,9 +14,12 @@ target_link_libraries(BDSInterpolatorTester ${BDSIM_LIB_NAME} gmadShared)
 
 add_subdirectory(TrackingTestFiles)
 
-#############
-## BDSTRKTest #
-#############
+add_executable(BDSTrajectoryTest TrajectoryTest.cc)
+set_target_properties(BDSTrajectoryTest PROPERTIES OUTPUT_NAME "BDSTrajectoryTest" VERSION ${BDSIM_VERSION})
+target_link_libraries(BDSTrajectoryTest rebdsim bdsimRootEvent bdsim)
+
+add_test(NAME "trajectory-functions" COMMAND BDSTrajectoryTest "../examples/features/data/trajectory-sample.root")
+
 
 # add_executable(BDSTRKTest BDSTRKTest1.cc)
 # set_target_properties(BDSTRKTest PROPERTIES OUTPUT_NAME "BDSTRKTest" VERSION ${BDSIM_VERSION})
