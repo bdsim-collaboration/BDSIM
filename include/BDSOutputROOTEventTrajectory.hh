@@ -216,12 +216,13 @@ public:
   //  std::map<int, std::vector<int>>    modelIndex_trackIndex;       // modelIndex to track index map
   //  std::pair<int,int>                 findParentProcess(int trackIndex);
 
-  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
-  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
-  BDSOutputROOTEventTrajectoryPoint              parentProcessPoint(int trackID);
-  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
-  void                                           printTrajectoryInfo(int trackID);
-  bool                                           parentIsPrimary(int trackID);
+  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              parentProcessPoint(int trackIDIn) const;
+  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackIDIn) const;
+  void                                           printTrajectoryInfoByTrackID(int trackIDIn) const;
+  void                                           printTrajectoryInfo(int storageIndex) const;
+  bool                                           parentIsPrimary(int trackIDIn) const;
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   
