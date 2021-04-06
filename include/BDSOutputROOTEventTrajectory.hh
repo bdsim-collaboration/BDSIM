@@ -34,6 +34,10 @@ class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+namespace BDS
+{
+  struct TrajectoryOptions;
+}
 #endif
 
 class BDSAuxiliaryNavigator;
@@ -114,7 +118,8 @@ public:
 #ifndef __ROOTBUILD__
   void Fill(const BDSTrajectoriesToStore* t,
             int  storeStepPointsN,
-            bool storeStepPointLast);
+            bool storeStepPointLast,
+            const BDS::TrajectoryOptions& storageOptions);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 
   /// Temporary structure for an individual trajectory used to convert types.
@@ -204,17 +209,20 @@ public:
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;// trackID to trackIndex
+  std::map<int, int>                 trackID_trackIndex;// trackID to storage index
   
   //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
   //  std::map<int, std::vector<int>>    modelIndex_trackIndex;       // modelIndex to track index map
   //  std::pair<int,int>                 findParentProcess(int trackIndex);
 
-  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
-  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
-  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
-  void                                           printTrajectoryInfo(int trackID);
+  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              parentProcessPoint(int trackIDIn) const;
+  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackIDIn) const;
+  void                                           printTrajectoryInfoByTrackID(int trackIDIn) const;
+  void                                           printTrajectoryInfo(int storageIndex) const;
+  bool                                           parentIsPrimary(int trackIDIn) const;
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   

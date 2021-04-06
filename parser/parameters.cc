@@ -130,6 +130,10 @@ Parameters::Parameters()
   setMap["phi"]                = false;
   setMap["theta"]              = false;
   setMap["psi"]                = false;
+  setMap["axisX"]              = false;
+  setMap["axisY"]              = false;
+  setMap["axisZ"]              = false;
+  setMap["axisAngle"]          = false;
 
   setMap["bias"]                 = false;
   setMap["biasMaterial"]         = false;
