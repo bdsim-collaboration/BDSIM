@@ -179,6 +179,8 @@ Bug Fixes
   point the track was created by on the parent trajectory, not the primary. It is now fixed.
 * The various trajectory functions now have been made tolerant of bad indices (e.g. negative numbers or parent
   used in a non-parent sense) and also of the now optional parts of the trajectory data.
+* Fix Issue 297 where optics were incorrect due an uninitialised variable incorrectly setting dipole fringes
+  to be zero strength.
 
 
 Output Changes
