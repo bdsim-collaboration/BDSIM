@@ -23,7 +23,7 @@ BDSHistBinMapper::BDSHistBinMapper(G4int nBinsIIn, G4int nBinsJIn, G4int nBinsKI
                                    boost_histogram_axes_variant energyAxisIn) : nBinsI(nBinsIIn),
                                                                                 nBinsJ(nBinsJIn),
                                                                                 nBinsK(nBinsKIn),
-                                                                                nBinsL(nBinsLIn),
+                                                                                nBinsL(nBinsLIn + 2), // + 2 to take into account in the mapping the two under and overflow bins
                                                                                 energyAxis(energyAxisIn) {
 }
 

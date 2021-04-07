@@ -1032,7 +1032,7 @@ void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 	  {
 	    // convert from scorer global index to 4d i,j,k,e index of 4d scorer
 	    mapper.IJKLFromGlobal(hit.first, x,y,z,e);
-	    evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e, *hit.second / unit);
+	    evtHistos->Set4DHistogramBinContent(histIndex, x, y, z, e - 1, *hit.second / unit); // - 1 to go back to the Boost Histogram indexing (-1 for the underflow bin)
 	  }
       runHistos->AccumulateHistogram4D(histIndex, evtHistos->Get4DHistogram(histIndex));
     } 
