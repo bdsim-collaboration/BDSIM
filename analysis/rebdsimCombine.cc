@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @file rebdsimCombine.cc
  */
 #include "FileMapper.hh"
+#include "Header.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
 
@@ -76,8 +77,6 @@ int main(int argc, char* argv[])
   headerOut->SetFileType("REBDSIMCOMBINE");
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
-  headerTree->Fill();
-  output->Write(nullptr,TObject::kOverwrite);
 
   // ensure new histograms are written to file
   TH1::AddDirectory(true);
@@ -101,6 +100,8 @@ int main(int argc, char* argv[])
 
   std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
 
+  unsigned long long int nOriginalEvents = 0;
+  
   // loop over files and accumulate
   for (const auto& file : inputFiles)
     {
@@ -116,6 +117,13 @@ int main(int argc, char* argv[])
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
 	    }
+	  
+	  Header* h = new Header();
+	  TTree* ht = (TTree*)f->Get("Header");
+	  h->SetBranchAddress(ht);
+	  ht->GetEntry(0);
+	  nOriginalEvents += h->header->nOriginalEvents;
+	  delete h;
 	}
       else
 	{std::cout << "Skipping " << file << " as not a rebdsim output file" << std::endl;}
@@ -131,6 +139,9 @@ int main(int argc, char* argv[])
       hist.outputDir->Add(result);
       delete hist.accumulator; // this removes temporary histograms from the file
     }
+  
+  headerOut->nOriginalEvents = nOriginalEvents;
+  headerTree->Fill();
 
   output->Write(nullptr,TObject::kOverwrite);
   output->Close();

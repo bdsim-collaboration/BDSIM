@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSColours.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
@@ -76,7 +77,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
   /// build logical volumes
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
-  SetVisAttributes();
+  SetVisAttributes(beamPipeMaterialIn);
   /// set user limits
   SetUserLimits(length);
   /// place volumes
@@ -106,17 +107,18 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
 				    nameIn + "_container_lv");
 }
 
-void BDSBeamPipeFactoryBase::SetVisAttributes()
+void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
 {
-  if (beamPipeLV)
-  {
-    auto pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
-    pipeVisAttr->SetVisibility(true);
-    pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-    allVisAttributes.insert(pipeVisAttr);
-    beamPipeLV->SetVisAttributes(pipeVisAttr);
-  }
-  // vacuum
+    if (beamPipeLV)
+    {
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColourWithDefault(beamPipeMaterialIn,
+                                                             BDSColours::Instance()->GetColour("beampipe"));
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
+  pipeVisAttr->SetVisibility(true);
+  pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  allVisAttributes.insert(pipeVisAttr);
+  beamPipeLV->SetVisAttributes(pipeVisAttr);
+    }
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }

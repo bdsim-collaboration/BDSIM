@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipe.hh"
 
+class G4Material;
+
 /**
  * @brief Factory for detailed lhc aperture model beam pipes.
  * 
@@ -64,7 +66,7 @@ private:
   void  BuildLogicalVolumes(const G4String&    nameIn,
 					    G4Material* vacuumMaterialIn,
 					    G4Material* beamPipeMaterialIn) override;
-  void  SetVisAttributes() override;
+  void  SetVisAttributes(G4Material* beamPipeMaterialIn) override;
   void  SetUserLimits(G4double length) override;
   void  PlaceComponents(const G4String& nameIn) override;
 

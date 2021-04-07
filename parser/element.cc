@@ -135,6 +135,7 @@ void Element::PublishMembers()
 
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
+  
   publish("x",           &Element::xdir);
   alternativeNames["x"] = "xdir";
   publish("y",           &Element::ydir);
@@ -147,6 +148,11 @@ void Element::PublishMembers()
   publish("phi",         &Element::phi);
   publish("theta",       &Element::theta);
   publish("psi",         &Element::psi);
+  publish("axisX",       &Element::axisX);
+  publish("axisY",       &Element::axisY);
+  publish("axisZ",       &Element::axisZ);
+  publish("axisAngle",   &Element::axisAngle);
+  
   publish("region",      &Element::region);
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
@@ -495,6 +501,10 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
+  axisX = 0;
+  axisY = 0;
+  axisZ = 0;
+  axisAngle = false;
 
   bias         = "";
   biasMaterial = "";
