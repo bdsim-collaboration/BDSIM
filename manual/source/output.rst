@@ -1333,11 +1333,11 @@ In addition, some maps are stored to link the entries together conceptually.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+--------------------------+-------------------------------------+---------------------------------------------------------+
-|  **Variable**            | **Type**                            |  **Description**                                        |
-+==========================+=====================================+=========================================================+
-| trackID_trackIndex       | std::map<int, int>                  | A map of all trackIDs to the index in this class        |
-+--------------------------+-------------------------------------+---------------------------------------------------------+
++--------------------------+---------------------+----------------------------------------------------------+
+|  **Variable**            | **Type**            |  **Description**                                         |
++==========================+=====================+==========================================================+
+| trackID_trackIndex       | std::map<int, int>  | A map of all trackIDs to the storage index in this class |
++--------------------------+---------------------+----------------------------------------------------------+
 
 These are currently not implemented.
 
@@ -1351,34 +1351,36 @@ These are currently not implemented.
 
 Functions are provided that allow exploration of the data through the connections stored.
 
+* Using the shorthand :code:`TP` = :code:`BDSOutputROOTEventTrajectoryPoint` for readability.
+
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.40\textwidth}|p{0.4\textwidth}|
 
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| **Function**                      | **Return Type**                                 | **Description**                                         |
-+===================================+=================================================+=========================================================+
-| trackInteractions(int trackID)    | std::vector<BDSOutputROOTEventTrajectoryPoint>  | Return vector of points where this particle interacted  |
-|                                   |                                                 | all the way to the primary. Transportation steps are    |
-|                                   |                                                 | suppressed.                                             |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| primaryProcessPoint(int trackID)  | BDSOutputROOTEventTrajectoryPoint               | For a given track ID, return the point where the        |
-|                                   |                                                 | primary particle first interacted.                      |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| processHistory(int trackID)       | std::vector<BDSOutputROOTEventTrajectoryPoint>  | A full history up the trajectory table to the primary   |
-|                                   |                                                 | for a given track ID.                                   |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| printTrajectory(int trackID)      | void                                            | Print information and history.                          |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| parentIsPrimary(int trackID)      | bool                                            | Whether the creator of this track is a primary particle |
-|                                   |                                                 | This returns false for a primary itself.                |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
++---------------------------------------+--------------------+----------------------------------------------------------+
+| **Function**                          | **Return Type**    | **Description**                                          |
++=======================================+====================+==========================================================+
+| trackInteractions(int trackID)        | std::vector<TP>    | Return vector of points where this particle interacted   |
+|                                       |                    | all the way to the primary. Transportation steps are     |
+|                                       |                    | suppressed.                                              |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| primaryProcessPoint(int trackID)      | TP                 | For a given track ID, return the point on the primary    |
+|                                       |                    | trajectory where this track ultimately leads back to.    |
+|                                       |                    | Therefore, for a given trajectory, this function will    |
+|                                       |                    | recurse up the trajectory tree on to the primary one.    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentProcessPoint(int trackID)       | TP                 | For a given track ID, return the point on the parent     |
+|                                       |                    | trajectory particle first interacted.                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| processHistory(int trackID)           | std::vector<TP>    | A full history up the trajectory table to the primary    |
+|                                       |                    | for a given track ID.                                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryByTrackID(int trackID) | void               | Print information and history for a given track ID.      |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryBy(int storageIndex)   | void               | Print information and history for a given storage index. |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentIsPrimary(int trackID)          | bool               | Whether the creator of this track is a primary particle  |
+|                                       |                    | This returns false for a primary itself.                 |
++---------------------------------------+--------------------+----------------------------------------------------------+
 
-Not implemented:
-
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process index from      |
-|                                   |                                                 | the ultimate parent of this particle up the             |
-|                                   |                                                 | trajectory table.                                       |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
 
 BDSOutputROOTEventSampler
 *************************
