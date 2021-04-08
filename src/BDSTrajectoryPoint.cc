@@ -47,6 +47,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
+G4double BDSTrajectoryPoint::dEThresholdForScattering = 1e-8;
+
 // Don't use transform caching in the aux navigator as it's used for all over the geometry here.
 BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator();
 
@@ -338,7 +340,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(G4int postProcessType,
   G4bool notUndefined      = postProcessType != G4ProcessType::fNotDefined; // for crystal channelling
 
   // energy can change in transportation step (EM)
-  if (totalEnergyDeposit > 1e-9)
+  if (totalEnergyDeposit > dEThresholdForScattering)
     {return true;}
 
   return initialised && notTransportation && notGeneral && notParallel && notUndefined;
