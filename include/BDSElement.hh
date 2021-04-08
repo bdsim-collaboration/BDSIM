@@ -53,7 +53,7 @@ public:
   // even if overridden. So if we want a BDSGeometryComponent that's uniquely
   // managed by the geometry factory (ie we don't own here) we have to forward
   // things on for the same access but no deletion.
-  /// @{ Overrloads of functions in BDSGeometryComponent.
+  /// @{ Overloads of functions in BDSGeometryComponent.
   virtual std::set<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const;
   virtual std::set<G4RotationMatrix*>  GetAllRotationMatrices() const;
   virtual std::set<G4VisAttributes*>   GetAllVisAttributes()    const;
