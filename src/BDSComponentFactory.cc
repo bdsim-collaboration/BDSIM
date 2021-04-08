@@ -1162,7 +1162,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->geometryFile,
 			 element->angle * CLHEP::rad,
 			 &vacuumBiasVolumeNames,
-			 element->autoColour));
+			 element->autoColour,
+			 element->markAsCollimator));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()

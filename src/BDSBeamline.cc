@@ -923,6 +923,6 @@ std::vector<G4int> BDSBeamline::GetIndicesOfElementsOfType(const std::set<G4Stri
 
 std::vector<G4int> BDSBeamline::GetIndicesOfCollimators() const
 {
-  std::set<G4String> collimatorTypes = {"ecol", "rcol", "jcol", "crystalcol"};
+  std::set<G4String> collimatorTypes = {"ecol", "rcol", "jcol", "crystalcol", "element-collimator"};
   return GetIndicesOfElementsOfType(collimatorTypes);
 }

@@ -44,7 +44,8 @@ public:
 	     const G4String& geometry,
 	     G4double        angle                       = 0,
 	     std::vector<G4String>* namedVacuumVolumesIn = nullptr,
-	     G4bool          autoColourGeometryIn        = true);
+	     G4bool          autoColourGeometryIn        = true,
+	     G4bool          markAsCollimatorIn          = false);
   virtual ~BDSElement(){;}
 
   // This is a little convoluted because ultimately we can't change the
@@ -82,6 +83,7 @@ private:
   G4String geometryFileName;
   std::vector<G4String> namedVacuumVolumes;
   G4bool   autoColourGeometry;
+  G4bool   markAsCollimator;
 
   /// Cache of the constructed geometry.  Used to forward onto various BDSGeometryComponent functions.
   BDSGeometryExternal* geometry;

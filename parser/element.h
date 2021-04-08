@@ -208,6 +208,7 @@ namespace GMAD
     bool        autoColour;   ///< Automagically colour the external geometry.
     std::string material;
     std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
+    bool        markAsCollimator;
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
 
