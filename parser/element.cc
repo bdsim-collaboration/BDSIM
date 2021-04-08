@@ -489,6 +489,9 @@ void Element::flush()
   poleStartZ         = 0;
   screenWidth        = 0;
   awakeMagnetOffsetX = 0.13;
+  windowmaterial     = "vacuum";
+  mountmaterial      = "";
+  scintmaterial      = "";
 
   layerThicknesses.clear();
   layerMaterials.clear();
@@ -527,9 +530,6 @@ void Element::flush()
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
-  windowmaterial = "vacuum";
-  mountmaterial="";
-  scintmaterial = "";
   spec = "";
   cavityModel = "";
 
