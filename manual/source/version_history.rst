@@ -42,6 +42,8 @@ New Features
   allows mixing of distributions for spatial, directional and energy / time rather than the usual
   coupled phase space of the `composite` distribution (e.g. x,xp and y,yp). `box` is uniform in
   all dimensions.
+* A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
+  collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
