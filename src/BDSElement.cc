@@ -54,10 +54,10 @@ void BDSElement::BuildContainerLogicalVolume()
 {
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
   // differently.
-  BDSSDType sensitivity = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
+  BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
   geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
 							   chordLength, horizontalWidth,
-							   &namedVacuumVolumes, true, sensitivity);
+							   &namedVacuumVolumes, true, sensitivityToAttach);
   
   if (!geometry)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}
