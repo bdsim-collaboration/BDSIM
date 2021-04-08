@@ -886,7 +886,7 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
   return sPos;
 }
 
-G4bool BDSBeamline::ElementAnglesSumToCircle()
+G4bool BDSBeamline::ElementAnglesSumToCircle() const
 {
   return (std::abs(totalAngle) > 0.99 * 2.0 * CLHEP::pi) and (std::abs(totalAngle) < 1.01 * 2.0 * CLHEP::pi);
 }
@@ -898,7 +898,7 @@ BDSExtentGlobal BDSBeamline::GetExtentGlobal() const
   return extG;
 }
 
-std::vector<G4int> BDSBeamline::GetIndicesOfElementsOfType(const G4String type) const
+std::vector<G4int> BDSBeamline::GetIndicesOfElementsOfType(const G4String& type) const
 {
   std::vector<G4int> result;
   for (auto element : beamline)

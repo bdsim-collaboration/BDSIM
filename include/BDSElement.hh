@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief A class for a generic piece of external geometry.
  * 
- * Allows any arbritary geometry and magnetic field map to be used
+ * Allows any arbitrary geometry and magnetic field map to be used
  * as an accelerator component in the beamline. Geometry and magnetic fields are imported
  * from an external file (each) and can be specified in various formats.
  */
