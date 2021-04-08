@@ -154,6 +154,7 @@ Parameters::Parameters()
   setMap["autoColour"]     = false;
   setMap["material"]       = false;
   setMap["namedVacuumVolumes"] = false;
+  setMap["markAsCollimator"] = false;
   setMap["spec"]           = false;
   setMap["cavityModel"]    = false;
 
