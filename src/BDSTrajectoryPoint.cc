@@ -314,6 +314,12 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
 {
   const G4StepPoint* postPoint   = step->GetPostStepPoint();
   const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
+  
+  G4double totalEnergyDeposit = step->GetTotalEnergyDeposit();
+  
+  G4Track* t = step->GetTrack();
+  if (t->GetCurrentStepNumber() == 1 && t->GetStepLength() < 1e-5 && totalEnergyDeposit < 1e-5)
+    {return false;} // ignore the first really small step
 
   G4int postProcessType    = -1;
   G4int postProcessSubType = -1;
@@ -322,8 +328,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
       postProcessType    = postProcess->GetProcessType();
       postProcessSubType = postProcess->GetProcessSubType();
     }
-
-  G4double totalEnergyDeposit = step->GetTotalEnergyDeposit();
+  
   return BDSTrajectoryPoint::IsScatteringPoint(postProcessType, postProcessSubType, totalEnergyDeposit);
 }
   
