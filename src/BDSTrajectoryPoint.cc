@@ -35,7 +35,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Allocator.hh"
-#include "G4NavigationHistory.hh"
 #include "G4ProcessType.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -249,7 +248,7 @@ void BDSTrajectoryPoint::StoreExtrasLink(const G4Track* track)
   G4double rigidity = 0;
   if (BDS::IsFinite(charge))
     {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
-  extraLink = new BDSTrajectoryPointLink(charge,
+  extraLink = new BDSTrajectoryPointLink((G4int)charge,
 					 BDSGlobalConstants::Instance()->TurnsTaken(),
 					 dynamicParticleDef->GetMass(),
 					 rigidity);
