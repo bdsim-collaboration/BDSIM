@@ -2191,6 +2191,13 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
 +----------------------------------+-------------------------------------------------------+
+| dEThresholdForScattering         | The energy deposition in GeV treated as the threshold |
+|                                  | for a step to be considered a scattering point.       |
+|                                  | Along step processes such as multiple scattering may  |
+|                                  | degrade the energy but not be the process that        |
+|                                  | defined the step, so may not register. Default        |
+|                                  | 1e-11 GeV.                                            |
++----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
 |                                  | magnets with finite poleface angles, and solenoids.   |
 |                                  | The length of the total element is conserved.         |
