@@ -1651,6 +1651,10 @@ and make a placement at the appropriate point in global coordinates.
 |                      | should be automatically coloured |              |               |
 |                      | according to density.            |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `markAsCollimator`   | Label this element as a          | 0            | No            |
+|                      | collimator so it appears in the  |              |               |
+|                      | collimator histograms and hits.  |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1658,6 +1662,9 @@ and make a placement at the appropriate point in global coordinates.
 * `fieldAll` should refer to the name of a field object the user has defined in the input
   gmad file. The syntax for this is described in :ref:`field-maps`.
 * The field map will also be tilted with the component if it is tilted.
+* If marked as a collimator, the element will also appear in the collimator histograms
+  and also have a collimator-specific branch made for it in the Event tree of the output
+  as per the other collimators. The type in the output will be "element-collimator".
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length

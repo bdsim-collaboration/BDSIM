@@ -42,6 +42,8 @@ New Features
   allows mixing of distributions for spatial, directional and energy / time rather than the usual
   coupled phase space of the `composite` distribution (e.g. x,xp and y,yp). `box` is uniform in
   all dimensions.
+* A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
+  collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -61,6 +63,13 @@ New Features
 |                                  | volume can be biased with this option. White space    |
 |                                  | separated list in a string. Does not apply to world   |
 |                                  | volume itself.                                        |
++----------------------------------+-------------------------------------------------------+
+| dEThresholdForScattering         | The energy deposition in GeV treated as the threshold |
+|                                  | for a step to be considered a scattering point.       |
+|                                  | Along step processes such as multiple scattering may  |
+|                                  | degrade the energy but not be the process that        |
+|                                  | defined the step, so may not register. Default        |
+|                                  | 1e-11 GeV.                                            |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
 |                                  | mass will be included in the energy deposition hit.   |
@@ -193,6 +202,9 @@ Bug Fixes
   used in a non-parent sense) and also of the now optional parts of the trajectory data.
 * Fix Issue 297 where optics were incorrect due an uninitialised variable incorrectly setting dipole fringes
   to be zero strength.
+* Fix possibly misidentified PrimaryFirstHit beam line elements (coordinates were always correct)
+  that could in the case of some particles be either the very first step into the accelerator from
+  air or the element before the expected one.
 
 
 Output Changes

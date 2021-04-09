@@ -63,6 +63,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDType.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSUtilities.hh"
 #include "BDSWarning.hh"
@@ -119,6 +120,8 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
   verbose       = globals->Verbose();
   checkOverlaps = globals->CheckOverlaps();
   circular      = globals->Circular();
+  
+  BDSTrajectoryPoint::dEThresholdForScattering = globals->DEThresholdForScattering();
   
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
