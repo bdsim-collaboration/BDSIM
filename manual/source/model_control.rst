@@ -1,4 +1,4 @@
-.. macro for non breaking white space usefulf or units:
+.. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
 
@@ -1258,7 +1258,7 @@ We recommend using the visualiser and interactively exploring the commands there
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
 
-A modular phyiscs list can be made by specifying several physics lists separated by spaces. These
+A modular physics list can be made by specifying several physics lists separated by spaces. These
 are independent.
 
 * The strings for the modular physics list are case-insensitive.
@@ -3308,7 +3308,7 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
 * All scorers include the weight associated with the particle, which is only different from
   1 if biasing is used. This ensures the correct physical result is always obtained.
 * As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+  is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
 .. _scoring-mesh:
