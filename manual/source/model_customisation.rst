@@ -1,4 +1,4 @@
-.. macro for non breaking white space usefulf or units:
+.. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
 
@@ -173,7 +173,7 @@ When defining a field, the following parameters can be specified.
 The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
 110% of the element length that the field is attached to, or the global maximum step length,
 or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
-velocity is assume to be :code:`c`, the speed of light, for the spatial distance calcualted
+velocity is assume to be :code:`c`, the speed of light, for the spatial distance calculated
 from this.
 
 .. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
@@ -550,7 +550,7 @@ elements:
 * nitrogen
 * silicon
 * titanium
-* tungstem
+* tungsten
 * uranium
 * vanadium
 * zinc
@@ -1175,7 +1175,7 @@ file. See :ref:`externally-provided-geometry` for more details.
 * The option :code:`biasForWorldContents` may be used to attach a bias object to the
   daughter volumes (i.e. excluding the world volume itself) of the loaded world geometry.
   This is useful for shielding.
-* The option :code:`biasForWorldVolume` may be used to attacha a bias object to the world
+* The option :code:`biasForWorldVolume` may be used to attach a bias object to the world
   volume itself (only). See :ref:`physics-biasing` for details.
 
 .. warning:: Be careful to avoid name clashing if loading multiple GDML files including the world.
@@ -1393,7 +1393,7 @@ The automatic tunnel building is controlled through the following options used w
 | buildTunnel                      | 0 (false)   | Whether to build a tunnel               |
 +----------------------------------+-------------+-----------------------------------------+
 | buildTunnelStraight              | 0 (false)   | Whether to build a tunnel, ignoring the |
-|                                  |             | beamline ane just in a straight line    |
+|                                  |             | beamline and just in a straight line    |
 +----------------------------------+-------------+-----------------------------------------+
 | buildTunnelFloor                 | 1 (true)    | Whether to add a floor to the tunnel    |
 +----------------------------------+-------------+-----------------------------------------+

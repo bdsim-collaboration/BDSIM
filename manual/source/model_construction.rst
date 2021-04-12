@@ -1,4 +1,4 @@
-.. macro for non breaking white space usefulf or units:
+.. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
 
@@ -548,7 +548,7 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
-* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+* If `lhcright` or `lhcleft` magnet geometry types are used the yoke field is a sum of two
   as described in :ref:`fields-multipole-outer-lhc`.
 
 A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
@@ -584,7 +584,7 @@ Notes:
 * The :ref:`aperture-parameters` may also be specified.
 * The :ref:`magnet-geometry-parameters` may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
-* If `lhcright` or `lhcleft` magnet geomtry types are used the yoke field is a sum of two
+* If `lhcright` or `lhcleft` magnet geometry types are used the yoke field is a sum of two
   as described in ref:`fields-multipole-outer-lhc`.
 
 A pure sextupolar field is provided in the beam pipe and a more general multipole (as
@@ -727,7 +727,7 @@ will change.
 The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
 to an increase in :math:`p_y` for a positively charged particle.
 
-.. warning:: :code:`vkick` will supercede the strength even if :code:`B` is specified. Therefore, the
+.. warning:: :code:`vkick` will supersede the strength even if :code:`B` is specified. Therefore, the
 	     user should specify only :code:`vkick` or :code:`B`.
 
 In the case of a thick vertical kicker, the resulting bending angle is calculated using:
@@ -791,7 +791,7 @@ will change.
 The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
 to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positively charged particle.
 
-.. warning:: :code:`hkick` will supercede the strength even if :code:`B` is specified. Therefore, the
+.. warning:: :code:`hkick` will supersede the strength even if :code:`B` is specified. Therefore, the
 	     user should specify only :code:`hkick` or :code:`B`.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum, so the particle
@@ -1008,7 +1008,7 @@ Examples: ::
 
 .. note:: The outer shape of an rcol can be made circular by defining :code:`apertureType="circular"` for
 	  that specific element. This is a temporary facility and may cause overlaps if the
-	  :code:`horizontalWidth` parameter is smaller than the radius from the `xize` and `ysize`
+	  :code:`horizontalWidth` parameter is smaller than the radius from the `xsize` and `ysize`
 	  parameters. In future this will be improved and generalised for any inner and outer shape. No
 	  other outer shapes are supported just now.
 
@@ -1402,7 +1402,7 @@ Parameter                   Description                                         
 
 Notes:
 
-* A postive crystalAngleYAxisLeft will result in the crystal being rotated away from the z axis of the
+* A positive crystalAngleYAxisLeft will result in the crystal being rotated away from the z axis of the
   collimator. Therefore, a positive angle for both a left and right crystal will result in diverging
   crystals.
 * The bending angle of the left crystal is reversed from the definition. Therefore a positive bending angle
@@ -1512,8 +1512,8 @@ Parameter         Description                   Default     Required
 `psi`             psi Euler angle               0           No
 `axisAngle`       whether to use axis angle     0           No
 `axisX`           x component of axis vector    0           No
-`axisX`           x component of axis vector    0           No
-`axisX`           x component of axis vector    0           No
+`axisY`           y component of axis vector    0           No
+`axisZ`           z component of axis vector    0           No
 `angle`           angle to rotate about axis    0           No
 ================  ============================  ==========  ===========
 
