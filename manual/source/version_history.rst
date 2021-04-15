@@ -127,6 +127,8 @@ General
 * The name of the bunch distribution is always print out in the terminal print out now.
 * Clarified trajectory options in manual a bit - two tables, one for filtering, one for storage.
 * Document option :code:`maximumTracksPerEvent`.
+* The directory :code:`bdsim/examples/ILC` has been removed as this is an old unmaintained example
+  that didn't work. This is in an effort to reduce the size of the examples and code repository generally.
 
 Bug Fixes
 ---------
