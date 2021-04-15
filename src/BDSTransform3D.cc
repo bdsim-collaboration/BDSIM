@@ -38,7 +38,7 @@ BDSTransform3D::BDSTransform3D(const G4String& nameIn,
 {
   rotationMatrix.set(dPhiIn, dThetaIn, dPsiIn);
   G4ThreeVector axis;
-  rotationMatrix.getAngleAxis(angle,axis);
+  rotationMatrix.getAngleAxis(angle,axis); // sets the variables by reference
   axisX = axis.x();
   axisY = axis.y();
   axisZ = axis.z();
