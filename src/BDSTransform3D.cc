@@ -33,7 +33,7 @@ BDSTransform3D::BDSTransform3D(const G4String& nameIn,
   BDSAcceleratorComponent(nameIn,0,0,"transform3d"),
   rotationMatrix(G4RotationMatrix()),
   dx(dxIn), dy(dyIn), dz(dzIn),
-  dTheta(dThetaIn), dPsi(dPsiIn), dPhi(dPhiIn)
+  dPhi(dPhiIn), dTheta(dThetaIn), dPsi(dPsiIn),
 {
   rotationMatrix.set(dPhi, dThetaIn, dPsiIn);
   G4ThreeVector axis;
@@ -62,8 +62,8 @@ BDSTransform3D::BDSTransform3D(const G4String& nameIn,
   G4ThreeVector axis(axisXIn, axisYIn, axisZIn);
   rotationMatrix.set(axis,angle);
   dPhi   = rotationMatrix.getPhi();
-  dPsi   = rotationMatrix.getPsi();
   dTheta = rotationMatrix.getTheta();
+  dPsi   = rotationMatrix.getPsi();
 }
 
 BDSTransform3D::~BDSTransform3D()

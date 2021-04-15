@@ -68,9 +68,9 @@ public:
   G4double dx;
   G4double dy;
   G4double dz;
+  G4double dPhi;
   G4double dTheta;
   G4double dPsi;
-  G4double dPhi;
   G4double axisX;
   G4double axisY;
   G4double axisZ;
