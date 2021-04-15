@@ -493,18 +493,19 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
   
   // test validity for potential overlaps
   if (dz < 0)
-  {
-    G4cerr << __METHOD_NAME__ << "Caution: Transform3d: " << component->GetName() << G4endl;
-    G4cerr << __METHOD_NAME__ << "dz = " << dz << " < 0 -> could overlap previous element" << G4endl;
-  }
+    {
+      G4cerr << __METHOD_NAME__ << "Caution: Transform3d: " << component->GetName() << G4endl;
+      G4cerr << __METHOD_NAME__ << "dz = " << dz << " < 0 -> could overlap previous element" << G4endl;
+    }
   
-  // if not the first element in the beamline, get information from the end of the last element in the beamline
+  // if not the first element in the beamline, get information from
+  // the end of the last element in the beamline
   if (!empty())
-  {
-    BDSBeamlineElement* last = back();
-    previousReferenceRotationEnd = last->GetReferenceRotationEnd();
-    previousReferencePositionEnd = last->GetReferencePositionEnd();
-  }
+    {
+      BDSBeamlineElement* last = back();
+      previousReferenceRotationEnd = last->GetReferenceRotationEnd();
+      previousReferencePositionEnd = last->GetReferencePositionEnd();
+    }
   
   // apply position
   // transform the local dx,dy,dz displacement into the global frame then apply
