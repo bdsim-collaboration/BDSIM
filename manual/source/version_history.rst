@@ -192,6 +192,8 @@ Bug Fixes
 * Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
   together, which would result in no trajectories being stored.
 * Fix uninitialised variable in BDSBunch.
+* Fix energy being 1000x too big in the halo bunch distribution since the previous version. Units were multiplied
+  through twice.
 * Fix float / double casts in sampler output.
 * Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
 * The maximum step length in a muon spoiler is now 1/20th of the length whereas before it was the full length.
