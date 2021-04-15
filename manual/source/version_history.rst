@@ -114,6 +114,9 @@ New Features
 General
 -------
 
+* The parser no longer builds a static library by default to save space and it responds to the
+  option of :code:`BDSIM_BUILD_STATIC_LIBS` as the main libraries do. The parser library name
+  has changed from "libgmadSharedLib" to "libgmad" and the static one is "libgmad-static".
 * LHC dipole geometry now applies also to rbends as well as sbends.
 * LHC dipole geometry now applies to hkickers and vkickers. In both cases the poles are like
   a normal LHC dipole (e.g. no "vertical" kicker geometry).
