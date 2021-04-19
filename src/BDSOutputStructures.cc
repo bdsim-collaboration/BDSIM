@@ -195,19 +195,19 @@ G4int BDSOutputStructures::UpdateSamplerStructures()
 {
   G4int result = 0;
   for (auto const& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
-  {// only put it in if it doesn't exist already
-    if (std::find(samplerNames.begin(), samplerNames.end(), samplerName) == samplerNames.end())
-    {
-      result++;
+    {// only put it in if it doesn't exist already
+      if (std::find(samplerNames.begin(), samplerNames.end(), samplerName) == samplerNames.end())
+	{
+	  result++;
 #ifndef __ROOTDOUBLE__
-      BDSOutputROOTEventSampler<float>* res = new BDSOutputROOTEventSampler<float>(samplerName);
+	  BDSOutputROOTEventSampler<float>* res = new BDSOutputROOTEventSampler<float>(samplerName);
 #else
-      BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
+	  BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
 #endif
-      samplerTrees.push_back(res);
-      samplerNames.push_back(samplerName);
+	  samplerTrees.push_back(res);
+	  samplerNames.push_back(samplerName);
+	}
     }
-  }
   return result;
 }
 #endif
