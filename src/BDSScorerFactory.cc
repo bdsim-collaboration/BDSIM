@@ -113,7 +113,9 @@ G4VPrimitiveScorer *BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo& 
       }
     case BDSScorerType::cellflux4d:
       {
-	result = new BDSPSCellFlux4D(info.name, mapper, "percm2");
+    BDSPSCellFlux4D *scorer = new BDSPSCellFlux4D(info.name, mapper, "percm2");
+	scorer->Weighted(true);
+	result = scorer;
 	break;
       }
     case BDSScorerType::cellfluxscaledperparticle3d:
