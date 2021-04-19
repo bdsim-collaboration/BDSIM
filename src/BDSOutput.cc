@@ -711,7 +711,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
       {return; break;} // don't fill for other types of hits
     }
 
-  G4int nHits = hits->entries();
+  G4int nHits = (G4int)hits->entries();
   if (nHits == 0) // integer so ok to compare
     {return;}
   switch (lossType)
@@ -758,7 +758,7 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
 			       const LossType lossType)
 {
-  G4int nHits            = hits->entries();
+  G4int nHits            = (G4int)hits->entries();
   if (nHits == 0)
     {return;}
   G4int indELoss         = histIndices1D["Eloss"];
@@ -898,7 +898,7 @@ void BDSOutput::FillTrajectories(const BDSTrajectoriesToStore* trajectories)
 void BDSOutput::FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
 				   const std::vector<const BDSTrajectoryPointHit*>& primaryLossPoints)
 {
-  G4int nHits = hits->entries();
+  G4int nHits = (G4int)hits->entries();
   for (G4int i = 0; i < nHits; i++)
     {
       BDSHitCollimator* hit = (*hits)[i];
@@ -960,7 +960,7 @@ void BDSOutput::FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits
     {return;}
 
   G4int nPrimaryImpacts = 0;
-  G4int nHits = hits->entries();
+  G4int nHits = (G4int)hits->entries();
   G4int histIndex = histIndices1D["PFirstAI"];
   for (G4int i = 0; i < nHits; i++)
     {
