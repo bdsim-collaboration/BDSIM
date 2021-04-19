@@ -192,6 +192,7 @@ set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include
 # BDSIM library and binaries
 option( BDSIM_BUILD_STATIC_LIBS "Build static BDSIM library."  OFF )
 if (BDSIM_BUILD_STATIC_LIBS)
+  message(STATUS "Building BDSIM static libraries in addition to shared ones.")
   add_library(${BDSIM_LIB_NAME_STATIC} STATIC ${root_dicts} ${bdsim_sources})
   generate_export_header(${BDSIM_LIB_NAME_STATIC})
 endif()
