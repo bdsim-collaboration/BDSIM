@@ -681,21 +681,21 @@ void BDSOutput::FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits)
   if (nHits == 0) // integer so ok to compare
     {return;}
   for (int i = 0; i < (int)hits->entries(); i++)
-  {
-    const BDSHitSamplerLink* hit = (*hits)[i];
-    G4int samplerID = hit->samplerID;
-    samplerID += 1; // offset index by one due to primary branch.
-    samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
-  }
+    {
+      const BDSHitSamplerLink* hit = (*hits)[i];
+      G4int samplerID = hit->samplerID;
+      samplerID += 1; // offset index by one due to primary branch.
+      samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
+    }
   // extra information - do only once at the end
   G4bool firstSampler = true;
   for (auto& sampler : samplerTrees)
-  {
-    if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
-      {firstSampler = false; continue;}
-    if (storeSamplerIon)
-      {sampler->FillIon();}
-  }
+    {
+      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
+	{firstSampler = false; continue;}
+      if (storeSamplerIon)
+	{sampler->FillIon();}
+    }
 }
 
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hits,

@@ -101,11 +101,11 @@ void BDSParallelWorldSampler::Construct()
       G4cout << "User placed sampler: \"" << samplerPlacement.name << "\"" << G4endl;
       
       if (BDSOutput::InvalidSamplerName(samplerPlacement.name))
-      {
-        G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerPlacement.name << "\"" << G4endl;
-        BDSOutput::PrintProtectedNames(G4cerr);
-        throw BDSException(__METHOD_NAME__, "");
-      }
+	{
+	  G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerPlacement.name << "\"" << G4endl;
+	  BDSOutput::PrintProtectedNames(G4cerr);
+	  throw BDSException(__METHOD_NAME__, "");
+	}
       
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);

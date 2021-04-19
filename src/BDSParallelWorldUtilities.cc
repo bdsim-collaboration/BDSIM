@@ -138,8 +138,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
       G4String importanceWorldGeometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
       G4String importanceVolumeMapFile     = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();
       auto importanceWorld = new BDSParallelWorldImportance("main",
-                                                                                   importanceWorldGeometryFile,
-                                                                                   importanceVolumeMapFile);
+							    importanceWorldGeometryFile,
+							    importanceVolumeMapFile);
       acceleratorModel->RegisterParallelWorld(importanceWorld);
       massWorld->RegisterParallelWorld(importanceWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));

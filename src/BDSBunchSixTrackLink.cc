@@ -87,22 +87,22 @@ void BDSBunchSixTrackLink::UpdateGeant4ParticleDefinition(G4int pdgID)
 {
   G4ParticleDefinition* newParticleDefinition = nullptr;
   if (!particleDefinition->IsAnIon())
-  {
-    G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
-    auto search = encoding->find(pdgID);
-    if (search != encoding->end())
-    {newParticleDefinition = search->second;}
-    else
-    {throw BDSException(__METHOD_NAME__,"PDG ID \"" + std::to_string(pdgID) + "not found in particle table");}
-  }
+    {
+      G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
+      auto search = encoding->find(pdgID);
+      if (search != encoding->end())
+	{newParticleDefinition = search->second;}
+      else
+	{throw BDSException(__METHOD_NAME__,"PDG ID \"" + std::to_string(pdgID) + "not found in particle table");}
+    }
   else
-  {
-    G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-    BDSIonDefinition* ionDefinition = particleDefinition->IonDefinition();
-    newParticleDefinition = ionTable->GetIon(ionDefinition->Z(),
-                                                            ionDefinition->A(),
-                                                            ionDefinition->ExcitationEnergy());
-  }
+    {
+      G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+      BDSIonDefinition* ionDefinition = particleDefinition->IonDefinition();
+      newParticleDefinition = ionTable->GetIon(ionDefinition->Z(),
+					       ionDefinition->A(),
+					       ionDefinition->ExcitationEnergy());
+    }
   particleDefinition->UpdateG4ParticleDefinition(newParticleDefinition);
   // Note we don't need to take care of electrons here. These are automatically
   // allocated by Geant4 when it converts the primary vertex to a dynamic particle
