@@ -42,6 +42,8 @@ New Features
   allows mixing of distributions for spatial, directional and energy / time rather than the usual
   coupled phase space of the `composite` distribution (e.g. x,xp and y,yp). `box` is uniform in
   all dimensions.
+* A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
+  collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -61,6 +63,13 @@ New Features
 |                                  | volume can be biased with this option. White space    |
 |                                  | separated list in a string. Does not apply to world   |
 |                                  | volume itself.                                        |
++----------------------------------+-------------------------------------------------------+
+| dEThresholdForScattering         | The energy deposition in GeV treated as the threshold |
+|                                  | for a step to be considered a scattering point.       |
+|                                  | Along step processes such as multiple scattering may  |
+|                                  | degrade the energy but not be the process that        |
+|                                  | defined the step, so may not register. Default        |
+|                                  | 1e-11 GeV.                                            |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
 |                                  | mass will be included in the energy deposition hit.   |
@@ -105,6 +114,9 @@ New Features
 General
 -------
 
+* The parser no longer builds a static library by default to save space and it responds to the
+  option of :code:`BDSIM_BUILD_STATIC_LIBS` as the main libraries do. The parser library name
+  has changed from "libgmadSharedLib" to "libgmad" and the static one is "libgmad-static".
 * LHC dipole geometry now applies also to rbends as well as sbends.
 * LHC dipole geometry now applies to hkickers and vkickers. In both cases the poles are like
   a normal LHC dipole (e.g. no "vertical" kicker geometry).
@@ -118,6 +130,8 @@ General
 * The name of the bunch distribution is always print out in the terminal print out now.
 * Clarified trajectory options in manual a bit - two tables, one for filtering, one for storage.
 * Document option :code:`maximumTracksPerEvent`.
+* The directory :code:`bdsim/examples/ILC` has been removed as this is an old unmaintained example
+  that didn't work. This is in an effort to reduce the size of the examples and code repository generally.
 
 Bug Fixes
 ---------
@@ -171,6 +185,8 @@ Bug Fixes
 * Fix filtering of trajectories when using `storeTrajectoryTransportationSteps` and `trajectoryFilterLogicAND`
   together, which would result in no trajectories being stored.
 * Fix uninitialised variable in BDSBunch.
+* Fix energy being 1000x too big in the halo bunch distribution since the previous version. Units were multiplied
+  through twice.
 * Fix float / double casts in sampler output.
 * Fix possible bad access by indexing beyond range of array in dipole fringe integrator.
 * The maximum step length in a muon spoiler is now 1/20th of the length whereas before it was the full length.
@@ -179,6 +195,11 @@ Bug Fixes
   point the track was created by on the parent trajectory, not the primary. It is now fixed.
 * The various trajectory functions now have been made tolerant of bad indices (e.g. negative numbers or parent
   used in a non-parent sense) and also of the now optional parts of the trajectory data.
+* Fix Issue 297 where optics were incorrect due an uninitialised variable incorrectly setting dipole fringes
+  to be zero strength.
+* Fix possibly misidentified PrimaryFirstHit beam line elements (coordinates were always correct)
+  that could in the case of some particles be either the very first step into the accelerator from
+  air or the element before the expected one.
 
 
 Output Changes

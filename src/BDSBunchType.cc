@@ -68,7 +68,7 @@ BDSBunchType BDS::DetermineBunchType(G4String distrType)
   types["eventgeneratorfile"] = BDSBunchType::eventgeneratorfile;
   types["sphere"]         = BDSBunchType::sphere;
   types["compositespacedirectionenergy"] = BDSBunchType::compositesde;
-  types["compositespe"]   = BDSBunchType::compositesde;
+  types["compositesde"]   = BDSBunchType::compositesde;
   types["box"]            = BDSBunchType::box;
 
   distrType.toLower();
