@@ -100,7 +100,7 @@ void Analysis::PreparePerEntryHistograms()
   if (c)
     {
       const auto& definitions = c->HistogramDefinitionsPerEntry(treeName);
-      for (const auto &def : definitions)
+      for (const auto& def : definitions)
         {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
     }
 }

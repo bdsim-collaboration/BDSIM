@@ -133,7 +133,7 @@ public:
 
   /// Set defaults in member maps for all options so that the keys can
   /// always be accessed.
-  void InitialiseOptions(std::string analysisFile);
+  void InitialiseOptions(const std::string& analysisFile);
 
   /// Parse a line beginning with histogram. Uses other functions if appropriately defined.
   void ParseHistogramLine(const std::string& line);
