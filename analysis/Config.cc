@@ -210,8 +210,7 @@ void Config::ParseHistogramLine(const std::string& line)
 {
   // Settings with histogram in name can be misidentified - check here.
   // This is the easiest way to do it for now.
-  std::string copyLine = line;
-  std::transform(copyLine.begin(), copyLine.end(), copyLine.begin(), ::tolower); // convert to lower case
+  std::string copyLine = LowerCase(line);
   if (copyLine.find("mergehistograms") != std::string::npos)
     {
       ParseSetting(line);
@@ -344,8 +343,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
 
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
 {
-  std::string res = name;
-  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+  std::string res = LowerCase(name);
   perEntry = res.find("simple") == std::string::npos;
 }
 
@@ -362,8 +360,7 @@ void Config::ParseLog(const std::string& definition,
   int index = 0;
   for (; iter != end; ++iter, ++index)
     {
-      std::string res = (*iter).str();
-      std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+      std::string res = LowerCase((*iter).str());
       *(results[index]) = res == "log";
     }
 }
