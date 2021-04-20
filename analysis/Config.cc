@@ -81,7 +81,7 @@ Config::~Config()
     }
 }
 
-void Config::InitialiseOptions(std::string analysisFile)
+void Config::InitialiseOptions(const std::string& analysisFile)
 {
   optionsString["analysisfile"] = analysisFile;
   
@@ -111,7 +111,7 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsNumber["eventend"]            = -1;
 
   // ensure keys exist for all trees.
-  for (auto name : treeNames)
+  for (const auto& name : treeNames)
     {
       histoDefs[name]         = std::vector<HistogramDef*>();
       histoDefsSimple[name]   = std::vector<HistogramDef*>();
