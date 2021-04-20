@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "RBDSException.hh"
 
 #include <algorithm>
 #include <fstream>
@@ -31,8 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <map>
 #include <regex>
-#include <sstream>
+#include <set>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 ClassImp(Config)
@@ -143,7 +145,7 @@ void Config::ParseInputFile()
   std::ifstream f(optionsString.at("analysisfile").c_str());
 
   if(!f)
-    {throw std::string("Config::ParseInputFile> could not open file");}
+    {throw RBDSException("Config::ParseInputFile>", "could not open file");}
 
   lineCounter = 0;
   std::string line;
@@ -154,17 +156,25 @@ void Config::ParseInputFile()
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
 
-  while(std::getline(f, line))
+  while (std::getline(f, line))
     {
       lineCounter++;
-      if (std::all_of(line.begin(), line.end(), isspace))
-	{continue;} // skip empty lines
-      else if (std::regex_search(line, comment))
-	{continue;} // skip lines starting with '#'
-      else if (std::regex_search(line, histogram))
-	{ParseHistogramLine(line);} // any histogram - must be before settings
-      else
-	{ParseSetting(line);} // any setting
+      try
+	{
+	  if (std::all_of(line.begin(), line.end(), isspace))
+	    {continue;} // skip empty lines
+	  else if (std::regex_search(line, comment))
+	    {continue;} // skip lines starting with '#'
+	  else if (std::regex_search(line, histogram))
+	    {ParseHistogramLine(line);} // any histogram - must be before settings
+	  else
+	    {ParseSetting(line);} // any setting
+	}
+      catch (RBDSException& e)
+	{
+	  e.AppendToMessage("\nProblem is on line " + std::to_string(lineCounter) + " of configuration file: " + fn + "\n");
+	  throw e;
+	}
     }
   
   f.close();
@@ -216,21 +226,10 @@ void Config::ParseHistogramLine(const std::string& line)
   if (std::regex_search(line, match, histNDim))
     {
       int nDim = std::stoi(match[1]);
-      try
-	{ParseHistogram(line, nDim);}
-      catch(std::invalid_argument& e)
-	{
-	  std::string errString = "\nProblem with histogram definition on line #"
-	    + std::to_string(lineCounter) + ": \n\"" + line + "\"\n";
-	  throw std::invalid_argument(e.what() + errString);
-	}
+      ParseHistogram(line, nDim);
     }
   else
-    {
-      std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
-	+ ": \n\"" + line + "\"\n";
-      throw std::invalid_argument(errString);
-    }
+    {throw RBDSException("Invalid histogram type");}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
@@ -250,17 +249,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     }
   
   if (results.size() < 7)
-    {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns (too few)";
-      throw std::string(errString);
-    }
+    {throw RBDSException("Too few columns in histogram definition.");}
   if (results.size() > 7)
-    {// ensure not too many columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-      + " - too many columns - check no extra whitespace";
-      throw std::string(errString);
-    }
+    {throw RBDSException("Too many columns in histogram definition.");}
 
   bool xLog = false;
   bool yLog = false;
@@ -304,12 +295,11 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
 					       std::sregex_iterator()));
   if (nColons > nDim - 1)
     {
-      std::cerr << "Error: Histogram \"" << histName << "\" variable includes too many single\n"
-		<< "colons specifying more dimensions than the number of specified dimensions."
-		<< std::endl;
-      std::cerr << "Declared dimensions: " << nDim << std::endl;
-      std::cerr << "Number of dimensions in variables " << nColons + 1 << std::endl;
-      exit(1);
+      std::string err = "Error: Histogram \"" + histName + "\" variable includes too many single\n";
+	  err += "colons specifying more dimensions than the number of specified dimensions.\n";
+      err += "Declared dimensions: " + std::to_string(nDim) + "\n";
+      err += "Number of dimensions in variables " + std::to_string(nColons + 1);
+      throw RBDSException(err);
     }
 
   HistogramDef1D* result = nullptr;
@@ -421,8 +411,8 @@ void Config::CheckValidTreeName(std::string& treeName) const
       std::string err = "Invalid tree name \"" + treeName + "\"\n";
       err += "Tree names are one of: ";
       for (const auto& n : treeNames)
-	{err += "\"" + n + "\" ";}
-      throw(err);
+	    {err += "\"" + n + "\" ";}
+      throw RBDSException(err);
     }
 }
 
@@ -446,7 +436,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Too few binning dimensions specified (N dimensions = " + std::to_string(nDim) + ") \"" + bins + "\"");}
 }
 
 void Config::ParseBinning(const std::string& binning,
@@ -496,9 +486,9 @@ void Config::ParseBinning(const std::string& binning,
 		  (*values[counter]).high = std::stod(matchR[2]);
 		}
 	      catch (std::invalid_argument&) // if stod can't convert number to double
-		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+		{throw RBDSException("Invalid binning number: \"" + matchS + "\"");}
 	      if ((*values[counter]).high <= (*values[counter]).low)
-		{throw std::invalid_argument("high bin edge is <= low bin edge \"" + binning + "\"");}
+		{throw RBDSException("high bin edge is <= low bin edge \"" + binning + "\"");}
 	      if (isLog[counter])
 		{
 		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
@@ -509,22 +499,21 @@ void Config::ParseBinning(const std::string& binning,
     }
   
   if (counter == 0)
-    {throw std::string("Invalid binning specification: \"" + binning + "\" on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Invalid binning specification: \"" + binning + "\"");}
   else if (counter < nDim)
     {
-      std::string errString = "Insufficient number of binning dimensions on line #"
-	+ std::to_string(lineCounter) + "\n"
+      std::string errString = "Insufficient number of binning dimensions: \n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
 	+ binning + "\nDimension defined by \"low:high\" and comma separated";
-      throw std::string(errString);
+      throw RBDSException(errString);
     }
   else if (counter > nDim)
     {
       std::string errString = "Too many binning dimension (i.e. commas) on line #"
-	+ std::to_string(lineCounter) + "\n"
-	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
-	+ binning + "\nDimension defined by \"low:high\" and comma separated";
-      throw std::string(errString);
+      + std::to_string(lineCounter) + "\n"
+      + std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
+      + binning + "\nDimension defined by \"low:high\" and comma separated";
+      throw RBDSException(errString);
     }
 }
 
@@ -569,8 +558,8 @@ void Config::ParseSetting(const std::string& line)
       else if (optionsNumber.find(key) != optionsNumber.end())
 	{optionsNumber[key] = std::stod(value);}
       else
-      {throw std::string("Invalid option \"" + key + "\"");}
+      {throw RBDSException("Invalid option \"" + key + "\"");}
     }
   else
-    {throw std::string("Invalid line #" + std::to_string(lineCounter) + "\n" + line);}
+    {throw RBDSException("Invalid option line \"" + line + "\"");}
 }
