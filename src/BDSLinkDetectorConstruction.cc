@@ -45,12 +45,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/elementtype.h"
 
 #include "G4Box.hh"
-#include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #include "G4PVPlacement.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
+#if G4VERSION_NUMBER > 1039
+#include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
+#endif
 
 #include <set>
 #include <vector>
@@ -386,6 +389,7 @@ G4int BDSLinkDetectorConstruction::PlaceOneComponent(const BDSBeamlineElement* e
 
 void BDSLinkDetectorConstruction::BuildPhysicsBias()
 {
+#if G4VERSION_NUMBER > 1039
   if (!crystalBiasing) // cache it because we may have to dynamically add later
     {crystalBiasing = new G4ChannelingOptrMultiParticleChangeCrossSection();}
 
@@ -401,4 +405,5 @@ void BDSLinkDetectorConstruction::BuildPhysicsBias()
             {crystalBiasing->AttachTo(crystal);}
         }
     }
+#endif
 }
