@@ -49,7 +49,8 @@ private:
   std::map<std::string, double>      optionsNumber;
   /// @}
 
-  /// Storage of histogram options. This owns th HistogramDef objects.
+  /// Storage of histogram options. This owns the HistogramDef objects. Key is tree name,
+  /// value is vector of all histogram definitions for that tree.
   std::map<std::string, std::vector<HistogramDef*> > histoDefs;
 
   /// Copy of definition used to identify only 'simple' histogram definitions. Doesn't own.

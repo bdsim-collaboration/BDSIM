@@ -42,7 +42,7 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	           const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -57,8 +57,8 @@ Config::Config(const std::string& inputFilePathIn,
 }
 
 Config::Config(const std::string& fileNameIn,
-	       const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	           const std::string& inputFilePathIn,
+	           const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);
@@ -77,7 +77,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	{delete histoDef;}
+	    {delete histoDef;}
     }
 }
 
@@ -85,7 +85,7 @@ void Config::InitialiseOptions(std::string analysisFile)
 {
   optionsString["analysisfile"] = analysisFile;
   
-  // for backwards compatability / verbose names
+  // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
@@ -121,8 +121,8 @@ void Config::InitialiseOptions(std::string analysisFile)
 }
 
 Config* Config::Instance(const std::string& fileName,
-			 const std::string& inputFilePath,
-			 const std::string& outputFileName)
+			             const std::string& inputFilePath,
+			             const std::string& outputFileName)
 {
   if(!instance && !fileName.empty())
     {instance = new Config(fileName, inputFilePath, outputFileName);}
@@ -384,14 +384,14 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
 }
 
 void Config::UpdateRequiredBranches(const std::string& treeName,
-				    const std::string& var)
+				                    const std::string& var)
 {
   // This won't work properly for the options Tree that has "::" in the class
   // as well as double splitting. C++ regex does not support lookahead / behind
   // which makes it nigh on impossible to correctly identify the single : with
   // regex. For now, only the Options tree has this and we turn it all on, so it
   // it shouldn't be a problem (it only ever has one entry).
-  // match word; '.'; word -> here we match the token rather than the bits inbetween
+  // match word; '.'; word -> here we match the token rather than the bits in-between
   std::regex branchLeaf("(\\w+)\\.(\\w+)");
   auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
   auto words_end   = std::sregex_iterator();
@@ -403,7 +403,7 @@ void Config::UpdateRequiredBranches(const std::string& treeName,
 }
 
 void Config::SetBranchToBeActivated(const std::string& treeName,
-				    const std::string& branchName)
+				                    const std::string& branchName)
 {
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
