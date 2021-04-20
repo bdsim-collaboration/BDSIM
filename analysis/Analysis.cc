@@ -39,10 +39,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 Analysis::Analysis(const std::string& treeNameIn,
-		   TChain*     chainIn,
+		   TChain*            chainIn,
 		   const std::string& mergedHistogramNameIn,
-		   bool        perEntryAnalysis,
-		   bool        debugIn):
+		   bool               perEntryAnalysis,
+		   bool               debugIn):
   treeName(treeNameIn),
   chain(chainIn),
   mergedHistogramName(mergedHistogramNameIn),
@@ -90,7 +90,7 @@ void Analysis::SimpleHistograms()
     {
       auto definitions = Config::Instance()->HistogramDefinitionsSimple(treeName);
       for (auto definition : definitions)
-	{FillHistogram(definition);}
+	    {FillHistogram(definition);}
     }
 }
 
@@ -145,6 +145,7 @@ void Analysis::Write(TFile* outputFile)
   TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
   TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
 
+  // per entry histograms
   perEntryDir->cd();
   for (auto h : perEntryHistograms)
     {h->Write(perEntryDir);}
