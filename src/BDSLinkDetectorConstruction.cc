@@ -68,7 +68,9 @@ BDSLinkDetectorConstruction::BDSLinkDetectorConstruction():
   linkRegistry(nullptr),
   primaryGeneratorAction(nullptr),
   designParticle(nullptr),
+#if G4VERSION_NUMBER > 1039
   crystalBiasing(nullptr),
+#endif
   samplerWorldID(-1)
 {
   linkRegistry = new BDSLinkRegistry();
@@ -79,7 +81,9 @@ BDSLinkDetectorConstruction::~BDSLinkDetectorConstruction()
 {
   delete linkBeamline;
   delete linkRegistry;
+#if G4VERSION_NUMBER > 1039
   delete crystalBiasing;
+#endif
 }
 
 G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()

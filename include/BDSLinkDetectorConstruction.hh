@@ -22,9 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorJaw.hh"
 #include "BDSExtent.hh"
 
-#include "G4VUserDetectorConstruction.hh"
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
+#include "G4Version.hh"
+#include "G4VUserDetectorConstruction.hh"
 
 #include <string>
 
@@ -95,7 +96,9 @@ public:
   /// Particle definition all components are built w.r.t. Includes rigidity etc.
   const BDSParticleDefinition* designParticle;
 
+#if G4VERSION_NUMBER > 1039
   G4ChannelingOptrMultiParticleChangeCrossSection* crystalBiasing;
+#endif
 
   /// Cache of the index to which parallel world the sampler one is.
   G4int samplerWorldID;
