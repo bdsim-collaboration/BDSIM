@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Event.hh"
+#include "RBDSException.hh"
 #include "RebdsimTypes.hh"
 
 #include "BDSOutputROOTEventAperture.hh"
@@ -229,11 +230,7 @@ void Event::SetBranchAddress(TTree* t,
       bool condition2 = ((*t).GetListOfBranches()->FindObject(nameDot.c_str())) != nullptr;
       // if we don't find the branch name (tolerating "." suffix), so pass by (some branches are optional)
       if (! (condition1 || condition2) )
-	{
-	  if (debug)
-	    {std::cout << "No such branch found in Tree - skipping" << std::endl;}
-	  continue;
-	}
+	{throw RBDSException("Unkown branch name \"" + name + "\"");}
       
       t->SetBranchStatus(nameStar.c_str(), true); // turn the branch loading on
       

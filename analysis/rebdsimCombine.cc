@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Header.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
+#include "RBDSException.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
 
@@ -93,8 +94,11 @@ int main(int argc, char* argv[])
   HistogramMap* histMap = nullptr;
   try
     {histMap = new HistogramMap(f, output);} // map out first file
-  catch (const std::exception& e)
-    {std::cout << e.what() << std::endl; return 1;}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
+
   f->Close();
   delete f;
 
