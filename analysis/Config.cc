@@ -141,8 +141,9 @@ Config* Config::Instance(const std::string& fileName,
 }
 
 void Config::ParseInputFile()
-{ 
-  std::ifstream f(optionsString.at("analysisfile").c_str());
+{
+  std::string fn = optionsString.at("analysisfile");
+  std::ifstream f(fn.c_str());
 
   if(!f)
     {throw RBDSException("Config::ParseInputFile>", "could not open file");}
@@ -238,8 +239,8 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   // doesn't inspect words themselves
   // checks number of words, ie number of columns is correct
   std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitepsace
-  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::regex wspace("\\s+"); // any whitespace
+  // -1 here makes it point to the suffix, ie the word rather than the whitespace
   std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
   std::sregex_token_iterator end;
   for (; iter != end; ++iter)
@@ -261,7 +262,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
   
-  std::string treeName  = results[1];
+  std::string treeName = results[1];
   CheckValidTreeName(treeName);
 
   if (perEntry)
@@ -334,9 +335,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     {
       histoDefs[treeName].push_back(result);
       if (perEntry)
-	{histoDefsPerEntry[treeName].push_back(result);}
+	    {histoDefsPerEntry[treeName].push_back(result);}
       else
-	{histoDefsSimple[treeName].push_back(result);}
+	    {histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
 }
