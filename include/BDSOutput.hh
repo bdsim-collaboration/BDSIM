@@ -44,6 +44,8 @@ class BDSParticleCoordsFullGlobal;
 class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
+class BDSHitSamplerLink;
+typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
 class BDSTrajectory;
 class BDSTrajectoryPointHit;
 class BDSHitEnergyDepositionGlobal;
@@ -83,6 +85,11 @@ public:
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
+
+#ifdef SIXTRACKLINK
+  /// Interface to allow updating samplers with dynamic construction.
+  virtual void UpdateSamplers() {UpdateSamplerStructures();}
+#endif
   
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
@@ -114,6 +121,7 @@ public:
 		 const G4PrimaryVertex*                         vertex,
 		 const BDSHitsCollectionSampler*                samplerHitsPlane,
 		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
@@ -213,6 +221,9 @@ private:
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
+  
+  /// Fill sampler link hits into output structures.
+  void FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits);
 
   /// Fill the hit where the primary particle impact.
   void FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits);

@@ -1,4 +1,4 @@
-.. macro for non breaking white space usefulf or units:
+.. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
 
@@ -1258,7 +1258,7 @@ We recommend using the visualiser and interactively exploring the commands there
 Modular Physics Lists
 ^^^^^^^^^^^^^^^^^^^^^
 
-A modular phyiscs list can be made by specifying several physics lists separated by spaces. These
+A modular physics list can be made by specifying several physics lists separated by spaces. These
 are independent.
 
 * The strings for the modular physics list are case-insensitive.
@@ -2190,6 +2190,13 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
++----------------------------------+-------------------------------------------------------+
+| dEThresholdForScattering         | The energy deposition in GeV treated as the threshold |
+|                                  | for a step to be considered a scattering point.       |
+|                                  | Along step processes such as multiple scattering may  |
+|                                  | degrade the energy but not be the process that        |
+|                                  | defined the step, so may not register. Default        |
+|                                  | 1e-11 GeV.                                            |
 +----------------------------------+-------------------------------------------------------+
 | includeFringeFields              | Places thin fringefield elements on the end of bending|
 |                                  | magnets with finite poleface angles, and solenoids.   |
@@ -3301,7 +3308,7 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
 * All scorers include the weight associated with the particle, which is only different from
   1 if biasing is used. This ensures the correct physical result is always obtained.
 * As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+  is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
 .. _scoring-mesh:

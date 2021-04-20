@@ -1,6 +1,6 @@
 add_executable(BDSFieldTest FieldTest.cc)
 set_target_properties(BDSFieldTest PROPERTIES OUTPUT_NAME "BDSFieldTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSFieldTest ${BDSIM_LIB_NAME} gmadShared)
+target_link_libraries(BDSFieldTest ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
 configure_file(purefieldplotter.py purefieldplotter.py COPYONLY)
 configure_file(converttobdsim.py converttobdsim.py COPYONLY)
 
@@ -9,8 +9,15 @@ configure_file(converttobdsim.py converttobdsim.py COPYONLY)
 
 add_executable(BDSInterpolatorTester BDSInterpolatorTester.cc)
 set_target_properties(BDSInterpolatorTester PROPERTIES OUTPUT_NAME "BDSInterpolatorTester" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSInterpolatorTester ${BDSIM_LIB_NAME} gmadShared)
+target_link_libraries(BDSInterpolatorTester ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
 
+add_executable(bdsim-linkexec link-test.cc)
+set_target_properties(bdsim-linkexec PROPERTIES OUTPUT_NAME "BDSLink" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdsim-linkexec ${BDSIM_LIB_NAME} gmad)
+
+add_executable(bdsim-sixtrackexec SixtrackTest.cc)
+set_target_properties(bdsim-sixtrackexec PROPERTIES OUTPUT_NAME "bdssixtracktest" ${BDSIM_VERSIO})
+target_link_libraries(bdsim-sixtrackexec ${BDSIM_LIB_NAME} gmad)
 
 add_subdirectory(TrackingTestFiles)
 
