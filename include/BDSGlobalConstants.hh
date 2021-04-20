@@ -322,6 +322,7 @@ public:
   inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
+  inline G4double DEThresholdForScattering() const {return G4double(options.dEThresholdForScattering)*CLHEP::GeV;}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
 
   /// @{ options that require some implementation.

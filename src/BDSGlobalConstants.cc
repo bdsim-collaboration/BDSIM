@@ -121,7 +121,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   InitialiseBeamlineTransform();
 
-  BDSSamplerPlane::chordLength = LengthSafety();
+  BDSSamplerPlane::chordLength = 10*LengthSafety();
   
   ProcessTrajectoryELossSRange();
 
