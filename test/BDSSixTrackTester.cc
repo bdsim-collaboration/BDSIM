@@ -81,7 +81,7 @@ int main(int /*argc2*/, char** /*argv2*/)
       exit(1);
     }
 
-  std::vector<Collimator> collimators = ReadFile("/Users/nevay/physics/reps/bdsim-tracker-coupling/test/allColls.dat");
+  std::vector<Collimator> collimators = ReadFile("allColls.dat");
 
   for (const auto& c : collimators)
     {

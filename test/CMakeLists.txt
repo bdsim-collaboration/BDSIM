@@ -1,29 +1,30 @@
-add_executable(BDSFieldTest FieldTest.cc)
-set_target_properties(BDSFieldTest PROPERTIES OUTPUT_NAME "BDSFieldTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSFieldTest ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
+add_executable(BDSFieldTester BDSFieldTester.cc)
+set_target_properties(BDSFieldTester PROPERTIES OUTPUT_NAME "BDSFieldTest" VERSION ${BDSIM_VERSION})
+target_link_libraries(BDSFieldTester ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
 configure_file(purefieldplotter.py purefieldplotter.py COPYONLY)
 configure_file(converttobdsim.py converttobdsim.py COPYONLY)
-
-# set binary (for testing usage in macros)
-#set (bdsimBinary BDSFieldTest)
+add_test(NAME "tester-fields" COMMAND BDSFieldTester)
 
 add_executable(BDSInterpolatorTester BDSInterpolatorTester.cc)
 set_target_properties(BDSInterpolatorTester PROPERTIES OUTPUT_NAME "BDSInterpolatorTester" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSInterpolatorTester ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
+add_test(NAME "tester-interpolator" COMMAND BDSINterpolatorTester)
 
-add_executable(bdsim-linkexec link-test.cc)
-set_target_properties(bdsim-linkexec PROPERTIES OUTPUT_NAME "BDSLink" VERSION ${BDSIM_VERSION})
-target_link_libraries(bdsim-linkexec ${BDSIM_LIB_NAME} gmad)
+add_executable(BDSLinkTester BDSLinkTester.cc)
+set_target_properties(BDSLinkTester PROPERTIES OUTPUT_NAME "BDSLinkTester" VERSION ${BDSIM_VERSION})
+target_link_libraries(BDSLinkTester ${BDSIM_LIB_NAME} gmad)
+add_test(NAME "tester-link" COMMAND BDSLinkTester)
 
-add_executable(BDSSixTrackTester SixtrackTest.cc)
-set_target_properties(BDSSixTrackTester PROPERTIES OUTPUT_NAME "BDSSixTrackTester" ${BDSIM_VERSIO})
+add_executable(BDSSixTrackTester BDSSixTrackTester.cc)
+set_target_properties(BDSSixTrackTester PROPERTIES OUTPUT_NAME "BDSSixTrackTester" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSSixTrackTester ${BDSIM_LIB_NAME} gmad)
-add_test(NAME "link-sixtrack" COMMAND BDSSixTrackTester)
+add_test(NAME "tester-sixtrack" COMMAND BDSSixTrackTester)
+configure_file(somecollimators.dat somecollimators.dat COPYONLY)
+
+add_executable(BDSTrajectoryTester BDSTrajectoryTester.cc)
+set_target_properties(BDSTrajectoryTester PROPERTIES OUTPUT_NAME "BDSTrajectoryTest" VERSION ${BDSIM_VERSION})
+target_link_libraries(BDSTrajectoryTester rebdsim bdsimRootEvent bdsim)
+add_test(NAME "tester-trajectories" COMMAND BDSTrajectoryTester "../examples/features/data/trajectory-sample.root")
+
 
 add_subdirectory(TrackingTestFiles)
-
-add_executable(BDSTrajectoryTest TrajectoryTest.cc)
-set_target_properties(BDSTrajectoryTest PROPERTIES OUTPUT_NAME "BDSTrajectoryTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSTrajectoryTest rebdsim bdsimRootEvent bdsim)
-
-add_test(NAME "trajectory-functions" COMMAND BDSTrajectoryTest "../examples/features/data/trajectory-sample.root")
