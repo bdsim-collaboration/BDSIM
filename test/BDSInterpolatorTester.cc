@@ -45,7 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 void Query(BDSFieldMag* field,
 	   G4double ymin, G4double ymax, G4double xmin, G4double xmax,
 	   G4int nX, G4int nY,
-	   G4String outputName)
+	   const G4String& outputName)
 {
   G4cout << "Querying " << outputName << G4endl;
   
@@ -56,24 +56,29 @@ void Query(BDSFieldMag* field,
   ofile.open(outputName+".dat");
 
   int i = 0;
-  for (double y = ymin; y < ymax; y += yStep)
+  double yc = ymin;
+  double xc = xmin;
+  for (int iy = 0; iy < nY; iy++)
     {
-      for (double x = xmin; x < xmax; x += xStep)
+      for (int ix = 0; ix < nX; ix++)
 	{
 	  if (i%1000 == 0)
 	    {std::cout << "\r" << i;}
-	  G4ThreeVector result = field->GetField(G4ThreeVector(x,y,0));
-	  ofile << x          << "\t"
-		<< y          << "\t"
-		<< result.x() / CLHEP::tesla << "\t"
-		<< result.y() / CLHEP::tesla << "\t"
-		<< result.z() / CLHEP::tesla << "\n";
+	  G4ThreeVector result = field->GetField(G4ThreeVector(xc,yc,0));
+	  ofile << std::setw(8) << xc << "\t" << std::setw(8) << yc << "\t"
+	  << std::setw(8) << result.x() / CLHEP::tesla << "\t"
+	  << std::setw(8) << result.y() / CLHEP::tesla << "\t"
+	  << std::setw(8) << result.z() / CLHEP::tesla << "\n";
 	  i++;
+	  
+	  xc += xStep;
 	}
+      yc += yStep;
+      xc = xmin;
     }
   ofile.close();
   std::cout << std::endl;
-
+  
   std::ofstream ofile2;
   ofile2.open(outputName+"_raw.dat");
   auto r = dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array();
