@@ -202,10 +202,10 @@ target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
-add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
+add_executable(bdsimExec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
-set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
+set_target_properties(bdsimExec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdsimExec ${BDSIM_LIB_NAME} gmad)
 
 if (USE_GZSTREAM)
   #preprocessor flag
@@ -224,7 +224,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
 endif()
 
 # set binary name for testing usage
-get_target_property(binaryname bdsimexec OUTPUT_NAME)
+get_target_property(binaryname bdsimExec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
@@ -250,7 +250,7 @@ add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 add_subdirectory(modules/nistmaterials)
 
 # Install the targets:
-set(executables bdsimexec)
+set(executables bdsimExec)
 if (BDSIM_BUILD_STATIC_LIBS)
   set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
 else()

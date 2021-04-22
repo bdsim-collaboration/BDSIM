@@ -81,15 +81,15 @@ set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine"
 target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimCombineExec)
 
-add_executable(rebdsimOptics rebdsimOptics.cc)
-set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOptics rebdsim bdsimRootEvent)
-bdsim_install_targets(rebdsimOptics)
+add_executable(rebdsimOpticsExec rebdsimOptics.cc)
+set_target_properties(rebdsimOpticsExec PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimOpticsExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimOpticsExec)
 
-add_executable(rebdsimOrbit rebdsimOrbit.cc)
-set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOrbit rebdsim bdsimRootEvent)
-bdsim_install_targets(rebdsimOrbit)
+add_executable(rebdsimOrbitExec rebdsimOrbit.cc)
+set_target_properties(rebdsimOrbitExec PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimOrbitExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimOrbitExec)
 
 add_executable(bdskimExec bdskim.cc)
 set_target_properties(bdskimExec PROPERTIES OUTPUT_NAME "bdskim" VERSION ${BDSIM_VERSION})
