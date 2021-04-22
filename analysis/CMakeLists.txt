@@ -67,9 +67,9 @@ endforeach()
 add_library(rebdsim SHARED ${rebdsimLibSources})
 target_link_libraries(rebdsim bdsimRootEvent)
 
-add_executable(rebdsimexec rebdsim.cc)
-set_target_properties(rebdsimexec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimexec rebdsim bdsimRootEvent)
+add_executable(rebdsimExec rebdsim.cc)
+set_target_properties(rebdsimExec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimExec rebdsim bdsimRootEvent)
 
 add_executable(rebdsimHistoMergeExec rebdsimHistoMerge.cc)
 set_target_properties(rebdsimHistoMergeExec PROPERTIES OUTPUT_NAME "rebdsimHistoMerge" VERSION ${BDSIM_VERSION})
@@ -107,9 +107,9 @@ if (USE_EVENTDISPLAY)
   target_link_libraries(edbdsim rebdsim ${ROOT_EVELIBRARIES})
   target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
   # Installation
-  bdsim_install_targets(rebdsimexec edbdsim rebdsim)
+  bdsim_install_targets(rebdsimExec edbdsim rebdsim)
 else()
-  bdsim_install_targets(rebdsimexec rebdsim)
+  bdsim_install_targets(rebdsimExec rebdsim)
 endif()
 
 # Install pcms
