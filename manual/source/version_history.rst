@@ -132,6 +132,10 @@ General
 * Document option :code:`maximumTracksPerEvent`.
 * The directory :code:`bdsim/examples/ILC` has been removed as this is an old unmaintained example
   that didn't work. This is in an effort to reduce the size of the examples and code repository generally.
+* The default visualisation macro is now called "bdsim_default_vis.mac" so as not to be confused with
+  the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
+* The visualisation macro path has the current working directory now as the last directory to search
+  after the installation directory.
 
 Bug Fixes
 ---------
