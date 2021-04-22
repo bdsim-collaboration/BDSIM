@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -58,8 +59,13 @@ void Summarise(BDSIMLink* bds);
 
 int main(int /*argc2*/, char** /*argv2*/)
 {
-  std::vector<std::string> arguments = {"--file=/Users/nevay/physics/reps/bdsim-tracker-coupling/test/lhccrystals.gmad","--file=/Users/nevay/physics/reps/bdsim-tracker-coupling/test/lhccrystals.gmad", "--vis_debug", "--batch"};
+  std::vector<std::string> arguments = {"theprogramnamenormally",
+                                        "--file=lhccrystals.gmad",
+                                        "--output=none",
+                                        "--batch",
+                                        "--vis_debug"};
   std::vector<char*> argv;
+  argv.reserve(arguments.size());
   for (const auto& arg : arguments)
     {argv.push_back((char*)arg.data());}
   argv.push_back(nullptr);
@@ -67,7 +73,7 @@ int main(int /*argc2*/, char** /*argv2*/)
   BDSBunchSixTrackLink* stp = new BDSBunchSixTrackLink();
   BDSIMLink* bds = new BDSIMLink(stp);
   try
-    {bds->Initialise(argv.size() - 1, argv.data(), true, 100);}
+    {bds->Initialise((int)argv.size() - 1, argv.data(), true, 100);}
   catch (const BDSException& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;
@@ -81,8 +87,15 @@ int main(int /*argc2*/, char** /*argv2*/)
       exit(1);
     }
 
-  std::vector<Collimator> collimators = ReadFile("allColls.dat");
-
+  std::vector<Collimator> collimators;
+  try
+    {collimators = ReadFile("somecollimators.dat");}
+  catch (std::exception& e)
+  {
+    std::cerr << e.what() <<  std::endl;
+    delete bds;
+    return 1;
+  }
   for (const auto& c : collimators)
     {
       bds->AddLinkCollimatorJaw(c.name,
@@ -107,10 +120,12 @@ int main(int /*argc2*/, char** /*argv2*/)
       Summarise(bds);
     }
 
+#ifdef VISLINK
   BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
                                            BDSGlobalConstants::Instance()->Geant4MacroFileName());
-  visManager.StartSession(argv.size() - 1, argv.data());
-  
+  visManager.StartSession((int)argv.size() - 1, argv.data());
+#endif
+  delete bds;
   return 0;
 }
 
@@ -119,7 +134,8 @@ std::vector<Collimator> ReadFile(const std::string& filename)
   std::ifstream file;
   file.open(filename);
   std::vector<Collimator> result;
-
+  if (file.fail())
+  {throw std::invalid_argument("No such file " + filename);}
   std::string line;
   std::string dummy, cn, mn;
   double le, ap, to, xo, yo;
@@ -145,7 +161,7 @@ void AddParticle(BDSBunchSixTrackLink* stp)
 
   long long int pdgID = 2212;
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particleDef = particleTable->FindParticle(pdgID);
+  G4ParticleDefinition* particleDef = particleTable->FindParticle((int)pdgID);
   if (!particleDef)
     {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(pdgID) + "\" not found");}
 
@@ -164,15 +180,13 @@ void AddParticle(BDSBunchSixTrackLink* stp)
   try
     {
       particleDefinition = new BDSParticleDefinition(particleDef, totalEnergy, 0, 0, 1, ionDef);
+      stp->AddParticle(particleDefinition, coords, 0, 0);
     }
   catch (const BDSException& e)
     {// if we throw an exception the object is invalid for the delete on the next loop
       particleDefinition = nullptr; // reset back to nullptr for safe delete
       return;
     }
-
-  if (particleDefinition)
-    {stp->AddParticle(particleDefinition, coords, 0, 0);}
 }
 
 void Summarise(BDSIMLink* bds)
