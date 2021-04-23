@@ -34,6 +34,7 @@ macro(rebdsim_test_long testName)
   set_tests_properties(${testName}-comparison PROPERTIES LABELS LONG)
 endmacro()
 
+# rebdsimOptics
 macro(rebdsim_optics_test testName inputFile outputFile)
   add_test(NAME ${testName} COMMAND rebdsimOpticsExec ${inputFile} ${outputFile})
 endmacro()
