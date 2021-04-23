@@ -48,7 +48,7 @@ PerEntryHistogramSet::PerEntryHistogramSet(const HistogramDefSet* definitionIn,
   topN(definitionIn->topN),
   sampler(nullptr)
 {
-  for (const auto pSpecDef : definitionIn->definitions)
+  for (const auto& pSpecDef : definitionIn->definitions)
     {
       auto pSpec = pSpecDef.first;
       auto def   = pSpecDef.second;
