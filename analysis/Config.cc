@@ -200,10 +200,7 @@ void Config::ParseInputFile()
   if (eE < 0) // default -1
     {eE = std::numeric_limits<double>::max();}
   if (eS < 0 || eS > eE)
-    {
-      std::cerr << "Invalid starting event number " << eS << std::endl;
-      exit(1);
-    }
+    {throw RBDSException("Invalid starting event number " + std::to_string(eS));}
 }
 
 void Config::ParseHistogramLine(const std::string& line)
