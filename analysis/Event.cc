@@ -230,14 +230,18 @@ void Event::SetBranchAddress(TTree* t,
       bool condition2 = ((*t).GetListOfBranches()->FindObject(nameDot.c_str())) != nullptr;
       // if we don't find the branch name (tolerating "." suffix), so pass by (some branches are optional)
       if (! (condition1 || condition2) )
-	{throw RBDSException("Unkown branch name \"" + name + "\"");}
+	{
+	  if (debug)
+	    {std::cout << "Unknown branch name \"" + name + "\"" << std::endl;}
+	  continue;
+	}
       
       t->SetBranchStatus(nameStar.c_str(), true); // turn the branch loading on
       
       // we can't automatically do this as SetBranchAddress must use the pointer
       // of the object type and not the base class (say TObject) so there's no
       // way to easily map these -> ifs
-      // special case first, then alphabetical as this is how'll they'll come from a set (optimisation)
+      // special case first, then alphabetical as this is how they'll come from a set (optimisation)
       if (name == "Primary")
 	{// special case
 	  usePrimaries = true;
