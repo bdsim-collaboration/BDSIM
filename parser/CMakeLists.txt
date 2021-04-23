@@ -53,21 +53,21 @@ if($ENV{VERBOSE})
   message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_executable(gmadexec gmad.cc)
-set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VERSION})
-target_link_libraries(gmadexec ${GMAD_LIB_NAME})
+add_executable(gmadExec gmad.cc)
+set_target_properties(gmadExec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VERSION})
+target_link_libraries(gmadExec ${GMAD_LIB_NAME})
 
 if (BDSIM_BUILD_STATIC_LIBS)
   set(glibraries ${GMAD_LIB_NAME} ${GMAD_LIB_NAME_STATIC})
 else()
   set(glibraries ${GMAD_LIB_NAME})
 endif()
-bdsim_install_targets(gmadexec ${glibraries})
+bdsim_install_targets(gmadExec ${glibraries})
 file(GLOB parser_headers ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 bdsim_install_parser_headers(${parser_headers})
 
 # set binary name for testing usage
-get_target_property(binaryname gmadexec OUTPUT_NAME)
+get_target_property(binaryname gmadExec OUTPUT_NAME)
 set(gmadBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # add tests
