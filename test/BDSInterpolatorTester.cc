@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <fstream>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include <stdexcept>
