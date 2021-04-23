@@ -136,6 +136,8 @@ General
   the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
 * The visualisation macro path has the current working directory now as the last directory to search
   after the installation directory.
+* The event display executable "edbdsim" is not build by default with the CMake option
+  :code:`USE_EVENTDISPLAY` set to :code:`OFF` by default as this isn't maintained or finished.
 
 Bug Fixes
 ---------

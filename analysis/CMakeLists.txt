@@ -1,5 +1,5 @@
 # option to turn event display, and therefore dependency on ROOT EVE libraries off or on.
-option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." ON )
+option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." OFF )
 
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
@@ -66,10 +66,22 @@ endforeach()
 
 add_library(rebdsim SHARED ${rebdsimLibSources})
 target_link_libraries(rebdsim bdsimRootEvent)
+if (USE_EVENTDISPLAY)
+    target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
+endif()
+bdsim_install_targets(rebdsim)
 
 add_executable(rebdsimExec rebdsim.cc)
 set_target_properties(rebdsimExec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimExec)
+
+if (USE_EVENTDISPLAY)
+    add_executable(edbdsimExec edbdsim.cc)
+    set_target_properties(edbdsimExec PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(edbdsimExec rebdsim ${ROOT_EVELIBRARIES})
+    bdsim_install_targets(edbdsimExec)
+endif()
 
 add_executable(rebdsimHistoMergeExec rebdsimHistoMerge.cc)
 set_target_properties(rebdsimHistoMergeExec PROPERTIES OUTPUT_NAME "rebdsimHistoMerge" VERSION ${BDSIM_VERSION})
@@ -101,17 +113,6 @@ set_target_properties(bdsimCombineExec PROPERTIES OUTPUT_NAME "bdsimCombine" VER
 target_link_libraries(bdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(bdsimCombineExec)
 
-if (USE_EVENTDISPLAY)
-  add_executable(edbdsim edbdsim.cc)
-  set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-  target_link_libraries(edbdsim rebdsim ${ROOT_EVELIBRARIES})
-  target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
-  # Installation
-  bdsim_install_targets(rebdsimExec edbdsim rebdsim)
-else()
-  bdsim_install_targets(rebdsimExec rebdsim)
-endif()
-
 # Install pcms
 bdsim_install_libs(${rebdsim_pcms})
 
@@ -130,10 +131,6 @@ if (NOT USE_EVENTDISPLAY)
 endif()
 bdsim_install_analysis_headers(${rebdsimHeaders})
 #message(STATUS "rebdsimHeaders ${rebdsimHeaders}")
-
-get_target_property(rebdsimBinaryName rebdsim OUTPUT_NAME)
-set(rebdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${rebdsimBinaryName} CACHE STRING "rebdsim binary")
-mark_as_advanced(rebdsimBinary)
 
 # load test macros
 include(rebdsim_test_macros)
