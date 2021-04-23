@@ -242,6 +242,7 @@ Parameter         Description          Default     Required
 Notes:
 
 * The :ref:`aperture-parameters` may also be specified.
+* The default beam pipe material is "stainlessSteel". This applies to all BDSIM elements that have a beam pipe.
 
 Examples: ::
 

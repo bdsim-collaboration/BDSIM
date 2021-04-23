@@ -1879,7 +1879,7 @@ Common Options
 +----------------------------------+-------------------------------------------------------+
 | beampipeThickness                | Default beam pipe thickness [m]                       |
 +----------------------------------+-------------------------------------------------------+
-| beampipeMaterial                 | Default beam pipe material                            |
+| beampipeMaterial                 | Default beam pipe material. Default "stainlessSteel"  |
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | The width of the default energy deposition and        |
 |                                  | particle loss histogram bins made as BDSIM runs [m]   |
