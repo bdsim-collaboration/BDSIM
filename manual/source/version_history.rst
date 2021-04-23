@@ -44,6 +44,7 @@ New Features
   all dimensions.
 * A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
   collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
+* More colours for default material colours.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
