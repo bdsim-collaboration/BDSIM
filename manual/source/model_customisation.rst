@@ -704,6 +704,7 @@ The required parameters and their meaning are given in the following table.
 	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
 	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
 	  a magnet with air and no beam pipe.
+.. note:: The default beam pipe material is "stainlessSteel".
 
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
