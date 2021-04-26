@@ -1,5 +1,46 @@
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2021.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 //
-// Created by strangesyd on 3/7/21.
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
 //
 
 #include "BDSDicomFileMgr.hh"
@@ -10,10 +51,9 @@
 #include "G4tgrFileIn.hh"
 #include "G4UIcommand.hh"
 
-BDSDicomFileMgr* BDSDicomFileMgr::theInstance = 0;
+BDSDicomFileMgr* BDSDicomFileMgr::theInstance = nullptr;
 int BDSDicomFileMgr::verbose = 1;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomFileMgr* BDSDicomFileMgr::GetInstance()
 {
     if( !theInstance ) {
@@ -22,16 +62,14 @@ BDSDicomFileMgr* BDSDicomFileMgr::GetInstance()
     return theInstance;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomFileMgr::BDSDicomFileMgr()
 {
     fCompression = 1.;
-    theCTFileAll = 0;
+    theCTFileAll = nullptr;
     theStructureNCheck = 4;
     theStructureNMaxROI = 100;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
 {
     G4tgrFileIn fin = G4tgrFileIn::GetInstance(filePath + fileName);
@@ -68,14 +106,10 @@ void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
         }
 
     }
-
-
     //@@@@@@ Process files
     ProcessFiles();
-
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::CheckNColumns(std::vector<G4String> wl, size_t vsizeTh )
 {
     if( wl.size() != vsizeTh ) {
@@ -90,17 +124,13 @@ void BDSDicomFileMgr::CheckNColumns(std::vector<G4String> wl, size_t vsizeTh )
                     ("Wrong number of columns in line " + std::to_string(wl.size()) + " <> "
                      + std::to_string(vsizeTh)).c_str());
     }
-
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::SetCompression( G4String fComp )
 {
     fCompression = G4UIcommand::ConvertToDouble(fComp);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::AddFile( G4String fileName )
 {
     DcmFileFormat dfile;
@@ -149,7 +179,6 @@ void BDSDicomFileMgr::AddFile( G4String fileName )
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::AddMaterial( std::vector<G4String> wl )
 {
     if( theMaterials.size() > 0 && bMaterialsDensity ) {
@@ -162,7 +191,6 @@ void BDSDicomFileMgr::AddMaterial( std::vector<G4String> wl )
     theMaterials[G4UIcommand::ConvertToDouble(wl[2])] = wl[1];
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::AddMaterialDensity( std::vector<G4String> wl )
 {
     if( theMaterialsDensity.size() > 0 && !bMaterialsDensity ) {
@@ -175,7 +203,6 @@ void BDSDicomFileMgr::AddMaterialDensity( std::vector<G4String> wl )
     theMaterialsDensity[G4UIcommand::ConvertToDouble(wl[2])] = wl[1];
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::AddCT2Density( std::vector<G4String> wl)
 {
     theCT2Density[G4UIcommand::ConvertToInt(wl[1])] = G4UIcommand::ConvertToDouble(wl[2]);
@@ -183,7 +210,6 @@ void BDSDicomFileMgr::AddCT2Density( std::vector<G4String> wl)
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4double BDSDicomFileMgr::Hounsfield2density(Uint32 Hval)
 {
     if( theCT2Density.size() == 0 ) {
@@ -238,7 +264,6 @@ G4double BDSDicomFileMgr::Hounsfield2density(Uint32 Hval)
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 size_t BDSDicomFileMgr::GetMaterialIndex( G4double Hval)
 {
     std::map<G4double,G4String>::iterator ite = theMaterials.upper_bound(Hval);
@@ -257,8 +282,6 @@ size_t BDSDicomFileMgr::GetMaterialIndex( G4double Hval)
 
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 size_t BDSDicomFileMgr::GetMaterialIndexByDensity( G4double density )
 {
     std::map<G4double,G4String>::iterator ite = theMaterialsDensity.upper_bound(density);
@@ -277,7 +300,6 @@ size_t BDSDicomFileMgr::GetMaterialIndexByDensity( G4double density )
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::ProcessFiles()
 {
     if( theCTFiles.size() == 0 ) {
@@ -286,20 +308,13 @@ void BDSDicomFileMgr::ProcessFiles()
                     JustWarning,
                     "No :FILE of type CT in input file");
     } else {
-
         CheckCTSlices();
-
         BuildCTMaterials();
-
         MergeCTFiles();
-
     }
-
     DumpToTextFile();
-
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::CheckCTSlices()
 {
     size_t nSlices = theCTFiles.size();
@@ -377,11 +392,8 @@ void BDSDicomFileMgr::CheckCTSlices()
             }
         }
     }
-
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::BuildCTMaterials()
 {
     G4cout << " DicomFileMgr::Building Materials " << theCTFiles.size() << G4endl;//GDEB
@@ -391,7 +403,6 @@ void BDSDicomFileMgr::BuildCTMaterials()
     }
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::MergeCTFiles()
 {
     G4cout << " DicomFileMgr::Merging CT Files " << theCTFiles.size() << G4endl;//GDEB
@@ -403,8 +414,6 @@ void BDSDicomFileMgr::MergeCTFiles()
     }
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileMgr::DumpToTextFile()
 {
     G4cout << " DicomFileMgr::Dumping To Text File " << G4endl; //GDEB
@@ -451,5 +460,4 @@ void BDSDicomFileMgr::DumpToTextFile()
     for( size_t i1 = 0; i1 < thePlanFiles.size(); i1++ ){
         thePlanFiles[i1]->DumpToFile();
     }
-
 }

@@ -1,6 +1,60 @@
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2021.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 //
-// Created by strangesyd on 3/7/21.
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
 //
+//
+/// \file medical/DICOM/src/DicomPhantomZSliceMerged.cc
+/// \brief Implementation of the DicomPhantomZSliceMerged class
+//
+//
+// The code was written by :
+//      * Jonathan Madsen : jonathan.madsen@cern.ch (12/18/2012)
+//
+//  Texas A&M University
+//  3133 TAMU, Zachry Building
+//  College Station, TX 77843, USA
+//
+//*******************************************************
 
 #include "BDSDicomIntersectVolume.hh"
 
@@ -18,7 +72,6 @@
 #include "G4UIcommand.hh"
 #include "G4SystemOfUnits.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomIntersectVolume::BDSDicomIntersectVolume()
         : G4UImessenger(),
           fG4VolumeCmd(0),
@@ -43,14 +96,12 @@ BDSDicomIntersectVolume::BDSDicomIntersectVolume()
     fG4VolumeCmd->AvailableForStates(G4State_Idle);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomIntersectVolume::~BDSDicomIntersectVolume()
 {
     if (fUserVolumeCmd) delete fUserVolumeCmd;
     if (fG4VolumeCmd) delete fG4VolumeCmd;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomIntersectVolume::SetNewValue(G4UIcommand * command,
                                        G4String newValues)
 {
@@ -288,7 +339,6 @@ BDSDicomIntersectVolume::GetPhantomParam(G4bool bMustExist)
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 std::vector<G4VPhysicalVolume*> BDSDicomIntersectVolume::GetPhysicalVolumes(
         const G4String& name, G4bool exists, G4int nVols )
 {
@@ -353,7 +403,6 @@ std::vector<G4VPhysicalVolume*> BDSDicomIntersectVolume::GetPhysicalVolumes(
     return vvolu;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4bool BDSDicomIntersectVolume::IsPhantomVolume( G4VPhysicalVolume* pv )
 {
     EAxis axis;
@@ -370,7 +419,6 @@ G4bool BDSDicomIntersectVolume::IsPhantomVolume( G4VPhysicalVolume* pv )
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 std::vector<G4LogicalVolume*> BDSDicomIntersectVolume::GetLogicalVolumes(
         const G4String& name, G4bool exists, G4int nVols )
 {
@@ -418,7 +466,6 @@ std::vector<G4LogicalVolume*> BDSDicomIntersectVolume::GetLogicalVolumes(
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
         const G4String& stemp)
 {
@@ -481,6 +528,5 @@ std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
         G4Exception("GmGenUtils:GetWordsFromString","",FatalException,
                     ("unbalanced quotes in line " + stemp).c_str() );
     }
-
     return wordlist;
 }
