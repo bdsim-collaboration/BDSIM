@@ -192,7 +192,7 @@ if (BDSIM_BUILD_STATIC_LIBS)
   add_library(${BDSIM_LIB_NAME_STATIC} STATIC ${root_dicts} ${bdsim_sources})
   generate_export_header(${BDSIM_LIB_NAME_STATIC})
 endif()
-add_library(${BDSIM_LIB_NAME} SHARED ${root_dicts} ${bdsim_sources} src/BDSCT.cc src/BDSDicomFileMgr.cc src/BDSDicomVFile.cc src/BDSDicomFileCT.cc src/BDSDicomFileStructure.cc src/BDSDicomFilePlan.cc src/BDSDicomROI.cc src/BDSDicomROIContour.cc src/BDSDicomIntersectVolume.cc src/BDSDicomPhantomZSliceHeader.cc src/BDSDicomPhantomZSliceMerged.cc src/BDSDicomPhantomParameterisationColour.cc)
+add_library(${BDSIM_LIB_NAME} SHARED ${root_dicts} ${bdsim_sources})
 target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
 target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 if (USE_GDML)
@@ -236,7 +236,7 @@ get_target_property(binaryname bdsimExec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
-set(bdsimRootEventSources ${root_dicts} ${root_files} include/BDSCT.hh include/BDSDicomFileMgr.hh include/BDSDicomVFile.hh include/BDSDicomFileCT.hh include/BDSDicomFileStructure.hh include/BDSDicomFilePlan.hh include/BDSDicomROI.hh include/BDSDicomROIContour.hh include/BDSDicomIntersectVolume.hh include/BDSDicomPhantomZSliceHeader.hh include/BDSDicomPhantomZSliceMerged.hh include/BDSDicomPhantomParameterisationColour.hh)
+set(bdsimRootEventSources ${root_dicts} ${root_files})
 
 # Add parser options
 list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
