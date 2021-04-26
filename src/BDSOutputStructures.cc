@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -197,6 +198,7 @@ void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
+      samplerTrees.reserve(300); // TODO hardcoded because of sixtrack dynamic buildup
       localSamplersInitialised = true;
       for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
@@ -210,6 +212,28 @@ void BDSOutputStructures::InitialiseSamplers()
         }
     }
 }
+
+#ifdef SIXTRACKLINK
+G4int BDSOutputStructures::UpdateSamplerStructures()
+{
+  G4int result = 0;
+  for (auto const& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {// only put it in if it doesn't exist already
+      if (std::find(samplerNames.begin(), samplerNames.end(), samplerName) == samplerNames.end())
+	{
+	  result++;
+#ifndef __ROOTDOUBLE__
+	  BDSOutputROOTEventSampler<float>* res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+	  BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+	  samplerTrees.push_back(res);
+	  samplerNames.push_back(samplerName);
+	}
+    }
+  return result;
+}
+#endif
 
 void BDSOutputStructures::PrepareCollimatorInformation()
 {

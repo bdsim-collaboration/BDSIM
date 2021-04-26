@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSHitEnergyDepositionGlobal.hh"
 #include "BDSHitSampler.hh"
+#include "BDSHitSamplerLink.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
@@ -279,6 +280,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const G4PrimaryVertex*                         vertex,
 			  const BDSHitsCollectionSampler*                samplerHitsPlane,
 			  const BDSHitsCollectionSampler*                samplerHitsCylinder,
+                          const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 			  const BDSHitsCollectionEnergyDeposition*       energyLoss,
 			  const BDSHitsCollectionEnergyDeposition*       energyLossFull,
 			  const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
@@ -313,6 +315,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
   if (samplerHitsCylinder)
     {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
+  if (samplerHitsLink)
+    {FillSamplerHitsLink(samplerHitsLink);}
   if (energyLoss)
     {FillEnergyLoss(energyLoss,        BDSOutput::LossType::energy);}
   if (energyLossFull)
@@ -682,6 +686,29 @@ void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,
   if (storeSamplerIon)
     {
       for (auto& sampler : samplerTrees)
+	{sampler->FillIon();}
+    }
+}
+
+void BDSOutput::FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits)
+{
+  G4int nHits = hits->entries();
+  if (nHits == 0) // integer so ok to compare
+    {return;}
+  for (int i = 0; i < (int)hits->entries(); i++)
+    {
+      const BDSHitSamplerLink* hit = (*hits)[i];
+      G4int samplerID = hit->samplerID;
+      samplerID += 1; // offset index by one due to primary branch.
+      samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge, storeSamplerPolarCoords, storeSamplerIon, storeSamplerRigidity, storeSamplerKineticEnergy);
+    }
+  // extra information - do only once at the end
+  G4bool firstSampler = true;
+  for (auto& sampler : samplerTrees)
+    {
+      if (firstSampler) // skip primaries (1st sampler) as it always has extras filled in
+	{firstSampler = false; continue;}
+      if (storeSamplerIon)
 	{sampler->FillIon();}
     }
 }

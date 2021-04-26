@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Geometry/Point3D.h"
 
 #include <cmath>
+#include <limits>
 #include <set>
 #include <string>
 
@@ -313,12 +314,12 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
   return result;
 }
 
-G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In) const
+G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)
 {
   G4double zp;
   G4double transMom = std::pow(xp, 2) + std::pow(yp, 2);
 
-  if (transMom > 1)
+  if (transMom > (1 - std::numeric_limits<double>::epsilon()))
     {throw BDSException(__METHOD_NAME__, "xp, yp too large, xp: " + std::to_string(xp) + " yp: " + std::to_string(yp));}
   if (Zp0In < 0)
     {zp = -std::sqrt(1.0 - transMom);}

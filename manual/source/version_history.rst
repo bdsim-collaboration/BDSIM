@@ -44,6 +44,7 @@ New Features
   all dimensions.
 * A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
   collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
+* More colours for default material colours.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -126,6 +127,9 @@ New Features
 General
 -------
 
+* The parser no longer builds a static library by default to save space and it responds to the
+  option of :code:`BDSIM_BUILD_STATIC_LIBS` as the main libraries do. The parser library name
+  has changed from "libgmadSharedLib" to "libgmad" and the static one is "libgmad-static".
 * LHC dipole geometry now applies also to rbends as well as sbends.
 * LHC dipole geometry now applies to hkickers and vkickers. In both cases the poles are like
   a normal LHC dipole (e.g. no "vertical" kicker geometry).
@@ -139,6 +143,14 @@ General
 * The name of the bunch distribution is always print out in the terminal print out now.
 * Clarified trajectory options in manual a bit - two tables, one for filtering, one for storage.
 * Document option :code:`maximumTracksPerEvent`.
+* The directory :code:`bdsim/examples/ILC` has been removed as this is an old unmaintained example
+  that didn't work. This is in an effort to reduce the size of the examples and code repository generally.
+* The default visualisation macro is now called "bdsim_default_vis.mac" so as not to be confused with
+  the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
+* The visualisation macro path has the current working directory now as the last directory to search
+  after the installation directory.
+* The event display executable "edbdsim" is not build by default with the CMake option
+  :code:`USE_EVENTDISPLAY` set to :code:`OFF` by default as this isn't maintained or finished.
 
 Bug Fixes
 ---------

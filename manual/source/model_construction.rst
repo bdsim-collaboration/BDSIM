@@ -242,6 +242,7 @@ Parameter         Description          Default     Required
 Notes:
 
 * The :ref:`aperture-parameters` may also be specified.
+* The default beam pipe material is "stainlessSteel". This applies to all BDSIM elements that have a beam pipe.
 
 Examples: ::
 
@@ -265,7 +266,8 @@ input and output points. Can be specified using:
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
-3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`.
+3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`
+   (see also `Component Strength Scaling`_).
 
 Pole face rotations can be applied to both the input and output faces of the
 magnet, based upon the reference system shown in the figure below. A pure dipole
@@ -400,7 +402,8 @@ system. `sbend` magnets are made of a series of straight segments. Can be specif
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
-3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`.
+3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`
+   (see also `Component Strength Scaling`_).
 
 Pole face rotations can be applied to both the input and output faces of the magnet,
 based upon the reference system shown in the figure below. A pure dipole field is
