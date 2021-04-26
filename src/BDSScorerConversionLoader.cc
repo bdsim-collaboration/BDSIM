@@ -46,7 +46,8 @@ BDSScorerConversionLoader<T>::~BDSScorerConversionLoader()
 {;}
 
 template <class T>
-G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName, G4bool silent)
+G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName,
+						    G4bool          silent)
 {
   file.open(fileName);
 

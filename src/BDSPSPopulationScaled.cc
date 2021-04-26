@@ -38,7 +38,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
-BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName, G4int depth):
+BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
+					     G4int           depth):
   G4VPrimitiveScorer(scorerName, depth),
   HCID(-1),
   EvtMap(nullptr)
@@ -46,7 +47,7 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName, G4int d
 
 BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
                                              const G4String& pathname,
-                                             G4int depth):
+                                             G4int           depth):
   BDSPSPopulationScaled(scorerName, depth)
 {
   G4String directory = BDS::GetFullPath(pathname);
@@ -127,7 +128,6 @@ void BDSPSPopulationScaled::Initialize(G4HCofThisEvent* HCE)
 
 void BDSPSPopulationScaled::EndOfEvent(G4HCofThisEvent* /*HEC*/)
 {
-  //PrintAll();
   fCellTrackLogger.clear();
 }
 

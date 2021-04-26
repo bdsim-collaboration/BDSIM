@@ -18,31 +18,33 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSPSBLMENERGYDEPOSIT_H
 #define BDSPSBLMENERGYDEPOSIT_H
-
-#include "globals.hh"
 #include "G4PSEnergyDeposit.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
 class G4Step;
-class G4TouchableHistory;
 
 /**
- * @brief Primitive scorer for energy deposition in BLMs. The class inherits BDSPSBLMEnergyDeposition and ensures that the
- * copy number for the volume is obtained from the top-most BLM geometry volume. This enables hit mapping even for
- * complex BLM geometries such as GDML models.
+ * @brief Primitive scorer for energy deposition in BLMs. 
+ * 
+ * The class inherits BDSPSBLMEnergyDeposition and ensures that the
+ * copy number for the volume is obtained from the top-most BLM geometry 
+ * volume. This enables hit mapping even for complex BLM geometries such as GDML models.
  *
  * @author Andrey Abramov
  */
 
-class BDSPSBLMEnergyDeposit : public G4PSEnergyDeposit
+class BDSPSBLMEnergyDeposit: public G4PSEnergyDeposit
 {
- 
- public: // with description
-    BDSPSBLMEnergyDeposit(G4String name, G4int depth=0);
-    BDSPSBLMEnergyDeposit(G4String name, const G4String &unit, G4int depth=0);
-
-    virtual ~BDSPSBLMEnergyDeposit();
-
  public:
-    G4int GetIndex(G4Step* aStep) override;
+  BDSPSBLMEnergyDeposit(const G4String& name,
+			G4int           depth = 0);
+  BDSPSBLMEnergyDeposit(const G4String& name,
+			const G4String& unit,
+			G4int           depth = 0);
+  
+  virtual ~BDSPSBLMEnergyDeposit();
+  
+  G4int GetIndex(G4Step* aStep) override;
 };
 #endif

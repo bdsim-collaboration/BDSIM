@@ -48,7 +48,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
   if (Activated())
     {return;}
 
-  G4HadronInelasticProcess* inelProcIon = new G4HadronInelasticProcess("ionEMD", G4GenericIon::GenericIon());
+  G4HadronInelasticProcess* inelProcIon = new G4HadronInelasticProcess("EMD", G4GenericIon::GenericIon());
 #ifdef G4EMDPROCESSID
   // in our customised Geant4 we explicitly label EMD to allow identification and biasing
   // as opposed to just general fHadronicInelastic
@@ -60,7 +60,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
 
   G4EMDissociation* emdModel = new G4EMDissociation();
   emdModel->SetMaxEnergy(100*CLHEP::TeV);
-  emdModel->SetMinEnergy(0*CLHEP::MeV);
+  emdModel->SetMinEnergy(1*CLHEP::MeV);
   inelProcIon->RegisterMe(emdModel);
 
   G4ProcessManager* pmanager = G4GenericIon::GenericIon()->GetProcessManager();
