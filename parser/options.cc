@@ -365,6 +365,7 @@ void Options::PublishMembers()
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
+  publish("dEThresholdForScattering", &Options::dEThresholdForScattering);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);

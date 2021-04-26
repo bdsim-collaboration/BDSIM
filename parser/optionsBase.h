@@ -278,6 +278,7 @@ namespace GMAD
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
     bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
+    double   dEThresholdForScattering;
 
     // hit generation - only two parts that go in the same collection / branch
     bool      sensitiveOuter;
