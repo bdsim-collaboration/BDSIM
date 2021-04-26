@@ -165,13 +165,8 @@ list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSVisManager.cc)
 list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSVisManager.cc)
 
 # Add Modules
-option(USE_AWAKE "Use AWAKE Module" OFF)
-if (USE_AWAKE)
-  add_definitions("-DUSE_AWAKE")
-  message(STATUS "AWAKE module ON")
-  add_subdirectory(modules/AWAKE)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/AWAKE/include)
-endif()
+add_subdirectory(modules)
+
 
 if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
@@ -262,9 +257,6 @@ endif()
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
 add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
-
-# material builder
-add_subdirectory(modules/nistmaterials)
 
 # Install the targets:
 set(executables bdsimExec)
