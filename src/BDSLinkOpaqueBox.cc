@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
-#include "BDSApertureInfo.hh"
+#include "BDSAperture.hh"
+#include "BDSApertureFactory.hh"
 #include "BDSApertureType.hh"
 #include "BDSBeamline.hh"
 #include "BDSColours.hh"
@@ -62,9 +63,9 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   if (tiltOffsetIn->HasFiniteTilt() && BDS::IsFinite(component->GetAngle()))
     {throw BDSException(__METHOD_NAME__, "finite tilt with angled component unsupported.");}
 
-  G4double tilt = tiltOffsetIn->GetTilt();
-  G4double ox   = tiltOffsetIn->GetXOffset();
-  G4double oy   = tiltOffsetIn->GetYOffset();
+  G4double tilt = tiltOffsetIn->Tilt();
+  G4double ox   = tiltOffsetIn->OffsetX();
+  G4double oy   = tiltOffsetIn->OffsetY();
   BDSExtent extent = component->GetExtent();
   extent = extent.TiltOffset(tiltOffsetIn);
   const G4double gap                = 10 * CLHEP::cm;
@@ -168,9 +169,12 @@ BDSLinkOpaqueBox::~BDSLinkOpaqueBox()
 G4int BDSLinkOpaqueBox::PlaceOutputSampler()
 {  
   G4String samplerName = component->GetName() + "_out";
-  BDSApertureType apt = BDSApertureType::circular;
-  BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
-  sampler = new BDSSamplerCustom(samplerName, ap);
+
+  BDSApertureFactory apFac;
+  BDSAperture* circularAp = apFac.CreateAperture(BDSApertureType::circle,
+						 outputSamplerRadius, 0, 0, 0,
+						 0, 0, 0, 0);
+  sampler = new BDSSamplerCustom(samplerName, circularAp);
   sampler->GetContainerLogicalVolume()->SetSensitiveDetector(BDSSDManager::Instance()->SamplerLink());
 
   G4double pl = BDSBeamline::PaddingLength();
