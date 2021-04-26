@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunch.hh"
 #include "BDSBunchComposite.hh"
-#include "BDSDebug.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
