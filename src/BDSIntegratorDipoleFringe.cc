@@ -71,7 +71,10 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   if (!BDS::IsFinite((*strengthIn)["field"]) || !BDS::IsFinite((*strengthIn)["scaling"]))
     {zeroStrength = true;}
   else
-    {rho = (std::abs(brhoIn)/(*strengthIn)["field"]) * (*strengthIn)["scaling"];}
+    {
+      zeroStrength = false;
+      rho = (std::abs(brhoIn)/(*strengthIn)["field"]) * (*strengthIn)["scaling"];
+    }
 
   // thin sextupole strength for curved polefaces
   G4double thinSextStrength = (-polefaceCurvature / rho) * 1.0 / std::pow(std::cos(polefaceAngle),3);

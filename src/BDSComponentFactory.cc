@@ -1187,7 +1187,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->geometryFile,
 			 element->angle * CLHEP::rad,
 			 &vacuumBiasVolumeNames,
-			 element->autoColour));
+			 element->autoColour,
+			 element->markAsCollimator));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -1757,9 +1758,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
                               element->xdir * CLHEP::m,
                               element->ydir * CLHEP::m,
                               element->zdir * CLHEP::m,
-                              element->phi * CLHEP::rad,
+                              element->phi   * CLHEP::rad,
                               element->theta * CLHEP::rad,
-                              element->psi * CLHEP::rad);
+                              element->psi   * CLHEP::rad);
   }
 }
 
