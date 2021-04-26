@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -27,6 +27,7 @@ std::map<BDSSDType, std::string>* BDSSDType::dictionary =
   new std::map<BDSSDType, std::string> ({
 					 {BDSSDType::samplerplane,           "samplerplane"},
 					 {BDSSDType::samplercylinder,        "samplercylinder"},
+					 {BDSSDType::samplerlink,            "samplerlink"},
 					 {BDSSDType::terminator,             "terminator"},
 					 {BDSSDType::energydep,              "energydep"},
 					 {BDSSDType::energydepvacuum,        "energydepvacuum"},

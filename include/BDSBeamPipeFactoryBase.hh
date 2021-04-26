@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -108,14 +108,14 @@ protected:
 					       G4double  containerRadius,
 					       G4bool    containerIsCircular = false);
   
-  // methods called by CommonConstruction, can be implmented by derived classes
+  // methods called by CommonConstruction, can be implemented by derived classes
   
   /// build logical volumes
   virtual void BuildLogicalVolumes(G4String    nameIn,
 				   G4Material* vacuumMaterialIn,
 				   G4Material* beamPipeMaterialIn);
   /// Set visual attributes.
-  virtual void SetVisAttributes();
+  virtual void SetVisAttributes(G4Material* beamPipeMaterialIn);
 
   /// Set user limits.
   virtual void SetUserLimits(G4double length);
@@ -124,7 +124,7 @@ protected:
   virtual void PlaceComponents(G4String nameIn);
   
   G4bool           sensitiveBeamPipe;    ///< Whether the beam pipe will record energy deposition.
-  G4bool           sensitiveVacuum;      ///< Wehther the vacuum will record any energy deposition.
+  G4bool           sensitiveVacuum;      ///< Whether the vacuum will record any energy deposition.
   G4bool           storeApertureImpacts; ///< Whether to store aperture impacts.
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;

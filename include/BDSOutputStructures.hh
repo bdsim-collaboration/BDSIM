@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -43,7 +43,7 @@ class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 template<class T> class BDSOutputROOTEventSampler;
 class BDSOutputROOTEventTrajectory;
-class BDSOutputROOTGeant4Data;
+class BDSOutputROOTParticleData;
 
 /**
  * @brief Holder for output information.
@@ -64,6 +64,11 @@ protected:
   /// Construct samplers.
   void InitialiseSamplers();
 
+#ifdef SIXTRACKLINK
+  /// Interface to allow setting up samplers later for dynamic geometry construction a la SixTrack.
+  G4int UpdateSamplerStructures();
+#endif
+  
   /// Extract number of collimators and their names from beam line. Two stage
   /// initialisation for collimators so histograms can be made dynamically if
   /// required or not based on number of collimators.
@@ -72,8 +77,8 @@ protected:
   /// Construct collimtors.
   void InitialiseCollimators();
 
-  /// Clear the local geant4 data structure.
-  void ClearStructuresGeant4Data();
+  /// Clear the local particle data structure.
+  void ClearStructuresParticleData();
 
   /// Clear the local header structure.
   void ClearStructuresHeader();
@@ -109,7 +114,7 @@ protected:
 			  G4int    nBinsZ, G4double zMin, G4double zMax);
   ///@}
 
-  BDSOutputROOTGeant4Data*   geant4DataOutput; ///< Geant4 information / particle tables.
+  BDSOutputROOTParticleData* particleDataOutput; ///< Geant4 information / particle tables.
   BDSOutputROOTEventHeader*  headerOutput;     ///< Information about the file.
   BDSOutputROOTEventBeam*    beamOutput;       ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput;    ///< Options output.

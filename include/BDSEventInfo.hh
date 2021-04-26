@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -63,9 +63,9 @@ public:
   /// Accessor.
   inline const BDSOutputROOTEventInfo* GetInfo() const {return info;}
 
-  inline void Flush() {info->Flush();}
+  virtual void Flush() {info->Flush();}
 
-private:
+protected:
   /// Instance of info.
   BDSOutputROOTEventInfo* info;
 };

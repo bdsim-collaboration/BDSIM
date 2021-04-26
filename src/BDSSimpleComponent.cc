@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -52,4 +52,16 @@ BDSSimpleComponent::BDSSimpleComponent(const G4String&       nameIn,
   SetExtent(extentIn);
   containerSolid         = containerSolidIn;
   containerLogicalVolume = containerLogicalVolumeIn;
+}
+
+void BDSSimpleComponent::Build()
+{
+  BuildContainerLogicalVolume();
+  
+  // set user limits for container & visual attributes
+  if (containerLogicalVolume)
+    {
+      BuildUserLimits();
+      containerLogicalVolume->SetUserLimits(userLimits);
+    }
 }

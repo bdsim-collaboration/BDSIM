@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -50,12 +50,15 @@ public:
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
 
+#ifdef SIXTRACKLINK
+  virtual void UpdateSamplers();
+#endif
 private:
   /// Copy header and write to file.
   virtual void WriteHeader();
 
   /// Copy geant4 data to file.
-  virtual void WriteGeant4Data();
+  virtual void WriteParticleData();
   
   /// Copy beam and write to file.
   virtual void WriteBeam();
@@ -81,7 +84,7 @@ private:
   G4int  compressionLevel;     ///< ROOT compression level for files.
   TFile* theRootOutputFile;    ///< Output file.
   TTree* theHeaderOutputTree;  ///< Header Tree.
-  TTree* theGeant4DataTree;    ///< Geant4 Data Tree.
+  TTree* theParticleDataTree;  ///< Geant4 Data Tree.
   TTree* theBeamOutputTree;    ///< Beam Tree.
   TTree* theOptionsOutputTree; ///< Options tree.
   TTree* theModelOutputTree;   ///< Model tree.

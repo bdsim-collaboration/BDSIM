@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -30,6 +30,7 @@ OptionsBase::OptionsBase()
   inputFileName         = "optics.mad";
   visMacroFileName      = "";
   geant4MacroFileName   = "";
+  geant4PhysicsMacroFileName = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
@@ -109,7 +110,7 @@ OptionsBase::OptionsBase()
 
   eventNumberOffset       = 0;
 
-  // general geometrical prameters
+  // general geometrical parameters
   checkOverlaps           = false;
   xsize=0.0, ysize=0.0;
 
@@ -118,11 +119,11 @@ OptionsBase::OptionsBase()
   outerMaterialName          = "iron";
   horizontalWidth            = 0.6;
   thinElementLength          = 1e-7;
-  hStyle                     = false; // vhRatio < 0 as signal to use geometry factory defautl
+  hStyle                     = false; // vhRatio < 0 as signal to use geometry factory default
   vhRatio                    = -1;
   coilWidthFraction          = -1;
   coilHeightFraction         = -1;
-  ignoreLocalMagnetGeometry  = 0;
+  ignoreLocalMagnetGeometry  = false;
 
   preprocessGDML       = true;
   preprocessGDMLSchema = true;
@@ -172,8 +173,10 @@ OptionsBase::OptionsBase()
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
+  tunnelMaxSegmentLength = 50.0; // m
 
   removeTemporaryFiles = true;
+  temporaryDirectory = "";
   
   // samplers
   samplerDiameter     = 5; // m
@@ -203,12 +206,17 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
   
   // biasing options
   defaultBiasVacuum        = "";
   defaultBiasMaterial      = "";
+  biasForWorldVolume       = "";
+  biasForWorldContents     = "";
+  biasForWorldVacuum       = "";
+  worldVacuumVolumeNames   = "";
 
   // tracking options
   integratorSet            = "bdsimmatrix";
@@ -223,6 +231,7 @@ OptionsBase::OptionsBase()
   sampleElementsWithPoleface  = false;   // affects dipole tracking in certain integrator sets when true
   nominalMatrixRelativeMomCut = 0.05;  // be careful adjusting this as it affects dipolequadrupole tracking
   teleporterFullTransform  = true;
+  dEThresholdForScattering = 1e-11; // GeV
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;
@@ -230,6 +239,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
   killNeutrinos            = false;
+  killedParticlesMassAddedToEloss = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
@@ -239,11 +249,12 @@ OptionsBase::OptionsBase()
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
 
-  storeApertureImpacts       = true;
-  storeApertureImpactsIons   = false;
-  storeApertureImpactsAll    = false;
+  storeMinimalData = false;
+  
   storeApertureImpacts       = true;
   storeApertureImpactsHistograms = true;
+  storeApertureImpactsIons   = false;
+  storeApertureImpactsAll    = false;
   apertureImpactsMinimumKE   = 0;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
@@ -267,10 +278,13 @@ OptionsBase::OptionsBase()
   storeElossStepLength       = false;
   storeElossPreStepKineticEnergy = false;
   storeElossModelID          = false;
-  storeGeant4Data            = true;
+  storeElossPhysicsProcesses = false;
+  storeParticleData          = true;
   storePrimaries             = true;
+  storePrimaryHistograms     = true;
   
   storeTrajectory                = false;
+  
   storeTrajectoryDepth           = 0;
   storeTrajectoryStepPoints      = 0;
   storeTrajectoryStepPointLast   = false;
@@ -279,12 +293,19 @@ OptionsBase::OptionsBase()
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false; ///< kept only for backwards compatibility.
-  storeTrajectoryLocal           = false;
-  storeTrajectoryLinks           = false;
-  storeTrajectoryIon             = false;
-  trajectoryFilterLogicAND       = false;
+  storeTrajectoryKineticEnergy       = true;
+  storeTrajectoryMomentumVector      = false;
+  storeTrajectoryProcesses           = false;
+  storeTrajectoryTime                = false;
+  storeTrajectoryLocal               = false;
+  storeTrajectoryLinks               = false;
+  storeTrajectoryIon                 = false;
+  storeTrajectoryAllVariables        = false;
+
+  trajectoryFilterLogicAND = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -327,12 +348,12 @@ OptionsBase::OptionsBase()
 
 void OptionsBase::print() const
 {
-  std::cout<<"Options                 " << std::endl;
-  std::cout<<"n particles           : " << nGenerate                << std::endl;
-  std::cout<<"BV sign               : " << ffact                    << std::endl;
-  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption  << std::endl;
-  std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
-  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;
-  std::cout<<"Optical surface on    : " << turnOnOpticalSurface     << std::endl;
+  std::cout<<"Options                  " << std::endl;
+  std::cout<<"n particles            : " << nGenerate                << std::endl;
+  std::cout<<"BV sign                : " << ffact                    << std::endl;
+  std::cout<<"Optical absorption on  : " << turnOnOpticalAbsorption  << std::endl;
+  std::cout<<"Mie scattering on      : " << turnOnMieScattering      << std::endl;
+  std::cout<<"Rayleigh scattering on : " << turnOnRayleighScattering << std::endl;
+  std::cout<<"Optical surface on     : " << turnOnOpticalSurface     << std::endl;
 }
 

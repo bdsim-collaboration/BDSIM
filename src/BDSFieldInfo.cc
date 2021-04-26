@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4RotationMatrix.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 #include "G4UserLimits.hh"
 
+#include <algorithm>
 #include <ostream>
 
 G4UserLimits* BDSFieldInfo::defaultUL = nullptr;
@@ -56,16 +58,18 @@ BDSFieldInfo::BDSFieldInfo():
   beamPipeRadius(0),
   chordStepMinimum(-1),
   tilt(0),
-  left(false),
+  secondFieldOnLeft(false),
   magneticSubFieldName(""),
   electricSubFieldName(""),
-  transformBeamline(nullptr)
+  usePlacementWorldTransform(false),
+  transformBeamline(nullptr),
+  nameOfParserDefinition("")
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 brhoIn,
 			   BDSIntegratorType        integratorTypeIn,
-			   const BDSMagnetStrength* magnetStrengthIn,
+			   BDSMagnetStrength*       magnetStrengthIn,
 			   G4bool                   provideGlobalTransformIn,
 			   const G4Transform3D&     transformIn,
 			   const G4String&          magneticFieldFilePathIn,
@@ -106,10 +110,12 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   poleTipRadius(poleTipRadiusIn),
   beamPipeRadius(beamPipeRadiusIn),
   chordStepMinimum(-1),
-  left(leftIn),
+  secondFieldOnLeft(leftIn),
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
-  transformBeamline(nullptr)
+  usePlacementWorldTransform(false),
+  transformBeamline(nullptr),
+  nameOfParserDefinition("")
 {
   if (transformIn != G4Transform3D::Identity)
     {transform = new G4Transform3D(transformIn);}
@@ -149,10 +155,12 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   beamPipeRadius(other.beamPipeRadius),
   chordStepMinimum(other.chordStepMinimum),
   tilt(other.tilt),
-  left(other.left),
+  secondFieldOnLeft(other.secondFieldOnLeft),
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
-  transformBeamline(nullptr)
+  usePlacementWorldTransform(other.usePlacementWorldTransform),
+  transformBeamline(nullptr),
+  nameOfParserDefinition(other.nameOfParserDefinition)
 {
   if (other.transform)
     {transform = new G4Transform3D(*other.transform);}
@@ -178,32 +186,56 @@ void BDSFieldInfo::SetUserLimits(G4UserLimits* userLimitsIn)
   stepLimit = userLimitsIn;
 }
 
+void BDSFieldInfo::UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSize,
+                                                         G4bool   warn) const
+{
+  if (stepLimit && (stepLimit != defaultUL))
+    {
+      G4UserLimits* old = stepLimit;
+      stepLimit = BDS::CreateUserLimits(stepLimit, maximumStepSize, 1.0);
+      if ((stepLimit != old) && (old != defaultUL))
+	{delete old;}
+      if (stepLimit == old)
+	{warn = false;} // no change and warning would print out wrong number
+    }
+  else
+    {stepLimit = new G4UserLimits(maximumStepSize);}
+  
+  if (warn)
+    {
+      G4cout << "Reducing maximum step size of field definition \"" << nameOfParserDefinition
+	     << "\" to " << maximumStepSize << " mm " << G4endl;
+    }
+}
+
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
 {
-  out << "Field type:        " << info.fieldType                << G4endl;
-  out << "Rigidity:          " << info.brho                     << G4endl;
-  out << "Integrator:        " << info.integratorType           << G4endl;
-  out << "Global transform?  " << info.provideGlobalTransform   << G4endl;
-  out << "B map file:        " << info.magneticFieldFilePath    << G4endl;
-  out << "B map file format: " << info.magneticFieldFormat      << G4endl;
-  out << "B interpolator     " << info.magneticInterpolatorType << G4endl;
-  out << "E map file:        " << info.electricFieldFilePath    << G4endl;
-  out << "E map file format: " << info.electricFieldFormat      << G4endl;
-  out << "E interpolator     " << info.electricInterpolatorType << G4endl;
-  out << "Transform caching: " << info.cacheTransforms          << G4endl;
-  out << "E Scaling:         " << info.eScaling                 << G4endl;
-  out << "B Scaling:         " << info.bScaling                 << G4endl;
-  out << "t offset           " << info.timeOffset               << G4endl;
-  out << "Auto scale         " << info.autoScale                << G4endl;
-  out << "Pole tip radius:   " << info.poleTipRadius            << G4endl;
-  out << "Beam pipe radius:  " << info.beamPipeRadius           << G4endl;
-  out << "Chord Step Min:    " << info.chordStepMinimum         << G4endl;
-  out << "Tilt:              " << info.tilt                     << G4endl;
-  out << "Left:              " << info.left                     << G4endl;
-  out << "Magnetic Sub Field " << info.magneticSubFieldName     << G4endl;
-  out << "Electric Sub Field " << info.electricSubFieldName     << G4endl;
+  out << "Parser definition name: \"" << info.nameOfParserDefinition << "\"" << G4endl;
+  out << "Field type:          " << info.fieldType                << G4endl;
+  out << "Rigidity:            " << info.brho                     << G4endl;
+  out << "Integrator:          " << info.integratorType           << G4endl;
+  out << "Global transform?    " << info.provideGlobalTransform   << G4endl;
+  out << "B map file:          " << info.magneticFieldFilePath    << G4endl;
+  out << "B map file format:   " << info.magneticFieldFormat      << G4endl;
+  out << "B interpolator       " << info.magneticInterpolatorType << G4endl;
+  out << "E map file:          " << info.electricFieldFilePath    << G4endl;
+  out << "E map file format:   " << info.electricFieldFormat      << G4endl;
+  out << "E interpolator       " << info.electricInterpolatorType << G4endl;
+  out << "Transform caching:   " << info.cacheTransforms          << G4endl;
+  out << "E Scaling:           " << info.eScaling                 << G4endl;
+  out << "B Scaling:           " << info.bScaling                 << G4endl;
+  out << "t offset             " << info.timeOffset               << G4endl;
+  out << "Auto scale           " << info.autoScale                << G4endl;
+  out << "Pole tip radius:     " << info.poleTipRadius            << G4endl;
+  out << "Beam pipe radius:    " << info.beamPipeRadius           << G4endl;
+  out << "Chord Step Min:      " << info.chordStepMinimum         << G4endl;
+  out << "Tilt:                " << info.tilt                     << G4endl;
+  out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
+  out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
+  out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
+  out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
   if (info.magnetStrength)
-    {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
+    {out << "Magnet strength:     " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)
     {
       G4Track t = G4Track(); // dummy track

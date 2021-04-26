@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -23,7 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @brief A bunch distribution that produces an uncorrelated uniform
- * random distribution over a sphere.
+ * random direction distribution over a sphere. The position, energy
+ * and time are all reference.
  * 
  * @author Laurie Nevay
  */

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -104,7 +104,7 @@ GMAD::BeamBase BDSOutputLoader::BeamBaseClass()
 {
   // always change back to this file - assuming other root files could be open
   file->cd();
-  optionsTree->GetEntry(0);
+  beamTree->GetEntry(0);
   return *(static_cast<GMAD::BeamBase*>(localBeam));
 }
 

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -99,7 +99,7 @@ public:
   inline G4double GetPostWeight()              const {return postWeight;}
   inline G4double GetPreEnergy()               const {return preEnergy;}
   inline G4double GetPostEnergy()              const {return postEnergy;}
-  inline G4double GetEnergy()                  const {return energy;}
+  inline G4double GetEnergyDeposit()           const {return energyDeposit;}
   inline G4ThreeVector GetPreMomentum()        const {return preMomentum;}
   inline G4ThreeVector GetPostMomentum()       const {return postMomentum;}
   inline G4double GetPreS()                    const {return preS;}
@@ -118,14 +118,14 @@ public:
 
   /// @{ Accessor for the extra information links.
   inline G4int      GetCharge()         const {return extraLink ? extraLink->charge        : 0;}
-  inline G4double   GetKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
+  inline G4double   GetKineticEnergy()  const {return preEnergy;}
   inline G4int      GetTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
   inline G4double   GetMass()           const {return extraLink ? extraLink->mass          : 0;}
   inline G4double   GetRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
   /// @}
 
   /// @{ Accessor for the extra information ions.
-  inline G4bool   GetIsIon()      const {return extraIon ? extraIon->isIon      : 0;}
+  inline G4bool   GetIsIon()      const {return extraIon ? extraIon->isIon      : false;}
   inline G4int    GetIonA()       const {return extraIon ? extraIon->ionA       : 0;}
   inline G4int    GetIonZ()       const {return extraIon ? extraIon->ionZ       : 0;}
   inline G4int    GetNElectrons() const {return extraIon ? extraIon->nElectrons : 0;}
@@ -150,6 +150,12 @@ public:
   BDSTrajectoryPointLocal* extraLocal;
   BDSTrajectoryPointLink*  extraLink;
   BDSTrajectoryPointIon*   extraIon;
+  
+  /// Threshold energy (in geant4 units) for considering a point a scattering point.
+  /// In some cases the along step process such as multiple scattering won't show as the
+  /// process that defined the step but may significantly degrade the energy. Use this
+  /// value as a threshold over which we consider the step a 'scattering' one.
+  static G4double dEThresholdForScattering;
 
 private:
   /// Initialisation of variables in separate function to reduce duplication in
@@ -157,8 +163,7 @@ private:
   void InitialiseVariables();
 
   /// Utility function to prepare and fill extra link variables.
-  void StoreExtrasLink(const G4Track* track,
-		       G4double       kineticEnergy);
+  void StoreExtrasLink(const G4Track* track);
 
   /// Utility function to prepare and fill extra ion variables.
   void StoreExtrasIon(const G4Track* track);
@@ -174,7 +179,7 @@ private:
   G4double postEnergy;            ///< Kinetic energy of post step point
   G4ThreeVector preMomentum;      ///< Momentum of pre-step point
   G4ThreeVector postMomentum;     ///< Momentum of post-step point
-  G4double energy;                ///< Total energy deposited during step
+  G4double energyDeposit;         ///< Total energy deposited during step
   G4double preS;                  ///< Global curvilinear S coordinate of pre-step point
   G4double postS;                 ///< Global curvilinear S coordinate of post step point
   G4double preGlobalTime;         ///< Time since event started of pre-step point.

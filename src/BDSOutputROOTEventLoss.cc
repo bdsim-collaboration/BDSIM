@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -22,22 +22,29 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "BDSHitEnergyDeposition.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSTrajectoryPointHit.hh"
 #endif
 
 ClassImp(BDSOutputROOTEventLoss)
 
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
+n(0)
+#ifndef __ROOTBUILD__
+,
   storeTurn(false),
   storeLinks(false),
   storeModelID(false),
   storeLocal(false),
   storeGlobal(false),
   storeTime(false),
-  storeStepLength(false)
+  storeStepLength(false),
+  storePhysicsProcesses(false)
+#endif
 {
   Flush();
 }
 
+#ifndef __ROOTBUILD__
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeLinksIn,
 					       bool storeModelIDIn,
@@ -45,7 +52,9 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
 					       bool storeGlobalIn,
 					       bool storeTimeIn,
 					       bool storeStepLengthIn,
-					       bool storePreStepKineticEnergyIn):
+					       bool storePreStepKineticEnergyIn,
+					       bool storePhysicsProcessesIn):
+  n(0),
   storeTurn(storeTurnIn),
   storeLinks(storeLinksIn),
   storeModelID(storeModelIDIn),
@@ -53,55 +62,70 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
   storeGlobal(storeGlobalIn),
   storeTime(storeTimeIn),
   storeStepLength(storeStepLengthIn),
-  storePreStepKineticEnergy(storePreStepKineticEnergyIn)
+  storePreStepKineticEnergy(storePreStepKineticEnergyIn),
+  storePhysicsProcesses(storePhysicsProcessesIn)
 {
   Flush();
 }
+#endif
 
 BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 {;}
 
 #ifndef __ROOTBUILD__
 
-void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
+void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPointHit* hit)
 {
   n++;
-  energy.push_back( (float &&) hit->GetEnergy() / CLHEP::GeV);
-  S.push_back     ( (float &&) hit->GetPostS()  / CLHEP::m);
-  weight.push_back( (float &&) hit->GetPostWeight());
-  modelID.push_back((int &&)   hit->GetBeamLineIndex());
-
+  energy.push_back( (float) (hit->point->GetEnergyDeposit() / CLHEP::GeV));
+  S.push_back     ( (float) (hit->point->GetPostS()  / CLHEP::m));
+  weight.push_back( (float) hit->point->GetPostWeight());
+  partID.push_back( (int)   hit->pdgID);
+  trackID.push_back( (int)  hit->trackID);
+  if (hit->parentID !=0) // general but don't fill for primaries as obvious -> reduce data size
+    {parentID.push_back((int) hit->parentID);}
+  modelID.push_back( (int)  hit->point->GetBeamLineIndex());
+  
   if (storeTurn)
-    {turn.push_back((int &&)   hit->GetTurnsTaken());}
-
+    {turn.push_back((int) hit->point->GetTurnsTaken());}
+  
   if (storeLocal)
     {
-      const G4ThreeVector& pos = hit->GetPostPosLocal();
-      x.push_back( (float &&) pos.x() / CLHEP::m);
-      y.push_back( (float &&) pos.y() / CLHEP::m);
-      z.push_back( (float &&) pos.z() / CLHEP::m);
+      const G4ThreeVector& pos = hit->point->GetPostPosLocal();
+      x.push_back( (float) (pos.x() / CLHEP::m));
+      y.push_back( (float) (pos.y() / CLHEP::m));
+      z.push_back( (float) (pos.z() / CLHEP::m));
     }
+  
   if (storeGlobal)
     {
-      const G4ThreeVector& pos = hit->GetPosition();
-      X.push_back( (float &&) pos.x() / CLHEP::m);
-      Y.push_back( (float &&) pos.y() / CLHEP::m);
-      Z.push_back( (float &&) pos.z() / CLHEP::m);
+      const G4ThreeVector& pos = hit->point->GetPosition();
+      X.push_back( (float) (pos.x() / CLHEP::m));
+      Y.push_back( (float) (pos.y() / CLHEP::m));
+      Z.push_back( (float) (pos.z() / CLHEP::m));
     }
+  
   if (storeTime)
-    {
-      T.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
-    }
+    {T.push_back( (float) (hit->point->GetPostGlobalTime() / CLHEP::ns));}
 
-  // don't store stepLength for trajectory point - not possible
-  // don't store kinetic energy for trajectory point - not possible
+  // no step length for a point
+  
+  if (storePreStepKineticEnergy)
+    {preStepKineticEnergy.push_back( (float) (hit->point->GetKineticEnergy() / CLHEP::GeV));}
+  
+  if (storePhysicsProcesses)
+    {
+      postStepProcessType.push_back( (int) (hit->point->GetPostProcessSubType()));
+      postStepProcessSubType.push_back( (int) (hit->point->GetPostProcessSubType()));
+    }
 }
+
 void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
 {
   n++;
-  energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
-  S.push_back     ( (float &&) (hit->GetSHit()   / CLHEP::m));
-  weight.push_back( (float &&)  hit->GetWeight());
+  energy.push_back( (float) (hit->GetEnergy() / CLHEP::GeV));
+  S.push_back     ( (float) (hit->GetSHit()   / CLHEP::m));
+  weight.push_back( (float) hit->GetWeight());
 
   if (storeTurn)
     {turn.push_back( hit->GetTurnsTaken());}
@@ -118,28 +142,33 @@ void BDSOutputROOTEventLoss::Fill(const BDSHitEnergyDeposition* hit)
   
   if (storeLocal)
     {
-      x.push_back( (float &&) (hit->Getx() / CLHEP::m));
-      y.push_back( (float &&) (hit->Gety() / CLHEP::m));
-      z.push_back( (float &&) (hit->Getz() / CLHEP::m));
+      x.push_back( (float) (hit->Getx() / CLHEP::m));
+      y.push_back( (float) (hit->Gety() / CLHEP::m));
+      z.push_back( (float) (hit->Getz() / CLHEP::m));
     }
   
   if(storeGlobal)
     {
-      X.push_back( (float &&) (hit->GetX() / CLHEP::m));
-      Y.push_back( (float &&) (hit->GetY() / CLHEP::m));
-      Z.push_back( (float &&) (hit->GetZ() / CLHEP::m));
+      X.push_back( (float) (hit->GetX() / CLHEP::m));
+      Y.push_back( (float) (hit->GetY() / CLHEP::m));
+      Z.push_back( (float) (hit->GetZ() / CLHEP::m));
     }
 
   if (storeTime)
-    {T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);}
+    {T.push_back( (float) (hit->GetGlobalTime() / CLHEP::ns));}
 
   if (storeStepLength)
-    {stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);}
+    {stepLength.push_back( (float) (hit->GetStepLength() / CLHEP::m));}
   
   if (storePreStepKineticEnergy)
-    {preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);}
-}
+    {preStepKineticEnergy.push_back( (float) (hit->GetPreStepKineticEnergy() / CLHEP::GeV));}
 
+  if (storePhysicsProcesses)
+    {
+      postStepProcessType.push_back( (int) hit->GetPostStepProcessType());
+      postStepProcessSubType.push_back( (int) hit->GetPostStepProcessSubType());
+    }
+}
 #endif
 
 void BDSOutputROOTEventLoss::Fill(const BDSOutputROOTEventLoss* other)
@@ -164,6 +193,8 @@ void BDSOutputROOTEventLoss::Fill(const BDSOutputROOTEventLoss* other)
   T = other->T;  
   stepLength           = other->stepLength;
   preStepKineticEnergy = other->preStepKineticEnergy;
+  postStepProcessType  = other->postStepProcessType;
+  postStepProcessSubType = other->postStepProcessSubType;
 }
 
 void BDSOutputROOTEventLoss::Flush()
@@ -186,4 +217,6 @@ void BDSOutputROOTEventLoss::Flush()
   T.clear();
   stepLength.clear();
   preStepKineticEnergy.clear();
+  postStepProcessType.clear();
+  postStepProcessSubType.clear();
 }

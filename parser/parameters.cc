@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -119,6 +119,9 @@ Parameters::Parameters()
   setMap["poleStartZ"]         = false;
   setMap["screenWidth"]        = false;
   setMap["awakeMagnetOffsetX"] = false;
+  setMap["scintmaterial"]      = false;
+  setMap["windowmaterial"]     = false;
+  setMap["mountmaterial"]      = false;
   setMap["layerThicknesses"]   = false;
   setMap["layerMaterials"]     = false;
   setMap["layerIsSampler"]     = false;
@@ -130,6 +133,10 @@ Parameters::Parameters()
   setMap["phi"]                = false;
   setMap["theta"]              = false;
   setMap["psi"]                = false;
+  setMap["axisX"]              = false;
+  setMap["axisY"]              = false;
+  setMap["axisZ"]              = false;
+  setMap["axisAngle"]          = false;
 
   setMap["bias"]                 = false;
   setMap["biasMaterial"]         = false;
@@ -147,9 +154,7 @@ Parameters::Parameters()
   setMap["autoColour"]     = false;
   setMap["material"]       = false;
   setMap["namedVacuumVolumes"] = false;
-  setMap["scintmaterial"]  = false;
-  setMap["windowmaterial"] = false;
-  setMap["mountmaterial"]  = false;
+  setMap["markAsCollimator"] = false;
   setMap["spec"]           = false;
   setMap["cavityModel"]    = false;
 

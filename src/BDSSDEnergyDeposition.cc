@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -40,10 +40,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VTouchable.hh"
 #include "Randomize.hh"
 
-BDSSDEnergyDeposition::BDSSDEnergyDeposition(G4String name,
-					     G4bool   storeExtrasIn):
+BDSSDEnergyDeposition::BDSSDEnergyDeposition(const G4String& name,
+					     G4bool          storeExtrasIn,
+					     G4bool          killedParticleMassAddedToElossIn):
   BDSSensitiveDetector("energy_counter/"+name),
   storeExtras(storeExtrasIn),
+  killedParticleMassAddedToEloss(killedParticleMassAddedToElossIn),
   colName(name),
   hits(nullptr),
   HCIDe(-1),
@@ -94,8 +96,8 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   G4double randDist = G4UniformRand();
   
   // global coordinate positions of the step
-  G4ThreeVector posbefore = preStepPoint->GetPosition();
-  G4ThreeVector posafter  = postStepPoint->GetPosition();
+  const G4ThreeVector& posbefore = preStepPoint->GetPosition();
+  const G4ThreeVector& posafter  = postStepPoint->GetPosition();
   G4ThreeVector eDepPos   = posbefore + randDist*(posafter - posbefore);
 
   // calculate local coordinates
@@ -180,6 +182,19 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
   G4int    trackID     = track->GetTrackID();
   G4int    turnsTaken  = BDSGlobalConstants::Instance()->TurnsTaken();
   
+  G4int postStepProcessType    = -1;
+  G4int postStepProcessSubType = -1;
+  if (storeExtras)
+    {// physics processes
+      const G4StepPoint* postPoint = aStep->GetPostStepPoint();
+      const G4VProcess* postProcess = postPoint->GetProcessDefinedStep();
+      if (postProcess)
+	{
+	  postStepProcessType = postProcess->GetProcessType();
+	  postStepProcessSubType = postProcess->GetProcessSubType();
+	}
+    }
+  
   //create hits and put in hits collection of the event
   BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(energy,
 							   sHit,
@@ -194,7 +209,9 @@ G4bool BDSSDEnergyDeposition::ProcessHits(G4Step* aStep,
 							   parentID,
 							   turnsTaken,
 							   stepLength,
-							   beamlineIndex);
+							   beamlineIndex,
+							   postStepProcessType,
+							   postStepProcessSubType);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hits->insert(hit);
@@ -207,24 +224,27 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 {
   G4int    parentID   = track->GetParentID(); // needed later on too
   G4int    ptype      = track->GetDefinition()->GetPDGEncoding();
-  G4double energy       = track->GetTotalEnergy();
+
+  // depending on our option, include the rest mass - for backwards compatibility
+  G4double energy     = killedParticleMassAddedToEloss ? track->GetTotalEnergy() : track->GetKineticEnergy();
+  
   G4double globalTime = track->GetGlobalTime();
   G4double weight     = track->GetWeight();
   G4int    trackID    = track->GetTrackID();
   G4double preStepKineticEnergy = track->GetKineticEnergy();
 
-  //if the energy is 0, don't do anything
+  // if the energy is 0, don't do anything
   if (!BDS::IsFinite(energy))
     {return false;}
   
   G4double stepLength = 0;
-  G4ThreeVector posGlobal = track->GetPosition();
+  const G4ThreeVector& posGlobal = track->GetPosition();
   G4double X = posGlobal.x();
   G4double Y = posGlobal.y();
   G4double Z = posGlobal.z();
 
   // calculate local coordinates
-  G4ThreeVector momGlobalUnit = track->GetMomentumDirection();
+  const G4ThreeVector& momGlobalUnit = track->GetMomentumDirection();
   BDSStep stepLocal = auxNavigator->ConvertToLocal(posGlobal, momGlobalUnit, 1*CLHEP::mm, true, 1*CLHEP::mm);
   G4ThreeVector posLocal = stepLocal.PreStepPoint();
   // local
@@ -243,8 +263,8 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   auto UpdateParams = [&](BDSPhysicalVolumeInfo* info)
     {
       G4double sCentre = info->GetSPos();
-      sAfter           = sCentre;
-      sBefore          = sCentre;
+      sAfter           = sCentre + posLocal.z();
+      sBefore          = sCentre + posLocal.z();
       beamlineIndex    = info->GetBeamlineIndex();
     };
   
@@ -277,6 +297,23 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
   G4double sHit = sBefore; // duplicate
 
   G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
+
+  G4int postStepProcessType    = -1;
+  G4int postStepProcessSubType = -1;
+  if (storeExtras)
+    {// physics processes
+      const G4Step* aStep = track->GetStep();
+      if (aStep)
+	{
+	  const G4StepPoint* postPoint = aStep->GetPostStepPoint();
+	  const G4VProcess* postProcess = postPoint->GetProcessDefinedStep();
+	  if (postProcess)
+	    {
+	      postStepProcessType = postProcess->GetProcessType();
+	      postStepProcessSubType = postProcess->GetProcessSubType();
+	    }
+	}
+    }
   
   //create hits and put in hits collection of the event
   BDSHitEnergyDeposition* hit = new BDSHitEnergyDeposition(energy,
@@ -292,7 +329,9 @@ G4bool BDSSDEnergyDeposition::ProcessHitsTrack(const G4Track* track,
 							   parentID,
 							   turnsTaken,
 							   stepLength,
-							   beamlineIndex);
+							   beamlineIndex,
+							   postStepProcessType,
+							   postStepProcessSubType);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   hits->insert(hit);

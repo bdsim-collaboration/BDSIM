@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,13 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureInfo.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
+#include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSOutput.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSampler.hh"
@@ -37,6 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDSampler.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/samplerplacement.h"
 
@@ -51,11 +51,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 
-BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
+BDSParallelWorldSampler::BDSParallelWorldSampler(const G4String& name):
   G4VUserParallelWorld("SamplerWorld_" + name),
   suffix(name),
   samplerWorldVis(nullptr),
-  generalPlane(nullptr)
+  generalPlane(nullptr),
+  samplerWorldLV(nullptr)
 {;}
 
 BDSParallelWorldSampler::~BDSParallelWorldSampler()
@@ -71,7 +72,7 @@ void BDSParallelWorldSampler::Construct()
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   G4VPhysicalVolume* samplerWorld   = GetWorld();
-  G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
+  samplerWorldLV = samplerWorld->GetLogicalVolume();
 
   samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
@@ -88,73 +89,29 @@ void BDSParallelWorldSampler::Construct()
   // appropriate type of sampler if required. Info encoded in BDSBeamlineElement instance
   if (beamline != nullptr)
     {
-    for (auto element : *beamline)
-      {
-        BDSSamplerType samplerType = element->GetSamplerType();
-        if (samplerType == BDSSamplerType::none)
-	  {continue;}
-        // else must be a valid sampler
-#ifdef BDSDEBUG
-        G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
-#endif
-        G4String name = element->GetSamplerName();
-        G4double sEnd = element->GetSPositionEnd();
-
-        BDSSampler* sampler = nullptr;
-        switch (samplerType.underlying())
-	  {
-	  case BDSSamplerType::plane:
-	    {sampler = generalPlane; break;}
-	  case BDSSamplerType::cylinder:
-	    {
-	      G4double length = element->GetAcceleratorComponent()->GetChordLength();
-	      sampler = new BDSSamplerCylinder(name,
-		  			       length,
-		  			       samplerRadius);
-	      break;
-	    }
-	  default:
-	    {break;} // leave as nullptr - shouldn't occur due to if at top
-	  }
-
-        if (sampler)
-	  {
-	    G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
-
-#ifdef BDSDEBUG
-	    G4cout << "Translation: " << pt->getTranslation() << G4endl;
-	    G4cout << "Rotation:    " << pt->getRotation()    << G4endl;
-#endif
-	    G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
-									      sampler,
-									      *pt,
-									      sEnd,
-									      element);
-
-	    // record placements for cleaning up at destruction.
-	    G4PVPlacement* pl = new G4PVPlacement(*pt,              // placement transform
-						  sampler->GetContainerLogicalVolume(), // logical volume
-						  name + "_pv",     // name of placement
-						  samplerWorldLV,   // mother volume
-						  false,            // no boolean operation
-						  samplerID,        // copy number
-						  checkOverlaps);
-
-	    placements.push_back(pl);
-	  }
-      }
+      for (auto element : *beamline)
+	{Place(element, samplerRadius);}
     }
+  
   // Now user customised samplers
   std::vector<GMAD::SamplerPlacement> samplerPlacements = BDSParser::Instance()->GetSamplerPlacements();
 
   for (const auto& samplerPlacement : samplerPlacements)
     {
       G4cout << "User placed sampler: \"" << samplerPlacement.name << "\"" << G4endl;
+      
+      if (BDSOutput::InvalidSamplerName(samplerPlacement.name))
+	{
+	  G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerPlacement.name << "\"" << G4endl;
+	  BDSOutput::PrintProtectedNames(G4cerr);
+	  throw BDSException(__METHOD_NAME__, "");
+	}
+      
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
       
       G4String samplerName = G4String(samplerPlacement.name);
-      BDSApertureInfo* shape = nullptr;
+      BDSApertureInfo* shape;
       if (samplerPlacement.apertureModel.empty())
 	{
 	  shape = new BDSApertureInfo(samplerPlacement.shape,
@@ -171,6 +128,10 @@ void BDSParallelWorldSampler::Construct()
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);
+      
+      G4String uniqueName = BDSSamplerRegistry::Instance()->GetNameUnique(samplerID);
+      if (uniqueName != samplerName)
+	{BDS::Warning("Sampler placement with name \"" + samplerName + "\" will be named \"" + uniqueName + "\" in the output");}
 
       G4PVPlacement* pl = new G4PVPlacement(transform,
 					    sampler->GetContainerLogicalVolume(),
@@ -181,4 +142,64 @@ void BDSParallelWorldSampler::Construct()
 					    checkOverlaps);
       placements.push_back(pl);
     } 
+}
+
+void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
+				    G4double samplerRadius)
+{
+  BDSSamplerType samplerType = element->GetSamplerType();
+  if (samplerType == BDSSamplerType::none)
+    {return;}
+  // else must be a valid sampler
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
+#endif
+  G4String name = element->GetSamplerName();
+  G4double sEnd = element->GetSPositionEnd();
+  
+  BDSSampler* sampler = nullptr;
+  switch (samplerType.underlying())
+    {
+    case BDSSamplerType::plane:
+      {sampler = generalPlane; break;}
+    case BDSSamplerType::cylinder:
+      {
+	G4double length = element->GetAcceleratorComponent()->GetChordLength();
+	sampler = new BDSSamplerCylinder(name,
+					 length,
+					 samplerRadius);
+	break;
+      }
+    default:
+      {break;} // leave as nullptr - shouldn't occur due to if at top
+    }
+  
+  if (sampler)
+    {
+      G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
+
+#ifdef BDSDEBUG
+      G4cout << "Translation: " << pt->getTranslation() << G4endl;
+      G4cout << "Rotation:    " << pt->getRotation()    << G4endl;
+#endif
+      G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
+									sampler,
+									*pt,
+									sEnd,
+									element);
+
+      G4VPhysicalVolume* samplerWorld   = GetWorld();
+      samplerWorldLV = samplerWorld->GetLogicalVolume();
+      const G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+      // record placements for cleaning up at destruction.
+      G4PVPlacement* pl = new G4PVPlacement(*pt,              // placement transform
+					    sampler->GetContainerLogicalVolume(), // logical volume
+					    name + "_pv",     // name of placement
+					    samplerWorldLV,   // mother volume
+					    false,            // no boolean operation
+					    samplerID,        // copy number
+					    checkOverlaps);
+
+      placements.push_back(pl);
+    }
 }

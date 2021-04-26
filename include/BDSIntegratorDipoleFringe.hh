@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -91,7 +91,7 @@ public:
   /// Calculate the thin multipole kick to represent the dipole poleface curvature effect.
   /// Step length is passed in as it is needed by the transforms.
   void MultipoleStep(const G4double  yIn[6],
-                     G4double        yMultipoleOut[7],
+                     G4double        yMultipoleOut[6],
                      const G4double& h);
 
   /// Getter functions for poleface and fringe variables. Values need to be read in at least the
@@ -111,7 +111,7 @@ protected:
   /// Poleface curvature
   G4double polefaceCurvature;
   /// Nominal magnet bending radius
-  const G4double rho;
+  G4double rho;
 
   G4ThreeVector unitField;       ///< Cache of the unit field direction.
   const G4double fieldArcLength; ///< Cache of the field arc length.
@@ -130,6 +130,8 @@ protected:
   static G4double thinElementLength;
 
   BDSIntegratorMultipoleThin* multipoleIntegrator;
+
+  G4bool isEntrance; ///< store if fringe is entrance or exit
 
 private:
   /// Private default constructor to enforce use of supplied constructor

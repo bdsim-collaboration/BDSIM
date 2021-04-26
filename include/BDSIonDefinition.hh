@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -33,6 +33,9 @@ class BDSIonDefinition
 {
 public:
   explicit BDSIonDefinition(const G4String& definition);
+  BDSIonDefinition(G4int    aIn,
+		   G4int    zIn,
+		   G4double qIn);
   ~BDSIonDefinition(){;}
 
   /// @{ Accessor.

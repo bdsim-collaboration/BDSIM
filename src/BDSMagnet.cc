@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,11 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSMaterials.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -34,23 +32,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include <cstdlib>
-#include <cmath>
-#include <string>
+#include "CLHEP/Units/SystemOfUnits.h"
 
 class G4Userlimits;
 
 
 BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
-		     G4String            nameIn,
+		     const G4String&     nameIn,
 		     G4double            lengthIn,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
@@ -236,19 +234,40 @@ void BDSMagnet::BuildOuterField()
       // determine key for this specific magnet instance
       G4String scalingKey = DetermineScalingKey(magnetType);
       
+      BDSMagnetStrength* scalingStrength = vacuumFieldInfo ? vacuumFieldInfo->MagnetStrength() : nullptr;
       G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								vol,
 								true,
-								vacuumFieldInfo->MagnetStrength(),
+                                                                scalingStrength,
 								scalingKey);
       // Attach to the container but don't propagate to daughter volumes. This ensures
       // any gap between the beam pipe and the outer also has a field.
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								containerLogicalVolume,
 								false,
-								vacuumFieldInfo->MagnetStrength(),
+                                                                scalingStrength,
 								scalingKey);
+      
+      // in the case of LHC-style geometry, override the second beam pipe (which is a daughter of the outer)
+      // field to be the opposite sign of the main vacuum field (same strength)
+      auto mgt = magnetOuterInfo->geometryType;
+      if (mgt == BDSMagnetGeometryType::lhcleft || mgt == BDSMagnetGeometryType::lhcright)
+	{
+	  std::set<BDSGeometryComponent*> daughtersSet = outer->GetAllDaughters();
+	  std::vector<BDSGeometryComponent*> daughters(daughtersSet.begin(), daughtersSet.end());
+	  if (daughters.size() == 1 && vacuumFieldInfo)
+	    {
+	      BDSFieldInfo* secondBPField = new BDSFieldInfo(*vacuumFieldInfo);
+	      (*(secondBPField->MagnetStrength()))["field"] *= -1; // flip the sign
+	      if (BDS::IsFinite((*(secondBPField->MagnetStrength()))["k1"]))
+		{(*(secondBPField->MagnetStrength()))["k1"] *= -1;}
+	      secondBPField->SetIntegratorType(BDSIntegratorType::g4classicalrk4);
+	      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(secondBPField,
+									daughters[0]->GetContainerLogicalVolume(),
+									true);
+	    }
+	}
     }
 }
 

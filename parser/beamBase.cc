@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -30,9 +30,12 @@ BeamBase::BeamBase()
   beamKineticEnergy    = 0;
   beamMomentum         = 0;
   distrType            = "reference";
-  xDistrType           = "";
-  yDistrType           = "";
-  zDistrType           = "";
+  xDistrType           = "reference";
+  yDistrType           = "reference";
+  zDistrType           = "reference";
+  spaceDistrType       = "reference";
+  directionDistrType   = "reference";
+  energyDistrType      = "reference";
   distrFile            = "";
   distrFileFormat      = "";
   matchDistrFileLength = true;
@@ -78,6 +81,8 @@ BeamBase::BeamBase()
   envelopeXp = 0.0;
   envelopeY  = 0.0;
   envelopeYp = 0.0;
+  envelopeZ  = 0.0;
+  envelopeZp = 0.0;
   envelopeT  = 0.0;
   envelopeE  = 0.0;
   envelopeR  = 0.0;
@@ -132,4 +137,5 @@ BeamBase::BeamBase()
   eventGeneratorMinEK = -1;
   eventGeneratorMaxEK = 1e50;
   eventGeneratorParticles = "";
+  eventGeneratorWarnSkippedParticles = true;
 }

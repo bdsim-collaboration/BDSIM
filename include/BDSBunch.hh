@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -47,6 +47,7 @@ class BDSBunch
 {
 public:
   BDSBunch();
+  explicit BDSBunch(const G4String& nameIn);
   virtual ~BDSBunch();
 
   /// Make BDSHepMC3Reader a friend so it can use the protected ApplyTransform function.
@@ -122,6 +123,9 @@ public:
   /// GetNextParticle() or GetNextParticleValid().
   inline G4bool ParticleDefinitionHasBeenUpdated() const {return particleDefinitionHasBeenUpdated;}
 
+  /// Calculate zp safely based on other components.
+  static G4double CalculateZp(G4double xp, G4double yp, G4double Zp0);
+
   /// Work out whether either the geometric or normalised emittances are set and update
   /// the variables by reference with the values. Can throw exception if more than
   /// one set in either x and y.
@@ -131,6 +135,8 @@ public:
 			    G4double&         emittGeometricY,
 			    G4double&         emittNormalisedX,
 			    G4double&         emittNormalisedY);
+  
+  inline G4String Name() const {return name;}
 
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
@@ -144,9 +150,8 @@ protected:
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
 
-  /// Calculate zp safely based on other components.
-  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
-
+  G4String name; ///< Name of distribution
+  
   ///@{ Centre of distributions
   G4double X0;
   G4double Y0;

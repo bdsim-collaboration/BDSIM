@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSHistBinMapper3D.hh"
 #include "BDSOutputStructures.hh"
+#include "BDSTrajectoryOptions.hh"
 
 #include "globals.hh"
 
@@ -43,8 +44,10 @@ class BDSParticleCoordsFullGlobal;
 class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
+class BDSHitSamplerLink;
+typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
 class BDSTrajectory;
-class BDSTrajectoryPoint;
+class BDSTrajectoryPointHit;
 class BDSHitEnergyDepositionGlobal;
 typedef G4THitsCollection<BDSHitEnergyDepositionGlobal> BDSHitsCollectionEnergyDepositionGlobal;
 class BDSTrajectoriesToStore;
@@ -82,12 +85,17 @@ public:
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
+
+#ifdef SIXTRACKLINK
+  /// Interface to allow updating samplers with dynamic construction.
+  virtual void UpdateSamplers() {UpdateSamplerStructures();}
+#endif
   
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
 
-  /// Fill the local structure geant4 data with information. Also calls WriteGeant4Data().
-  void FillGeant4Data(G4bool writeIons);
+  /// Fill the local structure particle data with information. Also calls WriteParticleData().
+  void FillParticleData(G4bool writeIons);
 
   /// Fill the local structure beam with the original ones from the parser.
   /// This also calls WriteBeam().
@@ -113,6 +121,7 @@ public:
 		 const G4PrimaryVertex*                         vertex,
 		 const BDSHitsCollectionSampler*                samplerHitsPlane,
 		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
@@ -120,8 +129,8 @@ public:
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorld,
 		 const BDSHitsCollectionEnergyDepositionGlobal* energyLossWorldContents,
 		 const BDSHitsCollectionEnergyDepositionGlobal* worldExitHits,
-		 const BDSTrajectoryPoint*                      primaryHit,
-		 const BDSTrajectoryPoint*                      primaryLoss,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryHits,
+		 const std::vector<const BDSTrajectoryPointHit*>& primaryLosses,
 		 const BDSTrajectoriesToStore*                  trajectories,
 		 const BDSHitsCollectionCollimator*             collimatorHits,
 		 const BDSHitsCollectionApertureImpacts*        apertureImpactHits,
@@ -148,10 +157,15 @@ protected:
   inline G4bool CreateCollimatorOutputStructures() const {return createCollimatorOutputStructures;}
 
   /// @{ Options for dynamic bits of output.
+  G4bool storeELoss;
+  G4bool storeELossTunnel;
+  G4bool storeELossVacuum;
+  G4bool storeELossWorld; // for both world and world exit
   G4bool storeELossWorldContents;
   G4bool storeApertureImpacts;
   G4bool storeApertureImpactsHistograms;
   G4bool storePrimaries;
+  G4bool storeTrajectory;
   /// @}
 
   /// Mapping from complete collection name ("SD/PS") to histogram ID to fill. We have this
@@ -171,7 +185,7 @@ private:
   virtual void WriteHeader() = 0;
 
   /// Write the geant4 information.
-  virtual void WriteGeant4Data() = 0;
+  virtual void WriteParticleData() = 0;
 
   /// Write the beam.
   virtual void WriteBeam() = 0;
@@ -207,9 +221,12 @@ private:
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
+  
+  /// Fill sampler link hits into output structures.
+  void FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits);
 
   /// Fill the hit where the primary particle impact.
-  void FillPrimaryHit(const BDSTrajectoryPoint* phits);
+  void FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits);
 
   /// Fill a collection of energy hits into the appropriate output structure.
   void FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* loss,
@@ -219,18 +236,18 @@ private:
   void FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* loss,
 		      const LossType type);
 
-  /// Fill a collection volume exit hits into the approprate output structure.
+  /// Fill a collection volume exit hits into the appropriate output structure.
   //void FillELossWorldExitHits(const BDSHitsCollectionVolumeExit* worldExitHits);
   
   /// Fill the hit where the primary stopped being a primary.
-  void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
+  void FillPrimaryLoss(const std::vector<const BDSTrajectoryPointHit*>& primaryLosses);
 
   /// Copy a set of trajectories to the output structure.
   void FillTrajectories(const BDSTrajectoriesToStore* trajectories);
 
   /// Fill collimator hits.
   void FillCollimatorHits(const BDSHitsCollectionCollimator* hits,
-			  const BDSTrajectoryPoint* primaryLossPoint);
+			  const std::vector<const BDSTrajectoryPointHit*>& primaryLossPoints);
 
   /// Fill aperture impact hits.
   void FillApertureImpacts(const BDSHitsCollectionApertureImpacts* hits);
@@ -280,14 +297,11 @@ private:
   G4bool storeCollimatorHits;
   G4bool storeCollimatorHitsLinks;
   G4bool storeCollimatorHitsIons;
-  G4bool storeELoss;
   G4bool storeELossHistograms;
-  G4bool storeELossTunnel;
   G4bool storeELossTunnelHistograms;
-  G4bool storeELossVacuum;
   G4bool storeELossVacuumHistograms;
-  G4bool storeELossWorld; // for both world and world exit
-  G4bool storeGeant4Data;
+  G4bool storeParticleData;
+  G4bool storePrimaryHistograms;
   G4bool storeModel;
   G4bool storeSamplerPolarCoords;
   G4bool storeSamplerCharge;
@@ -297,6 +311,7 @@ private:
   G4bool storeSamplerIon;
   G4int  storeTrajectoryStepPoints;
   G4bool storeTrajectoryStepPointLast;
+  BDS::TrajectoryOptions storeTrajectoryOptions;
   /// @}
 
   /// Whether to create collimator output structures or not - based on
@@ -309,7 +324,10 @@ private:
   G4double energyDepositedWorld;
   G4double energyDepositedWorldContents;
   G4double energyDepositedTunnel;
+  G4double energyImpactingAperture;
+  G4double energyImpactingApertureKinetic;
   G4double energyWorldExit;
+  G4double energyWorldExitKinetic;
   G4int    nCollimatorsInteracted;
   /// @}
 

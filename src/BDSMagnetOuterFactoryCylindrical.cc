@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -231,7 +231,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String         
   G4double horizontalWidth  = recipe->horizontalWidth;
   CleanUp();
   // in this factory, h and v kickers will look the same so ignore bool vertical
-  // have to retain it though for virtual base class compatability
+  // have to retain it though for virtual base class compatibility
   CreateCylindricalSolids(name, length, beamPipe, containerLength, horizontalWidth);
   return CommonFinalConstructor(name, length, recipe);}
 

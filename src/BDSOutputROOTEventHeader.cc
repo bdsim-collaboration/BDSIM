@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -54,6 +54,8 @@ void BDSOutputROOTEventHeader::FlushLocal()
   combinedFiles.clear();
   nTrajectoryFilters = BDS::NTrajectoryFilters;
   trajectoryFilters.clear();
+  skimmedFile   = false;
+  nOriginalEvents = 0;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;

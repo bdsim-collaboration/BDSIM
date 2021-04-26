@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -41,9 +41,15 @@ class G4Track;
 class BDSSDEnergyDeposition: public BDSSensitiveDetector
 {
 public:
-  BDSSDEnergyDeposition(G4String name,
-			G4bool   storeExtrasIn);
+  BDSSDEnergyDeposition(const G4String& name,
+			G4bool          storeExtrasIn,
+			G4bool          killedParticleMassAddedToElossIn = false);
   virtual ~BDSSDEnergyDeposition();
+  
+  /// assignment and copy constructor not implemented nor used
+  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&) = delete;
+  BDSSDEnergyDeposition(BDSSDEnergyDeposition&) = delete;
+  BDSSDEnergyDeposition() = delete;
 
   virtual void Initialize(G4HCofThisEvent* HCE);
 
@@ -64,12 +70,8 @@ public:
   virtual G4VHit* last() const;
   
 private:
-  /// assignment and copy constructor not implemented nor used
-  BDSSDEnergyDeposition& operator=(const BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition(BDSSDEnergyDeposition&);
-  BDSSDEnergyDeposition() = delete;
-  
   G4bool   storeExtras;     ///< Whether to store extra information.
+  G4bool   killedParticleMassAddedToEloss; ///< In the case of a G4Track being deposited
   G4String colName;         ///< Collection name.
   BDSHitsCollectionEnergyDeposition* hits;
   G4int    HCIDe;

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -25,10 +25,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
+#include "RBDSException.hh"
 
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventOptions.hh"
 
+#include "Beam.hh"
 #include "Options.hh"
 
 #include "TFile.h"
@@ -82,10 +85,27 @@ int main(int argc, char* argv[])
   DataLoader* dl = nullptr;
   try
     {dl = new DataLoader(inputFileName, false, true);}
-  catch (const std::string& e)
-    {std::cerr << e << std::endl; exit(1);}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
+
+  // beam required to get the mass of the primary particle in EventAnalysis
+  Beam*   beam     = dl->GetBeam();
+  TChain* beamTree = dl->GetBeamTree();
+  BDSOutputROOTEventBeam* outputBeam = beam->beam;
+  beamTree->GetEntry(0);
+  const std::string& particleName = outputBeam->particle;
+  
+  TChain* modelTree = dl->GetModelTree();
+  if (modelTree->GetEntries() == 0)
+    {
+      std::cerr << "Data file written without Model tree that is required for optics analysis" << std::endl;
+      exit(1);
+    }
+
   EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
-						 false, true, false, -1, emittanceOnFly);
+						 false, true, false, -1, emittanceOnFly, 0, -1, particleName);
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
@@ -111,7 +131,6 @@ int main(int argc, char* argv[])
   if (!ob->generatePrimariesOnly)
     {
       // clone model tree for nice built in optics plotting
-      auto modelTree = dl->GetModelTree();
       auto newTree = modelTree->CloneTree();
       newTree->Write("", TObject::kOverwrite);
     }

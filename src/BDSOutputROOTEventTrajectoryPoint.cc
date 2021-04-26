@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,61 +20,41 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventTrajectoryPoint)
 
-BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint():
-  partID(-1),
-  trackID(-1),
-  parentID(-1),
-  parentIndex(-1),
-  processType(-1),
-  processSubType(-1),
-  weight(-1.0),
-  energyDeposited(-1.0),
-  position(0,0,0),
-  momentum(0,0,0),
-  model(-1),
-  time(0),
-  positionLocal(0,0,0),
-  momentumLocal(0,0,0),
-  charge(0),
-  kineticEnergy(0),
-  turnsTaken(0),
-  rigidity(0),
-  mass(0),
-  isIon(0),
-  ionA(0),
-  ionZ(0),
-  nElectrons(0)
-{;}
+BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint()
+{
+  ClearContents();
+}
 
-BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int      partIDIn,
-								     int      trackIDIn,
-								     int      parentIDIn,
-								     int      parentIndexIn,
-								     int      processTypeIn,
-								     int      processSubTypeIn,
-								     double   weightIn,
-								     double   energyDepositedIn,
-								     TVector3 positionIn,
-								     TVector3 momentumIn,
-								     int      modelIn,
-								     double   timeIn,
-								     TVector3 positionLocalIn,
-								     TVector3 momentumLocalIn,
-								     double   chargeIn,
-								     double   kineticEnergyIn,
-								     int      turnsTakenIn,
-								     double   rigidityIn,
-								     double   massIn,
-								     bool     isIonIn,
-								     int      ionAIn,
-								     int      ionZIn,
-								     int      nElectronsIn):
+BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int             partIDIn,
+								     unsigned int    trackIDIn,
+								     unsigned int    parentIDIn,
+								     unsigned int    parentIndexIn,
+								     int             processTypeIn,
+								     int             processSubTypeIn,
+								     double          weightIn,
+								     double          energyDepositedIn,
+								     const TVector3& positionIn,
+								     const TVector3& momentumIn,
+								     int             modelIn,
+								     double          timeIn,
+								     const TVector3& positionLocalIn,
+								     const TVector3& momentumLocalIn,
+								     double chargeIn,
+								     double kineticEnergyIn,
+								     int    turnsTakenIn,
+								     double rigidityIn,
+								     double massIn,
+								     bool   isIonIn,
+								     int    ionAIn,
+								     int    ionZIn,
+								     int    nElectronsIn,
+								     int    stepIndexIn):
   partID(partIDIn),
   trackID(trackIDIn),
   parentID(parentIDIn),
   parentIndex(parentIndexIn),
-  processType(processTypeIn),
-  processSubType(processSubTypeIn),
+  postProcessType(processTypeIn),
+  postProcessSubType(processSubTypeIn),
   weight(weightIn),
   energyDeposited(energyDepositedIn),
   position(positionIn),
@@ -91,8 +71,37 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int      pa
   isIon(isIonIn),
   ionA(ionAIn),
   ionZ(ionZIn),
-  nElectrons(nElectronsIn)
+  nElectrons(nElectronsIn),
+  stepIndex(stepIndexIn)
 {;}
+
+void BDSOutputROOTEventTrajectoryPoint::ClearContents()
+{
+  partID = 0;
+  trackID = 0;
+  parentID = 0;
+  parentIndex = 0;
+  postProcessType = -1;
+  postProcessSubType = -1;
+  weight = -1.0;
+  energyDeposited = -1.0;
+  position = {0,0,0};
+  momentum = {0,0,0};
+  model = -1;
+  time = 0;
+  positionLocal = {0,0,0};
+  momentumLocal = {0,0,0};
+  charge = 0;
+  kineticEnergy = 0;
+  turnsTaken = 0;
+  rigidity = 0;
+  mass = 0;
+  isIon = false;
+  ionA = 0;
+  ionZ = 0;
+  nElectrons = 0;
+  stepIndex = -1;
+}
 
 BDSOutputROOTEventTrajectoryPoint::~BDSOutputROOTEventTrajectoryPoint()
 {;}

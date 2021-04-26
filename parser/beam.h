@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -63,16 +63,13 @@ namespace GMAD
     void Amalgamate(const Beam& optionsIn, bool override, int startFromEvent = 0);
 
     /// Whether a parameter has been set using the set_value method or not.
-    bool HasBeenSet(std::string name) const;
+    bool HasBeenSet(const std::string& name) const;
 
     inline const std::vector<std::string>& KeysOfSetValues() const {return setKeys;}
     
   private:
     /// publish members so these can be looked up from parser
     void PublishMembers();
-
-    /// A list of all the keys that have been set in this instance.
-    std::vector<std::string> setKeys;
   };
 
   template<typename T>
@@ -89,7 +86,7 @@ namespace GMAD
       }
     catch (const std::runtime_error&)
       {
-        std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
+        std::cerr << "Error: beam> unknown beam parameter \"" << name << "\" with value " << value << std::endl;
         exit(1);
       }
   }

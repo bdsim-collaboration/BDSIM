@@ -14,7 +14,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 4 )
+set( BDSIM_MINOR_VERSION 5 )
 set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -92,6 +92,13 @@ if(FIELDDOUBLEPRECISION)
   message(STATUS "Field double precision ON")
 endif()
 
+# Sixtrack linking bits of code that aren't needed otherwise
+option( USE_SIXTRACKLINK "Include linking code for SixTrack." OFF )
+if(USE_SIXTRACKLINK)
+  add_definitions("-DSIXTRACKLINK")
+  message(STATUS "SixTrack link ON")
+endif()
+
 # Find GEANT4
 include(cmake/Geant4.cmake)
 
@@ -111,6 +118,7 @@ include(rebdsim_test_macros)
 include(root_test_macros)
 
 # rpath for libraries to work from installation correctly
+set(CMAKE_BUILD_RPATH   "${ROOT_LIBRARY_DIR}")
 if (USE_HEPMC3)
   #TBC - need to test if we can just use this
   #set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
@@ -134,6 +142,7 @@ set(BDSIM_LIB_NAME_STATIC "bdsim-static")
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${PROJECT_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/src/BDSExecOptions.cc ${CMAKE_BINARY_DIR}/src/BDSExecOptions.cc @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/BDSIMClass.cc ${CMAKE_BINARY_DIR}/src/BDSIMClass.cc @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/BDSVisManager.cc ${CMAKE_BINARY_DIR}/src/BDSVisManager.cc @ONLY)
 
@@ -141,6 +150,8 @@ BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
+list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSExecOptions.cc)
+list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSExecOptions.cc)
 list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSIMClass.cc)
 list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSIMClass.cc)
 list(APPEND bdsim_sources ${CMAKE_CURRENT_BINARY_DIR}/src/BDSVisManager.cc)
@@ -181,6 +192,7 @@ set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include
 # BDSIM library and binaries
 option( BDSIM_BUILD_STATIC_LIBS "Build static BDSIM library."  OFF )
 if (BDSIM_BUILD_STATIC_LIBS)
+  message(STATUS "Building BDSIM static libraries in addition to shared ones.")
   add_library(${BDSIM_LIB_NAME_STATIC} STATIC ${root_dicts} ${bdsim_sources})
   generate_export_header(${BDSIM_LIB_NAME_STATIC})
 endif()
@@ -190,10 +202,10 @@ target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
 target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
-add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
+add_executable(bdsimExec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
-set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(bdsimexec ${BDSIM_LIB_NAME} gmad)
+set_target_properties(bdsimExec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdsimExec ${BDSIM_LIB_NAME} gmad)
 
 if (USE_GZSTREAM)
   #preprocessor flag
@@ -212,7 +224,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
 endif()
 
 # set binary name for testing usage
-get_target_property(binaryname bdsimexec OUTPUT_NAME)
+get_target_property(binaryname bdsimExec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
@@ -234,8 +246,11 @@ target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
 add_dependencies(${BDSIM_LIB_NAME} bdsimRootEvent)
 
+# material builder
+add_subdirectory(modules/nistmaterials)
+
 # Install the targets:
-set(executables bdsimexec)
+set(executables bdsimExec)
 if (BDSIM_BUILD_STATIC_LIBS)
   set(libraries ${BDSIM_LIB_NAME} ${BDSIM_LIB_NAME_STATIC} bdsimRootEvent)
 else()

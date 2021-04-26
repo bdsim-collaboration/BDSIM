@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTGeant4Data.hh"
+#include "BDSOutputROOTParticleData.hh"
 #include "BDSHitSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -65,10 +66,11 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeStepLength = globals->StoreELossStepLength();
   G4bool storePreStepKineticEnergy = globals->StoreELossPreStepKineticEnergy();
   G4bool storeModelID    = globals->StoreELossModelID();
+  G4bool storeELPhysics  = globals->StoreELossPhysicsProcesses();
   // store the model id if either modelID requested or store links
   storeModelID = storeModelID || storeLinks;
 
-  geant4DataOutput = new BDSOutputROOTGeant4Data();
+  particleDataOutput = new BDSOutputROOTParticleData();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
@@ -76,19 +78,19 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
   eLoss       = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossVacuum = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossTunnel = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
-					   storePreStepKineticEnergy);
+					   storePreStepKineticEnergy, storeELPhysics);
   eLossWorld         = new BDSOutputROOTEventLossWorld();
   eLossWorldExit     = new BDSOutputROOTEventLossWorld();
   eLossWorldContents = new BDSOutputROOTEventLossWorld();
 
-  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
-  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, true, true);
 
   apertureImpacts = new BDSOutputROOTEventAperture();
   
@@ -103,14 +105,12 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  samplerTrees.push_back(primary);
-  samplerNames.push_back("Primary");
   primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
 BDSOutputStructures::~BDSOutputStructures()
 {
-  delete geant4DataOutput;
+  delete particleDataOutput;
   delete headerOutput;
   delete beamOutput;
   delete optionsOutput;
@@ -134,6 +134,7 @@ BDSOutputStructures::~BDSOutputStructures()
     {delete sampler;}
   for (auto collimator : collimators)
     {delete collimator;}
+  delete primary;
 }
 
 G4int BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
@@ -174,8 +175,9 @@ void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
+      samplerTrees.reserve(300); // TODO hardcoded because of sixtrack dynamic buildup
       localSamplersInitialised = true;
-      for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+      for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
 #ifndef __ROOTDOUBLE__
 	  BDSOutputROOTEventSampler<float>*  res = new BDSOutputROOTEventSampler<float>(samplerName);
@@ -188,6 +190,28 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
+#ifdef SIXTRACKLINK
+G4int BDSOutputStructures::UpdateSamplerStructures()
+{
+  G4int result = 0;
+  for (auto const& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {// only put it in if it doesn't exist already
+      if (std::find(samplerNames.begin(), samplerNames.end(), samplerName) == samplerNames.end())
+	{
+	  result++;
+#ifndef __ROOTDOUBLE__
+	  BDSOutputROOTEventSampler<float>* res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+	  BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+	  samplerTrees.push_back(res);
+	  samplerNames.push_back(samplerName);
+	}
+    }
+  return result;
+}
+#endif
+
 void BDSOutputStructures::PrepareCollimatorInformation()
 {
   const G4String collimatorPrefix = "COLL_";
@@ -199,7 +223,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
     {
       // prepare output structure name
       const BDSBeamlineElement* el = flatBeamline->at(index);
-      // use the 'placement' name for a unique name (with copynumer included)
+      // use the 'placement' name for a unique name (with copy number included)
       G4String collimatorName = collimatorPrefix + el->GetPlacementName();
       collimatorNames.push_back(collimatorName);
       collimatorIndicesByName[el->GetName()]          = index;
@@ -227,9 +251,9 @@ void BDSOutputStructures::InitialiseCollimators()
     }
 }
 
-void BDSOutputStructures::ClearStructuresGeant4Data()
+void BDSOutputStructures::ClearStructuresParticleData()
 {
-  geant4DataOutput->Flush();
+  particleDataOutput->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresHeader()
@@ -254,6 +278,7 @@ void BDSOutputStructures::ClearStructuresOptions()
 
 void BDSOutputStructures::ClearStructuresEventLevel()
 {
+  primary->Flush();
   for (auto sampler : samplerTrees)
     {sampler->Flush();}
   for (auto collimator : collimators)

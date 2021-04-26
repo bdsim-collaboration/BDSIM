@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 BDSBunchHalo::BDSBunchHalo():
+  BDSBunch("halo"),
   alphaX(0.0), alphaY(0.0),
   betaX(0.0), betaY(0.0),
   emitX(0.0), emitY(0.0),
@@ -124,14 +125,6 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
     double emitXSp = gammaX * std::pow(std::abs(dx), 2) + (2. * alphaX * dx * dxp) + betaX * std::pow(std::abs(dxp), 2);
     double emitYSp = gammaY * std::pow(std::abs(dy), 2) + (2. * alphaY * dy * dyp) + betaY * std::pow(std::abs(dyp), 2);
 
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
-    G4cout << __METHOD_NAME__ << "Xcollimators> "  << haloXCutInner << G4endl;
-    G4cout << __METHOD_NAME__ << "Ycollimators> "  << haloYCutInner << G4endl;
-    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << emitInnerX << " " << emitOuterX << " "
-	   << emitY << " " << emitYSp << " " << emitInnerY << " " << emitOuterY << G4endl;
-#endif
-
     // check if particle is within normal beam core, if so continue generation
     // also check if particle is within the desired cut.
     if ((std::abs(emitXSp) < emitInnerX || std::abs(emitYSp) < emitInnerY) ||
@@ -186,14 +179,13 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
 	xp += dxp * CLHEP::rad;
 	yp += dyp * CLHEP::rad;
 	
-	G4double zp = CalculateZp(xp, yp, Zp0);	
-	G4double t = T0 * CLHEP::s;
-	G4double E = E0 * CLHEP::GeV;
+	G4double zp = CalculateZp(xp, yp, Zp0);
 	
 #ifdef BDSDEBUG
 	G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
 #endif
-	BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
+	// E0 and T0 from base class and already in G4 units
+	BDSParticleCoordsFull result(x,y,z,xp,yp,zp,T0,S0+z,E0,/*weight=*/1.0);
 	return result;
       }
   }
@@ -223,7 +215,7 @@ void BDSBunchHalo::CheckParameters()
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
   
   if (haloNSigmaYInner <= 0)
-    {throw BDSException(__METHOD_NAME__, "haloYSigmaXInner <= 0");}
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner <= 0");}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner cannot be less than haloNSigmaXOuter");}

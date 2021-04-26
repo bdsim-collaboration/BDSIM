@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -75,7 +75,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
   G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
   G4VSolid*       containerSolid = containerLV->GetSolid();
-  G4ThreeVector gdmlWorldOrigin(0,0,0);
+  G4ThreeVector gdmlWorldOrigin = G4ThreeVector();
   if (containerPV->GetName() == "world_volume_lv_PV")
     {
       gdmlWorldOrigin = parser->GetPosition("PygdmlOrigin"); // TODO check if Pygdml geometry
@@ -95,18 +95,13 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
 
   ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
-
-  /// Now overwrite container lv vis attributes
-  if (containerLV->GetNoDaughters() > 0)
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
-  else
-    {// no hierarchy - make sure it's visible
-      G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
-      G4VisAttributes* vis = new G4VisAttributes(*c);
-      vis->SetVisibility(true);
-      visesGDML.insert(vis);
-      containerLV->SetVisAttributes(vis);
-    }
+  
+  // make sure container is visible - Geant4 always makes the container invisible.
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
+  G4VisAttributes* vis = new G4VisAttributes(*c);
+  vis->SetVisibility(true);
+  visesGDML.insert(vis);
+  containerLV->SetVisAttributes(vis);
 
   std::pair<BDSExtent, BDSExtent> outerInner = BDS::DetermineExtents(containerSolid);
   

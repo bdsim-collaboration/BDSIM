@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -53,7 +53,8 @@ public:
 		double   printModuloFraction = 0.01,
 		bool     emittanceOnTheFlyIn = false,
 		long int eventStartIn        = 0,
-		long int eventEndIn          = -1);
+		long int eventEndIn          = -1,
+		const std::string& primaryParticleName = "");
 
   virtual ~EventAnalysis() noexcept;
 

@@ -1,3 +1,9 @@
+option(USE_GEANT4_EMD_ID "Support custom build of Geant4 with EMD process sub type set discretely"  OFF )
+if(USE_GEANT4_EMD_ID)
+  add_definitions("-DG4EMDPROCESSID")
+  message(STATUS "USE_GEANT4_EMD_ID ON - using custom build of Geant4 with EMD process ID customised.")
+endif()
+
 # with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
@@ -68,6 +74,7 @@ if (Geant4_FOUND)
 
       option(USE_CUSTOM_CHANNELLING "Use custom build of crystal channelling in Geant4" OFF)
       if(USE_CUSTOM_CHANNELLING)
+	message(STATUS "Use custom crystal channelling with Geant4: ON")
         add_definitions("-DCUSTOMCHANNELING")
         set(PREPROCESSOR_DEFS "-DCUSTOMCHANNELING")
       endif()

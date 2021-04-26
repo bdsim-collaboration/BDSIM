@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleCoordsFull.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beam.h"
 
@@ -39,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
-  BDSBunch(),
+  BDSBunch("event generator"),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
   eventGeneratorMinY(0),
@@ -95,6 +96,9 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
   eventGeneratorMaxEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
   acceptedParticlesString = beam.eventGeneratorParticles;
   Rp0 = std::hypot(Xp0,Yp0);
+  
+  if (beam.matchDistrFileLength)
+    {BDS::Warning("The option matchDistrFileLength doesn't work with the eventgenerator distribution");}
 }
 
 void BDSBunchEventGenerator::CheckParameters()
@@ -127,30 +131,25 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
       std::stringstream ss(acceptedParticlesString);
       while (ss >> particleIDStr)
 	{
-	  G4ParticleDefinition* particleDef = nullptr;
-	  // try and see if it's an integer and therefore PDG ID, if not search by string
 	  try
-	    {
+	    {// try and see if it's an integer and therefore PDG ID, if not search by string
 	      // we try this because std::stoi can throw a std::invalid_argument or
 	      // std::out_of_range exception, both of which inherit std::logic_error
 	      int particleID = std::stoi(particleIDStr);
 	      // we don't use the G4ParticleTable->FindParticle(int) because it unnecessarily
 	      // checks for physics readiness and throws an exception. here we just inspect
-	      // the encoding dictionary ourselve. it's all typedeffed but it's
+	      // the encoding dictionary ourselves. it's all typedeffed but it's
 	      // std::map<G4int, G4ParticleDefinition*>
 	      G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
 	      auto search = encoding->find(particleID);
 	      if (search != encoding->end())
-		{
-		  particleDef = search->second;
-		  acceptedParticles.push_back(particleID);
-		}
+		{acceptedParticles.push_back(particleID);}
 	      else
 		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "not found in particle table");}
 	    }
 	  catch (const std::logic_error&) // else, usual way by string search
 	    {
-	      particleDef = particleTable->FindParticle(particleIDStr);
+	      G4ParticleDefinition* particleDef = particleTable->FindParticle(particleIDStr);
 	      if (!particleDef)
 		{
 		  BDS::PrintDefinedParticles();

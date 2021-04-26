@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -43,12 +43,11 @@ G4ThreeVector BDSFieldMagGlobal::GetFieldTransformed(const G4ThreeVector& positi
     {return GetField(position, t);}
 }
 
-G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector &position,
+G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector& position,
 					  const G4double       t) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
   G4ThreeVector localField    = field->GetFieldTransformed(localPosition,t);
   G4ThreeVector globalField   = ConvertAxisToGlobal(localField);
-
   return globalField;
 }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -37,10 +37,7 @@ class G4LogicalVolume;
 
 BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     G4bool storeTrajectoryIn,
-				     G4bool storeTrajectoryLocalIn,
-				     G4bool storeTrajectoryLinksIn,
-				     G4bool storeTrajectoryIonIn,
-				     G4bool suppressTransportationStepsIn,
+				     const BDS::TrajectoryOptions& storeTrajectoryOptionsIn,
 				     BDSEventAction* eventActionIn,
 				     G4int  verboseSteppingEventStartIn,
 				     G4int  verboseSteppingEventStopIn,
@@ -48,10 +45,7 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 				     G4int  verboseSteppingLevelIn):
   interactive(!batchMode),
   storeTrajectory(storeTrajectoryIn),
-  storeTrajectoryLocal(storeTrajectoryLocalIn),
-  storeTrajectoryLinks(storeTrajectoryLinksIn),
-  storeTrajectoryIon(storeTrajectoryIonIn),
-  suppressTransportationSteps(suppressTransportationStepsIn),
+  storeTrajectoryOptions(storeTrajectoryOptionsIn),
   eventAction(eventActionIn),
   verboseSteppingEventStart(verboseSteppingEventStartIn),
   verboseSteppingEventStop(verboseSteppingEventStopIn),
@@ -79,10 +73,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 	{
 	  auto traj = new BDSTrajectory(track,
 					interactive,
-					suppressTransportationSteps,
-					storeTrajectoryLocal,
-					storeTrajectoryLinks,
-					storeTrajectoryIon);
+					storeTrajectoryOptions);
 	  fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
@@ -97,11 +88,9 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
       G4bool storePoints = storeTrajectory || interactive;
       auto traj = new BDSTrajectoryPrimary(track,
 					   interactive,
-					   suppressTransportationSteps,
-					   storeTrajectoryLocal,
-					   storeTrajectoryLinks,
-					   storeTrajectoryIon,
+					   storeTrajectoryOptions,
 					   storePoints);
+      eventAction->RegisterPrimaryTrajectory(traj);
       fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);
     }

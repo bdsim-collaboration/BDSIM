@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4VisAttributes;
 class G4VPhysicalVolume;
+class BDSBeamlineElement;
 class BDSSampler;
 
 /**
@@ -40,12 +41,21 @@ class BDSSampler;
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
 public:
-  explicit BDSParallelWorldSampler(G4String name);
+  explicit BDSParallelWorldSampler(const G4String& name);
   virtual ~BDSParallelWorldSampler();
 
   /// Construct the required parallel world geometry. This must
   /// overload the pure virtual method in G4VUserParallelWorld.
   virtual void Construct();
+
+  /// @{ Accessor.
+  BDSSampler* GeneralPlane() const {return generalPlane;}
+  G4LogicalVolume* WorldLV() const {return samplerWorldLV;}
+  /// @}
+  
+  /// Place a sampler from a single element.
+  void Place(const BDSBeamlineElement* element,
+	     G4double                  samplerRadius);
 
 private:
   /// No default constructor.
@@ -62,6 +72,8 @@ private:
 
   /// General single sampler we use for plane samplers.
   BDSSampler* generalPlane;
+  
+  G4LogicalVolume* samplerWorldLV;
 };
 
 #endif

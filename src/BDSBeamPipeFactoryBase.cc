@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSColours.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
@@ -31,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
+#include <limits>
 #include <set>
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
@@ -74,7 +76,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   /// build logical volumes
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
-  SetVisAttributes();
+  SetVisAttributes(beamPipeMaterialIn);
   /// set user limits
   SetUserLimits(length);
   /// place volumes
@@ -102,16 +104,16 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
   allLogicalVolumes.insert(beamPipeLV);
 }
 
-void BDSBeamPipeFactoryBase::SetVisAttributes()
+void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
 {
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColourWithDefault(beamPipeMaterialIn,
+                                                             BDSColours::Instance()->GetColour("beampipe"));
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
-  // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  // container
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
@@ -120,12 +122,19 @@ void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
   auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
-
   if (ul != defaultUL) // if it's not the default register it
     {allUserLimits.insert(ul);}
   vacuumLV->SetUserLimits(ul);
-  beamPipeLV->SetUserLimits(ul);
   containerLV->SetUserLimits(ul);
+  
+  G4UserLimits* beamPipeUL = ul;
+  if (BDSGlobalConstants::Instance()->BeamPipeIsInfiniteAbsorber())
+    {// new beam pipe user limits, copy from updated default user limits above
+      beamPipeUL = new G4UserLimits(*ul);
+      beamPipeUL->SetUserMinEkine(std::numeric_limits<double>::max());
+      allUserLimits.insert(beamPipeUL);
+    }
+  beamPipeLV->SetUserLimits(beamPipeUL);
 }
 
 void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
