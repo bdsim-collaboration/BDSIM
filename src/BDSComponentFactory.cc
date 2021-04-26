@@ -30,10 +30,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
+#ifdef USE_DICOM
+#include "BDSCT.hh"
+#include "BDSDicomIntersectVolume.hh"
+#endif
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
-#include "BDSCT.hh"
 #include "BDSElement.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
@@ -48,7 +51,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSWireScanner.hh"
 #include "BDSUndulator.hh"
 #include "BDSWarning.hh"
-#include "BDSDicomIntersectVolume.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -374,7 +376,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DUMP:
       {component = CreateDump(); break;}
     case ElementType::_CT:
+#ifdef USE_DICOMN
       {component = CreateCT(); break;}
+#else
+      {throw BDSException(__METHOD_NAME__, "ct element can't be used - not compiled with dicom module!");}
+#endif
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
       {component = CreateAwakeScreen(); break;} 
@@ -385,9 +391,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 #ifdef USE_AWAKE
       {component = CreateAwakeSpectrometer(); break;}
 #else
-      throw BDSException(__METHOD_NAME__, "Awake Spectrometer can't be used - not compiled with AWAKE module!");
+      {throw BDSException(__METHOD_NAME__, "Awake Spectrometer can't be used - not compiled with AWAKE module!");}
 #endif
-      
       // common types, but nothing to do here
     case ElementType::_MARKER:
     case ElementType::_LINE:
@@ -1557,6 +1562,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
   return result;
 }
 
+#ifdef USE_DICOM
 BDSAcceleratorComponent* BDSComponentFactory::CreateCT()
 {
     if (!HasSufficientMinimumLength(element))
@@ -1575,6 +1581,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCT()
 
     return result;
 }
+#endif
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
 {
