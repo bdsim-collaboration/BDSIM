@@ -166,6 +166,16 @@ list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSVisManager.cc)
 
 # Add Modules
 add_subdirectory(modules)
+if (USE_DICOM)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/dicom/include)
+  file(GLOB dicom_sources "${CMAKE_CURRENT_SOURCE_DIR}/modules/dicom/src/*.cc")
+  list(APPEND bdsim_sources ${dicom_sources})
+endif()
+if (USE_AWAKE)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/AWAKE/include)
+  file(GLOB awake_sources "${CMAKE_CURRENT_SOURCE_DIR}/modules/AWAKE/src/*.cc")
+  list(APPEND bdsim_sources ${awake_sources})
+endif()
 
 if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
@@ -175,6 +185,8 @@ endif()
 # Parser
 add_subdirectory(parser)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
+
+# TBC - don't think is needed...
 # include current directory for parser includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -220,8 +232,8 @@ if (USE_BOOST)
   target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
 endif()
 if (USE_DICOM)
-  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${DCMTK_INCLUDE_DIRS})
   target_link_libraries(${BDSIM_LIB_NAME} ${DCMTK_LIBRARIES})
+  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${DCMTK_INCLUDE_DIRS})
 endif()
 
 # link against ROOT
