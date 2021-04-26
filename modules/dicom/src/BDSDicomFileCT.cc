@@ -1,7 +1,21 @@
-//
-// Created by strangesyd on 3/7/21.
-//
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2021.
 
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDicomFileCT.hh"
 #include "BDSDicomFileStructure.hh"
 #include "BDSDicomROI.hh"
@@ -17,19 +31,16 @@
 
 #include <set>
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomFileCT::BDSDicomFileCT()
 {
-    theFileMgr = BDSDicomFileMgr::GetInstance();
+  theFileMgr = BDSDicomFileMgr::GetInstance();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomFileCT::BDSDicomFileCT(DcmDataset* dset) : BDSDicomVFile(dset)
 {
     theFileMgr = BDSDicomFileMgr::GetInstance();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::ReadData()
 {
     std::vector<double> dImagePositionPatient = Read1Data(theDataset, DCM_ImagePositionPatient,3);
@@ -99,8 +110,6 @@ void BDSDicomFileCT::ReadData()
     ReadPixelData();
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::ReadPixelData()
 {
     //  READING THE PIXELS :
@@ -208,13 +217,11 @@ void BDSDicomFileCT::ReadPixelData()
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::operator+=( const BDSDicomFileCT& rhs )
 {
-    *this = *this + rhs;
+  *this = *this + rhs;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 BDSDicomFileCT BDSDicomFileCT::operator+( const BDSDicomFileCT& rhs )
 {
     //----- Check that both slices has the same dimensions
@@ -276,7 +283,6 @@ BDSDicomFileCT BDSDicomFileCT::operator+( const BDSDicomFileCT& rhs )
     return temp;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::DumpHeaderToTextFile(std::ofstream& fout)
 {
     if( BDSDicomFileMgr::verbose >= warningVerb ) G4cout << fLocation << " DumpHeaderToTextFile "
@@ -296,7 +302,6 @@ void BDSDicomFileCT::DumpHeaderToTextFile(std::ofstream& fout)
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::Print(std::ostream& out )
 {
     G4int fCompress = theFileMgr->GetCompression();
@@ -348,10 +353,8 @@ void BDSDicomFileCT::BuildMaterials()
             fMateIDs.push_back(mateID);
         }
     }
-
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::DumpMateIDsToTextFile(std::ofstream& fout)
 {
     G4int fCompress = theFileMgr->GetCompression();
@@ -366,7 +369,6 @@ void BDSDicomFileCT::DumpMateIDsToTextFile(std::ofstream& fout)
     }
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::DumpDensitiesToTextFile(std::ofstream& fout)
 {
     G4int fCompress = theFileMgr->GetCompression();
@@ -386,7 +388,6 @@ void BDSDicomFileCT::DumpDensitiesToTextFile(std::ofstream& fout)
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::BuildStructureIDs()
 {
     G4int fCompress = theFileMgr->GetCompression();
@@ -633,7 +634,6 @@ GING -NStructureNMaxROI argument to a lower value").c_str());
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomFileCT::DumpStructureIDsToTextFile(std::ofstream& fout)
 {
     G4int fCompress = theFileMgr->GetCompression();

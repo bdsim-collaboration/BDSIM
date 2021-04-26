@@ -1,7 +1,60 @@
-//
-// Created by strangesyd on 3/12/21.
-//
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2021.
 
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+//
+/// \file medical/DICOM/src/DicomPhantomZSliceMerged.cc
+/// \brief Implementation of the DicomPhantomZSliceMerged class
+//
+//
+// The code was written by :
+//      * Jonathan Madsen : jonathan.madsen@cern.ch (12/18/2012)
+//
+//  Texas A&M University
+//  3133 TAMU, Zachry Building
+//  College Station, TX 77843, USA
+//
+//*******************************************************
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MaterialTable.hh"
@@ -11,23 +64,16 @@
 
 #include "BDSDicomPhantomZSliceHeader.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo..
 BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader(const G4String& fname)
         :   fNoVoxelX(0),fNoVoxelY(0),fNoVoxelZ(0),
             fMinX(0),fMinY(0),fMinZ(0),
             fMaxX(0),fMaxY(0),fMaxZ(0),
             fFilename(fname),fSliceLocation(0)
-{
+{;}
 
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo..
 BDSDicomPhantomZSliceHeader::~BDSDicomPhantomZSliceHeader()
-{
+{;}
 
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader( std::ifstream& fin )
 {
     //----- Read material indices and names
@@ -76,7 +122,6 @@ BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader( std::ifstream& fin )
     fSliceLocation = 0.5*(fMinZ + fMaxZ);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 G4bool BDSDicomPhantomZSliceHeader::CheckMaterialExists(const G4String& mateName)
 {
     const G4MaterialTable* matTab = G4Material::GetMaterialTable();
@@ -91,16 +136,13 @@ G4bool BDSDicomPhantomZSliceHeader::CheckMaterialExists(const G4String& mateName
     } else {
         return true;
     }
-
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 void BDSDicomPhantomZSliceHeader::operator+=( const BDSDicomPhantomZSliceHeader& rhs)
 {
     *this = *this + rhs;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo..
 BDSDicomPhantomZSliceHeader BDSDicomPhantomZSliceHeader::operator+(
         const BDSDicomPhantomZSliceHeader& rhs )
 {
@@ -175,10 +217,8 @@ BDSDicomPhantomZSliceHeader BDSDicomPhantomZSliceHeader::operator+(
     return temp;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo..
 void BDSDicomPhantomZSliceHeader::DumpToFile()
 {
-
     G4cout << "DicomPhantomZSliceHeader::Dumping Z Slice data to "
            << fFilename << "..." << G4endl;
     //sleep(5);
@@ -217,7 +257,6 @@ void BDSDicomPhantomZSliceHeader::DumpToFile()
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
 void BDSDicomPhantomZSliceHeader::ReadDataFromFile()
 {
     std::ifstream in;
@@ -302,4 +341,3 @@ void BDSDicomPhantomZSliceHeader::ReadDataFromFile()
 
     in.close();
 }
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
