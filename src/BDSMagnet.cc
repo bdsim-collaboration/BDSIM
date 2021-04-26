@@ -296,7 +296,7 @@ void BDSMagnet::BuildContainerLogicalVolume()
 
 void BDSMagnet::PlaceComponents()
 {
-  if (placeBeamPipe and !(magnetOuterInfo->extractOuterContainer) and (beamPipeInfo->beamPipeType != BDSBeamPipeType::none))
+  if (placeBeamPipe && !(magnetOuterInfo->extractOuterContainer) && (beamPipeInfo->beamPipeType != BDSBeamPipeType::none))
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
@@ -309,13 +309,13 @@ void BDSMagnet::PlaceComponents()
 						    0,                       // copy number
                                                     false);
 
-      if (beamPipePV->CheckOverlaps() and checkOverlaps)
+      if (beamPipePV->CheckOverlaps() && checkOverlaps)
         {throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");}
       
       RegisterPhysicalVolume(beamPipePV);
     }
 
-  if (outer and !(magnetOuterInfo->extractOuterContainer))
+  if (outer && !(magnetOuterInfo->extractOuterContainer))
     {
       // place the outer logical volume into the container logical volume
       if (magnetOuterInfo->geometryType != BDSMagnetGeometryType::external or magnetOuterInfo->includeGdmlWorldVolume)
@@ -357,7 +357,7 @@ void BDSMagnet::PlaceComponents()
                                               copyNumber,                               // copy number
                                               false);                           // overlap checking
 		  
-                  if (vv->CheckOverlaps() and checkOverlaps)
+                  if (vv->CheckOverlaps() && checkOverlaps)
 		    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
 		  
                   RegisterPhysicalVolume(vv);
