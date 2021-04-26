@@ -1,5 +1,5 @@
 # option to turn event display, and therefore dependency on ROOT EVE libraries off or on.
-option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." ON )
+option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." OFF )
 
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
@@ -11,6 +11,8 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimHistoMerge
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombine.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdskim.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsimCombine.cc)
 
 if (NOT USE_EVENTDISPLAY)
   list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
@@ -64,10 +66,22 @@ endforeach()
 
 add_library(rebdsim SHARED ${rebdsimLibSources})
 target_link_libraries(rebdsim bdsimRootEvent)
+if (USE_EVENTDISPLAY)
+    target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
+endif()
+bdsim_install_targets(rebdsim)
 
-add_executable(rebdsimexec rebdsim.cc)
-set_target_properties(rebdsimexec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimexec rebdsim bdsimRootEvent)
+add_executable(rebdsimExec rebdsim.cc)
+set_target_properties(rebdsimExec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimExec)
+
+if (USE_EVENTDISPLAY)
+    add_executable(edbdsimExec edbdsim.cc)
+    set_target_properties(edbdsimExec PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(edbdsimExec rebdsim ${ROOT_EVELIBRARIES})
+    bdsim_install_targets(edbdsimExec)
+endif()
 
 add_executable(rebdsimHistoMergeExec rebdsimHistoMerge.cc)
 set_target_properties(rebdsimHistoMergeExec PROPERTIES OUTPUT_NAME "rebdsimHistoMerge" VERSION ${BDSIM_VERSION})
@@ -79,26 +93,25 @@ set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine"
 target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimCombineExec)
 
-add_executable(rebdsimOptics rebdsimOptics.cc)
-set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOptics rebdsim bdsimRootEvent)
-bdsim_install_targets(rebdsimOptics)
+add_executable(rebdsimOpticsExec rebdsimOptics.cc)
+set_target_properties(rebdsimOpticsExec PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimOpticsExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimOpticsExec)
 
-add_executable(rebdsimOrbit rebdsimOrbit.cc)
-set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOrbit rebdsim bdsimRootEvent)
-bdsim_install_targets(rebdsimOrbit)
+add_executable(rebdsimOrbitExec rebdsimOrbit.cc)
+set_target_properties(rebdsimOrbitExec PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimOrbitExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimOrbitExec)
 
-if (USE_EVENTDISPLAY)
-  add_executable(edbdsim edbdsim.cc)
-  set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-  target_link_libraries(edbdsim rebdsim ${ROOT_EVELIBRARIES})
-  target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
-  # Installation
-  bdsim_install_targets(rebdsimexec edbdsim rebdsim)
-else()
-  bdsim_install_targets(rebdsimexec rebdsim)
-endif()
+add_executable(bdskimExec bdskim.cc)
+set_target_properties(bdskimExec PROPERTIES OUTPUT_NAME "bdskim" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdskimExec rebdsim bdsimRootEvent)
+bdsim_install_targets(bdskimExec)
+
+add_executable(bdsimCombineExec bdsimCombine.cc)
+set_target_properties(bdsimCombineExec PROPERTIES OUTPUT_NAME "bdsimCombine" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdsimCombineExec rebdsim bdsimRootEvent)
+bdsim_install_targets(bdsimCombineExec)
 
 # Install pcms
 bdsim_install_libs(${rebdsim_pcms})
@@ -118,10 +131,6 @@ if (NOT USE_EVENTDISPLAY)
 endif()
 bdsim_install_analysis_headers(${rebdsimHeaders})
 #message(STATUS "rebdsimHeaders ${rebdsimHeaders}")
-
-get_target_property(rebdsimBinaryName rebdsim OUTPUT_NAME)
-set(rebdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${rebdsimBinaryName} CACHE STRING "rebdsim binary")
-mark_as_advanced(rebdsimBinary)
 
 # load test macros
 include(rebdsim_test_macros)

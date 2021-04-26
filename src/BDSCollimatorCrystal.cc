@@ -58,8 +58,16 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn,
   crystalLeft(nullptr),
   crystalRight(nullptr)
 {
+#ifdef SIXTRACKLINK
+  G4cout << "Left " << crystalInfoLeftIn << G4endl;
+  G4cout << "Right " << crystalInfoRightIn << G4endl;
+#endif
   if (crystalInfoLeft)
     {crystalInfoLeft->bendingAngleYAxis *= -1.0;}
+#ifdef SIXTRACKLINK
+  G4cout << "halfGapLeftIn " << halfGapLeftIn << G4endl;
+  G4cout << "halfGapRightIn " << halfGapRightIn << G4endl;
+#endif
 }
 
 BDSCollimatorCrystal::~BDSCollimatorCrystal()
@@ -126,7 +134,8 @@ void BDSCollimatorCrystal::Build()
 	}
 
       // check if it'll fit..
-      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffsetL);
+      // use the collOffsetL as the specific solid might require a large offset (e.g. cylinder or torus)
+      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(colOffsetL);
       BDSExtent thisExtent = GetExtent(); // actually outer extent of beam pipe
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future
@@ -138,6 +147,14 @@ void BDSCollimatorCrystal::Build()
 	      {BDS::Warning(__METHOD_NAME__, "Left crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
 
+#ifdef SIXTRACKLINK
+      G4cout << "left crystal placement offset   " << placementOffsetL << G4endl;
+      if (placementRot)
+      {
+        G4cout << "left crystal placement rotation " << *placementRot << G4endl;
+      }
+#endif
+      
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
       auto cL = new G4PVPlacement(placementRot,
 				  placementOffsetL,
@@ -148,6 +165,9 @@ void BDSCollimatorCrystal::Build()
 				  0,
 				  true); // always check
       RegisterPhysicalVolume(cL);
+#ifdef SIXTRACKLINK
+      G4cout << "Placement of left crystal " << placementOffsetL << G4endl;
+#endif
     }
   if (crystalRight)
     {
@@ -168,7 +188,7 @@ void BDSCollimatorCrystal::Build()
 	}
       
       // check if it'll fit..
-      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffsetL);
+      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(colOffsetR);
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
       // second stricter check - TODO - use aperture check in future
@@ -179,6 +199,14 @@ void BDSCollimatorCrystal::Build()
       if (!safe || !safe2)
         {BDS::Warning(__METHOD_NAME__, "Right crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisRight, "Right");
+
+#ifdef SIXTRACKLINK
+    G4cout << "right crystal placement offset   " << placementOffsetL << G4endl;
+    if (placementRot)
+    {
+      G4cout << "right crystal placement rotation " << *placementRot << G4endl;
+    }
+#endif
 
       G4LogicalVolume* vac = *(GetAcceleratorVacuumLogicalVolumes().begin()); // take the first one
       auto cR = new G4PVPlacement(placementRot,

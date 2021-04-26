@@ -118,7 +118,7 @@ public:
 
   /// @{ Accessor for the extra information links.
   inline G4int      GetCharge()         const {return extraLink ? extraLink->charge        : 0;}
-  inline G4double   GetKineticEnergy()  const {return extraLink ? extraLink->kineticEnergy : 0;}
+  inline G4double   GetKineticEnergy()  const {return preEnergy;}
   inline G4int      GetTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
   inline G4double   GetMass()           const {return extraLink ? extraLink->mass          : 0;}
   inline G4double   GetRigidity()       const {return extraLink ? extraLink->rigidity      : 0;}
@@ -150,6 +150,12 @@ public:
   BDSTrajectoryPointLocal* extraLocal;
   BDSTrajectoryPointLink*  extraLink;
   BDSTrajectoryPointIon*   extraIon;
+  
+  /// Threshold energy (in geant4 units) for considering a point a scattering point.
+  /// In some cases the along step process such as multiple scattering won't show as the
+  /// process that defined the step but may significantly degrade the energy. Use this
+  /// value as a threshold over which we consider the step a 'scattering' one.
+  static G4double dEThresholdForScattering;
 
 private:
   /// Initialisation of variables in separate function to reduce duplication in
@@ -157,8 +163,7 @@ private:
   void InitialiseVariables();
 
   /// Utility function to prepare and fill extra link variables.
-  void StoreExtrasLink(const G4Track* track,
-		       G4double       kineticEnergy);
+  void StoreExtrasLink(const G4Track* track);
 
   /// Utility function to prepare and fill extra ion variables.
   void StoreExtrasIon(const G4Track* track);

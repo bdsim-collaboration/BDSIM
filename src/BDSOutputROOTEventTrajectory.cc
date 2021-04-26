@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryOptions.hh"
 
 #include <cmath>
 #endif
@@ -62,16 +63,19 @@ int findPrimaryStepIndex(BDSTrajectory* traj)
 
 void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectories,
                                         int  storeStepPointsN,
-                                        bool storeStepPointLast)
+                                        bool storeStepPointLast,
+                                        const BDS::TrajectoryOptions& storageOptions)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories->trajectories.size() << G4endl;
-#endif
   if(!auxNavigator)
     {// navigator for converting coordinates to curvilinear coordinate system
       auxNavigator = new BDSAuxiliaryNavigator();
     }
 
+  G4bool stEK = storageOptions.storeLinks || storageOptions.storeKineticEnergy;
+  G4bool stMo = storageOptions.storeMomentumVector;
+  G4bool stPr = storageOptions.storeProcesses;
+  G4bool stTi = storageOptions.storeTime;
+  
   // assign trajectory indices
   int idx = 0;
   for (auto trajFlag : trajectories->trajectories)
@@ -155,16 +159,29 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       
       XYZ.push_back(itj.XYZ);
       modelIndicies.push_back(itj.modelIndex);
-      PXPYPZ.push_back(itj.PXPYPZ);
+      
+      if (stMo)
+	{PXPYPZ.push_back(itj.PXPYPZ);}
+      
       S.push_back(itj.S);
-      preProcessTypes.push_back(itj.preProcessType);
-      preProcessSubTypes.push_back(itj.preProcessSubType);
-      postProcessTypes.push_back(itj.postProcessType);
-      postProcessSubTypes.push_back(itj.postProcessSubType);
+      
+      if (stPr)
+	{
+	  preProcessTypes.push_back(itj.preProcessType);
+	  preProcessSubTypes.push_back(itj.preProcessSubType);
+	  postProcessTypes.push_back(itj.postProcessType);
+	  postProcessSubTypes.push_back(itj.postProcessSubType);
+	}
+      
       preWeights.push_back(itj.preWeight);
       postWeights.push_back(itj.postWeight);
       energyDeposit.push_back(itj.energyDeposit);
-      T.push_back(itj.T);
+      
+      if (stTi)
+	{T.push_back(itj.T);}
+      
+      if (stEK)
+        {kineticEnergy.push_back(itj.kineticEnergy);}
 
       if (!itj.xyz.empty())
 	{
@@ -175,7 +192,6 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       if (!itj.charge.empty())
 	{
           charge.push_back(itj.charge);
-          kineticEnergy.push_back(itj.kineticEnergy);
           turnsTaken.push_back(itj.turn);
           mass.push_back(itj.mass);
           rigidity.push_back(itj.rigidity);
@@ -243,8 +259,8 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   // Position
   G4ThreeVector pos = point->GetPosition();
   itj.XYZ.emplace_back(TVector3(pos.getX() / CLHEP::m,
-			     pos.getY() / CLHEP::m,
-			     pos.getZ() / CLHEP::m));
+				pos.getY() / CLHEP::m,
+				pos.getZ() / CLHEP::m));
   
   G4VPhysicalVolume* vol = auxNavigator->LocateGlobalPointAndSetup(pos,nullptr,true,true,true);
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(vol);
@@ -261,13 +277,14 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   itj.preWeight.push_back(point->GetPreWeight());
   itj.postWeight.push_back(point->GetPostWeight());
-  itj.energyDeposit.push_back(point->GetEnergyDeposit());
+  itj.energyDeposit.push_back(point->GetEnergyDeposit() / CLHEP::GeV);
   G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
   itj.PXPYPZ.emplace_back(TVector3(mom.getX(),
-				mom.getY(),
-				mom.getZ()));
+				   mom.getY(),
+				   mom.getZ()));
   itj.S.push_back(point->GetPreS() / CLHEP::m);
   itj.T.push_back(point->GetPreGlobalTime() / CLHEP::ns);
+  itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
   
   if (point->extraLocal)
     {
@@ -284,7 +301,6 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   if (point->extraLink)
     {
       itj.charge.push_back(point->GetCharge() / (G4double)CLHEP::eplus);
-      itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
       itj.turn.push_back(point->GetTurnsTaken());
       itj.mass.push_back(point->GetMass() / CLHEP::GeV);
       itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));
@@ -418,17 +434,48 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
 }
 #endif
 
-std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackIDIn) const
 {
-  int ti = trackID_trackIndex.at(trackid);  // get track index
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
+  
+  int ti = trackID_trackIndex.at(trackIDIn);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
   int nstep = XYZ[ti].size();
+  if (nstep == 0) // no points or it wasn't stored
+    {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
+
+  if (postProcessTypes[ti].empty()) // and implicitly nstep>0
+    {// we require processes for this function
+      std::cout << "Processes not stored for this file - not possible." << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
+
+  bool usePXPYPZ = !PXPYPZ[ti].empty();
+  bool useT      = !T.empty();
+  bool useIon    = !isIon.empty();
+  bool useLocal  = !xyz.empty();
+  bool useLinks  = !charge.empty();
+  bool useEK     = !kineticEnergy.empty();
+  
   for (int i = 0; i < nstep; ++i)
     {
-      int ppt = postProcessTypes[ti][i];
-      if (ppt != -1 && ppt != 1 && ppt != 10)
+      int ppt  = postProcessTypes[ti][i];
+      int ppst = postProcessSubTypes[ti][i];
+      // this is a hard coded version of BDSTrajectoryPoint::IsScatteringPoint which is
+      // only available if we link to Geant4 for the enums (we don't here).
+      // -1 = undefined, 1 = G4ProcessType::fTransportation, 10 = G4ProcessTypes::fParallel
+      // 0 = G4ProcessType::fNotDefined for crystal channeling (exclude the thousands of points)
+      // 401 = G4TransportationProcessSubType::STEP_LIMITER which is categorised under G4ProcessType::fGeneral
+      bool notGeneral = ppt != 7 && ppst != 401;
+      bool changeInEnergy = energyDeposit[ti][i] > 1e-9;
+      if ( (ppt != -1 && ppt != 1 && ppt != 10 && ppt != 0 && notGeneral) || changeInEnergy)
 	{
 	  BDSOutputROOTEventTrajectoryPoint p(partID[ti],
 					      trackID[ti],
@@ -439,66 +486,147 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 					      postWeights[ti][i],
 					      energyDeposit[ti][i],
 					      XYZ[ti][i],
-					      PXPYPZ[ti][i],
+					      usePXPYPZ ? PXPYPZ[ti][i] : TVector3(),
 					      modelIndicies[ti][i],
-					      T[ti][i],
-					      xyz[ti][i],
-					      pxpypz[ti][i],
-					      charge[ti][i],
-					      kineticEnergy[ti][i],
-					      turnsTaken[ti][i],
-					      rigidity[ti][i],
-					      mass[ti][i],
-					      isIon[ti][i],
-					      ionA[ti][i],
-					      ionZ[ti][i],
-					      nElectrons[ti][i]);
+					      useT ? T[ti][i]      : 0,
+					      useLocal ? xyz[ti][i] : TVector3(),
+					      useLocal ? pxpypz[ti][i] : TVector3(),
+					      useLinks ? charge[ti][i] : 0,
+					      useEK ? kineticEnergy[ti][i] : 0,
+					      useLinks ? turnsTaken[ti][i] : 0,
+					      useLinks ? rigidity[ti][i] : 0,
+					      useLinks ? mass[ti][i] : 0,
+					      useIon ? isIon[ti][i] : false,
+					      useIon ? ionA[ti][i] : 0,
+					      useIon ? ionZ[ti][i] : 0,
+					      useIon ? nElectrons[ti][i] : 0,
+					      i);
 	  tpv.push_back(p);
 	}
     }
   return tpv;
 }
 
-BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackIDIn) const
 {
-  int ti = trackID_trackIndex.at(trackid);  // get track index
-  int si = parentStepIndex.at(ti);          // get primary index
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+  int ti = trackID_trackIndex.at(trackIDIn);  // get track index
+  int pid = parentID[ti];                   // parent trackID
+  int chosenTrackID = trackIDIn;
+  while (pid != 0)
+    {
+      if (parentID[trackID_trackIndex.at(pid)] > 0)
+	{chosenTrackID = pid;}
+      ti = trackID_trackIndex.at(pid);
+      pid = parentID[ti];
+    }
+  return parentProcessPoint(chosenTrackID);
+}
 
-  BDSOutputROOTEventTrajectoryPoint p(partID[ti],
-				      trackID[ti],
-                                      parentID[ti],
-				      parentIndex[ti],
-                                      postProcessTypes[ti][si],
-				      postProcessSubTypes[ti][si],
-                                      postWeights[ti][si],
-				      energyDeposit[ti][si],
-                                      XYZ[ti][si],
-				      PXPYPZ[ti][si],
-                                      modelIndicies[ti][si],
-				      T[ti][si],
-				      xyz[ti][si],
-				      pxpypz[ti][si],
-				      charge[ti][si],
-				      kineticEnergy[ti][si],
-				      turnsTaken[ti][si],
-				      rigidity[ti][si],
-				      mass[ti][si],
-				      isIon[ti][si],
-				      ionA[ti][si],
-				      ionZ[ti][si],
-				      nElectrons[ti][si]);
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoint(int trackIDIn) const
+{
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+  
+  int ti  = trackID_trackIndex.at(trackIDIn);  // get track index
+  int pti = parentID[ti]; // parent trackID
+  
+  if (pti == 0)
+    {
+      std::cout << "Track is a parent" << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+  
+  int si  = parentStepIndex.at(ti);          // get primary index
+  int pi = 0;
+  if (pti > 0)
+    {pi  = trackID_trackIndex.at(pti);}      // parent track storage index
+  else
+    {pi = ti;}
+  
+  if (si > (int)XYZ[pi].size())
+    {// evidently not all step points are stored
+      std::cout << "Not all step points are stored. Parent step index is outside points stored." << std::endl;
+      return BDSOutputROOTEventTrajectoryPoint();
+    }
+
+  bool usePXPYPZ = !PXPYPZ[ti].empty();
+  bool useT      = !T.empty();
+  bool useIon    = !isIon.empty();
+  bool useLocal  = !xyz.empty();
+  bool useLinks  = !charge.empty();
+  bool useEK     = !kineticEnergy.empty();
+
+  BDSOutputROOTEventTrajectoryPoint p(partID[pi],
+				      trackID[pi],
+                                      parentID[pi],
+				      parentIndex[pi],
+                                      postProcessTypes[pi][si],
+				      postProcessSubTypes[pi][si],
+                                      postWeights[pi][si],
+				      energyDeposit[pi][si],
+                                      XYZ[pi][si],
+				      usePXPYPZ ? PXPYPZ[pi][si] : TVector3(),
+				      modelIndicies[pi][si],
+				      useT ? T[pi][si]      : 0,
+				      useLocal ? xyz[pi][si] : TVector3(),
+				      useLocal ? pxpypz[pi][si] : TVector3(),
+				      useLinks ? charge[pi][si] : 0,
+				      useEK ? kineticEnergy[pi][si] : 0,
+				      useLinks ? turnsTaken[pi][si] : 0,
+				      useLinks ? rigidity[pi][si] : 0,
+				      useLinks ? mass[pi][si] : 0,
+				      useIon ? isIon[pi][si] : false,
+				      useIon ? ionA[pi][si] : 0,
+				      useIon ? ionZ[pi][si] : 0,
+				      useIon ? nElectrons[pi][si] : 0,
+				      si);
   return p;
 }
 
-std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackIDIn) const
 {
-  unsigned int ti = (unsigned int) std::abs(trackID_trackIndex.at(trackid));  // get track index
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
+
+  if (postProcessTypes.empty())
+    {
+      std::cout << "Processes not stored for this file - not possible." << std::endl;
+      return std::vector<BDSOutputROOTEventTrajectoryPoint>();
+    }
+  
+  int ti = trackID_trackIndex.at(trackIDIn);
+
+  bool usePXPYPZ = !PXPYPZ.empty();
+  bool useT      = !T.empty();
+  bool useIon    = !isIon.empty();
+  bool useLocal  = !xyz.empty();
+  bool useLinks  = !charge.empty();
+  bool useEK     = !kineticEnergy.empty();
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
   while (ti != 0)
     {
       unsigned int pi  = parentIndex.at(ti);
       unsigned int psi = parentStepIndex.at(ti);
+      if (psi > (unsigned int)XYZ[pi].size())
+	{
+	  std::cout << "Not all points stored - defaulting to creation point." << std::endl;
+	  psi = 0;
+	}
       
       BDSOutputROOTEventTrajectoryPoint p(partID[pi],
 					  trackID[pi],
@@ -509,40 +637,60 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 					  postWeights[pi][psi],
 					  energyDeposit[pi][psi],
 					  XYZ[pi][psi],
-					  PXPYPZ[pi][psi],
-					  modelIndicies[pi][psi],
-					  T[pi][psi],
-					  xyz[ti][psi],
-					  pxpypz[ti][psi],
-					  charge[ti][psi],
-					  kineticEnergy[ti][psi],
-					  turnsTaken[ti][psi],
-					  rigidity[ti][psi],
-					  mass[ti][psi],
-					  isIon[ti][psi],
-					  ionA[ti][psi],
-					  ionZ[ti][psi],
-					  nElectrons[ti][psi]);
+					  usePXPYPZ ? PXPYPZ[ti][psi] : TVector3(),
+					  modelIndicies[ti][psi],
+					  useT ? T[ti][psi]      : 0,
+					  useLocal ? xyz[ti][psi] : TVector3(),
+					  useLocal ? pxpypz[ti][psi] : TVector3(),
+					  useLinks ? charge[ti][psi] : 0,
+					  useEK ? kineticEnergy[ti][psi] : 0,
+					  useLinks ? turnsTaken[ti][psi] : 0,
+					  useLinks ? rigidity[ti][psi] : 0,
+					  useLinks ? mass[ti][psi] : 0,
+					  useIon ? isIon[ti][psi] : false,
+					  useIon ? ionA[ti][psi] : 0,
+					  useIon ? ionZ[ti][psi] : 0,
+					  useIon ? nElectrons[ti][psi] : 0),
+					  i;
       tpv.push_back(p);
-      ti = pi;
+      ti = (int)pi;
     }
   std::reverse(tpv.begin(),tpv.end());
   return tpv;
 }
 
-void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
+void BDSOutputROOTEventTrajectory::printTrajectoryInfoByTrackID(int trackIDIn) const
 {
+  // prevent a bad access
+  int storageIndex = 0;
+  auto search = trackID_trackIndex.find(trackIDIn);
+  if (search == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return;
+    }
+  else
+    {storageIndex = search->second;}
+  printTrajectoryInfo(storageIndex);
+}
+
+void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int storageIndex) const
+{
+  int i = storageIndex; // shortcut
   int wdt = 11; // width of columns for print out
+
+  if (i > (int)partID.size() || i < 0)
+    {std::cout << "Invalid index" << std::endl; return;}
   
   if (i+1 > n) // safety
     {std::cout << "Index chosen is greater than maximum index of: " << n-1 << std::endl; return;}
   
   // print out regarding the trajectory generally
-  std::cout << "Trajectory index " << std::setw(wdt) << i
+  std::cout << "Storage index "    << std::setw(wdt) << i
             << ", PDG ID "         << std::setw(wdt) << partID[i]
             << ", Track ID "       << std::setw(wdt) << trackID[i]
             << ", Parent ID "      << std::setw(wdt) << parentID[i] << std::endl;
-  std::cout << "Created by Track ID " << parentID[i] << ", with index " << parentIndex[i] << ", and at step index " << parentStepIndex[i] << std::endl;
+  std::cout << "Created by Track ID " << parentID[i] << ", with storage index " << parentIndex[i] << ", and at step index " << parentStepIndex[i] << std::endl;
   
   // print out regarding each step of the trajectory
   std::cout << std::setw(wdt) << "step ind"  << " "
@@ -565,6 +713,20 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 		  << std::setw(wdt) << PXPYPZ[i][j].Y()       << " " << std::setw(wdt) << PXPYPZ[i][j].Z()          << " "
 		  << std::setw(wdt) << T[i][j]                << std::endl;
     }
+}
+
+bool BDSOutputROOTEventTrajectory::parentIsPrimary(int trackIDIn) const
+{
+  // prevent a bad access
+  if (trackID_trackIndex.find(trackIDIn) == trackID_trackIndex.end())
+    {
+      std::cout << "No such track ID" << std::endl;
+      return false;
+    }
+  
+  unsigned int storageIndex = (unsigned int)trackID_trackIndex.at(trackIDIn);
+  unsigned int parentStorageIndex = parentIndex[storageIndex];
+  return parentID[parentStorageIndex] == 0;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
