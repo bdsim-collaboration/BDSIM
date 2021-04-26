@@ -18,12 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <cstddef>
 #include <string>
+#include <vector>
 
 #include "BDSParser.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputFactory.hh"
 #include "BDSGlobalConstants.hh"
-
 
 #include "TRKBunch.hh"
 #include "EventOutput.hh"
@@ -108,6 +108,7 @@ void EventOutput::FillEventOutputStructures()
 			nullptr, // vertex
 			nullptr, // sampler hits plane
 			nullptr, // sampler hits cylinder
+			nullptr, // sampler hits link
 			nullptr, // energy loss
 			nullptr, // energy loss full
 			nullptr, // energy loss vacuum
@@ -115,14 +116,13 @@ void EventOutput::FillEventOutputStructures()
 			nullptr, // energy loss world
 			nullptr, // energy loss contents
 			nullptr, // world exit hits
-			nullptr, // primary hit
-			nullptr, // primary loss
+                        std::vector<const BDSTrajectoryPointHit*>(), // primary hit
+                        std::vector<const BDSTrajectoryPointHit*>(), // primary loss
 			nullptr, // trajectories
 			nullptr, // collimator hits
 			nullptr, // aperture impacts
 			scorerhits, // scorer hits map
 			10); // turns taken
-
     }
 }
 
