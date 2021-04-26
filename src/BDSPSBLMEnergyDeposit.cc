@@ -16,27 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include "BDSPSBLMEnergyDeposit.hh"
-BDSPSBLMEnergyDeposit::BDSPSBLMEnergyDeposit(G4String name, G4int depth)
-        : G4PSEnergyDeposit(name, depth)
+
+#include "G4StepPoint.hh"
+#include "G4TouchableHistory.hh"
+
+BDSPSBLMEnergyDeposit::BDSPSBLMEnergyDeposit(const G4String& name,
+					     G4int           depth):
+  G4PSEnergyDeposit(name, depth)
 {;}
 
-BDSPSBLMEnergyDeposit::BDSPSBLMEnergyDeposit(G4String name, const G4String& unit,
-                                             G4int depth)
-        : G4PSEnergyDeposit(name, unit, depth)
+BDSPSBLMEnergyDeposit::BDSPSBLMEnergyDeposit(const G4String& name,
+					     const G4String& unit,
+                                             G4int           depth):
+  G4PSEnergyDeposit(name, unit, depth)
 {;}
 
 BDSPSBLMEnergyDeposit::~BDSPSBLMEnergyDeposit()
 {;}
 
-G4int BDSPSBLMEnergyDeposit::GetIndex(G4Step *aStep)
+G4int BDSPSBLMEnergyDeposit::GetIndex(G4Step* aStep)
 {
-    G4StepPoint* preStep = aStep->GetPreStepPoint();
-    G4TouchableHistory* th = (G4TouchableHistory*)(preStep->GetTouchable());
-    /// Get the copy number from the outermost volume in the geometry
-    /// Works for both single-solid BLMs and complex GDML models
-    return th->GetReplicaNumber(th->GetHistoryDepth() - 1);
+  G4StepPoint* preStep = aStep->GetPreStepPoint();
+  G4TouchableHistory* th = (G4TouchableHistory*)(preStep->GetTouchable());
+  /// Get the copy number from the outermost volume in the geometry
+  /// Works for both single-solid BLMs and complex GDML models
+  return th->GetReplicaNumber(th->GetHistoryDepth() - 1);
 }
 
 
