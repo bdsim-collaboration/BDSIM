@@ -167,7 +167,6 @@ list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSVisManager.cc)
 # Add Modules
 add_subdirectory(modules)
 
-
 if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
   message(STATUS "BDSIM sources ${bdsim_sources}")
