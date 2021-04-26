@@ -320,8 +320,8 @@ void Element::print(int ident)const{
       }
     case ElementType::_CT:
       {
-    std::cout << "dicomDataPath: " << dicomDataPath << std::endl;
-    break;
+	std::cout << "dicomDataPath: " << dicomDataPath << std::endl;
+	break;
       }
     case ElementType::_AWAKESCREEN:
       {

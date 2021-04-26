@@ -738,8 +738,7 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 
       // setup the sensitivity
       element->GetAcceleratorComponent()->AttachSensitiveDetectors();
-      std::cout << "ATTENTION !!!: " << element->GetName() << std::endl;
-        std::cout << "ATTENTION !!!: " << element->GetAcceleratorComponent()->GetType() << std::endl;
+      
       G4String placementName = element->GetPlacementName() + "_pv";
       G4Transform3D* placementTransform = element->GetPlacementTransform();
       if (useCLPlacementTransform)
