@@ -52,8 +52,8 @@ struct matInfo
 class BDSCT: public BDSAcceleratorComponent
 {
 public:
-  BDSCT(G4String nameIn,
-	G4String dataFileName);
+  BDSCT(const G4String& nameIn,
+	const G4String& dataFileName);
   
   virtual ~BDSCT();
   
