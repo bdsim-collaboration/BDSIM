@@ -15,7 +15,3 @@ bdsim_install_targets(comparatorExec comparator)
 
 file(GLOB comparatorHeaders ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
 bdsim_install_comparator_headers(${comparatorHeaders})
-
-get_target_property(comparatorBinaryName comparatorexec OUTPUT_NAME)
-set(comparatorBinary ${CMAKE_CURRENT_BINARY_DIR}/${comparatorBinaryName} CACHE STRING "comparator binary")
-mark_as_advanced(comparatorBinary)
