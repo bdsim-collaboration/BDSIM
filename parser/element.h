@@ -143,6 +143,9 @@ namespace GMAD
     double poleStartZ;
     double screenWidth;
     double awakeMagnetOffsetX;
+    std::string windowmaterial;
+    std::string scintmaterial;
+    std::string mountmaterial;
     ///@}
 
     ///@{ for 3d transform and laser
@@ -153,6 +156,8 @@ namespace GMAD
     double waveLength; ///< for laser wire and 3d transforms
     
     double phi, theta, psi; ///< for 3d transforms
+    double axisX, axisY, axisZ;
+    bool   axisAngle;
 
     ///@{ for degrader
     int numberWedges;
@@ -203,9 +208,7 @@ namespace GMAD
     bool        autoColour;   ///< Automagically colour the external geometry.
     std::string material;
     std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
-    std::string windowmaterial; ///< for AWAKE
-    std::string scintmaterial;  ///< for AWAKE
-    std::string mountmaterial;  ///< for AWAKE spectrometer
+    bool        markAsCollimator;
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
 

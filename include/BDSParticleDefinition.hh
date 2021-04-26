@@ -67,15 +67,18 @@ public:
 			G4double          momentumIn,
 			G4double          ffact,
 			BDSIonDefinition* ionDefinitionIn = nullptr,
-            G4int             ionPDGID        = 0);
+			G4int             ionPDGID        = 0);
 
-  /// Copy constructor specified as we have to copy the ionDefinition if it exists.
+  /// @{ Copy, move and assignment constructors specified as we have to copy the ionDefinition if it exists.
   BDSParticleDefinition(const BDSParticleDefinition& other);
+  BDSParticleDefinition(BDSParticleDefinition&& other) noexcept;
+  BDSParticleDefinition& operator=(BDSParticleDefinition&& other) noexcept;
+  /// @}
   
   ~BDSParticleDefinition();
 
   /// Check in order whether totalEnergy, kineticEnergy or momentum are specified and
-  /// copy that parameter to the member varible. Then calculate the other two and set
+  /// copy that parameter to the member variable. Then calculate the other two and set
   /// them to the member variables.
   void SetEnergies(G4double totalEnergyIn,
 		   G4double kineticEnergyIn,

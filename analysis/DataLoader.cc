@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
+#include "RBDSException.hh"
 #include "RebdsimTypes.hh"
 #include "Run.hh"
 
@@ -78,7 +79,7 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName)
+void DataLoader::CommonCtor(const std::string& fileName)
 {
   BuildInputFileList(fileName); // updates dataVersion
 
@@ -120,11 +121,11 @@ void DataLoader::CommonCtor(std::string fileName)
 void DataLoader::BuildInputFileList(std::string inputPath)
 {
   if(inputPath.empty())
-    {throw std::string("DataLoader::BuildInputFileList> no file specified");}
+    {throw RBDSException("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
   std::vector<std::string> fileNamesTemp;
-  if(inputPath.find("*") != std::string::npos)
+  if (inputPath.find("*") != std::string::npos)
     {
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
@@ -133,17 +134,17 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       globfree(&glob_result);
     }
   // single file
-  else if(inputPath.find(".root") != std::string::npos)
+  else if (inputPath.find(".root") != std::string::npos)
     {fileNamesTemp.push_back(inputPath);}
   // directory
-  else if(inputPath[inputPath.length()-1] == std::string("/"))
+  else if (inputPath[inputPath.length()-1] == std::string("/"))
     {
       // find all files in directory
       inputPath.append("/*.root");
       
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+      for (unsigned int i=0; i<glob_result.gl_pathc; ++i)
 	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
@@ -170,11 +171,8 @@ void DataLoader::BuildInputFileList(std::string inputPath)
     }
   delete fileDataVersion;
   
-  if (fileNames.empty()) // exit if no valid files.
-    {
-      std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
-      exit(1);
-    }
+  if (fileNames.empty())
+    {throw RBDSException("DataLoader - No valid files found - check input file path / name");}
 }
 
 void DataLoader::BuildTreeNameList()
@@ -182,10 +180,7 @@ void DataLoader::BuildTreeNameList()
   // open file - this is the first opening so test here if it's valid
   TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-    {
-      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-      exit(1);
-    }
+    {throw RBDSException(__METHOD_NAME__,"No such file \"" + fileNames[0] + "\"");}
   
   TList* kl = f->GetListOfKeys();
   for (int i = 0; i < kl->GetEntries(); ++i)
@@ -205,10 +200,7 @@ void DataLoader::BuildEventBranchNameList()
 {
   TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-    {
-      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-      exit(1);
-    }
+    {throw RBDSException(__METHOD_NAME__,"No such file \"" + fileNames[0] + "\"");}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
