@@ -23,14 +23,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPSPopulationScaled.hh"
 #include "BDSUtilities.hh"
 
+#include "G4IonTable.hh"
 #include "G4PhysicsVector.hh"
 #include "G4String.hh"
-#include "G4IonTable.hh"
 #include "G4Types.hh"
 #include "G4VSolid.hh"
 #include "G4VPVParameterisation.hh"
 
+#include <cmath>
 #include <fstream>
+#include <iterator>
 #include <string>
 #include <dirent.h>
 
@@ -83,13 +85,13 @@ BDSPSPopulationScaled::BDSPSPopulationScaled(const G4String& scorerName,
             {
 #ifdef USE_GZSTREAM
 	      BDSScorerConversionLoader<igzstream> loaderC;   
-	      conversionFactors[angleIndex][pid] = loaderC.Load(filepathPDG, 1);
+	      conversionFactors[angleIndex][pid] = loaderC.Load(filepathPDG, true);
 #else
 	      throw BDSException(__METHOD_NAME__, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
             }
 	  else if (BDS::FileExists(filepathPDG))
-            {conversionFactors[angleIndex][pid] = loader.Load(filepathPDG, 1);}
+            {conversionFactors[angleIndex][pid] = loader.Load(filepathPDG, true);}
 	  
 	  if (pid > 1e7)
             {ionPIDs.push_back(pid);}
@@ -158,14 +160,15 @@ G4bool BDSPSPopulationScaled::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       auto momDirection = aStep->GetPreStepPoint()->GetMomentumDirection();
       
       // The angle used for the lookup is sign-independent and spans the range 0 to pi/2
-      G4double angle = fmod(std::abs(momDirection.angle(blmUnitZ)), CLHEP::pi);
+      G4double angle = std::fmod(std::abs(momDirection.angle(blmUnitZ)), CLHEP::pi);
       if (angle > CLHEP::pi/2.)
         {angle = CLHEP::pi - angle;}
       
       G4double kineticEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
       G4double weight = aStep->GetPreStepPoint()->GetWeight();
-      G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(), kineticEnergy,
-					    angle);
+      G4double factor = GetConversionFactor(aStep->GetTrack()->GetDefinition()->GetPDGEncoding(),
+                                            kineticEnergy,
+                                            angle);
       radiationQuantity = weight * factor;
       
       EvtMap->add(index, radiationQuantity);
@@ -239,7 +242,7 @@ std::vector<G4String> BDSPSPopulationScaled::LoadDirectoryContents(const G4Strin
     return contents;
 }
 
-G4int BDSPSPopulationScaled::NearestNeighbourAngleIndex(std::vector<G4double> const& vec, G4double value) const
+G4int BDSPSPopulationScaled::NearestNeighbourAngleIndex(const std::vector<G4double>& vec, G4double value) const
 {
   if (vec.empty())
     {return -1;}
@@ -258,7 +261,7 @@ G4int BDSPSPopulationScaled::NearestNeighbourAngleIndex(std::vector<G4double> co
   return index;
 }
 
-G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& vec, G4int value) const
+G4int BDSPSPopulationScaled::NearestNeighbourIonPID(const std::vector<G4int>& vec, G4int value) const
 {
   // Make a vector of the ion Z for all ion particles
   std::vector<G4int> vecZ;
@@ -278,7 +281,7 @@ G4int BDSPSPopulationScaled::NearestNeighbourIonPID(std::vector<G4int> const& ve
 
   // Find the index of the nearest neighbour Z - used to look up the full particle ID
   auto const itr = std::find(vecZ.begin(), vecZ.end(), nearestNeighbourZ);
-  int index = std::distance(vecZ.begin(), itr);
+  int index = (int)std::distance(vecZ.begin(), itr);
   
   return vec.at(index);
 }
