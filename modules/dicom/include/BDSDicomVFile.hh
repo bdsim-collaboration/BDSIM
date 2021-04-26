@@ -17,7 +17,7 @@ class BDSDicomVFile
 public:
     BDSDicomVFile(){};
     BDSDicomVFile(DcmDataset* dset);
-    ~BDSDicomVFile(){};
+    virtual ~BDSDicomVFile(){};
 
     void SetFileName( G4String fName ) {
         fFileName = fName;

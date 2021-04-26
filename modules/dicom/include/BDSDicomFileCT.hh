@@ -9,12 +9,12 @@
 #include "BDSDicomFileMgr.hh"
 #include "G4ThreeVector.hh"
 
-class BDSDicomFileCT : public BDSDicomVFile
+class BDSDicomFileCT: public BDSDicomVFile
 {
 public:
     BDSDicomFileCT();
     BDSDicomFileCT(DcmDataset* dset);
-    ~BDSDicomFileCT(){};
+    virtual ~BDSDicomFileCT(){};
 
 public:
     virtual void ReadData();

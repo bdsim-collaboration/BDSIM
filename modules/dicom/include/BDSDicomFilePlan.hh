@@ -2,19 +2,18 @@
 // Created by strangesyd on 3/7/21.
 //
 
-#ifndef BDSIM_BDSDICOMFILEPLAN_HH
-#define BDSIM_BDSDICOMFILEPLAN_HH
+#ifndef BDSDICOMFILEPLAN_H
+#define BDSDICOMFILEPLAN_H
 
 #include "BDSDicomVFile.hh"
 class DcmDataSet;
 
-class BDSDicomFilePlan : public BDSDicomVFile
+class BDSDicomFilePlan: public BDSDicomVFile
 {
 public:
     BDSDicomFilePlan(DcmDataset* dset);
-    ~BDSDicomFilePlan(){};
-
-public:
+    virtual ~BDSDicomFilePlan(){};
+    
     virtual void ReadData();
     void CheckData0(OFString title, Sint32 val);
 
@@ -27,4 +26,4 @@ private:
     //Sint32 theNumberOfBeams;
 };
 
-#endif //BDSIM_BDSDICOMFILEPLAN_HH
+#endif

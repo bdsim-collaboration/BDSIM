@@ -9,11 +9,11 @@
 #include "BDSDicomROI.hh"
 class DcmDataSet;
 
-class BDSDicomFileStructure : public BDSDicomVFile
+class BDSDicomFileStructure: public BDSDicomVFile
 {
 public:
     BDSDicomFileStructure(DcmDataset* dset);
-    ~BDSDicomFileStructure(){};
+    virtual ~BDSDicomFileStructure(){};
 
 public:
     std::vector<BDSDicomROI*> GetROIs() const {
