@@ -89,6 +89,8 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const G4String&      
     case BDSScorerType::depositeddose3d:
       {result = new G4PSDoseDeposit3D(name); break;}
     case BDSScorerType::depositedenergy:
+      {result = new G4PSEnergyDeposit(name, "GeV"); break;}
+    case BDSScorerType::depositedenergyblm:
       {result = new BDSPSBLMEnergyDeposit(name, "GeV"); break;}
     case BDSScorerType::depositedenergy3d:
       {result = new G4PSEnergyDeposit3D(name, "GeV"); break;}
