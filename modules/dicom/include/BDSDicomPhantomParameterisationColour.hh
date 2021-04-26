@@ -10,7 +10,7 @@
 #include "G4PhantomParameterisation.hh"
 class G4VisAttributes;
 
-class BDSDicomPhantomParameterisationColour : public G4PhantomParameterisation
+class BDSDicomPhantomParameterisationColour: public G4PhantomParameterisation
 {
 public:
     typedef std::map<G4String,G4VisAttributes*> ColourMap_t;
@@ -20,7 +20,7 @@ public:
 public:  // with description
     BDSDicomPhantomParameterisationColour(G4String colorFile =
     defaultColorFile);
-    ~BDSDicomPhantomParameterisationColour();
+    virtual ~BDSDicomPhantomParameterisationColour();
 
     virtual G4Material* ComputeMaterial(const G4int repNo,
                                         G4VPhysicalVolume *currentVol,
@@ -37,4 +37,4 @@ private:
     std::map<G4int, G4VisAttributes*> mColours;
 };
 
-#endif //BDSIM_BDSDICOMPHANTOMPARAMETERISATIONCOLOUR_HH
+#endif

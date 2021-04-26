@@ -20,7 +20,7 @@ class G4VSolid;
 
 /// Manages intersections of DICOM files with volumes
 
-class BDSDicomIntersectVolume : public G4UImessenger
+class BDSDicomIntersectVolume: public G4UImessenger
 {
 public:
     BDSDicomIntersectVolume();
@@ -54,4 +54,4 @@ private:
     G4bool* fVoxelIsInside;
 };
 
-#endif //BDSIM_BDSDICOMINTERSECTVOLUME_HH
+#endif
