@@ -10,10 +10,6 @@ endif()
 # material builder
 add_subdirectory(nistmaterials)
 
-option(USE_DICOM "Use DCMTK library for DICOM file handling" OFF)
 if (USE_DICOM)
-  add_definitions("-DUSE_DICOM")
-  message(STATUS "DICOM module ON")
   add_subdirectory(dicom)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dicom/include)
 endif()
