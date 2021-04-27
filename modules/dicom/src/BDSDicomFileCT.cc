@@ -33,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmdata/dcpixseq.h"
 #include "dcmtk/dcmrt/drtimage.h"
 
+#include <cmath>
+#include <limits>
 #include <set>
 #include <string>
 #include <vector>
@@ -398,81 +400,95 @@ void BDSDicomFileCT::DumpMateIDsToTextFile(std::ofstream& fout)
 
 void BDSDicomFileCT::DumpDensitiesToTextFile(std::ofstream& fout)
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    if( BDSDicomFileMgr::verbose >= warningVerb ) G4cout << fLocation << " DumpDensitiesToTextFile "
-                                                      << fFileName << " " << fDensities.size() << G4endl;
-
-    G4int copyNo = 0;
-    for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ ) {
-        for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ ) {
-            fout << fDensities[ic+ir*fNoVoxelX/fCompress];
-            if( ic != fNoVoxelX/fCompress-1) fout << " ";
-            if( copyNo%8 == 7 ) fout << G4endl;
-            copyNo++;
+  G4int fCompress = theFileMgr->GetCompression();
+  if( BDSDicomFileMgr::verbose >= warningVerb )
+    {G4cout << fLocation << " DumpDensitiesToTextFile " << fFileName << " " << fDensities.size() << G4endl;}
+  
+  G4int copyNo = 0;
+  for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ )
+    {
+      for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ )
+	{
+	  fout << fDensities[ic+ir*fNoVoxelX/fCompress];
+	  if( ic != fNoVoxelX/fCompress-1)
+	    {fout << " ";}
+	  if( copyNo%8 == 7 )
+	    {fout << G4endl;}
+	  copyNo++;
         }
-        if( copyNo%8 != 0 ) fout << G4endl;
+      if( copyNo%8 != 0 )
+	{fout << G4endl;}
     }
-
 }
 
 void BDSDicomFileCT::BuildStructureIDs()
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    std::vector<BDSDicomFileStructure*> dfs = theFileMgr->GetStructFiles();
-    if( dfs.size() == 0 ) return;
+  G4int fCompress = theFileMgr->GetCompression();
+  std::vector<BDSDicomFileStructure*> dfs = theFileMgr->GetStructFiles();
+  if( dfs.size() == 0 )
+    {return;}
 
-    G4int NMAXROI = BDSDicomFileMgr::GetInstance()->GetStructureNMaxROI();
-    G4int NMAXROI_real = std::log(INT_MAX)/std::log(NMAXROI);
-
-    //  fStructure = new G4int(fNoVoxelX*fNoVoxelY);
-    for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ ) {
-        for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ ) {
-            //      fStructure[ic+ir*fNoVoxelX] = 0;
-            fStructure.push_back(0);
+  G4int NMAXROI = BDSDicomFileMgr::GetInstance()->GetStructureNMaxROI();
+  G4int NMAXROI_real = std::log(INT_MAX)/std::log(NMAXROI);
+  
+  //  fStructure = new G4int(fNoVoxelX*fNoVoxelY);
+  for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ )
+    {
+      for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ )
+	{
+	  //      fStructure[ic+ir*fNoVoxelX] = 0;
+	  fStructure.push_back(0);
         }
     }
-
-    std::set<double> distInters;
-
-    //  std::fill_n(fStructure,fNoVoxelX*fNoVoxelY,0);
-    //
-    for( size_t ii = 0; ii < dfs.size(); ii++ ){
-        std::vector<BDSDicomROI*> rois = dfs[ii]->GetROIs();
-        for( size_t jj = 0; jj < rois.size(); jj++ ){
-            if( BDSDicomFileMgr::verbose >= debugVerb ) std::cout << " BuildStructureIDs checking ROI "
-                                                               << rois[jj]->GetNumber() << " " << rois[jj]->GetName() << G4endl;
+  
+  std::set<double> distInters;
+  
+  //  std::fill_n(fStructure,fNoVoxelX*fNoVoxelY,0);
+  //
+  for( size_t ii = 0; ii < dfs.size(); ii++ )
+    {
+      std::vector<BDSDicomROI*> rois = dfs[ii]->GetROIs();
+        for( size_t jj = 0; jj < rois.size(); jj++ )
+	  {
+            if( BDSDicomFileMgr::verbose >= debugVerb )
+	      {std::cout << " BuildStructureIDs checking ROI " << rois[jj]->GetNumber() << " " << rois[jj]->GetName() << G4endl;}
             std::vector<BDSDicomROIContour*> contours = rois[jj]->GetContours();
             //      G4int roi = jj+1;
             G4int roiID = rois[jj]->GetNumber();
-            for( size_t kk = 0; kk < contours.size(); kk++ ){
+            for( size_t kk = 0; kk < contours.size(); kk++ )
+	      {
                 // check contour corresponds to this CT slice
                 BDSDicomROIContour* roic = contours[kk];
                 // if( DicomVerb(-debugVerb) ) G4cout << jj << " " << kk << " INTERS CONTOUR " << roic
                 //                << " " << fLocation << G4endl;
-                if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " " << roiID << " " << kk
-                                                                << " INTERS CONTOUR " << roic->GetZ() << " SLICE Z " << fMinZ << " " << fMaxZ << G4endl;
+                if( BDSDicomFileMgr::verbose >= debugVerb )
+		  {G4cout << " " << roiID << " " << kk << " INTERS CONTOUR " << roic->GetZ() << " SLICE Z " << fMinZ << " " << fMaxZ << G4endl;}
                 // Check Contour correspond to slice
-
-                if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ ) continue;
-                if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " INTERS CONTOUR WITH Z SLIZE "
-                                                                << fMinZ << " < " << roic->GetZ() << " < " << fMaxZ << G4endl;
-                if( roic->GetGeomType() == "CLOSED_PLANAR" ){
+		
+                if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ )
+		  {continue;}
+                if( BDSDicomFileMgr::verbose >= debugVerb )
+		  {G4cout << " INTERS CONTOUR WITH Z SLIZE " << fMinZ << " < " << roic->GetZ() << " < " << fMaxZ << G4endl;}
+                if( roic->GetGeomType() == "CLOSED_PLANAR" )
+		  {
                     // Get min and max X and Y, and corresponding slice indexes
                     std::vector<G4ThreeVector> points = roic->GetPoints();
-                    if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << jj << " " << kk << " NPOINTS "
-                                                                    << points.size() << G4endl;
+                    if( BDSDicomFileMgr::verbose >= debugVerb )
+		      {G4cout << jj << " " << kk << " NPOINTS " << points.size() << G4endl;}
                     std::vector<G4ThreeVector> dirs = roic->GetDirections();
                     double minXc = DBL_MAX;
                     double maxXc = -DBL_MAX;
                     double minYc = DBL_MAX;
                     double maxYc = -DBL_MAX;
-                    for( size_t ll = 0; ll < points.size(); ll++ ){
+                    for( size_t ll = 0; ll < points.size(); ll++ )
+		      {
                         minXc = std::min(minXc,points[ll].x());
                         maxXc = std::max(maxXc,points[ll].x());
                         minYc = std::min(minYc,points[ll].y());
                         maxYc = std::max(maxYc,points[ll].y());
-                    }
-                    if( minXc < fMinX || maxXc > fMaxX || minYc < fMinY || maxYc > fMaxY ){
+		      }
+                    if( minXc < fMinX || maxXc > fMaxX || minYc < fMinY || maxYc > fMaxY )
+		      {
                         G4cerr << " minXc " << minXc << " < " << fMinX
                                << " maxXc " << maxXc << " > " << fMaxX
                                << " minYc " << minYc << " < " << fMinY
@@ -481,100 +497,144 @@ void BDSDicomFileCT::BuildStructureIDs()
                                     "DFCT001",
                                     JustWarning,
                                     "Contour limits exceed Z slice extent");
-                    }
+		      }
                     int idMinX = std::max(0,int((minXc-fMinX)/fVoxelDimX/fCompress));
                     int idMaxX = std::min(fNoVoxelX/fCompress-1,int((maxXc-fMinX)/fVoxelDimX/fCompress+1));
                     int idMinY = std::max(0,int((minYc-fMinY)/fVoxelDimY/fCompress));
                     int idMaxY = std::min(fNoVoxelY/fCompress-1,int((maxYc-fMinY)/fVoxelDimY/fCompress+1));
                     if( BDSDicomFileMgr::verbose >= debugVerb )
-                        G4cout << " minXc " << minXc << " < " << fMinX
+		      {
+			G4cout << " minXc " << minXc << " < " << fMinX
                                << " maxXc " << maxXc << " > " << fMaxX
                                << " minYc " << minYc << " < " << fMinY
                                << " maxYc " << maxYc << " > " << fMaxY << G4endl;
+		      }
                     if( BDSDicomFileMgr::verbose >= debugVerb )
+		      {
                         G4cout << " idMinX " << idMinX
                                << " idMaxX " << idMaxX
                                << " idMinY " << idMinY
                                << " idMaxY " << idMaxY << G4endl;
+		      }
                     //for each voxel: build 4 lines from the corner towards the center
                     // and check how many contour segments it crosses, and the minimum distance to a segment
-                    for( int ix = idMinX; ix <= idMaxX; ix++ ) {
-                        for( int iy = idMinY; iy <= idMaxY; iy++ ) {
+                    for( int ix = idMinX; ix <= idMaxX; ix++ )
+		      {
+                        for( int iy = idMinY; iy <= idMaxY; iy++ )
+			  {
                             G4bool bOK = false;
                             G4int bOKs;
-                            if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << "@@@@@ TRYING POINT ("
-                                                                            <<  fMinX + fVoxelDimX*fCompress*(ix+0.5) << ","
-                                                                            <<  fMinY + fVoxelDimY*fCompress*(iy+0.5) << ")" << G4endl;
+                            if( BDSDicomFileMgr::verbose >= debugVerb )
+			      {
+				G4cout << "@@@@@ TRYING POINT (" <<  fMinX + fVoxelDimX*fCompress*(ix+0.5) << ","
+				       <<  fMinY + fVoxelDimY*fCompress*(iy+0.5) << ")" << G4endl;
+			      }
                             // four corners
-                            for( int icx = 0; icx <= 1; icx++ ){
-                                for( int icy = 0; icy <= 1; icy++ ){
+                            for( int icx = 0; icx <= 1; icx++ )
+			      {
+                                for( int icy = 0; icy <= 1; icy++ )
+				  {
                                     bOKs = 0;
-                                    if( bOK ) continue;
+                                    if( bOK )
+				      {continue;}
                                     double p0x = fMinX + fVoxelDimX*fCompress * (ix+icx);
                                     double p0y = fMinY + fVoxelDimY*fCompress * (iy+icy);
                                     double v0x = 1.;
-                                    if( icx == 1 ) v0x = -1.;
+                                    if( icx == 1 )
+				      {v0x = -1.;}
                                     double v0y = 0.99*fVoxelDimY/fVoxelDimX*std::pow(-1.,icy);
-                                    if( BDSDicomFileMgr::verbose >= testVerb ) G4cout << ix << " + " << icx << " "
-                                                                                   << iy << " + " << icy << " CORNER (" << p0x << "," << p0y << ") "
-                                                                                   << " DIR= (" << v0x << "," << v0y << ") " << G4endl;
+                                    if( BDSDicomFileMgr::verbose >= testVerb )
+				      {
+					G4cout << ix << " + " << icx << " "
+					       << iy << " + " << icy << " CORNER (" << p0x << "," << p0y << ") "
+					       << " DIR= (" << v0x << "," << v0y << ") " << G4endl;
+				      }
                                     int NTRIES = theFileMgr->GetStructureNCheck();
-                                    for( int ip = 0; ip < NTRIES; ip++) {
+                                    for( int ip = 0; ip < NTRIES; ip++)
+				      {
                                         distInters.clear();
                                         v0y -= ip*0.1*v0y;
                                         G4double halfDiagonal = 0.5*fVoxelDimX*fCompress;
-                                        if( BDSDicomFileMgr::verbose >= testVerb ) G4cout << ip
-                                                                                       << " TRYING WITH DIRECTION (" << " DIR= (" << v0x << ","
-                                                                                       << v0y << ") " << bOKs << G4endl;
-                                        for( size_t ll = 0; ll < points.size(); ll++ ){
+                                        if( BDSDicomFileMgr::verbose >= testVerb )
+					  {
+					    G4cout << ip
+						   << " TRYING WITH DIRECTION (" << " DIR= (" << v0x << ","
+						   << v0y << ") " << bOKs << G4endl;
+					  }
+					for( size_t ll = 0; ll < points.size(); ll++ )
+					  {
                                             double d0x = points[ll].x() - p0x;
                                             double d0y = points[ll].y() - p0y;
                                             double w0x = dirs[ll].x();
                                             double w0y = dirs[ll].y();
                                             double fac1 = w0x*v0y - w0y*v0x;
-                                            if( fac1 == 0 ) { // parallel lines
+                                            if( fac1 == 0 )
+					      { // parallel lines
                                                 continue;
-                                            }
+					      }
                                             double fac2 = d0x*v0y - d0y*v0x;
                                             double fac3 = d0y*w0x - d0x*w0y;
                                             double lambdaq = -fac2/fac1;
-                                            if( lambdaq < 0. || lambdaq >= 1. ) continue;
+                                            if( lambdaq < 0. || lambdaq >= 1. )
+					      {continue;}
                                             // intersection further than segment length
                                             double lambdap = fac3/fac1;
-                                            if( lambdap > 0. ) {
+                                            if( lambdap > 0. )
+					      {
                                                 distInters.insert(lambdap);
-                                                if( BDSDicomFileMgr::verbose >= testVerb ) G4cout << " !! GOOD INTERS "
-                                                                                               <<lambdaq << "  (" << d0x+p0x+lambdaq*w0x << "," << d0y+p0y+lambdaq*w0y
-                                                                                               << ")  =  (" << p0x+lambdap*v0x << "," << p0y+lambdap*v0y << ") "
-                                                                                               << " N " << distInters.size() << G4endl;
-                                            }
-                                            if( BDSDicomFileMgr::verbose >= testVerb ) G4cout << " INTERS LAMBDAQ "
-                                                                                           << lambdaq << " P " << lambdap << G4endl;
-
-                                            if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " INTERS POINT ("
-                                                                                            << d0x+p0x+lambdaq*w0x << "," << d0y+p0y+lambdaq*w0y << ")  =  ("
-                                                                                            << p0x+lambdap*v0x << "," << p0y+lambdap*v0y << ") " << G4endl;
-                                        }
-                                        if( distInters.size() % 2 == 1 ) {
-                                            if( *(distInters.begin() ) > halfDiagonal ) {
+                                                if( BDSDicomFileMgr::verbose >= testVerb )
+						  {
+						    G4cout << " !! GOOD INTERS "
+							   <<lambdaq << "  (" << d0x+p0x+lambdaq*w0x << ","
+							   << d0y+p0y+lambdaq*w0y
+							   << ")  =  (" << p0x+lambdap*v0x << ","
+							   << p0y+lambdap*v0y << ") "
+							   << " N " << distInters.size() << G4endl;
+						  }
+					      }
+                                            if( BDSDicomFileMgr::verbose >= testVerb )
+					      {
+						G4cout << " INTERS LAMBDAQ "
+						       << lambdaq << " P " << lambdap << G4endl;
+					      }
+                                            if( BDSDicomFileMgr::verbose >= debugVerb )
+					      {
+						G4cout << " INTERS POINT ("
+						       << d0x+p0x+lambdaq*w0x << "," << d0y+p0y+lambdaq*w0y << ")  =  ("
+						       << p0x+lambdap*v0x << "," << p0y+lambdap*v0y << ") " << G4endl;
+					      }
+					  }
+                                        if( distInters.size() % 2 == 1 )
+					  {
+                                            if( *(distInters.begin() ) > halfDiagonal )
+					      {
                                                 //                      bOK = true;
                                                 bOKs += 1;
-                                                if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " OK= " << bOKs
-                                                                                                << " N INTERS " << distInters.size() << " " << *(distInters.begin())
-                                                                                                << " > " << halfDiagonal <<  G4endl;
-                                            }
-                                        }
-                                    }
-                                    if(bOKs == NTRIES ) {
+                                                if( BDSDicomFileMgr::verbose >= debugVerb )
+						  {
+						    G4cout << " OK= " << bOKs
+							   << " N INTERS " << distInters.size() << " " << *(distInters.begin())
+							   << " > " << halfDiagonal <<  G4endl;
+						  }
+					      }
+					  }
+				      }
+                                    if(bOKs == NTRIES )
+				      {
                                         bOK = true;
-                                        if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << "@@@@@ POINT OK ("
-                                                                                        <<  fMinX + fVoxelDimX*fCompress*(ix+0.5) << ","
-                                                                                        <<  fMinY + fVoxelDimY*fCompress*(iy+0.5) << ")" << G4endl;
-                                    }
-
-                                }
-                            } // loop to four corners
-                            if( bOK ) {
+                                        if( BDSDicomFileMgr::verbose >= debugVerb )
+					  {
+					    G4cout << "@@@@@ POINT OK ("
+						   <<  fMinX + fVoxelDimX*fCompress*(ix+0.5) << ","
+						   <<  fMinY + fVoxelDimY*fCompress*(iy+0.5) << ")" << G4endl;
+					  }
+				      }
+				    
+				  }
+			      }
+			    // loop to four corners
+                            if( bOK )
+			      {
                                 // extract previous ROI value
                                 int roival = fStructure[ix+iy*fNoVoxelX/fCompress];
                                 //                roival = 2 + NMAXROI*3 + NMAXROI*NMAXROI*15;
