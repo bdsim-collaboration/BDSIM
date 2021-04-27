@@ -17,10 +17,14 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDicomFileCT.hh"
+#include "BDSDicomFileMgr.hh"
 #include "BDSDicomFileStructure.hh"
 #include "BDSDicomROI.hh"
 
+#include "G4Exception.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include "dcmtk/dcmdata/dcfilefo.h"
 #include "dcmtk/dcmdata/dcdeftag.h"
@@ -30,82 +34,83 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmrt/drtimage.h"
 
 #include <set>
+#include <vector>
 
 BDSDicomFileCT::BDSDicomFileCT()
 {
   theFileMgr = BDSDicomFileMgr::GetInstance();
 }
 
-BDSDicomFileCT::BDSDicomFileCT(DcmDataset* dset) : BDSDicomVFile(dset)
+BDSDicomFileCT::BDSDicomFileCT(DcmDataset* dset):
+  BDSDicomVFile(dset)
 {
-    theFileMgr = BDSDicomFileMgr::GetInstance();
+  theFileMgr = BDSDicomFileMgr::GetInstance();
 }
 
 void BDSDicomFileCT::ReadData()
 {
-    std::vector<double> dImagePositionPatient = Read1Data(theDataset, DCM_ImagePositionPatient,3);
-    fLocation = dImagePositionPatient[2];
-    std::vector<double> dSliceThickness = Read1Data(theDataset, DCM_SliceThickness, 1);
-    std::vector<double> dPixelSpacing = Read1Data(theDataset, DCM_PixelSpacing, 2);
+  std::vector<double> dImagePositionPatient = Read1Data(theDataset, DCM_ImagePositionPatient,3);
+  fLocation = dImagePositionPatient[2];
+  std::vector<double> dSliceThickness = Read1Data(theDataset, DCM_SliceThickness, 1);
+  std::vector<double> dPixelSpacing = Read1Data(theDataset, DCM_PixelSpacing, 2);
+  
+  std::vector<double> dRows = Read1Data(theDataset, DCM_Rows, 1);
+  std::vector<double> dColumns = Read1Data(theDataset, DCM_Columns, 1);
+  fNoVoxelY = dRows[0];
+  fNoVoxelX = dColumns[0];
+  fNoVoxelZ = 1;
+  
+  fMinX = dImagePositionPatient[0]; // center of upper corner of pixel?
+  fMaxX = dImagePositionPatient[0]+dColumns[0]*dPixelSpacing[0];
+  
+  fMinY = dImagePositionPatient[1];
+  fMaxY = dImagePositionPatient[1]+dRows[0]*dPixelSpacing[1];
+  
+  fMinZ = dImagePositionPatient[2]-dSliceThickness[0]/2.;
+  fMaxZ = dImagePositionPatient[2]+dSliceThickness[0]/2.;
+  fVoxelDimX = dPixelSpacing[0];
+  fVoxelDimY = dPixelSpacing[1];
+  fVoxelDimZ = dSliceThickness[0];
+  
+  if( BDSDicomFileMgr::verbose >= debugVerb )
+    {
+      G4cout << " DicomVFileImage::ReadData:  fNoVoxel " << fNoVoxelX << " " << fNoVoxelY << " " << fNoVoxelZ << G4endl;
+      G4cout << " DicomVFileImage::ReadData:  fMin " << fMinX << " " << fMinY << " " << fMinZ << G4endl;
+      G4cout << " DicomVFileImage::ReadData:  fMax " << fMaxX << " " << fMaxY << " " << fMaxZ << G4endl;
+      G4cout << " DicomVFileImage::ReadData:  fVoxelDim " << fVoxelDimX << " " << fVoxelDimY << " " << fVoxelDimZ << G4endl;
+    }
 
-    std::vector<double> dRows = Read1Data(theDataset, DCM_Rows, 1);
-    std::vector<double> dColumns = Read1Data(theDataset, DCM_Columns, 1);
-    fNoVoxelY = dRows[0];
-    fNoVoxelX = dColumns[0];
-    fNoVoxelZ = 1;
-
-    fMinX = dImagePositionPatient[0]; // center of upper corner of pixel?
-    fMaxX = dImagePositionPatient[0]+dColumns[0]*dPixelSpacing[0];
-
-    fMinY = dImagePositionPatient[1];
-    fMaxY = dImagePositionPatient[1]+dRows[0]*dPixelSpacing[1];
-
-    fMinZ = dImagePositionPatient[2]-dSliceThickness[0]/2.;
-    fMaxZ = dImagePositionPatient[2]+dSliceThickness[0]/2.;
-    fVoxelDimX = dPixelSpacing[0];
-    fVoxelDimY = dPixelSpacing[1];
-    fVoxelDimZ = dSliceThickness[0];
-
-    if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " DicomVFileImage::ReadData:  fNoVoxel "
-                                                    << fNoVoxelX << " " << fNoVoxelY << " " << fNoVoxelZ << G4endl;
-    if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " DicomVFileImage::ReadData:  fMin "
-                                                    << fMinX << " " << fMinY << " " << fMinZ << G4endl;
-    if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " DicomVFileImage::ReadData:  fMax "
-                                                    << fMaxX << " " << fMaxY << " " << fMaxZ << G4endl;
-    if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout << " DicomVFileImage::ReadData:  fVoxelDim "
-                                                    << fVoxelDimX << " " << fVoxelDimY << " " << fVoxelDimZ << G4endl;
-
-    std::vector<double> dImageOrientationPatient =
-            Read1Data(theDataset, DCM_ImageOrientationPatient,6);
-    fOrientationRows = G4ThreeVector(dImageOrientationPatient[0],dImageOrientationPatient[1],
-                                     dImageOrientationPatient[2]);
-    fOrientationColumns = G4ThreeVector(dImageOrientationPatient[3],dImageOrientationPatient[4],
+    std::vector<double> dImageOrientationPatient = Read1Data(theDataset, DCM_ImageOrientationPatient,6);
+    fOrientationRows = G4ThreeVector(dImageOrientationPatient[0],
+				     dImageOrientationPatient[1],
+				     dImageOrientationPatient[2]);
+    fOrientationColumns = G4ThreeVector(dImageOrientationPatient[3],
+					dImageOrientationPatient[4],
                                         dImageOrientationPatient[5]);
-
-    if( fOrientationRows != G4ThreeVector(1,0,0)
-        || fOrientationColumns != G4ThreeVector(0,1,0) ) {
+    
+    if( fOrientationRows != G4ThreeVector(1,0,0) || fOrientationColumns != G4ThreeVector(0,1,0) )
+      {
         G4cerr << " OrientationRows " << fOrientationRows << " OrientationColumns "
                << fOrientationColumns << G4endl;
         G4Exception("DicomVFileImage::ReadData",
                     "DFCT0002",
                     JustWarning,
                     "OrientationRows must be (1,0,0) and OrientationColumns (0,1,0), please contact GAMOS authors");
-    }
+      }
     fBitAllocated = Read1Data(theDataset, DCM_BitsAllocated, 1)[0];
-    if( BDSDicomFileMgr::verbose >= 4 ) G4cout << " BIT ALLOCATED " << fBitAllocated << G4endl;
+    if( BDSDicomFileMgr::verbose >= 4 )
+      {G4cout << " BIT ALLOCATED " << fBitAllocated << G4endl;}
 
     std::vector<double> dRescaleSlope = Read1Data(theDataset, DCM_RescaleSlope, 1);
-    if( dRescaleSlope.size() == 1 ) {
-        fRescaleSlope = dRescaleSlope[0];
-    } else {
-        fRescaleSlope = 1;
-    }
+    if( dRescaleSlope.size() == 1 )
+      {fRescaleSlope = dRescaleSlope[0];}
+    else
+      {fRescaleSlope = 1;}
     std::vector<double> dRescaleIntercept = Read1Data(theDataset, DCM_RescaleIntercept, 1);
-    if( dRescaleIntercept.size() == 1 ) {
-        fRescaleIntercept = dRescaleIntercept[0];
-    } else {
-        fRescaleIntercept = 1;
-    }
+    if( dRescaleIntercept.size() == 1 )
+      {fRescaleIntercept = dRescaleIntercept[0];}
+    else
+      {fRescaleIntercept = 1;}
 
     ReadPixelData();
 }
