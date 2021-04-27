@@ -638,102 +638,131 @@ void BDSDicomFileCT::BuildStructureIDs()
                                 // extract previous ROI value
                                 int roival = fStructure[ix+iy*fNoVoxelX/fCompress];
                                 //                roival = 2 + NMAXROI*3 + NMAXROI*NMAXROI*15;
-                                if(roival != 0 && roival != int(roiID) ) {
+                                if(roival != 0 && roival != int(roiID) )
+				  {
                                     std::set<G4int> roisVoxel;
                                     int nRois = std::log10(roival)/std::log10(NMAXROI)+1;
-                                    if( nRois > NMAXROI_real ) { // another one cannot be added
+                                    if( nRois > NMAXROI_real )
+				      { // another one cannot be added
                                         G4Exception("DicomFileCT:BuildStructureIDs",
                                                     "DFC0004",
                                                     FatalException,
                                                     G4String("Too many ROIs associated to a voxel: \
-" + std::to_string(nRois) + " > " + std::to_string(NMAXROI_real) + " TRY CHAN\
+" + std::to_string(nRois) + " > " + std::to_string(NMAXROI_real) + " TRY CHAN \
 GING -NStructureNMaxROI argument to a lower value").c_str());
-                                    }
-                                    for( int inr = 0; inr < nRois; inr++ ) {
+				      }
+                                    for( int inr = 0; inr < nRois; inr++ )
+				      {
                                         roisVoxel.insert( int(roival/std::pow(NMAXROI,inr))%NMAXROI );
-                                    }
+				      }
                                     roisVoxel.insert(roiID);
                                     roival = 0;
                                     size_t inr = 0;
                                     for( std::set<G4int>::const_iterator ite = roisVoxel.begin();
-                                         ite != roisVoxel.end(); ite++, inr++ ) {
+                                         ite != roisVoxel.end(); ite++, inr++ )
+				      {
                                         roival += (*ite)*std::pow(NMAXROI,inr);
-                                    }
+				      }
                                     fStructure[ix+iy*fNoVoxelX/fCompress] = roival;
-                                    if( BDSDicomFileMgr::verbose >= testVerb ){
-                                        G4cout << " WITH PREVIOUS ROI IN VOXEL " << roival << G4endl;
-                                    }
-                                } else {
-                                    fStructure[ix+iy*fNoVoxelX/fCompress] = roiID;
-                                }
-                            }
-
-                        }
+                                    if( BDSDicomFileMgr::verbose >= testVerb )
+				      {G4cout << " WITH PREVIOUS ROI IN VOXEL " << roival << G4endl;}
+				  }
+				else
+				  {fStructure[ix+iy*fNoVoxelX/fCompress] = roiID;}
+			      }
+			  }
+		      }
+		  }
+	      }
+	  }
+    }
+  
+  if( BDSDicomFileMgr::verbose >= 1 )
+    {
+      //@@@@ PRINT structures
+      //@@@ PRINT points of structures in this Z slice
+      if( BDSDicomFileMgr::verbose >= 0 )
+	{G4cout << " STRUCTURES FOR SLICE " << fLocation << G4endl;}
+      for( size_t ii = 0; ii < dfs.size(); ii++ )
+	{
+	  std::vector<BDSDicomROI*> rois = dfs[ii]->GetROIs();
+	  for( size_t jj = 0; jj < rois.size(); jj++ )
+	    {
+	      int roi = rois[jj]->GetNumber();
+	      std::vector<BDSDicomROIContour*> contours = rois[jj]->GetContours();
+	      for( size_t kk = 0; kk < contours.size(); kk++ )
+		{
+		  BDSDicomROIContour* roic = contours[kk];
+		  // check contour corresponds to this CT slice
+		  if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ )
+		    {continue;}
+		  if( roic->GetGeomType() == "CLOSED_PLANAR" )
+		    {
+		      if( BDSDicomFileMgr::verbose >= testVerb )
+			{
+			  G4cout << " PRINTING CONTOUR? " << roi << " "
+				 << kk << " INTERS CONTOUR " << roic->GetZ() << " SLICE Z "
+				 << fMinZ << " " << fMaxZ << G4endl;
+			}
+		      if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ )
+			{continue;}
+		      std::vector<G4ThreeVector> points = roic->GetPoints();
+		      std::vector<G4ThreeVector> dirs = roic->GetDirections();
+		      if( BDSDicomFileMgr::verbose >= 0 )
+			{std::cout << " STRUCTURE Z " << roic->GetZ() << std::endl;}
+		      for( size_t ll = 0; ll < points.size(); ll++ )
+			{
+			  if( BDSDicomFileMgr::verbose >= 0 )
+			    {
+			      G4cout << roi << " : " << ll
+				     << " STRUCTURE POINT (" << points[ll].x() << "," << points[ll].y() << ") "
+				     << " (" << dirs[ll].x() << "," << dirs[ll].y() << ") = " << roi << G4endl;
+			    }
+			}
                     }
                 }
             }
         }
-    }
-
-    if( BDSDicomFileMgr::verbose >= 1 ) {
-        //@@@@ PRINT structures
-        //@@@ PRINT points of structures in this Z slice
-        if( BDSDicomFileMgr::verbose >= 0 ) G4cout << " STRUCTURES FOR SLICE " << fLocation << G4endl;
-        for( size_t ii = 0; ii < dfs.size(); ii++ ){
-            std::vector<BDSDicomROI*> rois = dfs[ii]->GetROIs();
-            for( size_t jj = 0; jj < rois.size(); jj++ ){
-                int roi = rois[jj]->GetNumber();
-                std::vector<BDSDicomROIContour*> contours = rois[jj]->GetContours();
-                for( size_t kk = 0; kk < contours.size(); kk++ ){
-                    BDSDicomROIContour* roic = contours[kk];
-                    // check contour corresponds to this CT slice
-                    if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ ) continue;
-                    if( roic->GetGeomType() == "CLOSED_PLANAR" ){
-                        if( BDSDicomFileMgr::verbose >= testVerb ) G4cout << " PRINTING CONTOUR? " << roi << " "
-                                                                       << kk << " INTERS CONTOUR " << roic->GetZ() << " SLICE Z "
-                                                                       << fMinZ << " " << fMaxZ << G4endl;
-                        if( roic->GetZ() > fMaxZ || roic->GetZ() < fMinZ ) continue;
-                        std::vector<G4ThreeVector> points = roic->GetPoints();
-                        std::vector<G4ThreeVector> dirs = roic->GetDirections();
-                        if( BDSDicomFileMgr::verbose >= 0 ) std::cout << " STRUCTURE Z " << roic->GetZ()
-                                                                   << std::endl;
-                        for( size_t ll = 0; ll < points.size(); ll++ ){
-                            if( BDSDicomFileMgr::verbose >= 0 ) G4cout << roi << " : " << ll
-                                                                    << " STRUCTURE POINT (" << points[ll].x() << "," << points[ll].y() << ") "
-                                                                    << " (" << dirs[ll].x() << "," << dirs[ll].y() << ") = " << roi << G4endl;
-                        }
-                    }
-                }
-            }
-        }
-        //@@@ PRINT points in slice inside structure
-        for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ ) {
-            for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ ) {
-                if( fStructure[ic+ir*fNoVoxelX/fCompress] != 0 ) {
-                    if( BDSDicomFileMgr::verbose >= 0 ) G4cout << ic+ir*fNoVoxelX/fCompress << " = " << ic
-                                                            << " " << ir << " STRUCTURE VOXEL (" << fMinX + fVoxelDimX*fCompress * (ic+0.5)
-                                                            << "," << fMinY + fVoxelDimY*fCompress * (ir+0.5) << ") = "
-                                                            << fStructure[ic+ir*fNoVoxelX/fCompress] << G4endl;
+      //@@@ PRINT points in slice inside structure
+      for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ )
+	{
+	  for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ )
+	    {
+	      if( fStructure[ic+ir*fNoVoxelX/fCompress] != 0 )
+		{
+		  if( BDSDicomFileMgr::verbose >= 0 )
+		    {
+		      G4cout << ic+ir*fNoVoxelX/fCompress << " = " << ic
+			     << " " << ir << " STRUCTURE VOXEL (" << fMinX + fVoxelDimX*fCompress * (ic+0.5)
+			     << "," << fMinY + fVoxelDimY*fCompress * (ir+0.5) << ") = "
+			     << fStructure[ic+ir*fNoVoxelX/fCompress] << G4endl;
+		    }
                 }
             }
         }
     }
-
 }
 
 void BDSDicomFileCT::DumpStructureIDsToTextFile(std::ofstream& fout)
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    if( BDSDicomFileMgr::verbose >= 0 ) G4cout << fLocation << " DumpStructureIDsToTextFile "
-                                            << fFileName << " " << fStructure.size() << G4endl;
-    std::vector<BDSDicomFileStructure*> dfs = theFileMgr->GetStructFiles();
-    if( dfs.size() == 0 ) return;
+  G4int fCompress = theFileMgr->GetCompression();
+  if( BDSDicomFileMgr::verbose >= 0 )
+    {
+      G4cout << fLocation << " DumpStructureIDsToTextFile "
+	     << fFileName << " " << fStructure.size() << G4endl;
+    }
+  std::vector<BDSDicomFileStructure*> dfs = theFileMgr->GetStructFiles();
+  if( dfs.size() == 0 )
+    {return;}
 
-    for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ ) {
-        for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ ) {
-            fout << fStructure[ic+ir*fNoVoxelX/fCompress];
-            if( ic != fNoVoxelX/fCompress-1) fout << " ";
+  for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ )
+    {
+      for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ )
+	{
+	  fout << fStructure[ic+ir*fNoVoxelX/fCompress];
+	  if( ic != fNoVoxelX/fCompress-1)
+	    {fout << " ";}
         }
-        fout << G4endl;
+      fout << G4endl;
     }
 }
