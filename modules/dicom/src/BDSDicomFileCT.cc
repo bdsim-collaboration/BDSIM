@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmrt/drtimage.h"
 
 #include <set>
+#include <string>
 #include <vector>
 
 BDSDicomFileCT::BDSDicomFileCT()
@@ -243,148 +244,155 @@ void BDSDicomFileCT::operator+=( const BDSDicomFileCT& rhs )
 
 BDSDicomFileCT BDSDicomFileCT::operator+( const BDSDicomFileCT& rhs )
 {
-    //----- Check that both slices has the same dimensions
-    if( fNoVoxelX != rhs.GetNoVoxelX()
-        || fNoVoxelY != rhs.GetNoVoxelY() ) {
-        G4cerr << "DicomVFileImage error adding two slice headers: !!! Different number of voxels: "
-               << "  X= " << fNoVoxelX << " =? " << rhs.GetNoVoxelX()
-               << "  Y=  " << fNoVoxelY << " =? " << rhs.GetNoVoxelY()
-               << "  Z=  " << fNoVoxelZ << " =? " << rhs.GetNoVoxelZ()
-               << G4endl;
-        G4Exception("DicomVFileImage::DicomVFileImage",
-                    "",FatalErrorInArgument,"");
+  //----- Check that both slices has the same dimensions
+  if( fNoVoxelX != rhs.GetNoVoxelX() || fNoVoxelY != rhs.GetNoVoxelY() )
+    {
+      G4cerr << "DicomVFileImage error adding two slice headers: !!! Different number of voxels: "
+	     << "  X= " << fNoVoxelX << " =? " << rhs.GetNoVoxelX()
+	     << "  Y=  " << fNoVoxelY << " =? " << rhs.GetNoVoxelY()
+	     << "  Z=  " << fNoVoxelZ << " =? " << rhs.GetNoVoxelZ()
+	     << G4endl;
+      G4Exception("DicomVFileImage::DicomVFileImage",
+		  "",FatalErrorInArgument,"");
     }
-    //----- Check that both slices has the same extensions
-    if( fMinX != rhs.GetMinX() || fMaxX != rhs.GetMaxX()
-        || fMinY != rhs.GetMinY() || fMaxY != rhs.GetMaxY() ) {
-        G4cerr << "DicomVFileImage error adding two slice headers: !!! Different extensions: "
-               << "  Xmin= " << fMinX << " =? " << rhs.GetMinX()
-               << "  Xmax= " << fMaxX << " =? " << rhs.GetMaxX()
-               << "  Ymin= " << fMinY << " =? " << rhs.GetMinY()
-               << "  Ymax= " << fMaxY << " =? " << rhs.GetMaxY()
-               << G4endl;
-        G4Exception("DicomVFileImage::operator+","",
-                    FatalErrorInArgument,"");
+  //----- Check that both slices has the same extensions
+  if( fMinX != rhs.GetMinX() || fMaxX != rhs.GetMaxX()
+      || fMinY != rhs.GetMinY() || fMaxY != rhs.GetMaxY() )
+    {
+      G4cerr << "DicomVFileImage error adding two slice headers: !!! Different extensions: "
+	     << "  Xmin= " << fMinX << " =? " << rhs.GetMinX()
+	     << "  Xmax= " << fMaxX << " =? " << rhs.GetMaxX()
+	     << "  Ymin= " << fMinY << " =? " << rhs.GetMinY()
+	     << "  Ymax= " << fMaxY << " =? " << rhs.GetMaxY()
+	     << G4endl;
+      G4Exception("DicomVFileImage::operator+","",
+		  FatalErrorInArgument,"");
     }
-
-    //----- Check that both slices has the same orientations
-    if( fOrientationRows != rhs.GetOrientationRows() ||
-        fOrientationColumns != rhs.GetOrientationColumns() ) {
-        G4cerr << "DicomVFileImage error adding two slice headers: !!! Slices have different orientations "
-               << "  Orientation Rows = " << fOrientationRows << " & " << rhs.GetOrientationRows()
-               << "  Orientation Columns " << fOrientationColumns << " & "
-               << rhs.GetOrientationColumns() << G4endl;
-        G4Exception("DicomVFileImage::operator+","",
-                    FatalErrorInArgument,"");
+  
+  //----- Check that both slices has the same orientations
+  if( fOrientationRows != rhs.GetOrientationRows() ||
+      fOrientationColumns != rhs.GetOrientationColumns() )
+    {
+      G4cerr << "DicomVFileImage error adding two slice headers: !!! Slices have different orientations "
+	     << "  Orientation Rows = " << fOrientationRows << " & " << rhs.GetOrientationRows()
+	     << "  Orientation Columns " << fOrientationColumns << " & "
+	     << rhs.GetOrientationColumns() << G4endl;
+      G4Exception("DicomVFileImage::operator+","",
+		  FatalErrorInArgument,"");
     }
-
-    //----- Check that the slices are contiguous in Z
-    if( std::fabs( fMinZ - rhs.GetMaxZ() ) >
-        G4GeometryTolerance::GetInstance()->GetRadialTolerance() &&
-        std::fabs( fMaxZ - rhs.GetMinZ() ) >
-        G4GeometryTolerance::GetInstance()->GetRadialTolerance() ){
-        G4cerr << "DicomVFileImage error adding two slice headers: !!! Slices are not contiguous in Z "
-               << "  Zmin= " << fMinZ << " & " << rhs.GetMinZ()
-               << "  Zmax= " << fMaxZ << " & " << rhs.GetMaxZ()
-               << G4endl;
-        G4Exception("DicomVFileImage::operator+","",
-                    JustWarning,"");
+  
+  //----- Check that the slices are contiguous in Z
+  if( std::fabs( fMinZ - rhs.GetMaxZ() ) > G4GeometryTolerance::GetInstance()->GetRadialTolerance() &&
+        std::fabs( fMaxZ - rhs.GetMinZ() ) > G4GeometryTolerance::GetInstance()->GetRadialTolerance() )
+    {
+      G4cerr << "DicomVFileImage error adding two slice headers: !!! Slices are not contiguous in Z "
+	     << "  Zmin= " << fMinZ << " & " << rhs.GetMinZ()
+	     << "  Zmax= " << fMaxZ << " & " << rhs.GetMaxZ()
+	     << G4endl;
+      G4Exception("DicomVFileImage::operator+","",
+		  JustWarning,"");
     }
-
-    //----- Build slice header copying first one
-    BDSDicomFileCT temp( *this );
-
-    //----- Add data from second slice header
-    temp.SetMinZ( std::min( fMinZ, rhs.GetMinZ() ) );
-    temp.SetMaxZ( std::max( fMaxZ, rhs.GetMaxZ() ) );
-    temp.SetNoVoxelZ( fNoVoxelZ + rhs.GetNoVoxelZ() );
-
-    return temp;
+  
+  //----- Build slice header copying first one
+  BDSDicomFileCT temp( *this );
+  
+  //----- Add data from second slice header
+  temp.SetMinZ( std::min( fMinZ, rhs.GetMinZ() ) );
+  temp.SetMaxZ( std::max( fMaxZ, rhs.GetMaxZ() ) );
+  temp.SetNoVoxelZ( fNoVoxelZ + rhs.GetNoVoxelZ() );
+  
+  return temp;
 }
 
 void BDSDicomFileCT::DumpHeaderToTextFile(std::ofstream& fout)
 {
-    if( BDSDicomFileMgr::verbose >= warningVerb ) G4cout << fLocation << " DumpHeaderToTextFile "
-                                                      << fFileName << " " << fHounsfieldV.size() << G4endl;
-
-    G4String fName = fFileName.substr(0,fFileName.length()-3) + "g4dcm";
-    std::ofstream out(fName.c_str());
-
-    if( BDSDicomFileMgr::verbose >= warningVerb ) G4cout
-                << "### DicomVFileImage::Dumping Z Slice header to Text file " << G4endl;
-
-    G4int fCompress = theFileMgr->GetCompression();
-    fout << fNoVoxelX/fCompress << " " << fNoVoxelY/fCompress << " " << fNoVoxelZ << std::endl;
-    fout << fMinX << " " << fMaxX << std::endl;
-    fout << fMinY << " " << fMaxY << std::endl;
-    fout << fMinZ << " " << fMaxZ << std::endl;
-
+  if( BDSDicomFileMgr::verbose >= warningVerb )
+    {G4cout << fLocation << " DumpHeaderToTextFile " << fFileName << " " << fHounsfieldV.size() << G4endl;}
+  
+  G4String fName = fFileName.substr(0,fFileName.length()-3) + "g4dcm";
+  std::ofstream out(fName.c_str());
+  
+  if( BDSDicomFileMgr::verbose >= warningVerb )
+    {G4cout << "### DicomVFileImage::Dumping Z Slice header to Text file " << G4endl;}
+  
+  G4int fCompress = theFileMgr->GetCompression();
+  fout << fNoVoxelX/fCompress << " " << fNoVoxelY/fCompress << " " << fNoVoxelZ << std::endl;
+  fout << fMinX << " " << fMaxX << std::endl;
+  fout << fMinY << " " << fMaxY << std::endl;
+  fout << fMinZ << " " << fMaxZ << std::endl;
 }
 
 void BDSDicomFileCT::Print(std::ostream& out )
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    out << "@@ CT Slice " << fLocation << G4endl;
-
-    out << "@ NoVoxels " << fNoVoxelX/fCompress << " " << fNoVoxelY/fCompress << " "
-        << fNoVoxelZ << G4endl;
-    out << "@ DIM X: " << fMinX << " " << fMaxX
-        << " Y: " << fMinY << " " << fMaxY
-        << " Z: " << fMinZ << " " << fMaxZ << G4endl;
+  G4int fCompress = theFileMgr->GetCompression();
+  out << "@@ CT Slice " << fLocation << G4endl;
+  
+  out << "@ NoVoxels " << fNoVoxelX/fCompress << " " << fNoVoxelY/fCompress << " "
+      << fNoVoxelZ << G4endl;
+  out << "@ DIM X: " << fMinX << " " << fMaxX
+      << " Y: " << fMinY << " " << fMaxY
+      << " Z: " << fMinZ << " " << fMaxZ << G4endl;
 }
 
 void BDSDicomFileCT::BuildMaterials()
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    if( fNoVoxelX%fCompress != 0 || fNoVoxelY%fCompress != 0 ) {
-        G4Exception("DicompFileMgr.:BuildMaterials",
-                    "DFC004",
-                    FatalException,
-                    ("Compression factor = " + std::to_string(fCompress)
-                     + " has to be a divisor of Number of voxels X = " + std::to_string(fNoVoxelX)
-                     + " and Y " + std::to_string(fNoVoxelY)).c_str());
+  G4int fCompress = theFileMgr->GetCompression();
+  if( fNoVoxelX%fCompress != 0 || fNoVoxelY%fCompress != 0 )
+    {
+      G4Exception("DicompFileMgr.:BuildMaterials",
+		  "DFC004",
+		  FatalException,
+		  ("Compression factor = " + std::to_string(fCompress)
+		   + " has to be a divisor of Number of voxels X = " + std::to_string(fNoVoxelX)
+		   + " and Y " + std::to_string(fNoVoxelY)).c_str());
     }
-
-    //  if( DicomVerb(debugVerb) ) G4cout << " BuildMaterials " << fFileName << G4endl;
-    double meanHV = 0.;
-    for( int ir = 0; ir < fNoVoxelY; ir += fCompress ) {
-        for( int ic = 0; ic < fNoVoxelX; ic += fCompress ) {
-            meanHV = 0.;
-            int isumrMax = std::min(ir+fCompress,fNoVoxelY);
-            int isumcMax = std::min(ic+fCompress,fNoVoxelX);
-            for( int isumr = ir; isumr < isumrMax; isumr ++ ) {
-                for( int isumc = ic; isumc < isumcMax; isumc ++ ) {
-                    meanHV += fHounsfieldV[isumc+isumr*fNoVoxelX];
-                    // G4cout << isumr << " " << isumc << " GET mean " << meanHV << G4endl;
-                }
-            }
-            meanHV /= (isumrMax-ir)*(isumcMax-ic);
-            G4double meanDens = theFileMgr->Hounsfield2density(meanHV);
-            //      G4cout << ir << " " << ic << " FINAL mean " << meanDens << G4endl;
-
-            fDensities.push_back(meanDens);
-            size_t mateID;
-            if( theFileMgr->IsMaterialsDensity() ) {
-                mateID = theFileMgr->GetMaterialIndexByDensity(meanDens);
-            } else {
-                mateID = theFileMgr->GetMaterialIndex(meanHV);
-            }
-            fMateIDs.push_back(mateID);
+  
+  //  if( DicomVerb(debugVerb) ) G4cout << " BuildMaterials " << fFileName << G4endl;
+  double meanHV = 0.;
+  for( int ir = 0; ir < fNoVoxelY; ir += fCompress )
+    {
+      for( int ic = 0; ic < fNoVoxelX; ic += fCompress )
+	{
+	  meanHV = 0.;
+	  int isumrMax = std::min(ir+fCompress,fNoVoxelY);
+	  int isumcMax = std::min(ic+fCompress,fNoVoxelX);
+	  for( int isumr = ir; isumr < isumrMax; isumr ++ )
+	    {
+	      for( int isumc = ic; isumc < isumcMax; isumc ++ )
+		{
+		  meanHV += fHounsfieldV[isumc+isumr*fNoVoxelX];
+		  // G4cout << isumr << " " << isumc << " GET mean " << meanHV << G4endl;
+		}
+	    }
+	  meanHV /= (isumrMax-ir)*(isumcMax-ic);
+	  G4double meanDens = theFileMgr->Hounsfield2density(meanHV);
+	  //      G4cout << ir << " " << ic << " FINAL mean " << meanDens << G4endl;
+	  
+	  fDensities.push_back(meanDens);
+	  size_t mateID;
+	  if( theFileMgr->IsMaterialsDensity() )
+	    {mateID = theFileMgr->GetMaterialIndexByDensity(meanDens);}
+	  else
+	    {mateID = theFileMgr->GetMaterialIndex(meanHV);}
+	  fMateIDs.push_back(mateID);
         }
     }
 }
 
 void BDSDicomFileCT::DumpMateIDsToTextFile(std::ofstream& fout)
 {
-    G4int fCompress = theFileMgr->GetCompression();
-    if( BDSDicomFileMgr::verbose >= warningVerb ) G4cout << fLocation << " DumpMateIDsToTextFile "
-                                                      << fFileName << " " << fMateIDs.size() << G4endl;
-    for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ ) {
-        for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ ) {
-            fout << fMateIDs[ic+ir*fNoVoxelX/fCompress];
-            if( ic != fNoVoxelX/fCompress-1) fout << " ";
+  G4int fCompress = theFileMgr->GetCompression();
+  if( BDSDicomFileMgr::verbose >= warningVerb )
+    {G4cout << fLocation << " DumpMateIDsToTextFile " << fFileName << " " << fMateIDs.size() << G4endl;}
+  for( int ir = 0; ir < fNoVoxelY/fCompress; ir++ )
+    {
+      for( int ic = 0; ic < fNoVoxelX/fCompress; ic++ )
+	{
+	  fout << fMateIDs[ic+ir*fNoVoxelX/fCompress];
+	  if( ic != fNoVoxelX/fCompress-1)
+	    {fout << " ";}
         }
-        fout << G4endl;
+      fout << G4endl;
     }
 }
 
