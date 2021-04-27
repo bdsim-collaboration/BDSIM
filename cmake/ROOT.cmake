@@ -100,3 +100,4 @@ string(REPLACE "-stdlib=libc++"  "" ROOT_LIBRARIES ${ROOT_LIBRARIES})
 # nice regex from CRMC pacakge in their search for ROOT also
 STRING (REGEX REPLACE "[ \t\r\n]+" "" ROOT_VERSION "${ROOT_VERSION}")
 STRING (REGEX REPLACE "/" "." ROOT_VERSION "${ROOT_VERSION}")
+

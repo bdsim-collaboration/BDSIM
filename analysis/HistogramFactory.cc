@@ -200,7 +200,7 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
   
   if(d->eScale == "linear")
     {
-      result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale, binEdgesE,
+      result = new BDSBH4D<boost_histogram_linear>(name, title, d->eScale,
 						   xbs.n, xbs.low, xbs.high,
 						   ybs.n, ybs.low, ybs.high,
 						   zbs.n, zbs.low, zbs.high,
@@ -208,7 +208,7 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
     }
   else if(d->eScale == "log")
     {
-      result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale, binEdgesE,
+      result = new BDSBH4D<boost_histogram_log>(name, title, d->eScale,
 						xbs.n, xbs.low, xbs.high,
 						ybs.n, ybs.low, ybs.high,
 						zbs.n, zbs.low, zbs.high,
@@ -219,8 +219,7 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
       result = new BDSBH4D<boost_histogram_variable>(name, title, d->eScale, binEdgesE,
 						     xbs.n, xbs.low, xbs.high,
 						     ybs.n, ybs.low, ybs.high,
-						     zbs.n, zbs.low, zbs.high,
-						     ebs.n, ebs.low, ebs.high);
+						     zbs.n, zbs.low, zbs.high);
     }
   return result;
 }

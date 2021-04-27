@@ -31,11 +31,15 @@ template<class T>
 class BDSBH4D : public BDSBH4DBase {
 public:
     BDSBH4D();
-    BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
+    BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
             unsigned int nxbins, double xmin, double xmax,
             unsigned int nybins, double ymin, double ymax,
             unsigned int nzbins, double zmin, double zmax,
             unsigned int nebins, double emin, double emax);
+    BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
+            unsigned int nxbins, double xmin, double xmax,
+            unsigned int nybins, double ymin, double ymax,
+            unsigned int nzbins, double zmin, double zmax);
 
     T h;
     T h_err;
@@ -48,15 +52,15 @@ public:
     void Reset_BDSBH4D() override;
     BDSBH4D* Clone(const char*) const override;
     void Fill_BDSBH4D(double, double, double, double) override;
-    void Set(int, int, int, int, double) override;
-    void SetError(int, int, int, int, double) override;
-    void Add(BDSBH4DBase*) override;
+    void Set_BDSBH4D(int, int, int, int, double) override;
+    void SetError_BDSBH4D(int, int, int, int, double) override;
+    void Add_BDSBH4D(BDSBH4DBase*) override;
     double At(int, int, int, int) override;
     double AtError(int, int, int, int) override;
     double LowBinEdgeAt(int, int, int, int) override;
     double HighBinEdgeAt(int, int, int, int) override;
-    void Print(bool with_zero_values = true) override;
-    void Print(int , int , int , int) override;
+    void Print_BDSBH4D(bool with_zero_values = true) override;
+    void Print_BDSBH4D(int , int , int , int) override;
 
 ClassDef(BDSBH4D,1);
 

@@ -213,8 +213,8 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 					      ht->At(j,k,l,e),
 					      error, n, nEntriesToAccumulate,
 					      newMean, newVari);
-			h1->Set(j,k,l,e, newMean);
-			h1e->Set(j,k,l,e, newVari);
+			h1->Set_BDSBH4D(j,k,l,e, newMean);
+			h1e->Set_BDSBH4D(j,k,l,e, newVari);
 		      }
 		    
 		  }
@@ -299,8 +299,8 @@ TH1* HistogramAccumulator::Terminate()
 			mn = dynamic_cast<BDSBH4DBase*>(mean)->At(j, k, l, e);
 			var = dynamic_cast<BDSBH4DBase*>(variance)->At(j, k, l, e);
 			err = n > 1 ? factor*std::sqrt(var) : 0;
-			dynamic_cast<BDSBH4DBase*>(result)->Set(j, k, l, e, mn);
-			dynamic_cast<BDSBH4DBase*>(result)->SetError(j, k, l, e, err);
+			dynamic_cast<BDSBH4DBase*>(result)->Set_BDSBH4D(j, k, l, e, mn);
+			dynamic_cast<BDSBH4DBase*>(result)->SetError_BDSBH4D(j, k, l, e, err);
 		      }
 		    
 		  }
@@ -312,7 +312,7 @@ TH1* HistogramAccumulator::Terminate()
       {break;}
     }
   if(nDimensions==4)
-    {dynamic_cast<BDSBH4DBase*>(result)->SetEntries(n);}
+    {dynamic_cast<BDSBH4DBase*>(result)->SetEntries_BDSBH4D(n);}
   else
     {result->SetEntries(n);}
 
