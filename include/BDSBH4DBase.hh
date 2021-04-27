@@ -53,9 +53,9 @@ public:
     void SetEntries(double) override;
 
     virtual BDSBH4DBase& operator+=(const BDSBH4DBase& other) = 0;
-    virtual void Reset() = 0;
+    virtual void Reset_BDSBH4D() = 0;
     BDSBH4DBase* Clone(const char*) const override = 0;
-    virtual void Fill(double, double, double, double) = 0;
+    virtual void Fill_BDSBH4D(double, double, double, double) = 0;
     virtual void Set(int, int, int, int, double) = 0;
     virtual void SetError(int, int, int, int, double) = 0;
     virtual void Add(BDSBH4DBase*) = 0;
