@@ -114,7 +114,7 @@ BDSBH4D<boost_histogram_variable>::BDSBH4D()
 }
 
 template <>
-BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
+BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
                  unsigned int nxbins, double xmin, double xmax,
                  unsigned int nybins, double ymin, double ymax,
                  unsigned int nzbins, double zmin, double zmax,
@@ -149,7 +149,7 @@ BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, 
 }
 
 template <>
-BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
+BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
                     unsigned int nxbins, double xmin, double xmax,
                     unsigned int nybins, double ymin, double ymax,
                     unsigned int nzbins, double zmin, double zmax,
@@ -188,8 +188,7 @@ template <>
 BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
                                       unsigned int nxbins, double xmin, double xmax,
                                       unsigned int nybins, double ymin, double ymax,
-                                      unsigned int nzbins, double zmin, double zmax,
-                                      unsigned int nebins, double emin, double emax)
+                                      unsigned int nzbins, double zmin, double zmax)
 {
     h = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
                                               boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
@@ -278,7 +277,7 @@ void BDSBH4D<T>::Fill_BDSBH4D(double xValue,
 }
 
 template <class T>
-void BDSBH4D<T>::Set(int x,
+void BDSBH4D<T>::Set_BDSBH4D(int x,
                   int y,
                   int z,
                   int e,
@@ -287,7 +286,7 @@ void BDSBH4D<T>::Set(int x,
 }
 
 template <class T>
-void BDSBH4D<T>::SetError(int x,
+void BDSBH4D<T>::SetError_BDSBH4D(int x,
                        int y,
                        int z,
                        int e,
@@ -296,7 +295,7 @@ void BDSBH4D<T>::SetError(int x,
 }
 
 template <class T>
-void BDSBH4D<T>::Add(BDSBH4DBase* otherHistogram) {
+void BDSBH4D<T>::Add_BDSBH4D(BDSBH4DBase* otherHistogram) {
     auto tmp = dynamic_cast<BDSBH4D<T>*>(otherHistogram);
     h += tmp->h;
 }
@@ -316,6 +315,7 @@ double BDSBH4D<T>::LowBinEdgeAt(int x, int y, int z, int e) {
             return i.bin(3).lower();
         }
     }
+    return 0;
 }
 
 template <class T>
@@ -328,6 +328,7 @@ double BDSBH4D<T>::HighBinEdgeAt(int x, int y, int z, int e) {
             return i.bin(3).upper();
         }
     }
+    return 0;
 }
 
 template <class T>
@@ -336,7 +337,7 @@ double BDSBH4D<T>::AtError(int x, int y, int z, int e) {
 }
 
 template <class T>
-void BDSBH4D<T>::Print(bool with_zero_values) {
+void BDSBH4D<T>::Print_BDSBH4D(bool with_zero_values) {
 
     std::ostringstream os4;
     for (auto&& x : indexed(this->h)) {
@@ -367,7 +368,7 @@ void BDSBH4D<T>::Print(bool with_zero_values) {
 }
 
 template <class T>
-void BDSBH4D<T>::Print(int x, int y, int z, int e) {
+void BDSBH4D<T>::Print_BDSBH4D(int x, int y, int z, int e) {
 
     std::ostringstream os4;
     for (auto&& i : indexed(this->h)) {

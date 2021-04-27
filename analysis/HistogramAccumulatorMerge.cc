@@ -58,8 +58,8 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
 
   if (nDimensions == 4)
     {
-      oldEntries = (unsigned long)static_cast<BDSBH4DBase*>(mean)->GetEntries();
-      newEntries = (unsigned long)static_cast<BDSBH4DBase*>(newValue)->GetEntries();
+      oldEntries = (unsigned long)static_cast<BDSBH4DBase*>(mean)->GetEntries_BDSBH4D();
+      newEntries = (unsigned long)static_cast<BDSBH4DBase*>(newValue)->GetEntries_BDSBH4D();
     }
   else
     {
@@ -159,8 +159,8 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
 					      var,
 					      oldEntries, newEntries,
 					      newMean, newVari);
-			h1->Set(j, k, l, e, newMean);
-			h1e->Set(j, k, l, e, newVari);
+			h1->Set_BDSBH4D(j, k, l, e, newMean);
+			h1e->Set_BDSBH4D(j, k, l, e, newVari);
 		      }
 		  }
 	      }
@@ -172,8 +172,8 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
     }
   if(nDimensions==4)
     {
-      dynamic_cast<BDSBH4DBase*>(mean)->SetEntries(newTotalEntries);
-      dynamic_cast<BDSBH4DBase*>(variance)->SetEntries(newTotalEntries);
+      dynamic_cast<BDSBH4DBase*>(mean)->SetEntries_BDSBH4D(newTotalEntries);
+      dynamic_cast<BDSBH4DBase*>(variance)->SetEntries_BDSBH4D(newTotalEntries);
     }
   else
     {

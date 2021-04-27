@@ -187,7 +187,7 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
   std::string eScaleC = (std::string)eScale;
   if(eScale == "linear")
     {
-      histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(nameC, titleC, eScaleC, eBinsEdges,
+      histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(nameC, titleC, eScaleC,
 								 nxbins, xmin, xmax,
 								 nybins, ymin, ymax,
 								 nzbins, zmin, zmax,
@@ -195,7 +195,7 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
     }
   else if(eScale == "log")
     {
-      histograms4D.push_back(new BDSBH4D<boost_histogram_log>(nameC, titleC, eScaleC, eBinsEdges,
+      histograms4D.push_back(new BDSBH4D<boost_histogram_log>(nameC, titleC, eScaleC,
 							      nxbins, xmin, xmax,
 							      nybins, ymin, ymax,
 							      nzbins, zmin, zmax,
@@ -206,8 +206,7 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
       histograms4D.push_back(new BDSBH4D<boost_histogram_variable>(nameC, titleC, eScaleC, eBinsEdges,
 								   nxbins, xmin, xmax,
 								   nybins, ymin, ymax,
-								   nzbins, zmin, zmax,
-								   nebins, emin, emax));
+								   nzbins, zmin, zmax));
     }
   return (G4int)histograms4D.size() - 1;
 }
@@ -260,7 +259,7 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4int e,
                                 G4double value)
 {
-    histograms4D[histoId]->Set(x, y, z, e, value);
+    histograms4D[histoId]->Set_BDSBH4D(x, y, z, e, value);
 }
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
@@ -286,5 +285,5 @@ void BDSOutputROOTEventHistograms::Flush()
   for (auto h : histograms3D)
     {h->Reset();}
   for (auto h : histograms4D)
-    {h->Reset();}
+    {h->Reset_BDSBH4D();}
 }

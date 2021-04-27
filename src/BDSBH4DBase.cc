@@ -54,7 +54,7 @@ const char* BDSBH4DBase::GetTitle() const
   return h_title.c_str();
 }
 
-unsigned long BDSBH4DBase::GetEntries()
+unsigned long BDSBH4DBase::GetEntries_BDSBH4D()
 {
   return h_entries;
 }
@@ -69,7 +69,7 @@ void BDSBH4DBase::SetTitle(const char* title)
   h_title = std::string(title);
 }
 
-void BDSBH4DBase::SetEntries(double i)
+void BDSBH4DBase::SetEntries_BDSBH4D(double i)
 {
   h_entries = static_cast<unsigned long>(i);
 }

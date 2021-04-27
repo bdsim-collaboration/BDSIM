@@ -46,25 +46,25 @@ public:
     int GetNbinsE() const;
     const char* GetName() const override;
     const char* GetTitle() const override;
-    unsigned long GetEntries();
+    unsigned long GetEntries_BDSBH4D();
 
     void SetName(const char*) override;
     void SetTitle(const char*) override;
-    void SetEntries(double) override;
+    void SetEntries_BDSBH4D(double);
 
     virtual BDSBH4DBase& operator+=(const BDSBH4DBase& other) = 0;
     virtual void Reset_BDSBH4D() = 0;
     BDSBH4DBase* Clone(const char*) const override = 0;
     virtual void Fill_BDSBH4D(double, double, double, double) = 0;
-    virtual void Set(int, int, int, int, double) = 0;
-    virtual void SetError(int, int, int, int, double) = 0;
-    virtual void Add(BDSBH4DBase*) = 0;
+    virtual void Set_BDSBH4D(int, int, int, int, double) = 0;
+    virtual void SetError_BDSBH4D(int, int, int, int, double) = 0;
+    virtual void Add_BDSBH4D(BDSBH4DBase*) = 0;
     virtual double At(int, int, int, int) = 0;
     virtual double AtError(int, int, int, int) = 0;
     virtual double LowBinEdgeAt(int, int, int, int) = 0;
     virtual double HighBinEdgeAt(int, int, int, int) = 0;
-    virtual void Print(bool with_zero_values = true) = 0;
-    virtual void Print(int, int, int, int) = 0;
+    virtual void Print_BDSBH4D(bool with_zero_values = true) = 0;
+    virtual void Print_BDSBH4D(int, int, int, int) = 0;
 
     unsigned int h_nxbins;
     unsigned int h_nybins;
@@ -84,7 +84,7 @@ public:
     std::vector<double> h_ebinsedges;
     unsigned long h_entries = 0;
 
-ClassDef(BDSBH4DBase,1);
+ClassDefOverride(BDSBH4DBase,1);
 
 };
 
