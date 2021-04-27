@@ -242,7 +242,7 @@ void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
                             G4double zValue,
                             G4double eValue)
 {
-    histograms4D[histoId]->Fill(xValue, yValue, zValue, eValue);
+    histograms4D[histoId]->Fill_BDSBH4D(xValue, yValue, zValue, eValue);
 }
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,

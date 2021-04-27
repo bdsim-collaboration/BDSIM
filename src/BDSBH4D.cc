@@ -257,7 +257,7 @@ void BDSBH4D<T>::to_PyROOT(const std::string& filename, const std::string& histo
 }
 
 template <class T>
-void BDSBH4D<T>::Reset() {
+void BDSBH4D<T>::Reset_BDSBH4D() {
     h.reset();
     h_entries = 0;
 }
@@ -270,7 +270,7 @@ BDSBH4D<T>* BDSBH4D<T>::Clone(const char* newname) const {
 }
 
 template <class T>
-void BDSBH4D<T>::Fill(double xValue,
+void BDSBH4D<T>::Fill_BDSBH4D(double xValue,
                    double yValue,
                    double zValue,
                    double eValue) {

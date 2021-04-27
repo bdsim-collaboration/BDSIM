@@ -105,9 +105,9 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
       else
 	{
           // empty contents
-          static_cast<BDSBH4DBase*>(mean)->Reset();
-          static_cast<BDSBH4DBase*>(variance)->Reset();
-          static_cast<BDSBH4DBase*>(result)->Reset();
+          static_cast<BDSBH4DBase*>(mean)->Reset_BDSBH4D();
+          static_cast<BDSBH4DBase*>(variance)->Reset_BDSBH4D();
+          static_cast<BDSBH4DBase*>(result)->Reset_BDSBH4D();
           // set title
           static_cast<BDSBH4DBase*>(result)->SetTitle(resultHistTitle.c_str());
           static_cast<BDSBH4DBase*>(mean)->SetTitle(meanName.c_str());
