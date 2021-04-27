@@ -117,109 +117,123 @@ void BDSDicomFileCT::ReadData()
 
 void BDSDicomFileCT::ReadPixelData()
 {
-    //  READING THE PIXELS :
-    OFCondition result = EC_Normal;
-    //---- CHECK IF DATA IS COMPRESSED
-    DcmElement* element = NULL;
-    result = theDataset->findAndGetElement(DCM_PixelData, element);
-    if (result.bad() || element == NULL) {
-        G4Exception("ReadData",
-                    "findAndGetElement(DCM_PixelData, ",
-                    FatalException,
-                    ("Element PixelData not found: " + G4String(result.text())).c_str());
-    }
-    DcmPixelData *dpix = NULL;
-    dpix = OFstatic_cast(DcmPixelData*, element);
-    // If we have compressed data, we must utilize DcmPixelSequence
-    //   in order to access it in raw format, e. g. for decompressing it
-    //   with an external library.
-    DcmPixelSequence *dseq = NULL;
-    E_TransferSyntax xferSyntax = EXS_Unknown;
-    const DcmRepresentationParameter *rep = NULL;
-    // Find the key that is needed to access the right representation of the data within DCMTK
-    dpix->getOriginalRepresentationKey(xferSyntax, rep);
-    // Access original data representation and get result within pixel sequence
-    result = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
-    if ( result == EC_Normal ) // COMPRESSED DATA
+  //  READING THE PIXELS :
+  OFCondition result = EC_Normal;
+  //---- CHECK IF DATA IS COMPRESSED
+  DcmElement* element = NULL;
+  result = theDataset->findAndGetElement(DCM_PixelData, element);
+  if (result.bad() || element == NULL)
     {
-        G4Exception("DicomVFileImage::ReadData()",
-                    "DFCT004",
-                    FatalException,
-                    "Compressed pixel data is not supported");
+      G4Exception("ReadData",
+		  "findAndGetElement(DCM_PixelData, ",
+		  FatalException,
+		  ("Element PixelData not found: " + G4String(result.text())).c_str());
+    }
+  DcmPixelData *dpix = NULL;
+  dpix = OFstatic_cast(DcmPixelData*, element);
+  // If we have compressed data, we must utilize DcmPixelSequence
+  //   in order to access it in raw format, e. g. for decompressing it
+  //   with an external library.
+  DcmPixelSequence *dseq = NULL;
+  E_TransferSyntax xferSyntax = EXS_Unknown;
+  const DcmRepresentationParameter *rep = NULL;
+  // Find the key that is needed to access the right representation of the data within DCMTK
+  dpix->getOriginalRepresentationKey(xferSyntax, rep);
+  // Access original data representation and get result within pixel sequence
+  result = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
+  if ( result == EC_Normal ) // COMPRESSED DATA
+    {
+      G4Exception("DicomVFileImage::ReadData()",
+		  "DFCT004",
+		  FatalException,
+		  "Compressed pixel data is not supported");
+      
+      if( BDSDicomFileMgr::verbose >= debugVerb )
+	{G4cout << " DicomVFileImage::ReadData:  result == EC_Normal Reading compressed data " << std::endl;}
+      DcmPixelItem* pixitem = NULL;
+      // Access first frame (skipping offset table)
+      for( int ii = 1; ii < 2; ii++ )
+	{
+	  OFCondition cond =  dseq->getItem(pixitem, ii);
+	  if( !cond.good())
+	    {break;}
+	  G4cout << ii << " PIX LENGTH " << pixitem->getLength() << G4endl;
+        }
+      if (pixitem == NULL)
+	{
+	  G4Exception("ReadData",
+		      "dseq->getItem()",
+		      FatalException,
+		      "No DcmPixelItem in DcmPixelSequence");
+        }
+      Uint8* pixData = NULL;
+      // Get the length of this pixel item
+      // (i.e. fragment, i.e. most of the time, the lenght of the frame)
+      Uint32 length = pixitem->getLength();
+      if (length == 0)
+	{
+	  G4Exception("ReadData",
+		      "pixitem->getLength()",
+		      FatalException,
+		      "PixelData empty");
+        }
 
-        if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout
-                    << " DicomVFileImage::ReadData:  result == EC_Normal Reading compressed data " << std::endl;
-        DcmPixelItem* pixitem = NULL;
-        // Access first frame (skipping offset table)
-        for( int ii = 1; ii < 2; ii++ ) {
-            OFCondition cond =  dseq->getItem(pixitem, ii);
-            if( !cond.good()) break;
-            G4cout << ii << " PIX LENGTH " << pixitem->getLength() << G4endl;
+      if( BDSDicomFileMgr::verbose >= debugVerb )
+	{G4cout << " DicomVFileImage::ReadData:  number of pixels " << length << G4endl;}
+      // Finally, get the compressed data for this pixel item
+      result = pixitem->getUint8Array(pixData);
+    }
+  else
+    { // UNCOMPRESSED DATA
+      if(fBitAllocated == 8)
+	{ // Case 8 bits :
+	  Uint8* pixData = NULL;
+	  if(! (element->getUint8Array(pixData)).good() )
+	    {
+	      G4Exception("ReadData",
+			  "getUint8Array pixData, ",
+			  FatalException,
+			  ("PixelData not found: " + G4String(result.text())).c_str());
+            }
+	  for( int ir = 0; ir < fNoVoxelY; ir++ )
+	    {
+	      for( int ic = 0; ic < fNoVoxelX; ic++ )
+		{fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);}
+            }
         }
-        if (pixitem == NULL) {
-            G4Exception("ReadData",
-                        "dseq->getItem()",
-                        FatalException,
-                        "No DcmPixelItem in DcmPixelSequence");
+      else if(fBitAllocated == 16)
+	{ // Case 16 bits :
+	  Uint16* pixData = NULL;
+	  if(! (element->getUint16Array(pixData)).good() )
+	    {
+	      G4Exception("ReadData",
+			  "getUint16Array pixData, ",
+			  FatalException,
+			  ("PixelData not found: " + G4String(result.text())).c_str());
+            }
+	  for( int ir = 0; ir < fNoVoxelY; ir++ )
+	    {
+	      for( int ic = 0; ic < fNoVoxelX; ic++ )
+		{fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);}
+            }
         }
-        Uint8* pixData = NULL;
-        // Get the length of this pixel item
-        // (i.e. fragment, i.e. most of the time, the lenght of the frame)
-        Uint32 length = pixitem->getLength();
-        if (length == 0) {
-            G4Exception("ReadData",
-                        "pixitem->getLength()",
-                        FatalException,
-                        "PixelData empty");
-        }
-
-        if( BDSDicomFileMgr::verbose >= debugVerb ) G4cout
-                    << " DicomVFileImage::ReadData:  number of pixels " << length << G4endl;
-        // Finally, get the compressed data for this pixel item
-        result = pixitem->getUint8Array(pixData);
-    } else { // UNCOMPRESSED DATA
-        if(fBitAllocated == 8) { // Case 8 bits :
-            Uint8* pixData = NULL;
-            if(! (element->getUint8Array(pixData)).good() ) {
-                G4Exception("ReadData",
-                            "getUint8Array pixData, ",
-                            FatalException,
-                            ("PixelData not found: " + G4String(result.text())).c_str());
+      else if(fBitAllocated == 32)
+	{ // Case 32 bits :
+	  Uint32* pixData = NULL;
+	  if(! (element->getUint32Array(pixData)).good() )
+	    {
+	      G4Exception("ReadData",
+			  "getUint32Array pixData, ",
+			  FatalException,
+			  ("PixelData not found: " + G4String(result.text())).c_str());
             }
-            for( int ir = 0; ir < fNoVoxelY; ir++ ) {
-                for( int ic = 0; ic < fNoVoxelX; ic++ ) {
-                    fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);
-                }
-            }
-        } else if(fBitAllocated == 16) { // Case 16 bits :
-            Uint16* pixData = NULL;
-            if(! (element->getUint16Array(pixData)).good() ) {
-                G4Exception("ReadData",
-                            "getUint16Array pixData, ",
-                            FatalException,
-                            ("PixelData not found: " + G4String(result.text())).c_str());
-            }
-            for( int ir = 0; ir < fNoVoxelY; ir++ ) {
-                for( int ic = 0; ic < fNoVoxelX; ic++ ) {
-                    fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);
-                }
-            }
-        } else if(fBitAllocated == 32) { // Case 32 bits :
-            Uint32* pixData = NULL;
-            if(! (element->getUint32Array(pixData)).good() ) {
-                G4Exception("ReadData",
-                            "getUint32Array pixData, ",
-                            FatalException,
-                            ("PixelData not found: " + G4String(result.text())).c_str());
-            }
-            for( int ir = 0; ir < fNoVoxelY; ir++ ) {
-                for( int ic = 0; ic < fNoVoxelX; ic++ ) {
-                    fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);
-                }
+	  for( int ir = 0; ir < fNoVoxelY; ir++ )
+	    {
+	      for( int ic = 0; ic < fNoVoxelX; ic++ )
+		{fHounsfieldV.push_back(pixData[ic+ir*fNoVoxelX]*fRescaleSlope + fRescaleIntercept);}
             }
         }
     }
-
 }
 
 void BDSDicomFileCT::operator+=( const BDSDicomFileCT& rhs )
