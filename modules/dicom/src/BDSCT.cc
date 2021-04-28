@@ -148,6 +148,7 @@ void BDSCT::BuildPhantom()
     phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation
     //will be used instead
 
+    std::cout << "Phantom dimensions: (" << fContainer_solid->GetXHalfLength() << ", " << fContainer_solid->GetYHalfLength() << ", " << fContainer_solid->GetZHalfLength() << ")" << std::endl;
     SetScorer(voxel_logic);
 }
 
