@@ -485,7 +485,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
   // update this class's nameToElementIndex map
   nameToElementIndex = construction->NameToElementIndex();
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   if (bdsOutput)
     {bdsOutput->UpdateSamplers();}
 #endif
