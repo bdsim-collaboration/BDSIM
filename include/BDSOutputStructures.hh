@@ -64,7 +64,7 @@ protected:
   /// Construct samplers.
   void InitialiseSamplers();
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   /// Interface to allow setting up samplers later for dynamic geometry construction a la SixTrack.
   G4int UpdateSamplerStructures();
 #endif

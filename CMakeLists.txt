@@ -95,7 +95,7 @@ endif()
 # Sixtrack linking bits of code that aren't needed otherwise
 option( USE_SIXTRACKLINK "Include linking code for SixTrack." OFF )
 if(USE_SIXTRACKLINK)
-  add_definitions("-DSIXTRACKLINK")
+  add_definitions("-DUSE_SIXTRACKLINK")
   message(STATUS "SixTrack link ON")
 endif()
 

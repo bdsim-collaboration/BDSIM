@@ -86,7 +86,7 @@ public:
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   /// Interface to allow updating samplers with dynamic construction.
   virtual void UpdateSamplers() {UpdateSamplerStructures();}
 #endif

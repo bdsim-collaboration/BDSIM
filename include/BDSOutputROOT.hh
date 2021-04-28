@@ -50,7 +50,7 @@ public:
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   virtual void UpdateSamplers();
 #endif
 private:

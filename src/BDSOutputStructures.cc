@@ -175,7 +175,9 @@ void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
+#ifdef USE_SIXTRACKLINK
       samplerTrees.reserve(300); // TODO hardcoded because of sixtrack dynamic buildup
+#endif
       localSamplersInitialised = true;
       for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
@@ -190,7 +192,7 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
 G4int BDSOutputStructures::UpdateSamplerStructures()
 {
   G4int result = 0;
