@@ -376,7 +376,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DUMP:
       {component = CreateDump(); break;}
     case ElementType::_CT:
-#ifdef USE_DICOMN
+#ifdef USE_DICOM
       {component = CreateCT(); break;}
 #else
       {throw BDSException(__METHOD_NAME__, "ct element can't be used - not compiled with dicom module!");}
