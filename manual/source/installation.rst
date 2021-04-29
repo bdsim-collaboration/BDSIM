@@ -9,12 +9,13 @@ BDSIM is developed and used on Mac OSX and Linux.
 
 Tested systems:
 
-* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt5.14.2
-* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4.10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt5.14.2
-* Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4.10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt5.12.0
-* Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4.10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt5.12.0
-* SLC6, GCC 4.9.3, Geant4.10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt5.7.0
-* SLC6 as above with Geant4.10.4.p02, Geant4.10.3.p03, Geant4.10.2.p03, Geant4.10.1.p03
+* Mac OS 11.3 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt 5.14.2
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt 5.14.2
+* Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4 10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt 5.12.0
+* Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0
+* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
+* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
 
 BDSIM on Windows
 ----------------
@@ -80,7 +81,7 @@ Requirements \& Environment
 2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher, and typically 3.8 for later versions).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended but must be compatible with Geant4 version.
 4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
-5) `ROOT`_ 6.0 or higher, for output & analysis compiled with Python support (default is 3 series).
+5) `ROOT`_ 6.0 or higher, for output & analysis compiled **with** Python support (default is 3 series).
 6) *Optional* - Qt5 libraries for the best Geant4 visualiser.
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
 8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.4.p03**. Avoid 10.5.p0-1. See `Geant4 Installation Guide`_
@@ -94,20 +95,25 @@ For nice analysis and use of `pybdsim` for model conversion, we recommend Python
 matplotlib and numpy. ROOT should be installed with Python support in this case and with the
 **same** Python installation as will be used with the Python utilities.
 
-Geant4 and ROOT Versions
-------------------------
+Geant4, CLHEP and ROOT Versions
+-------------------------------
 
 We have found some problems with certain versions of software and these should be
 avoided. Generally, we recommend the latest patch version of Geant4. These are the
 problems we have found:
 
-* Geant4.10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
-* Geant4.10.3.pX - generic biasing has no effect - same code works in every other version.
-* Geant4.10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
-* Geant4.10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
-* Geant4.10.5.pX - bug in G4Extruded solid may occasionally lead to crashes depending on the geometry involved.
+* Geant4 10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
+* Geant4 10.3.pX - generic biasing has no effect - same code works in every other version.
+* Geant4 10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
+* Geant4 10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
+* Geant4 10.5.pX - bug in G4Extruded solid may occasionally lead to crashes depending on the geometry involved.
+* Geant4 10.5 onwards - diffractive proton physics on light target nuclei is disabled by default (on going fix).
 
-The authors typically use Geant4.10.4.p03 or Geant4.10.6.p02 for production.
+The authors typically use Geant4 10.4.p03 or Geant4.10.7.p01 for physics results production.
+
+.. note:: CLHEP 2.4.4.1 is required for Geant4 10.7 onwards as the SI units were updated to SI2019. Therefore,
+	  we should also be careful about using earlier versions of Geant4 with this version of CLHEP depending
+	  on how sensitive your simulation is. Nominally, it should make a negligible difference.
 
 .. _mac-osx-issues:
   
@@ -150,10 +156,12 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-* XCode should be installed.
-* XCode command line tools should be installed (xcode-select --install).
-* XQuartz should be installed - see `<https://www.xquartz.org>`_.
-* The `make` command is available in the terminal.
+In this order:
+
+1) XCode should be installed.
+2) XCode command line tools should be installed (xcode-select --install).
+3) XQuartz should be installed - see `<https://www.xquartz.org>`_.
+4) The `make` command is available in the terminal.
 
 We recommend obtaining :ref:`required-packages` using the `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
@@ -161,13 +169,15 @@ manually downloading, compiling and installing the source for each.
 
 For MacPorts you can do: ::
 
-  sudo port install root6
+  sudo port install root6 +python39
   sudo port install xercesc3 flex bison clhep qt5
-  sudo port install py37-matplotlib py37-numpy
+  sudo port install py39-matplotlib py39-numpy
 
 * It is best to install Geant4 manually to ensure you use the system CLHEP option (required
   by BDSIM for strong reproducibility) as well as visualiser choices and GDML geometry
   loading.
+* As of May 2021, clhep on macports is not 2.4.4.1, therefore if **Geant4 10.7** is used,
+  CLHEP should be setup manually.
 
 * See :ref:`geant4-installation-guide` to install Geant4.
 
@@ -215,8 +225,8 @@ installation::
 
 This typically produces the following output, which is slightly different on each computer::
 
-  -- The C compiler identification is AppleClang 10.0.1.10010046
-  -- The CXX compiler identification is AppleClang 10.0.1.10010046
+  -- The C compiler identification is AppleClang 12.0.5.12050022
+  -- The CXX compiler identification is AppleClang 12.0.5.12050022
   -- Detecting C compiler ABI info
   -- Detecting C compiler ABI info - done
   -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
@@ -227,34 +237,39 @@ This typically produces the following output, which is slightly different on eac
   -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped
   -- Detecting CXX compile features
   -- Detecting CXX compile features - done
-  -- Configuring BDSIM 1.5.0
+  -- Configuring BDSIM 1.6.0
   -- Installation prefix: /usr/local
   -- Build Type RelWithDebInfo
   -- Compiler fully supports C++17 and prior versions
   -- Looking for CLHEP... - found
-  -- Found CLHEP 2.4.1.0 in /opt/local/lib/CLHEP-2.4.1.0/../../include
-  -- Use ROOTSYS from environment: /Users/nevay/physics/packages/root-6.18.04-install
+  -- Found CLHEP 2.4.4.1 in /Users/nevay/physics/packages/clhep-2.4.4.1-install/lib/CLHEP-2.4.4.1/../../include
+  -- Use ROOTSYS from environment: /opt/local
   -- Looking for ROOT...
-  -- Found ROOT 6.18/04 in /Users/nevay/physics/packages/root-6.18.04-install
+  -- Found ROOT 6.24/00 in /opt/local/libexec/root6
+  -- ROOT compiled with cxx17 feature -> changing to C++17 for BDSIM
   -- GDML support ON
-  -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.06.p01-install/lib/Geant4-10.6.1/UseGeant4.cmake
-  -- Geant4 Definitions: -DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4UI_USE_XM;-DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
-  -- G4_VERSION: 10.6.1
-  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.20") found components: doxygen dot 
-  -- Found BISON: /opt/local/bin/bison (found suitable version "3.7.3", minimum required is "2.4") 
+  -- Looking for pthread.h
+  -- Looking for pthread.h - found
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+  -- Found Threads: TRUE  
+  -- Geant4 Use File: /Users/nevay/physics/packages/geant4-jai/geant4-10.7-jaidev-install/lib/Geant4-10.7.1/UseGeant4.cmake
+  -- Geant4 Definitions: -DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL;-DG4VIS_USE_QT3D
+  -- G4_VERSION: 10.7.1
+  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.9.1") found components: doxygen dot 
+  -- Found BISON: /opt/local/bin/bison (found suitable version "3.7.6", minimum required is "2.4") 
   -- Found FLEX: /opt/local/bin/flex (found version "2.6.4") 
-  -- Looking for zlib
-  -- Using Geant4 built in zlib
   -- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY
   -- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY - Success
   -- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY
   -- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY - Success
   -- Performing Test COMPILER_HAS_DEPRECATED_ATTR
   -- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success
-  -- Tests will use G4PARTICLEHPDATA
+  -- Looking for zlib
+  -- Using Geant4 built in zlib
   -- Copying example directory
   -- Found Sphinx: /opt/local/bin/sphinx-build  
-  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/sphinx_rtd_theme  
+  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/sphinx_rtd_theme  
   -- Configuring done
   -- Generating done
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test-build
