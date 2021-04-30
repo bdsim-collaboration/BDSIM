@@ -207,6 +207,8 @@ Bug Fixes
 * Fix possibly misidentified PrimaryFirstHit beam line elements (coordinates were always correct)
   that could in the case of some particles be either the very first step into the accelerator from
   air or the element before the expected one.
+* Fix build with a modern compiler (e.g. GCC9) of ROOT and BDSIM. Specifically, if ROOT was compiled
+  with C++14 or 17 the C++ standard for BDSIM is matched to that rather than the default C++11.
 
 
 Output Changes
