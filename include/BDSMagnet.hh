@@ -33,11 +33,10 @@ class BDSMagnetStrength;
 /**
  * @brief Abstract base class that implements features common to all magnets. 
  *
- * This includes the general construction pattern using the magnet 
- * outer geometry factories and the field related objects and attaching 
- * them to the necessary volumes. Each derived class must implement 
- * BuildBPFieldAndStepper() which constructs the field objects that
- * are later attached to the vacuum volume.
+ * Magnet consists of a beam pipe (with optional field) and an 'outer' (with
+ * optional field) both placed in the same level in a container volume. The
+ * outer is typically a yoke but can be any geometry as long as it doesn't
+ * overlap with the beam pipe placed at the same level.
  * 
  * @author Laurie Nevay
  */
