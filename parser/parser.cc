@@ -535,6 +535,18 @@ const Element& Parser::find_element(const std::string& element_name)const
   return (*it);
 }
 
+const Element* Parser::find_element_safe(const std::string& element_name) const
+{
+  const Element* result = nullptr;
+  auto search = element_list.find(element_name);
+  if (search != element_list.end())
+    {
+    const GMAD::Element& ele = *search;
+    result = &ele;
+    }
+  return result;
+}
+
 double Parser::property_lookup(const std::string& element_name, const std::string& property_name)const
 {
   const Element& element = find_element(element_name);

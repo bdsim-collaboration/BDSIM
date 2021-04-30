@@ -77,6 +77,9 @@ public:
   /// Return sequence.
   inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
   
+  /// Return an element definition. Returns nullptr if not found.
+  inline const GMAD::Element* GetElement(const std::string& name) {return find_element_safe(name);}
+  
   /// Return biasing list.
   inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}
 
