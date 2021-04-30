@@ -77,8 +77,8 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       BDSFieldInfo* fieldRecipe = nullptr;
       if (hasAField)
 	{
-    fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
-    fieldRecipe->SetUsePlacementWorldTransform(true);
+	  fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
+	  fieldRecipe->SetUsePlacementWorldTransform(true);
 	  comp->SetField(fieldRecipe);
 	}
       
@@ -113,15 +113,15 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       placementBL->AddBeamlineElement(el);
   
       if (hasAField)
-      {
-        G4String fieldName = comp->GetName() + "_" + fieldRecipe->NameOfParserDefinition();
-        G4VSolid* containerSolidClone = comp->GetContainerSolid()->Clone();
-        G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-        G4LogicalVolume* lv = new G4LogicalVolume(containerSolidClone, emptyMaterial, fieldName);
-        fieldPlacements.emplace_back(BDSPlacementToMake(transform, lv, fieldName+"_pv"));
-      }
+	{
+	  G4String fieldName = comp->GetName() + "_" + fieldRecipe->NameOfParserDefinition();
+	  G4VSolid* containerSolidClone = comp->GetContainerSolid()->Clone();
+	  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+	  G4LogicalVolume* lv = new G4LogicalVolume(containerSolidClone, emptyMaterial, fieldName);
+	  fieldPlacements.emplace_back(BDSPlacementToMake(transform, lv, fieldName+"_pv"));
+	}
     }
-
+  
   BDSAcceleratorModel::Instance()->RegisterPlacementFieldPlacements(fieldPlacements);
   
   return placementBL;
