@@ -346,7 +346,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 }
 
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
-						      G4String             name,
+						      const G4String&      name,
 						      const G4Transform3D& initialTransform,
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular,
