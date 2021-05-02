@@ -97,10 +97,6 @@ namespace GMAD
     void ParseFile(FILE *f);
 
   public:
-    // ***********************
-    // Public Parser methods *
-    // ***********************
-
     /// Exit method
     void quit();
     /// Method that transfers parameters to element properties
@@ -192,10 +188,6 @@ namespace GMAD
     const FastList<Element>& GetBeamline()const;
     
   private:
-    // *****************
-    // Private methods *
-    // *****************
-    
     /// Set sampler
     void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser
@@ -337,16 +329,16 @@ namespace GMAD
     }
 
   template <class C, typename T>
-    void Parser::SetValue(std::string property, T value)
-    {
-      GetGlobal<C>().set_value(property, value);
-    }
-
+  void Parser::SetValue(std::string property, T value)
+  {
+    GetGlobal<C>().set_value(property, value);
+  }
+  
   template <class C>
-    double Parser::GetValue(std::string property)
-    {
-      return GetGlobal<C>().get_value(property);
-    }
+  double Parser::GetValue(std::string property)
+  {
+    return GetGlobal<C>().get_value(property);
+  }
 }
 
 #endif
