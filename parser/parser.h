@@ -123,6 +123,14 @@ namespace GMAD
     /// Insert global object of parser class C in Container class
     template <class C, class Container=std::vector<C>>
     void Add();
+    /// Specialisation for Placements where we separately cache an Element. Note
+    /// we can't do a partial specialisation so we have to do a full explicit one.
+    /// Therefore we also have to be careful about the order we declare this because
+    /// of where these functions are used. Also, we can't implement it in the header
+    /// because we'd get multiple symobls. Therefore, decalred here, but implemented
+    /// in cc file with explicit instantation of templates we need in rest of cc file.
+    template <>
+    void Add<Placement, std::vector<Placement>>();
     /// Get global object of parser class C
     template <class C>
     C& GetGlobal();
@@ -299,6 +307,11 @@ namespace GMAD
     /// List of all encountered elements
     FastList<Element> element_list;
     
+    /// List of element definitions that are used in placements - keep separately a copy
+    /// so that when we clear all the lists after expanding the lines we still have the
+    /// element definitions we need
+    FastList<Element> placement_elements;
+    
     /// Temporary list
     std::list<Element> tmp_list;
     
@@ -313,20 +326,6 @@ namespace GMAD
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
   };
-
-  template <class C, class Container>
-    void Parser::Add()
-    {
-      // copy from global
-      C& global = GetGlobal<C>();
-      C inst(global);
-      // reset global
-      global.clear();
-#ifdef BDSDEBUG 
-      inst.print();
-#endif
-      GetList<C, Container>().push_back(inst);
-    }
 
   template <class C, typename T>
   void Parser::SetValue(std::string property, T value)
