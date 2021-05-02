@@ -164,10 +164,10 @@ namespace GMAD
     void ClearParams();
     /// Set value for parser class
     template <class C, typename T>
-      void SetValue(std::string property, T value);
+    void SetValue(std::string property, T value);
     /// Get value for parser class (only for doubles)
     template <class C>
-      double GetValue(std::string property);
+    double GetValue(std::string property);
 
     /// Add value to be extended to object
     template <typename T>
