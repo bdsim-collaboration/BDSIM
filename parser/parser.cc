@@ -713,11 +713,11 @@ bool Parser::FindAndExtend(const std::string& objectName)
 template<class C>
 void Parser::ExtendObject(C& object)
 {
-  for (auto option : extendedNumbers)
+  for (auto& option : extendedNumbers)
     {object.set_value(option.first, option.second);}
-  for (auto option : extendedStrings)
+  for (auto& option : extendedStrings)
     {object.set_value(option.first, option.second);}
-  for (auto option : extendedVectors)
+  for (auto& option : extendedVectors)
     {object.set_value(option.first, option.second);}
 }
 
