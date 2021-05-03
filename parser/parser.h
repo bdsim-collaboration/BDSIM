@@ -123,14 +123,6 @@ namespace GMAD
     /// Insert global object of parser class C in Container class
     template <class C, class Container=std::vector<C>>
     void Add();
-    /// Specialisation for Placements where we separately cache an Element. Note
-    /// we can't do a partial specialisation so we have to do a full explicit one.
-    /// Therefore we also have to be careful about the order we declare this because
-    /// of where these functions are used. Also, we can't implement it in the header
-    /// because we'd get multiple symobls. Therefore, decalred here, but implemented
-    /// in cc file with explicit instantation of templates we need in rest of cc file.
-    template <>
-    void Add<Placement, std::vector<Placement>>();
     /// Get global object of parser class C
     template <class C>
     C& GetGlobal();

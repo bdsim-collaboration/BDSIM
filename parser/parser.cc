@@ -911,6 +911,12 @@ namespace GMAD {
     GetList<C, Container>().push_back(inst);
   }
   
+  /// Specialisation for Placements where we separately cache an Element. Note
+  /// we can't do a partial specialisation so we have to do a full explicit one.
+  /// Therefore we also have to be careful about the order we declare this because
+  /// of where these functions are used. Also, we can't implement it in the header
+  /// because we'd get multiple symbols. Therefore, declared here, but implemented
+  /// in cc file with explicit instantiation of templates we need in rest of cc file.
   template <>
   void Parser::Add<Placement, std::vector<Placement>>()
   {
