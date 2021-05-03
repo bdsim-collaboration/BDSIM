@@ -479,7 +479,7 @@ BDSIM::~BDSIM()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
-void BDSIM::RegisterUserComponent(G4String componentTypeName,
+void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
