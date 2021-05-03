@@ -635,12 +635,12 @@ void Parser::add_var(std::string name, double value, int is_reserved)
   sp->Set(value,is_reserved);
 }
 
-Symtab * Parser::symcreate(std::string s)
+Symtab * Parser::symcreate(const std::string& s)
 {
   return symtab_map.symcreate(s);
 }
 
-Symtab * Parser::symlook(std::string s)
+Symtab * Parser::symlook(const std::string& s)
 {
   return symtab_map.symlook(s);
 }
@@ -649,7 +649,7 @@ void Parser::Store(double value)
   tmparray.push_front(value);
 }
 
-void Parser::Store(std::string name)
+void Parser::Store(const std::string& name)
 {
   tmpstring.push_front(name);
 }
