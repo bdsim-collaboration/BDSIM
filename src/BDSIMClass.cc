@@ -174,7 +174,7 @@ int BDSIM::Initialise()
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-  runManager = new BDSRunManager;
+  runManager = new BDSRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
@@ -407,10 +407,10 @@ void BDSIM::BeamOn(int nGenerate)
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
   if (!ignoreSIGINT)
-    {sigaction(SIGINT,  &act, 0);}
-  sigaction(SIGABRT, &act, 0);
-  sigaction(SIGTERM, &act, 0);
-  sigaction(SIGSEGV, &act, 0);
+    {sigaction(SIGINT,  &act, nullptr);}
+  sigaction(SIGABRT, &act, nullptr);
+  sigaction(SIGTERM, &act, nullptr);
+  sigaction(SIGSEGV, &act, nullptr);
   
   /// Run in either interactive or batch mode
   try
