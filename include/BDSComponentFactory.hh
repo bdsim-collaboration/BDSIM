@@ -113,8 +113,8 @@ public:
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
-					      const G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
-					      const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1));
+					      const G4ThreeVector& inputFaceNormal  = G4ThreeVector(0,0,-1),
+					      const G4ThreeVector& outputFaceNormal = G4ThreeVector(0,0,1));
 
   /// Interface to other PrepareBeamPipeInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
