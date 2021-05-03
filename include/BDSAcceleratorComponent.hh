@@ -153,6 +153,9 @@ public:
   /// Get the region name for this component.
   G4String GetRegion() const {return region;}
 
+  /// Whether this component has a field or not (ie is active). Implicit cast of pointer to bool.
+  virtual G4bool HasAField() const {return fieldInfo;}
+
   /// Access beam pipe information, which is stored in this class to provide
   /// aperture information when making a survey of the beamline consisting of
   /// accelerator components.
