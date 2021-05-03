@@ -154,13 +154,13 @@ namespace GMAD
     int copy_element_to_params(const std::string& elementName);
 
     /// create new parser symbol
-    Symtab * symcreate(std::string s);
+    Symtab * symcreate(const std::string& s);
     /// look up parser symbol
-    Symtab * symlook(std::string s);
+    Symtab * symlook(const std::string& s);
 
     ///@{ Add value to front of temporary list
     void Store(double value);
-    void Store(std::string name);
+    void Store(const std::string& name);
     ///@}
     ///@{ Fill array object from temporary list and clear temporary list
     void FillArray(Array*);
