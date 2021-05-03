@@ -71,7 +71,20 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       G4String fieldPlacementName;
       G4double chordLength;
 
-      if (placement.bdsimElement.empty())
+      G4bool elementSpecified  = !placement.bdsimElement.empty();
+      G4bool geometrySpecified = !placement.geometryFile.empty();
+      if (elementSpecified && geometrySpecified)
+	{
+	  G4String msg = "only one of \"geometryFile\" or \"bdsimElemenet\" can be specified in placement \"" + placement.name + "\"";
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
+      else if (!elementSpecified && !geometrySpecified)
+	{
+	  G4String msg = "at least one of \"geometryFile\" or \"bdsimElemenet\" must be specified in placement \"" + placement.name + "\"";
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
+      
+      if (elementSpecified)
 	{// it's a geometryFile + optional field map placement
 	  auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								    placement.geometryFile,
