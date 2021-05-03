@@ -398,6 +398,7 @@ BDSIMLink::~BDSIMLink()
   if (bdsOutput)
     {bdsOutput->CloseFile();}
   delete bdsOutput;
+  delete construction;
   delete runAction;
 
   try
@@ -423,8 +424,7 @@ BDSIMLink::~BDSIMLink()
     }
   catch (...)
     {;} // ignore any exception as this is a destructor
-
-  //delete bdsBunch;
+  
   delete parser;
 
   if (usualPrintOut)
