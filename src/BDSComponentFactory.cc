@@ -2130,7 +2130,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
   G4Material* result = nullptr;
-  if (el->vacuumMaterial == "")
+  if (el->vacuumMaterial.empty())
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
     {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
@@ -2138,8 +2138,8 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
-							  const G4ThreeVector inputFaceNormalIn,
-							  const G4ThreeVector outputFaceNormalIn)
+							  const G4ThreeVector& inputFaceNormalIn,
+							  const G4ThreeVector& outputFaceNormalIn)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
