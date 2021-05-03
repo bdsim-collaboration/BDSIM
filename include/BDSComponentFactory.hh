@@ -395,5 +395,9 @@ private:
 
   /// Variable used to pass around the possibly modified name of an element.
   G4String elementName;
+  
+  /// Only allow colours to be constructed from parser definitions once. Static so we can use
+  /// a component factory many times without calling multiple times.
+  static G4bool coloursInitialised;
 };
 #endif
