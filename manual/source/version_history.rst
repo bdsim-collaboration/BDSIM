@@ -17,6 +17,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.6.0 - 2021 / XX / XX
 =======================
 
+
 New Features
 ------------
 
@@ -28,11 +29,12 @@ New Features
 * :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
   in that placement of geometry.
 * Sub-fields can now be used with E field maps.
+* BDSIM components can now be used in placements to place a single component anywhere in the world.
 * The :code:`transform3d` beam line element now accepts axis angle parameters.
 * Bias objects can now be attached to the world volume (e.g. the air) specifically.
 * Bias objects can now be attached to the daughter volumes of the world when you load
   an external GDML world.
-* By default now, the rest mass of an artificially killed particle is **not** included in the
+* By default now, the rest mass of an **artificially killed particle** is **not** included in the
   Eloss.energy hit recorded. If this is desired, as was the old behaviour in previous versions,
   then the option :code:`killedParticlesMassAddedToEloss=1` can be used.
 * More granular control over information stored in trajectories. Trajectories can use a lot of disk
