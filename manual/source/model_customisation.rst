@@ -1195,7 +1195,8 @@ externally provided piece of geometry (e.g. GDML file and optional field map) or
 provided accelerator component can be placed by declaring a :code:`placement` object in
 the input.
 
-* :code:`bdsimElement` should be used to name a component to place.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
 * :code:`geometryFile` should be used to place an externally provided geometry file.
 * Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
 * This is intended to place geometry alongside the beam line and **not** inside or as part of it.
