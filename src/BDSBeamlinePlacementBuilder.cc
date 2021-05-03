@@ -84,7 +84,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 	  throw BDSException(__METHOD_NAME__, msg);
 	}
       
-      if (elementSpecified)
+      if (geometrySpecified)
 	{// it's a geometryFile + optional field map placement
 	  auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								    placement.geometryFile,
