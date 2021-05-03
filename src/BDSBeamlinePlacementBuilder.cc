@@ -111,7 +111,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 	{// it's a bdsim-built component
 	  // component factory
 	  // factory->CreateComponent(parser->GetElement(placement.bdsimElement))
-	  const GMAD::Element* element = BDSParser::Instance()->GetElement(placement.bdsimElement);
+	  const GMAD::Element* element = BDSParser::Instance()->GetPlacementElement(placement.bdsimElement);
 	  if (!element)
 	    {throw BDSException(__METHOD_NAME__, "no such element definition by name \"" + placement.bdsimElement + "\" found for placement.");}
 	  comp = componentFactory->CreateComponent(element, nullptr, nullptr); // note no current arc length for RF time offset
