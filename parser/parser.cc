@@ -914,8 +914,15 @@ namespace GMAD {
     // if an element definition is used for a placement, keep a separate copy of it
     if (!inst.bdsimElement.empty())
       {
-	Element elDef = find_element(inst.bdsimElement);
-	placement_elements.push_back(elDef);
+	const Element* elDef = find_element_safe(inst.bdsimElement);
+	if (!elDef)
+	  {
+	    std::cerr << "The bdsimElement referred to in \"" << inst.name << "\" (\""
+		      << inst.bdsimElement << "\") cannot be found and should be defined"
+		      << " before this placement" << std::endl;
+	    exit(1);
+	  }
+	placement_elements.push_back(Element(*elDef));
       }
   }
 }
