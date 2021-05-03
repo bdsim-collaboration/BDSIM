@@ -75,7 +75,10 @@ public:
   /// @}
 
   /// Accessor to outer material if it exists.
-  G4String virtual Material() const;
+  virtual G4String Material() const;
+
+  /// Overrride for a magnet - test on either field definition.
+  virtual G4bool HasAField() const {return vacuumFieldInfo || outerFieldInfo;}
   
 protected:
   /// Private default constructor to force the use of the supplied one.

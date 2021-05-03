@@ -1189,15 +1189,25 @@ file. See :ref:`externally-provided-geometry` for more details.
 Placements
 ----------
 
-Geometry provided in an external file may be placed at any location in the world with
-any rotation. This is intended to place geometry alongside the beam line and **not** inside
-or as part of it. The user is responsible for ensuring that the geometry does not
-overlap with any other geometry including the beam line. Only in special cases, such as
-for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
+Aside from a beam line, pieces of geometry may be placed at any location in the world with
+any orientation. The mechanism to do this in BDSIM is called "placements". Either an
+externally provided piece of geometry (e.g. GDML file and optional field map) or a BDSIM
+provided accelerator component can be placed by declaring a :code:`placement` object in
+the input.
 
-The geometry may also have a field map overlaid on it.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
+* :code:`geometryFile` should be used to place an externally provided geometry file.
+* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
+* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
+* The user is responsible for ensuring that the geometry does not
+  overlap with any other geometry including the beam line.
+* Only in special cases, such as for a magnet yoke, can externally provided
+  geometry be placed "inside" BDSIM geometry.
+* The geometry may also have a field map overlaid on it.
+* Placements cannot be made with respect to other placements.
 
-For geometry to be placed in the beam line, use the :ref:`element`.
+For geometry to be placed as part of the beam line, use the :ref:`element` component in a line.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	     incorrect results and there may not always be warnings provided. For this reason,
@@ -1228,12 +1238,13 @@ There are 3 possible ways to place a piece of geometry.
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
-The scenario is automatically selected based on which parameters are set. If `s` is finite, then
+The scenario is automatically selected based on which parameters are set. If `s` is non-zero, then
 it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
 
 .. warning:: For both scenarios 2) and 3), a placement can only be made **inside** the S length of
 	     the accelerator - it is not possible to place something beyond the accelerator currently.
 	     In this case, the user should resort to a global placement.
+
 	     
 The following parameters may be specified with a placement in BDSIM:
 
@@ -1241,6 +1252,8 @@ The following parameters may be specified with a placement in BDSIM:
 | **Parameter**           |  **Description**                                                   |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | :code:`format:file` - which geometry format and file to use        |
++-------------------------+--------------------------------------------------------------------+
+| bdsimElement            | Name of the beam line element defined in the parser to be used     |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -1320,12 +1333,18 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
 
-The following is an example syntax used to place a piece of geometry::
+The following is an example syntax used to place a piece of geometry: ::
 
   leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml";
+
+The following is an example of placing a BDSIM-generated component: ::
+
+  block1: rcol, l=1*m, material="Cu";
+  pl1: placement, bdsimElement="block1", x=2*m, z=20*m, axisAngle=1, axisY=1, angle=pi/4;
+
 
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters

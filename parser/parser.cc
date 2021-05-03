@@ -55,6 +55,25 @@ namespace {
   }
 }
 
+namespace GMAD {
+  // Explicitly make the templates we need here
+  template void Parser::Add<ScorerMesh, std::vector<ScorerMesh> >();
+  template void Parser::Add<CavityModel, std::vector<CavityModel> >();
+  template void Parser::Add<BLMPlacement, std::vector<BLMPlacement> >();
+  template void Parser::Add<SamplerPlacement, std::vector<SamplerPlacement> >();
+  template void Parser::Add<Atom, std::vector<Atom> >();
+  template void Parser::Add<Field, std::vector<Field> >();
+  template void Parser::Add<Query, std::vector<Query> >();
+  template void Parser::Add<Region, std::vector<Region> >();
+  template void Parser::Add<Scorer, std::vector<Scorer> >();
+  template void Parser::Add<Tunnel, std::vector<Tunnel> >();
+  template void Parser::Add<Crystal, std::vector<Crystal> >();
+  template void Parser::Add<Aperture, std::vector<Aperture> >();
+  template void Parser::Add<Material, std::vector<Material> >();
+  template void Parser::Add<NewColour, std::vector<NewColour> >();
+  template void Parser::Add<PhysicsBiasing, FastList<PhysicsBiasing> >();
+}
+
 using namespace GMAD;
 
 namespace GMAD {
@@ -535,6 +554,30 @@ const Element& Parser::find_element(const std::string& element_name)const
   return (*it);
 }
 
+const Element* Parser::find_placement_element_safe(const std::string& element_name) const
+{
+  const Element* result = nullptr;
+  auto search = placement_elements.find(element_name);
+  if (search != placement_elements.end())
+    {
+    const GMAD::Element& ele = *search;
+    result = &ele;
+    }
+  return result;
+}
+
+const Element* Parser::find_element_safe(const std::string& element_name) const
+{
+  const Element* result = nullptr;
+  auto search = element_list.find(element_name);
+  if (search != element_list.end())
+  {
+    const GMAD::Element& ele = *search;
+    result = &ele;
+  }
+  return result;
+}
+
 double Parser::property_lookup(const std::string& element_name, const std::string& property_name)const
 {
   const Element& element = find_element(element_name);
@@ -592,12 +635,12 @@ void Parser::add_var(std::string name, double value, int is_reserved)
   sp->Set(value,is_reserved);
 }
 
-Symtab * Parser::symcreate(std::string s)
+Symtab * Parser::symcreate(const std::string& s)
 {
   return symtab_map.symcreate(s);
 }
 
-Symtab * Parser::symlook(std::string s)
+Symtab * Parser::symlook(const std::string& s)
 {
   return symtab_map.symlook(s);
 }
@@ -606,7 +649,7 @@ void Parser::Store(double value)
   tmparray.push_front(value);
 }
 
-void Parser::Store(std::string name)
+void Parser::Store(const std::string& name)
 {
   tmpstring.push_front(name);
 }
@@ -701,11 +744,11 @@ bool Parser::FindAndExtend(const std::string& objectName)
 template<class C>
 void Parser::ExtendObject(C& object)
 {
-  for (auto option : extendedNumbers)
+  for (auto& option : extendedNumbers)
     {object.set_value(option.first, option.second);}
-  for (auto option : extendedStrings)
+  for (auto& option : extendedStrings)
     {object.set_value(option.first, option.second);}
-  for (auto option : extendedVectors)
+  for (auto& option : extendedVectors)
     {object.set_value(option.first, option.second);}
 }
 
@@ -853,4 +896,45 @@ namespace GMAD {
   template<>
   void Parser::ExtendValue(const std::string& property, Array* value)
   {extendedVectors[property]=value;}
+  
+  template <class C, class Container>
+  void Parser::Add()
+  {
+    // copy from global
+    C& global = GetGlobal<C>();
+    C inst(global);
+    // reset global
+    global.clear();
+#ifdef BDSDEBUG
+    inst.print();
+#endif
+    GetList<C, Container>().push_back(inst);
+  }
+  
+  template <>
+  void Parser::Add<Placement, std::vector<Placement>>()
+  {
+    // copy from global
+    Placement& global = GetGlobal<Placement>();
+    Placement inst(global);
+    // reset global
+    global.clear();
+#ifdef BDSDEBUG
+    inst.print();
+#endif
+    GetList<Placement, std::vector<Placement>>().push_back(inst);
+    // if an element definition is used for a placement, keep a separate copy of it
+    if (!inst.bdsimElement.empty())
+      {
+	const Element* elDef = find_element_safe(inst.bdsimElement);
+	if (!elDef)
+	  {
+	    std::cerr << "The bdsimElement referred to in \"" << inst.name << "\" (\""
+		      << inst.bdsimElement << "\") cannot be found and should be defined"
+		      << " before this placement" << std::endl;
+	    exit(1);
+	  }
+	placement_elements.push_back(Element(*elDef));
+      }
+  }
 }
