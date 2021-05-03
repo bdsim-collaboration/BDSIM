@@ -63,11 +63,9 @@ protected:
 
   /// Construct samplers.
   void InitialiseSamplers();
-
-#ifdef USE_SIXTRACKLINK
-  /// Interface to allow setting up samplers later for dynamic geometry construction a la SixTrack.
+  
+  /// Interface to allow setting up samplers later for dynamic geometry construction a la SixTrack. Not for regular use.
   G4int UpdateSamplerStructures();
-#endif
   
   /// Extract number of collimators and their names from beam line. Two stage
   /// initialisation for collimators so histograms can be made dynamically if

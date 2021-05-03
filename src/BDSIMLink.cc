@@ -484,11 +484,10 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     sampleIn);
   // update this class's nameToElementIndex map
   nameToElementIndex = construction->NameToElementIndex();
-
-#ifdef USE_SIXTRACKLINK
+  
   if (bdsOutput)
     {bdsOutput->UpdateSamplers();}
-#endif
+
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = gm->CloseGeometry();
   if (!bCloseGeometry)
