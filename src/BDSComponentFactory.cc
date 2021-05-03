@@ -101,6 +101,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
+G4bool BDSComponentFactory::coloursInitialised = false;
+
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
@@ -2246,15 +2248,19 @@ void BDSComponentFactory::PrepareCavityModels()
 
 void BDSComponentFactory::PrepareColours()
 {
-  BDSColours* allColours = BDSColours::Instance();
-  for (const auto& colour : BDSParser::Instance()->GetColours())
+  if (!coloursInitialised)
     {
-      allColours->DefineColour(G4String(colour.name),
-			       (G4double)colour.red,
-			       (G4double)colour.green,
-			       (G4double)colour.blue,
-			       (G4double)colour.alpha);
-    }
+      BDSColours* allColours = BDSColours::Instance();
+      for (const auto& colour : BDSParser::Instance()->GetColours())
+	{
+	  allColours->DefineColour(G4String(colour.name),
+				   (G4double) colour.red,
+				   (G4double) colour.green,
+				   (G4double) colour.blue,
+				   (G4double) colour.alpha);
+	}
+      coloursInitialised = true;
+  }
 }
 
 void BDSComponentFactory::PrepareCrystals()
