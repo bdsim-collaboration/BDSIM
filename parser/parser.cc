@@ -554,7 +554,7 @@ const Element& Parser::find_element(const std::string& element_name)const
   return (*it);
 }
 
-const Element* Parser::find_element_safe(const std::string& element_name) const
+const Element* Parser::find_placement_element_safe(const std::string& element_name) const
 {
   const Element* result = nullptr;
   auto search = placement_elements.find(element_name);
@@ -563,6 +563,18 @@ const Element* Parser::find_element_safe(const std::string& element_name) const
     const GMAD::Element& ele = *search;
     result = &ele;
     }
+  return result;
+}
+
+const Element* Parser::find_element_safe(const std::string& element_name) const
+{
+  const Element* result = nullptr;
+  auto search = element_list.find(element_name);
+  if (search != element_list.end())
+  {
+    const GMAD::Element& ele = *search;
+    result = &ele;
+  }
   return result;
 }
 

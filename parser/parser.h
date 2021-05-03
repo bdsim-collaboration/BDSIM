@@ -142,8 +142,10 @@ namespace GMAD
     Element& find_element(const std::string& element_name);
     /// find element (const) 
     const Element& find_element(const std::string& element_name) const;
-    /// find element by pointer - nullptr if not found
+    /// find element by pointer - nullptr if not found - searches elemnet_list
     const Element* find_element_safe(const std::string& element_name) const;
+    /// search placement_element
+    const Element* find_placement_element_safe(const std::string& element_name) const;
     /// access property of Element with element_name
     double property_lookup(const std::string& element_name, const std::string& property_name) const;
     /// add element to temporary element sequence tmp_list
