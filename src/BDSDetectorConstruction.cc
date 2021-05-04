@@ -191,8 +191,8 @@ void BDSDetectorConstruction::CountPlacementFields()
   G4int nFields = 0;
   const auto& placements = BDSParser::Instance()->GetPlacements();
   for (const auto& placement : placements)
-  {
-    if (!placement.fieldAll.empty())
+  {// here we assume if a bdsim element is used at all that it's active even though it may not be
+    if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
     {nFields++;}
   }
   buildPlacementFieldsWorld = nFields > 0;

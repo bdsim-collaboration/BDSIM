@@ -77,8 +77,11 @@ public:
   /// Accessor to outer material if it exists.
   virtual G4String Material() const;
 
-  /// Overrride for a magnet - test on either field definition.
+  /// Override for a magnet - test on either field definition.
   virtual G4bool HasAField() const {return vacuumFieldInfo || outerFieldInfo;}
+  
+  /// Override function as we have different field recipe objects.
+  virtual void SetFieldUsePlacementWorldTransform();
   
 protected:
   /// Private default constructor to force the use of the supplied one.
