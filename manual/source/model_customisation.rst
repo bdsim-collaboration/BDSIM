@@ -1082,16 +1082,13 @@ Externally Provided Geometry
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
 by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
-geometry can be used in three ways:
+geometry can be used in several ways:
 
-1) A placement of a piece of geometry unrelated to the beam line.
-2) Wrapped around the beam pipe in a BDSIM magnet element.
-3) As a general element in the beam line where the geometry constitutes the whole object.
-4) As the world volume in which the BDSIM beamline is placed.
-
-These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
-:ref:`element-external-geometry`.
-
+1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
+2) Wrapped around the beam pipe in a BDSIM magnet element (see :ref:`external-magnet-geometry`)
+3) As a general element in the beam line where the geometry constitutes the whole object. (see :ref:`element`)
+4) As the world volume in which the BDSIM beamline is placed. (see :ref:`external-world-geometry`)
+   
 .. _geometry-formats:
 
 Geometry Formats
@@ -1105,12 +1102,12 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 | **Format String**    | **Description**                                                     |
 +======================+=====================================================================+
 | gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
-|                      | | persistency format - recommended                                  |
+|                      | | persistency format - recommended, maintained and supported        |
 +----------------------+---------------------------------------------------------------------+
 | ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
-|                      | | geometry classes                                                  |
+|                      | | geometry classes - not maintained                                 |
 +----------------------+---------------------------------------------------------------------+
-| mokka                | | An SQL style description of geometry                              |
+| mokka                | | An SQL style description of geometry - not maintained             |
 +----------------------+---------------------------------------------------------------------+
 
 * With the `option, checkOverlaps=1;` turned on, each externally loaded piece of geometry will
@@ -1333,6 +1330,9 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
 
+External Geometry File
+^^^^^^^^^^^^^^^^^^^^^^
+	  
 The following is an example syntax used to place a piece of geometry: ::
 
   leadblock: placement, x = 10*m,
@@ -1340,7 +1340,11 @@ The following is an example syntax used to place a piece of geometry: ::
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml";
 
-The following is an example of placing a BDSIM-generated component: ::
+
+BDSIM Component
+^^^^^^^^^^^^^^^
+			
+The following is an example of placing a **single** BDSIM-generated component at an arbitrary position: ::
 
   block1: rcol, l=1*m, material="Cu";
   pl1: placement, bdsimElement="block1", x=2*m, z=20*m, axisAngle=1, axisY=1, angle=pi/4;
@@ -1349,6 +1353,11 @@ The following is an example of placing a BDSIM-generated component: ::
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters
 	     from the second, leading to possibly unexpected geometry.
+
+.. note:: For using a general piece of geometry as part of a beam line, it is better to use
+	  the `element` beam line element.  See :ref:`element`.  The length should be specified
+	  accurately and then the beam line will fit together well without any air gaps.
+
 	     
 .. _external-magnet-geometry:
 
@@ -1374,15 +1383,6 @@ Example: ::
 density if desired. This is on by default.  Example to turn it off: ::
     
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
-
-
-.. _element-external-geometry:
-
-Element
-^^^^^^^
-
-A general piece of geometry may be placed in the beam line along with any externally provided
-field map using the `element` beam line element.  See `element`_.
 
   
 .. _tunnel-geometry:
