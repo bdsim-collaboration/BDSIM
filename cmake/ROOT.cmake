@@ -1,14 +1,8 @@
-set(ROOTSYS "" CACHE PATH "Which ROOT installation to use.")
-
-if (NOT ROOTSYS STREQUAL "")
-  message(STATUS "Using user-specified ROOT: ${ROOTSYS}")
-elseif (DEFINED ENV{ROOTSYS})
-  message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
-  set (ROOTSYS "$ENV{ROOTSYS}" CACHE PATH "Which ROOT installation to use." FORCE)
-endif()
-
 # find ROOT of at least version 6
 find_package(ROOT 6.0 REQUIRED)
+if (NOT ROOT_FOUND)
+  message(FATAL_ERROR "ROOT 6 not found")
+endif()
 
 # remove the C++ standard set by ROOT so CMake can handle it correctly for the
 # compiler we find
@@ -21,6 +15,9 @@ removeDuplicateSubstring("${CMAKE_CXX_FLAGS}" $CMAKE_CXX_FLAGS)
 # at leat that standard, so we pick apart ROOT stuff to find out and update the standard
 execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} --features OUTPUT_VARIABLE ROOT_FEATURES)
 list(REMOVE_DUPLICATES ROOT_FEATURES)
+if($ENV{VERBOSE})
+  message(STATUS "ROOT features: ${ROOT_FEATURES}")
+endif()
 string(FIND ${ROOT_FEATURES} "cxx14" _CXX14FOUND)
 string(FIND ${ROOT_FEATURES} "cxx17" _CXX17FOUND)
 if (_CXX17FOUND STRGREATER -1)
