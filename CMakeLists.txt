@@ -85,13 +85,6 @@ endif()
 # HEPMC3
 include(cmake/HepMC.cmake)
 
-# Field double precision (off by default)
-option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
-if(FIELDDOUBLEPRECISION)
-  add_definitions("-DFIELDDOUBLE")
-  message(STATUS "Field double precision ON")
-endif()
-
 # Sixtrack linking bits of code that aren't needed otherwise
 option( USE_SIXTRACKLINK "Include linking code for SixTrack." OFF )
 if(USE_SIXTRACKLINK)

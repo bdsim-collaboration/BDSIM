@@ -43,14 +43,6 @@ endif()
 # add ROOT include directory
 include_directories(SYSTEM ${ROOT_INCLUDE_DIR})
 
-option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
-if(ROOT_DOUBLE_OUTPUT)
-  add_definitions("-D__ROOTDOUBLE__")
-  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
-else()
-  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
-endif()
-
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
 file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
