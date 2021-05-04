@@ -9,7 +9,7 @@ set(CMAKE_PREFIX_PATH /Users/nevay/physics/reps/bdsim-develop-install/lib/cmake/
 find_package(BDSIM REQUIRED)
 
 # add headers from BDSIM
-include_directories(${BDSIM_INCLUDE_DIR}/bdsim)
+include_directories(${BDSIM_INCLUDE_DIR})
 
 # add headers for this project
 include_directories(include)

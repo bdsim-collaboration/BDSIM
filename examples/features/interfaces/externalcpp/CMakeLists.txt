@@ -9,7 +9,7 @@ set(CMAKE_PREFIX_PATH /Users/nevay/physics/reps/bdsim-develop-install/lib/cmake/
 find_package(BDSIM REQUIRED)
 
 # define program includes
-include_directories(${BDSIM_INCLUDE_DIR}/bdsim)
+include_directories(${BDSIM_INCLUDE_DIR})
 
 # make a program and link to gmad (parser) and bdsim libraries
 add_executable(customprogram customprogram.cc)
