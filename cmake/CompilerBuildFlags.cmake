@@ -46,3 +46,11 @@ if(USE_CUSTOM_CHANNELLING)
   message(STATUS "Use custom crystal channelling with Geant4: ON")
   add_definitions("-DCUSTOMCHANNELING")
 endif()
+
+
+# ability to change includes in manual/source/conf.py.in
+# the sphinxcontrib.googleanalytics packages is broken, but it's a 1 line
+# local fix I have in mine and we want google analytics in the website
+# but give ability to turn off so most people can build the manual locally
+option( USE_SPHINX_GOOGLE "Use google analytics in sphinx." OFF)
+mark_as_advanced(USE_SPHINX_GOOGLE)
