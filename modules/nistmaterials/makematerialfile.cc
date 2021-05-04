@@ -30,6 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <fstream>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 #include <map>
 #include <set>
@@ -38,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 int main(int, char**)
 {
   std::ofstream efile;
-  efile.open("nistelements.txt");
+  efile.open("nist_elements.txt");
   
   G4double gcm3 = CLHEP::g / CLHEP::cm3;
   
@@ -54,7 +56,7 @@ int main(int, char**)
 
   //int nElements = (int)nm->GetNistElementNames().size(); // nope
   int nElements = 99;
-  efile << "# numberOfZ " << nElements << "\n";
+  efile << "# number of elements (unique Z): " << nElements << "\n";
   // the hard-coded number in G4NistMaterialBuilder (needed for density)
   // this number is not accessible in the code, so hard coded here
   for (G4int Z = 1; Z < nElements; Z++)
@@ -63,15 +65,15 @@ int main(int, char**)
       G4String name = "G4_" + el->GetName();
       G4Material* mat = nm->FindOrBuildMaterial(name);
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(Z);
-      
+      G4int nIsotopes = (G4int)el->GetNumberOfIsotopes();
       efile << "element"
 	    << "\t" << Z
 	    << "\t" << name
-	    << "\t" << mat->GetDensity() / gcm3
+	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
 	    << "\t" << meanIonisationEnergy / CLHEP::eV
+	    << "\t" << std::defaultfloat << nIsotopes
 	    << "\n";
       
-      G4int nIsotopes = el->GetNumberOfIsotopes();
       G4double* abundances = el->GetRelativeAbundanceVector();
       G4IsotopeVector* isotopes = el->GetIsotopeVector();
       if (nIsotopes > 1 && isotopes)
@@ -90,14 +92,16 @@ int main(int, char**)
   efile.close();
   
   std::ofstream mfile;
-  mfile.open("nistmaterials.txt");
+  mfile.open("nist_materials.txt");
   
   mfile << "# V1.0\n";
-  mfile << "# NIST Materials from BDSIM for pyg4ometry\n";
+  mfile << "# NIST materials from BDSIM for pyg4ometry\n";
   mfile << "# Geant4 version: " << G4Version << "\n";
-  mfile << "# compmass\tZ\tName\tdensity(g/cm^3)\tI(eV)\n";
+  mfile << "# NIST materials by # of atoms of each element - each element includes isotopes\n";
+  mfile << "# of atoms per unit is only approximate from Geant4 so best to go by fraction of mass\n";
+  mfile << "# material\t   # of elements\t         name\t                density(g/cm^3)\tI(eV)\n";
   mfile << "# for each element\n";
-  mfile << "# \tName\tZ\tA\tfraction of mass\n";
+  mfile << "# \t         name\tZ\t# atoms\tfraction of mass\n";
   
   std::vector<G4String> materialNames = nm->GetNistMaterialNames();
   
@@ -128,22 +132,25 @@ int main(int, char**)
       G4Material* mat = nm->FindOrBuildMaterial(materialName);
       // "Z" as the argument to this function is actually just the index in the material vector
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(materialNameToIndex[mat->GetName()]);
-      mfile << "compmass"
-	    << "\t" << mat->GetNumberOfElements()
-	    << "\t" << mat->GetName()
-	    << "\t" << mat->GetDensity() / gcm3
+      mfile << "material"
+	    << "\t" << std::setw(4)  << std::defaultfloat << mat->GetNumberOfElements()
+	    << "\t" << std::setw(40) << mat->GetName()
+	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
 	    << "\t" << meanIonisationEnergy / CLHEP::eV
 	    << "\n";
-      
+  
       const G4ElementVector* elementArray = mat->GetElementVector();
       const G4double* fractionArray = mat->GetFractionVector();
+      const G4int* atomsVector      = mat->GetAtomsVector();
+      
       for (int i = 0; i < (int)elementArray->size(); i++)
 	{
 	  const auto element = (*elementArray)[i];
-	  mfile << "\t" << element->GetName()
-		<< "\t" << element->GetZ()
-		<< "\t" << element->GetN()
-		<< "\t" << fractionArray[i]
+	  //std::cout << *(atomsVector + i) << " " << element->GetNumberOfIsotopes() << std::endl;
+	  mfile << "\t" << std::setw(12) << element->GetName()
+		<< "\t" << std::defaultfloat << element->GetZ()
+		<< "\t" << (*atomsVector + i)
+		<< "\t" << std::setw(12) << std::scientific << fractionArray[i]
 		<< "\n";
 	}
     }
