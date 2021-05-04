@@ -84,7 +84,7 @@ Requirements \& Environment
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled **with** Python support (default is 3 series).
 6) *Optional* - Qt5 libraries for the best Geant4 visualiser.
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
-8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.4.p03**. Avoid 10.5.p0-1. See `Geant4 Installation Guide`_
+8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.7.p01** or **10.4.p03** (for LHC energies). See `Geant4 Installation Guide`_
 9) Flex 2.5.37 or higher.
 10) Bison 2.3 or higher.
 11) *Optional* - HepMC3 for loading event generator output.
@@ -114,16 +114,6 @@ The authors typically use Geant4 10.4.p03 or Geant4.10.7.p01 for physics results
 .. note:: CLHEP 2.4.4.1 is required for Geant4 10.7 onwards as the SI units were updated to SI2019. Therefore,
 	  we should also be careful about using earlier versions of Geant4 with this version of CLHEP depending
 	  on how sensitive your simulation is. Nominally, it should make a negligible difference.
-
-.. _mac-osx-issues:
-  
-Mac OS X Issues
----------------
-  
-* Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
-  screen or worse, bits of the interface double size. The user must use Qt 5.12.1
-  or greater for these issues to be resolved. This issue is documented here:
-  https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
 
 Geant4 Environment
 ------------------
@@ -241,9 +231,8 @@ This typically produces the following output, which is slightly different on eac
   -- Installation prefix: /usr/local
   -- Build Type RelWithDebInfo
   -- Compiler fully supports C++17 and prior versions
-  -- Looking for CLHEP... - found
+  -- Looking for CLHEP
   -- Found CLHEP 2.4.4.1 in /Users/nevay/physics/packages/clhep-2.4.4.1-install/lib/CLHEP-2.4.4.1/../../include
-  -- Use ROOTSYS from environment: /opt/local
   -- Looking for ROOT...
   -- Found ROOT 6.24/00 in /opt/local/libexec/root6
   -- ROOT compiled with cxx17 feature -> changing to C++17 for BDSIM
@@ -334,45 +323,92 @@ Optional Configuration Options
 BDSIM has a few optional configuration options. These can be specified with a value when
 running CMake by prefixing them with "-D". The following options are available.
 
-+-----------------------------+------------+-------------------------------------------------------------+
-| **Option**                  | **Type**   | **Description**                                             |
-+=============================+============+=============================================================+
-| **HepMC3_DIR**              | string     | Optional way to give a hint to CMake where to find your     |
-|                             |            | HepMC3 installation. This should point to the directory     |
-|                             |            | with the CMake configuration file which is usually          |
-|                             |            | `<installdir>/share/HepMC3/cmake`.                          |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **ROOT_DOUBLE_OUTPUT**      | Boolean    | Whether to use double precision for all output. Note this   |
-|                             |            | will roughly double the size of the output files. Useful    |
-|                             |            | only for precision tracking tests using samplers. Note,     |
-|                             |            | data generated with this build cannot be used with a        |
-|                             |            | normal build with this turned off.                          |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **USE_AWAKE**               | Boolean    | Use AWAKE model components. (default off)                   |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **USE_EVENTDISPLAY**        | Boolean    | Turn off event display - useful as the EVE libraries are    |
-|                             |            | not installed correctly on the AFS ROOT build. (default on) |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **USE_GDML**                | Boolean    | Control over use of GDML. On if Geant4 has GDML support.    |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **USE_GZSTREAM**            | Boolean    | Control over using GZip library. (default on)               |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **USE_HEPMC3**              | Boolean    | Whether to link against HepMC3. (default off)               |
-+-----------------------------+------------+-------------------------------------------------------------+
-| **BDSIM_BUILD_STATIC_LIBS** | Boolean    | Whether to build the static library in addition to the main |
-|                             |            | shared one.                                                 |
-+-----------------------------+------------+-------------------------------------------------------------+
++-----------------------------+-------------------------------------------------------------+
+| **Option**                  | **Description**                                             |
++=============================+=============================================================+
+| **USE_AWAKE**               | Use AWAKE model components. (default OFF)                   |
++-----------------------------+-------------------------------------------------------------+
+| **USE_CUSTOM_CHANNELLING**  | Use RHUL custom crystal channelling package in Geant4. Only |
+|                             | if you have this package patched onto Geant4.               |
+| **USE_EVENT_DISPLAY**       | Turn on or off event display. Requires ROOT EVE libraries   |
+|                             | and is an unmaintained work in progress. (default OFF)      |
++-----------------------------+-------------------------------------------------------------+
+| **USE_GDML**                | Control over use of GDML. On if Geant4 has GDML support.    |
++-----------------------------+-------------------------------------------------------------+
+| **USE_GEANT4_EMD_ID**       | If using RHUL Geant4 with EMD process with its own ID turn  |
+|                             | this on to uniquely identify that process in cross-section  |
+|                             | biasing. (default OFF)                                      |
++-----------------------------+-------------------------------------------------------------+
+| **USE_GZSTREAM**            | Control over using GZip library. (default ON)               |
++-----------------------------+-------------------------------------------------------------+
+| **USE_HEPMC3**              | Whether to link against HepMC3. (default OFF)               |
++-----------------------------+-------------------------------------------------------------+
+| **USE_HEPMC3_ROOTIO**       | Whether HEPMC3 was built with ROOTIO on. (default OFF)      |
++-----------------------------+-------------------------------------------------------------+
+| **USE_ROOT_DOUBLE_OUTPUT**  | Whether to use double precision for all output. Note this   |
+|                             | will roughly double the size of the output files. Useful    |
+|                             | only for precision tracking tests using samplers. Note,     |
+|                             | data generated with this build cannot be used with a        |
+|                             | normal build with this turned off. (default OFF)            |
++-----------------------------+-------------------------------------------------------------+
+| **USE_SIXTRACK_LINK**       | Use experimental sixtrack link interface. Affects output.   |
+|                             | (default OFF)                                               |
++-----------------------------+-------------------------------------------------------------+
+| **BDSIM_BUILD_STATIC_LIBS** | Whether to build the static library in addition to the main |
+|                             | shared one. Note, currently the executables will only ever  |
+|                             | be linked to the shared libraries - work in progress.       |
+|                             | (default OFF)                                               |
++-----------------------------+-------------------------------------------------------------+
 
-* Booleans can be either specified as 0 or 1 or OFF or ON.
+* Booleans can be specified with OFF or ON.
 
 Examples: ::
 
-  cmake ../bdsim -DUSE_HEPMC3=1
-
-  cmake ../bdsim -DUSE_HEPMC3=ON -DHepMC3_DIR=/opt/local/share/HepMC3/cmake
+  cmake ../bdsim -DUSE_HEPMC3=ON
 
 * With HepMC 3.1.1 we find a compiler warning about an unused variable. This is harmless and on the
   HepMC3 side that we can't change.
+
+Giving CMake Hints for Packages
+*******************************
+
+When configuring BDSIM, or any CMake package, we can give CMake hints on where to look for
+packages. These can be given through the command line options at configuration time with
+the general syntax :code:`-D<package-name>_DIR=/path/to/package/install-prefix`. For example,
+the following ones may be useful with BDSIM.
+
+* :code:`-DHepMC3_DIR`
+* :code:`-DROOT_DIR`
+* :code:`-DGeant4_DIR`
+* :code:`-DCLHEP_DIR`
+
+Example: ::
+
+  cmake ../bdsim -DUSE_HEPMC3=ON -DHepMC3_DIR=/opt/local/share/HepMC3/cmake
+
+  
+Advanced Configuration Options
+******************************
+
+These options are for developers of BDSIM. These may change without notice or cause unintended
+effects.
+
++------------------------------------+-------------------------------------------------------------+
+| **Option**                         | **Description**                                             |
++====================================+=============================================================+
+| **BDSIM_GENERATE_REGRESSION_DATA** | Whether to generate regression test data from the tests.    |
++------------------------------------+-------------------------------------------------------------+
+| **BDSIM_REGRESSION_PREFIX**        | Name prefix for all output files from regression test data. |
++------------------------------------+-------------------------------------------------------------+
+| **USE_DEBUG_NAVIGATION**           | Extra print out (a lot) to understand navigation through    |
+|                                    | the geometry.                                               |
++------------------------------------+-------------------------------------------------------------+
+| **USE_FIELD_DOUBLE_PRECISION**     | Use double precision for all field maps.                    |
++------------------------------------+-------------------------------------------------------------+
+| **USE_SPHINX_GOOGLE**              | Assume we have the patched google analytics package for     |
+|                                    | for sphinx contrib installed. It's no longer supported, but |
+|                                    | works with a trivial import patch.                          |
++------------------------------------+-------------------------------------------------------------+
 
 .. _installation-environmental-variables:
   
@@ -382,7 +418,7 @@ Environmental Variables
 Some variables are required by ROOT to access the BDSIM classes but not by BDSIM itself.
 These variables are set in the :code:`<bdsim-install-dir>/bin/bdsim.sh` provided shell script.
 
-* We recommond addding this to your terminal profile: :code:`source <bdsim-install-dir>/bin/bdsim.sh`
+* We recommend adding this to your terminal profile: :code:`source <bdsim-install-dir>/bin/bdsim.sh`
 
 .. _setup-python-utilities:
   
@@ -694,7 +730,14 @@ Troubleshooting
 Below is a list of possible encountered problems. If you experience problems beyond these,
 please contact us (see :ref:`support-section`).
 
-1) Visualisation does not work::
+.. _mac-osx-issues:
+    
+1) Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
+  screen or worse, bits of the interface double size. The user must use Qt 5.12.1
+  or greater for these issues to be resolved. This issue is documented here:
+  https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
+
+2) Visualisation does not work::
 
      "parameter value is not listed in the candidate List."
 
@@ -723,7 +766,7 @@ please contact us (see :ref:`support-section`).
    You will have to reconfigure Geant4 and install any necessary libraries (such as Qt or XMotif), then
    recompile Geant4, then recompile bdsim.
 
-2) Huge print out and failure when trying to load data in Python: ::
+3) Huge print out and failure when trying to load data in Python: ::
 
      In [1]: import pybdsim
      d =
@@ -845,7 +888,7 @@ please contact us (see :ref:`support-section`).
 In this case, neither ROOT_INCLUDE_PATH or (DY)LD_LIBRARY_PATH environmental variables have been
 set. See :ref:`installation-building` and :ref:`installation-environmental-variables`.
         	
-2) Error from OpenGL::
+4) Error from OpenGL::
 
      G4OpenGLImmediateX::CreateViewer: error flagged by negative view id in
      G4OpenGLImmediateXViewer creation.
@@ -865,7 +908,7 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
 
    For more info see https://help.ubuntu.com/community/BinaryDriverHowto/AMD
 
-3) Build does not work - GLIBCXX errors, where a message similar to this is shown ::
+5) Build does not work - GLIBCXX errors, where a message similar to this is shown ::
 
      Linking CXX executable bdsim
      /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt
@@ -876,7 +919,7 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
    Make sure it is the same compiler version. Remember to start from a clean build directory, otherwise
    CMake does **NOT** update the compiler version.
 
-4) Build does not work - linker errors with xml and zlib like ::
+6) Build does not work - linker errors with xml and zlib like ::
 
      /usr/lib/../lib64/libxml2.so: undefined reference to `gzdirect@ZLIB_1.2.2.3'
      collect2: error: ld returned 1 exit status
