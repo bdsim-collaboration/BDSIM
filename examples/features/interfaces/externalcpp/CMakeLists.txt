@@ -11,6 +11,6 @@ find_package(BDSIM REQUIRED)
 # define program includes
 include_directories(${BDSIM_INCLUDE_DIR})
 
-# make a program and link to gmad (parser) and bdsim libraries
+# make a program and link to bdsim libraries
 add_executable(customprogram customprogram.cc)
-target_link_libraries(customprogram gmad bdsim)
+target_link_libraries(customprogram ${BDSIM_LIBRARIES})
