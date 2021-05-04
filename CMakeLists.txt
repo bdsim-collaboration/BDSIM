@@ -131,6 +131,8 @@ include(bdsim_install)
 # Before any linkages we define library names
 set(BDSIM_LIB_NAME "bdsim")
 set(BDSIM_LIB_NAME_STATIC "bdsim-static")
+set(GMAD_LIB_NAME "gmad")
+set(GMAD_LIB_NAME_STATIC "gmad-static")
 
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
