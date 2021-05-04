@@ -17,8 +17,7 @@ include_directories(include)
 # sources - put all compiled sources in a library
 file(GLOB SOURCES "source/*.cc")
 add_library(udipole SHARED ${SOURCES})
-# link to bdsim parser (gmad) then bdsim (order specific)
-target_link_libraries(udipole gmad bdsim)
+target_link_libraries(udipole ${BDSIM_LIBRARIES})
 
 # make a program and link to udipole source code library
 add_executable(bdsimuser usercomponent.cc)
