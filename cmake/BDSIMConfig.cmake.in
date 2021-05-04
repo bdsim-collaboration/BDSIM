@@ -52,3 +52,9 @@ set(BDSIM_LIBRARIES @GMAD_LIB_NAME@ @BDSIM_LIB_NAME@ rebdsim bdsimRootEvent)
 set(REBDSIM_LIBRARIES rebdsim bdsimRootEvent)
 
 check_required_components(bdsim)
+
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+message(STATUS "Found BDSIM: ${BDSIM_VERSION} in @CMAKE_INSTALL_PREFIX@")
