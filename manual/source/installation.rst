@@ -173,7 +173,6 @@ For MacPorts you can do: ::
 
 After this, `Building`_ can be started.
 
-.. warning:: For Mac OSX Mojave, see :ref:`mac-osx-issues`.
 
 Linux
 -----
@@ -729,13 +728,11 @@ Troubleshooting
 
 Below is a list of possible encountered problems. If you experience problems beyond these,
 please contact us (see :ref:`support-section`).
-
-.. _mac-osx-issues:
     
 1) Mac OSX Mojave - OpenGL visualisations in Geant4 appear to be missing in a grey
-  screen or worse, bits of the interface double size. The user must use Qt 5.12.1
-  or greater for these issues to be resolved. This issue is documented here:
-  https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
+   screen or worse, bits of the interface double size. The user must use Qt 5.12.1
+   or greater for these issues to be resolved. This issue is documented here:
+   https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2104
 
 2) Visualisation does not work::
 
@@ -925,6 +922,7 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
      collect2: error: ld returned 1 exit status
 
    This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
+
 
 .. rubric:: Footnotes
 
