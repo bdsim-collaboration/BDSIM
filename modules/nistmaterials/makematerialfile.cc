@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Element.hh"
 #include "G4ElementVector.hh"
 #include "G4IsotopeVector.hh"
+#include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
@@ -44,15 +45,21 @@ int main(int, char**)
   
   G4double gcm3 = CLHEP::g / CLHEP::cm3;
   
+  std::map<G4State, G4String> stateMap = {{G4State::kStateUndefined, "unknown"},
+                                          {G4State::kStateGas,       "gas"},
+                                          {G4State::kStateLiquid,    "liquid"},
+                                          {G4State::kStateSolid,     "solid"}
+  };
+  
   // calling this forces construction of all elements and NIST materials
   G4NistManager* nm = G4NistManager::Instance();
   
   efile << "# V1.0\n";
   efile << "# NIST Elements from BDSIM for pyg4ometry\n";
   efile << "# Geant4 version: " << G4Version << "\n";
-  efile << "# element\tZ\tName\tdensity(g/cm^3)\tI(eV)\n";
+  efile << "# element\tZ\tName\tdensity(g/cm^3)\tI(eV)\tnIsotopes\tstate\n";
   efile << "# for each isotope\n";
-  efile << "# \tA\tfractional abundance\n";
+  efile << "# \tA\tfractional abundance\tmolar mass (g)\n";
 
   //int nElements = (int)nm->GetNistElementNames().size(); // nope
   int nElements = 99;
@@ -69,21 +76,24 @@ int main(int, char**)
       efile << "element"
 	    << "\t" << Z << "\t" << name
 	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
-	    << "\t" << meanIonisationEnergy / CLHEP::eV << "\t";
+	    << "\t" << meanIonisationEnergy / CLHEP::eV ;
       // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
       // despite being in the standard for C++11
       efile.unsetf(std::ios_base::floatfield);
-      efile << nIsotopes << "\n";
+      efile << "\t" << nIsotopes
+      << "\t" << stateMap[mat->GetState()] << "\n";
       
       G4double* abundances = el->GetRelativeAbundanceVector();
       G4IsotopeVector* isotopes = el->GetIsotopeVector();
-      if (nIsotopes > 1 && isotopes)
+      if (isotopes)
 	{
 	  int i = 0;
 	  for (const auto& iso : *isotopes)
 	    {
+        efile.unsetf(std::ios_base::floatfield);
 	      efile << "\t" << iso->GetN() // number of nucleons
-		    << "\t" << abundances[i]
+		    << "\t" << std::setw(12) << std::scientific << abundances[i]
+		    << "\t" << std::setw(12) << std::scientific << iso->GetA() / ( CLHEP::g/CLHEP::mole)
 		    << "\n";
 	      i++;
 	    }
@@ -100,9 +110,9 @@ int main(int, char**)
   mfile << "# Geant4 version: " << G4Version << "\n";
   mfile << "# NIST materials by # of atoms of each element - each element includes isotopes\n";
   mfile << "# of atoms per unit is only approximate from Geant4 so best to go by fraction of mass\n";
-  mfile << "# material\t   # of elements\t         name\t                density(g/cm^3)\tI(eV)\n";
+  mfile << "# material   # of elements\t         name\t                density(g/cm^3)\tI(eV)\t\tstate\n";
   mfile << "# for each element\n";
-  mfile << "# \t         name\tZ\t# atoms\tfraction of mass\n";
+  mfile << "# \t         name\tZ\t# atoms    fraction of mass\n";
   
   std::vector<G4String> materialNames = nm->GetNistMaterialNames();
   
@@ -133,12 +143,13 @@ int main(int, char**)
       G4Material* mat = nm->FindOrBuildMaterial(materialName);
       // "Z" as the argument to this function is actually just the index in the material vector
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(materialNameToIndex[mat->GetName()]);
-      mfile << "material" << "\t" << std::setw(4);
+      mfile << "material " << std::setw(4);
       mfile.unsetf(std::ios_base::floatfield);
       mfile << mat->GetNumberOfElements()
 	    << "\t" << std::setw(40) << mat->GetName()
 	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
 	    << "\t" << meanIonisationEnergy / CLHEP::eV
+      << "\t" << stateMap[mat->GetState()]
 	    << "\n";
   
       const G4ElementVector* elementArray = mat->GetElementVector();
