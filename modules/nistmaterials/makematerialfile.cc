@@ -132,8 +132,11 @@ int main(int, char**)
       G4Material* mat = nm->FindOrBuildMaterial(materialName);
       // "Z" as the argument to this function is actually just the index in the material vector
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(materialNameToIndex[mat->GetName()]);
-      mfile << "material"
-	    << "\t" << std::setw(4)  << std::defaultfloat << mat->GetNumberOfElements()
+      mfile << "material" << "\t" << std::setw(4);
+      // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
+      // despite being in the standard for C++11
+      mfile.unsetf(std::ios_base::floatfield);
+      mfile << mat->GetNumberOfElements()
 	    << "\t" << std::setw(40) << mat->GetName()
 	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
 	    << "\t" << meanIonisationEnergy / CLHEP::eV
@@ -146,7 +149,7 @@ int main(int, char**)
       for (int i = 0; i < (int)elementArray->size(); i++)
 	{
 	  const auto element = (*elementArray)[i];
-	  //std::cout << *(atomsVector + i) << " " << element->GetNumberOfIsotopes() << std::endl;
+	  mfile.unsetf(std::ios_base::floatfield);
 	  mfile << "\t" << std::setw(12) << element->GetName()
 		<< "\t" << std::defaultfloat << element->GetZ()
 		<< "\t" << (*atomsVector + i)
