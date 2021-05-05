@@ -67,12 +67,13 @@ int main(int, char**)
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(Z);
       G4int nIsotopes = (G4int)el->GetNumberOfIsotopes();
       efile << "element"
-	    << "\t" << Z
-	    << "\t" << name
+	    << "\t" << Z << "\t" << name
 	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
-	    << "\t" << meanIonisationEnergy / CLHEP::eV
-	    << "\t" << std::defaultfloat << nIsotopes
-	    << "\n";
+	    << "\t" << meanIonisationEnergy / CLHEP::eV << "\t";
+      // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
+      // despite being in the standard for C++11
+      efile.unsetf(std::ios_base::floatfield);
+      efile << nIsotopes << "\n";
       
       G4double* abundances = el->GetRelativeAbundanceVector();
       G4IsotopeVector* isotopes = el->GetIsotopeVector();
@@ -133,8 +134,6 @@ int main(int, char**)
       // "Z" as the argument to this function is actually just the index in the material vector
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(materialNameToIndex[mat->GetName()]);
       mfile << "material" << "\t" << std::setw(4);
-      // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
-      // despite being in the standard for C++11
       mfile.unsetf(std::ios_base::floatfield);
       mfile << mat->GetNumberOfElements()
 	    << "\t" << std::setw(40) << mat->GetName()
@@ -150,8 +149,9 @@ int main(int, char**)
 	{
 	  const auto element = (*elementArray)[i];
 	  mfile.unsetf(std::ios_base::floatfield);
-	  mfile << "\t" << std::setw(12) << element->GetName()
-		<< "\t" << std::defaultfloat << element->GetZ()
+	  mfile << "\t" << std::setw(12) << element->GetName() << "\t";
+	  mfile.unsetf(std::ios_base::floatfield);
+	  mfile << element->GetZ()
 		<< "\t" << (*atomsVector + i)
 		<< "\t" << std::setw(12) << std::scientific << fractionArray[i]
 		<< "\n";
