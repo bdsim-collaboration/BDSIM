@@ -66,6 +66,7 @@ if (Geant4_FOUND)
       # Mark other Geant4 things as advanced to hide from bdsim's cmake configuration
       mark_as_advanced(Geant4_DIR)
       mark_as_advanced(Geant4_PREFIX)
+      mark_as_advanced(PTL_DIR)
       mark_as_advanced(Qt5Core_DIR)
       mark_as_advanced(Qt5Gui_DIR)
       mark_as_advanced(Qt5OpenGL_DIR)
