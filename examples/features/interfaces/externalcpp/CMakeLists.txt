@@ -8,9 +8,7 @@ set(CMAKE_PREFIX_PATH /Users/nevay/physics/reps/bdsim-develop-install/lib/cmake/
 # find the package and set up variables
 find_package(BDSIM REQUIRED)
 
-# define program includes
-include_directories(${BDSIM_INCLUDE_DIR})
-
 # make a program and link to bdsim libraries
 add_executable(customprogram customprogram.cc)
+target_include_directories(customprogram PUBLIC ${BDSIM_INCLUDE_DIR})
 target_link_libraries(customprogram ${BDSIM_LIBRARIES})
