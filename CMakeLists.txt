@@ -257,31 +257,6 @@ bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
-include(CPack)
-
-option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
-mark_as_advanced(BUILD_MACOSX_APP)
-
-if (BUILD_MACOSX_APP AND APPLE)
-    # building a macos executablemaking a bundle of 
-    add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
-    set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
-    target_link_libraries(bdsimapp ${BDSIM_LIB_NAME} gmad)
-    bdsim_install_bundle(bdsim)
-endif()
-
-# package source
-# uses git but only for developers
-add_custom_target(dist
-    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
-        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
-# copy dependent libraries in deps directory
-add_custom_target(copy-deps
-  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
-)
-
 ## Add subdirectories
 # Visualisation directory
 add_subdirectory(vis)
@@ -321,7 +296,37 @@ if(APPLE)
   mark_as_advanced(CMAKE_OSX_SYSROOT)
 endif()
 
+
+
 # CMake packaging so others can use BDSIM in their cmake applications.
+
+
+## in development
+include(CPack)
+
+option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+mark_as_advanced(BUILD_MACOSX_APP)
+
+if (BUILD_MACOSX_APP AND APPLE)
+    # building a macos executablemaking a bundle of 
+    add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
+    set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(bdsimapp ${BDSIM_LIB_NAME} gmad)
+    bdsim_install_bundle(bdsim)
+endif()
+
+# package source
+# uses git but only for developers
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# copy dependent libraries in deps directory
+add_custom_target(copy-deps
+  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
+)
+## end in development
 
 # we use "bdsimcmake" for install cmake stuff as it's prepared in the build
 # directory and this would clash with the main library name. the ConfigPackageLocation
