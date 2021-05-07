@@ -1833,16 +1833,30 @@ using the following syntax::
 
   option, <option_name>=<value>;
 
-Values accepted can be a number (integer, floating point or scientific notation), a string
-with the value enclosed in "double inverted commas", or a Boolean. For Boolean options (described
-as on or off, or true or false) a number 1 or 0 is used.
+Values accepted can be:
 
-Multiple options can be defined at once using the following syntax::
+* a **number** (integer, floating point or scientific notation)
+* a **string** with the value enclosed in "double inverted commas"
+* a **Boolean** (described as on or off, or true or false): must be 1 or 0.
 
-  option, <option1> = <value>,
-          <option2> = <value>;
+Examples (of fictional options): ::
 
-.. note:: No options are required to be specified to run a BDSIM model.  Defaults will be used in
+  option, numericalOption = 123;
+  option, numericalOption = 1.23e2;
+  option, stringOption = "value";
+  option, booleanOptionOn = 1;
+  option, booleanOptionOff = 0;
+
+Multiple options can be defined at once separated by commans and new lines are tolerated. The declaration
+should end in a semi-colon. For example: ::
+
+  option, anOption = 123, anotherOption = "bananas";
+
+  option, anOption = 123,
+          anotherOption = "bananas";
+
+
+.. note:: No options are required to be specified to run a BDSIM model. Defaults will be used in
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius, as these will have a large impact on the outcome of the simulation.
 
@@ -1937,7 +1951,7 @@ Common Options
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | worldMaterial                    | The default material surrounding the model. This is   |
-|                                  | by default air.                                       |
+|                                  | by default "G4_AIR".                                  |
 +----------------------------------+-------------------------------------------------------+
 
 .. _options-general-run:
@@ -2007,24 +2021,24 @@ described in :ref:`tunnel-geometry`.
 +==================================+=======================================================+
 | apertureType                     | Default aperture type for all elements.               |
 +----------------------------------+-------------------------------------------------------+
-| aper1                            | Default aper1 parameter                               |
+| aper1                            | Default aper1 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper2                            | Default aper2 parameter                               |
+| aper2                            | Default aper2 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper3                            | Default aper3 parameter                               |
+| aper3                            | Default aper3 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper4                            | Default aper4 parameter                               |
+| aper4                            | Default aper4 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | Default beam pipe inner radius - alias for aper1 [m]  |
 +----------------------------------+-------------------------------------------------------+
-| beampipeThickness                | Default beam pipe thickness [m]                       |
+| beampipeThickness                | Default beam pipe thickness [m] (default 2.5 mm)      |
 +----------------------------------+-------------------------------------------------------+
-| beampipeMaterial                 | Default beam pipe material                            |
+| beampipeMaterial                 | Default beam pipe material (default "stainlesssteel"  |
 +----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | Whether to build a tunnel (default = 0)               |
+| buildTunnel                      | Whether to build a tunnel (default = false)           |
 +----------------------------------+-------------------------------------------------------+
 | buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
-|                                  | just in a straight line (default = 0).                |
+|                                  | just in a straight line (default = false).            |
 +----------------------------------+-------------------------------------------------------+
 | buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
@@ -2066,7 +2080,7 @@ described in :ref:`tunnel-geometry`.
 | magnetGeometryType               | The default magnet geometry style to use              |
 +----------------------------------+-------------------------------------------------------+
 | outerMaterial                    | The default material to use for the yoke of magnet    |
-|                                  | geometry                                              |
+|                                  | geometry (default = "iron")                           |
 +----------------------------------+-------------------------------------------------------+
 | preprocessGDML                   | Whether to prepend the element name at the front of   |
 |                                  | every tag in a temporary copy of the GDML file.       |
@@ -2080,17 +2094,17 @@ described in :ref:`tunnel-geometry`.
 |                                  | internet access. On by default.                       |
 +----------------------------------+-------------------------------------------------------+
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
-|                                  | when BDSIM exits. Default true.                       |
+|                                  | when BDSIM exits (default = true)                     |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of all samplers (default 5 m) [m].           |
+| samplerDiameter                  | Diameter of all samplers [m]. (default = 5 m)         |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
-|                                  | includes cavities.                                    |
+|                                  | includes cavities. (default = true)                   |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
-|                                  | the beam pipe records energy loss                     |
+|                                  | the beam pipe records energy loss (default = true)    |
 +----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | Material for soil outside tunnel wall                 |
+| soilMaterial                     | Material for outside tunnel wall (default = "soil")   |
 +----------------------------------+-------------------------------------------------------+
 | temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
 |                                  | and the current working directory in that order to    |
@@ -2215,7 +2229,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | "geant4dp")                                           |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | Whether to always stop tracking neutrinos for         |
-|                                  | increased efficiency (default = true)                 |
+|                                  | increased efficiency (default = false)                |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
 |                                  | mass will be included in the energy deposition hit.   |
