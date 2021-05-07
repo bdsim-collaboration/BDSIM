@@ -232,7 +232,7 @@ Output Changes
 
 * :code:`Event.Trajectory.energyDeposit` now in GeV - was previously actually MeV, so 1000x bigger value.
 * Trajectory variables `PXPYPZ`, `T`, `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,
-  `postProcessSubTypes` are no **off** by default. These can be turned on in the output via new options
+  `postProcessSubTypes` are now **off** by default. These can be turned on in the output via new options
   listed above and in the options section. Expect a slight reduction in data file size when storing
   trajectories with default options.
 * Trajectory variable `kineticEnergy` is now **on** by default.
