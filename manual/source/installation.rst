@@ -63,14 +63,6 @@ BDSIM versions can be downloaded from the git repository website:
 
 https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 
-
-From Precompiled Sources
-------------------------
-
-BDSIM may also be downloaded from precompiled sources. These are available
-on: http://www.pp.rhul.ac.uk/bdsim/download
-
-
 .. _required-packages:
    
 Requirements \& Environment
@@ -121,10 +113,10 @@ Geant4 Environment
 Note: even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
 
-  > echo $G4 <tab>
-  $G4ABLADATA         $G4NEUTRONHPDATA    $G4RADIOACTIVEDATA
-  $G4LEDATA           $G4NEUTRONXSDATA    $G4REALSURFACEDATA
-  $G4LEVELGAMMADATA   $G4PIIDATA          $G4SAIDXSDATA
+  echo $G4 <tab>
+   $G4ABLADATA         $G4NEUTRONHPDATA    $G4RADIOACTIVEDATA
+   $G4LEDATA           $G4NEUTRONXSDATA    $G4REALSURFACEDATA
+   $G4LEVELGAMMADATA   $G4PIIDATA          $G4SAIDXSDATA
 
 If these do not exist, please source the Geant4 environmental script
 before installing BDSIM and each time before using BDSIM. It is common
@@ -198,19 +190,19 @@ Building
 Once ready, make a directory **outside** the BDSIM source directory to build
 BDSIM in::
 
-  > ls
-  bdsim
-  > mkdir bdsim-build
-  > ls
-  bdsim bdsim-build
+  ls
+   bdsim
+  mkdir bdsim-build
+  ls
+   bdsim bdsim-build
 
 It is important that the build directory be outside the source directory, otherwise
 trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
 
-  > cd bdsim-build
-  > cmake ../bdsim
+  cd bdsim-build
+  cmake ../bdsim
 
 This typically produces the following output, which is slightly different on each computer::
 
@@ -233,6 +225,8 @@ This typically produces the following output, which is slightly different on eac
   -- Looking for CLHEP
   -- Found CLHEP 2.4.4.1 in /Users/nevay/physics/packages/clhep-2.4.4.1-install/lib/CLHEP-2.4.4.1/../../include
   -- Looking for ROOT...
+  -- ROOT search hint from $ROOTSYS: /opt/local
+  -- Using root-config: /opt/local/bin/root-config
   -- Found ROOT 6.24/00 in /opt/local/libexec/root6
   -- ROOT compiled with cxx17 feature -> changing to C++17 for BDSIM
   -- GDML support ON
@@ -265,19 +259,19 @@ This typically produces the following output, which is slightly different on eac
 
 CMake will search your system for the required dependencies. In the above example, this
 proceeded without any errors. In the case where a required dependency cannot be found,
-an error will be shown and CMake will stop. Please see `Configuring the BDSIM Build with
-CMake`_ for further details on how to fix this and further configure the BDSIM installation.
+an error will be shown and CMake will stop. Please see :ref:`configuring-bdsim` for
+further details on how to fix this and further configure the BDSIM installation.
 
 You can then compile BDSIM with::
 
-  > make
+  make
 
 BDSIM can then be installed (default directory /usr/local) for access from anywhere
 on the system with::
 
-  > sudo make install
+  sudo make install
 
-To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
+To change the installation directory, see :ref:`configuring-bdsim`.
 From any directory on your computer, ``bdsim`` should be available.
 
 At this point, BDSIM itself will work, but more environmental variables must be
@@ -312,8 +306,39 @@ to find the library.
 From the build directory you can verify your installation using a series of tests
 included with BDSIM (excluding long running tests)::
 
-  > ctest -LE LONG
+  ctest -LE LONG
 
+
+.. _configuring-bdsim:
+
+Configuring the Build
+---------------------
+
+To either enter paths to dependencies manually, or edit the configuration, the following
+command will give you and interface to CMake (from the :code:`bdsim-build` directory)::
+
+  ccmake .
+
+.. image:: figures/cmake_screenshot.png
+   :width: 100%
+   :align: center
+
+You can then use **up** and **down** arrows to select the desired parameter and
+**enter** to edit it. If the parameter is a path, press **enter** again after
+entering the path to confirm.
+
+Once the parameter has been edited, you can proceed by pressing **c** to run
+the configuration and if successful, follow this by **g** to generate the
+build. After configuring the installation, you should run::
+
+  make
+  make install
+
+.. note:: If the default installation directory is used, you may need to use :code:`sudo` before
+	  this command. You can change the installation directory in the above **ccmake**
+	  configuration to one that won't require the :code:`sudo` command. The variable
+	  :code:`CMAKE_INSTALL_PREFIX` should be changed.
+  
 .. _installation-bdsim-config-options:
 
 Optional Configuration Options
@@ -377,7 +402,6 @@ the general syntax :code:`-D<package-name>_DIR=/path/to/package/install-prefix`.
 the following ones may be useful with BDSIM.
 
 * :code:`-DHepMC3_DIR`
-* :code:`-DROOT_DIR`
 * :code:`-DGeant4_DIR`
 * :code:`-DCLHEP_DIR`
 
@@ -385,6 +409,24 @@ Example: ::
 
   cmake ../bdsim -DUSE_HEPMC3=ON -DHepMC3_DIR=/opt/local/share/HepMC3/cmake
 
+
+Specifying a ROOT Installation
+******************************
+
+To specify a ROOT installation it is best to have source the :code:`<root-install-prefix>/bin/thisroot.sh`.
+This will set the environmental variable ROOTSYS. BDSIM will look for the program :code:`root-config`
+in the prefix given by ROOTSYS in the environment then use the ROOT installation according to that
+root-config.
+
+This can be overridden by specifying :code:`-DROOT_CONFIG_EXECUTABLE=/path/to/root-config` when configuring
+BDSIM.  For example: ::
+
+  mkdir bdsim-build
+  cd bdsim-build
+  cmake ../bdsim -DROOT_CONFIG_EXECUTABLE=/Users/nevay/physics/packages/root-6.18.04-install/bin/root-config
+
+The CMake configuration print out will show which ROOT installation is being used.
+  
   
 Advanced Configuration Options
 ******************************
@@ -427,16 +469,16 @@ Python Utilities
 * Quick setup: simply run ``make`` from the ``bdsim/utils`` directory.
   
 BDSIM includes copies of our accompanying Python utilities (pytransport, pymad8, pymadx
-and pybdsim) that can now be installed. These are included as "subrepositories" in
+and pybdsim) that can now be installed. These are included as "sub-repositories" in
 :code:`bdsim/utils/`. One should do the following from the root bdsim source directory
 to get git to download these. ::
 
   pwd
-  > bdsim
+   bdsim
   git submodule init
   git submodule update
 
-This prepares and downloads the copies of other respositories. If you intend to edit these
+This prepares and downloads the copies of other repositories. If you intend to edit these
 (as it's all open source), it is better to clone these elsewhere outside of the bdsim source.
 These all exist in separate git repositories in the following locations:
 
@@ -477,36 +519,6 @@ In each utility we use PIP to get any dependencies required. Using our MakeFile
 somewhere else into the Python installation, so if you edit or git pull next time
 you import the utility in Python it will be automatically up to date.
 
-.. _configuring-bdsim:
-
-Configuring the BDSIM Build with CMake
---------------------------------------
-
-To either enter paths to dependencies manually, or edit the configuration, the following
-command will give you and interface to CMake (from ``bdsim-build`` directory)::
-
-  > ccmake .
-
-.. image:: figures/cmake_screenshot.png
-   :width: 100%
-   :align: center
-
-You can then use **up** and **down** arrows to select the desired parameter and
-**enter** to edit it. If the parameter is a path, press **enter** again after
-entering the path to confirm.
-
-Once the parameter has been edited, you can proceed by pressing **c** to run
-the configuration and if successful, follow this by **g** to generate the
-build. After configuring the installation, you should run::
-
-  > make
-  > sudo make install
-
-Note, ``sudo`` is used here as the default installation directory will be a
-system folder. You can however, specify a different directory in the above **ccmake**
-configuration and that won't require the ``sudo`` command. The installation directory
-can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
-
 Making the Manual
 -----------------
 
@@ -515,11 +527,11 @@ as a pdf in the source directory, but if desired the user can compile the manual
 in both HTML and pdflatex from the build directory using the following command
 to make the HTML manual in the folder ``manual/html``::
 
-  > make manual
+  make manual
 
- Similarly::
+Similarly::
 
-  > make manual-pdf
+  make manual-pdf
 
 will make the pdf Manual in the folder ``manual/latex``.
 
@@ -537,7 +549,7 @@ http://www.pp.rhul.ac.uk/bdsim/doxygen/
 If desired the user can create this from the build directory using the following command
 to make the Doxygen documentation in a folder called ``Doxygen``.::
 
-  > make doc
+  make doc
 
 .. note:: This requires the Doxygen documentation system to be installed.
 
@@ -548,23 +560,23 @@ If not installed with a package manager (MacPorts, HomeBrew, yum), download CLHE
 
 Move and unpack to a suitable place::
 
-   > tar -xzf clhep-2.3.1.1.tgz
-   > cd 2.3.1.1
+   tar -xzf clhep-2.3.1.1.tgz
+   cd 2.3.1.1
 
 Make build directory::
 
-   > mkdir build
-   > cd build
-   > cmake ../CLHEP
+   mkdir build
+   cd build
+   cmake ../CLHEP
 
 Adapt parameters if needed with::
 
-   > ccmake .
+   ccmake .
 
 Make and install::
 
-   > make
-   > sudo make install
+   make
+   sudo make install
 
 .. _geant4-installation-guide:
 
@@ -580,25 +592,24 @@ is more flexible to allow choice of visualiser and use of GDML (necessary for ex
 geometry). For manual installation, download the latest patch version from the
 Geant website. Move and unpack to a suitable place ::
 
-  > tar -xzf geant4.10.6.p03.tar.gz
-  > ls
-  geant4.10.6.p03
+  tar -xzf geant4.10.6.p03.tar.gz
+  ls
+   geant4.10.6.p03
 
 Make a build and installation directory **outside** that directory ::
 
-  > mkdir geant4.10.6.p03-build
-  > mkdir geant4.10.6.p03-install
+  mkdir geant4.10.6.p03-build
+  mkdir geant4.10.6.p03-install
 
 Configure Geant4 using CMake ::
 
-  > cd geant4.10.6.p03-build
-  > cmake ../geant4.10.6.p03
+  cd geant4.10.6.p03-build
+  cmake ../geant4.10.6.p03
 
 At this point it's useful to define the installation directory for Geant4 by
-modifying the CMake configuration as generally described in
-`Configuring the BDSIM Build with CMake`_. ::
+modifying the CMake configuration as generally described in :ref:`configuring-bdsim`. ::
 
-  > ccmake .
+  ccmake .
 
 It is useful to change a few options with Geant4 for practical purposes.
 
@@ -651,18 +662,18 @@ typically takes two or three times - it is due to dependencies being dependent o
 other dependencies. Geant4 can then
 be compiled ::
 
-  > make
+  make
 
 Note: Geant4 can take around 20 minutes to compile on a typical computer. If your
 computer has multiple cores, you can significantly decrease the time required to
 compile by using extra cores ::
 
-  > make -jN
+  make -jN
 
 where ``N`` is the number of cores on your computer [#ncoresnote]_. Geant4 should
 then be installed ::
 
-  > make install
+  make install
 
 Note: if you've specified the directory to install, you will not need the ``sudo``
 command. However, if you've left the settings as default, it'll be installed
@@ -671,7 +682,7 @@ in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
 
-  > source path/to/geant4.10.6.p03-install/bin/geant4.sh
+  source path/to/geant4.10.6.p03-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
