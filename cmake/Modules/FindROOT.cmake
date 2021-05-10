@@ -18,29 +18,25 @@ elseif(EXISTS "${ROOTSYS}/bin/root-config6")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config6")
 else()
   if($ENV{VERBOSE})
-       message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
+    message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
   endif()
   find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config6)
 endif()
 
-if(NOT ROOT_CONFIG_EXECUTABLE OR
-    NOT EXISTS ${ROOT_CONFIG_EXECUTABLE}) # for broken symlinks
+if(NOT ROOT_CONFIG_EXECUTABLE OR NOT EXISTS ${ROOT_CONFIG_EXECUTABLE}) # for broken symlinks
   set(ROOT_FOUND FALSE)
   MESSAGE(STATUS "root-config not found in PATH")
-
 else()    
   set(ROOT_FOUND TRUE)
 
-  if($ENV{VERBOSE})
-        message(STATUS "root-config found... ${ROOT_CONFIG_EXECUTABLE}")
-  endif()
+  message(STATUS "Using root-config: ${ROOT_CONFIG_EXECUTABLE}")
+
+  set(ROOT_EXECUTABLE ${ROOTSYS}/bin/root)
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --prefix 
     OUTPUT_VARIABLE ROOTSYS 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-  set(ROOT_EXECUTABLE ${ROOTSYS}/bin/root)
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --version 
@@ -91,6 +87,8 @@ if(NOT ROOTCINT_EXECUTABLE OR
     NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
   MESSAGE(FATAL_ERROR "rootcint not found")
 endif()
+
+
 
 find_program(GENREFLEX_EXECUTABLE genreflex PATHS ${ROOTSYS}/bin)
 find_package(GCCXML)
