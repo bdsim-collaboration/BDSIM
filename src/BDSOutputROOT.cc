@@ -227,7 +227,6 @@ void BDSOutputROOT::Close()
     }
 }
 
-#ifdef SIXTRACKLINK
 void BDSOutputROOT::UpdateSamplers()
 {
   G4int nNewSamplers = BDSOutputStructures::UpdateSamplerStructures();
@@ -242,4 +241,3 @@ void BDSOutputROOT::UpdateSamplers()
 				 samplerTreeLocal,32000,0);
     }
 }
-#endif

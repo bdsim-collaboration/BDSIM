@@ -38,6 +38,12 @@ class G4Box;
 class G4ChannelingOptrMultiParticleChangeCrossSection;
 class G4VPhysicalVolume;
 
+/**
+ * @brief Construction of the geometry in the case of a link model.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSLinkDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:

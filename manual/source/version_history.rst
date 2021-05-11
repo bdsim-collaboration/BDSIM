@@ -17,6 +17,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.6.0 - 2021 / XX / XX
 =======================
 
+
 New Features
 ------------
 
@@ -28,11 +29,12 @@ New Features
 * :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
   in that placement of geometry.
 * Sub-fields can now be used with E field maps.
+* BDSIM components can now be used in placements to place a single component anywhere in the world.
 * The :code:`transform3d` beam line element now accepts axis angle parameters.
 * Bias objects can now be attached to the world volume (e.g. the air) specifically.
 * Bias objects can now be attached to the daughter volumes of the world when you load
   an external GDML world.
-* By default now, the rest mass of an artificially killed particle is **not** included in the
+* By default now, the rest mass of an **artificially killed particle** is **not** included in the
   Eloss.energy hit recorded. If this is desired, as was the old behaviour in previous versions,
   then the option :code:`killedParticlesMassAddedToEloss=1` can be used.
 * More granular control over information stored in trajectories. Trajectories can use a lot of disk
@@ -149,8 +151,22 @@ General
   the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
 * The visualisation macro path has the current working directory now as the last directory to search
   after the installation directory.
+
+Build Changes
+-------------
+
 * The event display executable "edbdsim" is not build by default with the CMake option
-  :code:`USE_EVENTDISPLAY` set to :code:`OFF` by default as this isn't maintained or finished.
+  :code:`USE_EVENT_DISPLAY` set to :code:`OFF` by default as this isn't maintained or finished.
+* The CMake options have all been changed to start with :code:`USE_`.
+* The ROOTSYS print out and option in BDSIM's CMake has been removed as this wasn't in fact
+  used as a hint to CMake. The user should use :code:`-DROOT_DIR=/path/to/root` on the command
+  line (standard CMake practice) if they want to specify a specific ROOT installation.
+* Many Geant4 options for Qt and X11 have been marked as advanced to clean up the BDSIM ccmake
+  list of options.
+* The BDSIMConfig.cmake in the installation now contains all the compilation options but prefixed
+  with :code:`BDS_`, for example, :code:`BDS_USE_HEPMC3`.
+* If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
+  :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
 
 Bug Fixes
 ---------
@@ -219,6 +235,8 @@ Bug Fixes
 * Fix possibly misidentified PrimaryFirstHit beam line elements (coordinates were always correct)
   that could in the case of some particles be either the very first step into the accelerator from
   air or the element before the expected one.
+* Fix build with a modern compiler (e.g. GCC9) of ROOT and BDSIM. Specifically, if ROOT was compiled
+  with C++14 or 17 the C++ standard for BDSIM is matched to that rather than the default C++11.
 
 
 Output Changes
@@ -226,7 +244,7 @@ Output Changes
 
 * :code:`Event.Trajectory.energyDeposit` now in GeV - was previously actually MeV, so 1000x bigger value.
 * Trajectory variables `PXPYPZ`, `T`, `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,
-  `postProcessSubTypes` are no **off** by default. These can be turned on in the output via new options
+  `postProcessSubTypes` are now **off** by default. These can be turned on in the output via new options
   listed above and in the options section. Expect a slight reduction in data file size when storing
   trajectories with default options.
 * Trajectory variable `kineticEnergy` is now **on** by default.

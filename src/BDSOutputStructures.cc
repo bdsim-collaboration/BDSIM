@@ -198,7 +198,17 @@ void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
-      samplerTrees.reserve(300); // TODO hardcoded because of sixtrack dynamic buildup
+#ifdef USE_SIXTRACKLINK
+      // TODO hardcoded because of sixtrack dynamic buildup
+      // Sixtrack does lazy initialisation for collimators in link to Geant4 so we don't know
+      // a priori how many link elements there'll be. If we allow it to be dynamically built up
+      // we risk the vector expanding and moving in memory, therefore breaking all the && (address
+      // of pointer) links of TTree::SetBranchAddress in the output. Therefore, we reserve a size
+      // of 300 in the hope that this is less than the LHC 120 collimators for both beams. Ideally,
+      // the sixtrack interface should be rewritten so we know at construction time how many will
+      // be built.
+      samplerTrees.reserve(300);
+#endif
       localSamplersInitialised = true;
       for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
@@ -213,7 +223,6 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
-#ifdef SIXTRACKLINK
 G4int BDSOutputStructures::UpdateSamplerStructures()
 {
   G4int result = 0;
@@ -233,7 +242,6 @@ G4int BDSOutputStructures::UpdateSamplerStructures()
     }
   return result;
 }
-#endif
 
 void BDSOutputStructures::PrepareCollimatorInformation()
 {

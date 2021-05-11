@@ -49,10 +49,9 @@ public:
 
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
-
-#ifdef SIXTRACKLINK
+  
+  /// Implementation for ROOT output. Only for link - not for regular use.
   virtual void UpdateSamplers();
-#endif
 private:
   /// Copy header and write to file.
   virtual void WriteHeader();
