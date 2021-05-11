@@ -19,4 +19,7 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersion.hh     ${CMAKE_CURRENT_BINARY_DIR}/BDSVersion.hh     @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BDSVersionData.hh ${CMAKE_CURRENT_BINARY_DIR}/BDSVersionData.hh @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bdsim.sh.in       ${CMAKE_BINARY_DIR}/bin/bdsim.sh              @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/bin/bdsim.sh DESTINATION bin)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BDSVersion.hh     DESTINATION include/bdsim COMPONENT Headers)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BDSVersionData.hh DESTINATION include/bdsim COMPONENT Headers)
+install(FILES ${CMAKE_BINARY_DIR}/bin/bdsim.sh              DESTINATION bin)
