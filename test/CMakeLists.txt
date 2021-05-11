@@ -13,7 +13,7 @@ add_test(NAME "tester-interpolator" COMMAND BDSInterpolatorTester)
 add_executable(BDSLinkTester BDSLinkTester.cc)
 set_target_properties(BDSLinkTester PROPERTIES OUTPUT_NAME "BDSLinkTester" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSLinkTester ${BDSIM_LIB_NAME} gmad)
-add_test(NAME "tester-link" COMMAND BDSLinkTester)
+#add_test(NAME "tester-link" COMMAND BDSLinkTester)
 
 add_executable(BDSSixTrackTester BDSSixTrackTester.cc)
 set_target_properties(BDSSixTrackTester PROPERTIES OUTPUT_NAME "BDSSixTrackTester" VERSION ${BDSIM_VERSION})

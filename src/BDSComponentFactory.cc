@@ -102,6 +102,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
+G4bool BDSComponentFactory::coloursInitialised = false;
+
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
@@ -2160,7 +2162,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
   G4Material* result = nullptr;
-  if (el->vacuumMaterial == "")
+  if (el->vacuumMaterial.empty())
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
     {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
@@ -2168,8 +2170,8 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
-							  const G4ThreeVector inputFaceNormalIn,
-							  const G4ThreeVector outputFaceNormalIn)
+							  const G4ThreeVector& inputFaceNormalIn,
+							  const G4ThreeVector& outputFaceNormalIn)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
@@ -2276,15 +2278,19 @@ void BDSComponentFactory::PrepareCavityModels()
 
 void BDSComponentFactory::PrepareColours()
 {
-  BDSColours* allColours = BDSColours::Instance();
-  for (const auto& colour : BDSParser::Instance()->GetColours())
+  if (!coloursInitialised)
     {
-      allColours->DefineColour(G4String(colour.name),
-			       (G4double)colour.red,
-			       (G4double)colour.green,
-			       (G4double)colour.blue,
-			       (G4double)colour.alpha);
-    }
+      BDSColours* allColours = BDSColours::Instance();
+      for (const auto& colour : BDSParser::Instance()->GetColours())
+	{
+	  allColours->DefineColour(G4String(colour.name),
+				   (G4double) colour.red,
+				   (G4double) colour.green,
+				   (G4double) colour.blue,
+				   (G4double) colour.alpha);
+	}
+      coloursInitialised = true;
+  }
 }
 
 void BDSComponentFactory::PrepareCrystals()
