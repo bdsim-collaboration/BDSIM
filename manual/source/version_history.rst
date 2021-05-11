@@ -17,6 +17,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.6.0 - 2021 / XX / XX
 =======================
 
+* Public CVMFS build now available. See :ref:`cvmfs-build`.
 
 New Features
 ------------

@@ -5,7 +5,7 @@ Installation
 Supported Systems
 =================
 
-BDSIM is developed and used on Mac OSX and Linux.
+BDSIM is developed and used on Mac OSX and (Scientific) Linux.
 
 Tested systems:
 
@@ -16,6 +16,7 @@ Tested systems:
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0
 * SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
 * SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
+* CERN CentOS 7, GCC 8.3, Geant4 10.7.1, 10.6, 10.4.3, ROOT 6.22.06, CLHEP 2.4.4.0 (i.e. lxplus at CERN)
 
 BDSIM on Windows
 ----------------
@@ -68,6 +69,49 @@ https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 	  output will just be "develop" and not the specific git SHA1 commit ID. Therefore, if
 	  dealing with the develop branch, it's recommended to clone the repository.
 
+.. _cvmfs-build:
+	  
+CentOS 7 with CVMFS Access
+--------------------------
+
+If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
+File System), you can access an installation of bdsim at: ::
+
+  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
+
+In this directory, there are several BASH environment scripts you can source to use the BDSIM
+installation there, including Geant4, ROOT, CLHEP and all dependencies. This is based on CERN's LCG
+software release (currently #99 for BDSIM). There are builds of the latest tagged version of BDSIM
+as well as a reasonably up to date "develop" branch build. The develop branch build may be updated
+without notice. Each build is in a directory with the naming convention: ::
+
+  bdsim-<version>-g4<g4version>.sh
+
+Optional group patches to Geant4 are represented by an extra patch number (e.g. 10.7.1.1 for our patch
+#1 on 10.7.1). The contents of the patches are documented in the build directory in a directory called
+"patches" as patch files. These are the patches that were applied to the public source code. Each directory
+has a text file in it named with the time of the build and contains any options used to configure the software
+so that anyone could reproduce the build.
+
+Example usage: ::
+
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.5.1-g4v10.7.1.1.sh
+  bdsim --help
+
+This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
+at caching files and it will subsequently be much faster.
+
+Sourcing this script will include BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8, and pytransport.
+Using this Python and IPython installation will provide the utilities.
+
+.. note:: We are currently fixing some ongoing issues with pybdsim loading ROOT data files and crashing
+	  due to a segfault in ROOT.
+
+.. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
+	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
+	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
+	  never visited before even though they are accessible.
+	  
 .. _required-packages:
    
 Requirements \& Environment
