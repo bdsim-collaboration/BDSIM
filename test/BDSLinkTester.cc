@@ -29,24 +29,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 int main(int argc, char** argv)
 {
   BDSIMLink* bds = nullptr;
+  BDSBunchSixTrackLink* stp = nullptr;
   try
     {
-      BDSBunchSixTrackLink* stp = new BDSBunchSixTrackLink();
+      stp = new BDSBunchSixTrackLink();
       bds = new BDSIMLink(stp);
 
       //std::vector<std::string> arguments = {"--file=../examples/features/link/link_collimators.gmad",
-	//				    "--vis_debug"/*, "--batch"*/};
+      //				    "--vis_debug"/*, "--batch"*/};
       /*std::vector<char*> argvv;
-     for (const auto& arg : arguments)
-   {argvv.push_back((char*)arg.data());}
-     argv.push_back(std::string(*(argv->[0])));
-    */
+	for (const auto& arg : arguments)
+	{argvv.push_back((char*)arg.data());}
+	argv.push_back(std::string(*(argv->[0])));
+      */
       bds->Initialise(argc, argv, true, 100);
       if (!bds->Initialised())
 	{
@@ -57,21 +59,24 @@ int main(int argc, char** argv)
 	{
 	  bds->BeamOn();
 	}
-    auto hits = bds->SamplerHits();
-    if (hits)
-      {G4cout << hits->entries() << G4endl;}
+      auto hits = bds->SamplerHits();
+      if (hits)
+	{G4cout << hits->entries() << G4endl;}
       delete bds;
+      delete stp;
     }
   catch (const BDSException& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;
       delete bds;
+      delete stp;
       exit(1);
     }
   catch (const std::exception& exception)
     {
       std::cerr << std::endl << exception.what() << std::endl;
       delete bds;
+      delete stp;
       exit(1);
     }
 

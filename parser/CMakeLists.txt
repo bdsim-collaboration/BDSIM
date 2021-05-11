@@ -8,10 +8,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -Wno-unneeded-internal-declaration")
 endif()
 
-# Before any linkages we define library names
-set(GMAD_LIB_NAME "gmad")
-set(GMAD_LIB_NAME_STATIC "gmad-static")
-
 if($ENV{VERBOSE})
   message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
