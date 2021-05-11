@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputType.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSParser.hh"
+#include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryFilter.hh"
@@ -143,7 +144,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   InitialiseBeamlineTransform();
 
-  BDSSamplerPlane::chordLength = 10*LengthSafety();
+  BDSSamplerPlane::chordLength  = 10*LengthSafety();
+  BDSSamplerCustom::chordLength = 10*BDSSamplerPlane::chordLength;
   
   ProcessTrajectoryELossSRange();
 

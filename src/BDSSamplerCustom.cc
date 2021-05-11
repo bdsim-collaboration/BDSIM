@@ -27,10 +27,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 #include "G4Tubs.hh"
-#include "G4Types.hh"
 
+G4double BDSSamplerCustom::chordLength = -1;
 
-BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
+BDSSamplerCustom::BDSSamplerCustom(const G4String&         nameIn,
 				   BDSAperture* shape):
   BDSSampler(nameIn)
 {

@@ -114,6 +114,8 @@ void g4_terminate()
 {
   delete bds;
   bds = nullptr;
+  delete stp;
+  stp = nullptr;
 }
 
 extern "C"

@@ -193,8 +193,8 @@ void BDSDetectorConstruction::CountPlacementFields()
   G4int nFields = 0;
   const auto& placements = BDSParser::Instance()->GetPlacements();
   for (const auto& placement : placements)
-  {
-    if (!placement.fieldAll.empty())
+  {// here we assume if a bdsim element is used at all that it's active even though it may not be
+    if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
     {nFields++;}
   }
   buildPlacementFieldsWorld = nFields > 0;
@@ -216,9 +216,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // construct placement geometry from parser
   BDSBeamline* mainBeamLine = BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
+  auto componentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
-					    mainBeamLine);
+                                            mainBeamLine,
+                                            componentFactory);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
+  delete componentFactory;
 
   BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
 				     mainBeamLine);
@@ -344,7 +347,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 }
 
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
-						      G4String             name,
+						      const G4String&      name,
 						      const G4Transform3D& initialTransform,
 						      G4double             initialS,
 						      G4bool               beamlineIsCircular,
