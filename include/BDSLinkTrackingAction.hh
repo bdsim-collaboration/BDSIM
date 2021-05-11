@@ -18,10 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSLINKTRACKINGACTION_H
 #define BDSLINKTRACKINGACTION_H
-
 #include "BDSTrajectoryOptions.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "G4Types.hh"
 #include "G4UserTrackingAction.hh"
 
 class BDSLinkEventAction;
@@ -35,11 +34,11 @@ class BDSLinkTrackingAction: public G4UserTrackingAction
 {
 public:
   BDSLinkTrackingAction(G4bool batchMode,
-		    BDSLinkEventAction* eventActionIn,
-		    G4int  verboseSteppingEventStartIn,
-		    G4int  verboseSteppingEventStopIn,
-		    G4bool verboseSteppingPrimaryOnlyIn,
-		    G4int  verboseSteppingLevelIn);
+			BDSLinkEventAction* eventActionIn,
+			G4int  verboseSteppingEventStartIn,
+			G4int  verboseSteppingEventStopIn,
+			G4bool verboseSteppingPrimaryOnlyIn,
+			G4int  verboseSteppingLevelIn);
   
   virtual ~BDSLinkTrackingAction(){;}
 

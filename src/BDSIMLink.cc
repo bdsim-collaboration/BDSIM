@@ -356,10 +356,10 @@ void BDSIMLink::BeamOn(int nGenerate)
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
   if (!ignoreSIGINT)
-    {sigaction(SIGINT,  &act, 0);}
-  sigaction(SIGABRT, &act, 0);
-  sigaction(SIGTERM, &act, 0);
-  sigaction(SIGSEGV, &act, 0);
+    {sigaction(SIGINT,  &act, nullptr);}
+  sigaction(SIGABRT, &act, nullptr);
+  sigaction(SIGTERM, &act, nullptr);
+  sigaction(SIGSEGV, &act, nullptr);
   
   /// Run in either interactive or batch mode
   try
@@ -398,7 +398,6 @@ BDSIMLink::~BDSIMLink()
   if (bdsOutput)
     {bdsOutput->CloseFile();}
   delete bdsOutput;
-  delete runAction;
 
   try
     {
@@ -423,8 +422,8 @@ BDSIMLink::~BDSIMLink()
     }
   catch (...)
     {;} // ignore any exception as this is a destructor
-
-  //delete bdsBunch;
+  
+  delete runManager;
   delete parser;
 
   if (usualPrintOut)
@@ -484,11 +483,10 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     sampleIn);
   // update this class's nameToElementIndex map
   nameToElementIndex = construction->NameToElementIndex();
-
-#ifdef SIXTRACKLINK
+  
   if (bdsOutput)
     {bdsOutput->UpdateSamplers();}
-#endif
+
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = gm->CloseGeometry();
   if (!bCloseGeometry)

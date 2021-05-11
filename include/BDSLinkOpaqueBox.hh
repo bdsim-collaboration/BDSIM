@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LINKOPAQUEBOX_H
-#define LINKOPAQUEBOX_H
+#ifndef BDSLINKOPAQUEBOX_H
+#define BDSLINKOPAQUEBOX_H
 #include "BDSAcceleratorComponent.hh"
 #include "BDSUtilities.hh"
 
@@ -30,12 +30,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSAcceleratorComponent;
 class BDSSamplerCustom;
 
+/**
+ * @brief Wrapper box for an accelerator component.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSLinkOpaqueBox: public BDSGeometryComponent
 {
 public:
   BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponentIn,
                    BDSTiltOffset* tiltOffsetIn,
-		               G4double outputSamplerRadiusIn);
+		   G4double outputSamplerRadiusIn);
   virtual ~BDSLinkOpaqueBox();
 
   /// Default constructor
