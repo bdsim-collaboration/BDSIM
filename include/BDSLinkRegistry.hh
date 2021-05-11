@@ -18,12 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSLINKREGISTRY_H
 #define BDSLINKREGISTRY_H
+#include "G4Transform3D.hh"
+#include "G4Types.hh"
 
 #include <map>
 #include <string>
-
-#include "G4Transform3D.hh"
-#include "G4Types.hh"
 
 class BDSLinkOpaqueBox;
 

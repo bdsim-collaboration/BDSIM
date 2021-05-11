@@ -172,10 +172,9 @@ G4int BDSLinkOpaqueBox::PlaceOutputSampler()
   BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
   sampler = new BDSSamplerCustom(samplerName, ap);
   sampler->GetContainerLogicalVolume()->SetSensitiveDetector(BDSSDManager::Instance()->SamplerLink());
-
-  G4double pl = BDSBeamline::PaddingLength();
+  
   auto z2 = component->GetExtent();
-  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl + BDSSamplerPlane::ChordLength());
+  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + 2*BDSSamplerCustom::ChordLength());
   G4RotationMatrix* rm = nullptr;
   if (BDS::IsFinite(component->GetAngle()))
     {
@@ -183,7 +182,7 @@ G4int BDSLinkOpaqueBox::PlaceOutputSampler()
       rm->rotateY(0.5 * component->GetAngle()); // rotate to output face
       RegisterRotationMatrix(rm);
       position = G4ThreeVector(component->Sagitta(), 0, 0.5*component->GetChordLength());
-      G4ThreeVector gap = G4ThreeVector(0,0,pl + BDSSamplerPlane::ChordLength());
+      G4ThreeVector gap = G4ThreeVector(0,0,2*BDSSamplerCustom::ChordLength());
       position += gap.transform(*rm);
     }
   // if there's finite angle, we ensure (in constructor) there's no tilt
