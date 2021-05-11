@@ -9,7 +9,7 @@ if (GIT_FOUND)
                   RESULT_VARIABLE   GIT_SHA1_RESULT)
     
   if (GIT_SHA1_RESULT EQUAL "1")
-    message(STATUS "Not a git repository clone - using ${BDSIM_VERSION} as version in output.")
+    message(STATUS "Couldn't determine git SHA1 - using ${BDSIM_VERSION} as BDSIM version in output.")
     set(VERSION_SHA1 ${BDSIM_VERSION})
   endif()
 else()
