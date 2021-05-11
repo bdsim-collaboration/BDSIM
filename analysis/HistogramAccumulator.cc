@@ -288,21 +288,28 @@ TH1* HistogramAccumulator::Terminate()
       }
     case 4:
       {
-	for (int j = -1; j <= dynamic_cast<BDSBH4DBase*>(result)->GetNbinsX(); ++j)
+	auto histCast = dynamic_cast<BDSBH4DBase*>(result);
+	auto mnCast   = dynamic_cast<BDSBH4DBase*>(mean);
+	auto varCast  = dynamic_cast<BDSBH4DBase*>(variance);
+	auto resCast  = dynamic_cast<BDSBH4DBase*>(result);
+	int nBinsX = histCast->GetNbinsX();
+	int nBinsY = histCast->GetNbinsY();
+	int nBinsZ = histCast->GetNbinsZ();
+	int nBinsE = histCast->GetNbinsE();
+	for (int j = -1; j <= nBinsX; ++j)
 	  {
-	    for (int k = -1; k <= dynamic_cast<BDSBH4DBase*>(result)->GetNbinsY(); ++k)
+	    for (int k = -1; k <= nBinsY; ++k)
 	      {
-		for (int l = -1; l <= dynamic_cast<BDSBH4DBase*>(result)->GetNbinsZ(); ++l)
+		for (int l = -1; l <= nBinsZ; ++l)
 		  {
-		    for (int e = -1; e <= dynamic_cast<BDSBH4DBase*>(result)->GetNbinsE(); ++e)
+		    for (int e = -1; e <= nBinsE; ++e)
 		      {
-			mn = dynamic_cast<BDSBH4DBase*>(mean)->At(j, k, l, e);
-			var = dynamic_cast<BDSBH4DBase*>(variance)->At(j, k, l, e);
+			mn  = mnCast->At(j, k, l, e);
+			var = varCast->At(j, k, l, e);
 			err = n > 1 ? factor*std::sqrt(var) : 0;
-			dynamic_cast<BDSBH4DBase*>(result)->Set_BDSBH4D(j, k, l, e, mn);
-			dynamic_cast<BDSBH4DBase*>(result)->SetError_BDSBH4D(j, k, l, e, err);
+			resCast->Set_BDSBH4D(j, k, l, e, mn);
+			resCast->SetError_BDSBH4D(j, k, l, e, err);
 		      }
-		    
 		  }
 	      }
 	  }
