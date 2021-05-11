@@ -63,6 +63,11 @@ BDSIM versions can be downloaded from the git repository website:
 
 https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 
+.. note:: If you download a branch such as develop.tar.gz then it is not a git repository but just
+	  a copy of the files. In the case of the develop branch, the BDSIM version recorded in the
+	  output will just be "develop" and not the specific git SHA1 commit ID. Therefore, if
+	  dealing with the develop branch, it's recommended to clone the repository.
+
 .. _required-packages:
    
 Requirements \& Environment
@@ -94,7 +99,7 @@ We have found some problems with certain versions of software and these should b
 avoided. Generally, we recommend the latest patch version of Geant4. These are the
 problems we have found:
 
-* Geant4 10.3.0  - excessively long overlap checking - 15mins per solid vs normal 40ms.
+* Geant4 10.3.0  - excessively long overlap checking - 15 mins per solid vs normal 40ms.
 * Geant4 10.3.pX - generic biasing has no effect - same code works in every other version.
 * Geant4 10.4.0  - crash within constructor of G4ExtrudedSolid used extensively in BDSIM.
 * Geant4 10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
