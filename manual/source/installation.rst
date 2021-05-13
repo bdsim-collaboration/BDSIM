@@ -486,6 +486,10 @@ effects.
 +------------------------------------+-------------------------------------------------------------+
 | **Option**                         | **Description**                                             |
 +====================================+=============================================================+
+| **BDSIM_FINAL_INSTALL_DIR**        | This path if set will used as the first vis macro path to   |
+|                                    | be searched. Should be up to and including "bdsim". Used in |
+|                                    | the case of a CVMFS build where the build is relocated.     |
++------------------------------------+-------------------------------------------------------------+
 | **BDSIM_GENERATE_REGRESSION_DATA** | Whether to generate regression test data from the tests.    |
 +------------------------------------+-------------------------------------------------------------+
 | **BDSIM_REGRESSION_PREFIX**        | Name prefix for all output files from regression test data. |
