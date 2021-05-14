@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <vector>
 
+class G4AssemblyVolume;
 class G4Colour;
 class G4LogicalVolume;
 class G4UserLimits;
@@ -73,6 +74,8 @@ public:
   /// Attach a set of user limits to every logical volume supplied.
   virtual void ApplyUserLimits(const std::set<G4LogicalVolume*>& lvsIn,
 			       G4UserLimits* userLimits);
+
+  virtual G4AssemblyVolume* ToAssemblyVolume(G4LogicalVolume* container);
 
 protected:
   /// Virtual clean up that derived classes can override that calls CleanUpBase().

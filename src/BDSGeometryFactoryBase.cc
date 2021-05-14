@@ -23,8 +23,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
+#include "G4AssemblyVolume.hh"
 #include "G4Colour.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4String.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
@@ -113,6 +115,21 @@ void BDSGeometryFactoryBase::ApplyUserLimits(const std::set<G4LogicalVolume*>& l
 {
   for (auto& lv : lvsIn)
     {lv->SetUserLimits(userLimits);}
+}
+
+G4AssemblyVolume* BDSGeometryFactoryBase::ToAssemblyVolume(G4LogicalVolume* container)
+{
+  auto av = new G4AssemblyVolume;
+  auto ndaughters = container->GetNoDaughters();
+  for (decltype(ndaughters) i = 0; i < ndaughters; ++i)
+    {
+      auto daughter_pv = container->GetDaughter(i);
+      auto daughter_lv = daughter_pv->GetLogicalVolume();
+      auto translation = daughter_pv->GetTranslation();
+      auto rotation = G4RotationMatrix(*(daughter_pv->GetFrameRotation()));
+      av->AddPlacedVolume(daughter_lv, translation, &rotation);
+    }
+  return av;
 }
 
 void BDSGeometryFactoryBase::CleanUp()
