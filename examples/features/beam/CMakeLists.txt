@@ -49,3 +49,6 @@ simple_testing(bunch-tilt                     "--file=tilt.gmad"                
 
 set(TESTING_ARGS --ngenerate=32)
 simple_testing(bunch-ptc-loop-file "--file=ptc.gmad" "")
+
+simple_testing(random-engine-hepjames   "--file=random-engine-hepjames.gmad"  "")
+simple_testing(random-engine-mixmax     "--file=random-engine-mixmax.gmad"    "")
