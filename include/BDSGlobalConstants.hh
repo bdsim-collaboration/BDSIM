@@ -119,6 +119,7 @@ public:
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
+  inline G4String RandomEngine()           const {return G4String(options.randomEngine);}
   inline G4bool   Recreate()               const {return G4bool  (options.recreate);}
   inline G4String RecreateFileName()       const {return G4String(options.recreateFileName);}
   inline G4int    StartFromEvent()         const {return G4int   (options.startFromEvent);}
