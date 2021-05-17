@@ -18,6 +18,7 @@ V1.6.0 - 2021 / XX / XX
 =======================
 
 * Public CVMFS build now available. See :ref:`cvmfs-build`.
+* HepJames is still the default random number generator, but you can now choose MixMax.
 
 New Features
 ------------
@@ -26,6 +27,9 @@ New Features
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
+* New ability to choose random number generator. Previously, BDSIM always used CLHEP's HepJamesRandom
+  class. In more recent versions of Geant4, CLHEP's MixMax class is now the default. For now, BDSIM
+  still uses HepJamesRandom as the default, but the user can select MixMax with the option :code:`randomEngine`.
 * Few new variants of stainless steel at different temperatures as materials as well as RHC1000 plastic.
 * :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
   in that placement of geometry.
@@ -80,6 +84,9 @@ New Features
 |                                  | mass will be included in the energy deposition hit.   |
 |                                  | Relevant when minimumKineticEnergy option or          |
 |                                  | stopSecondaries is used.                              |
++----------------------------------+-------------------------------------------------------+
+| randomEngine                     | Name of which random engine ("hepjames", "mixmax").   |
+|                                  | Default is "hepjames".                                |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectoryAllVariables      | Override and turn on `storeTrajectoryIon`,            |
 |                                  | `storeTrajectoryLocal`,                               |
