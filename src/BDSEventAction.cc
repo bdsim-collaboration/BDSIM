@@ -407,6 +407,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   delete interestingTrajectories;
+  for (auto& p : primaryLosses)
+    {delete p;}
+  for (auto& p : primaryHits)
+    {delete p;}
   
   G4cout.flags(flagsCache);
 }
