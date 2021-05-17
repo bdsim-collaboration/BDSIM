@@ -86,6 +86,7 @@ namespace GMAD
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
+    std::string randomEngine;      ///< Name of random engine to use.
     int  nGenerate;                ///< The number of primary events to simulate
     bool recreate;                 ///< Whether to recreate from a file or not.
     std::string recreateFileName;  ///< The file path to recreate a run from.

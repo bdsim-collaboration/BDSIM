@@ -193,6 +193,7 @@ void Options::PublishMembers()
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("randomEngine",          &Options::randomEngine);
   publish("recreate",              &Options::recreate);
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);

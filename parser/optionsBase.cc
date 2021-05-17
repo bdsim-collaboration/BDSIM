@@ -65,6 +65,7 @@ OptionsBase::OptionsBase()
   
   circular              = false;
   seed                  = -1;
+  randomEngine          = "hepjames";
   nGenerate             = 1;
   recreate              = false;
   recreateFileName      = "";
