@@ -16,27 +16,62 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSRandom.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSRandom.hh"
 
-#include "globals.hh" //G4 cout etc
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/JamesRandom.h"
+#include "CLHEP/Random/MixMaxRng.h"
 
 #include <ctime>
+#include <map>
 #include <string>
 #include <sstream>
 
-void BDSRandom::CreateRandomNumberGenerator()
+template<>
+std::map<BDSRandomEngineType, std::string>* BDSRandomEngineType::dictionary =
+  new std::map<BDSRandomEngineType, std::string> ({
+						   {BDSRandomEngineType::hepjames,  "hepjames"},
+						   {BDSRandomEngineType::mixmax,    "mixmax"}
+    });
+
+BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
 {
-  // choose the Random engine
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Initialising random number generator." << G4endl;
-#endif  
-  CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
+  std::map<G4String, BDSRandomEngineType> types;
+  types["hepjames"] = BDSRandomEngineType::hepjames;
+  types["mixmax"]   = BDSRandomEngineType::mixmax;
+
+  engineType.toLower();
+  auto result = types.find(engineType);
+  if (result == types.end())
+    {// it's not a valid key
+      G4cerr << __METHOD_NAME__ << "\"" << engineType << "\" is not a valid random engine" << G4endl;
+
+      G4cout << "Available random engines are:" << G4endl;
+      for (auto& it : types)
+	{G4cout << "\"" << it.first << "\"" << G4endl;}
+      throw BDSException(__METHOD_NAME__, "");
+    }
+  return result->second;
+}
+
+void BDSRandom::CreateRandomNumberGenerator(const G4String& engineName)
+{
+  auto et = BDSRandom::DetermineRandomEngineType(engineName);
+  switch (et.underlying())
+  {
+    case BDSRandomEngineType::hepjames:
+      {CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom());}
+    case BDSRandomEngineType::mixmax:
+      {CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng());}
+    default:
+      {throw BDSException(__METHOD_NAME__, "engine \"" + engineName + "\" not implemented");}
+  }
 }
 
 void BDSRandom::SetSeed()
