@@ -66,11 +66,11 @@ void BDSRandom::CreateRandomNumberGenerator(const G4String& engineName)
   switch (et.underlying())
   {
     case BDSRandomEngineType::hepjames:
-      {CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom());}
+      {CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom()); break;}
     case BDSRandomEngineType::mixmax:
-      {CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng());}
+      {CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng()); break;}
     default:
-      {throw BDSException(__METHOD_NAME__, "engine \"" + engineName + "\" not implemented");}
+      {throw BDSException(__METHOD_NAME__, "engine \"" + engineName + "\" not implemented"); break;}
   }
 }
 
