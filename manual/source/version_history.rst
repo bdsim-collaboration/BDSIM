@@ -249,7 +249,7 @@ Output Changes
   such as when using an event generator file.
 * `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
   now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
-* New event summary variables `energyWorldExitKinet` and `energyImpactingApertureKinetic`.
+* New event summary variables `energyWorldExitKinetic` and `energyImpactingApertureKinetic`.
 * A new vector of set variable names is stored in the options and beam trees in the output
   to ensure we recreate a simulation correctly.
 * The trajectory filter bitset has been shortened by 1 to remove "transportation" as a filter.
