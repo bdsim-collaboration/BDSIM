@@ -34,7 +34,7 @@ namespace BDSRandom
   void PrintFullSeedState();
 
   /// Write the seed state out to suffix + 'seedstate.txt' in cwd.
-  void WriteSeedState(G4String suffix = "");
+  void WriteSeedState(const G4String& suffix = "");
 
   /// Get the current full seed state as a string.
   G4String GetSeedState();

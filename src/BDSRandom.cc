@@ -77,7 +77,7 @@ void BDSRandom::PrintFullSeedState()
   G4cout << G4endl;
 }
 
-void BDSRandom::WriteSeedState(G4String suffix)
+void BDSRandom::WriteSeedState(const G4String& suffix)
 {
   G4String baseFileName = BDSGlobalConstants::Instance()->OutputFileName();
   G4String seedstatefilename = baseFileName + suffix + ".seedstate.txt";
