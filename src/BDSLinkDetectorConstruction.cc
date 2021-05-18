@@ -57,7 +57,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <set>
 #include <vector>
-#include <include/BDSCrystalInfo.hh>
 
 class BDSParticleDefinition;
 
@@ -278,7 +277,6 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
     }
   else
     {el.region = "r1";} // stricter range cuts for default collimators
-    
     
   BDSAcceleratorComponent* component = nullptr;
   try
