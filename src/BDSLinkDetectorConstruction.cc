@@ -258,7 +258,7 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
       el.aper1 = 0.5; // m
       // need a small margin in length as crystal may have angled face and be rotated
       el.l += 10e-6; // TODO - confirm margin with sixtrack interface backtracking on input side
-      if (collimatorName.find("2") != std::string::npos) // b2
+      if (collimatorName.find('2') != std::string::npos) // b2
         {
           el.crystalLeft = crystalNameC;
           el.crystalAngleYAxisLeft = crystalAngle + 0.5 * ci->bendingAngleYAxis;
