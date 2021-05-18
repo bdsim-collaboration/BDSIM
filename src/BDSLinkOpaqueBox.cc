@@ -187,7 +187,7 @@ G4int BDSLinkOpaqueBox::PlaceOutputSampler()
       position += gap.transform(*rm);
     }
   // if there's finite angle, we ensure (in constructor) there's no tilt
-  G4RotationMatrix* rml = rm ? rm : new G4RotationMatrix();
+  G4RotationMatrix* rml = rm ? new G4RotationMatrix(*rm) : new G4RotationMatrix();
   BDSSamplerInfo info(samplerName, sampler, G4Transform3D(*rml, position));
   delete rml;
   
