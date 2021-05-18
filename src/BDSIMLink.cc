@@ -82,7 +82,8 @@ BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   bdsBunch(bunchIn),
   runManager(nullptr),
   construction(nullptr),
-  runAction(nullptr)
+  runAction(nullptr),
+  currentElementIndex(0)
 {;}
 
 BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
@@ -97,7 +98,8 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   bdsBunch(nullptr),
   runManager(nullptr),
   construction(nullptr),
-  runAction(nullptr)
+  runAction(nullptr),
+  currentElementIndex(0)
 {
   initialisationResult = Initialise();
 }

@@ -91,10 +91,10 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
     {delete f;}
   for (auto r : regionStorage)
     {delete r;}
-  for (auto a : apertures)
+  for (auto& a : apertures)
     {delete a.second;}
 
-  for (auto vr : volumeRegistries)
+  for (auto& vr : volumeRegistries)
     {delete vr.second;}
 
   G4cout << "BDSAcceleratorModel> Deletion complete" << G4endl;
