@@ -94,6 +94,8 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
 
   std::vector<BDSLinkOpaqueBox*> opaqueBoxes = {};
   linkBeamline = new BDSBeamline();
+  
+  auto acceleratorModel = BDSAcceleratorModel::Instance();
 
   for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
     {
@@ -129,7 +131,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 							opaqueBox,
 							opaqueBox->GetExtent().DZ());
-
+      acceleratorModel->RegisterLinkComponent(comp); // memory management
       nameToElementIndex[elementIt->name] = (G4int)linkBeamline->size();
       linkBeamline->AddComponent(comp);
     }
@@ -296,11 +298,12 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
                                         el.offsetY * CLHEP::m,
                                         el.tilt * CLHEP::rad);
   BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, component->GetExtent().MaximumAbsTransverse());
-
+  
   // add to beam line
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
+  BDSAcceleratorModel::Instance()->RegisterLinkComponent(comp);
   linkBeamline->AddComponent(comp, nullptr, BDSSamplerType::plane, comp->GetName() + "_out");
 
   // update world extents and world solid
