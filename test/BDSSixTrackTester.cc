@@ -181,6 +181,7 @@ void AddParticle(BDSBunchSixTrackLink* stp)
     {
       particleDefinition = new BDSParticleDefinition(particleDef, totalEnergy, 0, 0, 1, ionDef);
       stp->AddParticle(particleDefinition, coords, 0, 0);
+      delete ionDef; // no longer required
     }
   catch (const BDSException& e)
     {// if we throw an exception the object is invalid for the delete on the next loop
