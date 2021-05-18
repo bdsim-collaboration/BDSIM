@@ -123,7 +123,7 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
       BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component,
                                                          to,
                                                          component->GetExtent().MaximumAbsTransverse());
-
+      delete to; // opaqueBox doesn't own it
       opaqueBoxes.push_back(opaqueBox);
 
       BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),

@@ -157,6 +157,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
     {rm2->rotate(-0.5 * component->GetAngle(), G4ThreeVector(0,1,0));}
   offsetToStart = G4ThreeVector(xy.x(), xy.y(), -0.5*component->GetChordLength());
   transformToStart = G4Transform3D(rm2->inverse(), offsetToStart);
+  delete rm2;
   G4cout << "Transform to start (local) " << transformToStart.getTranslation() << G4endl;
 }
 
