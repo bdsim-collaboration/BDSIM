@@ -26,7 +26,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/JamesRandom.h"
+#ifdef CLHEPHASMIXMAX
 #include "CLHEP/Random/MixMaxRng.h"
+#else
+#include "CLHEP/ClhepVersion.h"
+#endif
 
 #include <ctime>
 #include <map>
@@ -63,15 +67,24 @@ BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
 void BDSRandom::CreateRandomNumberGenerator(const G4String& engineName)
 {
   auto et = BDSRandom::DetermineRandomEngineType(engineName);
+  G4cout << __METHOD_NAME__ << "Engine name: " << et.ToString() << G4endl;
   switch (et.underlying())
-  {
+    {
     case BDSRandomEngineType::hepjames:
       {CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom()); break;}
     case BDSRandomEngineType::mixmax:
+#ifdef CLHEPHASMIXMAX
       {CLHEP::HepRandom::setTheEngine(new CLHEP::MixMaxRng()); break;}
+#else
+      {
+	G4String msg = G4String(et.ToString()) + " is not available in CLHEP version: " + G4String(CLHEP::Version::String());
+	throw BDSException(__METHOD_NAME__, msg);
+	break;
+      }
+#endif
     default:
       {throw BDSException(__METHOD_NAME__, "engine \"" + engineName + "\" not implemented"); break;}
-  }
+    }
 }
 
 void BDSRandom::SetSeed()
