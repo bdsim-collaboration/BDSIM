@@ -27,6 +27,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TTree.h"
 
+/** @brief 4D histogram class.
+ *
+ * @author Eliott Ramoisiaux
+ */
+
 template<class T>
 class BDSBH4D : public BDSBH4DBase {
 public:
@@ -48,6 +53,15 @@ public:
       h += dynamic_cast<const BDSBH4D<T>&>(other).h;
       return *this;
     }
+    void Initialize(std::string& name, std::string& title, const std::string& eScale,
+                                unsigned int nxbins, double xmin, double xmax,
+                                unsigned int nybins, double ymin, double ymax,
+                                unsigned int nzbins, double zmin, double zmax,
+                                unsigned int nebins, double emin, double emax);
+    void Initialize(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
+                                unsigned int nxbins, double xmin, double xmax,
+                                unsigned int nybins, double ymin, double ymax,
+                                unsigned int nzbins, double zmin, double zmax);
     void to_PyROOT(const std::string&, const std::string&);
     void Reset_BDSBH4D() override;
     BDSBH4D* Clone(const char*) const override;
