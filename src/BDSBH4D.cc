@@ -136,7 +136,7 @@ BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title
                                                   boost::histogram::axis::variable<double> {eBinsEdges, "energy"});
 
     Initialize(name, title, eScale,eBinsEdges, nxbins, xmin, xmax, nybins, ymin, ymax, nzbins, zmin, zmax);
-    
+
 }
 
 

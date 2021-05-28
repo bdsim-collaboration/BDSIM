@@ -27,12 +27,12 @@ eBinning(BinSpecification())
 
 HistogramDef4D::HistogramDef4D(const std::string&      treeNameIn,
                                const std::string&      histNameIn,
-			       const BinSpecification& xBinningIn,
-			       const BinSpecification& yBinningIn,
-			       const BinSpecification& zBinningIn,
-			       const BinSpecification& eBinningIn,
+                               const BinSpecification& xBinningIn,
+                               const BinSpecification& yBinningIn,
+                               const BinSpecification& zBinningIn,
+                               const BinSpecification& eBinningIn,
                                const std::string&      variableIn,
-			       const std::string&      eScaleIn,
+                               const std::string&      eScaleIn,
                                const std::string&      selectionIn,
                                bool                    perEntryIn):
   HistogramDef3D(treeNameIn, histNameIn, xBinningIn, yBinningIn, zBinningIn, variableIn, selectionIn, perEntryIn),

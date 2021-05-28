@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSCORERMESHINFO_H
 #define BDSSCORERMESHINFO_H
 
-#include "BDSBHTypedefs.hh"
+#include "BDSBH4DTypedefs.hh"
 #include "BDSExtent.hh"
 
 #include "G4String.hh"

@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSIM_BDSHISTBINMAPPER_H
 #define BDSIM_BDSHISTBINMAPPER_H
 
-#include "BDSBHTypedefs.hh"
+#include "BDSBH4DTypedefs.hh"
 #include "G4ThreeVector.hh"
 
 
