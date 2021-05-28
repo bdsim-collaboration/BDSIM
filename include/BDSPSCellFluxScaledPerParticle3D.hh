@@ -39,15 +39,15 @@ class BDSPSCellFluxScaledPerParticle3D: public BDSPSCellFluxScaled3D
 {
 public:
   BDSPSCellFluxScaledPerParticle3D(const G4String&         scorerName,
-				   const BDSHistBinMapper* mapperIn,
-				   const G4String&         pathname,
-				   const G4String&         unitIn = "percm2",
-				   G4int ni=1,
-				   G4int nj=1,
-				   G4int nk=1,
-				   G4int depi=2,
-				   G4int depj=1,
-				   G4int depk=0);
+                                   const BDSHistBinMapper* mapperIn,
+                                   const G4String&         pathname,
+                                   const G4String&         unitIn = "percm2",
+                                   G4int ni=1,
+                                   G4int nj=1,
+                                   G4int nk=1,
+                                   G4int depi=2,
+                                   G4int depj=1,
+                                   G4int depk=0);
   
   virtual ~BDSPSCellFluxScaledPerParticle3D() override;
   

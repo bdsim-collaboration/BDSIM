@@ -18,11 +18,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSIM_BDSPSCELLFLUX4D_H
 #define BDSIM_BDSPSCELLFLUX4D_H
-#include "BDSBHTypedefs.hh"
+#include "BDSBH4DTypedefs.hh"
 
 #include "G4PSCellFlux3D.hh"
 
 class BDSHistBinMapper;
+
+/** @brief Primitive scorer for cell flux in a 4D mesh.
+ *
+ * @author Eliott Ramoisiaux
+ */
 
 class BDSPSCellFlux4D: public G4PSCellFlux3D
 {

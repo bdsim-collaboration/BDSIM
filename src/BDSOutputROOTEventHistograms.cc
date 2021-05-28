@@ -185,6 +185,7 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
   std::string nameC   = (std::string)name;
   std::string titleC  = (std::string)title;
   std::string eScaleC = (std::string)eScale;
+  
   if(eScale == "linear")
     {
       histograms4D.push_back(new BDSBH4D<boost_histogram_linear>(nameC, titleC, eScaleC,
