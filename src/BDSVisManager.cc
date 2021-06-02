@@ -34,6 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UIExecutive.hh"
 #endif
 
+#include "G4String.hh"
+#include "G4Types.hh"
+
 #include "G4TrajectoryDrawByCharge.hh"
 #include "G4Version.hh"
 
@@ -47,7 +50,7 @@ BDSVisManager::BDSVisManager(G4String visMacroFileNameIn,
   geant4MacroFileName(geant4MacroFileNameIn)
 {;}
 
-void BDSVisManager::StartSession(G4int argc, char** argv)
+void BDSVisManager::StartSession(int argc, char** argv)
 {
   /// Create BDS UI messenger
   BDSMessenger* bdsMessenger = new BDSMessenger();
