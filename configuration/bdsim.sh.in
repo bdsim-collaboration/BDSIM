@@ -1,12 +1,8 @@
 # self locate this script for a portable installation
-# on mac "-bash" is seen as well as "bash"
-if [[ $0 == "bash" || $0 == "-bash" ]]; then
-  BDSIM=$(pwd)/..
-elif [[ $0 == "zsh" ]]; then
-  BDSIM=${0:a}/..
-else
-  echo "Shell is neither bash nor zsh so can't self-locate this script"
-fi
+# from https://gist.github.com/elentok/5546958
+BDSIM=`dirname ${BASH_SOURCE[0]-$0}`
+BDSIM=`cd $BDSIM && pwd`
+echo "BDSIM = $BDSIM"
 
 # set path for executables
 export PATH=$BDSIM/bin:$PATH
