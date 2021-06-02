@@ -164,6 +164,7 @@ Build Changes
   with :code:`BDS_`, for example, :code:`BDS_USE_HEPMC3`.
 * If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
   :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
+* The bdsim.sh in the installation directory should now be portable and also work with zsh as well as bash.
 
 Bug Fixes
 ---------
