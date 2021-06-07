@@ -16,9 +16,5 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ROOT_TEST_BDSBH4DBASELINKDEF_H
-#define ROOT_TEST_BDSBH4DBASELINKDEF_H
-
 #pragma link C++ class BDSBH4DBase+;
 
-#endif

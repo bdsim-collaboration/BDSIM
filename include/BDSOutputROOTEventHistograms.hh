@@ -22,7 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+#ifdef USE_BOOST
 #include <boost/histogram.hpp>
+#endif
 
 #ifndef __ROOTBUILD__
 #include "globals.hh"

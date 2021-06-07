@@ -19,6 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSHistBinMapper.hh"
 
+BDSHistBinMapper::BDSHistBinMapper(G4int nBinsIIn, G4int nBinsJIn, G4int nBinsKIn, G4int nBinsLIn) :
+                                                                                nBinsI(nBinsIIn),
+                                                                                nBinsJ(nBinsJIn),
+                                                                                nBinsK(nBinsKIn),
+                                                                                nBinsL(nBinsLIn){
+}
+
+#ifdef USE_BOOST
 BDSHistBinMapper::BDSHistBinMapper(G4int nBinsIIn, G4int nBinsJIn, G4int nBinsKIn, G4int nBinsLIn,
                                    boost_histogram_axes_variant energyAxisIn) : nBinsI(nBinsIIn),
                                                                                 nBinsJ(nBinsJIn),
@@ -30,6 +38,7 @@ BDSHistBinMapper::BDSHistBinMapper(G4int nBinsIIn, G4int nBinsJIn, G4int nBinsKI
         nBinsL += 2; // + 2 to take into account in the mapping the two under and overflow bins
     }
 }
+#endif
 
 G4int BDSHistBinMapper::GlobalFromIJKLIndex(G4int iIndex,
                                             G4int jIndex,

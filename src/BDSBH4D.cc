@@ -20,10 +20,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
+#ifdef USE_BOOST
 #include <boost/format.hpp>
+#endif
+
+
 #include "iostream"
 
 templateClassImp(BDSBH4D)
+
+#ifdef USE_BOOST
 
 template <>
 BDSBH4D<boost_histogram_linear>::BDSBH4D()
@@ -360,3 +366,5 @@ void BDSBH4D<T>::Print_BDSBH4D(int x, int y, int z, int e) {
 template class BDSBH4D<boost_histogram_linear>;
 template class BDSBH4D<boost_histogram_log>;
 template class BDSBH4D<boost_histogram_variable>;
+
+#endif
