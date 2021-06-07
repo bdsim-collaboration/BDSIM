@@ -322,6 +322,8 @@ OptionsBase::OptionsBase()
   
   storeModel               = true;
 
+  samplersSplitLevel       = 0;
+
   // circular options
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
