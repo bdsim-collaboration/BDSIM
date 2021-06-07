@@ -418,6 +418,12 @@ New Features
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
 +------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
+|                                    | `PFirstAI`, on by default.                                         |
++------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
++------------------------------------+--------------------------------------------------------------------+
 
 
 General
