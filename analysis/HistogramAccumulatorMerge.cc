@@ -141,6 +141,7 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
       }
     case 4:
       {
+#ifdef USE_BOOST
 	BDSBH4DBase* h1  = dynamic_cast<BDSBH4DBase*>(mean);
 	BDSBH4DBase* h1e = dynamic_cast<BDSBH4DBase*>(variance);
 	BDSBH4DBase* ht  = dynamic_cast<BDSBH4DBase*>(newValue);
@@ -166,6 +167,7 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
 	      }
 	  }
 	break;
+#endif
       }
     default:
       {break;}

@@ -81,10 +81,12 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
       }
     case 4:
       {
+#ifdef USE_BOOST
 	mean     = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(meanName.c_str());
 	variance = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(variName.c_str());
 	result   = dynamic_cast<BDSBH4DBase*>(baseHistogram)->Clone(resultHistName.c_str());
 	break;
+#endif
       }
     default:
       {throw std::domain_error("Invalid number of dimensions"); break;}
@@ -104,6 +106,7 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
 	}
       else
 	{
+#ifdef USE_BOOST
           // empty contents
           static_cast<BDSBH4DBase*>(mean)->Reset_BDSBH4D();
           static_cast<BDSBH4DBase*>(variance)->Reset_BDSBH4D();
@@ -112,6 +115,7 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
           static_cast<BDSBH4DBase*>(result)->SetTitle(resultHistTitle.c_str());
           static_cast<BDSBH4DBase*>(mean)->SetTitle(meanName.c_str());
           static_cast<BDSBH4DBase*>(variance)->SetTitle(variName.c_str());
+#endif
 	}
     }
 }
@@ -197,6 +201,7 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
       }
     case 4:
       {
+#ifdef USE_BOOST
 	BDSBH4DBase* h1  = dynamic_cast<BDSBH4DBase*>(mean);
 	BDSBH4DBase* h1e = dynamic_cast<BDSBH4DBase*>(variance);
 	BDSBH4DBase* ht  = dynamic_cast<BDSBH4DBase*>(newValue);
@@ -221,6 +226,7 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 	      }
 	  }
 	break;
+#endif
       }
     default:
       {break;}
@@ -288,6 +294,7 @@ TH1* HistogramAccumulator::Terminate()
       }
     case 4:
       {
+#ifdef USE_BOOST
 	auto histCast = dynamic_cast<BDSBH4DBase*>(result);
 	auto mnCast   = dynamic_cast<BDSBH4DBase*>(mean);
 	auto varCast  = dynamic_cast<BDSBH4DBase*>(variance);
@@ -314,6 +321,7 @@ TH1* HistogramAccumulator::Terminate()
 	      }
 	  }
 	break;
+#endif
       }
     default:
       {break;}

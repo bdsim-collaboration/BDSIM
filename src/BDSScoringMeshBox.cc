@@ -43,7 +43,11 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
   nEnergySegments = recipe.nBinsE;
   SetNumberOfSegments(nSegment);
 
+#ifdef USE_BOOST
   mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nEnergySegments, recipe.energyAxis);
+#else
+  mapper = new BDSHistBinMapper(fNSegment[0], fNSegment[1], fNSegment[2], nEnergySegments);
+#endif
 }
 
 BDSScoringMeshBox::BDSScoringMeshBox(const G4String&         name,

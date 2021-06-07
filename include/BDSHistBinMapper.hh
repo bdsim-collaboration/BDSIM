@@ -26,7 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSHistBinMapper
 {
 public:
+    BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn);
+#ifdef USE_BOOST
     BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn, boost_histogram_axes_variant energyAxisIn);
+#endif
 
     virtual ~BDSHistBinMapper(){;}
 
@@ -45,14 +48,19 @@ public:
     inline G4double NBinsJ() const {return nBinsJ;}
     inline G4double NBinsK() const {return nBinsK;}
     inline G4double NBinsL() const {return nBinsL;}
+
+#ifdef USE_BOOST
     inline boost_histogram_axes_variant  GetEnergyAxis() const {return energyAxis;}
+#endif
 
 protected:
     G4int nBinsI;
     G4int nBinsJ;
     G4int nBinsK;
     G4int nBinsL;
+#ifdef USE_BOOST
     boost_histogram_axes_variant energyAxis;
+#endif
 };
 
 #endif

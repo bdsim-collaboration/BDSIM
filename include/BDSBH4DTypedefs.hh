@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSIM_BDSBH4DTYPEDEFS_H
 #define BDSIM_BDSBH4DTYPEDEFS_H
 
+#ifdef USE_BOOST
 #include <boost/histogram.hpp>
 #include <boost/variant.hpp>
 
@@ -37,5 +38,7 @@ typedef boost::variant<boost_histogram_linear_axis*, boost_histogram_log_axis*, 
 typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis   >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_linear;
 typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis      >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_log;
 typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_variable_axis >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_variable;
+
+#endif
 
 #endif

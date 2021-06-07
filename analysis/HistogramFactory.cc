@@ -73,10 +73,12 @@ TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
       }
     case 4:
       {
+#ifdef USE_BOOST
 	const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
 	if (d)
 	  {result = CreateHistogram4D(d, overRideName, overRideTitle);}
 	break;
+#endif
       }
     default:
       {break;}
@@ -187,6 +189,9 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
                                                  const std::string& overRideTitle)
 {
   BDSBH4DBase* result = nullptr;
+
+#ifdef USE_BOOST
+
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
@@ -221,5 +226,8 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
 						     ybs.n, ybs.low, ybs.high,
 						     zbs.n, zbs.low, zbs.high);
     }
+
+#endif
+
   return result;
 }

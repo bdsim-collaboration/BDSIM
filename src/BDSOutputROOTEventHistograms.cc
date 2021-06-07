@@ -75,8 +75,10 @@ void BDSOutputROOTEventHistograms::Fill(const BDSOutputROOTEventHistograms* rhs)
     {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
   for (auto h : rhs->histograms3D)
     {histograms3D.push_back(static_cast<TH3D*>(h->Clone()));}
+#ifdef USE_BOOST
   for (auto h : rhs->histograms4D)
     {histograms4D.push_back(static_cast<BDSBH4DBase*>(h->Clone("")));}
+#endif
 
 }
 
@@ -182,6 +184,9 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
 						      unsigned int nzbins, G4double zmin, G4double zmax,
 						      unsigned int nebins, G4double emin, G4double emax)
 {
+
+#ifdef USE_BOOST
+
   std::string nameC   = (std::string)name;
   std::string titleC  = (std::string)title;
   std::string eScaleC = (std::string)eScale;
@@ -209,6 +214,9 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
 								   nybins, ymin, ymax,
 								   nzbins, zmin, zmax));
     }
+
+#endif
+
   return (G4int)histograms4D.size() - 1;
 }
 
@@ -242,7 +250,9 @@ void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
                             G4double zValue,
                             G4double eValue)
 {
+#ifdef USE_BOOST
     histograms4D[histoId]->Fill_BDSBH4D(xValue, yValue, zValue, eValue);
+#endif
 }
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
@@ -260,7 +270,9 @@ void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
                                 G4int e,
                                 G4double value)
 {
+#ifdef USE_BOOST
     histograms4D[histoId]->Set_BDSBH4D(x, y, z, e, value);
+#endif
 }
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
@@ -285,6 +297,8 @@ void BDSOutputROOTEventHistograms::Flush()
     {h->Reset();}
   for (auto h : histograms3D)
     {h->Reset();}
+#ifdef USE_BOOST
   for (auto h : histograms4D)
     {h->Reset_BDSBH4D();}
+#endif
 }

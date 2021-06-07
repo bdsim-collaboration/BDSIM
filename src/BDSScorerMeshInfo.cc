@@ -91,6 +91,7 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   
   if (nBinsE > 1)
     {
+#ifdef USE_BOOST
       if (eScale == "linear")
 	{energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");}
       else if (eScale == "log")
@@ -104,5 +105,6 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 	}
       else
 	{throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
+#endif
     }
 }
