@@ -20,8 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBH4D_HH
 
 #include "BDSBH4DBase.hh"
-#include "BDSBH4DTypedefs.hh"
 
+#include "BDSBH4DTypedefs.hh"  // to comment if USE_BOOST=OFF
 #ifdef USE_BOOST
 #include <boost/histogram.hpp>
 #endif
@@ -37,6 +37,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template<class T>
 class BDSBH4D : public BDSBH4DBase {
+
+#ifdef USE_BOOST
+
 public:
     BDSBH4D();
     BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
@@ -78,6 +81,8 @@ public:
     double HighBinEdgeAt(int, int, int, int) override;
     void Print_BDSBH4D(bool with_zero_values = true) override;
     void Print_BDSBH4D(int , int , int , int) override;
+
+#endif
 
 ClassDef(BDSBH4D,1);
 
