@@ -16,13 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef USE_BOOST
 #ifndef __ROOTDOUBLE__
 typedef double boost_histogram_storage_type;
 #else
 typedef double boost_histogram_storage_type;
 #endif
-
-#include "BDSBH4D.hh"
 
 #pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > >+;
 #pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >+;
@@ -51,3 +50,4 @@ typedef double boost_histogram_storage_type;
 #pragma link C++ class BDSBH4D<boost_histogram_log>+;
 #pragma link C++ class BDSBH4D<boost_histogram_variable>+;
 
+#endif
