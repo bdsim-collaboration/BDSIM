@@ -184,14 +184,14 @@ TH3D* HistogramFactory::CreateHistogram3D(const HistogramDef3D* d,
   return result;
 }
 
+
+#ifdef USE_BOOST
 BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
                                                  const std::string& overRideName,
                                                  const std::string& overRideTitle)
 {
   BDSBH4DBase* result = nullptr;
-
-#ifdef USE_BOOST
-
+  
   std::string name  = d->histName;
   std::string title = name;
   CheckNameAndTitle(name, title, overRideName, overRideTitle);
@@ -227,7 +227,8 @@ BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D* d,
 						     zbs.n, zbs.low, zbs.high);
     }
 
-#endif
-
   return result;
 }
+#else
+BDSBH4DBase* HistogramFactory::CreateHistogram4D(const HistogramDef4D*, const std::string&, const std::string&) {return nullptr;}
+#endif
