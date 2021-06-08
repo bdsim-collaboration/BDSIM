@@ -1,13 +1,14 @@
 .. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
-
+      
 .. _model-control:
 
 =============
 Model Control
 =============
 
+* :ref:`random-engine`
 * :ref:`beam-parameters`    
 * :ref:`physics-processes`
 
@@ -39,6 +40,29 @@ Model Control
 * More details about :ref:`bend-tracking-behaviour`
 
 
+.. _random-engine:
+
+Random Engine
+-------------
+
+BDSIM, like Geant4 uses CLHEP for pseudo-random number generation. BDSIM requires Geant4 to be
+compiled with respect to a system installation of CLHEP and not the partially included one inside
+Geant4. This is because we require the full set of classes from CLHEP for beam coordinate generation
+but these classes aren't available in the limited version in Geant4. If we permit Geant4 to use its
+own internal CLHEP and BDSIM to use the system CLHEP, we can end up with two random number generators
+and the simulation is not reproducible. Therefore we prevent this behaviour at compilation.
+
+BDSIM uses the HepJamesRandom CLHEP engine by default. This was traditionally the default pseudo-random
+number engine used in Geant4 until recently. Now, Geant4 uses CLHEP's MixMax engine. BDSIM explicitly
+sets the engine to HepJamesRandom so the same engine is used by Geant4 and BDSIM.
+
+This behaviour can be controlled by the option :code:`randomEngine`. ::
+
+  option, randomEngine="hepjames";
+  option, randomEngine="mixmax";
+
+Examples are included in :code:`bdsim/examples/features/beam/random-engine*`.
+  
 .. _beam-parameters:
 
 Beam Parameters
@@ -1981,6 +2005,9 @@ For a description of recreating events, see :ref:`running-recreation`.
 |                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
 |                                  | Will only print out in an event that also prints out. |
 +----------------------------------+-------------------------------------------------------+
+| randomEngine                     | Name of which random engine ("hepjames", "mixmax").   |
+|                                  | Default is "hepjames".                                |
++----------------------------------+-------------------------------------------------------+
 | recreate                         | Whether to use recreation mode or not (default 0). If |
 |                                  | used as an executable option, this should be a string |
 |                                  | with a path to the :code:`recreateFileName`.          |
@@ -3137,6 +3164,9 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 This defines a circular (by default) sampler with radius 10 cm positioned with respect to
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
+
+.. note:: samplerplacements have no S coordinate, so the S variable will always be -1 m in
+	  the output (the default unphysical value for easy filtering).
 
 Shape
 *****
