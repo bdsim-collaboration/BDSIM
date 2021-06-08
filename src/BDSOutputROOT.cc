@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 

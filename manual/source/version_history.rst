@@ -17,6 +17,8 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.6.0 - 2021 / XX / XX
 =======================
 
+* Public CVMFS build now available. See :ref:`cvmfs-build`.
+* HepJames is still the default random number generator, but you can now choose MixMax.
 
 New Features
 ------------
@@ -25,6 +27,9 @@ New Features
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
   and skimmed data files alike. See :ref:`bdsimCombine-tool`.
+* New ability to choose random number generator. Previously, BDSIM always used CLHEP's HepJamesRandom
+  class. In more recent versions of Geant4, CLHEP's MixMax class is now the default. For now, BDSIM
+  still uses HepJamesRandom as the default, but the user can select MixMax with the option :code:`randomEngine`.
 * Few new variants of stainless steel at different temperatures as materials as well as RHC1000 plastic.
 * :code:`fieldAll` can be specified for a geometry placement allowing a field to be attached to all volumes
   in that placement of geometry.
@@ -47,6 +52,7 @@ New Features
 * A generic beam line :code:`element` type can now be marked as a collimator for the purpose of
   collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * More colours for default material colours.
+* New units accepted in input (PeV, PJ, GJ, MJ, kJ, J, mJ, uJ, nJ, pJ). J=1, GeV=1.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
@@ -78,6 +84,9 @@ New Features
 |                                  | mass will be included in the energy deposition hit.   |
 |                                  | Relevant when minimumKineticEnergy option or          |
 |                                  | stopSecondaries is used.                              |
++----------------------------------+-------------------------------------------------------+
+| randomEngine                     | Name of which random engine ("hepjames", "mixmax").   |
+|                                  | Default is "hepjames".                                |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectoryAllVariables      | Override and turn on `storeTrajectoryIon`,            |
 |                                  | `storeTrajectoryLocal`,                               |
@@ -167,6 +176,7 @@ Build Changes
   with :code:`BDS_`, for example, :code:`BDS_USE_HEPMC3`.
 * If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
   :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
+* The bdsim.sh in the installation directory should now be portable and also work with zsh as well as bash.
 
 Bug Fixes
 ---------
@@ -252,7 +262,7 @@ Output Changes
   such as when using an event generator file.
 * `trackID`, `partID`, `postProcessType`, `postProcessSubType` and `preStepKineticEnergy` are
   now all filled for the `PrimaryFirstHit` and `PrimaryLastHit` branches.
-* New event summary variables `energyWorldExitKinet` and `energyImpactingApertureKinetic`.
+* New event summary variables `energyWorldExitKinetic` and `energyImpactingApertureKinetic`.
 * A new vector of set variable names is stored in the options and beam trees in the output
   to ensure we recreate a simulation correctly.
 * The trajectory filter bitset has been shortened by 1 to remove "transportation" as a filter.
@@ -419,6 +429,12 @@ New Features
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
+|                                    | `PFirstAI`, on by default.                                         |
++------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
 
 
