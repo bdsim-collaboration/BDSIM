@@ -2649,6 +2649,9 @@ with the following options.
 | storeSamplerIon                    | Stores A, Z and Boolean whether the entry is an ion or not as well |
 |                                    | as the `nElectrons` variable for possible number of electrons.     |
 +------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
 |                                    | particle(s) trajectory(ies) are stored by default. This is         |
 |                                    | required for the storage of any other trajectories at all. Note    |

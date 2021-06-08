@@ -473,6 +473,8 @@ void Options::PublishMembers()
   
   publish("storeModel",                     &Options::storeModel);
 
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+
   // circular options
   publish("nturns",                   &Options::nturns);
   publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
